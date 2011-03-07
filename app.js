@@ -1,5 +1,5 @@
-var express = require('express')
-  , connect = require('connect')
+var express = require('express@1.0.8')
+  , connect = require('connect@0.5.10')
   , jade = require('jade')
   , app = module.exports = express.createServer()
   //, io = require('socket.io')
@@ -522,7 +522,7 @@ app.del('/sessions', loadMember, function (req, res) {
 });
 
 if (!module.parent) {
-  app.listen(3000);
+  app.listen(8000);
   console.log('Express server listening on port %d, environment: %s', app.address().port, app.settings.env)
   console.log('Using connect %s, Express %s, Jade %s', connect.version, express.version, jade.version);
 }
