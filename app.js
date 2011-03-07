@@ -1,5 +1,5 @@
-var express = require('express@1.0.8')
-  , connect = require('connect@0.5.10')
+var express = require('express')
+  , connect = require('connect')
   , jade = require('jade')
   , app = module.exports = express.createServer()
   //, io = require('socket.io')
