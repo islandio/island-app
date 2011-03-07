@@ -1,0 +1,7 @@
+.page
+  h2 New Media
+  p
+    a.button(href='/media') &larr; All Media
+  form(method='post', action='/media', enctype='multipart/form-data')
+    !=partial('media/fields', { locals: { d: d } })
+

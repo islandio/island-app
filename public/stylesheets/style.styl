@@ -1,0 +1,898 @@
+/* ISLAND.com */
+
+/*––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– fonts */
+
+@font-face
+  font-family Title
+  font-style normal
+  src url(../fonts/Impact.ttf)
+
+/*––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– resets */
+
+html
+  color #000
+  background #fff
+
+body, div, dl, dt, dd, ul, ol, li, h1,h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td
+  margin 0
+  padding 0
+
+table
+  border-collapse collapse
+  border-spacing 0
+
+fieldset, img
+  outline none
+  border 0
+
+img:focus
+  outline none
+  
+img::-moz-focus-inner
+  border none
+
+address, caption, cite, code, dfn, em, strong, th, var
+  font-style normal
+  font-weight normal
+
+li
+  list-style none
+
+caption, th
+  text-align left
+
+h1, h2, h3, h4, h5, h6
+  font-size 100%
+  font-weight normal
+
+q:before, q:after
+  content ''
+
+abbr, acronym
+  border 0
+  font-variant normal
+
+sup
+  vertical-align text-top
+
+sub
+  vertical-align text-bottom
+
+input, textarea, select
+  font-family inherit
+  font-size inherit
+  font-weight inherit
+
+legend
+  color #000
+
+header, footer, section, aside, nav, article
+  display block
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+body
+  background white
+  color #1a1a1a
+  font-family Verdana, Arial, sans-serif
+  font-size 10px 
+  line-height 13px 
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+a
+  color black
+  text-decoration underline 
+
+a:visited, a:hover
+  text-decoration none 
+
+a:active, a:focus
+  outline none
+  
+a::-moz-focus-inner
+  border none
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+p.mission-txt
+  font-size 22px
+  line-height 25px
+  color white
+  width 484px
+  font-family Title, Verdana, Arial, sans-serif
+
+small
+  font-size 10px
+  line-height 12px
+
+h1.nav
+  padding 0 20px 0 0
+  font-size 13px
+  color #29b9d9
+  text-transform lowercase
+  line-height normal
+  font-weight normal
+  font-family Title, Verdana, Arial, sans-serif
+
+h1.navhover
+  color #d95032
+
+h1.nav-selected
+  color #d95032 
+
+h1.obj-title
+  display inline
+  font-size 24px
+  font-weight normal
+  line-height normal
+  color #1a1a1a
+  font-family Title, Verdana, Arial, sans-serif
+
+h1.obj-owner
+  font-size 9px
+  padding 0 0 0 22px
+  line-height 9px
+
+h1.media-title
+  font-size 18px
+  font-weight normal
+  line-height normal
+  color #1a1a1a
+  font-family Title, Verdana, Arial, sans-serif
+
+h1.media-title2
+  font-size 26px
+  font-weight normal
+  line-height normal
+  color #1a1a1a
+  font-family Title, Verdana, Arial, sans-serif
+
+h1.side-title
+  font-size 12px
+  font-weight normal
+  line-height normal
+  color #1a1a1a
+  padding 26px 0 0 0
+  font-family Title, Verdana, Arial, sans-serif
+
+h1.side-title2
+  font-size 12px
+  font-weight normal
+  line-height normal
+  color #1a1a1a
+  padding 7px 0 0 0
+  font-family Title, Verdana, Arial, sans-serif
+
+
+
+h2.message, h2.error
+  float right
+  font-size 10px
+  font-weight normal
+  display inline
+  vertical-align bottom
+  padding 4px 0 0 0 
+
+h2.message
+  color #c2c2c2
+
+h2.error
+  color red
+
+h2.welcome
+  color #1a1a1a
+  font-weight normal
+  display inline
+
+h3.obj-details
+  text-transform uppercase
+  color #b3b3b3
+  font-size 8px
+  padding 20px 0 10px 0
+  font-weight normal
+
+h3.add-media
+  font-size 16px
+  font-weight lighter
+  line-height normal
+  color #404040
+
+span.slash
+  padding 0 5px 0 0
+  font-weight bold
+  vertical-align middle
+  font-size 42px
+  color #1a1a1a
+  font-family Title, Verdana, Arial, sans-serif
+
+
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+img.social-icons
+  position absolute
+  cursor pointer
+
+img.centered
+  display block
+  margin 0 auto
+  vertical-align middle
+  
+img[alt=image]
+  -moz-border-radius 5px
+  -webkit-border-radius 5px
+  border-radius 5px
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+.left
+  float left
+  
+.right
+  float right
+
+.clear
+  clear both
+    
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+.landing-wrap
+  width 100%
+  
+.landing-center
+  margin 0 auto
+  width 984px
+  
+.landing-back
+  background #1a1a1a
+  margin 10px 0
+  padding 5px
+  
+.landing-logo
+  margin 0 632px 0 0
+  
+.landing-login
+  float right
+
+#remember_me
+  margin 0 5px 0 0
+
+#wrap
+  margin 0 auto
+  width 984px
+
+#header  
+  height 82px
+  background #fcfcfb
+  position fixed
+  z-index 10001
+  top 0
+  width 984px
+  background rgba(252, 252, 251, 0.5)
+  border-bottom 5px solid #1a1a1a
+  border-right 5px solid #1a1a1a
+  -moz-border-radius 0 0 83px 0
+  -webkit-border-radius0 0 83px 0
+  border-radius 0 0 83px 0
+
+#header-left
+  float left
+
+#logo
+  width 300px
+  height 52px
+  padding 15px 0
+  cursor pointer
+
+#header-right
+  margin 0 0 0 330px
+  position relative
+
+#feeds
+  margin 28px 0 0 0
+  position relative
+
+#twitter
+  position absolute
+
+#loading
+  position fixed
+  left 15px
+  top 15px
+  display none
+
+#menu
+  padding 12px 0 0 0
+  position relative
+
+#main
+  margin 128px 0
+
+#main-bottom
+  min-height 500px
+  padding 50px 0 0 0
+
+#footer
+  position fixed
+  bottom 0
+  width 100%
+
+#footer > div
+  margin 0 auto
+  width 984px
+
+#footer > div > div
+  padding 5px 0
+  width 333px
+  background rgba(252, 252, 251, 0.5)
+  text-align right
+  font-family Title, Verdana, Arial, sans-serif
+  float right
+  z-index 10001
+  position relative
+  border-top 5px solid #1a1a1a
+  border-left 5px solid #1a1a1a
+  -moz-border-radius 23px 0 0 0
+  -webkit-border-radius 23px 0 0 0
+  border-radius 23px 0 0 0
+
+#logo img
+  position absolute
+  left 0
+  
+.is-highlight, .is-error
+  position fixed
+  left 20px
+  top 20px
+  padding 10px
+  -moz-border-radius 5px
+  -webkit-border-radius 5px
+  border-radius 5px
+  font-family monospace
+  font-weight bold
+
+.is-highlight
+  color #4bb8d7
+  border 1px dotted #4bb8d7
+  
+.is-error
+  color red
+  border 1px dotted red
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+input:focus
+  outline none
+
+input::-moz-focus-inner
+  border none
+
+#login-form
+  /*display none*/
+  //position absolute
+  
+#login-form input[type=text], #login-form input[type=password]
+  font-family monospace
+  font-weight bold
+  background #f2f2f2
+  width 142px
+  margin 0
+  padding 3px
+  font-size 12px
+  display inline
+  color #808080
+  border 1px solid #ddd
+  -moz-border-radius 5px
+  -webkit-border-radius 5px
+  border-radius 5px
+
+#login-form input[type=text]:focus, #login-form input[type=password]:focus
+  background none
+  border 1px solid #404040
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+#grid
+  position relative
+  //top 20px
+  //margin 0 0 100px 0
+
+//#obj-title
+
+#obj-holder
+  padding 20px 0 10px 0
+
+#obj-desc
+  background-color #f2f2f2
+  width 640px
+  min-height 85px
+  margin 0 0 5px 0
+
+.commentor
+  display none
+  padding 0 0 5px
+
+//#obj-desc-txt
+
+.commentor-input, .commentor-input-dummy
+  font-weight normal
+  background #fcfcfb
+  width 304px
+  margin 15px 0 0 0
+  padding 4px
+  border 1px solid #cdcdcd
+  vertical-align top
+  
+.commentor-input
+  height 32px
+  color #404040
+  overflow hidden
+
+.commentor-input-dummy
+  height 13px
+  color #808080
+
+.commentor-input:focus, .commentor-input-dummy:focus
+  outline none
+  
+.commentor-input::-moz-focus-inner, .commentor-input-dummy::-moz-focus-inner
+  border none
+  
+.commentor-whois
+  margin 0 90px 0 0
+  color #bcbcbc
+  font-size 10px
+  padding 10px 0 0 0
+  display block
+  
+.commentor-login
+  margin 15px 0 0 0
+  font-style italic
+
+/*for submits*/
+input.is-button[type=submit]
+  cursor pointer
+  background #f2f2f2
+  padding 2px 6px 3px 6px
+  font-size 12px
+  font-weight bold
+  border 1px solid #ddd
+  -moz-border-radius 5px
+  -webkit-border-radius 5px
+  border-radius 5px
+  -moz-text-shadow 0 1px 0 white
+  -webkit-text-shadow 0 1px 0 white
+  text-shadow 0 1px 0 white
+
+input.is-button[type=submit]:hover
+  border 1px solid #404040
+
+input.is-button[type=submit]:active
+  background-image -moz-linear-gradient(center bottom, rgb(255,255,255) 0%, rgb(236,236,236) 100%)
+  background-image -webkit-gradient(linear, 0% 100%, 0% 0%, from(rgb(255,255,255)), to(rgb(236,236,236)))
+
+.add-comment
+  float right
+  width 79px
+  margin 5px 0 0
+
+#obj-comments
+  margin 15px 0 0
+
+.comment
+  background-color #f2f2f2
+  width 314px
+  margin 5px 0 0
+  
+.comment-title
+  font-weight bold
+  font-size 10px
+  background-color #b1dc36
+  padding 3px 20px 3px 10px
+  -moz-border-radius 5px 0 20px 0
+  -webkit-border-radius 5px 0 20px 0
+  border-radius 5px 0 20px 0
+  width -moz-fit-content
+  width intrinsic
+  max-width 314px
+  
+.comment-body
+  padding 5px 40px 5px 10px
+  
+.comment-txt
+  padding 0 0 2px 0
+  
+.comment-added
+  color #b3b3b3
+  font-size 9px
+  
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+div.members-bar
+  width 335px
+  margin 0 0 0 300px
+  position absolute
+  color #b3d929
+
+div.members-bar a
+  color #b3d929
+
+
+
+div.each-grid-obj
+  position absolute
+  opacity 1
+  border-bottom 1px solid #1a1a1a
+  padding 0
+  width 231px
+  
+a.grid-obj
+  text-decoration none
+
+div.grid-obj-hover
+  width 100%
+  background black
+  opacity 0.8
+  position absolute
+  
+  display -webkit-box
+  display -moz-box
+  display box
+  
+  display -webkit-box
+  -webkit-box-orient horizontal
+  -webkit-box-pack center
+  -webkit-box-align center
+
+  display -moz-box
+  -moz-box-orient horizontal
+  -moz-box-pack center
+  -moz-box-align center
+
+  display box
+  box-orient horizontal
+  box-pack center
+  box-align center
+  
+
+a.grid-obj-title
+  text-decoration none
+  color white
+  line-height 38px
+  background #1a1a1a
+  padding 1px 4px 2px 4px
+  border-radius 3px
+  -moz-border-radius 3px
+  -khtml-border-radius 3px
+  -webkit-border-radius 3px
+  
+a.grid-obj-title:hover
+  background #d12b83
+  
+a.grid-obj-title:active
+  color white
+
+span.grid-obj-tags
+  font-weight bold
+  line-height 26px
+
+span.grid-tag
+  font-variant small-caps
+  color gray
+
+h1.grid-obj-hover-txt
+  font-size 12px
+  //position relative
+  background-color white
+  padding 10px
+  //display block
+  width -moz-fit-content
+  width intrinsic
+  font-weight lighter
+  text-transform uppercase
+  -moz-border-radius 15px
+  -webkit-border-radius 15px
+  border-radius 15px
+
+
+
+
+div.each-fea-obj
+  cursor pointer
+
+div.profile-left
+  margin 0 0 0 0
+  float left
+
+div.profile-right
+  width 492px
+  margin 0 0 0 492px
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+/*form
+  display inline
+
+form.login-form
+  float right
+  display none*/
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+button
+  background #f2f2f2
+  padding 0
+  border none
+  cursor pointer
+  
+button:hover
+  background #d04c38
+  
+button:active
+  color white
+
+button:focus
+  outline none
+  
+button::-moz-focus-inner
+  border none
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+/*default submit*/
+/*input[type=submit], #upload-holder
+  font-size 12px
+  font-family 'Helvetica Neue', Arial, sans-serif
+  cursor pointer
+  background #fcfcfb
+  border 1px solid #b2b2b2
+  display inline
+  font-weight bold
+  padding 6px 18px 
+  vertical-align top
+  height auto
+  -moz-border-radius 5px
+  -webkit-border-radius 5px
+  border-radius 5px
+  -moz-text-shadow 0 1px 0 white
+  -webkit-text-shadow0 1px 0 white
+  text-shadow 0 1px 0 white
+
+input[type=submit]:hover, #upload-holder:hover
+  border 1px solid #1a1a1a
+
+input[type=submit]:active, #upload-holder:active
+  background-image -moz-linear-gradient(center bottom, rgb(255,255,255) 0%, rgb(236,236,236) 100%)
+  background-image -webkit-gradient(linear, 0% 100%, 0% 0%, from(rgb(255,255,255)), to(rgb(236,236,236)))
+
+input[type=submit]:focus, #upload-holder:focus
+  outline none*/
+
+
+
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+label
+  color #808080
+  font-size 11px
+  font-weight normal
+  
+td
+  padding 2px 0 0 10px
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+/*input[type=text], input[type=password]
+  font-family 'Helvetica Neue', Arial, sans-serif
+  font-weight normal
+  background #fcfcfb
+  margin 5px 0 10px 0
+  padding 4px
+  font-size 16px
+  display block
+  height auto
+  color #b2b2b2
+  vertical-align top
+  border 1px solid #ddd
+  -moz-border-radius 5px
+  -webkit-border-radius 5px
+  border-radius 5px
+
+input[type=text]:focus, input[type=password]:focus
+  border 1px solid #404040*/
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+input[type=checkbox], input[type=radio]
+  display inline
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+textarea
+  font-size 11px
+  resize none
+  font-weight normal
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+#contribute-wrap
+  background-color #fefefe
+  padding 0
+  margin 20px 0 0 0
+
+#upload-form
+  padding 0 0 0 20px
+  display block
+  border-left 1px solid #eee
+
+#upload-holder
+  font-size 10px
+  position absolute
+  top 0
+  left 338px
+  height 14px
+  padding 3px 8px 2px
+
+#upload-holder > object
+  position absolute
+  top 0
+  right 0
+  z-index 10001
+
+#uploadQueue
+  background-color #fbfcfc
+  margin 5px 0 10px 0
+  overflow auto
+  border 1px solid #ddd
+  width 443px
+  height 257px
+  -moz-border-radius 5px
+  -webkit-border-radius 5px
+  border-radius 5px
+
+p.no-pending-txt
+  color #b2b2b2
+  padding 132px 0 0 0
+  text-align center
+  -moz-text-shadow 0 1px 0 white
+  -webkit-text-shadow 0 1px 0 white
+  text-shadow 0 1px 0 white
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+.matte
+  border-radius 5px
+  -moz-border-radius 5px
+  -webkit-border-radius 5px
+
+.list
+  list-style-type none
+  white-space nowrap
+
+.list li
+  display inline
+  float left
+
+.list li a
+  color #ccc
+  text-decoration none
+  font-style normal
+  font-size 12px
+
+.butt
+  height 20px
+  cursor pointer
+  margin 0 5px 0 0
+  padding 7px 15px 3px 13px
+
+.butthover
+  background-color #d95032
+
+.buttactive
+  outline none
+
+.head-butt
+  background-color #29b9d9
+
+.head-butt-selected
+  background-color #d95032
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––tweets*/
+
+.tweet p
+  font-size 9px
+  color gray
+  line-height 12px
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––carousel*/
+
+#fea-carousel, #mem-carousel
+  padding 20px 0 0 0
+
+#fea-carousel-wrap
+  width 640px
+  height 320px
+  position relative
+  overflow hidden
+
+#fea-carousel-holder
+  position absolute
+  height 2000em
+  opacity 0
+
+#mem-carousel-wrap
+  width 984px
+  height 320px
+  position relative
+  overflow hidden
+
+#mem-carousel-holder
+  position absolute
+  width 2000em
+  opacity 0
+
+#mem-carousel-holder > div
+  float left
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+/* For this demo. Feel free to customize */
+div.overlay
+  background rgba(0,0,0,0.01)
+  z-index 10001
+
+div.overlay > div.wrap-outer > div.wrap
+  -webkit-box-pack start
+  -moz-box-pack start
+  box-pack start
+
+.my-dialog
+  width 500px
+  background #fff
+  resize none
+  overflow auto
+
+  -webkit-border-radius 5px
+  -webkit-border-top-left-radius 0
+  -webkit-border-top-right-radius 0
+  -moz-border-radius 0 0 5px 5px
+  border-radius 0 0 5px 5px
+
+  padding 15px
+
+  -webkit-box-sizing border-box
+  -moz-box-sizing border-box
+  box-sizing border-box
+  
+  -webkit-box-shadow 0 3px 6px rgba(0,0,0,0.5)
+  -moz-box-shadow 0 3px 6px rgba(0,0,0,0.5)
+  box-shadow 0 3px 6px rgba(0,0,0,0.5)
+
+  background -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fff), to(#e6e6e6))
+  font 13px Verdana
+
+  /* for the animation */
+  -webkit-transform translateY(-100%)
+  -moz-transform translateY(-100%)
+  transform translateY(-100%)
+
+  -webkit-transition -webkit-transform 0.25s ease-out
+  -moz-transition -moz-transform 0.25s ease-out
+  transition transform 0.25s ease-out
+
+
+body.overlaid .my-dialog
+  -webkit-transform translateY(0)
+  -moz-transform translateY(0)
+  transform translateY(0)
+
+
+.my-dialog input
+  resize none
+
+
+.my-dialog h1
+  margin 0 0 15px
+  font bold 24px Verdana

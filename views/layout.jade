@@ -1,0 +1,21 @@
+!!! 5
+html
+  head
+    title= 'We\'re Island'
+    link(rel='stylesheet', href='/stylesheets/overlay.css')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='shortcut icon', href='/graphics/favicon.ico', type='image/x-icon')
+    script(type='text/javascript', src='/javascripts/json2.js')
+    script(type='text/javascript', src='http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js')
+    //script(src='overlay.js')
+    script(type='text/javascript', src='/javascripts/jquery.autogrow.js')
+    //script(type='text/javascript', src='http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js')
+    //script(type='text/javascript', src='/javascripts/socket.io.js')
+    //script(type='text/javascript', src='/javascripts/nodestream.js')
+    script(type='text/javascript', src='/javascripts/jquery.tweet.js')
+    //script(type='text/javascript', src='/javascripts/date.format.js')
+    //script(type='text/javascript', src='/javascripts/flowplayer-3.2.3.min.js')
+  body
+    !{flashMessages}
+    != body
+    script(type='text/javascript', src='/javascripts/island.js')

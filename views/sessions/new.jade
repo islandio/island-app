@@ -1,0 +1,32 @@
+div.landing-wrap
+  div.landing-center(style='margin-top: 150px; height: 61px')
+    //a.button(href='/members/new') Register 
+    div.landing-login
+      form#login-form(method='post', action='/sessions')
+        table
+          tbody
+            tr
+              td
+                label(for='email') Email
+              td
+                label(for='password') Password
+            tr
+              td
+                input(name='member[email]', type='text')
+              td
+                input(name='member[password]', type='password')
+              td
+                input#login.is-button(type='submit', title='Log In', value='Log In')
+            tr
+              td(style='padding-top: 10px')
+                input#remember_me(type='checkbox', name='remember_me')
+                label(for='remember_me') Keep me logged in
+              td(style='padding-top: 10px')
+                a(href='', rel='nofollow') Forgot your password?
+    div.landing-logo
+      img(src='/graphics/is-logo.png', alt='is-landing')
+  div.landing-back
+    div.landing-center
+      p.mission-txt
+        | Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      

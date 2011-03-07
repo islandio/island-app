@@ -1,0 +1,12 @@
+div(id='obj-' + object.id, class='each-grid-obj ' + object.type)
+  a.grid-obj-title(href=object.id)
+    =object.title
+  a.grid-obj(href=object.id)
+    div.grid-obj-hover.matte
+      h1.grid-obj-hover-txt
+        =object.member.name.first + ' / ' + object.meta.likes
+    img.grid-obj-img(id='img-' + object.id, class='page-0', src=object.location, alt=object.type, width='231')
+  div.right
+    span.grid-tag tags: 
+    span.grid-obj-tags
+      =object.meta.tags
