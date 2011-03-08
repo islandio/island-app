@@ -1238,6 +1238,29 @@ $(function() {
 		Island.cancelPulse();
 	});
 	
+	
+	
+	
+  // $('#goto-register-form a').live('click', function () {
+  //   $('#login-form').hide();
+  //   $('#register-form').fadeIn('fast');
+  //   $(this.parentNode).hide();
+  //   $('#goto-login-form').show();
+  //   $('input[name="newmember[name.first]"]').focus();
+  // });
+  // 
+  // $('#goto-login-form a').live('click', function () {
+  //   $('#register-form').hide();
+  //   $('#login-form').fadeIn('fast');
+  //   $(this.parentNode).hide();
+  //   $('#goto-register-form').show();
+  //   $('input[name="member[email]"]').focus();
+  // });
+	
+	
+	$('input[name="member[email]"]').focus();
+	
+	
 	// no submit
 	//$("form").live("submit",function() { return false; });
 	// focus and blur
@@ -1282,26 +1305,31 @@ $(function() {
   
 	
 	// rss, archipelago
-	$(".rss-icon, #archipelago").live("mouseenter",function() {
-		var src = $(this).attr("alt");
-		var alt = $(this).attr("src");
-		$(this).attr("src",src).attr("alt",alt);
-	});
-	$(".rss-icon, #archipelago").live("mouseleave",function() {
-		var src = $(this).attr("alt");
-		var alt = $(this).attr("src");
-		$(this).attr("src",src).attr("alt",alt);
-	});
+  // $('.is-archipelago').live('mouseenter',function() {
+  //     var $this = $(this)
+  //       , src = $this.attr('alt')
+  //    , alt = $this.attr('src')
+  //  ;
+  //  $(this).attr('src', src).attr('alt', alt);
+  // }).live('mouseleave',function() {
+  //  var $this = $(this)  
+  //    , src = $this.attr('alt')
+  //    , alt = $this.attr('src')
+  //  ;
+  //  $this.attr('src', src).attr('alt', alt);
+  // });
+	
+	
 	
 	$(window).scroll(function() {
 		if($(this).scrollTop()>0) {
-			$("#feeds").css({ opacity:0 });
-			$("#menu,#feeds,.members-bar").hide();
-			$("#header").css({ width:363 });
+			$('#feeds').css({ opacity:0 });
+			$('#menu,#feeds,.members-bar').hide();
+			$('#header').css({ width:363 });
 		} else if($(this).scrollTop()==0) {
-			$("#header").css({ width:984 });
-			$("#menu,#feeds,.members-bar").show();
-			$("#feeds").css({ opacity:1 });
+			$('#header').css({ width:984 });
+			$('#menu,#feeds,.members-bar').show();
+			$('#feeds').css({ opacity:1 });
 		}
 	});
 

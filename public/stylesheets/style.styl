@@ -75,12 +75,12 @@ body
   background white
   color #1a1a1a
   font-family Verdana, Arial, sans-serif
-  font-size 10px 
-  line-height 13px 
+  font-size 10px
+  line-height 13px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
-a
+/*a
   color black
   text-decoration underline 
 
@@ -91,11 +91,33 @@ a:active, a:focus
   outline none
   
 a::-moz-focus-inner
+  border none*/
+
+
+a, button
+  color #404040
+  background #f2f2f2
+  padding 0
+  border none
+  cursor pointer
+  text-decoration none
+
+a:hover, button:hover
+  background rgba(177, 220, 54, 0.5)
+
+a:active, button:active
+  background rgba(177, 220, 54, 0.25)
+
+a:focus, button:focus
+  outline none
+
+a::-moz-focus-inner, button::-moz-focus-inner
   border none
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
 p.mission-txt
+  margin 0 500px 0 0
   font-size 22px
   line-height 25px
   color white
@@ -224,6 +246,15 @@ img[alt=image]
   -webkit-border-radius 5px
   border-radius 5px
 
+label
+  color #808080
+  font-size 11px
+  font-weight normal
+
+td
+  white-space nowrap
+  padding 2px 0 0 10px
+
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
 .left
@@ -250,10 +281,26 @@ img[alt=image]
   padding 5px
   
 .landing-logo
-  margin 0 632px 0 0
+  margin 200px 500px 0 0
   
-.landing-login
+.landing-forms-wrap
+  position absolute
+
+.landing-forms
   float right
+
+.landing-form-controls
+  white-space nowrap
+  text-align right
+  
+.landing-archipelago
+  float right
+  margin 5px 25px 0 0
+  text-align right
+
+.landing-copy
+  color #808080
+  font-size 9px
 
 #remember_me
   margin 0 5px 0 0
@@ -369,10 +416,23 @@ input::-moz-focus-inner
   border none
 
 #login-form
+  position absolute
+  top 0
+  right 0
   /*display none*/
   //position absolute
   
-#login-form input[type=text], #login-form input[type=password]
+#register-form
+  position absolute
+  bottom -50px
+  right 0
+  display none
+
+#register-form td
+  padding 0 0 10px 10px
+  
+#login-form input[type=text], #login-form input[type=password],
+#register-form input[type=text], #register-form input[type=password]
   font-family monospace
   font-weight bold
   background #f2f2f2
@@ -387,9 +447,12 @@ input::-moz-focus-inner
   -webkit-border-radius 5px
   border-radius 5px
 
-#login-form input[type=text]:focus, #login-form input[type=password]:focus
+#login-form input[type=text]:focus, #login-form input[type=password]:focus,
+#register-form input[type=text]:focus, #register-form input[type=password]:focus
   background none
   border 1px solid #404040
+  
+
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
@@ -620,23 +683,7 @@ form.login-form
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
-button
-  background #f2f2f2
-  padding 0
-  border none
-  cursor pointer
-  
-button:hover
-  background #d04c38
-  
-button:active
-  color white
 
-button:focus
-  outline none
-  
-button::-moz-focus-inner
-  border none
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
@@ -674,13 +721,7 @@ input[type=submit]:focus, #upload-holder:focus
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
-label
-  color #808080
-  font-size 11px
-  font-weight normal
-  
-td
-  padding 2px 0 0 10px
+
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 

@@ -454,23 +454,30 @@ app.put('/comment/:id.:format?', loadMember, function (req, res, next) {
 
 
 // Members
-app.get('/members/new', function(req, res) {
+app.get('/members/new', function (req, res) {
   res.render('members/new.jade', {
     locals: { member: new Member() }
   });
 });
 
-app.post('/members.:format?', function(req, res) {
-  var member = new Member(req.body.member);
-
+app.post('/members.:format?', function (req, res) {
+  
+  // check email
+  delete req.body.newmember.email2;
+  
+  var member = new Member(req.body.newmember);
+  
+  console.log(req.body.newmember);
+  
   function memberSaveFailed() {
-    req.flash('error', 'Account creation failed');
-    res.render('members/new.jade', {
-      locals: { member: member }
-    });
+    // req.flash('error', 'Account creation failed');
+    // res.render('sessions/new.jade', {
+    //   locals: { member: member }
+    // });
   }
 
-  member.save(function(err) {
+  member.save(function (err) {
+    console.log(err);
     if (err) return memberSaveFailed();
 
     req.flash('info', 'Your account has been created');
