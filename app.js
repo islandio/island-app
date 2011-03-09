@@ -12,7 +12,7 @@ var express = require('express')
       secret: 'kdL8k9yEoQXCt39z1TU/Z+TOlctcZ2Coxs0BRAjm',
       bucket: 'islandio'
     })
-  , magick = require('Node-Magick') //require('imagemagick')
+  //, magick = require('Node-Magick') //require('imagemagick')
   , stylus = require('stylus')
   , markdown = require('markdown').markdown
   , fs = require('fs')
@@ -249,7 +249,7 @@ app.post('/media.:format?', function (req, res) {
           upStream.emit('close');
           form.emit('file', part.name, file);
           
-          console.log(file);
+          //if ()
           
           // if ()
           //   magick
