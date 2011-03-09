@@ -41,20 +41,26 @@ function defineModels(mongoose, fn) {
     * Model: Media
     */
   Media = new Schema({
-      title     : String
-    , body      : String
-    , comments  : [Comment]
-    , type      : { type: String, enum: ['image', 'video', 'article', 'link'], index: true }
-    , added     : { type: Date, default: Date.now }
-    , location  : String
-    , slug      : { type: String, index: { unique: true } }
-    , meta      : {
-            featured  : Boolean
-          , tags      : { type: Array, index: true }  
-          , hits      : Number
-          , likes     : { type: Number, default: 0 }
-        }
-    , member_id    : ObjectId
+      title       : String
+    , body        : String
+    , comments    : [Comment]
+    , type        : { type: String, enum: ['image', 'video', 'article', 'link'], index: true }
+    , added       : { type: Date, default: Date.now }
+    , slug        : { type: String, index: { unique: true } }
+    , meta        : {
+              featured  : Boolean
+            , tags      : { type: Array, index: true }  
+            , hits      : Number
+            , likes     : { type: Number, default: 0 }
+          }
+    , attached   : {
+              type      : { type: String, default: 'NA' }
+            , size      : { type: String, default: 'NA' }
+            , width     : { type: Number, default: 0 }
+            , height    : { type: Number, default: 0 }
+            , remote_id : { type: String, default: 'NA' }
+          }
+    , member_id   : ObjectId
   });
 
   Media.pre('save', function(next) {
@@ -85,7 +91,7 @@ function defineModels(mongoose, fn) {
                     first   : String
                   , last    : String
                 }
-    , url               : String
+    , twitter           : String
     , role              : { type: String, enum: ['contributor', 'guest'], default: 'guest' }
     , joined            : { type: Date, default: Date.now }
     , slug              : { type: String, index: { unique: true } }

@@ -12,7 +12,7 @@ var express = require('express')
       secret: 'kdL8k9yEoQXCt39z1TU/Z+TOlctcZ2Coxs0BRAjm',
       bucket: 'islandio'
     })
-  , im = require('imagemagick')
+  , magick = require('Node-Magick') //require('imagemagick')
   , stylus = require('stylus')
   , markdown = require('markdown').markdown
   , fs = require('fs')
@@ -205,29 +205,73 @@ app.get('/media/new', loadMember, function (req, res) {
 
 // Create media 
 app.post('/media.:format?', function (req, res) {
+  //
+  var attachment = {
+      type      : String
+    , size      : String
+    , width     : Number
+    , height    : Number
+    , remote_id : String
+  }
+  
   // create a new form
   var form = new formidable.IncomingForm();
-  // form.keepExtensions = true;
   // handle parts
   form.onPart = function (part) {
     if (!part.filename) {
       form.handlePart(part);
     } else {
       (function () {
+        
+        var tmpName = utils.randStr(5)
+          , tmpPath = '/tmp/' + tmpName
+          , upStream = fs.createWriteStream(tmpPath)
+        ;
+        
         var file = {
-          filename: part.filename, 
-          mime: part.mime, 
-          length: 0, 
-          hash: require('crypto').createHash('md5'), 
-          buffers: []
+            filename: tmpName
+          , mime: part.mime
+          , length: 0
+          , hash: require('crypto').createHash('md5')
+          , buffers: []
         };
+        
         part.on('data', function (buf) {
+          upStream.write(buf);
           file.buffers.push(buf);
           file.length += buf.length;
           file.hash.update(buf);
         });
+        
         part.on('end', function () {
+          
+          attachment.remote_id = file.hash.digest('hex');
+          upStream.emit('close');
           form.emit('file', part.name, file);
+          
+          console.log(file);
+          
+          // if ()
+          //   magick
+          //     .createCommand(tmpPath)
+          //     .identify(function (m) {
+          //       attachment.type = m.params.type;
+          //       attachment.size = m.params.size;
+          //       attachment.width = m.params.width;
+          //       attachment.height = m.params.height;
+          //       m
+          //         .resize(231)
+          //         .write(tmpPath + '-w231', function () {
+          //           s3client.putFile(tmpPath + '-w231', attachment.remote_id + '-w231', function (err, res) {
+          //             fs.unlink(tmpPath);
+          //             fs.unlink(tmpPath + '-w231');
+          //             console.log('thumb saved to %s', res.socket._httpMessage.url);
+          //           });
+          //         });
+          //     });
+          //   
+          //   }
+            
         });
       }());
     }
@@ -238,13 +282,14 @@ app.post('/media.:format?', function (req, res) {
     // ensure member is valid -- need fix, breaks onion ring
     loadMember(req, res, function () {
       if (utils.isEmpty(files))
-        capture();
+        mediaAddFailed();
       // begin stream to s3
       else {
         for (f in files) {
           var buffer = new Buffer(files[f].length)
-            , file_name = files[f].hash.digest('hex')// + path.extname(files[f].filename)
-            , length = 0;
+            , file_name = attachment.remote_id
+            , length = 0
+          ;
           files[f].buffers.forEach(function (buf) {
             buf.copy(buffer, length, 0);
             length += buf.length;
@@ -254,24 +299,20 @@ app.post('/media.:format?', function (req, res) {
             'Content-Type': 'text/plain'
           }).on('response', function (res) {
             if (200 == res.statusCode) {
-              //fields.location = res.headers.etag.substr(1).substr(0, res.headers.etag.length - 2);
-              fields.location = this.url;
               console.log('object saved to %s', this.url);
               capture();
             }
           }).end(buffer);
         }
-        // capture();
-        req.flash('info', 'Media added to queue');
-        res.redirect('/media');
       }
       // save to db
       function capture() {
-        //req.currentMember.media.push(fields);
-        //req.currentMember.save(function(err) {
+        fields.attached = attachment;
         fields.member_id = req.currentMember.id;
         var d = new Media(fields);
-        d.save(function(err) {
+        d.save(function (err) {
+          req.flash('info', 'Media added to queue');
+          res.redirect('/media');
           // switch (req.params.format) {
           //   case 'json':
           //     res.send(req.currentMember.toObject());

@@ -1202,22 +1202,34 @@ $(function() {
 	
 	
 	// tweets
-  Island.twitters = ['KingJames','50cent','ladygaga'];
+  Island.twitters = ['plebeiantv'];
   Island.tweets = [];
   Island.twut = 0;
-  Island.twit = function() {
-   $("#twitter").hide().html(Island.tweets[Island.twut]);
-   $("#twitter").fadeIn("fast");
-   Island.twut++;
-   if(Island.twut==Island.tweets.length) Island.twut = 0;
+  
+  Island.twit = function () {
+    var twap = $('#twitter');
+    twap.hide().html(Island.tweets[Island.twut]);
+    twap.fadeIn('fast');
+    Island.twut++;
+    if (Island.twut == Island.tweets.length) 
+      Island.twut = 0;
   };
-  Island.twat = function(t) {
-   Island.tweets = Island.tweets.concat(t);
-   $.fisherYates(Island.tweets);
+  
+  Island.twat = function (t) {
+    Island.tweets = Island.tweets.concat(t);
+    $.fisherYates(Island.tweets);
   };
-  Island.tweeter = $.setIntervalObj(this,10000,Island.twit);
-	
-	
+  
+ 
+	// tweets
+  for (var tt in Island.twitters)
+    $.tweet({
+        username: Island.twitters[tt]
+      , callback: Island.twat
+    });
+    
+  Island.tweeter = $.setIntervalObj(this, 5000, Island.twit);
+  setTimeout(Island.twit, 1000);
 	
 	
 	
@@ -1241,21 +1253,23 @@ $(function() {
 	
 	
 	
-  // $('#goto-register-form a').live('click', function () {
-  //   $('#login-form').hide();
-  //   $('#register-form').fadeIn('fast');
-  //   $(this.parentNode).hide();
-  //   $('#goto-login-form').show();
-  //   $('input[name="newmember[name.first]"]').focus();
-  // });
-  // 
-  // $('#goto-login-form a').live('click', function () {
-  //   $('#register-form').hide();
-  //   $('#login-form').fadeIn('fast');
-  //   $(this.parentNode).hide();
-  //   $('#goto-register-form').show();
-  //   $('input[name="member[email]"]').focus();
-  // });
+	
+	
+  $('#goto-register-form a').live('click', function () {
+    $('#login-form').hide();
+    $('#register-form').fadeIn('fast');
+    $(this.parentNode).hide();
+    $('#goto-login-form').show();
+    $('input[name="newmember[name.first]"]').focus();
+  });
+  
+  $('#goto-login-form a').live('click', function () {
+    $('#register-form').hide();
+    $('#login-form').fadeIn('fast');
+    $(this.parentNode).hide();
+    $('#goto-register-form').show();
+    $('input[name="member[email]"]').focus();
+  });
 	
 	
 	$('input[name="member[email]"]').focus();
@@ -1284,12 +1298,7 @@ $(function() {
   //  }
   // });
 	
-  // tweets
-  for (var tt in Island.twitters)
-    $.tweet({
-      username: Island.twitters[tt],
-      callback: Island.twat
-    });
+  
   
   
   function hideFlashMessages() {
@@ -1335,7 +1344,7 @@ $(function() {
 
 
   
-  $(window).load(function () {
+  //$(window).load(function () {
   
   
     // position rollovers
@@ -1344,6 +1353,8 @@ $(function() {
         , text = $('.grid-obj-hover-txt', this)
         , img = $('img', this)
       ;
+      
+      
       
       hover.hide().css('height', img.height());
 
@@ -1355,7 +1366,7 @@ $(function() {
   
     grid($('#grid')).collage();
     
-  });
+  //});
   
   
   

@@ -5,7 +5,7 @@ div(id='obj-' + object.id, class='each-grid-obj ' + object.type)
     div.grid-obj-hover.matte
       h1.grid-obj-hover-txt
         =object.member.name.first + ' / ' + object.meta.likes
-    img.grid-obj-img(id='img-' + object.id, class='page-0', src=object.location, alt=object.type, width='231')
+    img.grid-obj-img(id='img-' + object.id, class='page-0', src='http://d2tb9qj0mrnmyx.cloudfront.net/' + object.attached.remote_id + '-w231', alt=object.type, width='231', height=(object.attached.height/object.attached.width)*231)
   div.right
     span.grid-tag tags: 
     span.grid-obj-tags
