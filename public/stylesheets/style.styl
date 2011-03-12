@@ -409,30 +409,25 @@ td
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
-input:focus
+textarea
+  font-size 11px
+  resize none
+  font-weight normal
+  background #fcfcfb
+  padding 4px
+  border 1px solid #cdcdcd
+  vertical-align top
+
+textarea:focus
   outline none
 
-input::-moz-focus-inner
+textarea::-moz-focus-inner
   border none
 
-#login-form
-  position absolute
-  top 0
-  right 0
-  /*display none*/
-  //position absolute
-  
-#register-form
-  position absolute
-  bottom -50px
-  right 0
-  display none
+input[type=checkbox], input[type=radio]
+  display inline
 
-#register-form td
-  padding 0 0 10px 10px
-  
-#login-form input[type=text], #login-form input[type=password],
-#register-form input[type=text], #register-form input[type=password]
+input[type=text], input[type=password]
   font-family monospace
   font-weight bold
   background #f2f2f2
@@ -447,12 +442,83 @@ input::-moz-focus-inner
   -webkit-border-radius 5px
   border-radius 5px
 
-#login-form input[type=text]:focus, #login-form input[type=password]:focus,
-#register-form input[type=text]:focus, #register-form input[type=password]:focus
+input[type=text]:focus, input[type=password]:focus
   background none
   border 1px solid #404040
-  
 
+input:focus
+  outline none
+
+input::-moz-focus-inner
+  border none
+  
+/*for submits*/
+input.is-button[type=submit]
+  cursor pointer
+  background #f2f2f2
+  padding 2px 6px 3px 6px
+  font-size 12px
+  font-weight bold
+  border 1px solid #ddd
+  -moz-border-radius 5px
+  -webkit-border-radius 5px
+  border-radius 5px
+  -moz-text-shadow 0 1px 0 white
+  -webkit-text-shadow 0 1px 0 white
+  text-shadow 0 1px 0 white
+
+input.is-button[type=submit]:hover
+  border 1px solid #404040
+
+input.is-button[type=submit]:active
+  background-image -moz-linear-gradient(center bottom, rgb(255,255,255) 0%, rgb(236,236,236) 100%)
+  background-image -webkit-gradient(linear, 0% 100%, 0% 0%, from(rgb(255,255,255)), to(rgb(236,236,236)))
+
+  
+input.is-button-alert[type=submit]
+  color red !important
+  border 1px solid red !important
+  
+.button-mask-wrap
+  position relative
+  
+#add-media-mask
+  position absolute
+  right 0
+  bottom 0
+  cursor pointer
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+#login-form
+  position absolute
+  top 0
+  right 0
+
+#register-form
+  position absolute
+  bottom -50px
+  right 0
+  display none
+
+#media-form table
+  width 100%
+  margin 20px 0 0 0
+
+#media-form input[name='media[title]']
+  width 284px
+
+#media-form textarea
+  width 974px
+  height 150px
+  color #404040
+  overflow hidden
+
+#register-form td
+  padding 0 0 10px 10px
+
+#media-form td
+  padding 0 0 10px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
@@ -479,14 +545,10 @@ input::-moz-focus-inner
 //#obj-desc-txt
 
 .commentor-input, .commentor-input-dummy
-  font-weight normal
-  background #fcfcfb
   width 304px
   margin 15px 0 0 0
   padding 4px
-  border 1px solid #cdcdcd
-  vertical-align top
-  
+
 .commentor-input
   height 32px
   color #404040
@@ -496,44 +558,16 @@ input::-moz-focus-inner
   height 13px
   color #808080
 
-.commentor-input:focus, .commentor-input-dummy:focus
-  outline none
-  
-.commentor-input::-moz-focus-inner, .commentor-input-dummy::-moz-focus-inner
-  border none
-  
 .commentor-whois
   margin 0 90px 0 0
   color #bcbcbc
   font-size 10px
   padding 10px 0 0 0
   display block
-  
+
 .commentor-login
   margin 15px 0 0 0
   font-style italic
-
-/*for submits*/
-input.is-button[type=submit]
-  cursor pointer
-  background #f2f2f2
-  padding 2px 6px 3px 6px
-  font-size 12px
-  font-weight bold
-  border 1px solid #ddd
-  -moz-border-radius 5px
-  -webkit-border-radius 5px
-  border-radius 5px
-  -moz-text-shadow 0 1px 0 white
-  -webkit-text-shadow 0 1px 0 white
-  text-shadow 0 1px 0 white
-
-input.is-button[type=submit]:hover
-  border 1px solid #404040
-
-input.is-button[type=submit]:active
-  background-image -moz-linear-gradient(center bottom, rgb(255,255,255) 0%, rgb(236,236,236) 100%)
-  background-image -webkit-gradient(linear, 0% 100%, 0% 0%, from(rgb(255,255,255)), to(rgb(236,236,236)))
 
 .add-comment
   float right
@@ -547,7 +581,7 @@ input.is-button[type=submit]:active
   background-color #f2f2f2
   width 314px
   margin 5px 0 0
-  
+
 .comment-title
   font-weight bold
   font-size 10px
@@ -559,17 +593,17 @@ input.is-button[type=submit]:active
   width -moz-fit-content
   width intrinsic
   max-width 314px
-  
+
 .comment-body
   padding 5px 40px 5px 10px
-  
+
 .comment-txt
   padding 0 0 2px 0
-  
+
 .comment-added
   color #b3b3b3
   font-size 9px
-  
+
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
 div.members-bar
@@ -581,20 +615,17 @@ div.members-bar
 div.members-bar a
   color #b3d929
 
-
-
 div.each-grid-obj
   position absolute
   opacity 1
   border-bottom 1px solid #1a1a1a
   padding 0
   width 231px
-  
+
 a.grid-obj
   text-decoration none
 
 div.grid-obj-hover
-  width 100%
   background black
   opacity 0.8
   position absolute
@@ -607,17 +638,16 @@ div.grid-obj-hover
   -webkit-box-orient horizontal
   -webkit-box-pack center
   -webkit-box-align center
-
+  
   display -moz-box
   -moz-box-orient horizontal
   -moz-box-pack center
   -moz-box-align center
-
+  
   display box
   box-orient horizontal
   box-pack center
   box-align center
-  
 
 a.grid-obj-title
   text-decoration none
@@ -629,10 +659,10 @@ a.grid-obj-title
   -moz-border-radius 3px
   -khtml-border-radius 3px
   -webkit-border-radius 3px
-  
+
 a.grid-obj-title:hover
   background #d12b83
-  
+
 a.grid-obj-title:active
   color white
 
@@ -646,10 +676,8 @@ span.grid-tag
 
 h1.grid-obj-hover-txt
   font-size 12px
-  //position relative
   background-color white
   padding 10px
-  //display block
   width -moz-fit-content
   width intrinsic
   font-weight lighter
@@ -657,9 +685,6 @@ h1.grid-obj-hover-txt
   -moz-border-radius 15px
   -webkit-border-radius 15px
   border-radius 15px
-
-
-
 
 div.each-fea-obj
   cursor pointer
@@ -671,135 +696,6 @@ div.profile-left
 div.profile-right
   width 492px
   margin 0 0 0 492px
-
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
-
-/*form
-  display inline
-
-form.login-form
-  float right
-  display none*/
-
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
-
-
-
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
-
-/*default submit*/
-/*input[type=submit], #upload-holder
-  font-size 12px
-  font-family 'Helvetica Neue', Arial, sans-serif
-  cursor pointer
-  background #fcfcfb
-  border 1px solid #b2b2b2
-  display inline
-  font-weight bold
-  padding 6px 18px 
-  vertical-align top
-  height auto
-  -moz-border-radius 5px
-  -webkit-border-radius 5px
-  border-radius 5px
-  -moz-text-shadow 0 1px 0 white
-  -webkit-text-shadow0 1px 0 white
-  text-shadow 0 1px 0 white
-
-input[type=submit]:hover, #upload-holder:hover
-  border 1px solid #1a1a1a
-
-input[type=submit]:active, #upload-holder:active
-  background-image -moz-linear-gradient(center bottom, rgb(255,255,255) 0%, rgb(236,236,236) 100%)
-  background-image -webkit-gradient(linear, 0% 100%, 0% 0%, from(rgb(255,255,255)), to(rgb(236,236,236)))
-
-input[type=submit]:focus, #upload-holder:focus
-  outline none*/
-
-
-
-
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
-
-
-
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
-
-/*input[type=text], input[type=password]
-  font-family 'Helvetica Neue', Arial, sans-serif
-  font-weight normal
-  background #fcfcfb
-  margin 5px 0 10px 0
-  padding 4px
-  font-size 16px
-  display block
-  height auto
-  color #b2b2b2
-  vertical-align top
-  border 1px solid #ddd
-  -moz-border-radius 5px
-  -webkit-border-radius 5px
-  border-radius 5px
-
-input[type=text]:focus, input[type=password]:focus
-  border 1px solid #404040*/
-
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
-
-input[type=checkbox], input[type=radio]
-  display inline
-
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
-
-textarea
-  font-size 11px
-  resize none
-  font-weight normal
-
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
-
-#contribute-wrap
-  background-color #fefefe
-  padding 0
-  margin 20px 0 0 0
-
-#upload-form
-  padding 0 0 0 20px
-  display block
-  border-left 1px solid #eee
-
-#upload-holder
-  font-size 10px
-  position absolute
-  top 0
-  left 338px
-  height 14px
-  padding 3px 8px 2px
-
-#upload-holder > object
-  position absolute
-  top 0
-  right 0
-  z-index 10001
-
-#uploadQueue
-  background-color #fbfcfc
-  margin 5px 0 10px 0
-  overflow auto
-  border 1px solid #ddd
-  width 443px
-  height 257px
-  -moz-border-radius 5px
-  -webkit-border-radius 5px
-  border-radius 5px
-
-p.no-pending-txt
-  color #b2b2b2
-  padding 132px 0 0 0
-  text-align center
-  -moz-text-shadow 0 1px 0 white
-  -webkit-text-shadow 0 1px 0 white
-  text-shadow 0 1px 0 white
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 

@@ -44,30 +44,31 @@ function defineModels(mongoose, fn) {
       title       : String
     , body        : String
     , comments    : [Comment]
-    , type        : { type: String, enum: ['image', 'video', 'article', 'link'], index: true }
+    , type        : { type: String, index: true }
     , added       : { type: Date, default: Date.now }
-    , slug        : { type: String, index: { unique: true } }
+    //, slug        : { type: String, index: { unique: true } }
     , meta        : {
               featured  : Boolean
             , tags      : { type: Array, index: true }  
             , hits      : Number
             , likes     : { type: Number, default: 0 }
           }
-    , attached   : {
-              type      : { type: String, default: 'NA' }
-            , size      : { type: String, default: 'NA' }
-            , width     : { type: Number, default: 0 }
-            , height    : { type: Number, default: 0 }
-            , remote_id : { type: String, default: 'NA' }
-          }
+    // , attached   : {
+    //           type      : { type: String, default: 'NA' }
+    //         , size      : { type: String, default: 'NA' }
+    //         , width     : { type: Number, default: 0 }
+    //         , height    : { type: Number, default: 0 }
+    //         , remote_id : { type: String, default: 'NA' }
+    //       }
     , member_id   : ObjectId
+    , attached    : {}
   });
 
-  Media.pre('save', function(next) {
-    // Automatically create the slugs
-    this.slug = slugify(this.title);
-    next();
-  });
+  // Media.pre('save', function(next) {
+  //   // Automatically create the slugs
+  //   this.slug = slugify(this.title);
+  //   next();
+  // });
 
   Media.virtual('id')
     .get(function() {

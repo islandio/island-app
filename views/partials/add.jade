@@ -1,0 +1,33 @@
+div.media-form-wrap
+  form#media-form(action='/transloadit', enctype='multipart/form-data', method='POST')
+    input(type='hidden', name='params', value=JSON.stringify(d.tlip))
+    h3.add-media Add new Island media
+    table
+      tbody
+        tr
+          td
+            label(for='media[title]') Title
+          td(align='right')
+            input#add-media.is-button(type='submit', title='Add New', value='Add New')
+            div.button-mask-wrap
+              div#add-media-mask
+        tr
+          td(colspan='2')
+            input(name='media[title]', type='text')
+        tr
+          td(colspan='2')
+            label(for='media[body]') Write something about this...
+        tr
+          td(colspan='2')
+            textarea.matte(name='media[body]')
+        tr
+          td(width='100')
+            label(for='media[meta.tags]') Tags
+          td
+            input(name='media[meta.tags]', type='text')
+        tr
+          td
+            label(for='my_file') Choose file
+          td
+            input(type='file', name='my_file')
+div.clear

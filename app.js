@@ -188,261 +188,271 @@ app.get('/media', loadMember, function (req, res) {
   });
 });
 
-app.get('/media/:id.:format?/edit', loadMember, function (req, res, next) {
-  Media.findById(req.params.id, function (err, d) {
-    if (!d) return next(new NotFound('Media not found'));
-    res.render('media/edit.jade', {
-      locals: { d: d, currentMember: req.currentMember }
-    });
-  });
-});
+// app.get('/media/:id.:format?/edit', loadMember, function (req, res, next) {
+//   Media.findById(req.params.id, function (err, d) {
+//     if (!d) return next(new NotFound('Media not found'));
+//     res.render('media/edit.jade', {
+//       locals: { d: d, currentMember: req.currentMember }
+//     });
+//   });
+// });
 
 app.get('/media/new', loadMember, function (req, res) {
-  res.render('media/new.jade', {
-    locals: { d: new Media(), currentMember: req.currentMember }
-  });
-});
-
-// Create media 
-app.post('/media.:format?', function (req, res) {
-  //
-  var attachment = {
-      type      : String
-    , size      : String
-    , width     : Number
-    , height    : Number
-    , remote_id : String
-  }
   
-  // create a new form
-  var form = new formidable.IncomingForm();
-  // handle parts
-  form.onPart = function (part) {
-    if (!part.filename) {
-      form.handlePart(part);
-    } else {
-      (function () {
-        
-        var tmpName = utils.randStr(5)
-          , tmpPath = '/tmp/' + tmpName
-          , upStream = fs.createWriteStream(tmpPath)
-        ;
-        
-        var file = {
-            filename: tmpName
-          , mime: part.mime
-          , length: 0
-          , hash: require('crypto').createHash('md5')
-          , buffers: []
-        };
-        
-        part.on('data', function (buf) {
-          upStream.write(buf);
-          file.buffers.push(buf);
-          file.length += buf.length;
-          file.hash.update(buf);
-        });
-        
-        part.on('end', function () {
-          
-          attachment.remote_id = file.hash.digest('hex');
-          upStream.emit('close');
-          form.emit('file', part.name, file);
-          
-          //if ()
-          
-          // if ()
-          //   magick
-          //     .createCommand(tmpPath)
-          //     .identify(function (m) {
-          //       attachment.type = m.params.type;
-          //       attachment.size = m.params.size;
-          //       attachment.width = m.params.width;
-          //       attachment.height = m.params.height;
-          //       m
-          //         .resize(231)
-          //         .write(tmpPath + '-w231', function () {
-          //           s3client.putFile(tmpPath + '-w231', attachment.remote_id + '-w231', function (err, res) {
-          //             fs.unlink(tmpPath);
-          //             fs.unlink(tmpPath + '-w231');
-          //             console.log('thumb saved to %s', res.socket._httpMessage.url);
-          //           });
-          //         });
-          //     });
-          //   
-          //   }
-            
-        });
-      }());
-    }
+  var tlip = {
+      "auth": {
+          "key": "8a36aa56062f49c79976fa24a74db6cc"
+        }
+    , "template_id": "dd77fc95cfff48e8bf4af6159fd6b2e7"
   };
   
-  form.parse(req, function (err, fields, files) {
-    if (err) return mediaAddFailed();
-    // ensure member is valid -- need fix, breaks onion ring
-    loadMember(req, res, function () {
-      if (utils.isEmpty(files))
-        mediaAddFailed();
-      // begin stream to s3
-      else {
-        for (f in files) {
-          var buffer = new Buffer(files[f].length)
-            , file_name = attachment.remote_id
-            , length = 0
-          ;
-          files[f].buffers.forEach(function (buf) {
-            buf.copy(buffer, length, 0);
-            length += buf.length;
-          });
-          s3client.put(file_name, {
-            'Content-Length': buffer.length,
-            'Content-Type': 'text/plain'
-          }).on('response', function (res) {
-            if (200 == res.statusCode) {
-              console.log('object saved to %s', this.url);
-              capture();
-            }
-          }).end(buffer);
-        }
-      }
-      // save to db
-      function capture() {
-        fields.attached = attachment;
-        fields.member_id = req.currentMember.id;
-        var d = new Media(fields);
-        d.save(function (err) {
-          req.flash('info', 'Media added to queue');
-          res.redirect('/media');
-          // switch (req.params.format) {
-          //   case 'json':
-          //     res.send(req.currentMember.toObject());
-          //     break;
-          //   default:
-          //     req.flash('info', 'Media created');
-          //     res.redirect('/media');
-          // }
-        });
-      }
-    });
+  res.render('index.jade', {
+    locals: { p: 'add', d: { media: new Media(), tlip: tlip }, cm: req.currentMember }
   });
-  
-  function mediaAddFailed() {
-    req.flash('error', 'Media creation failed');
-    res.render('media/new.jade', {
-      locals: { }
-    });
-    return false;
-  }
-    
+
 });
 
-// Read media
-app.get('/media/:id.:format?', loadMember, function(req, res, next) {
-  Media.findById(req.params.id, function(err, d) {
-    if (!d) return next(new NotFound('Media not found'));
-
-    switch (req.params.format) {
-      case 'json':
-        res.send(d.toObject());
-      break;
-
-      case 'html':
-        res.send(markdown.toHTML(d.data));
-      break;
-
-      default:
-        res.render('media/show.jade', {
-          locals: { d: d, currentMember: req.currentMember }
-        });
+app.put('/transloadit', loadMember, function (req, res, next) {
+  
+  var fields = req.body.media;
+  fields.member_id = req.currentMember.id;
+  
+  // determine type
+  if (req.body.assembly.results.image_thumb) {
+    // this is an image
+    var attachment = {
+        image_thumb : req.body.assembly.results.image_thumb['0']
+      , image_full  : req.body.assembly.results.image_full['0']
     }
+    fields.attached = attachment;
+    fields.type = fields.attached.image_full.type;
+    for (var i in fields.attached) {
+      var id = fields.attached[i].id;
+      fields.attached[i].cf_url = 'http://d1da6a4is4i5z6.cloudfront.net/' + id.substr(0, 2) + '/' + id.substr(2);  
+    }
+  } else if (req.body.assembly.results.video_encode) {
+    // this is a video
+    var attachment = {
+        video_thumbs : req.body.assembly.results.video_thumbs
+      , video_encode : req.body.assembly.results.video_encode['0']
+    }
+    fields.attached = attachment;
+    fields.type = fields.attached.video_encode.type;
+    for (var i in fields.attached.video_thumbs) {
+      var id = fields.attached.video_thumbs[i].id;
+      fields.attached.video_thumbs[i].cf_url = 'http://d1ehvayr9dfk4s.cloudfront.net/' + id.substr(0, 2) + '/' + id.substr(2);  
+    }
+    var id = fields.attached.video_encode.id;
+    fields.attached.video_encode.cf_url = 'http://d1ehvayr9dfk4s.cloudfront.net/' + id.substr(0, 2) + '/' + id.substr(2);
+  }
+  
+  console.log(fields);
+  
+  var d = new Media(fields);
+  d.save(function (err) {
+    res.send({ err: err });
   });
-});
-
-// Update media
-app.put('/media/:id.:format?', loadMember, function(req, res, next) {
-  Media.findById(req.body.d.id, function(err, d) {
-    if (!d) return next(new NotFound('Media not found'));
-
-    d.title = req.body.d.title;
-    d.data = req.body.d.data;
-
-    d.save(function(err) {
-      switch (req.params.format) {
-        case 'json':
-          res.send(d.toObject());
-        break;
-
-        default:
-          req.flash('info', 'Media updated');
-          res.redirect('/media');
-      }
-    });
-  });
-});
-
-// Delete media
-app.del('/media/:id.:format?', loadMember, function (req, res, next) {
-  Media.findById(req.params.id, function (err, d) {
-    if (!d) return next(new NotFound('Media not found'));
-
-    d.remove(function () {
-      switch (req.params.format) {
-        case 'json':
-          res.send('true');
-        break;
-
-        default:
-          req.flash('info', 'Media deleted');
-          res.redirect('/media');
-      } 
-    });
-  });
-});
-
-
-app.get('/i/:id.:format?', function (req, res) {
-  // 
-  // // get image id
-  // var id
-  //   , width
-  //   , height
-  // ;
-  // try {
-  //   var items = req.params.id.split('-');
-  //   id = items[0];
-  //   var dims = items[items.length - 1];
-  //   if (dims.indexOf('w') === 0)
-  //     width = dims.substr(1);
-  // } catch (exception) {
-  //   id = null;
-  // }
-  // 
-  // var path = __dirname + '/public/' + req.url;
-  // var tmp = __dirname + '/public/' + req.url + '.tmp';
-  // 
-  // s3client.get(id + '.jpg').on('response', function (s3res) {
-  //   var outstream = fs.createWriteStream(tmp);
-  //   s3res.on('data', function (chunk) {
-  //     outstream.write(chunk);
-  //   }).on('end', function () {
-  //     outstream.emit('close');
-  //     
-  //     im.resize({
-  //       srcPath: tmp,
-  //       dstPath: path,
-  //       width: width
-  //     }, function(err, stdout, stderr){
-  //       if (err) throw err
-  //       console.log('resized kittens.jpg to fit within 256x256px')
-  //     });
-  //     
-  //     
-  //     res.redirect(req.url);
-  //   });
-  //   
-  // }).end();
+  
   
 });
+
+
+// Create media 
+// app.post('/media.:format?', function (req, res) {
+//   //
+//   var attachment = {
+//       type      : String
+//     , size      : String
+//     , width     : Number
+//     , height    : Number
+//     , remote_id : String
+//   }
+//   
+//   // create a new form
+//   var form = new formidable.IncomingForm();
+//   // handle parts
+//   form.onPart = function (part) {
+//     if (!part.filename) {
+//       form.handlePart(part);
+//     } else {
+//       (function () {
+//         
+//         var tmpName = utils.randStr(5)
+//           , tmpPath = '/tmp/' + tmpName
+//           , upStream = fs.createWriteStream(tmpPath)
+//         ;
+//         
+//         var file = {
+//             filename: tmpName
+//           , mime: part.mime
+//           , length: 0
+//           , hash: require('crypto').createHash('md5')
+//           , buffers: []
+//         };
+//         
+//         part.on('data', function (buf) {
+//           upStream.write(buf);
+//           file.buffers.push(buf);
+//           file.length += buf.length;
+//           file.hash.update(buf);
+//         });
+//         
+//         part.on('end', function () {
+//           
+//           attachment.remote_id = file.hash.digest('hex');
+//           upStream.emit('close');
+//           form.emit('file', part.name, file);
+//           
+//           //if ()
+//           
+//           // if ()
+//           //   magick
+//           //     .createCommand(tmpPath)
+//           //     .identify(function (m) {
+//           //       attachment.type = m.params.type;
+//           //       attachment.size = m.params.size;
+//           //       attachment.width = m.params.width;
+//           //       attachment.height = m.params.height;
+//           //       m
+//           //         .resize(231)
+//           //         .write(tmpPath + '-w231', function () {
+//           //           s3client.putFile(tmpPath + '-w231', attachment.remote_id + '-w231', function (err, res) {
+//           //             fs.unlink(tmpPath);
+//           //             fs.unlink(tmpPath + '-w231');
+//           //             console.log('thumb saved to %s', res.socket._httpMessage.url);
+//           //           });
+//           //         });
+//           //     });
+//           //   
+//           //   }
+//             
+//         });
+//       }());
+//     }
+//   };
+//   
+//   form.parse(req, function (err, fields, files) {
+//     if (err) return mediaAddFailed();
+//     // ensure member is valid -- need fix, breaks onion ring
+//     loadMember(req, res, function () {
+//       if (utils.isEmpty(files))
+//         mediaAddFailed();
+//       // begin stream to s3
+//       else {
+//         for (f in files) {
+//           var buffer = new Buffer(files[f].length)
+//             , file_name = attachment.remote_id
+//             , length = 0
+//           ;
+//           files[f].buffers.forEach(function (buf) {
+//             buf.copy(buffer, length, 0);
+//             length += buf.length;
+//           });
+//           s3client.put(file_name, {
+//             'Content-Length': buffer.length,
+//             'Content-Type': 'text/plain'
+//           }).on('response', function (res) {
+//             if (200 == res.statusCode) {
+//               console.log('object saved to %s', this.url);
+//               capture();
+//             }
+//           }).end(buffer);
+//         }
+//       }
+//       // save to db
+//       function capture() {
+//         fields.attached = attachment;
+//         fields.member_id = req.currentMember.id;
+//         var d = new Media(fields);
+//         d.save(function (err) {
+//           req.flash('info', 'Media added to queue');
+//           res.redirect('/media');
+//           // switch (req.params.format) {
+//           //   case 'json':
+//           //     res.send(req.currentMember.toObject());
+//           //     break;
+//           //   default:
+//           //     req.flash('info', 'Media created');
+//           //     res.redirect('/media');
+//           // }
+//         });
+//       }
+//     });
+//   });
+//   
+//   function mediaAddFailed() {
+//     req.flash('error', 'Media creation failed');
+//     res.render('media/new.jade', {
+//       locals: { }
+//     });
+//     return false;
+//   }
+//     
+// });
+
+// // Read media
+// app.get('/media/:id.:format?', loadMember, function(req, res, next) {
+//   Media.findById(req.params.id, function(err, d) {
+//     if (!d) return next(new NotFound('Media not found'));
+// 
+//     switch (req.params.format) {
+//       case 'json':
+//         res.send(d.toObject());
+//       break;
+// 
+//       case 'html':
+//         res.send(markdown.toHTML(d.data));
+//       break;
+// 
+//       default:
+//         res.render('media/show.jade', {
+//           locals: { d: d, currentMember: req.currentMember }
+//         });
+//     }
+//   });
+// });
+// 
+// // Update media
+// app.put('/media/:id.:format?', loadMember, function(req, res, next) {
+//   Media.findById(req.body.d.id, function(err, d) {
+//     if (!d) return next(new NotFound('Media not found'));
+// 
+//     d.title = req.body.d.title;
+//     d.data = req.body.d.data;
+// 
+//     d.save(function(err) {
+//       switch (req.params.format) {
+//         case 'json':
+//           res.send(d.toObject());
+//         break;
+// 
+//         default:
+//           req.flash('info', 'Media updated');
+//           res.redirect('/media');
+//       }
+//     });
+//   });
+// });
+// 
+// // Delete media
+// app.del('/media/:id.:format?', loadMember, function (req, res, next) {
+//   Media.findById(req.params.id, function (err, d) {
+//     if (!d) return next(new NotFound('Media not found'));
+// 
+//     d.remove(function () {
+//       switch (req.params.format) {
+//         case 'json':
+//           res.send('true');
+//         break;
+// 
+//         default:
+//           req.flash('info', 'Media deleted');
+//           res.redirect('/media');
+//       } 
+//     });
+//   });
+// });
+
 
 
 app.get('/:obj?', loadMember, function (req, res) {
@@ -508,7 +518,6 @@ app.post('/members.:format?', function (req, res) {
   
   var member = new Member(req.body.newmember);
   
-  console.log(req.body.newmember);
   
   function memberSaveFailed() {
     // req.flash('error', 'Account creation failed');
@@ -552,7 +561,7 @@ app.post('/sessions', function (req, res) {
           res.cookie('logintoken', loginToken.cookieValue, { expires: new Date(Date.now() + 2 * 604800000), path: '/' });
         });
       }
-      res.redirect('/media');
+      res.redirect('/media/new');
     } else {
       req.flash('error', 'Incorrect credentials');
       res.redirect('/sessions/new');

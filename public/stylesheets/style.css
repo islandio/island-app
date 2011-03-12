@@ -426,30 +426,27 @@ td {
   color: #f00;
   border: 1px dotted #f00;
 }
-input:focus {
+textarea {
+  font-size: 11px;
+  resize: none;
+  font-weight: normal;
+  background: #fcfcfb;
+  padding: 4px;
+  border: 1px solid #cdcdcd;
+  vertical-align: top;
+}
+textarea:focus {
   outline: none;
 }
-input::-moz-focus-inner {
+textarea::-moz-focus-inner {
   border: none;
 }
-#login-form {
-  position: absolute;
-  top: 0;
-  right: 0;
+input[type=checkbox],
+input[type=radio] {
+  display: inline;
 }
-#register-form {
-  position: absolute;
-  bottom: -50px;
-  right: 0;
-  display: none;
-}
-#register-form td {
-  padding: 0 0 10px 10px;
-}
-#login-form input[type=text],
-#login-form input[type=password],
-#register-form input[type=text],
-#register-form input[type=password] {
+input[type=text],
+input[type=password] {
   font-family: monospace;
   font-weight: bold;
   background: #f2f2f2;
@@ -464,66 +461,16 @@ input::-moz-focus-inner {
   -webkit-border-radius: 5px;
   border-radius: 5px;
 }
-#login-form input[type=text]:focus,
-#login-form input[type=password]:focus,
-#register-form input[type=text]:focus,
-#register-form input[type=password]:focus {
+input[type=text]:focus,
+input[type=password]:focus {
   background: none;
   border: 1px solid #404040;
 }
-#grid {
-  position: relative;
-}
-#obj-holder {
-  padding: 20px 0 10px 0;
-}
-#obj-desc {
-  background-color: #f2f2f2;
-  width: 640px;
-  min-height: 85px;
-  margin: 0 0 5px 0;
-}
-.commentor {
-  display: none;
-  padding: 0 0 5px;
-}
-.commentor-input,
-.commentor-input-dummy {
-  font-weight: normal;
-  background: #fcfcfb;
-  width: 304px;
-  margin: 15px 0 0 0;
-  padding: 4px;
-  border: 1px solid #cdcdcd;
-  vertical-align: top;
-}
-.commentor-input {
-  height: 32px;
-  color: #404040;
-  overflow: hidden;
-}
-.commentor-input-dummy {
-  height: 13px;
-  color: #808080;
-}
-.commentor-input:focus,
-.commentor-input-dummy:focus {
+input:focus {
   outline: none;
 }
-.commentor-input::-moz-focus-inner,
-.commentor-input-dummy::-moz-focus-inner {
+input::-moz-focus-inner {
   border: none;
-}
-.commentor-whois {
-  margin: 0 90px 0 0;
-  color: #bcbcbc;
-  font-size: 10px;
-  padding: 10px 0 0 0;
-  display: block;
-}
-.commentor-login {
-  margin: 15px 0 0 0;
-  font-style: italic;
 }
 input.is-button[type=submit] {
   cursor: pointer;
@@ -545,6 +492,91 @@ input.is-button[type=submit]:hover {
 input.is-button[type=submit]:active {
   background-image: -moz-linear-gradient(center bottom, #fff 0%, #ececec 100%);
   background-image: -webkit-gradient(linear, 0% 100%, 0% 0%, from(#fff), to(#ececec));
+}
+input.is-button-alert[type=submit] {
+  color: #f00 !important;
+  border: 1px solid #f00 !important;
+}
+.button-mask-wrap {
+  position: relative;
+}
+#add-media-mask {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  cursor: pointer;
+}
+#login-form {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+#register-form {
+  position: absolute;
+  bottom: -50px;
+  right: 0;
+  display: none;
+}
+#media-form table {
+  width: 100%;
+  margin: 20px 0 0 0;
+}
+#media-form input[name='media[title]'] {
+  width: 284px;
+}
+#media-form textarea {
+  width: 974px;
+  height: 150px;
+  color: #404040;
+  overflow: hidden;
+}
+#register-form td {
+  padding: 0 0 10px 10px;
+}
+#media-form td {
+  padding: 0 0 10px;
+}
+#grid {
+  position: relative;
+}
+#obj-holder {
+  padding: 20px 0 10px 0;
+}
+#obj-desc {
+  background-color: #f2f2f2;
+  width: 640px;
+  min-height: 85px;
+  margin: 0 0 5px 0;
+}
+.commentor {
+  display: none;
+  padding: 0 0 5px;
+}
+.commentor-input,
+.commentor-input-dummy {
+  width: 304px;
+  margin: 15px 0 0 0;
+  padding: 4px;
+}
+.commentor-input {
+  height: 32px;
+  color: #404040;
+  overflow: hidden;
+}
+.commentor-input-dummy {
+  height: 13px;
+  color: #808080;
+}
+.commentor-whois {
+  margin: 0 90px 0 0;
+  color: #bcbcbc;
+  font-size: 10px;
+  padding: 10px 0 0 0;
+  display: block;
+}
+.commentor-login {
+  margin: 15px 0 0 0;
+  font-style: italic;
 }
 .add-comment {
   float: right;
@@ -601,7 +633,6 @@ a.grid-obj {
   text-decoration: none;
 }
 div.grid-obj-hover {
-  width: 100%;
   background: #000;
   opacity: 0.8;
   position: absolute;
@@ -668,58 +699,6 @@ div.profile-left {
 div.profile-right {
   width: 492px;
   margin: 0 0 0 492px;
-}
-input[type=checkbox],
-input[type=radio] {
-  display: inline;
-}
-textarea {
-  font-size: 11px;
-  resize: none;
-  font-weight: normal;
-}
-#contribute-wrap {
-  background-color: #fefefe;
-  padding: 0;
-  margin: 20px 0 0 0;
-}
-#upload-form {
-  padding: 0 0 0 20px;
-  display: block;
-  border-left: 1px solid #eee;
-}
-#upload-holder {
-  font-size: 10px;
-  position: absolute;
-  top: 0;
-  left: 338px;
-  height: 14px;
-  padding: 3px 8px 2px;
-}
-#upload-holder > object {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 10001;
-}
-#uploadQueue {
-  background-color: #fbfcfc;
-  margin: 5px 0 10px 0;
-  overflow: auto;
-  border: 1px solid #ddd;
-  width: 443px;
-  height: 257px;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-}
-p.no-pending-txt {
-  color: #b2b2b2;
-  padding: 132px 0 0 0;
-  text-align: center;
-  -moz-text-shadow: 0 1px 0 #fff;
-  -webkit-text-shadow: 0 1px 0 #fff;
-  text-shadow: 0 1px 0 #fff;
 }
 .matte {
   border-radius: 5px;

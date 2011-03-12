@@ -6,7 +6,7 @@ div.left
     h1.obj-owner from 
       =m.name.first + ' ' + m.name.last
   #obj-holder
-    img(id='image-'+d.id, src='http://d2tb9qj0mrnmyx.cloudfront.net/' + d.attached.remote_id, alt=d.type, width='640')
+    img.matte(id='image-'+d.id, src=d.attached.image_full.cf_url, width=d.attached.image_full.meta.width, height=d.attached.image_full.meta.height)
   #obj-desc.matte
     img.left(src='/graphics/is-obj-info.gif', alt='info', align='top')
     div(style='margin: 0 0 0 25px; padding: 10px 10px 5px 4px')
