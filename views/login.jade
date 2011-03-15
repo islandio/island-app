@@ -1,0 +1,79 @@
+div.landing-wrap
+  div.landing-center
+    div.landing-form-controls
+      p#goto-register-form
+        span Not a member? 
+        a(href='javascript:;', title='Register for free access to Island.') Register for free access to Island.
+      p#goto-login-form(style='display: none')
+        a(href='javascript:;', title='Go back to Log In.') Go back to Log In.
+  div.landing-center
+    div.landing-forms
+      div.landing-forms-wrap
+        form#login-form(method='post', action='/sessions')
+          table
+            tbody
+              tr
+                td
+                  label(for='email') Email
+                td
+                  label(for='password') Password
+              tr
+                td
+                  input(name='member[email]', type='text')
+                td
+                  input(name='member[password]', type='password')
+                td
+                  input#login.is-button(type='submit', title='Log In', value='Log In')
+              tr
+                td(style='padding-top: 10px')
+                  input#remember_me(type='checkbox', name='remember_me')
+                  label(for='remember_me') Keep me logged in
+                //td(style='padding-top: 10px')
+                //a(href='', rel='nofollow') Forgot your password?
+        form#register-form(method='post', action='/members')
+          table
+            tbody
+              tr
+                td
+                  label(for='newmember[name.first]') First Name
+                td
+                  input(name='newmember[name.first]', type='text')
+              tr
+                td
+                  label(for='newmember[name.last]') Last Name
+                td
+                  input(name='newmember[name.last]', type='text')
+              tr
+                td
+                  label(for='newmember[email]') Email
+                td
+                  input(name='newmember[email]', type='text')
+              tr
+                td
+                  label(for='newmember[email2]') Re-enter Email
+                td
+                  input(name='newmember[email2]', type='text')
+              tr
+                td
+                  label(for='newmember[password]') New Password
+                td
+                  input(name='newmember[password]', type='password')
+              tr
+                td(colspan='2', align='right')
+                  input#register.is-button(type='submit', title='Register', value='Register')
+    div.landing-logo
+      img(src='/graphics/is-logo.png', alt='is-landing')
+  div.landing-back
+    div.landing-center
+      div.landing-archipelago
+        img.is-archipelago(src='/graphics/is-archipelago.png', title='Archipelago', alt='/graphics/is-archipelago-hover.png')
+      p.mission-txt
+        | Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+  div.landing-center(style='text-align: right')
+    span.landing-copy
+      | We Are Island © 2011
+
+
+
+
+

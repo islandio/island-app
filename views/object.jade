@@ -1,0 +1,30 @@
+- if (object.type == 'image')
+  div(id='obj-' + object.id, class='each-grid-obj ' + object.type)
+    a.grid-obj-title(href=object.id)
+      =object.title
+    a.grid-obj(href=object.id)
+      div.grid-obj-hover.matte(style='width: ' + object.attached.image_thumb.meta.width + 'px; height: ' + object.attached.image_thumb.meta.height + 'px')
+        h1.grid-obj-hover-txt
+          =object.member.name.first + ' / ' + object.meta.likes
+      img.grid-obj-img.matte(id='img-' + object.id, class='page-0', src=object.attached.image_thumb.cf_url, width=object.attached.image_thumb.meta.width, height=object.attached.image_thumb.meta.height)
+    div.right
+      span.grid-obj-tag-title tags: 
+      span.grid-obj-tags
+        - for (var i=0; i < object.meta.tags.length; i++)
+          a.grid-obj-tag(href='javascript:;')
+            =object.meta.tags[i]
+- if (object.type == 'video')
+  div(id='obj-' + object.id, class='each-grid-obj ' + object.type)
+    a.grid-obj-title(href=object.id)
+      =object.title
+    a.grid-obj(href=object.id)
+      div.grid-obj-hover.matte(style='width: ' + object.attached.video_thumbs[0].meta.width + 'px; height: ' + object.attached.video_thumbs[0].meta.height + 'px')
+        h1.grid-obj-hover-txt
+          =object.member.name.first + ' / ' + object.meta.likes
+      img.grid-obj-img.matte(id='vid-' + object.id, class='page-0', src=object.attached.video_thumbs[0].cf_url, width=object.attached.video_thumbs[0].meta.width, height=object.attached.video_thumbs[0].meta.height)
+    div.right
+      span.grid-obj-tag-title tags: 
+      span.grid-obj-tags
+      - for (var i=0; i < object.meta.tags.length; i++)
+        a.grid-obj-tag(href='javascript:;')
+          =object.meta.tags[i]
