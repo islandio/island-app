@@ -113,6 +113,22 @@ a:focus, button:focus
 
 a::-moz-focus-inner, button::-moz-focus-inner
   border none
+  
+a.nav-link
+  padding 0 20px 0 0
+  font-size 13px
+  background none
+  color #29b9d9
+  text-transform lowercase
+  line-height normal
+  font-weight normal
+  font-family Title, Verdana, Arial, sans-serif
+
+a.nav-link:hover
+  color #d95032
+  
+a.nav-link:active
+  color #d95032
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
@@ -186,8 +202,6 @@ h1.side-title2
   padding 7px 0 0 0
   font-family Title, Verdana, Arial, sans-serif
 
-
-
 h2.message, h2.error
   float right
   font-size 10px
@@ -211,7 +225,7 @@ h3.obj-details
   text-transform uppercase
   color #b3b3b3
   font-size 8px
-  padding 20px 0 10px 0
+  padding 0 0 5px
   font-weight normal
 
 h3.add-media
@@ -313,7 +327,7 @@ td
   height 82px
   background #fcfcfb
   position fixed
-  z-index 10001
+  z-index 1001
   top 0
   width 984px
   background rgba(252, 252, 251, 0.5)
@@ -376,7 +390,7 @@ td
   text-align right
   font-family Title, Verdana, Arial, sans-serif
   float right
-  z-index 10001
+  z-index 1001
   position relative
   border-top 5px solid #1a1a1a
   border-left 5px solid #1a1a1a
@@ -390,7 +404,7 @@ td
   
 .is-highlight, .is-error
   position fixed
-  left 20px
+  right 20px
   top 20px
   padding 10px
   -moz-border-radius 5px
@@ -501,6 +515,9 @@ input.is-button-alert[type=submit]
   right 0
   display none
 
+.media-form-wrap
+  margin 0 0 50px
+
 #media-form table
   width 100%
   margin 20px 0 0 0
@@ -524,29 +541,29 @@ input.is-button-alert[type=submit]
 
 #grid
   position relative
-  //top 20px
-  //margin 0 0 100px 0
-
-//#obj-title
 
 #obj-holder
-  padding 20px 0 10px 0
+  padding 20px 0 5px 0
 
 #obj-desc
   background-color #f2f2f2
   width 640px
-  min-height 85px
   margin 0 0 5px 0
+
+#obj-desc-txt-wrap
+  margin 0 0 0 25px 
+  padding 10px 10px 0 4px
+  
+#obj-desc-txt
+  padding 0 40px 5px 0
 
 .commentor
   display none
   padding 0 0 5px
 
-//#obj-desc-txt
-
 .commentor-input, .commentor-input-dummy
   width 304px
-  margin 15px 0 0 0
+  margin 18px 0 0 0
   padding 4px
 
 .commentor-input
@@ -574,7 +591,7 @@ input.is-button-alert[type=submit]
   width 79px
   margin 5px 0 0
 
-#obj-comments
+.obj-comments
   margin 15px 0 0
 
 .comment
@@ -630,9 +647,9 @@ div.grid-obj-hover
   opacity 0.8
   position absolute
   
-  display -webkit-box
-  display -moz-box
-  display box
+  //display -webkit-box
+  //display -moz-box
+  //display box
   
   display -webkit-box
   -webkit-box-orient horizontal
@@ -670,9 +687,15 @@ span.grid-obj-tags
   font-weight bold
   line-height 26px
 
-span.grid-tag
+span.grid-obj-tag-title
   font-variant small-caps
   color gray
+  
+a.grid-obj-tag
+  margin 0 0 0 5px
+  color #d04c38
+  font-variant small-caps
+  
 
 h1.grid-obj-hover-txt
   font-size 12px
@@ -712,7 +735,7 @@ div.profile-right
   display inline
   float left
 
-.list li a
+/*.list li a
   color #ccc
   text-decoration none
   font-style normal
@@ -734,7 +757,7 @@ div.profile-right
   background-color #29b9d9
 
 .head-butt-selected
-  background-color #d95032
+  background-color #d95032*/
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––tweets*/
 
@@ -775,62 +798,3 @@ div.profile-right
   float left
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
-
-/* For this demo. Feel free to customize */
-div.overlay
-  background rgba(0,0,0,0.01)
-  z-index 10001
-
-div.overlay > div.wrap-outer > div.wrap
-  -webkit-box-pack start
-  -moz-box-pack start
-  box-pack start
-
-.my-dialog
-  width 500px
-  background #fff
-  resize none
-  overflow auto
-
-  -webkit-border-radius 5px
-  -webkit-border-top-left-radius 0
-  -webkit-border-top-right-radius 0
-  -moz-border-radius 0 0 5px 5px
-  border-radius 0 0 5px 5px
-
-  padding 15px
-
-  -webkit-box-sizing border-box
-  -moz-box-sizing border-box
-  box-sizing border-box
-  
-  -webkit-box-shadow 0 3px 6px rgba(0,0,0,0.5)
-  -moz-box-shadow 0 3px 6px rgba(0,0,0,0.5)
-  box-shadow 0 3px 6px rgba(0,0,0,0.5)
-
-  background -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fff), to(#e6e6e6))
-  font 13px Verdana
-
-  /* for the animation */
-  -webkit-transform translateY(-100%)
-  -moz-transform translateY(-100%)
-  transform translateY(-100%)
-
-  -webkit-transition -webkit-transform 0.25s ease-out
-  -moz-transition -moz-transform 0.25s ease-out
-  transition transform 0.25s ease-out
-
-
-body.overlaid .my-dialog
-  -webkit-transform translateY(0)
-  -moz-transform translateY(0)
-  transform translateY(0)
-
-
-.my-dialog input
-  resize none
-
-
-.my-dialog h1
-  margin 0 0 15px
-  font bold 24px Verdana

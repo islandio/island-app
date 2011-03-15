@@ -1,9 +1,0 @@
-h2 Edit Media
-p
-  a.button(href='/media')
-    &larr; All Media
-form(method='post', action='/media/' + d.id)
-  input(name='d[id]', value=d.id, type='hidden')
-  input(name='_method', value='PUT', type='hidden')
-  !=partial('media/fields', { locals: { d: d } })
-

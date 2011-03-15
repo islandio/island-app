@@ -46,29 +46,24 @@ function defineModels(mongoose, fn) {
     , comments    : [Comment]
     , type        : { type: String, index: true }
     , added       : { type: Date, default: Date.now }
-    //, slug        : { type: String, index: { unique: true } }
     , meta        : {
               featured  : Boolean
             , tags      : { type: Array, index: true }  
             , hits      : Number
             , likes     : { type: Number, default: 0 }
           }
-    // , attached   : {
-    //           type      : { type: String, default: 'NA' }
-    //         , size      : { type: String, default: 'NA' }
-    //         , width     : { type: Number, default: 0 }
-    //         , height    : { type: Number, default: 0 }
-    //         , remote_id : { type: String, default: 'NA' }
-    //       }
     , member_id   : ObjectId
     , attached    : {}
   });
 
-  // Media.pre('save', function(next) {
-  //   // Automatically create the slugs
-  //   this.slug = slugify(this.title);
-  //   next();
-  // });
+  Media.pre('save', function(next) {
+    // parse the tags
+    var tags = this.meta.tags[0].trim().split(',');
+    for (t in tags)
+      tags[t] = tags[t].trim().toLowerCase();
+    this.meta.tags = tags;
+    next();
+  });
 
   Media.virtual('id')
     .get(function() {

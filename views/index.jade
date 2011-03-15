@@ -3,42 +3,36 @@
 #wrap
   header#header
     #header-left
-      a#log-featured.nav-link(href='/')
+      a#log-featured(href='/')
         #logo
           img#logo-a.centered(src='/graphics/is-logo.png', alt='is-logo_img', width='300')
           img#logo-b.centered(src='/graphics/is-logo-pink.png', alt='is-logo_img', width='300', style='display:none;')
     #header-right
       #menu.list
         ul
-          //li
-          //  a#nav-featured.nav-link(href='/featured', title='ISLAND featured')
-          //    h1.nav / featured
-          //li
-          //  a#nav-members.nav-link(href='/members', title='ISLAND members')
-          //    h1.nav / members
-          //li
-          //  a#nav-mission.nav-link(href='/mission', title='ISLAND mission')
-          //    h1.nav / mission
           li
-            a#nav-contribute.nav-link(href='/media/new', title='contribute')
-              h1.nav / contribute
-          - if (typeof cm !== 'undefined')
-            li
-              a#logout.nav-link(href='/sessions') Log Out
+            a#nav-featured.nav-link(href='javascript:alert("Section not public yet. Thanks for your patience.");', title='Island Featured Content')
+              | / featured
+          li
+            a#nav-members.nav-link(href='javascript:alert("Section not public yet. Thanks for your patience.");', title='The Island Members')
+              | / members
+          li
+            a#nav-mission.nav-link(href='javascript:alert("Section not public yet. Thanks for your patience.");', title='The Island Mission')
+              | / mission
+          li
+            a#nav-contribute.nav-link(href='/add', title='Contribute to Island')
+              | / add
+          li
+            a#nav-logout.nav-link(href='/sessions', title='Island Logout') 
+              | / Log Out
       #feeds
         #twitter.tweet
           p loading ISLAND tweets...
     div.clear
   div.clear
   #main
-    !=partial(p, { locals: { d: d } })
+    !=partial(part)
 footer#footer
   div
     div
       small We Are Island © 2011
-//div.overlay
-//  div.wrap-outer
-//    div.wrap
-//      div.my-dialog
-//        hr
-//        button.toggle-overlay Cancel
