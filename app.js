@@ -136,6 +136,27 @@ function findMedia(next, by, val) {
   });
 }
 
+function getTwitterNames(next) {
+  Member.find({}, function (err, data) {
+    if (!err) {
+      var twitters = []
+        , num = data.length
+        , cnt = 0
+      ;
+      if (num > 0)
+        data.forEach(function (mem) {
+          twitters.push(mem.twitter);
+          cnt++;
+          if (cnt == num)
+            next(twitters);
+        });
+      else 
+        next([]);
+    } else 
+      next([]);
+  });
+}
+
 
 // Error handling
 function NotFound(msg) {
@@ -181,10 +202,13 @@ app.get('/login', function(req, res) {
 // Media list
 app.get('/media', loadMember, function (req, res) {
   findMedia(function (media) {
-    res.render('index', {
-        part  : 'media'
-      , media : media
-      , cm    : req.currentMember
+    getTwitterNames(function (names) {  
+      res.render('index', {
+          part  : 'media'
+        , media : media
+        , cm    : req.currentMember
+        , names : names
+      });
     });
   });
 });
@@ -213,12 +237,15 @@ app.get('/media/:tag.:format?', loadMember, function (req, res) {
 // Add media form
 app.get('/add', loadMember, function (req, res) {
   findMedia(function (grid) {
-    res.render('index', {
-        part  : 'add'
-      , data  : new Media()
-      , tlip  : tlip
-      , grid  : grid 
-      , cm    : req.currentMember
+    getTwitterNames(function (names) {
+      res.render('index', {
+          part  : 'add'
+        , data  : new Media()
+        , tlip  : tlip
+        , grid  : grid 
+        , cm    : req.currentMember
+        , names : names    
+      });
     });
   });
 });
@@ -233,10 +260,16 @@ app.get('/:id?', loadMember, function (req, res) {
         , cnt = 0
       ;
       if (num == 0) {
-        res.render('index', {
-            part: 'single'
-          , data: med
-          , cm: req.currentMember
+        findMedia(function (grid) {  
+          getTwitterNames(function (names) {
+            res.render('index', {
+                part  : 'single'
+              , data  : med
+              , grid  : grid
+              , cm    : req.currentMember
+              , names : names
+            });
+          });
         });
       } else {
         med.comments.reverse();
@@ -245,11 +278,17 @@ app.get('/:id?', loadMember, function (req, res) {
             com.member = commentor;
             cnt++;
             if (cnt == num) {
-              res.render('index', {
-                  part: 'single'
-                , data: med
-                , cm: req.currentMember 
-              }); 
+              findMedia(function (grid) {  
+                getTwitterNames(function (names) {
+                  res.render('index', {
+                      part  : 'single'
+                    , data  : med
+                    , grid  : grid
+                    , cm    : req.currentMember
+                    , names : names
+                  });
+                });
+              });
             }
           });
         });
@@ -288,7 +327,7 @@ app.post('/members.:format?', function (req, res) {
     || !req.body.newmember.email
     || !req.body.newmember.password
   ) {
-    req.flash('error', 'All fields are required.');
+    req.flash('error', 'Try again.');
     res.redirect('/login');
     return;
   }

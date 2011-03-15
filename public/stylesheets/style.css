@@ -253,7 +253,7 @@ h3.obj-details {
   text-transform: uppercase;
   color: #b3b3b3;
   font-size: 8px;
-  padding: 0 0 5px;
+  padding: 20px 0 5px;
   font-weight: normal;
 }
 h3.add-media {
@@ -301,6 +301,9 @@ td {
 }
 .clear {
   clear: both;
+}
+#twitter-names {
+  display: none;
 }
 .landing-wrap {
   width: 100%;

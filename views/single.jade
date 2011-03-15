@@ -1,4 +1,4 @@
-div.left
+div.left(style='margin: 0 0 50px')
   #obj-title
     span.slash /
     h1.obj-title
@@ -46,3 +46,5 @@ div(style='margin-left: 670px')
   div.obj-comments(id='coms-' + data.id)
     !=partial('comment', data.comments )
 div.clear
+#grid
+  !=partial('object', grid.reverse())

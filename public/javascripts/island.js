@@ -31,8 +31,9 @@ Island = (function ($) {
    * tweets
    */
 
-    , twitters = ['plebeiantv']
+    , twitters = []
     , tweets = []
+    , twot = 0
     , twut = 0
     , twap
     
@@ -46,7 +47,12 @@ Island = (function ($) {
 
     , twat = function (t) {
         tweets = tweets.concat(t);
-        $.fisherYates(tweets);
+        twot++;
+        if (twot == twitters.length) {
+          $.fisherYates(tweets);
+          var tweeter = $.setIntervalObj(this, 5000, twit);
+          twit();
+        }
       }
     
   /**
@@ -299,14 +305,16 @@ Island = (function ($) {
 
 
       	// tweets
+      	twitterNames = $('#twitter-names').text().split(',');
+      	for (var i=0; i < twitterNames.length; ++i)
+      	  if (twitterNames[i] != 'undefined' && twitterNames[i] != '')
+      	    twitters.push(twitterNames[i]);
       	twap = $('#twitter');
         for (var tt in twitters)
           $.tweet({
               username: twitters[tt]
             , callback: twat
           });
-        var tweeter = $.setIntervalObj(this, 5000, twit);
-        setTimeout(twit, 1000);
 
 
       	// reduce header on scroll
