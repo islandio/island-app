@@ -240,7 +240,8 @@ Island = (function ($) {
 
 
         // init mediaelement
-        //$('video, audio').mediaelementplayer();
+        //new MediaElementPlayer('video',{mode:'shim'});
+        $('video, audio').mediaelementplayer();
 
 
       	// landing page login - register
