@@ -38,7 +38,7 @@ app.configure('test', function () {
 });
 
 app.configure('production', function () {
-  app.set('db-uri', 'mongodb://localhost/islandio-production');
+  app.set('db-uri', 'mongodb://localhost/islandio-development');
 });
 
 app.configure(function () {
@@ -445,7 +445,7 @@ app.del('/sessions', loadMember, function (req, res) {
 if (!module.parent) {
   
   // listening...
-  app.listen(8000);
+  app.listen(8080);
   
   // init now.js
   var everyone = require('now').initialize(app);
@@ -476,7 +476,7 @@ if (!module.parent) {
     Media.findById(data.pid, function (err, med) {
       if (!err) {
         var com = med.comments.id(data.comment_id);
-        Member.findById(med.member_id, function (err, mem) {
+        Member.findById(com.member_id, function (err, mem) {
           com.member = mem;
           if (!err)
             jade.renderFile(__dirname + '/views/comment.jade', { locals: { comment: com } }, function (err, html) {
