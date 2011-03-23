@@ -1,2 +1,18 @@
+#feedback
+  div.trending-media-wrap.left
+    span.slash /
+    h1.title-left Trending
+    h1.title-sub Highest rated right now
+    div.trending-media.matte
+      #trend.trending-media-images
+        !=partial('trend', trends)
+  div.recent-comments-wrap
+    h1.title-right / Recent Comments
+    #recent-comments
+      !=partial('comment', coms)
+div.clear
+#search
+  h1.title-bottom / Browse
+  input#search-box.matte(type='search', placeholder='Search')
 #grid
   !=partial('object', media.reverse())

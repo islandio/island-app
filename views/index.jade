@@ -4,34 +4,26 @@
 #loading
   img(src='/graphics/is-loading.gif', alt='loading...')
 #wrap
-  header#header
-    #header-left
-      a#log-featured(href='/')
-        #logo
-          img#logo-a.centered(src='/graphics/is-logo.png', alt='is-logo_img', width='300')
-          img#logo-b.centered(src='/graphics/is-logo-pink.png', alt='is-logo_img', width='300', style='display:none;')
-    #header-right
-      #menu.list
-        ul
-          li
-            a#nav-featured.nav-link(href='javascript:alert("Section not public yet. Thanks for your patience.");', title='Island Featured Content')
-              | / featured
-          li
-            a#nav-members.nav-link(href='javascript:alert("Section not public yet. Thanks for your patience.");', title='The Island Members')
-              | / members
-          li
-            a#nav-mission.nav-link(href='javascript:alert("Section not public yet. Thanks for your patience.");', title='The Island Mission')
-              | / mission
-          li
-            a#nav-contribute.nav-link(href='/add', title='Contribute to Island')
-              | / add
-          li
-            a#nav-logout.nav-link(href='/sessions', title='Island Logout') 
-              | / Log Out
-      #feeds
-        #twitter.tweet
-          p loading ISLAND tweets...
-    div.clear
+  header#header-left
+    a(href='/')
+      #logo
+        img#logo-a.centered(src='/graphics/is-logo.png', alt='is-logo_img', width='300')
+        img#logo-b.centered(src='/graphics/is-logo-pink.png', alt='is-logo_img', width='300', style='display:none;')
+  header#header-right
+    #menu.list
+      ul
+        li
+          a#nav-logout.nav-link-right(href='/sessions', title='Log Out Island') 
+            | Log Out
+        - if (cm.role == 'contributor')
+          li(style='margin: 0 5px 0 0')
+            a#nav-add.nav-link-right(href='/add', title='Add Media') 
+              | Add Media
+        li
+          span.welcome-member Hi, 
+            =cm.name.first + ' ' + cm.name.last
+    #twitter.tweet
+      p loading contributor tweets...
   div.clear
   #main
     !=partial(part)

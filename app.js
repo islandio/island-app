@@ -61,11 +61,18 @@ app.configure(function () {
 models.defineModels(mongoose, function () {
   app.Member = Member = mongoose.model('Member');
   app.Comment = Comment = mongoose.model('Comment');
+  app.Rating = Rating = mongoose.model('Rating');
   app.Media = Media = mongoose.model('Media');
   app.LoginToken = LoginToken = mongoose.model('LoginToken');
   db = mongoose.connect(app.set('db-uri'));
 });
 
+
+/**
+ * 
+ * @param
+ */
+ 
 function authenticateFromLoginToken(req, res, next) {
   var cookie = JSON.parse(req.cookies.logintoken);
 
@@ -94,6 +101,12 @@ function authenticateFromLoginToken(req, res, next) {
   }));
 }
 
+
+/**
+ * 
+ * @param
+ */
+ 
 function loadMember(req, res, next) {
   if (req.session.member_id) {
     Member.findById(req.session.member_id, function (err, member) {
@@ -111,10 +124,13 @@ function loadMember(req, res, next) {
   }
 }
 
-function findMedia(next, by, val) {
-  var filter = {};
-  if (by)
-    filter[by] = val;
+
+/**
+ * 
+ * @param
+ */
+ 
+function findMedia(next, filter) {
   Media.find(filter, function (err, media) {
     if (!err) {
       var num = media.length
@@ -136,6 +152,143 @@ function findMedia(next, by, val) {
   });
 }
 
+
+/**
+ * 
+ * @param
+ */
+ 
+function getTrending(limit, next) {
+  Media.find({}, [], { limit: limit }).sort('meta.hearts', -1).run(function (err, media) {
+    if (!err) {
+      var num = media.length
+        , cnt = 0
+      ;
+      if (num > 0)
+        media.forEach(function (med) {
+          Member.findById(med.member_id, function (err, member) {
+            med.member = member;
+            cnt++;
+            if (cnt == num)
+              next(media);
+          });
+        });
+      else
+        next([]);
+    } else
+      next([]);
+  });
+}
+
+
+/**
+ * 
+ * @param
+ */
+ 
+function getRecentComments(limit, next) {
+  Comment.find({}, [], { limit: limit }).sort('added', -1).run(function (err, coms) {
+    var num = coms.length
+      , cnt = 0
+    ;
+    if (err || num == 0)
+      next([]);
+    else
+      coms.forEach(function (com) {
+        Member.findById(com.member_id, function (err, mem) {
+          if (!err) {
+            com.member = mem;
+            Media.findById(com.parent_id, function (err, med) {
+              if (!err) {
+                com.parent = med;
+                cnt++;
+                if (cnt == num)
+                  next(coms);
+              } else {
+                next([]);
+                return;
+              }
+            });
+          } else {
+            next([]);
+            return;
+          }
+        });
+      });
+  });
+}
+
+
+/**
+ * Transform text array of searchable terms
+ * @param string text
+ */
+
+function makeTerms(text) {
+  text = text.replace(/[~|!|@|#|$|%|^|&|*|(|)|_|+|`|-|=|[|{|;|'|:|"|\/|\\|?|>|.|<|,|}|]|]+/gi, '');
+  text = text.replace(/\s{2,}/g, ' ');
+  return text.toLowerCase().trim().split(' ');
+}
+
+
+/**
+ * 
+ * @param
+ */
+ 
+function renderObject(obj, next) {
+  Member.findById(obj.member_id, function (err, mem) {
+    if (!err) {
+      obj.member = mem;
+      jade.renderFile(__dirname + '/views/object.jade', { locals: { object: obj } }, function (err, html) {
+        if (!err)
+          next(html);
+        else
+          next(err);
+      });
+    } else
+      next(err);
+  });
+}
+
+
+/**
+ * 
+ * @param
+ */
+ 
+function renderComment(com, next) {
+  Member.findById(com.member_id, function (err, mem) {
+    if (!err) {
+      com.member = mem;
+      Media.findById(com.parent_id, function (err, med) {
+        if (!err) {
+          jade.renderFile(__dirname + '/views/comment.jade', { locals: { comment: com } }, function (err, chtml) {
+            if (!err) {
+              com.parent = med;
+              jade.renderFile(__dirname + '/views/comment.jade', { locals: { comment: com } }, function (err, rhtml) {
+                if (!err)
+                  next(chtml, rhtml);
+                else
+                  next(err);
+              });
+            } else
+              next(err);
+          });
+        } else
+          next([]);
+      });
+    } else
+      next(err);
+  });
+}
+
+
+/**
+ * 
+ * @param
+ */
+ 
 function getTwitterNames(next) {
   Member.find({}, function (err, data) {
     if (!err) {
@@ -158,7 +311,11 @@ function getTwitterNames(next) {
 }
 
 
-// Error handling
+/**
+ * 
+ * @param
+ */
+ 
 function NotFound(msg) {
   this.name = 'NotFound';
   Error.call(this, msg);
@@ -187,11 +344,6 @@ app.error(function (err, req, res, next) {
   }
 });
 
-// Root - go to /media
-app.get('/', loadMember, function (req, res) {
-  res.redirect('/media')
-});
-
 
 // Landing page
 app.get('/login', function(req, res) {
@@ -200,37 +352,23 @@ app.get('/login', function(req, res) {
 
 
 // Media list
-app.get('/media', loadMember, function (req, res) {
+app.get('/', loadMember, function (req, res) {
   findMedia(function (media) {
-    getTwitterNames(function (names) {  
-      res.render('index', {
-          part  : 'media'
-        , media : media
-        , cm    : req.currentMember
-        , names : names
+    getTrending(5, function (trends) {
+      getRecentComments(6, function (coms) {
+        getTwitterNames(function (names) {  
+          res.render('index', {
+              part   : 'media'
+            , media  : media
+            , coms   : coms
+            , trends : trends
+            , cm     : req.currentMember
+            , names  : names
+          });
+        });
       });
     });
   });
-});
-
-
-// Get tag results
-app.get('/media/:tag.:format?', loadMember, function (req, res) {
-  findMedia(function (media) {
-    var rendered = []
-      , num = media.length
-      , cnt = 0
-    ;
-    if (num > 0)
-      media.forEach(function (med) {
-        rendered.push(res.partial('object', med));
-        cnt++;
-        if (cnt == num)
-          res.send({ objects: rendered });
-      });
-    else 
-      res.send({ objects: rendered });
-  }, req.body.d.by, req.body.d.val);
 });
 
 
@@ -251,45 +389,126 @@ app.get('/add', loadMember, function (req, res) {
 });
 
 
+// Get tag results
+app.get('/search/:by.:format?', loadMember, function (req, res) {
+  var filter
+    , by = req.body.by
+    , val = makeTerms(req.body.val)
+  ;
+  // if (val.length > 1) {
+  //   filter = { $nor: [] };
+  //   for (var i=0; i < by.length; i++) {
+  //     fil = {};
+  //     fil[by[i]] = { $not: { $in: val } }
+  //     filter.$nor.push(fil);
+  //   }
+  if (val[0] != '') {
+    filter = { $or: [] }
+    for (var i=0; i < by.length; i++) {
+      fil = {};
+      fil[by[i]] = { $in: val }
+      filter.$or.push(fil);
+    }
+  }
+  // filter = { $nor: [], $or: [] };
+  // if (val[0] != '') {
+  //   for (var i=0; i < by.length; i++) {
+  //     or = {};
+  //     or[by[i]] = { $all: val };
+  //     filter.$or.push(or);
+  //     
+  //     nor = {};
+  //     nor[by[i]] = { $not: { $in: val } };
+  //     filter.$nor.push(nor);
+  //   }
+  // }
+  findMedia(function (media) {
+    var rendered = []
+      , num = media.length
+      , cnt = 0
+    ;
+    if (num > 0)
+      media.forEach(function (med) {
+        renderObject(med, function (ren) {
+          if ('string' == typeof ren)
+            rendered.push(ren);
+          else {
+            res.send({ status: 'error', message: ren.message });
+            return;
+          }
+          cnt++;
+          if (cnt == num)
+            res.send({ status: 'success', data: { objects: rendered } });
+        });
+      });
+    else
+      res.send({ status: 'success', data: { objects: rendered } });
+  }, filter);
+});
+
+
 // Single object
 app.get('/:id?', loadMember, function (req, res) {
   Media.findById(req.params.id, function (err, med) {
     Member.findById(med.member_id, function (err, mem) {
       med.member = mem;
-      var num = med.comments.length
+      var hearts = 0
+        , comments = []
+        , num = med.comments.length
         , cnt = 0
       ;
+      if (med.meta.ratings) {
+        for (var i=0; i < med.meta.ratings.length; i++) {
+          if (req.currentMember.id == med.meta.ratings[i].mid) {
+            hearts = med.meta.ratings[i].hearts;
+            break;
+          }
+        }
+      }
       if (num == 0) {
-        findMedia(function (grid) {  
-          getTwitterNames(function (names) {
-            res.render('index', {
-                part  : 'single'
-              , data  : med
-              , grid  : grid
-              , cm    : req.currentMember
-              , names : names
+        med.meta.hits++;
+        med.save(function (err) {
+          findMedia(function (grid) {
+            getTwitterNames(function (names) {
+              res.render('index', {
+                  part   : 'single'
+                , media  : med
+                , coms   : comments
+                , hearts : hearts
+                , grid   : grid
+                , cm     : req.currentMember
+                , names  : names
+              });
             });
           });
         });
       } else {
         med.comments.reverse();
-        med.comments.forEach(function (com) {
-          Member.findById(com.member_id, function (err, commentor) {
-            com.member = commentor;
-            cnt++;
-            if (cnt == num) {
-              findMedia(function (grid) {  
-                getTwitterNames(function (names) {
-                  res.render('index', {
-                      part  : 'single'
-                    , data  : med
-                    , grid  : grid
-                    , cm    : req.currentMember
-                    , names : names
+        med.comments.forEach(function (cid) {
+          Comment.findById(cid, function (err, com) {
+            Member.findById(com.member_id, function (err, commentor) {
+              com.member = commentor;
+              comments.push(com);
+              cnt++;
+              if (cnt == num) {
+                med.meta.hits++;
+                med.save(function (err) {
+                  findMedia(function (grid) {  
+                    getTwitterNames(function (names) {
+                      res.render('index', {
+                          part   : 'single'
+                        , media  : med
+                        , coms   : comments
+                        , hearts : hearts
+                        , grid   : grid
+                        , cm     : req.currentMember
+                        , names  : names
+                      });
+                    });
                   });
                 });
-              });
-            }
+              }
+            });
           });
         });
       }
@@ -310,7 +529,7 @@ app.post('/sessions', function (req, res) {
           res.cookie('logintoken', loginToken.cookieValue, { expires: new Date(Date.now() + 2 * 604800000), path: '/' });
         });
       }
-      res.redirect('/media');
+      res.redirect('/');
     } else {
       req.flash('error', 'Incorrect credentials');
       res.redirect('/login');
@@ -344,7 +563,7 @@ app.post('/members.:format?', function (req, res) {
           break;
           default:
             req.session.member_id = member.id;
-            res.redirect('/media');
+            res.redirect('/');
         }
       } else {
         req.flash('error', 'An error has occurred. Please try again.');
@@ -374,26 +593,33 @@ app.put('/insert', loadMember, function (req, res, next) {
     }
     media.attached = attachment;
     media.type = media.attached.image_full.type;
-    for (var i in media.attached) {
-      var id = media.attached[i].id;
-      media.attached[i].cf_url = 'http://d1da6a4is4i5z6.cloudfront.net/' + id.substr(0, 2) + '/' + id.substr(2) + '.' + media.attached[i].ext;  
-    }
+    var id;
+    for (var i in media.attached)
+      if (media.attached.hasOwnProperty(i)) {
+        id = media.attached[i].id;
+        media.attached[i].cf_url = 'http://d1da6a4is4i5z6.cloudfront.net/' + id.substr(0, 2) + '/' + id.substr(2) + '.' + media.attached[i].ext;  
+      }
   } else if (req.body.assembly.results.video_encode) {
     // this is a video
     var attachment = {
         video_thumbs : req.body.assembly.results.video_thumbs
+      , video_placeholder : req.body.assembly.results.video_placeholder['0']
       , video_poster : req.body.assembly.results.video_poster['0']
       , video_encode : req.body.assembly.results.video_encode['0']
     }
     media.attached = attachment;
     media.type = media.attached.video_encode.type;
-    for (var i in media.attached.video_thumbs) {
-      var id = media.attached.video_thumbs[i].id;
-      media.attached.video_thumbs[i].cf_url = 'http://d1ehvayr9dfk4s.cloudfront.net/' + id.substr(0, 2) + '/' + id.substr(2) + '.' + media.attached.video_thumbs[i].ext;
-    }
-    var id = media.attached.video_poster.id;
+    var id;
+    for (var i in media.attached.video_thumbs)
+      if (media.attached.video_thumbs.hasOwnProperty(i)) {
+        id = media.attached.video_thumbs[i].id;
+        media.attached.video_thumbs[i].cf_url = 'http://d1ehvayr9dfk4s.cloudfront.net/' + id.substr(0, 2) + '/' + id.substr(2) + '.' + media.attached.video_thumbs[i].ext;
+      }
+    id = media.attached.video_placeholder.id;
+    media.attached.video_placeholder.cf_url = 'http://d1ehvayr9dfk4s.cloudfront.net/' + id.substr(0, 2) + '/' + id.substr(2) + '.' + media.attached.video_placeholder.ext;
+    id = media.attached.video_poster.id;
     media.attached.video_poster.cf_url = 'http://d1ehvayr9dfk4s.cloudfront.net/' + id.substr(0, 2) + '/' + id.substr(2) + '.' + media.attached.video_poster.ext;
-    var id = media.attached.video_encode.id;
+    id = media.attached.video_encode.id;
     media.attached.video_encode.cf_url = 'http://d1ehvayr9dfk4s.cloudfront.net/' + id.substr(0, 2) + '/' + id.substr(2) + '.' + media.attached.video_encode.ext;
   }
   
@@ -403,7 +629,7 @@ app.put('/insert', loadMember, function (req, res, next) {
     if (!err)
       res.send({ status: 'success', data: { id: doc._id } });
     else
-      res.send({ status: 'error', message: err });
+      res.send({ status: 'error', message: err.message });
   });
   
 });
@@ -413,19 +639,77 @@ app.put('/insert', loadMember, function (req, res, next) {
 app.put('/comment/:id.:format?', loadMember, function (req, res, next) {
   Media.findById(req.body.pid, function (err, med) {
     if (!err) {
-      med.comments.push({
-          body: req.body.comment
-        , member_id: req.currentMember.id
-      });
-      med.save(function (err) {
+      var comment = {
+          body      : req.body.comment
+        , member_id : req.currentMember.id
+        , parent_id : req.body.pid
+      };
+      var com = new Comment(comment);
+      com.save(function (err) {
         if (!err) {
-          var comment_id = med.comments.pop().toObject()._id;
-          res.send({ status: 'success', data: { pid: med._id, comment_id: comment_id } });
+          med.comments.push(com._id);
+          med.save(function (err) {
+            if (!err)
+              res.send({ status: 'success', data: { pid: med.id, comment: com } });
+            else
+              res.send({ status: 'error', message: err.message });
+          });
         } else
-          res.send({ status: 'error', message: err });
+          res.send({ status: 'error', message: err.message });
       });
     } else
-      res.send({ status: 'error', message: err });
+      res.send({ status: 'error', message: err.message });
+  });
+});
+
+
+// Add hearts
+app.put('/hearts/:id.:format?', loadMember, function (req, res, next) {
+  Media.findById(req.body.id, function (err, med) {
+    if (!err) {
+      var num = med.meta.ratings ? med.meta.ratings.length : 0
+        , cnt = 0
+      ;
+      if (num == 0) {
+        med.meta.ratings = [];
+        med.meta.ratings.push({
+            member_id : req.currentMember.id
+          , hearts    : req.body.hearts
+        });
+        med.save(function (err) {
+          if (!err) {
+            res.send({ status: 'success', data: { hearts: med.meta.hearts } });
+          } else
+            res.send({ status: 'error', message: err.message });
+        });
+      } else
+        med.meta.ratings.forEach(function (rat) {
+          if (rat.mid == req.currentMember.id) {
+            rat.hearts = req.body.hearts;
+            med.save(function (err) {
+              if (!err) {
+                res.send({ status: 'success', data: { hearts: med.meta.hearts } });
+              } else
+                res.send({ status: 'error', message: err.message });
+            });
+            return;
+          }
+          cnt++;
+          if (cnt == num) {
+            med.meta.ratings.push({
+                member_id : req.currentMember.id
+              , hearts    : req.body.hearts
+            });
+            med.save(function (err) {
+              if (!err) {
+                res.send({ status: 'success', data: { hearts: med.meta.hearts } });
+              } else
+                res.send({ status: 'error', message: err.message });
+            });
+          }
+        });
+    } else
+      res.send({ status: 'error', message: err.message });
   });
 });
 
@@ -450,48 +734,55 @@ if (!module.parent) {
   // init now.js
   var everyone = require('now').initialize(app);
   
-  // add new media to everyone's page
-  everyone.now.distributeMedia = function(id) {
+  // add new object to everyone's page
+  everyone.now.distributeObject = function (id) {
     Media.findById(id, function (err, obj) {
       if (!err)
-        Member.findById(obj.member_id, function (err, mem) {
-          if (!err) {
-            obj.member = mem;
-            jade.renderFile(__dirname + '/views/object.jade', { locals: { object: obj } }, function (err, html) {
-              if (!err)
-                everyone.now.receiveMedia({ status: 'success', data: { obj: html } });
-              else
-                everyone.now.receiveMedia({ status: 'error', message: err });
-            });
-          } else
-            everyone.now.receiveMedia({ status: 'error', message: err });
+        renderObject(obj, function (ren) {
+          if ('string' == typeof ren)
+            everyone.now.receiveObject({ status: 'success', data: { obj: ren } });
+          else
+            everyone.now.receiveObject({ status: 'error', message: ren.message });
         });
       else
-        everyone.now.receiveMedia({ status: 'error', message: err });
+        everyone.now.receiveObject({ status: 'error', message: err.message });
     });
   };
   
   // add new comment to everyone's page
-  everyone.now.distributeComment = function(data) {
-    Media.findById(data.pid, function (err, med) {
-      if (!err) {
-        var com = med.comments.id(data.comment_id);
-        Member.findById(com.member_id, function (err, mem) {
-          com.member = mem;
-          if (!err)
-            jade.renderFile(__dirname + '/views/comment.jade', { locals: { comment: com } }, function (err, html) {
-              if (!err)
-                everyone.now.receiveComment({ status: 'success', data: { pid: data.pid, com: html } });
-              else
-                everyone.now.receiveComment({ status: 'error', message: err });
-            });
-          else
-            everyone.now.receiveComment({ status: 'error', message: err });
-        });
-      } else
-        everyone.now.receiveComment({ status: 'error', message: err });  
+  everyone.now.distributeComment = function (data) {
+    renderComment(data.comment, function (cren, rren) {
+      if ('string' == typeof cren && 'string' == typeof rren)
+        everyone.now.receiveComment({ status: 'success', data: { pid: data.pid, com: cren, rec: rren } });
+      else
+        everyone.now.receiveComment({ status: 'error', message: cren.message || rren.message });
     });
   };
+  
+  // update everyone with new trends
+  var distributeTrends = function () {
+    getTrending(5, function (trends) {
+      var rendered = []
+        , num = trends.length
+        , cnt = 0
+      ;
+      if (num == 0)
+        return;
+      else
+        trends.forEach(function (med) {
+          jade.renderFile(__dirname + '/views/trend.jade', { locals: { trend: med } }, function (err, html) {
+            if (!err) {
+              rendered.push(html);
+              cnt++;
+              if (cnt == num)
+                everyone.now.receiveTrends({ status: 'success', data: { trends: rendered } });
+            } else
+              return;
+          });
+        });
+    });
+  };
+  setInterval(distributeTrends, 5000);
   
   // Server info
   console.log('Express server listening on port %d, environment: %s', app.address().port, app.settings.env)

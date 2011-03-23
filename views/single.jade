@@ -1,28 +1,47 @@
-div.left(style='margin: 0 0 50px')
-  #obj-title
+input(type='hidden', name='hearts', value=hearts)
+div.left(style='margin: 0 0 40px')
+  div.obj-title
     span.slash /
-    h1.obj-title
-      =data.title
-    h1.obj-owner from 
-      =data.member.name.first + ' ' + data.member.name.last
-  - if (data.type == 'image')  
-    #obj-holder(style='height: ' + data.attached.image_full.meta.height + 'px')
-      img.matte(id='image-' + data.id, src=data.attached.image_full.cf_url, width=data.attached.image_full.meta.width, height=data.attached.image_full.meta.height)
-  - if (data.type == 'video')
-    #obj-holder  
-      video.matte(id='video-' + data.id, poster=data.attached.video_poster.cf_url, controls='controls', preload='none', width='640', height=(data.attached.video_encode.meta.height / data.attached.video_encode.meta.width) * 640)
-        source(type='video/mp4', src=data.attached.video_encode.cf_url)
-        object(type='application/x-shockwave-flash', data='/mediaelement/flashmediaelement.swf', width='640', height=(data.attached.video_encode.meta.height / data.attached.video_encode.meta.width) * 640)
+    h1.title-left
+      =media.title
+    h1.title-sub from 
+      =media.member.name.first + ' ' + media.member.name.last
+  - if (media.type == 'image')
+    div.obj-holder(style='height: ' + media.attached.image_full.meta.height + 'px')
+      img.matte(id='image-' + media.id, src=media.attached.image_full.cf_url, width=media.attached.image_full.meta.width, height=media.attached.image_full.meta.height)
+      div.hearts
+        div.hearts-wrap
+          img.heart-img(src='/graphics/heart.png')
+          img.heart-img(src='/graphics/heart.png')
+          img.heart-img(src='/graphics/heart.png')
+          img.heart-img(src='/graphics/heart.png')
+          img.heart-img(src='/graphics/heart.png')
+        div.hearts-back(id='like-' + media.id)
+          img(src='/graphics/hearts.png')
+  - if (media.type == 'video')
+    div.obj-holder
+      video.matte(id='video-' + media.id, poster=media.attached.video_poster.cf_url, controls='controls', preload='none', width='640', height=(media.attached.video_encode.meta.height / media.attached.video_encode.meta.width) * 640)
+        source(type='video/mp4', src=media.attached.video_encode.cf_url)
+        object(type='application/x-shockwave-flash', data='/mediaelement/flashmediaelement.swf', width='640', height=(media.attached.video_encode.meta.height / media.attached.video_encode.meta.width) * 640)
             param(name='movie', value='/mediaelement/flashmediaelement.swf')
-            param(name='flashvars', value='controls=true&poster=' + data.attached.video_poster.cf_url + '&file=' + data.attached.video_encode.cf_url)
-            img(src=data.attached.video_poster.cf_url, title='No video playback capabilities', width='640', height=(data.attached.video_poster.meta.height / data.attached.video_poster.meta.width) * 640)
-  #obj-desc.matte
+            param(name='flashvars', value='controls=true&poster=' + media.attached.video_poster.cf_url + '&file=' + media.attached.video_encode.cf_url)
+            img(src=media.attached.video_placeholder.cf_url, title='No video playback capabilities', width=media.attached.video_placeholder.meta.width, height=media.attached.video_placeholder.meta.height)
+      div.hearts
+        div.hearts-wrap
+          img.heart-img(src='/graphics/heart.png')
+          img.heart-img(src='/graphics/heart.png')
+          img.heart-img(src='/graphics/heart.png')
+          img.heart-img(src='/graphics/heart.png')
+          img.heart-img(src='/graphics/heart.png')
+        div.hearts-back(id='like-' + media.id)
+          img(src='/graphics/hearts.png')
+  div.obj-desc.matte
     img.left(src='/graphics/is-obj-info.gif', alt='info', align='top')
-    div#obj-desc-txt-wrap
-      p#obj-desc-txt
-        =data.body
-      h3#obj-details.obj-details Added 
-        =data.added + ' by ' + data.member.name.first + ' ' + data.member.name.last
+    div.obj-desc-txt-wrap
+      p.obj-desc-txt
+        =media.body
+      h3.obj-details.obj-details Added 
+        =media.added
       //div(style='position: relative; height: 17px')
       //img.social-icons(src='/graphics/sn/b/facebook_16.png', alt='/graphics/sn/facebook_16.png', title='Post, to Profile', style='left:0px;')
       //img.social-icons(src='/graphics/sn/b/twitter_16.png', alt='/graphics/sn/twitter_16.png', title='Tweet', style='left:21px;')
@@ -34,17 +53,20 @@ div.left(style='margin: 0 0 50px')
       //img.social-icons(src='/graphics/sn/b/email_16.png', alt='/graphics/sn/email_16.png', title='Email', style='left:147px;')
       //img.social-icons(src='/graphics/sn/b/rss_16.png', alt='/graphics/sn/rss_16.png', title='Follow', style='left:168px;')
 div(style='margin-left: 670px')
-  div(style='padding-top: 20px')
+  div(style='padding-top: 17px')
     img(src='/graphics/is-bubble.png', alt='is-bubble', align='top')
   textarea.commentor-input-dummy.matte(name='Write a comment...') Write a comment...
   div.commentor
     textarea.commentor-input.matte
-    input.is-button.add-comment(id='addto-' + data.id, type='submit', title='Add Comment', value='Comment')
+    input.is-button.add-comment(id='addto-' + media.id, type='submit', title='Add Comment', value='Comment')
     span.commentor-whois Logged in as 
       span(style='font-style: italic')
         =cm.name.first + ' ' + cm.name.last
-  div.obj-comments(id='coms-' + data.id)
-    !=partial('comment', data.comments )
+  div.obj-comments(id='coms-' + media.id)
+    !=partial('comment', coms )
 div.clear
+#search
+  h1.title-bottom / Browse
+  input#search-box.matte(type='search', placeholder='Search')
 #grid
   !=partial('object', grid.reverse())

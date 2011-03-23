@@ -15,9 +15,12 @@ html
     script(type='text/javascript', src='/javascripts/jquery.jsonp.js')
     script(type='text/javascript', src='/javascripts/toolbox.expose.js')
     script(type='text/javascript', src='/javascripts/jquery.easing.js')
+    script(type='text/javascript', src='/javascripts/jquery.xcolor.js')
     script(type='text/javascript', src='/javascripts/jquery.transloadit2.js')
     //script(type='text/javascript', src='/javascripts/date.format.js')
     script(type='text/javascript', src='/javascripts/island.js')
+    script
+      jQuery(function () { Island.go(); });
   body
     !{flashMessages}
     != body

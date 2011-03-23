@@ -1,6 +1,10 @@
 div.comment.matte
   div.comment-title
-    =comment.member.name.first + ' ' + comment.member.name.last
+    span.comment-title-name
+      =comment.member.name.first + ' ' + comment.member.name.last
+    - if (comment.parent)
+      a.comment-title-parent(href=comment.parent.id)
+        =comment.parent.title
   div.comment-body
     p.comment-txt
       =comment.body

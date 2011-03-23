@@ -1,7 +1,7 @@
 div.media-form-wrap
   form#media-form(action='/transloadit', enctype='multipart/form-data', method='POST')
     input(type='hidden', name='params', value=JSON.stringify(tlip))
-    h3.add-media Add new Island media
+    h1.title-left / Add new Island media
     table
       tbody
         tr
@@ -31,5 +31,6 @@ div.media-form-wrap
           td
             input(type='file', name='my_file')
 div.clear
+h1.title-bottom / All Media
 #grid
   !=partial('object', grid.reverse())

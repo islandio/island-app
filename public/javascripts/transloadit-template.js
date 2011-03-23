@@ -23,6 +23,15 @@
       , "width": 232
       , "resize_strategy": "fit"
     },
+    "video_placeholder": {
+        "use": ":original"
+      , "robot": "/video/thumbs"
+      , "count": 1
+      , "width": 640
+      , "resize_strategy": "fit"
+      , "watermark_url": "http://s3.amazonaws.com/core.islandio/water/is-water-solid-dots-sm.png"
+      , "watermark_position": "bottom-right"
+    },
     "video_poster": {
         "use": ":original"
       , "robot": "/video/thumbs"
@@ -54,7 +63,7 @@
       , "path": "${unique_prefix}.${file.ext}"
     },
     "video_export": {
-        "use": ["video_thumbs", "video_poster", "video_encode"]
+        "use": ["video_thumbs", "video_placeholder", "video_poster", "video_encode"]
       , "robot": "/s3/store"
       , "key": "AKIAJE7B76FRJNGSKWCA"
       , "secret": "kdL8k9yEoQXCt39z1TU/Z+TOlctcZ2Coxs0BRAjm"

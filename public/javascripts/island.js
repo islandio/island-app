@@ -13,20 +13,20 @@ Island = (function ($) {
   var pulseCnt = 0
 
     , pulse = function (a, b) {
-      	if (pulseCnt % 2 == 0) 
-      	  $(b).fadeTo(500, 0.75);
-      	else 
-      	  $(b).fadeTo(500, 1);
-      	pulseCnt += 1;
+        if (pulseCnt % 2 == 0) 
+          $(b).fadeTo(500, 0.75);
+        else 
+          $(b).fadeTo(500, 1);
+        pulseCnt += 1;
       }
     
     , cancelPulse = function () {
-      	clearInterval(pulseTimer);
-      	clearTimeout(pulseCancel);
-      	$("#logo-a").show();
-      	$("#logo-b").hide();
+        clearInterval(pulseTimer);
+        clearTimeout(pulseCancel);
+        $("#logo-a").show();
+        $("#logo-b").hide();
       }
-    
+
   /**
    * tweets
    */
@@ -54,14 +54,164 @@ Island = (function ($) {
           twit();
         }
       }
-    
+
+  /**
+   * handle relative time
+   */
+
+    , relativeTime = function (ts) {
+        var parsed_date = Date.parse(ts)
+          , relative_to = (arguments.length > 1) ? arguments[1] : new Date()
+          , delta = parseInt((relative_to.getTime() - parsed_date) / 1000)
+        ;
+        if (delta < 5)
+          return 'just now';
+        else if (delta < 15)
+          return 'just a moment ago';
+        else if (delta < 30)
+          return 'just a few moments ago';
+        else if (delta < 60) 
+          return 'less than a minute ago';
+        else if (delta < 120) 
+          return 'about a minute ago';
+        else if (delta < (45 * 60)) 
+          return (parseInt(delta / 60)).toString() + ' minutes ago';
+        else if (delta < (90 * 60)) 
+          return 'about an hour ago';
+        else if (delta < (24 * 60 * 60)) 
+          return 'about ' + (parseInt(delta / 3600)).toString() + ' hours ago';
+        else if (delta < (2 * 24 * 60 * 60)) 
+          return 'about a day ago';
+        else if (delta < (10 * 24 * 60 * 60))
+          return (parseInt(delta / 86400)).toString() + ' days ago';
+        else
+          return
+            new Date(ts).toLocaleDateString();
+      }
+      
+    , updateTimes = function () {
+        $('.comment-added').each(function (i) {
+          var time = $(this);
+          if (!time.data('ts'))
+            time.data('ts', time.text());
+          time.text(relativeTime(time.data('ts')));
+        });
+      }
+
+  /**
+   * header control
+   */    
+    // , overHeader = false
+    // , shrinkHeader = function() {
+    //     if (!$('#menu').is(":visible"))
+    //        return;
+    //      $('#twitter').css({ visibility: 'hidden' });
+    //      $('#menu, #twitter').hide();
+    //      $('#header').css({ width: 363 });
+    //   }
+    //   
+    // , expandHeader = function() {
+    //     if ($('#menu').is(":visible"))
+    //        return;
+    //      $('#header').css({ width: 984 });
+    //      $('#menu, #twitter').show();
+    //      $('#twitter').css({ visibility: 'visible' });
+    //   }
+
+  /**
+   * select hearts for rating
+   */
+
+    , rater
+    , hearts
+    , selectHearts = function (x, h) {
+        if (!h) {
+          var h;
+          if (x < 10) h = 0;
+          else if (x < 30) h = 1;
+          else if (x < 55) h = 2;
+          else if (x < 80) h = 3;
+          else if (x < 105) h = 4;
+          else h = 5;
+        }
+        $(hearts.children()).hide();
+        for (var i=0; i < h; i++)
+          $(hearts.children()[i]).show();
+        return h;
+      }
+
+  /**
+   * search media
+   */
+
+    , search = function (by, val, fn) {
+        $('#grid').empty();
+        var data = {
+              by  : by
+            , val : val
+          };
+        $.get('/search/' + val + '.json', data, fn);
+      }
+
+  /**
+   * trending media
+   */
+
+    , trending
+    , Trending = function (el) {
+        var scroller
+          , holder
+          , holderHeight
+          , kids
+          , top = 0
+          , newKids = []
+        ;
+        
+        return {
+            init: function() {
+              holder = $(el);
+              this.start();
+            }
+          , start: function() {
+              holderHeight = holder.height();
+              kids = holder.children();
+              $(kids[0]).clone().appendTo(holder);
+              scroller = $.setIntervalObj(this, 40, this.scroll);
+            }
+          , update: function () {
+              clearInterval(scroller);
+              this.start();
+            }
+          , scroll: function () {
+              top -= 4;
+              if (-top >= holderHeight) {
+                top = 0;
+                if (newKids.length != 0) {
+                  holder.empty();
+                  for (var i=0; i < newKids.length; i++)
+                    newKids[i].appendTo(holder);
+                  this.update();
+                }
+              }
+              holder.css({ marginTop: top });
+            }
+          , receive: function (trends) {
+              newKids = [];
+              for (var i=0; i < trends.length; i++)
+                newKids.push($(trends[i]));
+            }
+        };
+      }
+
   /**
    * media grid
    */
+
     , grid
     , Grid = function (el) {
         // grid vars
-        var NUM_GRID = 50
+        var wrap = $(el)
+          , NUM_GRID = 50
           , NUM_FLOW = 25
           , GRID_OBJ_FREQ = { '482px': 1, '231px': '*' }
           , COL_WIDTH = 231
@@ -77,53 +227,53 @@ Island = (function ($) {
         function num_cols() {
           return Math.min(Math.max(
               MIN_COLS
-            , (parseInt(el.innerWidth()) + COL_GAP_X) / (COL_WIDTH + COL_GAP_X)
+            , (parseInt(wrap.innerWidth()) + COL_GAP_X) / (COL_WIDTH + COL_GAP_X)
           )
           , MAX_COLS);
         }
-        // methods 
+        
         return {
           collage: function () {
-          
+            
             // hide hovers
             $('.grid-obj-hover').hide();
-          
+            
             // calc num cols once
             var nc = num_cols();
-          
+            
             // clear column height array
             for (var x = 0; x < nc; x++) 
               col_heights[x] = 0;
-      
+            
             // loop over each object in grid
             $('.each-grid-obj').each(function (i) {
-        
+            
               var self = $(this)
                 , obj_col = 0
                 , obj_y = 0
-          
+              
                 // determine how many columns the object will span
                 , obj_span = Math.max(Math.round(self.outerWidth() / COL_WIDTH), 1)
               ;
-        
+              
               // determine which column to place the object in
               for (var x = 0; x < nc - (obj_span - 1); x++) 
                 obj_col = col_heights[x] < col_heights[obj_col] ? x : obj_col;
-        
+              
               // determine the object's y position
               for (x = 0; x < obj_span; x++) 
                 obj_y = Math.max(obj_y, col_heights[obj_col + x]);
-        
+              
               // determine the new height for the effected columns
               for (x = 0; x < obj_span; x++) 
                 col_heights[obj_col + x] = parseInt(self.outerHeight()) + COL_GAP_Y + obj_y;
-        
+              
               // set the object's css position
-              self.css("left", obj_col * (COL_WIDTH + COL_GAP_X) + x_off).css('top', obj_y + y_off);
+              self.css('left', obj_col * (COL_WIDTH + COL_GAP_X) + x_off).css('top', obj_y + y_off);
             });
-      
+            
             // add the column gap to the bottom of the collage
-            el.height(Math.max.apply(Math, col_heights) - COL_GAP_Y + 'px');
+            wrap.height(Math.max.apply(Math, col_heights) - COL_GAP_Y + 'px');
           }
         }
       }
@@ -131,61 +281,60 @@ Island = (function ($) {
         $(this).fadeOut();
       }
     , log = function (m) {
-        for (var e=0; e < serv.message.length; ++e)
-          console.log(m[e]);
+        console.log(m);
       }
   ;
-  
+
 
   return {
     
     /**
      * setup doc
      */
-    
+      
       go: function () {
       
         // extras
-      	if (!window.console) window.console = { log: function () {} };
-      	String.prototype.trim = function() { return this.replace(/^\s+|\s+$/g,""); }
-      	String.prototype.ltrim = function() { return this.replace(/^\s+/,""); }
-      	String.prototype.rtrim = function() { return this.replace(/\s+$/,""); }
+        if (!window.console) window.console = { log: function () {} };
+        String.prototype.trim = function() { return this.replace(/^\s+|\s+$/g,""); }
+        String.prototype.ltrim = function() { return this.replace(/^\s+/,""); }
+        String.prototype.rtrim = function() { return this.replace(/\s+$/,""); }
 
 
         // scope aware timeouts
         // TODO: replace with native
         $.setTimeoutObj = function (o, t, f, a) {
-      	  return setTimeout(function () { f.apply(o, a); }, t);
+          return setTimeout(function () { f.apply(o, a); }, t);
         }
         $.setIntervalObj = function (o, t, f, a) {
-      	  return setInterval(function () { f.apply(o, a); }, t); 
+          return setInterval(function () { f.apply(o, a); }, t); 
         }
 
 
         // random generation
         $.fisherYates = function (a) {
-      	  var i = a.length;
-      	  if (i==0 ) return false;
-      	  while (--i) {
-      	    var j = Math.floor(Math.random() * (i + 1));
-      	    var tempi = a[i];
-      	    var tempj = a[j];
-      	    a[i] = tempj;
-      	    a[j] = tempi;
-      	  }
+          var i = a.length;
+          if (i==0 ) return false;
+          while (--i) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var tempi = a[i];
+            var tempj = a[j];
+            a[i] = tempj;
+            a[j] = tempi;
+          }
         }
 
 
         // determine of object is empty (non-enumerable)
         $.isEmpty = function (o) {
-        	for (var p in o)
-        		if (o.hasOwnProperty(p))
-        			return false;
-        	return true;
+          for (var p in o)
+            if (o.hasOwnProperty(p))
+              return false;
+          return true;
         }
 
 
-      	// map form data to JSON
+        // map form data to JSON
         $.fn.serializeObject = function () {
           var o = {}
             , a = this.serializeArray()
@@ -202,7 +351,7 @@ Island = (function ($) {
         };
 
 
-      	// get database ID
+        // get database ID
         $.fn.itemID = function () {
           try {
             var items = $(this).attr('id').split('-');
@@ -225,27 +374,42 @@ Island = (function ($) {
           data._method = 'GET';
           $.post(url, data, success, 'json');
         };
-        
-  
-        // hide server message in load  
+
+
+        // hide server message in load
         setTimeout(function() {
           $('.flash').each(hideFlashMessages);
         }, 5000);
         $('.flash').click(hideFlashMessages);
-        
 
-      	// init media grid
-      	grid = new Grid($('#grid'));
+
+        // init trending
+        trending = new Trending('#trend');
+        trending.init();
+
+
+        // fit comments
+        recentComments = $('#recent-comments');
+        while (recentComments.height() > 360)
+          $(recentComments.children()[recentComments.children().length - 1]).remove();
+
+
+        // get relative comment times
+        $.setIntervalObj(this, 5000, updateTimes); updateTimes();
+
+
+        // init media grid
+        grid = new Grid('#grid');
         grid.collage();
 
 
         // init mediaelement
-        //new MediaElementPlayer('video',{mode:'shim'});
-        $('video, audio').mediaelementplayer();
+        if ($('video').length > 0)
+          new MediaElementPlayer('video', { mode:'shim' });
 
 
-      	// landing page login - register
-      	// TODO: reduce DOM calls
+        // landing page login - register
+        // TODO: reduce DOM calls
         $('#goto-register-form a').live('click', function () {
           $('#login-form').hide();
           $('#register-form').fadeIn('fast');
@@ -260,57 +424,55 @@ Island = (function ($) {
           $('#goto-register-form').show();
           $('input[name="member[email]"]').focus();
         });
-      	$('input[name="member[email]"]').focus();
+        $('input[name="member[email]"]').focus();
 
 
-      	// logout of island
+        // logout of island
         // TODO: replace without alert
         $('#nav-logout').live('click', function (e) {
           e.preventDefault();
-          if (confirm('Are you sure you want to log out?')) {
-            var element = $(this)
-              , form = $('<form></form>')
-            ;
-            form
-              .attr({
-                  method: 'POST'
-                , action: '/sessions'
-              })
-              .hide()
-              .append('<input type="hidden" />')
-              .find('input')
-              .attr({
-                  'name': '_method'
-                , 'value': 'delete'
-              })
-              .end()
-              .submit();
-          }
+          var element = $(this)
+            , form = $('<form></form>')
+          ;
+          form
+            .attr({
+                method: 'POST'
+              , action: '/sessions'
+            })
+            .hide()
+            .append('<input type="hidden" />')
+            .find('input')
+            .attr({
+                'name': '_method'
+              , 'value': 'delete'
+            })
+            .end()
+            .submit();
         });
 
 
-      	// pulse logo on mouseover
-      	var logoA = $('#logo-a')
-      	  , logoB = $('#logo-b')
-      	  , logos = [ logoA, logoB ]
-      	;
-      	$('#logo').bind('mouseover', function () {
-      		logoA.hide();
-      		logoB.show();
-      		pulse(logos[0], logos[1]);
-      		pulseTimer = $.setIntervalObj(this, 500, pulse, logos);
-      		pulseCancel = $.setTimeoutObj(this, 5000, cancelPulse);
-      	}).bind('mouseout', function () {
-      		cancelPulse();
-      	});
+        // pulse logo on mouseover
+        var logoA = $('#logo-a')
+          , logoB = $('#logo-b')
+          , logos = [ logoA, logoB ]
+        ;
+        $('#logo').bind('mouseover', function () {
+          logoA.hide();
+          logoB.show();
+          pulse(logos[0], logos[1]);
+          pulseTimer = $.setIntervalObj(this, 500, pulse, logos);
+          pulseCancel = $.setTimeoutObj(this, 5000, cancelPulse);
+        }).bind('mouseout', function () {
+          cancelPulse();
+        });
 
 
-      	// tweets
-      	twitterNames = $('#twitter-names').text().split(',');
-      	for (var i=0; i < twitterNames.length; ++i)
-      	  if (twitterNames[i] != 'undefined' && twitterNames[i] != '')
-      	    twitters.push(twitterNames[i]);
-      	twap = $('#twitter');
+        // tweets
+        twitterNames = $('#twitter-names').text().split(',');
+        for (var i=0; i < twitterNames.length; i++)
+          if (twitterNames[i] != 'undefined' && twitterNames[i] != '')
+            twitters.push(twitterNames[i]);
+        twap = $('#twitter');
         for (var tt in twitters)
           $.tweet({
               username: twitters[tt]
@@ -318,19 +480,31 @@ Island = (function ($) {
           });
 
 
-      	// reduce header on scroll
-      	// TODO: throttle this shit
-      	$(window).scroll(function () {
-      		if ($(this).scrollTop() > 0) {
-      			$('#feeds').css({ opacity: 0 });
-      			$('#menu, #feeds, .members-bar').hide();
-      			$('#header').css({ width: 363 });
-      		} else if ($(this).scrollTop() == 0) {
-      			$('#header').css({ width: 984 });
-      			$('#menu, #feeds, .members-bar').show();
-      			$('#feeds').css({ opacity:1 });
-      		}
-      	});
+        // reduce header on scroll
+        // TODO: throttle this shit
+        // $(window).scroll(function () {
+        //   if ($(this).scrollTop() > 100) {
+        //     if (!overHeader)
+        //       shrinkHeader();
+        //   } else if ($(this).scrollTop() < 100) {
+        //     if (!overHeader)
+        //       expandHeader();
+        //   }
+        // });
+        // 
+        // $('#header').bind('mouseenter', function () {
+        //   overHeader = true;
+        //   if ($(window).scrollTop() > 100) {
+        //     expandHeader();
+        //     $(this).animate({ backgroundColor: 'rgba(255, 255, 255, 0.95)' }, 500);
+        //   }
+        // }).bind('mouseleave', function () {
+        //   overHeader = false;
+        //   if ($(window).scrollTop() > 100) {
+        //     shrinkHeader();
+        //     $(this).animate({ backgroundColor: 'rgba(255, 255, 255, 0.5)' }, 500);
+        //   }
+        // });
 
 
         // init autogrow text
@@ -346,18 +520,34 @@ Island = (function ($) {
         });
 
 
+        // search box
+        $('#search-box').bind('keyup search', function (e) {
+          var txt = $(this).val().trim();
+          $('#grid').empty();
+          search(['meta.tags', 'terms'], txt, function (serv) {
+            if (serv.status == 'success') {
+              var objects = serv.data.objects;
+              for (var i=0; i < objects.length; i++)
+                $(objects[i]).appendTo('#grid');
+              grid.collage();
+            } else
+              log(serv.message);
+          });
+        });
+
+
         // filter grid by tag
-        // TODO: fix! not working...
         $('.grid-obj-tag').live('click', function () {
-          var tag = $(this).text()
-            , params = { 
-                d: {
-                    by  : 'meta.tags'
-                  , val : tag
-                }
-          };
-          $.get('/media/' + tag + '.json', params, function (data) {
-            console.log(data);
+          var tag = $(this).text();
+          $('#search-box').val('tag:' + tag);
+          search(['meta.tags'], tag, function (serv) {
+            if (serv.status == 'success') {
+              var objects = serv.data.objects;
+              for (var i=0; i < objects.length; i++)
+                $(objects[i]).appendTo('#grid');
+              grid.collage();
+            } else
+              log(serv.message);
           });
         });
 
@@ -367,22 +557,22 @@ Island = (function ($) {
           $(this).hide();
           $(this.nextElementSibling).show();
           $(this.nextElementSibling.firstElementChild).focus();
-      	});
-      	$('.commentor-input').live('blur', function () {
+        });
+        $('.commentor-input').live('blur', function () {
           if (this.value == '') {
             $(this.parentNode).hide();
             $(this.parentNode.previousElementSibling).show();
           }
-      	});
+        });
 
 
-      	// add comment on media
-      	$('.add-comment').live('click', function () {
-      	  var comment = $(this.previousElementSibling).val().trim();
-      	  if (comment == '') 
-      	    return false;
-      	  $(this.previousElementSibling).val('');
-      	  $(this.parentNode).hide();
+        // add comment on media
+        $('.add-comment').live('click', function () {
+          var comment = $(this.previousElementSibling).val().trim();
+          if (comment == '') 
+            return false;
+          $(this.previousElementSibling).val('');
+          $(this.parentNode).hide();
           $(this.parentNode.previousElementSibling).show();
           var pid = $(this).itemID()
             , data = {
@@ -390,12 +580,57 @@ Island = (function ($) {
               , pid     : pid
             };
           $.put('/comment/' + pid + '.json', data, function (serv) {
-            if (serv.status == 'error')
-              alert(serv.message);
-            else {
+            if (serv.status == 'success')
               // update everyone
               now.distributeComment(serv.data);
-            }
+            else
+              log(serv.message);
+          });
+        });
+
+
+        // show like heart
+        $('.obj-holder').live('mouseenter', function () {
+          $('.hearts', this).show();
+        }).live('mouseleave', function () {
+          $('.hearts', this).hide();
+        });
+
+
+        // no dragging hearts
+        $('.hearts-wrap img, .hearts-back img').live('mousedown', function (e) {
+          e.preventDefault();
+        });
+
+
+        // rate media with hearts
+        var currentHearts = parseInt($('input[name="hearts"]').val())
+          , x = 0
+          , h = 0
+        ;
+        rater = $('.hearts-back');
+        hearts = $('.hearts-wrap');
+        if (currentHearts)
+          selectHearts(null, currentHearts);
+        rater.live('mouseenter', function (e) {
+          
+        }).live('mouseleave', function (e) {
+          selectHearts(null, currentHearts);
+        }).live('mousemove', function (e) {
+          x = e.pageX - rater.offset().left;
+          h = selectHearts(x);
+        }).live('click', function (e) {
+          currentHearts = h;
+          var id = rater.itemID()
+            , data = {
+                id  : id
+              , hearts : h
+            };
+          $.put('/hearts/' + id + '.json', data, function (serv) {
+            if (serv.status == 'success') {
+              // do something ?
+            } else
+              log(serv.message);
           });
         });
 
@@ -473,29 +708,28 @@ Island = (function ($) {
               data.params = JSON.parse(data.params);
               data.assembly = assembly;
               $.put('/insert', data, function (serv) {
-                if (serv.status == 'error')
-                  alert(serv.message);
-                else {
+                if (serv.status == 'success') {
                   // clear form
                   mediaTitle.val('');
                   mediaBody.val('');
                   mediaTags.val('');
                   mediaFile = $('input[name="my_file"]');
                   // update everyone
-                  now.distributeMedia(serv.data.id);
-                }
+                  now.distributeObject(serv.data.id);
+                } else
+                  log(serv.message);
               });
             }
         });
       
       }
-      
+
   /**
    * Push a media object to all clients.
    */
-   
-    , receiveMedia: function (serv) {
-        if (serv.status != 'error') {
+
+    , receiveObject: function (serv) {
+        if (serv.status == 'success') {
           var obj = $(serv.data.obj);
           obj.prependTo('#grid').css({ opacity: 0 });
           grid.collage();
@@ -503,20 +737,47 @@ Island = (function ($) {
         } else
           log(serv.message);
       }
-      
+
   /**
    * Push a comment to all clients.
    */
-   
+
     , receiveComment: function (serv) {
-        if (serv.status != 'error') {
+        if (serv.status == 'success') {
           var com = $(serv.data.com)
-            , parent = '#coms-' + serv.data.pid
+            , rec = $(serv.data.rec)
+            , comHolder = $('#coms-' + serv.data.pid)
+            , recHolder = $('#recent-comments')
           ;
-          setTimeout(function () {
-            com.hide().css({ opacity: 0 }).prependTo(parent).show(250).animate({ opacity: 1 }, 500);
-          }, 100);
+          if (recHolder.length == 0)
+            setTimeout(function () {
+              com.hide().css({ opacity: 0 }).prependTo(comHolder).show(250).animate({ opacity: 1 }, 500);
+              var time = $('.comment-added', com);
+              time.data('ts', time.text());
+              time.text(relativeTime(time.data('ts')));
+            }, 100);
+          else
+            rec.hide().css({ opacity: 0 }).appendTo(recHolder);
+            var time = $('.comment-added', rec);
+            time.data('ts', time.text());
+            time.text(relativeTime(time.data('ts')));
+            while (recHolder.height() + rec.height() + 5 > 360)
+              $(recHolder.children()[recHolder.children().length - 2]).remove();
+            setTimeout(function () {
+              rec.prependTo(recHolder).show(250).animate({ opacity: 1 }, 500);
+            }, 100);
         } else
+          log(serv.message);
+      }
+
+  /**
+   * Push new trends to all clients.
+   */
+
+    , receiveTrends: function (serv) {
+        if (serv.status == 'success')
+          trending.receive(serv.data.trends);
+        else
           log(serv.message);
       }
   }
@@ -528,14 +789,11 @@ Island = (function ($) {
  * Now.JS handlers
  */
 
-now.receiveMedia = Island.receiveMedia;
+now.receiveObject = Island.receiveObject;
 now.receiveComment = Island.receiveComment;
+now.receiveTrends = Island.receiveTrends;
 
 
-/**
- * ready to go
- */
- 
-jQuery(function() {
-  Island.go();
-});
+
+
+

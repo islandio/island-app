@@ -1,0 +1,12 @@
+div.comment.matte
+  div.comment-title
+    span.comment-title-name
+      =romment.member.name.first + ' ' + romment.member.name.last
+    - if (romment.parent)
+      a.comment-title-parent(href=romment.parent.id)
+        =romment.parent.title
+  div.comment-body
+    p.comment-txt
+      =romment.body
+    h3.comment-added
+      =romment.added

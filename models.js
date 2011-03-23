@@ -10,14 +10,28 @@ function defineModels(mongoose, fn) {
 
 
   /**
-   * Transform text into a URL slug: spaces turned into dashes, remove non alnum
+   * Make a random string
+   * @param int l
+   */
+
+  function makeKey(l) {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for( var i=0; i < l; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    return text;
+  }
+
+
+
+  /**
+   * Transform text array of searchable terms
    * @param string text
    */
-  function slugify(text) {
-  	text = text.replace(/[^-a-zA-Z0-9,&\s]+/ig, '');
-  	text = text.replace(/-/gi, "_");
-  	text = text.replace(/\s/gi, "-");
-  	return text.toLowerCase();
+  function makeTerms(text) {
+    text = text.replace(/[~|!|@|#|$|%|^|&|*|(|)|_|+|`|-|=|[|{|;|'|:|"|\/|\\|?|>|.|<|,|}|]|]+/gi, "");
+    text = text.replace(/\s{2,}/g, ' ');
+    return text.toLowerCase().trim().split(' ');
   }
 
 
@@ -34,13 +48,12 @@ function defineModels(mongoose, fn) {
     , hashed_password   : String
     , salt              : String
     , name              : {
-                    first   : String
-                  , last    : String
-                }
+          first         : String
+        , last          : String
+      }
     , twitter           : String
     , role              : { type: String, enum: ['contributor', 'guest'], default: 'guest' }
     , joined            : { type: Date, default: Date.now }
-    , slug              : { type: String, index: { unique: true } }
   });
 
   Member.index({ 'name.last': 1, 'name.first': 1 });
@@ -86,8 +99,6 @@ function defineModels(mongoose, fn) {
       if (!validatePresenceOf(this.password)) {
         next(new Error('Invalid password'));
       } else {
-        // Automatically create the slugs
-        this.slug = slugify(this.name.first + ' ' + this.name.last);
         next();
       }
     } else {
@@ -102,13 +113,32 @@ function defineModels(mongoose, fn) {
     */    
   var Comment = new Schema({
       body      : String
-    , comments  : [Comment]
-    , added     : { type: Date, default: Date.now }
-    , meta      : {
-            likes     : { type: Number, default: 0 }
-        }
-    , member_id : ObjectId
+    , comments  : [ObjectId]
+    , added     : { type: Date, default: Date.now, index: true }
+    , likes     : { type: Number, default: 0 }
+    , member_id : { type: ObjectId, index: true }
+    , parent_id : ObjectId
   });
+
+  Comment.virtual('id')
+    .get(function() {
+      return this._id.toHexString();
+    });
+
+
+
+  /**
+    * Model: Rating
+    */    
+  var Rating = new Schema({
+      member_id : ObjectId
+    , hearts    : { type: Number, default: 0 }
+  });
+
+  Rating.virtual('mid')
+    .get(function() {
+      return this.member_id.toHexString();
+    });
 
 
 
@@ -116,27 +146,43 @@ function defineModels(mongoose, fn) {
     * Model: Media
     */
   Media = new Schema({
-      title       : String
+      key         : { type: String, index: true }
+    , title       : String
+    , terms       : { type: Array, index: true }
     , body        : String
-    , comments    : [Comment]
+    , comments    : [ObjectId]
     , type        : { type: String, index: true }
     , added       : { type: Date, default: Date.now }
     , meta        : {
-              featured  : Boolean
-            , tags      : { type: Array, index: true }  
-            , hits      : Number
-            , likes     : { type: Number, default: 0 }
-          }
+          tags    : { type: Array, index: true }
+        , hits    : { type: Number, default: 0 }
+        , hearts   : { type: Number, default: 0 }
+        , ratings : [Rating]
+      }
     , member_id   : ObjectId
     , attached    : {}
   });
 
   Media.pre('save', function(next) {
-    // parse the tags
-    var tags = this.meta.tags[0].trim().split(',');
-    for (t in tags)
-      tags[t] = tags[t].trim().toLowerCase();
-    this.meta.tags = tags;
+    if (this.isNew) {
+      // make key
+      this.key = makeKey(8);
+      // parse title for search terms
+      this.terms = makeTerms(this.title);
+      // parse the tags
+      var tags = this.meta.tags[0].trim().split(',');
+      for (var i=0; i < tags.length; ++i)
+        tags[i] = tags[i].trim().toLowerCase();
+      this.meta.tags = tags;
+    }
+    // count hearts
+    if (this.meta.ratings) {
+      var hearts = 0;
+      for (var i=0; i < this.meta.ratings.length; ++i) {
+        hearts += this.meta.ratings[i].hearts;
+      }
+      this.meta.hearts = hearts;
+    }
     next();
   });
 
@@ -185,6 +231,7 @@ function defineModels(mongoose, fn) {
 
   mongoose.model('Member', Member);
   mongoose.model('Comment', Comment);
+  mongoose.model('Rating', Rating);
   mongoose.model('Media', Media);
   mongoose.model('LoginToken', LoginToken);
 
