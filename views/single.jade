@@ -1,5 +1,5 @@
 input(type='hidden', name='hearts', value=hearts)
-div.left(style='margin: 0 0 40px')
+div.single-left
   div.obj-title
     span.slash /
     h1.title-left
@@ -52,8 +52,8 @@ div.left(style='margin: 0 0 40px')
       //img.social-icons(src='/graphics/sn/b/tumblr_16.png', alt='/graphics/sn/tumblr_16.png', title='Share', style='left:126px;')
       //img.social-icons(src='/graphics/sn/b/email_16.png', alt='/graphics/sn/email_16.png', title='Email', style='left:147px;')
       //img.social-icons(src='/graphics/sn/b/rss_16.png', alt='/graphics/sn/rss_16.png', title='Follow', style='left:168px;')
-div(style='margin-left: 670px')
-  div(style='padding-top: 17px')
+div.single-right
+  div(style='padding-top: 4px')
     img(src='/graphics/is-bubble.png', alt='is-bubble', align='top')
   textarea.commentor-input-dummy.matte(name='Write a comment...') Write a comment...
   div.commentor
@@ -64,9 +64,9 @@ div(style='margin-left: 670px')
         =cm.name.first + ' ' + cm.name.last
   div.obj-comments(id='coms-' + media.id)
     !=partial('comment', coms )
-div.clear
-#search
-  h1.title-bottom / Browse
-  input#search-box.matte(type='search', placeholder='Search')
-#grid
-  !=partial('object', grid.reverse())
+div.grid-wrap
+  #search
+    h1.title-bottom / Browse
+    input#search-box.matte(type='search', placeholder='Search')
+  #grid.adjustable-grid
+    !=partial('object', grid.reverse())

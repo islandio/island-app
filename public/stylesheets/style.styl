@@ -6,6 +6,9 @@ orange = #d04c38
 blue = #4bb8d7
 pink = #d12b83
 
+lightgreen = #eff8d7
+lightorange = #f6dbd7
+
 black = #1a1a1a
 darkgray = #404040
 gray = #808080
@@ -117,10 +120,10 @@ a, button
   text-decoration none
 
 a:hover, button:hover
-  background rgba(75, 184, 215, 0.5)
+  background rgba(75, 184, 215, 0.25)
 
 a:active, button:active
-  background rgba(75, 184, 215, 0.25)
+  background rgba(75, 184, 215, 0.1)
 
 a:focus, button:focus
   outline none
@@ -181,7 +184,7 @@ h2.message
   color #c2c2c2
 
 h2.error
-  color red
+  color orange
 
 h2.welcome
   color black
@@ -192,7 +195,7 @@ h3.obj-details
   text-transform uppercase
   color lightgray
   font-size 8px
-  padding 20px 0 5px
+  padding 0 0 5px
   font-weight normal
 
 span.slash
@@ -251,7 +254,7 @@ td
   font-size 9px
   color gray
   line-height 12px
-  max-width 384px
+  max-width 300px
 
 span.welcome-member
   display block
@@ -276,6 +279,44 @@ span.welcome-member
   margin 10px 0
   padding 5px
   
+.landing-reports
+  position relative
+
+#landing-message, #landing-success, #landing-error
+  position absolute
+  top -143px
+  left 0
+  display none
+
+p.landing-report
+  margin 20px 0 0 0
+  padding 10px
+  max-width 350px
+  font-style italic
+  color gray
+  background-color mattegray
+
+h1.landing-report-title
+  font-family title
+  font-size 24px
+
+#landing-message h1
+  color blue
+
+#landing-success h1
+  color green
+
+#landing-error h1
+  color orange
+
+#landing-loader
+  position relative
+  left 0
+  margin 20px 0 0 0
+  
+a.resend-conf
+  font-weight bold
+
 .landing-logo
   margin 200px 500px 0 0
   
@@ -288,7 +329,7 @@ span.welcome-member
 .landing-form-controls
   white-space nowrap
   text-align right
-  
+
 .landing-archipelago
   float right
   margin 5px 25px 0 0
@@ -308,15 +349,14 @@ span.welcome-member
 #header-left
   float left
   height 82px
-  background-color backgray
-  //position fixed
-  //z-index 1001
-  //top 0
   width 363px
-  background rgba(255, 255, 255, 0.5)
   border-bottom 5px solid black
   border-right 5px solid black
   border-radius 0 0 83px 0
+
+#header-left:hover
+  border-bottom 5px solid pink
+  border-right 5px solid pink
 
 #logo
   width 300px
@@ -327,12 +367,6 @@ span.welcome-member
 #header-right
   margin 0 0 0 388px
   position relative
-
-#loading
-  position fixed
-  left 15px
-  top 15px
-  display none
 
 #menu
   padding 12px 0 0 0
@@ -369,26 +403,20 @@ span.welcome-member
   border-left 5px solid black
   border-radius 23px 0 0 0
 
-#logo img
-  //position absolute
-  //left 0
-  
 .is-highlight, .is-error
   position fixed
-  right 20px
-  top 20px
+  left 20px
+  bottom 20px
   padding 10px
   border-radius 5px
-  font-family monospace
+  color gray
   font-weight bold
 
 .is-highlight
-  color blue
-  border 1px dotted blue
+  background-color mattegray
   
 .is-error
-  color red
-  border 1px dotted red
+  background-color lightorange
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
@@ -455,14 +483,16 @@ input.is-button[type=submit]:active
   background-image -moz-linear-gradient(center bottom, rgb(255,255,255) 0%, rgb(236,236,236) 100%)
   background-image -webkit-gradient(linear, 0% 100%, 0% 0%, from(rgb(255,255,255)), to(rgb(236,236,236)))
 
-  
 input.is-button-alert[type=submit]
-  color red !important
-  border 1px solid red !important
-  
+  color orange !important
+  border 1px solid orange !important
+
+.is-input-alert
+  border 1px solid orange !important
+
 .button-mask-wrap
   position relative
-  
+
 #add-media-mask
   position absolute
   right 0
@@ -511,7 +541,7 @@ input.is-button-alert[type=submit]
 
 .trending-media
   height 360px
-  margin 10px 0 40px 0
+  margin 10px 0 0
   overflow hidden
 
 .trending-media-images
@@ -527,7 +557,7 @@ a.trending, a.trending:hover, a.trending:focus
   margin 0 0 0 670px
 
 #recent-comments
-  margin 8px 0 0 0
+  margin 21px 0 0 0
 
 h1.title-left
   display inline
@@ -542,7 +572,7 @@ h1.title-right
   font-weight normal
   line-height normal
   color black
-  padding 23px 0 0 0
+  padding 10px 0 0 0
   font-family title
   
 h1.title-bottom
@@ -557,6 +587,9 @@ h1.title-sub
   font-size 9px
   padding 0 0 0 22px
   line-height 9px
+
+#search
+  width 640px
 
 #search-box
   -moz-appearance none
@@ -578,8 +611,22 @@ h1.title-sub
   background none
   border 1px solid darkgray
 
+//::-webkit-input-placeholder
+
+
 #grid
   position relative
+  width 984px
+
+.single-left
+  float left
+  margin 0 0 40px
+
+.single-right
+  margin 0 0 0 670px
+
+.grid-wrap
+  position absolute
 
 .obj-holder
   position relative
@@ -621,7 +668,7 @@ img.heart-img
 
 .commentor-input, .commentor-input-dummy
   width 304px
-  margin 11px 0 0 0
+  margin 24px 0 0 0
   padding 4px
 
 .commentor-input
@@ -684,14 +731,14 @@ img.heart-img
   left -15px
 
 .comment-title-parent:hover
-  color backgray
-
+  color black
+  background-color backgray
 
 .comment-body
   padding 5px 40px 5px 10px
 
 .comment-txt
-  padding 0 0 2px 0
+  padding 5px 0
 
 .comment-added
   color lightgray

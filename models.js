@@ -1,7 +1,10 @@
 var crypto = require('crypto')
-  , Media
   , Member
-  , LoginToken;
+  , Comment
+  , Rating
+  , Media
+  , LoginToken
+;
 
 function defineModels(mongoose, fn) {
   var Schema = mongoose.Schema
@@ -54,6 +57,10 @@ function defineModels(mongoose, fn) {
     , twitter           : String
     , role              : { type: String, enum: ['contributor', 'guest'], default: 'guest' }
     , joined            : { type: Date, default: Date.now }
+    , confirmed         : { type: Boolean, default: false }
+    , meta              : {
+          logins        : { type: Number, default: 0 }
+      }
   });
 
   Member.index({ 'name.last': 1, 'name.first': 1 });

@@ -13,18 +13,22 @@ function FlashMessage(type, messages) {
 }
 
 FlashMessage.prototype = {
-  // get icon() {
-  //   switch (this.type) {
-  //     case 'info':
-  //       return 'is-info';
-  //     case 'error':
-  //       return 'is-alert';
-  //   }
-  // },
-
+  
+  get icon() {
+    switch (this.type) {
+      case 'info':
+        return '&nbsp;<span style="color: #d12b83; font-size: 12px">&hearts;</span>&nbsp;';
+      case 'thanks':
+        return '&nbsp;<span style="color: #d12b83; font-size: 12px">&#10004;</span>&nbsp;';
+      case 'error':
+        return '&nbsp;<span style="color: #d04c38; font-size: 12px">&#10008;</span>&nbsp;';
+    }
+  },
+  
   get stateClass() {
     switch (this.type) {
       case 'info':
+      case 'thanks':
         return 'is-highlight';
       case 'error':
         return 'is-error';
@@ -34,7 +38,7 @@ FlashMessage.prototype = {
   toHTML: function() {
     return '<div class="flash">' +
            '<div class="' + this.stateClass + '">' +
-           '<p>' + this.messages.join(', ') + '</p>' +
+           '<p>' + this.icon + ' ' + this.messages.join(', ') + '</p>' +
            '</div>' +
            '</div>';
   }
@@ -43,11 +47,10 @@ FlashMessage.prototype = {
 exports.dynamicHelpers = {
   flashMessages: function (req, res) {
     var html = '';
-    ['error', 'info'].forEach(function (type) {
+    ['info', 'thanks', 'error'].forEach(function (type) {
       var messages = req.flash(type);
-      if (messages.length > 0) {
+      if (messages.length > 0)
         html += new FlashMessage(type, messages).toHTML();
-      }
     });
     return html;
   }

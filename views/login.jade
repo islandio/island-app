@@ -14,9 +14,9 @@ div.landing-wrap
             tbody
               tr
                 td
-                  label(for='email') Email
+                  label(for='member[email]') Email
                 td
-                  label(for='password') Password
+                  label(for='member[password]') Password
               tr
                 td
                   input(name='member[email]', type='text')
@@ -30,7 +30,7 @@ div.landing-wrap
                   label(for='remember_me') Keep me logged in
                 //td(style='padding-top: 10px')
                 //a(href='', rel='nofollow') Forgot your password?
-        form#register-form(method='post', action='/members')
+        form#register-form
           table
             tbody
               tr
@@ -53,11 +53,11 @@ div.landing-wrap
                   label(for='newmember[email2]') Re-enter Email
                 td
                   input(name='newmember[email2]', type='text')
-              tr
-                td
-                  label(for='newmember[twitter]') Twitter Name
-                td
-                  input(name='newmember[twitter]', type='text')
+              //tr
+              //td
+              //label(for='newmember[twitter]') Twitter Name
+              //td
+              //input(name='newmember[twitter]', type='text')
               tr
                 td
                   label(for='newmember[password]') New Password
@@ -65,7 +65,17 @@ div.landing-wrap
                   input(name='newmember[password]', type='password')
               tr
                 td(colspan='2', align='right')
-                  input#register.is-button(type='submit', title='Register', value='Register')
+                  input#add-member.is-button(type='submit', title='Register', value='Register')
+    div.landing-reports
+      #landing-message
+        h1.landing-report-title / Just a moment...
+        img#landing-loader(src='/graphics/is-landing-loading-pink.gif')
+      #landing-success
+        h1.landing-report-title / Success
+        p.landing-report.matte
+      #landing-error
+        h1.landing-report-title / Failure
+        p.landing-report.matte
     div.landing-logo
       img(src='/graphics/is-logo.png', alt='is-landing')
   div.landing-back
