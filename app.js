@@ -29,12 +29,12 @@ app.helpers(require('./helpers.js').helpers);
 app.dynamicHelpers(require('./helpers.js').dynamicHelpers);
 
 app.configure('development', function () {
-  app.set('db-uri', 'mongodb://localhost/islandio-development');
+  app.set('db-uri', 'mongodb://localhost:27020/islandio-development,mongodb://localhost:27021,mongodb://localhost:27022');
   app.use(express.errorHandler({ dumpExceptions: true }));
 });
 
 app.configure('test', function () {
-  app.set('db-uri', 'mongodb://localhost/islandio-test');
+  app.set('db-uri', 'mongodb://localhost:27020/islandio-test,mongodb://localhost:27021,mongodb://localhost:27022');
 });
 
 app.configure('production', function () {
@@ -47,12 +47,23 @@ app.configure(function () {
   app.use(express.favicon());
   app.use(express.bodyParser());
   app.use(express.cookieParser());
+  // app.use(express.session({
+  //     cookie: { maxAge: 86400 * 1000 } // one day 86400
+  //   , store: new MongoStore(app.set('db-uri'))
+  //   , secret: 'topsecretshit' 
+  // }));
   app.use(express.session({
-      cookie: { maxAge: 86400 * 1000 } // one day 86400
-    , store: new MongoStore(app.set('db-uri'))
-    , secret: 'topsecretshit' 
+    cookie: { maxAge: 86400 * 1000 }, // one day 86400
+    secret: 'topsecretislandshit',
+    store: new MongoStore({
+      host: 'localhost',
+      port: [27020, 27021, 27022],
+      dbname: 'islandio-sessions'
+      //username: 'sander',
+      //password: 'plebeian'
+    })
   }));
-  app.use(express.logger({ format: '\x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms' }))
+  app.use(express.logger({ format: '\x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms' }));
   app.use(express.methodOverride());
   app.use(stylus.middleware({ src: __dirname + '/public' }));
   app.use(express.static(__dirname + '/public'));

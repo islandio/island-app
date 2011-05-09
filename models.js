@@ -55,7 +55,7 @@ function defineModels(mongoose, fn) {
         , last          : String
       }
     , twitter           : String
-    , role              : { type: String, enum: ['contributor', 'guest'], default: 'guest' }
+    , role              : { type: String, enum: ['contributor', 'guest'], default: 'contributor' }
     , joined            : { type: Date, default: Date.now }
     , confirmed         : { type: Boolean, default: false }
     , meta              : {
@@ -66,17 +66,17 @@ function defineModels(mongoose, fn) {
   Member.index({ 'name.last': 1, 'name.first': 1 });
 
   Member.virtual('id')
-    .get(function() {
+    .get(function () {
       return this._id.toHexString();
     });
 
   Member.virtual('password')
-    .set(function(password) {
+    .set(function (password) {
       this._password = password;
       this.salt = this.makeSalt();
       this.hashed_password = this.encryptPassword(password);
     })
-    .get(function() { return this._password; });
+    .get(function () { return this._password; });
 
   Member.virtual('name.full')
     .get(function () {
@@ -89,19 +89,19 @@ function defineModels(mongoose, fn) {
       this.set('name.last', lastName);
     });
 
-  Member.method('authenticate', function(plainText) {
+  Member.method('authenticate', function (plainText) {
     return this.encryptPassword(plainText) === this.hashed_password;
   });
 
-  Member.method('makeSalt', function() {
+  Member.method('makeSalt', function () {
     return Math.round((new Date().valueOf() * Math.random())) + '';
   });
 
-  Member.method('encryptPassword', function(password) {
+  Member.method('encryptPassword', function (password) {
     return crypto.createHmac('sha1', this.salt).update(password).digest('hex');
   });
 
-  Member.pre('save', function(next) {
+  Member.pre('save', function (next) {
     if (this.isNew) {
       if (!validatePresenceOf(this.password)) {
         next(new Error('Invalid password'));
@@ -128,7 +128,7 @@ function defineModels(mongoose, fn) {
   });
 
   Comment.virtual('id')
-    .get(function() {
+    .get(function () {
       return this._id.toHexString();
     });
 
@@ -143,7 +143,7 @@ function defineModels(mongoose, fn) {
   });
 
   Rating.virtual('mid')
-    .get(function() {
+    .get(function () {
       return this.member_id.toHexString();
     });
 
@@ -170,7 +170,7 @@ function defineModels(mongoose, fn) {
     , attached    : {}
   });
 
-  Media.pre('save', function(next) {
+  Media.pre('save', function (next) {
     if (this.isNew) {
       // make key
       this.key = makeKey(8);
@@ -194,7 +194,7 @@ function defineModels(mongoose, fn) {
   });
 
   Media.virtual('id')
-    .get(function() {
+    .get(function () {
       return this._id.toHexString();
     });
 
@@ -211,11 +211,11 @@ function defineModels(mongoose, fn) {
     , token   : { type: String, index: true }
   });
 
-  LoginToken.method('randomToken', function() {
+  LoginToken.method('randomToken', function () {
     return Math.round((new Date().valueOf() * Math.random())) + '';
   });
 
-  LoginToken.pre('save', function(next) {
+  LoginToken.pre('save', function (next) {
     // Automatically create the tokens
     this.token = this.randomToken();
 
@@ -226,12 +226,12 @@ function defineModels(mongoose, fn) {
   });
 
   LoginToken.virtual('id')
-    .get(function() {
+    .get(function () {
       return this._id.toHexString();
     });
 
   LoginToken.virtual('cookieValue')
-    .get(function() {
+    .get(function () {
       return JSON.stringify({ email: this.email, token: this.token, series: this.series });
     });
 
