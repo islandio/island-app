@@ -30,15 +30,22 @@ app.dynamicHelpers(require('./helpers.js').dynamicHelpers);
 
 app.configure('development', function () {
   app.set('db-uri', 'mongodb://localhost:27020/islandio-development,mongodb://localhost:27021,mongodb://localhost:27022');
+  app.set('sessions-host', 'localhost');
+  app.set('sessions-port', [27017, 27018, 27019]);
   app.use(express.errorHandler({ dumpExceptions: true }));
 });
 
 app.configure('test', function () {
   app.set('db-uri', 'mongodb://localhost:27020/islandio-test,mongodb://localhost:27021,mongodb://localhost:27022');
+  app.set('sessions-host', 'localhost');
+  app.set('sessions-port', [27017, 27018, 27019]);
 });
 
 app.configure('production', function () {
   app.set('db-uri', 'mongodb://10.242.63.18:27017/islandio-production,mongodb://10.117.95.200:27017,mongodb://10.196.190.94:27017');
+  app.set('sessions-host', ['10.242.63.18','10.117.95.200','10.196.190.94']);
+  app.set('sessions-port', 27017);
+  app.use(express.errorHandler({ dumpExceptions: true }));
 });
 
 app.configure(function () {
@@ -51,8 +58,8 @@ app.configure(function () {
     cookie: { maxAge: 86400 * 1000 }, // one day 86400
     secret: 'topsecretislandshit',
     store: new MongoStore({
-      host: '10.242.63.18,10.117.95.200,10.196.190.94',
-      port: 27017,
+      host: app.set('sessions-host'),
+      port: app.set('sessions-port'),
       dbname: 'islandio-sessions'
     })
   }));
