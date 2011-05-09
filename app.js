@@ -47,20 +47,13 @@ app.configure(function () {
   app.use(express.favicon());
   app.use(express.bodyParser());
   app.use(express.cookieParser());
-  // app.use(express.session({
-  //     cookie: { maxAge: 86400 * 1000 } // one day 86400
-  //   , store: new MongoStore(app.set('db-uri'))
-  //   , secret: 'topsecretshit' 
-  // }));
   app.use(express.session({
     cookie: { maxAge: 86400 * 1000 }, // one day 86400
     secret: 'topsecretislandshit',
     store: new MongoStore({
-      host: 'localhost',
-      port: [27020, 27021, 27022],
+      host: '10.242.63.18,10.117.95.200,10.196.190.94',
+      port: 27017,
       dbname: 'islandio-sessions'
-      //username: 'sander',
-      //password: 'plebeian'
     })
   }));
   app.use(express.logger({ format: '\x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms' }));
@@ -76,7 +69,6 @@ models.defineModels(mongoose, function () {
   app.Media = Media = mongoose.model('Media');
   app.LoginToken = LoginToken = mongoose.model('LoginToken');
   db = mongoose.connectSet(app.set('db-uri'));
-  //db = mongoose.connect(app.set('db-uri'));
 });
 
 
