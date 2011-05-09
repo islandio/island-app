@@ -637,6 +637,8 @@ app.post('/resendconf/:id?', function (req, res) {
 
 // Add Member
 app.put('/members', function (req, res) {
+  res.send({ status: 'error', message: 'Hey, you can\'t do that yet!' });
+  return;
   // check fields
   var missing = [];
   if (!req.body.newmember['name.first'])
