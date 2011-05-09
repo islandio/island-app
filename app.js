@@ -38,7 +38,7 @@ app.configure('development', function () {
 app.configure('test', function () {
   app.set('db-uri', 'mongodb://localhost:27020/islandio-test,mongodb://localhost:27021,mongodb://localhost:27022');
   app.set('sessions-host', 'localhost');
-  app.set('sessions-port', [27017, 27018, 27019]);
+  app.set('sessions-port', [27020, 27021, 27022]);
 });
 
 app.configure('production', function () {
@@ -637,8 +637,8 @@ app.post('/resendconf/:id?', function (req, res) {
 
 // Add Member
 app.put('/members', function (req, res) {
-  res.send({ status: 'error', message: 'Hey, you can\'t do that yet!' });
-  return;
+  //res.send({ status: 'error', message: 'Hey, you can\'t do that yet!' });
+  //return;
   // check fields
   var missing = [];
   if (!req.body.newmember['name.first'])
