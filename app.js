@@ -366,7 +366,7 @@ app.error(function (err, req, res, next) {
 app.get('/', loadMember, function (req, res) {
   findMedia(function (media) {
     getTrending(5, function (trends) {
-      getRecentComments(6, function (coms) {
+      getRecentComments(10, function (coms) {
         getTwitterNames(function (names) {
           res.render('index', {
               part   : 'media'

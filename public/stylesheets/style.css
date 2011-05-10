@@ -778,6 +778,7 @@ div.each-grid-obj {
 a.grid-obj {
   text-decoration: none;
   background: none;
+  vertical-align: text-top;
 }
 a.grid-obj:hover {
   background: none;
@@ -818,9 +819,11 @@ a.grid-obj-title:hover {
 a.grid-obj-title:active {
   color: #fff;
 }
+div.grid-obj-tags-wrap {
+  margin: 3px 0 5px 0;
+}
 span.grid-obj-tags {
   font-weight: bold;
-  line-height: 26px;
 }
 span.grid-obj-tag-title {
   font-variant: small-caps;
@@ -830,6 +833,7 @@ a.grid-obj-tag {
   margin: 0 0 0 5px;
   color: #d04c38;
   font-variant: small-caps;
+  line-height: 14px;
 }
 h1.grid-obj-hover-txt {
   font-size: 12px;

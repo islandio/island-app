@@ -7,8 +7,9 @@
         h1.grid-obj-hover-txt
           =object.member.name.first// + ' / ' + object.meta.hits
       img.grid-obj-img.matte(id='img-' + object.id, class='page-0', src=object.attached.image_thumb.cf_url, width=object.attached.image_thumb.meta.width, height=object.attached.image_thumb.meta.height)
-    div.right
-      span.grid-obj-tag-title tags: 
+    div.grid-obj-tags-wrap
+      - if (object.meta.tags[0])
+        span.grid-obj-tag-title tags: 
       span.grid-obj-tags
         - for (var i=0; i < object.meta.tags.length; i++)
           a.grid-obj-tag(href='javascript:;')
@@ -22,8 +23,9 @@
         h1.grid-obj-hover-txt
           =object.member.name.first// + ' / ' + object.meta.hits
       img.grid-obj-img.matte(id='vid-' + object.id, class='page-0', src=object.attached.video_thumbs[0].cf_url, width=object.attached.video_thumbs[0].meta.width, height=object.attached.video_thumbs[0].meta.height)
-    div.right
-      span.grid-obj-tag-title tags: 
+    div.grid-obj-tags-wrap
+      - if (object.meta.tags[0])
+        span.grid-obj-tag-title tags:
       span.grid-obj-tags
       - for (var i=0; i < object.meta.tags.length; i++)
         a.grid-obj-tag(href='javascript:;')

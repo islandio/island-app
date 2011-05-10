@@ -163,7 +163,7 @@ function defineModels(mongoose, fn) {
     , meta        : {
           tags    : { type: Array, index: true }
         , hits    : { type: Number, default: 0 }
-        , hearts   : { type: Number, default: 0 }
+        , hearts  : { type: Number, default: 0 }
         , ratings : [Rating]
       }
     , member_id   : ObjectId
@@ -171,21 +171,35 @@ function defineModels(mongoose, fn) {
   });
 
   Media.pre('save', function (next) {
+    // TMP fix tags
+    if (!this.isNew && this.meta.tags) {
+      var newTags = [];
+      for (var i=0; i < this.meta.tags.length; i++) {
+        if (this.meta.tags[i].indexOf(' ') != -1) {
+          var ts = makeTerms(this.meta.tags[i]);
+          newTags = newTags.concat(ts);
+        } else {
+          newTags.push(this.meta.tags[i]);
+        }
+      }
+      this.meta.tags = newTags;
+    }
+    
     if (this.isNew) {
       // make key
       this.key = makeKey(8);
       // parse title for search terms
       this.terms = makeTerms(this.title);
       // parse the tags
-      var tags = this.meta.tags[0].trim().split(',');
-      for (var i=0; i < tags.length; ++i)
-        tags[i] = tags[i].trim().toLowerCase();
-      this.meta.tags = tags;
+      var tags = this.meta.tags[0].trim();
+      if (tags != '') {
+        this.meta.tags = this.meta.tags;//makeTerms(tags);
+      }
     }
     // count hearts
     if (this.meta.ratings) {
       var hearts = 0;
-      for (var i=0; i < this.meta.ratings.length; ++i) {
+      for (var i=0; i < this.meta.ratings.length; i++) {
         hearts += this.meta.ratings[i].hearts;
       }
       this.meta.hearts = hearts;
