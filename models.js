@@ -193,7 +193,7 @@ function defineModels(mongoose, fn) {
       // parse the tags
       var tags = this.meta.tags[0].trim();
       if (tags != '') {
-        this.meta.tags = this.meta.tags;//makeTerms(tags);
+        this.meta.tags = makeTerms(tags);
       }
     }
     // count hearts

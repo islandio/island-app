@@ -9,9 +9,10 @@
       img.grid-obj-img.matte(id='img-' + object.id, class='page-0', src=object.attached.image_thumb.cf_url, width=object.attached.image_thumb.meta.width, height=object.attached.image_thumb.meta.height)
     div.grid-obj-tags-wrap
       - if (object.meta.tags[0])
-        span.grid-obj-tag-title tags: 
+        span.grid-obj-tag-title tags:
       span.grid-obj-tags
         - for (var i=0; i < object.meta.tags.length; i++)
+          | &nbsp;
           a.grid-obj-tag(href='javascript:;')
             =object.meta.tags[i]
 - if (object.type == 'video')
@@ -28,5 +29,6 @@
         span.grid-obj-tag-title tags:
       span.grid-obj-tags
         - for (var i=0; i < object.meta.tags.length; i++)
+          | &nbsp;
           a.grid-obj-tag(href='javascript:;')
             =object.meta.tags[i]
