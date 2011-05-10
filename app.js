@@ -594,7 +594,7 @@ app.post('/sessions', function (req, res) {
           } else
             res.send({ status: 'success' });
         } else {
-          res.send({ status: 'error', message: '#FML. We\'re experiencing an unknown problem but are looking into it now. Please try registering again later.' });
+          res.send({ status: 'error', message: '#FML. We\'re experiencing an unknown problem but are looking into it now. Please try to log in again later.' });
           Notify.problem(err);
         }
       });
@@ -637,8 +637,8 @@ app.post('/resendconf/:id?', function (req, res) {
 
 // Add Member
 app.put('/members', function (req, res) {
-  res.send({ status: 'error', message: 'Hey, you can\'t do that yet!' });
-  return;
+  //res.send({ status: 'error', message: 'Hey, you can\'t do that yet!' });
+  //return;
   // check fields
   var missing = [];
   if (!req.body.newmember['name.first'])
