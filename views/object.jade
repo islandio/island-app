@@ -27,6 +27,6 @@
       - if (object.meta.tags[0])
         span.grid-obj-tag-title tags:
       span.grid-obj-tags
-      - for (var i=0; i < object.meta.tags.length; i++)
-        a.grid-obj-tag(href='javascript:;')
-          =object.meta.tags[i]
+        - for (var i=0; i < object.meta.tags.length; i++)
+          a.grid-obj-tag(href='javascript:;')
+            =object.meta.tags[i]
