@@ -498,8 +498,18 @@ Island = (function ($) {
         
         
         // init mediaelement
-        if ($('video').length > 0)
-          new MediaElementPlayer('video', { mode:'shim' });
+        if (navigator.userAgent.match(/Android/i) ||
+         navigator.userAgent.match(/webOS/i) ||
+         navigator.userAgent.match(/iPhone/i) ||
+         navigator.userAgent.match(/iPod/i)
+        ) {
+          if ($('video').length > 0)
+            new MediaElementPlayer('video');
+        } else {
+          if ($('video').length > 0)
+            new MediaElementPlayer('video', { mode: 'shim' });
+        }
+        
         
         // packman loader
         man = $('#landing-loader');
