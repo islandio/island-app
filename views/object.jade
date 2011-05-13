@@ -7,14 +7,14 @@
         h1.grid-obj-hover-txt
           =object.member.name.first// + ' / ' + object.meta.hits
       img.grid-obj-img.matte(id='img-' + object.id, class='page-0', src=object.attached.image_thumb.cf_url, width=object.attached.image_thumb.meta.width, height=object.attached.image_thumb.meta.height)
-    div.grid-obj-tags-wrap
-      - if (object.meta.tags[0])
+    - if (object.meta.tags[0])
+      div.grid-obj-tags-wrap
         span.grid-obj-tag-title tags:
-      span.grid-obj-tags
-        - for (var i=0; i < object.meta.tags.length; i++)
-          | &nbsp;
-          a.grid-obj-tag(href='javascript:;')
-            =object.meta.tags[i]
+        span.grid-obj-tags
+          - for (var i=0; i < object.meta.tags.length; i++)
+            | &nbsp;
+            a.grid-obj-tag(href='javascript:;')
+              =object.meta.tags[i]
 - if (object.type == 'video')
   div(id='obj-' + object.id, class='each-grid-obj ' + object.type)
     a.grid-obj-title(href=object.id)
@@ -24,11 +24,11 @@
         h1.grid-obj-hover-txt
           =object.member.name.first// + ' / ' + object.meta.hits
       img.grid-obj-img.matte(id='vid-' + object.id, class='page-0', src=object.attached.video_thumbs[0].cf_url, width=object.attached.video_thumbs[0].meta.width, height=object.attached.video_thumbs[0].meta.height)
-    div.grid-obj-tags-wrap
-      - if (object.meta.tags[0])
+    - if (object.meta.tags[0])
+      div.grid-obj-tags-wrap
         span.grid-obj-tag-title tags:
-      span.grid-obj-tags
-        - for (var i=0; i < object.meta.tags.length; i++)
-          | &nbsp;
-          a.grid-obj-tag(href='javascript:;')
-            =object.meta.tags[i]
+        span.grid-obj-tags
+          - for (var i=0; i < object.meta.tags.length; i++)
+            | &nbsp;
+            a.grid-obj-tag(href='javascript:;')
+              =object.meta.tags[i]

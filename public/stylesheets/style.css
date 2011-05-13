@@ -580,6 +580,8 @@ a.trending:focus {
   margin: 0 0 0 670px;
 }
 #recent-comments {
+  position: relative;
+  z-index: 1;
   margin: 21px 0 0 0;
 }
 h1.title-left {
@@ -771,7 +773,6 @@ img.heart-img {
 div.each-grid-obj {
   position: absolute;
   opacity: 1;
-  border-bottom: 1px solid #1a1a1a;
   padding: 0;
   width: 231px;
 }
@@ -830,9 +831,8 @@ span.grid-obj-tag-title {
   color: #808080;
 }
 a.grid-obj-tag {
-  color: #d04c38;
+  font-size: 9px;
   font-variant: small-caps;
-  line-height: 14px;
 }
 h1.grid-obj-hover-txt {
   font-size: 12px;
