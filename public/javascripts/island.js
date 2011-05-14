@@ -507,7 +507,8 @@ Island = (function ($) {
             new MediaElementPlayer('video');
         } else {
           if ($('video').length > 0)
-            new MediaElementPlayer('video', { mode: 'shim' });
+            new MediaElementPlayer('video');
+            //new MediaElementPlayer('video', { mode: 'shim' });
         }
         
         
