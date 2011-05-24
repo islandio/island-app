@@ -31,7 +31,7 @@ app.dynamicHelpers(require('./helpers.js').dynamicHelpers);
 app.configure('development', function () {
   app.set('db-uri', 'mongodb://localhost:27020/islandio-development,mongodb://localhost:27021,mongodb://localhost:27022');
   app.set('sessions-host', 'localhost');
-  app.set('sessions-port', [27017, 27018, 27019]);
+  app.set('sessions-port', [27020, 27021, 27022]);
   app.use(express.errorHandler({ dumpExceptions: true }));
 });
 
@@ -137,6 +137,10 @@ function loadMember(req, res, next) {
   } else if (req.cookies.logintoken) {
     authenticateFromLoginToken(req, res, next);
   } else {
+    if (req.params && req.params.key) {
+      //app.set('desiredPath', req.params.key);
+      req.session.desiredPath = req.params.key;
+    }
     res.redirect('/login');
   }
 }
@@ -148,24 +152,27 @@ function loadMember(req, res, next) {
  */
  
 function findMedia(next, filter) {
-  Media.find(filter, function (err, media) {
+  Media.find(filter).sort('added', 1).run(function (err, media) {
     if (!err) {
       var num = media.length
         , cnt = 0
       ;
-      if (num > 0)
+      if (num > 0) {
         media.forEach(function (med) {
           Member.findById(med.member_id, function (err, member) {
             med.member = member;
             cnt++;
-            if (cnt == num)
+            if (cnt == num) {
               next(media);
+            }
           });
         });
-      else 
+      } else { 
         next([]);
-    } else 
+      }
+    } else {
       next([]);
+    }
   });
 }
 
@@ -414,6 +421,10 @@ app.get('/confirm/:id', function (req, res) {
 
 // Add media form
 app.get('/add', loadMember, function (req, res) {
+  if (req.currentMember.role !== 'contributor') {
+    res.redirect('/');
+    return;
+  }
   findMedia(function (grid) {
     getTwitterNames(function (names) {
       res.render('index', {
@@ -488,8 +499,11 @@ app.get('/search/:by.:format?', loadMember, function (req, res) {
 
 
 // Single object
-app.get('/:id', loadMember, function (req, res) {
-  Media.findById(req.params.id, function (err, med) {
+app.get('/:key', loadMember, function (req, res) {
+  Media.findOne({ key: req.params.key }, function (err, med) {
+    for (var i = 0, len = med.terms.length; i < len; i++) {
+      console.log(med.terms[i]);
+    }
     Member.findById(med.member_id, function (err, mem) {
       med.member = mem;
       var hearts = 0
@@ -559,6 +573,7 @@ app.get('/:id', loadMember, function (req, res) {
 
 // Login - add member to session
 app.post('/sessions', function (req, res) {
+  var desiredPath = req.session.desiredPath || '/';
   // check fields
   var missing = [];
   if (!req.body.member.email)
@@ -589,10 +604,11 @@ app.post('/sessions', function (req, res) {
             var loginToken = new LoginToken({ email: mem.email });
             loginToken.save(function () {
               res.cookie('logintoken', loginToken.cookieValue, { expires: new Date(Date.now() + 2 * 604800000), path: '/' });
-              res.send({ status: 'success' });
+              res.send({ status: 'success', data: { path: desiredPath } });
             });
-          } else
-            res.send({ status: 'success' });
+          } else {
+            res.send({ status: 'success', data: { path: desiredPath } });
+          }
         } else {
           res.send({ status: 'error', message: '#FML. We\'re experiencing an unknown problem but are looking into it now. Please try to log in again later.' });
           Notify.problem(err);

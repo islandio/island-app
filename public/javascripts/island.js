@@ -140,31 +140,12 @@ Island = (function ($) {
           time.text(relativeTime(time.data('ts')));
         });
       }
-
-  /**
-   * header control
-   */    
-    // , overHeader = false
-    // , shrinkHeader = function() {
-    //     if (!$('#menu').is(":visible"))
-    //        return;
-    //      $('#twitter').css({ visibility: 'hidden' });
-    //      $('#menu, #twitter').hide();
-    //      $('#header').css({ width: 363 });
-    //   }
-    //   
-    // , expandHeader = function() {
-    //     if ($('#menu').is(":visible"))
-    //        return;
-    //      $('#header').css({ width: 984 });
-    //      $('#menu, #twitter').show();
-    //      $('#twitter').css({ visibility: 'visible' });
-    //   }
-    
+  
+  
   /**
    * select hearts for rating
    */
-   
+  
     , rater
     , hearts
     , selectHearts = function (x, h) {
@@ -194,6 +175,28 @@ Island = (function ($) {
             , val : val
           };
         $.get('/search/' + val + '.json', data, fn);
+      }
+    
+  /**
+   * simulate gifs for videos in grid
+   */
+    
+    , initVideoSlides = function () {
+        $('.is-video').each(function (v) {
+          if ($(this).data().timer)
+            return;
+          var thumbs = $('img', this)
+            , num = thumbs.length
+            , i = 1
+            , timer = setInterval(function () {
+                var h = i === 0 ? num - 1 : i - 1;
+                $(thumbs[h]).hide();
+                $(thumbs[i]).show();
+                i += i == num - 1 ? 1 - num : 1;
+              }, 500)
+          ;
+          $(this).data({ timer: timer });
+        });
       }
       
   /**
@@ -292,7 +295,7 @@ Island = (function ($) {
             for (var x = 0; x < nc; x++) 
               col_heights[x] = 0;
             
-            if (single) {
+            if (single && comsOffset() > jrid.offset().top) {
               extra = extra || 0;
               col_heights[2] = col_heights[3] = comsOffset() - wrap.offset().top + 10 + extra;
             }
@@ -378,7 +381,11 @@ Island = (function ($) {
      */
       
       go: function () {
-      
+        
+        
+        /////////////////////////// UTILS
+        
+        
         // extras
         if (!window.console) window.console = { log: function () {} };
         String.prototype.trim = function() { return this.replace(/^\s+|\s+$/g,""); }
@@ -467,6 +474,9 @@ Island = (function ($) {
         };
         
         
+        /////////////////////////// SETUP
+        
+        
         // flash messages
         $('.flash').hide().fadeIn(1000).live('click', hideFlashMessages);
         $('.is-highlight, .is-error').dropIn();
@@ -497,25 +507,55 @@ Island = (function ($) {
           grid.collage();
         
         
-        // init mediaelement
+        // TODO: better way to do this?
+        // mobile checks
         if (navigator.userAgent.match(/Android/i) ||
          navigator.userAgent.match(/webOS/i) ||
          navigator.userAgent.match(/iPhone/i) ||
          navigator.userAgent.match(/iPod/i)
         ) {
-          if ($('video').length > 0)
+          
+          // init the videos
+          if ($('video').length > 0) {
             new MediaElementPlayer('video');
+          }
+            
+          // hide footer
+          $('#footer').hide();
         } else {
-          if ($('video').length > 0)
-            new MediaElementPlayer('video');
-            //new MediaElementPlayer('video', { mode: 'shim' });
+          
+          // init the videos with flash shim
+          if ($('video').length > 0) {
+            new MediaElementPlayer('video', { mode: 'shim' });
+          }
         }
+        
+        
+        // start all video thumb timers
+        initVideoSlides();
         
         
         // packman loader
         man = $('#landing-loader');
-        if (man.length == 0)
+        if (man.length === 0)
           packman.start = function () {};
+        
+        
+        // tweets
+        twitterNames = $('#twitter-names').text().split(',');
+        for (var i=0; i < twitterNames.length; i++)
+          if (twitterNames[i] != 'undefined' && twitterNames[i] != '')
+            twitters.push(twitterNames[i]);
+        twap = $('#twitter');
+        for (var tt in twitters)
+          $.tweet({
+              username: twitters[tt]
+            , callback: twat
+          });
+        
+        
+        /////////////////////////// ACTIONS
+        
         
         // forms
         $('form input[type="text"], form input[type="password"], form textarea').live('focus', function () {
@@ -636,7 +676,7 @@ Island = (function ($) {
           var data = loginForm.serializeObject();
           $.post('/sessions', data, function (serv) {
             if (serv.status == 'success') {
-              window.location = '/';
+              window.location = serv.data.path;
             } else if (serv.status == 'fail') {
               landingErrorText.html(serv.data.message);
               landingError.fadeIn('fast');
@@ -692,7 +732,8 @@ Island = (function ($) {
           packman.start();
           var data = registerForm.serializeObject();
           $.put('/members', data, function (serv) {
-            landingMessage.hide(packman.stop);
+            landingMessage.hide();
+            packman.stop();
             if (serv.status == 'success') {
               landingSuccessText.html(serv.data.message);
               landingSuccess.fadeIn('fast');
@@ -795,53 +836,13 @@ Island = (function ($) {
         });
         
         
-        // tweets
-        twitterNames = $('#twitter-names').text().split(',');
-        for (var i=0; i < twitterNames.length; i++)
-          if (twitterNames[i] != 'undefined' && twitterNames[i] != '')
-            twitters.push(twitterNames[i]);
-        twap = $('#twitter');
-        for (var tt in twitters)
-          $.tweet({
-              username: twitters[tt]
-            , callback: twat
-          });
-        
-        
-        // reduce header on scroll
-        // TODO: throttle this shit
-        // $(window).scroll(function () {
-        //   if ($(this).scrollTop() > 100) {
-        //     if (!overHeader)
-        //       shrinkHeader();
-        //   } else if ($(this).scrollTop() < 100) {
-        //     if (!overHeader)
-        //       expandHeader();
-        //   }
-        // });
-        // 
-        // $('#header').bind('mouseenter', function () {
-        //   overHeader = true;
-        //   if ($(window).scrollTop() > 100) {
-        //     expandHeader();
-        //     $(this).animate({ backgroundColor: 'rgba(255, 255, 255, 0.95)' }, 500);
-        //   }
-        // }).bind('mouseleave', function () {
-        //   overHeader = false;
-        //   if ($(window).scrollTop() > 100) {
-        //     shrinkHeader();
-        //     $(this).animate({ backgroundColor: 'rgba(255, 255, 255, 0.5)' }, 500);
-        //   }
-        // });
-        
-        
         // init autogrow text
         $('textarea').autogrow();
         
         
         // rollover each object
         $('.grid-obj-img').live('mouseenter', function () {
-          $(this.previousElementSibling).show();
+          $('.grid-obj-hover', this.parentNode).show();
         });
         $('.grid-obj-hover').live('mouseleave', function () {
           $(this).fadeOut(100);
@@ -863,6 +864,7 @@ Island = (function ($) {
                 grid.collage();
             } else
               log(serv.message);
+            initVideoSlides();
           });
         }).live('focus', adjustGridHeight);
         
@@ -871,7 +873,7 @@ Island = (function ($) {
         $('.grid-obj-tag').live('click', function () {
           adjustGridHeight();
           var tag = $(this).text();
-          $('#search-box').val('tag:' + tag);
+          $('#search-box').val(tag);
           search(['meta.tags'], tag, function (serv) {
             if (serv.status == 'success') {
               var objects = serv.data.objects;
@@ -883,6 +885,7 @@ Island = (function ($) {
                 grid.collage();
             } else
               log(serv.message);
+            initVideoSlides();
           });
         });
         

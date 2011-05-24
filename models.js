@@ -185,17 +185,6 @@ function defineModels(mongoose, fn) {
       this.meta.tags = newTags;
     }
     
-    if (this.isNew) {
-      // make key
-      this.key = makeKey(8);
-      // parse title for search terms
-      this.terms = makeTerms(this.title);
-      // parse the tags
-      var tags = this.meta.tags[0].trim();
-      if (tags != '') {
-        this.meta.tags = makeTerms(tags);
-      }
-    }
     // count hearts
     if (this.meta.ratings) {
       var hearts = 0;
@@ -204,7 +193,32 @@ function defineModels(mongoose, fn) {
       }
       this.meta.hearts = hearts;
     }
-    next();
+    
+    // parse tags, title, member
+    if (this.isNew) {
+      // make key
+      this.key = makeKey(8);
+      // parse the tags
+      var tags = this.meta.tags[0].trim();
+      if (tags != '') {
+        this.meta.tags = makeTerms(tags);
+      }
+    }
+    
+    // TMP move this to isNew after awhile
+    // parse member name and title for search
+    var terms = this.title
+      , self = this
+    ;
+    mongoose.model('Member').findById(this.member_id, function (err, member) {
+      if (!err && member) {
+        terms += ' ' + member.name.first + ' ' + member.name.last;
+      }
+      self.terms = makeTerms(terms);
+      next();
+    });
+    
+    
   });
 
   Media.virtual('id')

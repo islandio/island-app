@@ -439,6 +439,9 @@ a.resend-conf {
 .is-error {
   background-color: #f6dbd7;
 }
+.hidden {
+  display: none;
+}
 textarea {
   font-size: 11px;
   resize: none;
