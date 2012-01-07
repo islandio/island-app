@@ -1,3 +1,5 @@
+/* Island.IO */
+/*––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– fonts */
 @font-face {
   font-family: Title;
   font-style: normal;
@@ -6,6 +8,7 @@
   font-smoothing: antialiased;
   src: url("../fonts/Impact.ttf");
 }
+/*––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– resets */
 html {
   color: #1a1a1a;
   background: #fff;
@@ -115,6 +118,7 @@ nav,
 article {
   display: block;
 }
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 body {
   background: #fff;
   color: #1a1a1a;
@@ -122,6 +126,7 @@ body {
   font-size: 10px;
   line-height: 13px;
 }
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 a,
 button {
   color: #404040;
@@ -137,7 +142,7 @@ button:hover {
 }
 a:active,
 button:active {
-  background: rgba(75,184,215,0.1);
+  background: rgba(75,184,215,0.10);
 }
 a:focus,
 button:focus {
@@ -173,6 +178,7 @@ a.like {
 span.like-wrap {
   float: right;
 }
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 p.mission-txt {
   margin: 0 500px 0 0;
   font-size: 22px;
@@ -220,6 +226,7 @@ span.slash {
   color: #1a1a1a;
   font-family: Title, Verdana, Arial, sans-serif;
 }
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 img.social-icons {
   position: absolute;
   cursor: pointer;
@@ -243,6 +250,7 @@ td {
   white-space: nowrap;
   padding: 2px 0 0 10px;
 }
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 .left {
   float: left;
 }
@@ -276,6 +284,7 @@ span.welcome-member {
   color: #808080;
   margin: 1px 20px 0 0;
 }
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 #twitter-names {
   display: none;
 }
@@ -409,7 +418,7 @@ a.resend-conf {
 #footer > div > div {
   padding: 5px 0;
   width: 333px;
-  background: rgba(252,252,251,0.5);
+  background: rgba(252,252,251,0.50);
   text-align: right;
   font-family: Title, Verdana, Arial, sans-serif;
   float: right;
@@ -442,6 +451,7 @@ a.resend-conf {
 .hidden {
   display: none;
 }
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 textarea {
   font-size: 11px;
   resize: none;
@@ -490,6 +500,7 @@ input:focus {
 input::-moz-focus-inner {
   border: none;
 }
+/*for submits*/
 input.is-button[type=submit] {
   cursor: pointer;
   background: #f2f2f2;
@@ -527,6 +538,7 @@ input.is-button-alert[type=submit] {
   bottom: 0;
   cursor: pointer;
 }
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 #login-form {
   position: absolute;
   top: 0;
@@ -560,6 +572,7 @@ input.is-button-alert[type=submit] {
 #media-form td {
   padding: 0 0 10px;
 }
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 .trending-media-wrap {
   width: 640px;
 }
@@ -773,6 +786,7 @@ img.heart-img {
   color: #b3b3b3;
   font-size: 9px;
 }
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 div.each-grid-obj {
   position: absolute;
   opacity: 1;
@@ -860,6 +874,7 @@ div.profile-right {
   width: 492px;
   margin: 0 0 0 492px;
 }
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––carousel*/
 #fea-carousel,
 #mem-carousel {
   padding: 20px 0 0 0;
@@ -889,3 +904,4 @@ div.profile-right {
 #mem-carousel-holder > div {
   float: left;
 }
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/

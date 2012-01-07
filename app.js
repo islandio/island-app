@@ -3,11 +3,14 @@ var express = require('express')
   , stylus = require('stylus')
   , markdown = require('markdown').markdown
   , app = module.exports = express.createServer()
+  , mongodb = require('mongodb')
   , mongoose = require('mongoose')
+  , util = require('util'), debug = util.debug, inspect = util.inspect
   , MongoStore = require('connect-mongodb')
   , fs = require('fs')
   , sys = require('sys')
   , path = require('path')
+  , templates = require('./templates.js')
   , models = require('./models')
   , utils = require('./utils.js')
   , db
@@ -22,30 +25,23 @@ var express = require('express')
             "key": "8a36aa56062f49c79976fa24a74db6cc"
           }
       , "template_id": "dd77fc95cfff48e8bf4af6159fd6b2e7"
-    }
-;
+    };
+
+
 
 app.helpers(require('./helpers.js').helpers);
 app.dynamicHelpers(require('./helpers.js').dynamicHelpers);
 
 app.configure('development', function () {
-  app.set('db-uri', 'mongodb://localhost:27020/islandio-development,mongodb://localhost:27021,mongodb://localhost:27022');
-  app.set('sessions-host', 'localhost');
-  app.set('sessions-port', [27020, 27021, 27022]);
-  app.use(express.errorHandler({ dumpExceptions: true }));
-});
-
-app.configure('test', function () {
-  app.set('db-uri', 'mongodb://localhost:27020/islandio-test,mongodb://localhost:27021,mongodb://localhost:27022');
-  app.set('sessions-host', 'localhost');
-  app.set('sessions-port', [27020, 27021, 27022]);
+  app.set('db-uri-mongoose', 'mongodb://localhost:27020/islandio-development,mongodb://localhost:27021,mongodb://localhost:27022');
+  app.set('db-uri-mongodb', 'mongodb://:27020,:27021,:27022/islandio-development');
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: false }));
 });
 
 app.configure('production', function () {
-  app.set('db-uri', 'mongodb://10.242.63.18:27017/islandio-production,mongodb://10.117.95.200:27017,mongodb://10.196.190.94:27017');
-  app.set('sessions-host', ['10.242.63.18','10.117.95.200','10.196.190.94']);
-  app.set('sessions-port', 27017);
-  app.use(express.errorHandler({ dumpExceptions: true }));
+  app.set('db-uri-mongoose', 'mongodb://10.201.227.195:27017/service-samples,mongodb://10.211.174.11:27017,mongodb://10.207.62.61:27017');
+  app.set('db-uri-mongodb', 'mongodb://10.201.227.195:27017,10.211.174.11:27017,10.207.62.61:27017/service-samples');
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: false }));
 });
 
 app.configure(function () {
@@ -54,17 +50,20 @@ app.configure(function () {
   app.use(express.favicon());
   app.use(express.bodyParser());
   app.use(express.cookieParser());
+
+  var sessionServerDb =
+      mongodb.connect(app.set('db-uri-mongodb'), { noOpen: true }, function() {});
   app.use(express.session({
-    cookie: { maxAge: 86400 * 1000 }, // one day 86400
+    cookie: { maxAge: 86400 * 1000 * 7 }, // one day 86400
     secret: 'topsecretislandshit',
-    store: new MongoStore({
-      host: app.set('sessions-host'),
-      port: app.set('sessions-port'),
-      dbname: 'islandio-sessions'
+    store: new MongoStore({ db: sessionServerDb, }, function (err) {
+      if (err) util.log('Error creating MongoStore: ' + err);
     })
   }));
+
   app.use(express.logger({ format: '\x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms' }));
   app.use(express.methodOverride());
+  app.use(app.router);
   app.use(stylus.middleware({ src: __dirname + '/public' }));
   app.use(express.static(__dirname + '/public'));
 });
@@ -75,7 +74,7 @@ models.defineModels(mongoose, function () {
   app.Rating = Rating = mongoose.model('Rating');
   app.Media = Media = mongoose.model('Media');
   app.LoginToken = LoginToken = mongoose.model('LoginToken');
-  db = mongoose.connectSet(app.set('db-uri'));
+  db = mongoose.connectSet(app.set('db-uri-mongoose'));
 });
 
 
@@ -264,14 +263,10 @@ function renderObject(obj, next) {
   Member.findById(obj.member_id, function (err, mem) {
     if (!err) {
       obj.member = mem;
-      jade.renderFile(path.join(__dirname, 'views', 'object.jade'), { locals: { object: obj } }, function (err, html) {
-        if (!err)
-          next(html);
-        else
-          next(err);
-      });
-    } else
+      next(templates.object({ object: obj }));
+    } else {
       next(err);
+    }
   });
 }
 
@@ -287,23 +282,17 @@ function renderComment(com, next) {
       com.member = mem;
       Media.findById(com.parent_id, function (err, med) {
         if (!err) {
-          jade.renderFile(path.join(__dirname, 'views', 'comment.jade'), { locals: { comment: com } }, function (err, chtml) {
-            if (!err) {
-              com.parent = med;
-              jade.renderFile(path.join(__dirname, 'views', 'comment.jade'), { locals: { comment: com } }, function (err, rhtml) {
-                if (!err)
-                  next(chtml, rhtml);
-                else
-                  next(err);
-              });
-            } else
-              next(err);
-          });
-        } else
+          var chtml = templates.comment({ comment: com });
+          com.parent = med;
+          var rhtml = templates.comment({ comment: com });
+          next(chtml, rhtml);
+        } else {
           next([]);
+        }
       });
-    } else
+    } else {
       next(err);
+    }
   });
 }
 
@@ -846,13 +835,13 @@ app.del('/sessions', loadMember, function (req, res) {
 
 // Go live
 if (!module.parent) {
-  
+
   // listening...
   app.listen(8080);
-  
+
   // init now.js
   var everyone = require('now').initialize(app);
-  
+
   // add new object to everyone's page
   everyone.now.distributeObject = function (id) {
     Media.findById(id, function (err, obj) {
@@ -867,43 +856,34 @@ if (!module.parent) {
         everyone.now.receiveObject({ status: 'error', message: err.message });
     });
   };
-  
+
   // add new comment to everyone's page
   everyone.now.distributeComment = function (data) {
     renderComment(data.comment, function (cren, rren) {
       if ('string' == typeof cren && 'string' == typeof rren)
-        everyone.now.receiveComment({ status: 'success', data: { pid: data.pid, com: cren, rec: rren } });
+        everyone.now.receiveComment({ status: 'success', 
+            data: { pid: data.pid, com: cren, rec: rren } });
       else
         everyone.now.receiveComment({ status: 'error', message: cren.message || rren.message });
     });
   };
-  
+
   // update everyone with new trends
   var distributeTrends = function () {
     getTrending(5, function (trends) {
-      var rendered = []
-        , num = trends.length
-        , cnt = 0
-      ;
-      if (num == 0)
-        return;
-      else
-        trends.forEach(function (med) {
-          jade.renderFile(path.join(__dirname, 'views', 'trend.jade'), { locals: { trend: med } }, function (err, html) {
-            if (!err) {
-              rendered.push(html);
-              cnt++;
-              if (cnt == num)
-                everyone.now.receiveTrends({ status: 'success', data: { trends: rendered } });
-            } else
-              return;
-          });
-        });
+      var rendered = [];
+      trends.forEach(function (trend) {
+        rendered.push(templates.trend({ trend: trend }));
+      });
+      if (everyone.now.receiveTrends) {
+        everyone.now.receiveTrends({ status: 'success', data: { trends: rendered } });
+      }
     });
   };
   setInterval(distributeTrends, 5000);
-  
+
   // Server info
-  console.log('Express server listening on port %d, environment: %s', app.address().port, app.settings.env)
+  console.log('Express server listening on port %d, environment: %s',
+      app.address().port, app.settings.env)
   console.log('Express %s, Jade %s', express.version, jade.version);
 }
