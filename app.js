@@ -1,364 +1,118 @@
-var express = require('express')
-  , jade = require('jade')
-  , stylus = require('stylus')
-  , markdown = require('markdown').markdown
-  , app = module.exports = express.createServer()
-  , mongodb = require('mongodb')
-  , mongoose = require('mongoose')
-  , util = require('util'), debug = util.debug, inspect = util.inspect
-  , MongoStore = require('connect-mongodb')
-  , fs = require('fs')
-  , sys = require('sys')
-  , path = require('path')
-  , templates = require('./templates.js')
-  , models = require('./models')
-  , utils = require('./utils.js')
-  , db
-  , Media
-  , Comment
-  , Member
-  , LoginToken
-  , Notify = require('./notify')
-  , Settings = { development: {}, test: {}, production: {} }
-  , transloadit = {
-        "auth": {
-            "key": "8a36aa56062f49c79976fa24a74db6cc"
-          }
-      , "template_id": "dd77fc95cfff48e8bf4af6159fd6b2e7"
-    };
+#!/usr/bin/env node
+
+/**
+ * Arguments.
+ */
+var optimist = require('optimist');
+var argv = optimist
+    .describe('help', 'Get help')
+    .describe('port', 'Port to listen on')
+      .default('port', 3644)
+    .describe('db', 'MongoDb URL to connect to')
+      .default('db', 'mongo:///island:27018')
+    .argv;
+
+if (argv._.length || argv.help) {
+  optimist.showHelp();
+  process.exit(1);
+}
+
+/**
+ * Module dependencies.
+ */
+var express = require('express');
+var connect = require('connect');
+var now = require('now');
+var mongodb = require('mongodb');
+var mongoStore = require('connect-mongodb');
+
+var stylus = require('stylus');
+var jade = require('jade');
+
+var util = require('util'), debug = util.debug, inspect = util.inspect;
+var fs = require('fs');
+var path = require('path');
+
+var _ = require('underscore');
+_.mixin(require('underscore.string'));
+var Step = require('step');
+var color = require('cli-color');
+
+var Notify = require('./notify');
+
+var MemberDb = require('./member_db.js').MemberDb;
+
+var passport = require('passport');
+var FacebookStrategy = require('passport-facebook').Strategy;
+
+var transloadit = {
+  "auth": { "key": "8a36aa56062f49c79976fa24a74db6cc" },
+  "template_id": "dd77fc95cfff48e8bf4af6159fd6b2e7"
+};
 
 
+// Configuration
 
-app.helpers(require('./helpers.js').helpers);
-app.dynamicHelpers(require('./helpers.js').dynamicHelpers);
+var app = module.exports = express.createServer();
 
 app.configure('development', function () {
-  app.set('db-uri-mongoose', 'mongodb://localhost:27020/islandio-development,mongodb://localhost:27021,mongodb://localhost:27022');
-  app.set('db-uri-mongodb', 'mongodb://:27020,:27021,:27022/islandio-development');
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: false }));
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+  Notify.active = false;
 });
 
 app.configure('production', function () {
-  app.set('db-uri-mongoose', 'mongodb://10.201.227.195:27017/service-samples,mongodb://10.211.174.11:27017,mongodb://10.207.62.61:27017');
-  app.set('db-uri-mongodb', 'mongodb://10.201.227.195:27017,10.211.174.11:27017,10.207.62.61:27017/service-samples');
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: false }));
+  app.use(express.errorHandler());
+  Notify.active = true;
 });
+
+app.set('sessionStore', new mongoStore({
+  db: mongodb.connect(argv.db, { noOpen: true }, function () {}),
+}, function (err) {
+  if (err) log('Error creating mongoStore: ' + err);
+}));
 
 app.configure(function () {
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
-  app.use(express.favicon());
   app.use(express.bodyParser());
   app.use(express.cookieParser());
 
-  var sessionServerDb =
-      mongodb.connect(app.set('db-uri-mongodb'), { noOpen: true }, function() {});
   app.use(express.session({
-    cookie: { maxAge: 86400 * 1000 * 7 }, // one day 86400
-    secret: 'topsecretislandshit',
-    store: new MongoStore({ db: sessionServerDb, }, function (err) {
-      if (err) util.log('Error creating MongoStore: ' + err);
-    })
+    cookie: { maxAge: 86400 * 1000 * 7 }, // one week
+    secret: '69topsecretislandshit69',
+    store: app.set('sessionStore'),
+  }));
+  app.use(passport.initialize());
+  app.use(passport.session());
+
+  app.use(express.logger({
+    format: '\x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms'
   }));
 
-  app.use(express.logger({ format: '\x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms' }));
   app.use(express.methodOverride());
   app.use(app.router);
   app.use(stylus.middleware({ src: __dirname + '/public' }));
   app.use(express.static(__dirname + '/public'));
 });
 
-models.defineModels(mongoose, function () {
-  app.Member = Member = mongoose.model('Member');
-  app.Comment = Comment = mongoose.model('Comment');
-  app.Rating = Rating = mongoose.model('Rating');
-  app.Media = Media = mongoose.model('Media');
-  app.LoginToken = LoginToken = mongoose.model('LoginToken');
-  db = mongoose.connectSet(app.set('db-uri-mongoose'));
+
+// Passport session cruft
+
+passport.serializeUser(function (member, cb) {
+  cb(null, member._id.toString());
+});
+
+passport.deserializeUser(function (id, cb) {
+  memberDb.findMemberById(id, function (err, member) {
+    if (!member) member = {};
+    cb(err, member);
+  });
 });
 
 
-/**
- * 
- * @param
- */
- 
-function authenticateFromLoginToken(req, res, next) {
-  var cookie = JSON.parse(req.cookies.logintoken);
-  LoginToken.findOne({ 
-      email: cookie.email
-    , series: cookie.series
-    , token: cookie.token }, (function (err, token) {
-    if (!token) {
-      res.redirect('/login');
-      return;
-    }
-    Member.findOne({ email: token.email }, function (err, member) {
-      if (member) {
-        req.session.member_id = member.id;
-        req.currentMember = member;
-        token.token = token.randomToken();
-        token.save(function () {
-          res.cookie('logintoken', token.cookieValue, { expires: new Date(Date.now() + 2 * 604800000), path: '/' });
-          next();
-        });
-      } else {
-        res.redirect('/login');
-      }
-    });
-  }));
-}
+////////////// Web Routes
 
-
-/**
- * 
- * @param
- */
- 
-function loadMember(req, res, next) {
-  if (req.session.member_id) {
-    Member.findById(req.session.member_id, function (err, mem) {
-      if (mem) {
-        req.currentMember = mem;
-        if (mem.meta.logins == 0) {
-          req.flash('thanks', 'Thanks for confirming your email address. Welcome to Island.');
-          mem.meta.logins++
-          mem.save(function (err) {
-            if (err)
-              Notify.problem(err);
-          });
-        }
-        next();
-      } else {
-        res.redirect('/login');
-      }
-    });
-  } else if (req.cookies.logintoken) {
-    authenticateFromLoginToken(req, res, next);
-  } else {
-    if (req.params && req.params.key) {
-      //app.set('desiredPath', req.params.key);
-      req.session.desiredPath = req.params.key;
-    }
-    res.redirect('/login');
-  }
-}
-
-
-/**
- * 
- * @param
- */
- 
-function findMedia(next, filter) {
-  Media.find(filter).sort('added', 1).run(function (err, media) {
-    if (!err) {
-      var num = media.length
-        , cnt = 0
-      ;
-      if (num > 0) {
-        media.forEach(function (med) {
-          Member.findById(med.member_id, function (err, member) {
-            med.member = member;
-            cnt++;
-            if (cnt == num) {
-              next(media);
-            }
-          });
-        });
-      } else { 
-        next([]);
-      }
-    } else {
-      next([]);
-    }
-  });
-}
-
-
-/**
- * 
- * @param
- */
- 
-function getTrending(limit, next) {
-  Media.find({}, [], { limit: limit }).sort('meta.hearts', -1).run(function (err, media) {
-    if (!err) {
-      var num = media.length
-        , cnt = 0
-      ;
-      if (num > 0)
-        media.forEach(function (med) {
-          Member.findById(med.member_id, function (err, member) {
-            med.member = member;
-            cnt++;
-            if (cnt == num)
-              next(media);
-          });
-        });
-      else
-        next([]);
-    } else
-      next([]);
-  });
-}
-
-
-/**
- * 
- * @param
- */
- 
-function getRecentComments(limit, next) {
-  Comment.find({}, [], { limit: limit }).sort('added', -1).run(function (err, coms) {
-    var num = coms.length
-      , cnt = 0
-    ;
-    if (err || num == 0)
-      next([]);
-    else
-      coms.forEach(function (com) {
-        Member.findById(com.member_id, function (err, mem) {
-          if (!err) {
-            com.member = mem;
-            Media.findById(com.parent_id, function (err, med) {
-              if (!err) {
-                com.parent = med;
-                cnt++;
-                if (cnt == num)
-                  next(coms);
-              } else {
-                next([]);
-                return;
-              }
-            });
-          } else {
-            next([]);
-            return;
-          }
-        });
-      });
-  });
-}
-
-
-/**
- * Transform text array of searchable terms
- * @param string text
- */
-
-function makeTerms(text) {
-  text = text.replace(/[~|!|@|#|$|%|^|&|*|(|)|_|+|`|-|=|[|{|;|'|:|"|\/|\\|?|>|.|<|,|}|]|]+/gi, '');
-  text = text.replace(/\s{2,}/g, ' ');
-  return text.toLowerCase().trim().split(' ');
-}
-
-
-/**
- * 
- * @param
- */
- 
-function renderObject(obj, next) {
-  Member.findById(obj.member_id, function (err, mem) {
-    if (!err) {
-      obj.member = mem;
-      next(templates.object({ object: obj }));
-    } else {
-      next(err);
-    }
-  });
-}
-
-
-/**
- * 
- * @param
- */
- 
-function renderComment(com, next) {
-  Member.findById(com.member_id, function (err, mem) {
-    if (!err) {
-      com.member = mem;
-      Media.findById(com.parent_id, function (err, med) {
-        if (!err) {
-          var chtml = templates.comment({ comment: com });
-          com.parent = med;
-          var rhtml = templates.comment({ comment: com });
-          next(chtml, rhtml);
-        } else {
-          next([]);
-        }
-      });
-    } else {
-      next(err);
-    }
-  });
-}
-
-
-/**
- * 
- * @param
- */
- 
-function getTwitterNames(next) {
-  Member.find({}, function (err, data) {
-    if (!err) {
-      var twitters = []
-        , num = data.length
-        , cnt = 0
-      ;
-      if (num > 0)
-        data.forEach(function (mem) {
-          twitters.push(mem.twitter);
-          cnt++;
-          if (cnt == num)
-            next(twitters);
-        });
-      else 
-        next([]);
-    } else 
-      next([]);
-  });
-}
-
-
-/**
- * 
- * @param
- */
- 
-function NotFound(msg) {
-  this.name = 'NotFound';
-  Error.call(this, msg);
-  Error.captureStackTrace(this, arguments.callee);
-}
-
-sys.inherits(NotFound, Error);
-
-app.get('/404', function (req, res) {
-  throw new NotFound;
-});
-
-app.get('/500', function (req, res) {
-  throw new Error('An expected error');
-});
-
-app.get('/bad', function (req, res) {
-  unknownMethod();
-});
-
-app.error(function (err, req, res, next) {
-  if (err instanceof NotFound) {
-    res.render('404', { status: 404 });
-  } else {
-    next(err);
-  }
-});
-
-
-// Home page
+// Home
 app.get('/', loadMember, function (req, res) {
   findMedia(function (media) {
     getTrending(5, function (trends) {
@@ -378,34 +132,74 @@ app.get('/', loadMember, function (req, res) {
   });
 });
 
-
 // Landing page
 app.get('/login', function (req, res) {
   res.render('login');
 });
 
-
-// Confirm page
-app.get('/confirm/:id', function (req, res) {
-  Member.findById(req.params.id, function (err, mem) {
-    if (!err) {
-      mem.confirmed = true;
-      mem.save(function (err) {
-        if (!err) {
-          req.currentMember = mem;
-          req.session.member_id = mem.id;
-          res.redirect('/');
-        } else {
-          res.redirect('/login');
-          Notify.problem(err);
-        }
+// Redirect the user to Facebook for authentication.
+// When complete, Facebook will redirect the user
+// back to the application at /auth/facebook/return.
+// ** The passport strategy initialization must
+// happen here becuase host needs to be snarfed from req.
+app.get('/auth/facebook', function (req, res, next) {
+  // Add referer to session so we can use it on return.
+  // This way we can preserve query params in links.
+  req.session.referer = req.headers.referer;
+  var host = req.headers.host.split(':')[0];
+  var home = 'http://' + host + ':' + argv.port + '/';
+  passport.use(new FacebookStrategy({
+      clientID: 203397619757208,
+      clientSecret: 'af79cdc8b5ca447366e87b12c3ddaed2',
+      callbackURL: home + 'auth/facebook/callback',
+    },
+    function (accessToken, refreshToken, profile, done) {
+      profile.accessToken = accessToken;
+      profile.refreshToken = refreshToken;
+      memberDb.findOrCreateMemberFromFacebook(profile, function (err, member) {
+        done(err, member);
       });
-    } else {
-      res.redirect('/login');
-      Notify.problem(err);
     }
-  });
+  ));
+  passport.authenticate('facebook', { scope: ['email', 'user_status'] })(req, res, next);
 });
+
+// Facebook will redirect the user to this URL
+// after authentication. Finish the process by
+// verifying the assertion. If valid, the user will be
+// logged in. Otherwise, authentication has failed.
+app.get('/auth/facebook/callback', function (req, res, next) {
+  passport.authenticate('facebook', { successRedirect: req.session.referer || '/',
+                                    failureRedirect: req.session.referer || '/' })(req, res, next);
+});
+
+// We logout via an ajax request.
+app.get('/logout', function (req, res) {
+  req.logOut();
+  res.redirect('/');
+});
+
+// // Confirm page
+// app.get('/confirm/:id', function (req, res) {
+//   Member.findById(req.params.id, function (err, mem) {
+//     if (!err) {
+//       mem.confirmed = true;
+//       mem.save(function (err) {
+//         if (!err) {
+//           req.currentMember = mem;
+//           req.session.member_id = mem.id;
+//           res.redirect('/');
+//         } else {
+//           res.redirect('/login');
+//           Notify.problem(err);
+//         }
+//       });
+//     } else {
+//       res.redirect('/login');
+//       Notify.problem(err);
+//     }
+//   });
+// });
 
 
 // Add media form
@@ -560,129 +354,129 @@ app.get('/:key', loadMember, function (req, res) {
 });
 
 
-// Login - add member to session
-app.post('/sessions', function (req, res) {
-  var desiredPath = req.session.desiredPath || '/';
-  // check fields
-  var missing = [];
-  if (!req.body.member.email)
-    missing.push('email');
-  if (!req.body.member.password)
-    missing.push('password');
-  if (missing.length != 0) {
-    res.send({ status: 'fail', data: { code: 'MISSING_FIELD', message: 'Hey, we need both those fields to get you in here ;)', missing: missing } });
-    return;
-  }
-  Member.findOne({ email: req.body.member.email }, function (err, mem) {
-    if (mem && mem.authenticate(req.body.member.password)) {
-      if (!mem.confirmed) {
-        res.send({
-            status: 'fail'
-          , data: { 
-                code: 'NOT_CONFIRMED'
-              , message: 'Hey there, ' + mem.name.first + '. You must confirm your account before we can let you in here. I can <a href="javascript:;" id="noconf-' + mem.id + '" class="resend-conf">re-send the confirmation email</a> if you\'d like.'
-            }
-        });
-        return;
-      }
-      mem.meta.logins++
-      mem.save(function (err) {
-        if (!err) {
-          req.session.member_id = mem.id;
-          if (req.body.remember_me) {
-            var loginToken = new LoginToken({ email: mem.email });
-            loginToken.save(function () {
-              res.cookie('logintoken', loginToken.cookieValue, { expires: new Date(Date.now() + 2 * 604800000), path: '/' });
-              res.send({ status: 'success', data: { path: desiredPath } });
-            });
-          } else {
-            res.send({ status: 'success', data: { path: desiredPath } });
-          }
-        } else {
-          res.send({ status: 'error', message: '#FML. We\'re experiencing an unknown problem but are looking into it now. Please try to log in again later.' });
-          Notify.problem(err);
-        }
-      });
-    } else {
-      res.send({
-          status: 'fail'
-        , data: { 
-              code: 'BAD_AUTH'
-            , message: 'Hey, sorry. That didn\'t work. Your email or password is incorrect.'
-          }
-      });
-    }
-  });
-});
+// // Login - add member to session
+// app.post('/sessions', function (req, res) {
+//   var desiredPath = req.session.desiredPath || '/';
+//   // check fields
+//   var missing = [];
+//   if (!req.body.member.email)
+//     missing.push('email');
+//   if (!req.body.member.password)
+//     missing.push('password');
+//   if (missing.length != 0) {
+//     res.send({ status: 'fail', data: { code: 'MISSING_FIELD', message: 'Hey, we need both those fields to get you in here ;)', missing: missing } });
+//     return;
+//   }
+//   Member.findOne({ email: req.body.member.email }, function (err, mem) {
+//     if (mem && mem.authenticate(req.body.member.password)) {
+//       if (!mem.confirmed) {
+//         res.send({
+//             status: 'fail'
+//           , data: { 
+//                 code: 'NOT_CONFIRMED'
+//               , message: 'Hey there, ' + mem.name.first + '. You must confirm your account before we can let you in here. I can <a href="javascript:;" id="noconf-' + mem.id + '" class="resend-conf">re-send the confirmation email</a> if you\'d like.'
+//             }
+//         });
+//         return;
+//       }
+//       mem.meta.logins++
+//       mem.save(function (err) {
+//         if (!err) {
+//           req.session.member_id = mem.id;
+//           if (req.body.remember_me) {
+//             var loginToken = new LoginToken({ email: mem.email });
+//             loginToken.save(function () {
+//               res.cookie('logintoken', loginToken.cookieValue, { expires: new Date(Date.now() + 2 * 604800000), path: '/' });
+//               res.send({ status: 'success', data: { path: desiredPath } });
+//             });
+//           } else {
+//             res.send({ status: 'success', data: { path: desiredPath } });
+//           }
+//         } else {
+//           res.send({ status: 'error', message: '#FML. We\'re experiencing an unknown problem but are looking into it now. Please try to log in again later.' });
+//           Notify.problem(err);
+//         }
+//       });
+//     } else {
+//       res.send({
+//           status: 'fail'
+//         , data: { 
+//               code: 'BAD_AUTH'
+//             , message: 'Hey, sorry. That didn\'t work. Your email or password is incorrect.'
+//           }
+//       });
+//     }
+//   });
+// });
 
 
-// Resend Confirmation Email
-app.post('/resendconf/:id?', function (req, res) {
-  if (!req.params.id) {
-    res.send({ status: 'error', message: 'Invalid request.' });
-    return;
-  } else {
-    Member.findById(req.body.id, function (err, mem) {
-      if (mem) {
-        var confirm = 'http://' + path.join(req.headers.host, 'confirm', mem.id);
-        Notify.welcome(mem, confirm, function (err, message) {
-          if (!err)
-            res.send({ status: 'success', data: { message: 'Excellent, ' + mem.name.first + '. Please check your inbox for the next step. There\'s only one more... I promise.', member: mem } });
-          else {
-            res.send({ status: 'error', message: '#FML. We\'re experiencing an unknown problem but are looking into it now. Please try registering again later.' });
-            Notify.problem(err);
-          }
-        });
-      } else
-        res.send({ status: 'error', message: 'Oops, we lost your account info. Please register again.' });
-    });
-  }
-});
+// // Resend Confirmation Email
+// app.post('/resendconf/:id?', function (req, res) {
+//   if (!req.params.id) {
+//     res.send({ status: 'error', message: 'Invalid request.' });
+//     return;
+//   } else {
+//     Member.findById(req.body.id, function (err, mem) {
+//       if (mem) {
+//         var confirm = 'http://' + path.join(req.headers.host, 'confirm', mem.id);
+//         Notify.welcome(mem, confirm, function (err, message) {
+//           if (!err)
+//             res.send({ status: 'success', data: { message: 'Excellent, ' + mem.name.first + '. Please check your inbox for the next step. There\'s only one more... I promise.', member: mem } });
+//           else {
+//             res.send({ status: 'error', message: '#FML. We\'re experiencing an unknown problem but are looking into it now. Please try registering again later.' });
+//             Notify.problem(err);
+//           }
+//         });
+//       } else
+//         res.send({ status: 'error', message: 'Oops, we lost your account info. Please register again.' });
+//     });
+//   }
+// });
 
 
-// Add Member
-app.put('/members', function (req, res) {
-  //res.send({ status: 'error', message: 'Hey, you can\'t do that yet!' });
-  //return;
-  // check fields
-  var missing = [];
-  if (!req.body.newmember['name.first'])
-    missing.push('name.first');
-  if (!req.body.newmember['name.last'])
-    missing.push('name.last');
-  if (!req.body.newmember.email)
-    missing.push('email');
-  if (!req.body.newmember.email2)
-    missing.push('email2');
-  if (!req.body.newmember.password)
-    missing.push('password');
-  if (missing.length != 0) {
-    res.send({ status: 'fail', data: { code: 'MISSING_FIELD', message: 'Hey, we need all those fields for this to work.', missing: missing } });
-    return;
-  }
-  // compare emails
-  if (req.body.newmember.email2 != req.body.newmember.email) {
-    res.send({ status: 'fail', data: { code: 'INVALID_EMAIL', message: 'Oops. You didn\'t re-enter your email address correctly. Please do it right and try registering again.' } });
-    return;
-  } else
-    delete req.body.newmember.email2;
-  // create new member
-  var member = new Member(req.body.newmember);
-  member.save(function (err) {
-    if (!err) {
-      var confirm = 'http://' + path.join(req.headers.host, 'confirm', member.id);
-      Notify.welcome(member, confirm, function (err, message) {
-        if (!err)
-          res.send({ status: 'success', data: { message: 'Excellent. Please check your inbox for the next step. There\'s only one more, I promise.', member: member } });
-        else {
-          res.send({ status: 'error', message: '#FML. We\'re experiencing an unknown problem but are looking into it now. Please try registering again later.' });
-          Notify.problem(err);
-        }
-      });
-    } else
-      res.send({ status: 'fail', data: { code: 'DUPLICATE_EMAIL', message: 'Your email address is already being used on our system. Please try registering with a different address.' } });
-  });
-});
+// // Add Member
+// app.put('/members', function (req, res) {
+//   //res.send({ status: 'error', message: 'Hey, you can\'t do that yet!' });
+//   //return;
+//   // check fields
+//   var missing = [];
+//   if (!req.body.newmember['name.first'])
+//     missing.push('name.first');
+//   if (!req.body.newmember['name.last'])
+//     missing.push('name.last');
+//   if (!req.body.newmember.email)
+//     missing.push('email');
+//   if (!req.body.newmember.email2)
+//     missing.push('email2');
+//   if (!req.body.newmember.password)
+//     missing.push('password');
+//   if (missing.length != 0) {
+//     res.send({ status: 'fail', data: { code: 'MISSING_FIELD', message: 'Hey, we need all those fields for this to work.', missing: missing } });
+//     return;
+//   }
+//   // compare emails
+//   if (req.body.newmember.email2 != req.body.newmember.email) {
+//     res.send({ status: 'fail', data: { code: 'INVALID_EMAIL', message: 'Oops. You didn\'t re-enter your email address correctly. Please do it right and try registering again.' } });
+//     return;
+//   } else
+//     delete req.body.newmember.email2;
+//   // create new member
+//   var member = new Member(req.body.newmember);
+//   member.save(function (err) {
+//     if (!err) {
+//       var confirm = 'http://' + path.join(req.headers.host, 'confirm', member.id);
+//       Notify.welcome(member, confirm, function (err, message) {
+//         if (!err)
+//           res.send({ status: 'success', data: { message: 'Excellent. Please check your inbox for the next step. There\'s only one more, I promise.', member: member } });
+//         else {
+//           res.send({ status: 'error', message: '#FML. We\'re experiencing an unknown problem but are looking into it now. Please try registering again later.' });
+//           Notify.problem(err);
+//         }
+//       });
+//     } else
+//       res.send({ status: 'fail', data: { code: 'DUPLICATE_EMAIL', message: 'Your email address is already being used on our system. Please try registering with a different address.' } });
+//   });
+// });
 
 
 // Add media from transloadit.com
@@ -822,68 +616,109 @@ app.put('/hearts/:id.:format?', loadMember, function (req, res, next) {
 });
 
 
-// Delete a session on logout
-app.del('/sessions', loadMember, function (req, res) {
-  if (req.session) {
-    LoginToken.remove({ email: req.currentMember.email }, function () {});
-    res.clearCookie('logintoken');
-    req.session.destroy(function () {});
-  }
-  res.redirect('/login');
-});
+// // Delete a session on logout
+// app.del('/sessions', loadMember, function (req, res) {
+//   if (req.session) {
+//     LoginToken.remove({ email: req.currentMember.email }, function () {});
+//     res.clearCookie('logintoken');
+//     req.session.destroy(function () {});
+//   }
+//   res.redirect('/login');
+// });
 
 
-// Go live
+////////////// Initialize and Listen
+
+var memberDb;
+
 if (!module.parent) {
 
-  // listening...
-  app.listen(8080);
+  Step(
+    // Connect to MemberDb:
+    function () {
+      log('Connecting to MemberDb:', argv.db);
+      mongodb.connect(argv.db, { server: { poolSize: 4 } }, this);
+    }, function (err, db) {
+      if (err) return this(err);
+      new MemberDb(db, { ensureIndexes: true }, this);
+    }, function (err, mDb) {
+      if (err) return this(err);
+      memberDb = mDb;
+      this();
+    },
 
-  // init now.js
-  var everyone = require('now').initialize(app);
+    // Listen:
+    function (err) {
+      if (err) return this(err);
+      app.listen(argv.port);
 
-  // add new object to everyone's page
-  everyone.now.distributeObject = function (id) {
-    Media.findById(id, function (err, obj) {
-      if (!err)
-        renderObject(obj, function (ren) {
-          if ('string' == typeof ren)
-            everyone.now.receiveObject({ status: 'success', data: { obj: ren } });
+      // init now.js
+      var everyone = now.initialize(app);
+
+      // add new object to everyone's page
+      everyone.now.distributeObject = function (id) {
+        Media.findById(id, function (err, obj) {
+          if (!err)
+            renderObject(obj, function (ren) {
+              if ('string' == typeof ren)
+                everyone.now.receiveObject({ status: 'success', data: { obj: ren } });
+              else
+                everyone.now.receiveObject({ status: 'error', message: ren.message });
+            });
           else
-            everyone.now.receiveObject({ status: 'error', message: ren.message });
+            everyone.now.receiveObject({ status: 'error', message: err.message });
         });
-      else
-        everyone.now.receiveObject({ status: 'error', message: err.message });
-    });
-  };
+      };
 
-  // add new comment to everyone's page
-  everyone.now.distributeComment = function (data) {
-    renderComment(data.comment, function (cren, rren) {
-      if ('string' == typeof cren && 'string' == typeof rren)
-        everyone.now.receiveComment({ status: 'success', 
-            data: { pid: data.pid, com: cren, rec: rren } });
-      else
-        everyone.now.receiveComment({ status: 'error', message: cren.message || rren.message });
-    });
-  };
+      // add new comment to everyone's page
+      everyone.now.distributeComment = function (data) {
+        renderComment(data.comment, function (cren, rren) {
+          if ('string' == typeof cren && 'string' == typeof rren)
+            everyone.now.receiveComment({ status: 'success', 
+                data: { pid: data.pid, com: cren, rec: rren } });
+          else
+            everyone.now.receiveComment({ status: 'error', message: cren.message || rren.message });
+        });
+      };
 
-  // update everyone with new trends
-  var distributeTrends = function () {
-    getTrending(5, function (trends) {
-      var rendered = [];
-      trends.forEach(function (trend) {
-        rendered.push(templates.trend({ trend: trend }));
-      });
-      if (everyone.now.receiveTrends) {
-        everyone.now.receiveTrends({ status: 'success', data: { trends: rendered } });
-      }
-    });
-  };
-  setInterval(distributeTrends, 5000);
+      // update everyone with new trends
+      var distributeTrends = function () {
+        getTrending(5, function (trends) {
+          var rendered = [];
+          trends.forEach(function (trend) {
+            rendered.push(templates.trend({ trend: trend }));
+          });
+          if (everyone.now.receiveTrends) {
+            everyone.now.receiveTrends({ status: 'success', data: { trends: rendered } });
+          }
+        });
+      };
+      setInterval(distributeTrends, 5000);
 
-  // Server info
-  console.log('Express server listening on port %d, environment: %s',
-      app.address().port, app.settings.env)
-  console.log('Express %s, Jade %s', express.version, jade.version);
+      // .server.socket.set('authorization', function (data, cb) {
+      //   var cookies = connect.utils.parseCookie(data.headers.cookie);
+      //   var sid = cookies['connect.sid'];
+      //   app.settings.sessionStore.load(sid, function (err, sess) {
+      //     if (err) {
+      //       log("Error: Failed finding session", '(' + sid + ')');
+      //       return cb(err);
+      //     }
+      //     if (!sess) {
+      //       // log("Error: Invalid session", '(sid:' + sid + ')');
+      //       return cb(new Error('Could not find session.'));
+      //     }
+      //     log("Session opened", '(sid:' + sid + ')');
+      //     data.session = sess;
+      //     cb(null, true);
+      //   });
+      //   // TODO: Keep the session alive on with a timeout.
+      // });
+      log("Express server listening on port", app.address().port);
+    }
+  );
 }
+
+
+
+
+

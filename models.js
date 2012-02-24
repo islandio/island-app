@@ -1,31 +1,26 @@
-var crypto = require('crypto')
-  , Member
-  , Comment
-  , Rating
-  , Media
-  , LoginToken
-;
 
-function defineModels(mongoose, fn) {
-  var Schema = mongoose.Schema
-    , ObjectId = Schema.ObjectId;
+/**
+ * Module dependencies.
+ */
+var crypto = require('crypto');
 
+var Member, Comment, Rating, Media;
 
+exports.defineModels = function (mongoose, fn) {
+  var Schema = mongoose.Schema;
+  var ObjectId = Schema.ObjectId;
 
   /**
    * Make a random string
    * @param int l
    */
-
   function makeKey(l) {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for( var i=0; i < l; i++ )
+    for (var i=0; i < l; i++)
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     return text;
   }
-
-
 
   /**
    * Transform text array of searchable terms
@@ -37,8 +32,6 @@ function defineModels(mongoose, fn) {
     return text.toLowerCase().trim().split(' ');
   }
 
-
-
   /**
     * Model: Member
     */
@@ -47,127 +40,129 @@ function defineModels(mongoose, fn) {
   }
 
   Member = new Schema({
-      email             : { type: String, validate: [validatePresenceOf, 'an email is required'], index: { unique: true } }
-    , hashed_password   : String
-    , salt              : String
-    , name              : {
-          first         : String
-        , last          : String
-      }
-    , twitter           : String
-    , role              : { type: String, enum: ['contributor', 'guest'], default: 'contributor' }
-    , joined            : { type: Date, default: Date.now }
-    , confirmed         : { type: Boolean, default: false }
-    , meta              : {
-          logins        : { type: Number, default: 0 }
-      }
+    email: {
+      type: String,
+      validate: [validatePresenceOf, 'an email is required'],
+      index: { unique: true },
+    },
+    // hashed_password: String,
+    // salt: String,
+    name: {
+      first: String,
+      last: String,
+    },
+    tokens: {
+      facebook: String,
+      twitter: String,
+      google: String,
+    },
+    // twitter: String,
+    role: {
+      type: String,
+      enum: ['contributor', 'guest'],
+      default: 'contributor',
+    },
+    joined: { type: Date, default: Date.now },
+    confirmed: { type: Boolean, default: false },
+    meta: {
+      logins: { type: Number, default: 0 },
+    },
   });
 
   Member.index({ 'name.last': 1, 'name.first': 1 });
 
-  Member.virtual('id')
-    .get(function () {
-      return this._id.toHexString();
-    });
-
-  Member.virtual('password')
-    .set(function (password) {
-      this._password = password;
-      this.salt = this.makeSalt();
-      this.hashed_password = this.encryptPassword(password);
-    })
-    .get(function () { return this._password; });
-
-  Member.virtual('name.full')
-    .get(function () {
-      return this.name.first + ' ' + this.name.last;
-    })
-    .set(function (setFullNameTo) {
-      var split = setFullNameTo.split(' ')
-        , firstName = split[0], lastName = split[1];
-      this.set('name.first', firstName);
-      this.set('name.last', lastName);
-    });
-
-  Member.method('authenticate', function (plainText) {
-    return this.encryptPassword(plainText) === this.hashed_password;
+  Member.virtual('id').get(function () {
+    return this._id.toHexString();
   });
 
-  Member.method('makeSalt', function () {
-    return Math.round((new Date().valueOf() * Math.random())) + '';
+  // Member.virtual('password').set(function (password) {
+  //   this._password = password;
+  //   this.salt = this.makeSalt();
+  //   this.hashed_password = this.encryptPassword(password);
+  // }).get(function () {
+  //   return this._password;
+  // });
+
+  Member.virtual('name.full').get(function () {
+    return this.name.first + ' ' + this.name.last;
+  }).set(function (setFullNameTo) {
+    var split = setFullNameTo.split(' ');
+    var firstName = split[0], lastName = split[1];
+    this.set('name.first', firstName);
+    this.set('name.last', lastName);
   });
 
-  Member.method('encryptPassword', function (password) {
-    return crypto.createHmac('sha1', this.salt).update(password).digest('hex');
-  });
+  // Member.method('authenticate', function (plainText) {
+  //   return this.encryptPassword(plainText) === this.hashed_password;
+  // });
+  // 
+  // Member.method('makeSalt', function () {
+  //   return Math.round((new Date().valueOf() * Math.random())) + '';
+  // });
+  // 
+  // Member.method('encryptPassword', function (password) {
+  //   return crypto.createHmac('sha1', this.salt).update(password).digest('hex');
+  // });
 
-  Member.pre('save', function (next) {
-    if (this.isNew) {
-      if (!validatePresenceOf(this.password)) {
-        next(new Error('Invalid password'));
-      } else {
-        next();
-      }
-    } else {
-      next();
-    }
-  });
-
-
+  // Member.pre('save', function (next) {
+  //   if (this.isNew) {
+  //     if (!validatePresenceOf(this.password)) {
+  //       next(new Error('Invalid password'));
+  //     } else {
+  //       next();
+  //     }
+  //   } else {
+  //     next();
+  //   }
+  // });
 
   /**
     * Model: Comments
-    */    
+    */
   var Comment = new Schema({
-      body      : String
-    , comments  : [ObjectId]
-    , added     : { type: Date, default: Date.now, index: true }
-    , likes     : { type: Number, default: 0 }
-    , member_id : { type: ObjectId, index: true }
-    , parent_id : ObjectId
+    body: String,
+    comments: [ObjectId],
+    added: { type: Date, default: Date.now, index: true },
+    likes: { type: Number, default: 0 },
+    member_id: { type: ObjectId, index: true },
+    parent_id: ObjectId,
   });
 
-  Comment.virtual('id')
-    .get(function () {
-      return this._id.toHexString();
-    });
-
-
+  Comment.virtual('id').get(function () {
+    return this._id.toHexString();
+  });
 
   /**
     * Model: Rating
-    */    
+    */
   var Rating = new Schema({
-      member_id : ObjectId
-    , hearts    : { type: Number, default: 0 }
+    member_id: ObjectId,
+    hearts: { type: Number, default: 0 },
   });
 
-  Rating.virtual('mid')
-    .get(function () {
-      return this.member_id.toHexString();
-    });
-
-
+  Rating.virtual('mid').get(function () {
+    return this.member_id.toHexString();
+  });
 
   /**
     * Model: Media
     */
   Media = new Schema({
-      key         : { type: String, index: true }
-    , title       : String
-    , terms       : { type: Array, index: true }
-    , body        : String
-    , comments    : [ObjectId]
-    , type        : { type: String, index: true }
-    , added       : { type: Date, default: Date.now }
-    , meta        : {
-          tags    : { type: Array, index: true }
-        , hits    : { type: Number, default: 0 }
-        , hearts  : { type: Number, default: 0 }
-        , ratings : [Rating]
-      }
-    , member_id   : ObjectId
-    , attached    : {}
+    key: { type: String, index: true },
+    title: String,
+    terms: { type: Array, index: true },
+    body: String,
+    comments: [ObjectId],
+    type: { type: String, index: true },
+    added: { type: Date, default: Date.now },
+    meta: {
+      tags: { type: Array, index: true },
+      hits: { type: Number, default: 0 },
+      hearts: { type: Number, default: 0 },
+      ratings: [Rating],
+    },
+    member_id: ObjectId,
+    attached: {},
   });
 
   Media.pre('save', function (next) {
@@ -207,9 +202,9 @@ function defineModels(mongoose, fn) {
     
     // TMP move this to isNew after awhile
     // parse member name and title for search
-    var terms = this.title
-      , self = this
-    ;
+    var terms = this.title;
+    var self = this;
+
     mongoose.model('Member').findById(this.member_id, function (err, member) {
       if (!err && member) {
         terms += ' ' + member.name.first + ' ' + member.name.last;
@@ -218,60 +213,52 @@ function defineModels(mongoose, fn) {
       next();
     });
     
-    
   });
 
-  Media.virtual('id')
-    .get(function () {
-      return this._id.toHexString();
-    });
-
-
+  Media.virtual('id').get(function () {
+    return this._id.toHexString();
+  });
 
   /**
     * Model: LoginToken
     *
     * Used for session persistence.
     */
-  LoginToken = new Schema({
-      email   : { type: String, index: true }
-    , series  : { type: String, index: true }
-    , token   : { type: String, index: true }
-  });
-
-  LoginToken.method('randomToken', function () {
-    return Math.round((new Date().valueOf() * Math.random())) + '';
-  });
-
-  LoginToken.pre('save', function (next) {
-    // Automatically create the tokens
-    this.token = this.randomToken();
-
-    if (this.isNew)
-      this.series = this.randomToken();
-
-    next();
-  });
-
-  LoginToken.virtual('id')
-    .get(function () {
-      return this._id.toHexString();
-    });
-
-  LoginToken.virtual('cookieValue')
-    .get(function () {
-      return JSON.stringify({ email: this.email, token: this.token, series: this.series });
-    });
+  // LoginToken = new Schema({
+  //   email: { type: String, index: true },
+  //   series: { type: String, index: true },
+  //   token: { type: String, index: true },
+  // });
+  // 
+  // LoginToken.method('randomToken', function () {
+  //   return Math.round((new Date().valueOf() * Math.random())) + '';
+  // });
+  // 
+  // LoginToken.pre('save', function (next) {
+  //   // Automatically create the tokens
+  //   this.token = this.randomToken();
+  // 
+  //   if (this.isNew)
+  //     this.series = this.randomToken();
+  // 
+  //   next();
+  // });
+  // 
+  // LoginToken.virtual('id').get(function () {
+  //   return this._id.toHexString();
+  // });
+  // 
+  // LoginToken.virtual('cookieValue').get(function () {
+  //   return JSON.stringify({ email: this.email, token: this.token, series: this.series });
+  // });
 
 
   mongoose.model('Member', Member);
   mongoose.model('Comment', Comment);
   mongoose.model('Rating', Rating);
   mongoose.model('Media', Media);
-  mongoose.model('LoginToken', LoginToken);
+  // mongoose.model('LoginToken', LoginToken);
 
   fn();
-}
-
-exports.defineModels = defineModels; 
+};
 
