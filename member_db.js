@@ -1,10 +1,16 @@
-// Functionality for members, .
+// Functionality for handling members and their media.
 
 /** Notes:
  *
+ *
+ *
+ *
  */
 
-// var ObjectID = require('mongodb').
+/**
+* Module dependencies.
+*/
+var ObjectID = require('mongodb').BSONPure.ObjectID;
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
 var util = require('util');
@@ -13,7 +19,7 @@ var Step = require('step');
 
 
 /*
- * Creates a db instance.
+ * Create a db instance.
  */
 var MemberDb = exports.MemberDb = function (db, options, cb) {
   var self = this;
@@ -21,7 +27,10 @@ var MemberDb = exports.MemberDb = function (db, options, cb) {
   self.collections = {};
 
   var collections = {
-    members: { index: { added: 1, primaryEmail: 1 } },
+    member: { index: { primaryEmail: 1, role: 1 } },
+    media: { index: { key: 1, type: 1, 'meta.tags': 1, member_id: 1 } },
+    comment: { index: { member_id: 1, media_id: 1 } },
+    sessions: {},
   };
 
   Step(
@@ -39,8 +48,9 @@ var MemberDb = exports.MemberDb = function (db, options, cb) {
       if (options.ensureIndexes) {
         var parallel = this.parallel;
         _.each(cols, function (col) {
-          col.ensureIndex(collections[col.collectionName].index,
-                          parallel());
+          var index = collections[col.collectionName].index;
+          if (index)
+            col.ensureIndex(index, parallel());
         });
       } else this();
     },
@@ -58,25 +68,26 @@ var MemberDb = exports.MemberDb = function (db, options, cb) {
 MemberDb.prototype.findOrCreateMemberFromOpenId = function (props, cb) {
   var self = this;
   props.primaryEmail = props.emails[0].value;
-  self.collections.members.findOne({ primaryEmail: props.primaryEmail },
+  self.collections.member.findOne({ primaryEmail: props.primaryEmail },
                                   function (err, member) {
     if (err) return cb(err);
     if (!member) {
-      _.extend(props, {
+      _.defaults(props, {
         meta: {},
         role: 1,
+        twitter: '',
       });
-      createDoc.call(self, self.collections.members, props, cb);
+      createDoc(self.collections.member, props, cb);
     } else cb(null, member);
   });
 }
 
 
 /*
- * Create methods for members, comments, ratings, media.
+ * Create methods for media and comments.
  */
 MemberDb.prototype.createMedia = function (props, cb) {
-  if (!_.has(props, ['title', 'body', 'type', 'memberId', 'attached']))
+  if (!_.has(props, ['title', 'body', 'type', 'member_id', 'attached']))
     return cb(new Error('Invalid media.'));
   var tags = props.tags && props.tags !== '' ?
       makeTags(props.tags) : [];
@@ -89,48 +100,25 @@ MemberDb.prototype.createMedia = function (props, cb) {
       hits: 0,
     },
   });
-  createDoc.call(this, this.collections.media, props, cb);
+  createDoc(this.collections.media, props, cb);
 }
 MemberDb.prototype.createComment = function (props, cb) {
-  if (!_.has(props, ['body', 'memberId', 'parentId']))
+  if (!_.has(props, ['body', 'member_id', 'media_id']))
     return cb(new Error('Invalid comment.'));
   _.defaults(props, {
     likes: 0,
   });
-  createDoc.call(this, this.collections.comments, props, cb);
+  createDoc(this.collections.comment, props, cb);
 }
 
 
 /*
  * Add a rating to existing media.
  */
-MemberDb.prototype.addRating = function (props, cb) {
-  if (!_.has(props, ['memberId', 'hearts']))
+MemberDb.prototype.addMediaRating = function (props, cb) {
+  if (!_.has(props, ['member_id', 'hearts']))
     return cb(new Error('Invalid rating.'));
-  _.defaults(props, {
 
-  });
-  cb();
-}
-
-
-/*
- * Find a member by its _id.
- */
-MemberDb.prototype.findMemberById = function (id, cb) {
-  if ('string' === typeof id)
-    id = new ObjectID(id);
-  this.collections.members.findOne({ _id: id },
-                                function (err, member) {
-    cb(err, member);
-  });
-}
-
-
-/*
- * Get some media.
- */
-MemberDb.prototype.findMedia = function (props, cb) {
   // count hearts
   // if (this.meta.ratings) {
   //   var hearts = 0;
@@ -139,25 +127,181 @@ MemberDb.prototype.findMedia = function (props, cb) {
   //   }
   //   this.meta.hearts = hearts;
   // }
+
+  cb();
 }
 
 
 /*
+ * Find methods for media and comments.
+ */
+MemberDb.prototype.findMedia = function (query, opts, cb) {
+  find.call(this, this.collections.media, query, opts, cb);
+}
+MemberDb.prototype.findComments = function (query, opts, cb) {
+  find.call(this, this.collections.comment, query, opts, cb);
+}
+
+
+/*
+ * Find a collection documents by _id..
+ */
+MemberDb.prototype.findMemberById = function (id, cb) {
+  findById(this.collections.member, id, cb);
+}
+MemberDb.prototype.findMediaById = function (id, cb) {
+  findById(this.collections.media, id, cb);
+}
+
+
+/*
+ * Get a list of all twitter names from members.
+ */
+MemberDb.prototype.findTwitterNames = function (cb) {
+  var self = this;
+  self.collections.member.find({})
+      .toArray(function (err, members) {
+    if (err) return cb(err);
+    cb(null, _(members).pluck('twitter')
+      .reject(function (str) { return str === ''; }));
+  });
+}
+
+
+/**
+ * Replace _ids with documents.
+ */
+MemberDb.prototype.expandDocIds = function (docs, cb) {
+  var self = this;
+  if (docs.length === 0)
+    return cb(null, docs);
+  var _cb = _.after(docs.length, cb);
+  _.each(docs, function (doc) {
+    var collections = {};
+    _.each(doc, function (id, key) {
+      var u = key.indexOf('_');
+      var col = u !== -1 ? key.substr(0, u) : null;
+      if (col) {
+        collections[col] = id;
+        delete doc[col];
+      }
+    });
+    var __cb = _.after(_.size(collections), _cb);
+    _.each(collections, function (id, collection) {
+      findById(self.collections[collection], id,
+              function (err, d) {
+        if (err) return cb(err);
+        switch (collection) {
+          case 'member':
+            doc[collection] = {
+              _id: d._id.toString(),
+              displayName: d.displayName,
+            };
+            if (d.twitter !== '')
+              doc[collection].twitter = d.twitter;
+            break;
+          case 'media':
+            doc[collection] = {
+              _id: d._id.toString(),
+              key: d.key,
+              type: d.type,
+              title: d.title,
+            };
+            break;
+        }
+        __cb(null, docs);
+      });
+    });
+  });
+}
+
+
+// MemberDb.prototype.expandDocIds = function (docs, cb) {
+//   var self = this;
+//   if (docs.length === 0)
+//     return cb(null, docs);
+//   var _cb = _.after(docs.length, cb);
+//   _.each(docs, function (doc) {
+//     var __cb = _.after(Boolean(doc.memberId)
+//                       + Boolean(doc.mediaId), _cb);
+//     if (doc.memberId)
+//       findById(self.collections.members, doc.memberId,
+//               function (err, mem) {
+//         if (err) return cb(err);
+//         doc.member = {
+//           _id: mem._id.toString(),
+//           displayName: mem.displayName,
+//         };
+//         if (mem.twitter !== '')
+//           doc.member.twitter = mem.twitter;
+//         delete doc.memberId;
+//         __cb(null, docs);
+//       });
+//     if (doc.mediaId)
+//       findById(self.collections.media, doc.mediaId,
+//               function (err, med) {
+//         if (err) return cb(err);
+//         doc.media = {
+//           _id: med._id.toString(),
+//           key: med.key,
+//           type: med.type,
+//           title: med.title,
+//         };
+//         delete doc.mediaId;
+//         __cb(null, docs);
+//       });
+//   });
+// }
+
+
+/*
  * Insert a document into a collecting
- * adding `added` key if it doesn't
+ * adding `created` key if it doesn't
  * exist in the given props.
  */
 function createDoc(collection, props, cb) {
-  var self = this;
   function insert() {
     collection.insert(props, { safe: true },
                       function (err, inserted) {
       cb(err, inserted[0]);
     });
   }
-  if (!props.added)
-    props.added = new Date;
+  if (!props.created)
+    props.created = new Date;
   insert();
+}
+
+
+/*
+ * Find collection documents and
+ * replace *_ids with the document
+ * from the cooresponding collection
+ * specified by given _id.
+ */
+function find(collection, query, opts, cb) {
+  var self = this;
+  if ('function' === typeof opts) {
+    cb = opts;
+    opts = {};
+  }
+  collection.find(query, opts)
+            .toArray(function (err, docs) {
+    if (err) return cb(err);
+    self.expandDocIds(docs, cb);
+  });
+}
+
+
+/*
+ * Find a document by its _id.
+ */
+function findById(collection, id, cb) {
+  if ('string' === typeof id)
+    id = new ObjectID(id);
+  collection.findOne({ _id: id },
+                    function (err, doc) {
+    cb(err, doc);
+  });
 }
 
 
@@ -183,164 +327,4 @@ function makeTags(str) {
   str = str.replace(/\s{2,}/g, ' ');
   return str.toLowerCase().trim().split(' ');
 }
-
-
-
-
-// function findMedia(next, filter) {
-//   Media.find(filter).sort('added', 1).run(function (err, media) {
-//     if (!err) {
-//       var num = media.length
-//         , cnt = 0
-//       ;
-//       if (num > 0) {
-//         media.forEach(function (med) {
-//           Member.findById(med.member_id, function (err, member) {
-//             med.member = member;
-//             cnt++;
-//             if (cnt == num) {
-//               next(media);
-//             }
-//           });
-//         });
-//       } else { 
-//         next([]);
-//       }
-//     } else {
-//       next([]);
-//     }
-//   });
-// }
-// 
-// /**
-//  * 
-//  * @param
-//  */
-// function getTrending(limit, next) {
-//   Media.find({}, [], { limit: limit }).sort('meta.hearts', -1).run(function (err, media) {
-//     if (!err) {
-//       var num = media.length
-//         , cnt = 0
-//       ;
-//       if (num > 0)
-//         media.forEach(function (med) {
-//           Member.findById(med.member_id, function (err, member) {
-//             med.member = member;
-//             cnt++;
-//             if (cnt == num)
-//               next(media);
-//           });
-//         });
-//       else
-//         next([]);
-//     } else
-//       next([]);
-//   });
-// }
-// 
-// /**
-//  * 
-//  * @param
-//  */
-// function getRecentComments(limit, next) {
-//   Comment.find({}, [], { limit: limit }).sort('added', -1).run(function (err, coms) {
-//     var num = coms.length
-//       , cnt = 0
-//     ;
-//     if (err || num == 0)
-//       next([]);
-//     else
-//       coms.forEach(function (com) {
-//         Member.findById(com.member_id, function (err, mem) {
-//           if (!err) {
-//             com.member = mem;
-//             Media.findById(com.parent_id, function (err, med) {
-//               if (!err) {
-//                 com.parent = med;
-//                 cnt++;
-//                 if (cnt == num)
-//                   next(coms);
-//               } else {
-//                 next([]);
-//                 return;
-//               }
-//             });
-//           } else {
-//             next([]);
-//             return;
-//           }
-//         });
-//       });
-//   });
-// }
-
-
-
-
-
-
-// /**
-//  * 
-//  * @param
-//  */
-// function renderObject(obj, next) {
-//   Member.findById(obj.member_id, function (err, mem) {
-//     if (!err) {
-//       obj.member = mem;
-//       next(templates.object({ object: obj }));
-//     } else {
-//       next(err);
-//     }
-//   });
-// }
-// 
-// /**
-//  * 
-//  * @param
-//  */
-// function renderComment(com, next) {
-//   Member.findById(com.member_id, function (err, mem) {
-//     if (!err) {
-//       com.member = mem;
-//       Media.findById(com.parent_id, function (err, med) {
-//         if (!err) {
-//           var chtml = templates.comment({ comment: com });
-//           com.parent = med;
-//           var rhtml = templates.comment({ comment: com });
-//           next(chtml, rhtml);
-//         } else {
-//           next([]);
-//         }
-//       });
-//     } else {
-//       next(err);
-//     }
-//   });
-// }
-// 
-// /**
-//  * 
-//  * @param
-//  */
-// function getTwitterNames(next) {
-//   Member.find({}, function (err, data) {
-//     if (!err) {
-//       var twitters = []
-//         , num = data.length
-//         , cnt = 0
-//       ;
-//       if (num > 0)
-//         data.forEach(function (mem) {
-//           twitters.push(mem.twitter);
-//           cnt++;
-//           if (cnt == num)
-//             next(twitters);
-//         });
-//       else 
-//         next([]);
-//     } else 
-//       next([]);
-//   });
-// }
-
 

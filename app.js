@@ -32,6 +32,8 @@ var jade = require('jade');
 var util = require('util'), debug = util.debug, inspect = util.inspect;
 var fs = require('fs');
 var path = require('path');
+var log = require('./log.js').log;
+var logTimestamp = require('./log.js').logTimestamp;
 
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
@@ -110,26 +112,75 @@ passport.deserializeUser(function (id, cb) {
 });
 
 
+////////////// Helpers
+
+function getMedia(limit, cb) {
+  memberDb.findMedia({}, { limit: limit, sort: { created: -1 } }, cb);
+}
+function getTrending(limit, cb) {
+  memberDb.findMedia({}, { limit: limit, sort: { 'meta.hearts': -1 } }, cb);
+}
+function getRecentComments(limit, cb) {
+  memberDb.findComments({}, { limit: limit, sort: { created: -1 } }, cb);
+}
+function getTwitterNames(limit, cb) {
+  memberDb.findTwitterNames(cb);
+}
+
+// function renderObject(obj, next) {
+//   Member.findById(obj.member_id, function (err, mem) {
+//     if (!err) {
+//       obj.member = mem;
+//       next(templates.object({ object: obj }));
+//     } else {
+//       next(err);
+//     }
+//   });
+// }
+// 
+// function renderComment(com, next) {
+//   Member.findById(com.member_id, function (err, mem) {
+//     if (!err) {
+//       com.member = mem;
+//       Media.findById(com.media_id, function (err, med) {
+//         if (!err) {
+//           var chtml = templates.comment({ comment: com });
+//           com.media = med;
+//           var rhtml = templates.comment({ comment: com });
+//           next(chtml, rhtml);
+//         } else {
+//           next([]);
+//         }
+//       });
+//     } else {
+//       next(err);
+//     }
+//   });
+// }
+//
+
 ////////////// Web Routes
 
 // Home
-app.get('/', loadMember, function (req, res) {
-  findMedia(function (media) {
-    getTrending(5, function (trends) {
-      getRecentComments(10, function (coms) {
-        getTwitterNames(function (names) {
-          res.render('index', {
-              part   : 'media'
-            , media  : media
-            , coms   : coms
-            , trends : trends
-            , cm     : req.currentMember
-            , names  : names
-          });
-        });
+app.get('/', function (req, res) {
+  Step(
+    function () {
+      getMedia(50, this.parallel());
+      getTrending(5, this.parallel());
+      getRecentComments(5, this.parallel());
+      getTwitterNames(this.parallel());
+    },
+    function (err, media, trends, comments, twitters) {
+      res.render('index', {
+        part: 'media',
+        media: media,
+        trends: trends,
+        comments: comments,
+        member: req.user,
+        twitters: twitters,
       });
-    });
-  });
+    }
+  );
 });
 
 // Landing page
@@ -203,7 +254,7 @@ app.get('/logout', function (req, res) {
 
 
 // Add media form
-app.get('/add', loadMember, function (req, res) {
+app.get('/add', function (req, res) {
   if (req.currentMember.role !== 'contributor') {
     res.redirect('/');
     return;
@@ -224,7 +275,7 @@ app.get('/add', loadMember, function (req, res) {
 
 
 // Get tag results
-app.get('/search/:by.:format?', loadMember, function (req, res) {
+app.get('/search/:by.:format?', function (req, res) {
   var filter
     , by = req.body.by
     , val = makeTerms(req.body.val)
@@ -282,7 +333,7 @@ app.get('/search/:by.:format?', loadMember, function (req, res) {
 
 
 // Single object
-app.get('/:key', loadMember, function (req, res) {
+app.get('/:key', function (req, res) {
   Media.findOne({ key: req.params.key }, function (err, med) {
     for (var i = 0, len = med.terms.length; i < len; i++) {
       console.log(med.terms[i]);
@@ -480,7 +531,7 @@ app.get('/:key', loadMember, function (req, res) {
 
 
 // Add media from transloadit.com
-app.put('/insert', loadMember, function (req, res, next) {
+app.put('/insert', function (req, res, next) {
   
   // form params
   var media = req.body.media;
@@ -538,7 +589,7 @@ app.put('/insert', loadMember, function (req, res, next) {
 
 
 // Add comment
-app.put('/comment/:id.:format?', loadMember, function (req, res, next) {
+app.put('/comment/:id.:format?', function (req, res, next) {
   Media.findById(req.body.pid, function (err, med) {
     if (!err) {
       var comment = {
@@ -566,7 +617,7 @@ app.put('/comment/:id.:format?', loadMember, function (req, res, next) {
 
 
 // Add hearts
-app.put('/hearts/:id.:format?', loadMember, function (req, res, next) {
+app.put('/hearts/:id.:format?', function (req, res, next) {
   Media.findById(req.body.id, function (err, med) {
     if (!err) {
       var num = med.meta.ratings ? med.meta.ratings.length : 0
@@ -617,7 +668,7 @@ app.put('/hearts/:id.:format?', loadMember, function (req, res, next) {
 
 
 // // Delete a session on logout
-// app.del('/sessions', loadMember, function (req, res) {
+// app.del('/sessions', function (req, res) {
 //   if (req.session) {
 //     LoginToken.remove({ email: req.currentMember.email }, function () {});
 //     res.clearCookie('logintoken');
@@ -683,7 +734,7 @@ if (!module.parent) {
 
       // update everyone with new trends
       var distributeTrends = function () {
-        getTrending(5, function (trends) {
+        getTrending(5, function (err, trends) {
           var rendered = [];
           trends.forEach(function (trend) {
             rendered.push(templates.trend({ trend: trend }));
