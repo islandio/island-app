@@ -65,15 +65,18 @@ var MemberDb = exports.MemberDb = function (db, options, cb) {
  * Find a member by its primaryEmail. If it does not exist
  * create one using the given props.
  */
-MemberDb.prototype.findOrCreateMemberFromOpenId = function (props, cb) {
+MemberDb.prototype.findOrCreateMemberFromFacebook = function (props, cb) {
   var self = this;
   props.primaryEmail = props.emails[0].value;
   self.collections.member.findOne({ primaryEmail: props.primaryEmail },
                                   function (err, member) {
     if (err) return cb(err);
-    if (!member) {
+    if (member && !member.provider) {
+      _.defaults(props, member);
+      self.collections.member.update({ primaryEmail: props.primaryEmail },
+                                      props, { safe: true }, cb);
+    } else if (!member) {
       _.defaults(props, {
-        meta: {},
         role: 1,
         twitter: '',
       });
@@ -135,6 +138,7 @@ MemberDb.prototype.addMediaRating = function (props, cb) {
 /*
  * Find methods for media and comments.
  */
+
 MemberDb.prototype.findMedia = function (query, opts, cb) {
   find.call(this, this.collections.media, query, opts, cb);
 }
@@ -162,96 +166,10 @@ MemberDb.prototype.findTwitterNames = function (cb) {
   self.collections.member.find({})
       .toArray(function (err, members) {
     if (err) return cb(err);
-    cb(null, _(members).pluck('twitter')
-      .reject(function (str) { return str === ''; }));
+    cb(null, _.chain(members).pluck('twitter')
+      .reject(function (str) { return str === ''; }).value());
   });
 }
-
-
-/**
- * Replace _ids with documents.
- */
-MemberDb.prototype.expandDocIds = function (docs, cb) {
-  var self = this;
-  if (docs.length === 0)
-    return cb(null, docs);
-  var _cb = _.after(docs.length, cb);
-  _.each(docs, function (doc) {
-    var collections = {};
-    _.each(doc, function (id, key) {
-      var u = key.indexOf('_');
-      var col = u !== -1 ? key.substr(0, u) : null;
-      if (col) {
-        collections[col] = id;
-        delete doc[col];
-      }
-    });
-    var __cb = _.after(_.size(collections), _cb);
-    _.each(collections, function (id, collection) {
-      findById(self.collections[collection], id,
-              function (err, d) {
-        if (err) return cb(err);
-        switch (collection) {
-          case 'member':
-            doc[collection] = {
-              _id: d._id.toString(),
-              displayName: d.displayName,
-            };
-            if (d.twitter !== '')
-              doc[collection].twitter = d.twitter;
-            break;
-          case 'media':
-            doc[collection] = {
-              _id: d._id.toString(),
-              key: d.key,
-              type: d.type,
-              title: d.title,
-            };
-            break;
-        }
-        __cb(null, docs);
-      });
-    });
-  });
-}
-
-
-// MemberDb.prototype.expandDocIds = function (docs, cb) {
-//   var self = this;
-//   if (docs.length === 0)
-//     return cb(null, docs);
-//   var _cb = _.after(docs.length, cb);
-//   _.each(docs, function (doc) {
-//     var __cb = _.after(Boolean(doc.memberId)
-//                       + Boolean(doc.mediaId), _cb);
-//     if (doc.memberId)
-//       findById(self.collections.members, doc.memberId,
-//               function (err, mem) {
-//         if (err) return cb(err);
-//         doc.member = {
-//           _id: mem._id.toString(),
-//           displayName: mem.displayName,
-//         };
-//         if (mem.twitter !== '')
-//           doc.member.twitter = mem.twitter;
-//         delete doc.memberId;
-//         __cb(null, docs);
-//       });
-//     if (doc.mediaId)
-//       findById(self.collections.media, doc.mediaId,
-//               function (err, med) {
-//         if (err) return cb(err);
-//         doc.media = {
-//           _id: med._id.toString(),
-//           key: med.key,
-//           type: med.type,
-//           title: med.title,
-//         };
-//         delete doc.mediaId;
-//         __cb(null, docs);
-//       });
-//   });
-// }
 
 
 /*
@@ -287,7 +205,7 @@ function find(collection, query, opts, cb) {
   collection.find(query, opts)
             .toArray(function (err, docs) {
     if (err) return cb(err);
-    self.expandDocIds(docs, cb);
+    getDocIds.call(self, docs, cb);
   });
 }
 
@@ -301,6 +219,54 @@ function findById(collection, id, cb) {
   collection.findOne({ _id: id },
                     function (err, doc) {
     cb(err, doc);
+  });
+}
+
+
+/**
+ * Replace _ids with documents.
+ */
+function getDocIds(docs, cb) {
+  var self = this;
+  if (docs.length === 0)
+    return cb(null, docs);
+  var _cb = _.after(docs.length, cb);
+  _.each(docs, function (doc) {
+    var collections = {};
+    _.each(doc, function (id, key) {
+      var u = key.indexOf('_');
+      var col = u !== -1 ? key.substr(0, u) : null;
+      if (col) {
+        collections[col] = id;
+        delete doc[key];
+      }
+    });
+    var __cb = _.after(_.size(collections), _cb);
+    _.each(collections, function (id, collection) {
+      findById(self.collections[collection], id,
+              function (err, d) {
+        if (err) return cb(err);
+        switch (collection) {
+          case 'member':
+            doc[collection] = {
+              _id: d._id.toString(),
+              displayName: d.displayName,
+            };
+            if (d.twitter !== '')
+              doc[collection].twitter = d.twitter;
+            break;
+          case 'media':
+            doc[collection] = {
+              _id: d._id.toString(),
+              key: d.key,
+              type: d.type,
+              title: d.title,
+            };
+            break;
+        }
+        __cb(null, docs);
+      });
+    });
   });
 }
 

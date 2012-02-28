@@ -5,7 +5,7 @@
     a.grid-obj(href=object.key)
       div.grid-obj-hover.matte(style='width: ' + object.attached.image_thumb.meta.width + 'px; height: ' + object.attached.image_thumb.meta.height + 'px')
         h1.grid-obj-hover-txt
-          =object.member.name.first// + ' / ' + object.meta.hits
+          =object.member.displayName// + ' / ' + object.meta.hits
       img.grid-obj-img.matte(id='img-' + object.key, class='page-0', src=object.attached.image_thumb.cf_url, width=object.attached.image_thumb.meta.width, height=object.attached.image_thumb.meta.height)
     - if (object.meta.tags[0])
       div.grid-obj-tags-wrap
@@ -22,7 +22,7 @@
     a.grid-obj(href=object.key)
       div.grid-obj-hover.matte(style='width: ' + object.attached.video_thumbs[0].meta.width + 'px; height: ' + object.attached.video_thumbs[0].meta.height + 'px')
         h1.grid-obj-hover-txt
-          =object.member.name.first// + ' / ' + object.meta.hits
+          =object.member.displayName// + ' / ' + object.meta.hits
       img.grid-obj-img.matte(id='vid-' + object.key + '-0', class='page-0', src=object.attached.video_thumbs[0].cf_url, width=object.attached.video_thumbs[0].meta.width, height=object.attached.video_thumbs[0].meta.height)
       img.grid-obj-img.matte.hidden(id='vid-' + object.key + '-1', class='page-0', src=object.attached.video_thumbs[1].cf_url, width=object.attached.video_thumbs[1].meta.width, height=object.attached.video_thumbs[1].meta.height)
       img.grid-obj-img.matte.hidden(id='vid-' + object.key + '-2', class='page-0', src=object.attached.video_thumbs[2].cf_url, width=object.attached.video_thumbs[2].meta.width, height=object.attached.video_thumbs[2].meta.height)

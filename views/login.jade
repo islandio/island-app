@@ -7,66 +7,7 @@ div.landing-wrap
       p#goto-login-form(style='display: none')
         a(href='javascript:;', title='Go back to Log In.') Go back to Log In.
   div.landing-center(style="height: 64px;")
-    div.landing-forms
-      div.landing-forms-wrap
-        form#login-form(method='post', action='/sessions')
-          table
-            tbody
-              tr
-                td
-                  label(for='member[email]') Email
-                td
-                  label(for='member[password]') Password
-              tr
-                td
-                  input(name='member[email]', type='text')
-                td
-                  input(name='member[password]', type='password')
-                td
-                  input#login.is-button(type='submit', title='Log In', value='Log In')
-                  a(href='/auth/facebook') Login with Facebook
-              tr
-                td(style='padding-top: 10px')
-                  input#remember_me(type='checkbox', name='remember_me')
-                  label(for='remember_me') Keep me logged in
-                //td(style='padding-top: 10px')
-                //a(href='', rel='nofollow') Forgot your password?
-        form#register-form
-          table
-            tbody
-              tr
-                td
-                  label(for='newmember[name.first]') First Name
-                td
-                  input(name='newmember[name.first]', type='text')
-              tr
-                td
-                  label(for='newmember[name.last]') Last Name
-                td
-                  input(name='newmember[name.last]', type='text')
-              tr
-                td
-                  label(for='newmember[email]') Email
-                td
-                  input(name='newmember[email]', type='text')
-              tr
-                td
-                  label(for='newmember[email2]') Re-enter Email
-                td
-                  input(name='newmember[email2]', type='text')
-              tr
-                td
-                  label(for='newmember[twitter]') Twitter Name
-                td
-                  input(name='newmember[twitter]', type='text')
-              tr
-                td
-                  label(for='newmember[password]') New Password
-                td
-                  input(name='newmember[password]', type='password')
-              tr
-                td(colspan='2', align='right')
-                  input#add-member.is-button(type='submit', title='Register', value='Register')
+    a.is-button(href='/auth/facebook') Login with Facebook
     div.landing-reports
       #landing-message
         h1.landing-report-title / Just a moment...
@@ -88,8 +29,3 @@ div.landing-wrap
   div.landing-center(style='text-align: right')
     span.landing-copy
       | We Are Island © 2011
-
-
-
-
-

@@ -106,7 +106,7 @@ Step(
     memberDb.collections.member.dropIndexes(this.parallel());
     memberDb.collections.media.dropIndexes(this.parallel());
     memberDb.collections.comment.dropIndexes(this.parallel());
-    memberDb.collections.sessions.dropIndexes(this.parallel());
+    memberDb.collections.sessions.drop(this.parallel());
   },
   // Reformat members.
   function (err) {
@@ -122,6 +122,7 @@ Step(
           mem.primaryEmail = mem.primaryEmail || mem.email;
           mem.created = mem.created || mem.joined;
           mem.role = 0;
+          mem.displayName = mem.name.first + ' ' + mem.name.last;
           delete mem.name;
           delete mem.joined;
           delete mem.confirmed;

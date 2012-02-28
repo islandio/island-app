@@ -1,12 +1,12 @@
 div.comment.matte
   div.comment-title
     span.comment-title-name
-      =comment.member.name.first + ' ' + comment.member.name.last
-    - if (comment.parent)
-      a.comment-title-parent(href=comment.parent.id)
-        =comment.parent.title
+      =comment.member.displayName
+    - if (comment.media)
+      a.comment-title-parent(href=comment.media.id)
+        =comment.media.title
   div.comment-body
     p.comment-txt
       =comment.body
     h3.comment-added
-      =comment.added
+      =comment.created

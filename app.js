@@ -9,7 +9,7 @@ var argv = optimist
     .describe('port', 'Port to listen on')
       .default('port', 3644)
     .describe('db', 'MongoDb URL to connect to')
-      .default('db', 'mongo:///island:27018')
+      .default('db', 'mongo://localhost:27018/island')
     .argv;
 
 if (argv._.length || argv.help) {
@@ -28,6 +28,7 @@ var mongoStore = require('connect-mongodb');
 
 var stylus = require('stylus');
 var jade = require('jade');
+var templates = require('./templates');
 
 var util = require('util'), debug = util.debug, inspect = util.inspect;
 var fs = require('fs');
@@ -101,6 +102,7 @@ app.configure(function () {
 // Passport session cruft
 
 passport.serializeUser(function (member, cb) {
+  console.log(member);
   cb(null, member._id.toString());
 });
 
@@ -114,6 +116,52 @@ passport.deserializeUser(function (id, cb) {
 
 ////////////// Helpers
 
+function authorize(req, res, cb) {
+  var memberId = req.session.passport.user;
+  if (memberId) {
+    memberDb.findMemberById(memberId, function (err, member) {
+      if (err) return cb(err);
+      if (!member) {
+        res.redirect('/login');
+        return cb('Member and Session do NOT match!');
+      }
+      req.member = member;
+      cb(null, member);
+    });
+  } else {
+    res.redirect('/login');
+    cb('Session has no Member.');
+  }
+
+
+  // if (req.session.member_id) {
+  //   memberDb.findMemberById(req.session.member_id, function (err, mem) {
+  //     if (mem) {
+  //       req.currentMember = mem;
+  //       if (mem.meta.logins == 0) {
+  //         req.flash('thanks', 'Thanks for confirming your email address. Welcome to Island.');
+  //         mem.meta.logins++
+  //         mem.save(function (err) {
+  //           if (err)
+  //             Notify.problem(err);
+  //         });
+  //       }
+  //       next();
+  //     } else {
+  //       res.redirect('/login');
+  //     }
+  //   });
+  // } else if (req.cookies.logintoken) {
+  //   authenticateFromLoginToken(req, res, next);
+  // } else {
+  //   if (req.params && req.params.key) {
+  //     //app.set('desiredPath', req.params.key);
+  //     req.session.desiredPath = req.params.key;
+  //   }
+  //   res.redirect('/login');
+  // }
+}
+
 function getMedia(limit, cb) {
   memberDb.findMedia({}, { limit: limit, sort: { created: -1 } }, cb);
 }
@@ -123,7 +171,7 @@ function getTrending(limit, cb) {
 function getRecentComments(limit, cb) {
   memberDb.findComments({}, { limit: limit, sort: { created: -1 } }, cb);
 }
-function getTwitterNames(limit, cb) {
+function getTwitterNames(cb) {
   memberDb.findTwitterNames(cb);
 }
 
@@ -162,7 +210,7 @@ function getTwitterNames(limit, cb) {
 ////////////// Web Routes
 
 // Home
-app.get('/', function (req, res) {
+app.get('/', authorize, function (req, res) {
   Step(
     function () {
       getMedia(50, this.parallel());
@@ -176,7 +224,7 @@ app.get('/', function (req, res) {
         media: media,
         trends: trends,
         comments: comments,
-        member: req.user,
+        member: req.member,
         twitters: twitters,
       });
     }
@@ -199,10 +247,11 @@ app.get('/auth/facebook', function (req, res, next) {
   req.session.referer = req.headers.referer;
   var host = req.headers.host.split(':')[0];
   var home = 'http://' + host + ':' + argv.port + '/';
+  console.log(home);
   passport.use(new FacebookStrategy({
       clientID: 203397619757208,
       clientSecret: 'af79cdc8b5ca447366e87b12c3ddaed2',
-      callbackURL: home + 'auth/facebook/callback',
+      callbackURL: 'http://island.io:3644/' + 'auth/facebook/callback',
     },
     function (accessToken, refreshToken, profile, done) {
       profile.accessToken = accessToken;
@@ -220,8 +269,8 @@ app.get('/auth/facebook', function (req, res, next) {
 // verifying the assertion. If valid, the user will be
 // logged in. Otherwise, authentication has failed.
 app.get('/auth/facebook/callback', function (req, res, next) {
-  passport.authenticate('facebook', { successRedirect: req.session.referer || '/',
-                                    failureRedirect: req.session.referer || '/' })(req, res, next);
+  passport.authenticate('facebook', { successRedirect: '/',
+                                    failureRedirect: '/login' })(req, res, next);
 });
 
 // We logout via an ajax request.
@@ -333,76 +382,76 @@ app.get('/search/:by.:format?', function (req, res) {
 
 
 // Single object
-app.get('/:key', function (req, res) {
-  Media.findOne({ key: req.params.key }, function (err, med) {
-    for (var i = 0, len = med.terms.length; i < len; i++) {
-      console.log(med.terms[i]);
-    }
-    Member.findById(med.member_id, function (err, mem) {
-      med.member = mem;
-      var hearts = 0
-        , comments = []
-        , num = med.comments.length
-        , cnt = 0
-      ;
-      if (med.meta.ratings) {
-        for (var i=0; i < med.meta.ratings.length; i++) {
-          if (req.currentMember.id == med.meta.ratings[i].mid) {
-            hearts = med.meta.ratings[i].hearts;
-            break;
-          }
-        }
-      }
-      if (num == 0) {
-        med.meta.hits++;
-        med.save(function (err) {
-          findMedia(function (grid) {
-            getTwitterNames(function (names) {
-              res.render('index', {
-                  part   : 'single'
-                , media  : med
-                , coms   : comments
-                , hearts : hearts
-                , grid   : grid
-                , cm     : req.currentMember
-                , names  : names
-              });
-            });
-          });
-        });
-      } else {
-        med.comments.reverse();
-        med.comments.forEach(function (cid) {
-          Comment.findById(cid, function (err, com) {
-            Member.findById(com.member_id, function (err, commentor) {
-              com.member = commentor;
-              comments.push(com);
-              cnt++;
-              if (cnt == num) {
-                med.meta.hits++;
-                med.save(function (err) {
-                  findMedia(function (grid) {  
-                    getTwitterNames(function (names) {
-                      res.render('index', {
-                          part   : 'single'
-                        , media  : med
-                        , coms   : comments
-                        , hearts : hearts
-                        , grid   : grid
-                        , cm     : req.currentMember
-                        , names  : names
-                      });
-                    });
-                  });
-                });
-              }
-            });
-          });
-        });
-      }
-    });
-  });
-});
+// app.get('/:key', function (req, res) {
+//   Media.findOne({ key: req.params.key }, function (err, med) {
+//     for (var i = 0, len = med.terms.length; i < len; i++) {
+//       console.log(med.terms[i]);
+//     }
+//     Member.findById(med.member_id, function (err, mem) {
+//       med.member = mem;
+//       var hearts = 0
+//         , comments = []
+//         , num = med.comments.length
+//         , cnt = 0
+//       ;
+//       if (med.meta.ratings) {
+//         for (var i=0; i < med.meta.ratings.length; i++) {
+//           if (req.currentMember.id == med.meta.ratings[i].mid) {
+//             hearts = med.meta.ratings[i].hearts;
+//             break;
+//           }
+//         }
+//       }
+//       if (num == 0) {
+//         med.meta.hits++;
+//         med.save(function (err) {
+//           findMedia(function (grid) {
+//             getTwitterNames(function (names) {
+//               res.render('index', {
+//                   part   : 'single'
+//                 , media  : med
+//                 , coms   : comments
+//                 , hearts : hearts
+//                 , grid   : grid
+//                 , cm     : req.currentMember
+//                 , names  : names
+//               });
+//             });
+//           });
+//         });
+//       } else {
+//         med.comments.reverse();
+//         med.comments.forEach(function (cid) {
+//           Comment.findById(cid, function (err, com) {
+//             Member.findById(com.member_id, function (err, commentor) {
+//               com.member = commentor;
+//               comments.push(com);
+//               cnt++;
+//               if (cnt == num) {
+//                 med.meta.hits++;
+//                 med.save(function (err) {
+//                   findMedia(function (grid) {  
+//                     getTwitterNames(function (names) {
+//                       res.render('index', {
+//                           part   : 'single'
+//                         , media  : med
+//                         , coms   : comments
+//                         , hearts : hearts
+//                         , grid   : grid
+//                         , cm     : req.currentMember
+//                         , names  : names
+//                       });
+//                     });
+//                   });
+//                 });
+//               }
+//             });
+//           });
+//         });
+//       }
+//     });
+//   });
+// });
 
 
 // // Login - add member to session

@@ -1,6 +1,6 @@
 #twitter-names
-  - for (var n=0; n < names.length; ++n)
-    =names[n] + ','
+  - for (var n=0; n < twitters.length; ++n)
+    =twitters[n] + ','
 #wrap
   header#header-left
     a(href='/')
@@ -13,13 +13,13 @@
         li
           a#nav-logout.nav-link-right(href='/sessions', title='Log Out Island') 
             | Log Out
-        - if (cm.role == 'contributor')
+        - if (member.role === 0)
           li(style='margin: 0 5px 0 0')
             a#nav-add.nav-link-right(href='/add', title='Add Media') 
               | Add Media
         li
           span.welcome-member Hi, 
-            =cm.name.first + ' ' + cm.name.last
+            =member.displayName
     #twitter.tweet
       p loading contributor tweets...
   div.clear
