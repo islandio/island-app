@@ -90,28 +90,96 @@ MemberDb.prototype.findOrCreateMemberFromFacebook = function (props, cb) {
  * Create methods for media and comments.
  */
 MemberDb.prototype.createMedia = function (props, cb) {
-  if (!_.has(props, ['title', 'body', 'type', 'member_id', 'attached']))
-    return cb(new Error('Invalid media.'));
-  var tags = props.tags && props.tags !== '' ?
-      makeTags(props.tags) : [];
-  _.defaults(props, {
-    key: makeURLKey(8),
-    comments: [],
-    meta: {
-      tags: tags,
-      ratings: [],
-      hits: 0,
-    },
+  var self = this;
+  // if (!_.has(props, ['title', 'body', 'type', 'member_id', 'attached']))
+  //   return cb(new Error('Invalid media'));
+  createUniqueURLKey(self.collections.member,
+                    8, function (err, key) {
+    var tags = makeTags(props['meta.tags']);
+    delete props['meta.tags'];
+    _.defaults(props, {
+      key: key,
+      comments: [],
+      meta: {
+        tags: tags,
+        ratings: [],
+        hits: 0,
+      },
+    });
+    createDoc(self.collections.member, props, cb);
   });
-  createDoc(this.collections.media, props, cb);
 }
 MemberDb.prototype.createComment = function (props, cb) {
   if (!_.has(props, ['body', 'member_id', 'media_id']))
-    return cb(new Error('Invalid comment.'));
+    return cb(new Error('Invalid comment'));
   _.defaults(props, {
     likes: 0,
   });
   createDoc(this.collections.comment, props, cb);
+}
+
+
+/*
+ * Find methods for media and comments.
+ */
+
+MemberDb.prototype.findMedia = function (query, opts, cb) {
+  var self = this;
+  if ('function' === typeof opts) {
+    cb = opts;
+    opts = {};
+  }
+  find.call(self, self.collections.media, query, opts,
+          function (err, media) {
+    var _cb = _.after(media.length, cb);
+    _.each(media, function (med) {
+      if (med.comments.length === 0)
+        return _cb(null, media);
+      var __cb = _.after(med.comments.length, _cb);
+      _.each(med.comments, function (commentId, i) {
+        self.findCommentById(commentId,
+                            function (err, comment) {
+          if (err) return cb(err);
+          med.comments[i] = comment;
+          __cb(null, media);
+        });
+      });
+    });
+  });
+}
+MemberDb.prototype.findComments = function (query, opts, cb) {
+  find.call(this, this.collections.comment, query, opts, cb);
+}
+
+
+/*
+ * Find a collection documents by _id..
+ */
+MemberDb.prototype.findMemberById = function (id, cb) {
+  findOne.call(this, this.collections.member,
+              { _id: id }, cb);
+}
+MemberDb.prototype.findMediaById = function (id, cb) {
+  findOne.call(this, this.collections.media,
+              { _id: id }, cb);
+}
+MemberDb.prototype.findCommentById = function (id, cb) {
+  findOne.call(this, this.collections.comment,
+              { _id: id }, cb);
+}
+
+
+/*
+ * Get a list of all twitter names from members.
+ */
+MemberDb.prototype.findTwitterNames = function (cb) {
+  var self = this;
+  self.collections.member.find({})
+      .toArray(function (err, members) {
+    if (err) return cb(err);
+    cb(null, _.chain(members).pluck('twitter')
+      .reject(function (str) { return str === ''; }).value());
+  });
 }
 
 
@@ -132,43 +200,6 @@ MemberDb.prototype.addMediaRating = function (props, cb) {
   // }
 
   cb();
-}
-
-
-/*
- * Find methods for media and comments.
- */
-
-MemberDb.prototype.findMedia = function (query, opts, cb) {
-  find.call(this, this.collections.media, query, opts, cb);
-}
-MemberDb.prototype.findComments = function (query, opts, cb) {
-  find.call(this, this.collections.comment, query, opts, cb);
-}
-
-
-/*
- * Find a collection documents by _id..
- */
-MemberDb.prototype.findMemberById = function (id, cb) {
-  findById(this.collections.member, id, cb);
-}
-MemberDb.prototype.findMediaById = function (id, cb) {
-  findById(this.collections.media, id, cb);
-}
-
-
-/*
- * Get a list of all twitter names from members.
- */
-MemberDb.prototype.findTwitterNames = function (cb) {
-  var self = this;
-  self.collections.member.find({})
-      .toArray(function (err, members) {
-    if (err) return cb(err);
-    cb(null, _.chain(members).pluck('twitter')
-      .reject(function (str) { return str === ''; }).value());
-  });
 }
 
 
@@ -211,14 +242,23 @@ function find(collection, query, opts, cb) {
 
 
 /*
- * Find a document by its _id.
+ * Find a document and
+ * replace *_ids with the document
+ * from the cooresponding collection
+ * specified by given _id.
  */
-function findById(collection, id, cb) {
-  if ('string' === typeof id)
-    id = new ObjectID(id);
-  collection.findOne({ _id: id },
+function findOne(collection, query, opts, cb) {
+  var self = this;
+  if ('function' === typeof opts) {
+    cb = opts;
+    opts = {};
+  }
+  if (query._id && 'string' === typeof query._id)
+    query._id = new ObjectID(query._id);
+  collection.findOne(query, opts,
                     function (err, doc) {
-    cb(err, doc);
+    if (err) return cb(err);
+    getDocIds.call(self, doc, cb);
   });
 }
 
@@ -228,12 +268,21 @@ function findById(collection, id, cb) {
  */
 function getDocIds(docs, cb) {
   var self = this;
-  if (docs.length === 0)
-    return cb(null, docs);
-  var _cb = _.after(docs.length, cb);
-  _.each(docs, function (doc) {
+  var _cb;
+  if (_.isArray(docs)) {
+    if (docs.length === 0)
+      return cb(null, docs);
+    _cb = _.after(docs.length, cb);
+    _.each(docs, handleDoc);
+  } else {
+    _cb = cb;
+    handleDoc(docs);
+  }
+  
+  function handleDoc(doc) {
     var collections = {};
     _.each(doc, function (id, key) {
+      if ('_id' === key) return;
       var u = key.indexOf('_');
       var col = u !== -1 ? key.substr(0, u) : null;
       if (col) {
@@ -241,10 +290,12 @@ function getDocIds(docs, cb) {
         delete doc[key];
       }
     });
-    var __cb = _.after(_.size(collections), _cb);
+    var num = _.size(collections);
+    if (num === 0) return _cb(null, docs);
+    var __cb = _.after(num, _cb);
     _.each(collections, function (id, collection) {
-      findById(self.collections[collection], id,
-              function (err, d) {
+      findOne.call(self, self.collections[collection],
+                  { _id: id }, function (err, d) {
         if (err) return cb(err);
         switch (collection) {
           case 'member':
@@ -267,7 +318,7 @@ function getDocIds(docs, cb) {
         __cb(null, docs);
       });
     });
-  });
+  }
 }
 
 
@@ -275,7 +326,7 @@ function getDocIds(docs, cb) {
   * Create a string identifier
   * for use in a URL at a given length.
   */
-function makeURLKey(length) {
+function createURLKey(length) {
   var key = '';
   var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'+
       'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -285,10 +336,27 @@ function makeURLKey(length) {
   return key;
 }
 
+
+/*
+ * Create a string identifier for a
+ * document ensuring that it's unique
+ * for the given collection.
+ */
+function createUniqueURLKey(collection, length, cb) {
+  var key = createURLKey(length);
+  collection.findOne({ key: key }, function (err, doc) {
+    if (err) return cb(err);
+    if (doc) createUniqueURLKey(collection, length, cb);
+    else cb(null, key);
+  });
+}
+
+
 /**
  * Make array of searchable terms from str
  */
 function makeTags(str) {
+  if (!str || str === '') return [];
   str = str.replace(/[~|!|@|#|$|%|^|&|*|(|)|_|+|`|-|=|[|{|;|'|:|"|\/|\\|?|>|.|<|,|}|]|]+/gi, '');
   str = str.replace(/\s{2,}/g, ' ');
   return str.toLowerCase().trim().split(' ');

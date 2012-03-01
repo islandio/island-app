@@ -52,6 +52,7 @@ var transloadit = {
   "auth": { "key": "8a36aa56062f49c79976fa24a74db6cc" },
   "template_id": "dd77fc95cfff48e8bf4af6159fd6b2e7"
 };
+var cloudfrontUrl = 'http://d1ehvayr9dfk4s.cloudfront.net/';
 
 
 // Configuration
@@ -102,7 +103,6 @@ app.configure(function () {
 // Passport session cruft
 
 passport.serializeUser(function (member, cb) {
-  console.log(member);
   cb(null, member._id.toString());
 });
 
@@ -125,7 +125,7 @@ function authorize(req, res, cb) {
         res.redirect('/login');
         return cb('Member and Session do NOT match!');
       }
-      req.member = member;
+      req.user = member;
       cb(null, member);
     });
   } else {
@@ -224,7 +224,7 @@ app.get('/', authorize, function (req, res) {
         media: media,
         trends: trends,
         comments: comments,
-        member: req.member,
+        member: req.user,
         twitters: twitters,
       });
     }
@@ -247,7 +247,6 @@ app.get('/auth/facebook', function (req, res, next) {
   req.session.referer = req.headers.referer;
   var host = req.headers.host.split(':')[0];
   var home = 'http://' + host + ':' + argv.port + '/';
-  console.log(home);
   passport.use(new FacebookStrategy({
       clientID: 203397619757208,
       clientSecret: 'af79cdc8b5ca447366e87b12c3ddaed2',
@@ -279,47 +278,26 @@ app.get('/logout', function (req, res) {
   res.redirect('/');
 });
 
-// // Confirm page
-// app.get('/confirm/:id', function (req, res) {
-//   Member.findById(req.params.id, function (err, mem) {
-//     if (!err) {
-//       mem.confirmed = true;
-//       mem.save(function (err) {
-//         if (!err) {
-//           req.currentMember = mem;
-//           req.session.member_id = mem.id;
-//           res.redirect('/');
-//         } else {
-//           res.redirect('/login');
-//           Notify.problem(err);
-//         }
-//       });
-//     } else {
-//       res.redirect('/login');
-//       Notify.problem(err);
-//     }
-//   });
-// });
-
 
 // Add media form
-app.get('/add', function (req, res) {
-  if (req.currentMember.role !== 'contributor') {
-    res.redirect('/');
-    return;
-  }
-  findMedia(function (grid) {
-    getTwitterNames(function (names) {
+app.get('/add', authorize, function (req, res) {
+  if (req.user.role !== 0)
+    return res.redirect('/');
+  Step(
+    function () {
+      getMedia(50, this.parallel());
+      getTwitterNames(this.parallel());
+    },
+    function (err, media, twitters) {
       res.render('index', {
-          part  : 'add'
-        , data  : new Media()
-        , tlip  : transloadit
-        , grid  : grid 
-        , cm    : req.currentMember
-        , names : names    
+        part: 'add',
+        tlip: transloadit,
+        grid: media,
+        member: req.user,
+        twitters: twitters,
       });
-    });
-  });
+    }
+  );
 });
 
 
@@ -382,254 +360,77 @@ app.get('/search/:by.:format?', function (req, res) {
 
 
 // Single object
-// app.get('/:key', function (req, res) {
-//   Media.findOne({ key: req.params.key }, function (err, med) {
-//     for (var i = 0, len = med.terms.length; i < len; i++) {
-//       console.log(med.terms[i]);
-//     }
-//     Member.findById(med.member_id, function (err, mem) {
-//       med.member = mem;
-//       var hearts = 0
-//         , comments = []
-//         , num = med.comments.length
-//         , cnt = 0
-//       ;
-//       if (med.meta.ratings) {
-//         for (var i=0; i < med.meta.ratings.length; i++) {
-//           if (req.currentMember.id == med.meta.ratings[i].mid) {
-//             hearts = med.meta.ratings[i].hearts;
-//             break;
-//           }
-//         }
-//       }
-//       if (num == 0) {
-//         med.meta.hits++;
-//         med.save(function (err) {
-//           findMedia(function (grid) {
-//             getTwitterNames(function (names) {
-//               res.render('index', {
-//                   part   : 'single'
-//                 , media  : med
-//                 , coms   : comments
-//                 , hearts : hearts
-//                 , grid   : grid
-//                 , cm     : req.currentMember
-//                 , names  : names
-//               });
-//             });
-//           });
-//         });
-//       } else {
-//         med.comments.reverse();
-//         med.comments.forEach(function (cid) {
-//           Comment.findById(cid, function (err, com) {
-//             Member.findById(com.member_id, function (err, commentor) {
-//               com.member = commentor;
-//               comments.push(com);
-//               cnt++;
-//               if (cnt == num) {
-//                 med.meta.hits++;
-//                 med.save(function (err) {
-//                   findMedia(function (grid) {  
-//                     getTwitterNames(function (names) {
-//                       res.render('index', {
-//                           part   : 'single'
-//                         , media  : med
-//                         , coms   : comments
-//                         , hearts : hearts
-//                         , grid   : grid
-//                         , cm     : req.currentMember
-//                         , names  : names
-//                       });
-//                     });
-//                   });
-//                 });
-//               }
-//             });
-//           });
-//         });
-//       }
-//     });
-//   });
-// });
-
-
-// // Login - add member to session
-// app.post('/sessions', function (req, res) {
-//   var desiredPath = req.session.desiredPath || '/';
-//   // check fields
-//   var missing = [];
-//   if (!req.body.member.email)
-//     missing.push('email');
-//   if (!req.body.member.password)
-//     missing.push('password');
-//   if (missing.length != 0) {
-//     res.send({ status: 'fail', data: { code: 'MISSING_FIELD', message: 'Hey, we need both those fields to get you in here ;)', missing: missing } });
-//     return;
-//   }
-//   Member.findOne({ email: req.body.member.email }, function (err, mem) {
-//     if (mem && mem.authenticate(req.body.member.password)) {
-//       if (!mem.confirmed) {
-//         res.send({
-//             status: 'fail'
-//           , data: { 
-//                 code: 'NOT_CONFIRMED'
-//               , message: 'Hey there, ' + mem.name.first + '. You must confirm your account before we can let you in here. I can <a href="javascript:;" id="noconf-' + mem.id + '" class="resend-conf">re-send the confirmation email</a> if you\'d like.'
-//             }
-//         });
-//         return;
-//       }
-//       mem.meta.logins++
-//       mem.save(function (err) {
-//         if (!err) {
-//           req.session.member_id = mem.id;
-//           if (req.body.remember_me) {
-//             var loginToken = new LoginToken({ email: mem.email });
-//             loginToken.save(function () {
-//               res.cookie('logintoken', loginToken.cookieValue, { expires: new Date(Date.now() + 2 * 604800000), path: '/' });
-//               res.send({ status: 'success', data: { path: desiredPath } });
-//             });
-//           } else {
-//             res.send({ status: 'success', data: { path: desiredPath } });
-//           }
-//         } else {
-//           res.send({ status: 'error', message: '#FML. We\'re experiencing an unknown problem but are looking into it now. Please try to log in again later.' });
-//           Notify.problem(err);
-//         }
-//       });
-//     } else {
-//       res.send({
-//           status: 'fail'
-//         , data: { 
-//               code: 'BAD_AUTH'
-//             , message: 'Hey, sorry. That didn\'t work. Your email or password is incorrect.'
-//           }
-//       });
-//     }
-//   });
-// });
-
-
-// // Resend Confirmation Email
-// app.post('/resendconf/:id?', function (req, res) {
-//   if (!req.params.id) {
-//     res.send({ status: 'error', message: 'Invalid request.' });
-//     return;
-//   } else {
-//     Member.findById(req.body.id, function (err, mem) {
-//       if (mem) {
-//         var confirm = 'http://' + path.join(req.headers.host, 'confirm', mem.id);
-//         Notify.welcome(mem, confirm, function (err, message) {
-//           if (!err)
-//             res.send({ status: 'success', data: { message: 'Excellent, ' + mem.name.first + '. Please check your inbox for the next step. There\'s only one more... I promise.', member: mem } });
-//           else {
-//             res.send({ status: 'error', message: '#FML. We\'re experiencing an unknown problem but are looking into it now. Please try registering again later.' });
-//             Notify.problem(err);
-//           }
-//         });
-//       } else
-//         res.send({ status: 'error', message: 'Oops, we lost your account info. Please register again.' });
-//     });
-//   }
-// });
-
-
-// // Add Member
-// app.put('/members', function (req, res) {
-//   //res.send({ status: 'error', message: 'Hey, you can\'t do that yet!' });
-//   //return;
-//   // check fields
-//   var missing = [];
-//   if (!req.body.newmember['name.first'])
-//     missing.push('name.first');
-//   if (!req.body.newmember['name.last'])
-//     missing.push('name.last');
-//   if (!req.body.newmember.email)
-//     missing.push('email');
-//   if (!req.body.newmember.email2)
-//     missing.push('email2');
-//   if (!req.body.newmember.password)
-//     missing.push('password');
-//   if (missing.length != 0) {
-//     res.send({ status: 'fail', data: { code: 'MISSING_FIELD', message: 'Hey, we need all those fields for this to work.', missing: missing } });
-//     return;
-//   }
-//   // compare emails
-//   if (req.body.newmember.email2 != req.body.newmember.email) {
-//     res.send({ status: 'fail', data: { code: 'INVALID_EMAIL', message: 'Oops. You didn\'t re-enter your email address correctly. Please do it right and try registering again.' } });
-//     return;
-//   } else
-//     delete req.body.newmember.email2;
-//   // create new member
-//   var member = new Member(req.body.newmember);
-//   member.save(function (err) {
-//     if (!err) {
-//       var confirm = 'http://' + path.join(req.headers.host, 'confirm', member.id);
-//       Notify.welcome(member, confirm, function (err, message) {
-//         if (!err)
-//           res.send({ status: 'success', data: { message: 'Excellent. Please check your inbox for the next step. There\'s only one more, I promise.', member: member } });
-//         else {
-//           res.send({ status: 'error', message: '#FML. We\'re experiencing an unknown problem but are looking into it now. Please try registering again later.' });
-//           Notify.problem(err);
-//         }
-//       });
-//     } else
-//       res.send({ status: 'fail', data: { code: 'DUPLICATE_EMAIL', message: 'Your email address is already being used on our system. Please try registering with a different address.' } });
-//   });
-// });
+app.get('/:key', function (req, res) {
+  Step(
+    function () {
+      memberDb.findMedia({ key: req.params.key },
+                        { limit: 1 }, this.parallel());
+      getMedia(50, this.parallel());
+      getTwitterNames(this.parallel());
+    },
+    function (err, med, media, twitters) {
+      if (err || !med)
+        return res.render('404');
+      med = _.first(med);
+      var rating = _.find(med.meta.ratings,
+                          function (rate) {
+        console.log(rate);
+        return
+          req.user._id.toString() === rate.member_id;
+      });
+      // med.meta.hits++;
+      // med.save(function (err) {
+      res.render('index', {
+        part: 'single',
+        media: med,
+        hearts: rating ? rating.hearts : 0,
+        grid: media,
+        member: req.user,
+        twitters: [],
+      });
+    }
+  );
+});
 
 
 // Add media from transloadit.com
-app.put('/insert', function (req, res, next) {
-  
-  // form params
-  var media = req.body.media;
-  media.member_id = req.currentMember.id;
-  
-  // determine type
+app.put('/insert', authorize, function (req, res, next) {
+  var props = req.body.media;
+  var results = req.body.assembly.results;
+  props.member_id = req.user._id;
+
   if (req.body.assembly.results.image_thumb) {
-    // this is an image
     var attachment = {
-        image_thumb : req.body.assembly.results.image_thumb['0']
-      , image_full  : req.body.assembly.results.image_full['0']
+      image_thumb: results.image_thumb['0'],
+      image_full: results.image_full['0']
     }
-    media.attached = attachment;
-    media.type = media.attached.image_full.type;
-    var id;
-    for (var i in media.attached)
-      if (media.attached.hasOwnProperty(i)) {
-        id = media.attached[i].id;
-        media.attached[i].cf_url = 'http://d1da6a4is4i5z6.cloudfront.net/' + id.substr(0, 2) + '/' + id.substr(2) + '.' + media.attached[i].ext;  
-      }
-  } else if (req.body.assembly.results.video_encode) {
-    // this is a video
+    props.attached = attachment;
+    props.type = props.attached.image_full.type;
+    _.each(props.attached, function (att) {
+      att.cf_url = cloudfrontUrl + att.id.substr(0, 2)
+                    + '/' + att.id.substr(2) + '.' + att.ext; });
+  } else if (results.video_encode) {
     var attachment = {
-        video_thumbs : req.body.assembly.results.video_thumbs
-      , video_placeholder : req.body.assembly.results.video_placeholder['0']
-      , video_poster : req.body.assembly.results.video_poster['0']
-      , video_encode : req.body.assembly.results.video_encode['0']
+      video_thumbs: results.video_thumbs,
+      video_placeholder: results.video_placeholder['0'],
+      video_poster: results.video_poster['0'],
+      video_encode: results.video_encode['0'],
     }
-    media.attached = attachment;
-    media.type = media.attached.video_encode.type;
-    var id;
-    for (var i in media.attached.video_thumbs)
-      if (media.attached.video_thumbs.hasOwnProperty(i)) {
-        id = media.attached.video_thumbs[i].id;
-        media.attached.video_thumbs[i].cf_url = 'http://d1ehvayr9dfk4s.cloudfront.net/' + id.substr(0, 2) + '/' + id.substr(2) + '.' + media.attached.video_thumbs[i].ext;
-      }
-    id = media.attached.video_placeholder.id;
-    media.attached.video_placeholder.cf_url = 'http://d1ehvayr9dfk4s.cloudfront.net/' + id.substr(0, 2) + '/' + id.substr(2) + '.' + media.attached.video_placeholder.ext;
-    id = media.attached.video_poster.id;
-    media.attached.video_poster.cf_url = 'http://d1ehvayr9dfk4s.cloudfront.net/' + id.substr(0, 2) + '/' + id.substr(2) + '.' + media.attached.video_poster.ext;
-    id = media.attached.video_encode.id;
-    media.attached.video_encode.cf_url = 'http://d1ehvayr9dfk4s.cloudfront.net/' + id.substr(0, 2) + '/' + id.substr(2) + '.' + media.attached.video_encode.ext;
+    props.attached = attachment;
+    props.type = props.attached.video_encode.type;
+    _.each(props.attached.video_thumbs, function (thu) {
+      thu.cf_url = cloudfrontUrl + thu.id.substr(0, 2)
+                    + '/' + thu.id.substr(2) + '.' + thu.ext; });
+    _.each([props.attached.video_placeholder,
+    props.attached.video_poster,
+    props.attached.video_encode], function (att) {
+      att.cf_url = cloudfrontUrl + att.id.substr(0, 2)
+                    + '/' + att.id.substr(2) + '.' + att.ext; });
   }
-  
-  // save it
-  var doc = new Media(media);
-  doc.save(function (err) {
+  console.log(props);
+  memberDb.createMedia(props, function (err, media) {
     if (!err)
-      res.send({ status: 'success', data: { id: doc._id } });
+      res.send({ status: 'success', data: { id: media._id } });
     else
       res.send({ status: 'error', message: err.message });
   });
@@ -716,17 +517,6 @@ app.put('/hearts/:id.:format?', function (req, res, next) {
 });
 
 
-// // Delete a session on logout
-// app.del('/sessions', function (req, res) {
-//   if (req.session) {
-//     LoginToken.remove({ email: req.currentMember.email }, function () {});
-//     res.clearCookie('logintoken');
-//     req.session.destroy(function () {});
-//   }
-//   res.redirect('/login');
-// });
-
-
 ////////////// Initialize and Listen
 
 var memberDb;
@@ -757,7 +547,7 @@ if (!module.parent) {
 
       // add new object to everyone's page
       everyone.now.distributeObject = function (id) {
-        Media.findById(id, function (err, obj) {
+        memberDb.findMediaById(id, function (err, obj) {
           if (!err)
             renderObject(obj, function (ren) {
               if ('string' == typeof ren)
@@ -793,8 +583,8 @@ if (!module.parent) {
           }
         });
       };
-      setInterval(distributeTrends, 5000);
-
+      // setInterval(distributeTrends, 5000);
+      
       // .server.socket.set('authorization', function (data, cb) {
       //   var cookies = connect.utils.parseCookie(data.headers.cookie);
       //   var sid = cookies['connect.sid'];

@@ -3,7 +3,7 @@ div.comment.matte
     span.comment-title-name
       =comment.member.displayName
     - if (comment.media)
-      a.comment-title-parent(href=comment.media.id)
+      a.comment-title-parent(href=comment.media.key)
         =comment.media.title
   div.comment-body
     p.comment-txt

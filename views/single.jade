@@ -5,7 +5,7 @@ div.single-left
     h1.title-left
       =media.title
     h1.title-sub from 
-      =media.member.name.first + ' ' + media.member.name.last
+      =media.member.displayName
   - if (media.type == 'image')
     div.obj-holder(style='height: ' + media.attached.image_full.meta.height + 'px')
       img.matte(id='image-' + media.id, src=media.attached.image_full.cf_url, width=media.attached.image_full.meta.width, height=media.attached.image_full.meta.height)
@@ -41,7 +41,7 @@ div.single-left
       p.obj-desc-txt
         =media.body
       h3.obj-details.obj-details Added 
-        =media.added
+        =media.created
       //div(style='position: relative; height: 17px')
       //img.social-icons(src='/graphics/sn/b/facebook_16.png', alt='/graphics/sn/facebook_16.png', title='Post, to Profile', style='left:0px;')
       //img.social-icons(src='/graphics/sn/b/twitter_16.png', alt='/graphics/sn/twitter_16.png', title='Tweet', style='left:21px;')
@@ -61,9 +61,9 @@ div.single-right
     input.is-button.add-comment(id='addto-' + media.id, type='submit', title='Add Comment', value='Comment')
     span.commentor-whois Logged in as 
       span(style='font-style: italic')
-        =cm.name.first + ' ' + cm.name.last
-  div.obj-comments(id='coms-' + media.id)
-    !=partial('comment', coms )
+        =member.displayName
+  div.obj-comments(id='coms-' + media._id)
+    !=partial('comment', media.comments )
 div.grid-wrap
   #search
     h1.title-bottom / Browse
