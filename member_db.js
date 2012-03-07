@@ -11,6 +11,7 @@
 * Module dependencies.
 */
 var ObjectID = require('mongodb').BSONPure.ObjectID;
+var search = require('reds').createSearch('media');
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
 var util = require('util');
@@ -74,7 +75,10 @@ MemberDb.prototype.findOrCreateMemberFromFacebook = function (props, cb) {
     if (member && !member.provider) {
       _.defaults(props, member);
       self.collections.member.update({ primaryEmail: props.primaryEmail },
-                                      props, { safe: true }, cb);
+                                      props, { safe: true }, function (err) {
+        if (err) return cb(err);
+        cb(null, props);
+      });
     } else if (!member) {
       _.defaults(props, {
         role: 1,
@@ -91,26 +95,37 @@ MemberDb.prototype.findOrCreateMemberFromFacebook = function (props, cb) {
  */
 MemberDb.prototype.createMedia = function (props, cb) {
   var self = this;
-  // if (!_.has(props, ['title', 'body', 'type', 'member_id', 'attached']))
-  //   return cb(new Error('Invalid media'));
-  createUniqueURLKey(self.collections.member,
+  if (!validate(props, ['title', 'body',
+      'type', 'member', 'attached']))
+    return cb(new Error('Invalid media'));
+  props.member_id = props.member._id;
+  var memberName = props.member.displayName;
+  delete props.member;
+  delete props['meta.tags'];
+  createUniqueURLKey(self.collections.media,
                     8, function (err, key) {
-    var tags = makeTags(props['meta.tags']);
-    delete props['meta.tags'];
+    // var tags = makeTags(props['meta.tags']);
     _.defaults(props, {
       key: key,
       comments: [],
       meta: {
-        tags: tags,
+        // tags: tags,
         ratings: [],
         hits: 0,
       },
     });
-    createDoc(self.collections.member, props, cb);
+    createDoc(self.collections.media, props,
+              function (err, doc) {
+      if (err) return cb(err);
+      search.index(doc.title, doc._id);
+      search.index(doc.body, doc._id);
+      search.index(memberName, doc._id);
+      getDocIds.call(self, doc, cb);
+    });
   });
 }
 MemberDb.prototype.createComment = function (props, cb) {
-  if (!_.has(props, ['body', 'member_id', 'media_id']))
+  if (!validate(props, ['body', 'member_id', 'media_id']))
     return cb(new Error('Invalid comment'));
   _.defaults(props, {
     likes: 0,
@@ -153,20 +168,17 @@ MemberDb.prototype.findComments = function (query, opts, cb) {
 
 
 /*
- * Find a collection documents by _id..
+ * Find a collection documents by _id.
  */
 MemberDb.prototype.findMemberById = function (id, cb) {
   findOne.call(this, this.collections.member,
-              { _id: id }, cb);
-}
+              { _id: id }, cb); }
 MemberDb.prototype.findMediaById = function (id, cb) {
   findOne.call(this, this.collections.media,
-              { _id: id }, cb);
-}
+              { _id: id }, cb); }
 MemberDb.prototype.findCommentById = function (id, cb) {
   findOne.call(this, this.collections.comment,
-              { _id: id }, cb);
-}
+              { _id: id }, cb); }
 
 
 /*
@@ -187,7 +199,7 @@ MemberDb.prototype.findTwitterNames = function (cb) {
  * Add a rating to existing media.
  */
 MemberDb.prototype.addMediaRating = function (props, cb) {
-  if (!_.has(props, ['member_id', 'hearts']))
+  if (!validate(props, ['member_id', 'hearts']))
     return cb(new Error('Invalid rating.'));
 
   // count hearts
@@ -253,7 +265,7 @@ function findOne(collection, query, opts, cb) {
     cb = opts;
     opts = {};
   }
-  if (query._id && 'string' === typeof query._id)
+  if (_.has(query, '_id') && 'string' === typeof query._id)
     query._id = new ObjectID(query._id);
   collection.findOne(query, opts,
                     function (err, doc) {
@@ -319,6 +331,19 @@ function getDocIds(docs, cb) {
       });
     });
   }
+}
+
+
+/**
+  * Determine if all keys in the
+  * given list are in the given obj.
+  */
+function validate(obj, keys) {
+  var valid = true;
+  _.each(keys, function (k) {
+    if (!_.has(obj, k))
+      valid = false; });
+  return valid;
 }
 
 

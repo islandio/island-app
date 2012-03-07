@@ -798,26 +798,26 @@ Island = (function ($) {
         
         // logout of island
         // TODO: replace without alert
-        $('#nav-logout').live('click', function (e) {
-          e.preventDefault();
-          var element = $(this)
-            , form = $('<form></form>')
-          ;
-          form
-            .attr({
-                method: 'POST'
-              , action: '/sessions'
-            })
-            .hide()
-            .append('<input type="hidden" />')
-            .find('input')
-            .attr({
-                'name': '_method'
-              , 'value': 'delete'
-            })
-            .end()
-            .submit();
-        });
+        // $('#nav-logout').live('click', function (e) {
+        //   e.preventDefault();
+        //   var element = $(this)
+        //     , form = $('<form></form>')
+        //   ;
+        //   form
+        //     .attr({
+        //         method: 'POST'
+        //       , action: '/sessions'
+        //     })
+        //     .hide()
+        //     .append('<input type="hidden" />')
+        //     .find('input')
+        //     .attr({
+        //         'name': '_method'
+        //       , 'value': 'delete'
+        //     })
+        //     .end()
+        //     .submit();
+        // });
         
         
         // pulse logo on mouseover

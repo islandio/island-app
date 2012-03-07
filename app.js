@@ -108,7 +108,6 @@ passport.serializeUser(function (member, cb) {
 
 passport.deserializeUser(function (id, cb) {
   memberDb.findMemberById(id, function (err, member) {
-    if (!member) member = {};
     cb(err, member);
   });
 });
@@ -132,80 +131,54 @@ function authorize(req, res, cb) {
     res.redirect('/login');
     cb('Session has no Member.');
   }
-
-
-  // if (req.session.member_id) {
-  //   memberDb.findMemberById(req.session.member_id, function (err, mem) {
-  //     if (mem) {
-  //       req.currentMember = mem;
-  //       if (mem.meta.logins == 0) {
-  //         req.flash('thanks', 'Thanks for confirming your email address. Welcome to Island.');
-  //         mem.meta.logins++
-  //         mem.save(function (err) {
-  //           if (err)
-  //             Notify.problem(err);
-  //         });
-  //       }
-  //       next();
-  //     } else {
-  //       res.redirect('/login');
-  //     }
-  //   });
-  // } else if (req.cookies.logintoken) {
-  //   authenticateFromLoginToken(req, res, next);
-  // } else {
-  //   if (req.params && req.params.key) {
-  //     //app.set('desiredPath', req.params.key);
-  //     req.session.desiredPath = req.params.key;
-  //   }
-  //   res.redirect('/login');
-  // }
 }
 
 function getMedia(limit, cb) {
-  memberDb.findMedia({}, { limit: limit, sort: { created: -1 } }, cb);
+  memberDb.findMedia({}, { limit: limit,
+                    sort: { created: -1 } }, cb);
 }
 function getTrending(limit, cb) {
-  memberDb.findMedia({}, { limit: limit, sort: { 'meta.hearts': -1 } }, cb);
+  memberDb.findMedia({}, { limit: limit,
+                    sort: { 'meta.hearts': -1 } }, cb);
 }
 function getRecentComments(limit, cb) {
-  memberDb.findComments({}, { limit: limit, sort: { created: -1 } }, cb);
+  memberDb.findComments({}, { limit: limit,
+                        sort: { created: -1 } }, cb);
 }
 function getTwitterNames(cb) {
   memberDb.findTwitterNames(cb);
 }
 
-// function renderObject(obj, next) {
-//   Member.findById(obj.member_id, function (err, mem) {
-//     if (!err) {
-//       obj.member = mem;
-//       next(templates.object({ object: obj }));
-//     } else {
-//       next(err);
-//     }
-//   });
-// }
-// 
-// function renderComment(com, next) {
-//   Member.findById(com.member_id, function (err, mem) {
-//     if (!err) {
-//       com.member = mem;
-//       Media.findById(com.media_id, function (err, med) {
-//         if (!err) {
-//           var chtml = templates.comment({ comment: com });
-//           com.media = med;
-//           var rhtml = templates.comment({ comment: com });
-//           next(chtml, rhtml);
-//         } else {
-//           next([]);
-//         }
-//       });
-//     } else {
-//       next(err);
-//     }
-//   });
-// }
-//
+function renderMedia(med, cb) {
+  cb(null, templates.object({ object: med }));
+  // userDb.findMemberById(obj.member_id, function (err, mem) {
+  //   if (err) return cb(err);
+  //   obj.member = mem;
+  //   cb(templates.object({ object: obj }));
+  // });
+}
+
+function renderComment(com, cb) {
+  cb(null, templates.comment({ comment: com }));
+  // Member.findById(com.member_id, function (err, mem) {
+  //   if (!err) {
+  //     com.member = mem;
+  //     Media.findById(com.media_id, function (err, med) {
+  //       if (!err) {
+  //         var chtml = templates.comment({ comment: com });
+  //         com.media = med;
+  //         var rhtml = templates.comment({ comment: com });
+  //         next(chtml, rhtml);
+  //       } else {
+  //         next([]);
+  //       }
+  //     });
+  //   } else {
+  //     next(err);
+  //   }
+  // });
+}
+
 
 ////////////// Web Routes
 
@@ -254,13 +227,14 @@ app.get('/auth/facebook', function (req, res, next) {
     },
     function (accessToken, refreshToken, profile, done) {
       profile.accessToken = accessToken;
-      profile.refreshToken = refreshToken;
-      memberDb.findOrCreateMemberFromFacebook(profile, function (err, member) {
+      memberDb.findOrCreateMemberFromFacebook(profile,
+            function (err, member) {
         done(err, member);
       });
     }
   ));
-  passport.authenticate('facebook', { scope: ['email', 'user_status'] })(req, res, next);
+  passport.authenticate('facebook', { scope: ['email',
+                        'user_status'] })(req, res, next);
 });
 
 // Facebook will redirect the user to this URL
@@ -397,7 +371,7 @@ app.get('/:key', function (req, res) {
 app.put('/insert', authorize, function (req, res, next) {
   var props = req.body.media;
   var results = req.body.assembly.results;
-  props.member_id = req.user._id;
+  props.member = req.user;
 
   if (req.body.assembly.results.image_thumb) {
     var attachment = {
@@ -427,12 +401,11 @@ app.put('/insert', authorize, function (req, res, next) {
       att.cf_url = cloudfrontUrl + att.id.substr(0, 2)
                     + '/' + att.id.substr(2) + '.' + att.ext; });
   }
-  console.log(props);
   memberDb.createMedia(props, function (err, media) {
-    if (!err)
-      res.send({ status: 'success', data: { id: media._id } });
-    else
-      res.send({ status: 'error', message: err.message });
+    if (!err) res.send({ status: 'success',
+                      data: { id: media._id } });
+    else res.send({ status: 'error',
+                      message: err.message });
   });
   
 });
@@ -546,44 +519,36 @@ if (!module.parent) {
       var everyone = now.initialize(app);
 
       // add new object to everyone's page
-      everyone.now.distributeObject = function (id) {
+      everyone.now.distributeMedia = function (id) {
         memberDb.findMediaById(id, function (err, obj) {
-          if (!err)
-            renderObject(obj, function (ren) {
-              if ('string' == typeof ren)
-                everyone.now.receiveObject({ status: 'success', data: { obj: ren } });
-              else
-                everyone.now.receiveObject({ status: 'error', message: ren.message });
-            });
-          else
-            everyone.now.receiveObject({ status: 'error', message: err.message });
+          if (err) return everyone.now.receiveMedia(err);
+          renderObject(obj, function (err, html) {
+            if (err) return everyone.now.receiveMedia(err);
+            everyone.now.receiveMedia(null, html);
+          });
         });
       };
 
       // add new comment to everyone's page
       everyone.now.distributeComment = function (data) {
-        renderComment(data.comment, function (cren, rren) {
-          if ('string' == typeof cren && 'string' == typeof rren)
-            everyone.now.receiveComment({ status: 'success', 
-                data: { pid: data.pid, com: cren, rec: rren } });
-          else
-            everyone.now.receiveComment({ status: 'error', message: cren.message || rren.message });
+        renderComment(data.comment, function (err, html) {
+          if (err) return everyone.now.receiveComment(err);
+          everyone.now.receiveComment(null, html);
         });
       };
 
       // update everyone with new trends
       var distributeTrends = function () {
-        getTrending(5, function (err, trends) {
+        getTrending(5, function (err, media) {
           var rendered = [];
-          trends.forEach(function (trend) {
-            rendered.push(templates.trend({ trend: trend }));
+          _.each(media, function (med) {
+            rendered.push(templates.trend({ trend: med }));
           });
-          if (everyone.now.receiveTrends) {
-            everyone.now.receiveTrends({ status: 'success', data: { trends: rendered } });
-          }
+          if (everyone.now.receiveTrends)
+            everyone.now.receiveTrends(null, rendered);
         });
       };
-      // setInterval(distributeTrends, 5000);
+      setInterval(distributeTrends, 5000);
       
       // .server.socket.set('authorization', function (data, cb) {
       //   var cookies = connect.utils.parseCookie(data.headers.cookie);
