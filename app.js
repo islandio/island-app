@@ -376,11 +376,11 @@ app.put('/comment/:mediaId', function (req, res, next) {
     member_id: req.user._id,
     body: req.body.body,
   };
-  memberDb.createComment(props, function (err, com) {
+  memberDb.createComment(props, function (err, doc) {
     if (err) return fail(err);
-    everyone.now.distributeComment(com);
+    everyone.now.distributeComment(doc);
     res.send({ status: 'success', data: {
-             comment: com } });
+             comment: doc } });
   });  
   function fail(err) {
     res.send({ status: 'error',
@@ -389,68 +389,23 @@ app.put('/comment/:mediaId', function (req, res, next) {
 });
 
 
-// Add hearts
-app.put('/hearts/:mediaId', function (req, res, next) {
+// Add rating
+app.put('/rate/:mediaId', function (req, res, next) {
   // TODO: permissions...
   var props = {
+    media_id: req.params.mediaId,
     member_id: req.user._id,
-    hearts: req.body.hearts,
+    val: req.body.val,
   };
-  memberDb.addRating(req.body.mediaId, props, function (err, num) {
+  memberDb.createRating(props, function (err, doc) {
     if (err) return fail(err);
     res.send({ status: 'success', data: {
-             hearts: num }});
+             val: doc.val }});
   });
   function fail(err) {
     res.send({ status: 'error',
              message: err.stack });
   }  
-  // memberDb.findMediaById(req.body.mediaId, function (err, med) {
-  //   if (!err) {
-  //     var num = med.meta.ratings ? med.meta.ratings.length : 0
-  //       , cnt = 0
-  //     ;
-  //     if (num == 0) {
-  //       med.meta.ratings = [];
-  //       med.meta.ratings.push({
-  //           member_id : req.currentMember.id
-  //         , hearts    : req.body.hearts
-  //       });
-  //       med.save(function (err) {
-  //         if (!err) {
-  //           res.send({ status: 'success', data: { hearts: med.meta.hearts } });
-  //         } else
-  //           res.send({ status: 'error', message: err.message });
-  //       });
-  //     } else
-  //       med.meta.ratings.forEach(function (rat) {
-  //         if (rat.mid == req.currentMember.id) {
-  //           rat.hearts = req.body.hearts;
-  //           med.save(function (err) {
-  //             if (!err) {
-  //               res.send({ status: 'success', data: { hearts: med.meta.hearts } });
-  //             } else
-  //               res.send({ status: 'error', message: err.message });
-  //           });
-  //           return;
-  //         }
-  //         cnt++;
-  //         if (cnt == num) {
-  //           med.meta.ratings.push({
-  //               member_id : req.currentMember.id
-  //             , hearts    : req.body.hearts
-  //           });
-  //           med.save(function (err) {
-  //             if (!err) {
-  //               res.send({ status: 'success', data: { hearts: med.meta.hearts } });
-  //             } else
-  //               res.send({ status: 'error', message: err.message });
-  //           });
-  //         }
-  //       });
-  //   } else
-  //     res.send({ status: 'error', message: err.message });
-  // });
 });
 
 
