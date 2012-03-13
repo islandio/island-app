@@ -11,7 +11,7 @@
 * Module dependencies.
 */
 var ObjectID = require('mongodb').BSONPure.ObjectID;
-var search = require('reds').createSearch('media');
+var reds = require('reds');
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
 var util = require('util');
@@ -26,11 +26,13 @@ var MemberDb = exports.MemberDb = function (db, options, cb) {
   var self = this;
   self.db = db;
   self.collections = {};
+  self.search = reds.createSearch('media');
 
   var collections = {
     member: { index: { primaryEmail: 1, role: 1 } },
-    media: { index: { key: 1, type: 1, 'meta.tags': 1, member_id: 1 } },
+    media: { index: { key: 1, type: 1, member_id: 1 } },
     comment: { index: { member_id: 1, media_id: 1 } },
+    rating: { index: { member_id: 1, media_id: 1 } },
     sessions: {},
   };
 
@@ -104,40 +106,85 @@ MemberDb.prototype.createMedia = function (props, cb) {
   delete props['meta.tags'];
   createUniqueURLKey(self.collections.media,
                     8, function (err, key) {
-    // var tags = makeTags(props['meta.tags']);
     _.defaults(props, {
       key: key,
       comments: [],
-      meta: {
-        // tags: tags,
-        ratings: [],
-        hits: 0,
-      },
+      ratings: [],
+      hits: 0,
     });
     createDoc(self.collections.media, props,
               function (err, doc) {
       if (err) return cb(err);
-      search.index(doc.title, doc._id);
-      search.index(doc.body, doc._id);
-      search.index(memberName, doc._id);
+      self.search.index(doc.title, doc._id);
+      self.search.index(doc.body, doc._id);
+      self.search.index(memberName, doc._id);
       getDocIds.call(self, doc, cb);
     });
   });
 }
 MemberDb.prototype.createComment = function (props, cb) {
-  if (!validate(props, ['body', 'member_id', 'media_id']))
+  var self = this;
+  if (!validate(props, ['member_id', 'media_id', 'body']))
     return cb(new Error('Invalid comment'));
   _.defaults(props, {
     likes: 0,
   });
-  createDoc(this.collections.comment, props, cb);
+  Step(
+    // TODO: Verify that the user has
+    // permission to comment.
+    function () {
+      self.findMediaById(props.media_id, this);
+    },
+    function (err, med) {
+      if (err) return cb(err);
+      if (!med) return cb(new Error('Media not found'));
+      props.media_id = med._id;
+      createDoc(self.collections.comment, props, this);
+    },
+    function (err, doc) {
+      if (err) return cb(err);
+      self.collections.media.update({ _id: doc.media_id },
+                                    { $push : { comments: doc._id } },
+                                    { safe: true }, function (err) {
+        if (err) return cb(err);
+        getDocIds.call(self, doc, cb);
+      });
+    }
+  );
+}
+MemberDb.prototype.createRating = function (props, cb) {
+  var self = this;
+  if (!validate(props, ['member_id', 'media_id', 'val']))
+    return cb(new Error('Invalid rating'));
+  _.defaults(props, {});
+  Step(
+    // TODO: Verify that the user has
+    // permission to add a rating.
+    function () {
+      self.findMediaById(props.media_id, this);
+    },
+    function (err, med) {
+      if (err) return cb(err);
+      if (!med) return cb(new Error('Media not found'));
+      props.media_id = med._id;
+      createDoc(self.collections.rating, props, this);
+    },
+    function (err, doc) {
+      if (err) return cb(err);
+      self.collections.media.update({ _id: doc.media_id },
+                                    { $push : { ratings: doc._id } },
+                                    { safe: true }, function (err) {
+        if (err) return cb(err);
+        cb(null, doc);
+      });
+    }
+  );
 }
 
 
 /*
  * Find methods for media and comments.
  */
-
 MemberDb.prototype.findMedia = function (query, opts, cb) {
   var self = this;
   if ('function' === typeof opts) {
@@ -170,15 +217,30 @@ MemberDb.prototype.findComments = function (query, opts, cb) {
 /*
  * Find a collection documents by _id.
  */
-MemberDb.prototype.findMemberById = function (id, cb) {
+MemberDb.prototype.findMemberById = function (id, bare, cb) {
+  if ('function' === typeof bare) {
+    cb = bare;
+    bare = false;
+  }
   findOne.call(this, this.collections.member,
-              { _id: id }, cb); }
-MemberDb.prototype.findMediaById = function (id, cb) {
+              { _id: id }, { bare: bare}, cb);
+}
+MemberDb.prototype.findMediaById = function (id, bare, cb) {
+  if ('function' === typeof bare) {
+    cb = bare;
+    bare = false;
+  }
   findOne.call(this, this.collections.media,
-              { _id: id }, cb); }
-MemberDb.prototype.findCommentById = function (id, cb) {
+              { _id: id }, { bare: bare}, cb);
+}
+MemberDb.prototype.findCommentById = function (id, bare, cb) {
+  if ('function' === typeof bare) {
+    cb = bare;
+    bare = false;
+  }
   findOne.call(this, this.collections.comment,
-              { _id: id }, cb); }
+              { _id: id }, { bare: bare}, cb);
+}
 
 
 /*
@@ -198,20 +260,21 @@ MemberDb.prototype.findTwitterNames = function (cb) {
 /*
  * Add a rating to existing media.
  */
-MemberDb.prototype.addMediaRating = function (props, cb) {
-  if (!validate(props, ['member_id', 'hearts']))
-    return cb(new Error('Invalid rating.'));
-
-  // count hearts
-  // if (this.meta.ratings) {
-  //   var hearts = 0;
-  //   for (var i=0; i < this.meta.ratings.length; i++) {
-  //     hearts += this.meta.ratings[i].hearts;
-  //   }
-  //   this.meta.hearts = hearts;
-  // }
-
-  cb();
+MemberDb.prototype.searchMedia = function (str, cb) {
+  var self = this;
+  self.search.query(str).end(function (err, ids) {
+    if (err) return cb(err);
+    if (ids.length === 0) return cb(null);
+    var results = [];
+    var _cb = _.after(ids.length, cb);
+    _.each(ids, function (id) {
+      self.findMediaById(id, function (err, med) {
+        if (err) return cb(err);
+        if (med) results.push(med);
+        _cb(null, results);
+      });
+    });
+  });
 }
 
 
@@ -245,9 +308,12 @@ function find(collection, query, opts, cb) {
     cb = opts;
     opts = {};
   }
+  var bare = opts.bare;
+  delete opts.bare;
   collection.find(query, opts)
             .toArray(function (err, docs) {
     if (err) return cb(err);
+    if (bare) return cb(null, docs);
     getDocIds.call(self, docs, cb);
   });
 }
@@ -265,11 +331,14 @@ function findOne(collection, query, opts, cb) {
     cb = opts;
     opts = {};
   }
+  var bare = opts.bare;
+  delete opts.bare;
   if (_.has(query, '_id') && 'string' === typeof query._id)
     query._id = new ObjectID(query._id);
   collection.findOne(query, opts,
                     function (err, doc) {
     if (err) return cb(err);
+    if (bare) return cb(null, doc);
     getDocIds.call(self, doc, cb);
   });
 }

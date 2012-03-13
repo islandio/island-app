@@ -8,7 +8,7 @@ div.single-left
       =media.member.displayName
   - if (media.type == 'image')
     div.obj-holder(style='height: ' + media.attached.image_full.meta.height + 'px')
-      img.matte(id='image-' + media.id, src=media.attached.image_full.cf_url, width=media.attached.image_full.meta.width, height=media.attached.image_full.meta.height)
+      img.matte(id='image-' + media._id, src=media.attached.image_full.cf_url, width=media.attached.image_full.meta.width, height=media.attached.image_full.meta.height)
       div.hearts
         div.hearts-wrap
           img.heart-img(src='/graphics/heart.png')
@@ -16,11 +16,11 @@ div.single-left
           img.heart-img(src='/graphics/heart.png')
           img.heart-img(src='/graphics/heart.png')
           img.heart-img(src='/graphics/heart.png')
-        div.hearts-back(id='like-' + media.id)
+        div.hearts-back(id='like-' + media._id)
           img(src='/graphics/hearts.png')
   - if (media.type == 'video')
     div.obj-holder
-      video.matte(id='video-' + media.id, poster=media.attached.video_poster.cf_url, controls='controls', preload='none', width='640', height=(media.attached.video_encode.meta.height / media.attached.video_encode.meta.width) * 640)
+      video.matte(id='video-' + media._id, poster=media.attached.video_poster.cf_url, controls='controls', preload='none', width='640', height=(media.attached.video_encode.meta.height / media.attached.video_encode.meta.width) * 640)
         source(type='video/mp4', src=media.attached.video_encode.cf_url)
         object(type='application/x-shockwave-flash', data='/mediaelement/flashmediaelement.swf', width='640', height=(media.attached.video_encode.meta.height / media.attached.video_encode.meta.width) * 640)
             param(name='movie', value='/mediaelement/flashmediaelement.swf')
@@ -33,7 +33,7 @@ div.single-left
           img.heart-img(src='/graphics/heart.png')
           img.heart-img(src='/graphics/heart.png')
           img.heart-img(src='/graphics/heart.png')
-        div.hearts-back(id='like-' + media.id)
+        div.hearts-back(id='like-' + media._id)
           img(src='/graphics/hearts.png')
   div.obj-desc.matte
     img.left(src='/graphics/is-obj-info.gif', alt='info', align='top')
@@ -58,15 +58,15 @@ div.single-right
   textarea.commentor-input-dummy.matte(name='Write a comment...') Write a comment...
   div.commentor
     textarea.commentor-input.matte
-    input.is-button.add-comment(id='addto-' + media.id, type='submit', title='Add Comment', value='Comment')
+    input.is-button.add-comment(id='addto-' + media._id, type='submit', title='Add Comment', value='Comment')
     span.commentor-whois Logged in as 
       span(style='font-style: italic')
         =member.displayName
   div.obj-comments(id='coms-' + media._id)
-    !=partial('comment', media.comments )
+    !=partial('comment', media.comments.reverse())
 div.grid-wrap
   #search
     h1.title-bottom / Browse
     input#search-box.matte(type='search', placeholder='Search')
   #grid.adjustable-grid
-    !=partial('object', grid.reverse())
+    !=partial('object', grid)

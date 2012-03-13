@@ -17,6 +17,13 @@ if (argv._.length || argv.help) {
   process.exit(1);
 }
 
+
+/**
+ * Environment
+ */
+ 
+var LOCAL = process.NODE_ENV !== 'production';
+
 /**
  * Module dependencies.
  */
@@ -48,16 +55,20 @@ var MemberDb = require('./member_db.js').MemberDb;
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 
-var transloadit = {
-  "auth": { "key": "8a36aa56062f49c79976fa24a74db6cc" },
-  "template_id": "dd77fc95cfff48e8bf4af6159fd6b2e7"
-};
-var cloudfrontUrl = 'http://d1ehvayr9dfk4s.cloudfront.net/';
+var transloadit = { auth: { key: '8a36aa56062f49c79976fa24a74db6cc' }};
+transloadit.template_id = LOCAL ? '29c60cfc5b9f4e8b8c8bf7a9b1191147' :
+                          'dd77fc95cfff48e8bf4af6159fd6b2e7';
+
+var cloudfrontImageUrl = LOCAL ? 'https://d2a89oeknmk80g.cloudfront.net/' :
+                                'https://d1da6a4is4i5z6.cloudfront.net/';
+var cloudfrontVideoUrl = LOCAL ? 'https://d2c2zu8qn6mgju.cloudfront.net/' :
+                                'https://d1ehvayr9dfk4s.cloudfront.net/';
 
 
 // Configuration
 
 var app = module.exports = express.createServer();
+var everyone;
 
 app.configure('development', function () {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
@@ -151,32 +162,10 @@ function getTwitterNames(cb) {
 
 function renderMedia(med, cb) {
   cb(null, templates.object({ object: med }));
-  // userDb.findMemberById(obj.member_id, function (err, mem) {
-  //   if (err) return cb(err);
-  //   obj.member = mem;
-  //   cb(templates.object({ object: obj }));
-  // });
 }
 
 function renderComment(com, cb) {
   cb(null, templates.comment({ comment: com }));
-  // Member.findById(com.member_id, function (err, mem) {
-  //   if (!err) {
-  //     com.member = mem;
-  //     Media.findById(com.media_id, function (err, med) {
-  //       if (!err) {
-  //         var chtml = templates.comment({ comment: com });
-  //         com.media = med;
-  //         var rhtml = templates.comment({ comment: com });
-  //         next(chtml, rhtml);
-  //       } else {
-  //         next([]);
-  //       }
-  //     });
-  //   } else {
-  //     next(err);
-  //   }
-  // });
 }
 
 
@@ -252,7 +241,6 @@ app.get('/logout', function (req, res) {
   res.redirect('/');
 });
 
-
 // Add media form
 app.get('/add', authorize, function (req, res) {
   if (req.user.role !== 0)
@@ -274,67 +262,34 @@ app.get('/add', authorize, function (req, res) {
   );
 });
 
-
-// Get tag results
-app.get('/search/:by.:format?', function (req, res) {
-  var filter
-    , by = req.body.by
-    , val = makeTerms(req.body.val)
-  ;
-  // if (val.length > 1) {
-  //   filter = { $nor: [] };
-  //   for (var i=0; i < by.length; i++) {
-  //     fil = {};
-  //     fil[by[i]] = { $not: { $in: val } }
-  //     filter.$nor.push(fil);
-  //   }
-  if (val[0] != '') {
-    filter = { $or: [] }
-    for (var i=0; i < by.length; i++) {
-      fil = {};
-      fil[by[i]] = { $in: val }
-      filter.$or.push(fil);
-    }
-  }
-  // filter = { $nor: [], $or: [] };
-  // if (val[0] != '') {
-  //   for (var i=0; i < by.length; i++) {
-  //     or = {};
-  //     or[by[i]] = { $all: val };
-  //     filter.$or.push(or);
-  //     
-  //     nor = {};
-  //     nor[by[i]] = { $not: { $in: val } };
-  //     filter.$nor.push(nor);
-  //   }
-  // }
-  findMedia(function (media) {
-    var rendered = []
-      , num = media.length
-      , cnt = 0
-    ;
-    if (num > 0)
-      media.forEach(function (med) {
-        renderObject(med, function (ren) {
-          if ('string' == typeof ren)
-            rendered.push(ren);
-          else {
-            res.send({ status: 'error', message: ren.message });
-            return;
-          }
-          cnt++;
-          if (cnt == num)
-            res.send({ status: 'success', data: { objects: rendered } });
+// Media search
+app.get('/search/:query', function (req, res) {
+  memberDb.searchMedia(req.params.query,
+                      function (err, docs) {
+    if (err) return fail(err);
+    Step(
+      function () {
+        var group = this.group();
+        _.each(docs, function (doc) {
+          renderMedia(doc, group());
         });
-      });
-    else
-      res.send({ status: 'success', data: { objects: rendered } });
-  }, filter);
+      },
+      function (err, results) {
+        if (err) return fail(err);
+        res.send({ status: 'success',
+                 data: { results: results } });
+      }
+    );
+  });
+  function fail(err) {
+    res.send({ status: 'error',
+             message: err.stack });
+  }
 });
 
 
 // Single object
-app.get('/:key', function (req, res) {
+app.get('/:key', authorize, function (req, res) {
   Step(
     function () {
       memberDb.findMedia({ key: req.params.key },
@@ -348,9 +303,8 @@ app.get('/:key', function (req, res) {
       med = _.first(med);
       var rating = _.find(med.meta.ratings,
                           function (rate) {
-        console.log(rate);
-        return
-          req.user._id.toString() === rate.member_id;
+        // console.log(rate);
+        return req.user._id.toString() === rate.member_id;
       });
       // med.meta.hits++;
       // med.save(function (err) {
@@ -381,7 +335,7 @@ app.put('/insert', authorize, function (req, res, next) {
     props.attached = attachment;
     props.type = props.attached.image_full.type;
     _.each(props.attached, function (att) {
-      att.cf_url = cloudfrontUrl + att.id.substr(0, 2)
+      att.cf_url = cloudfrontImageUrl + att.id.substr(0, 2)
                     + '/' + att.id.substr(2) + '.' + att.ext; });
   } else if (results.video_encode) {
     var attachment = {
@@ -393,100 +347,110 @@ app.put('/insert', authorize, function (req, res, next) {
     props.attached = attachment;
     props.type = props.attached.video_encode.type;
     _.each(props.attached.video_thumbs, function (thu) {
-      thu.cf_url = cloudfrontUrl + thu.id.substr(0, 2)
+      thu.cf_url = cloudfrontVideoUrl + thu.id.substr(0, 2)
                     + '/' + thu.id.substr(2) + '.' + thu.ext; });
     _.each([props.attached.video_placeholder,
     props.attached.video_poster,
     props.attached.video_encode], function (att) {
-      att.cf_url = cloudfrontUrl + att.id.substr(0, 2)
+      att.cf_url = cloudfrontVideoUrl + att.id.substr(0, 2)
                     + '/' + att.id.substr(2) + '.' + att.ext; });
   }
   memberDb.createMedia(props, function (err, media) {
-    if (!err) res.send({ status: 'success',
-                      data: { id: media._id } });
-    else res.send({ status: 'error',
-                      message: err.message });
+    if (err) return fail(err);
+    everyone.now.distributeMedia(media);
+    res.send({ status: 'success', data: {
+             mediaId: media._id } });   
   });
-  
+  function fail(err) {
+    res.send({ status: 'error',
+             message: err.stack });
+  }
 });
 
 
 // Add comment
-app.put('/comment/:id.:format?', function (req, res, next) {
-  Media.findById(req.body.pid, function (err, med) {
-    if (!err) {
-      var comment = {
-          body      : req.body.comment
-        , member_id : req.currentMember.id
-        , parent_id : req.body.pid
-      };
-      var com = new Comment(comment);
-      com.save(function (err) {
-        if (!err) {
-          med.comments.push(com._id);
-          med.save(function (err) {
-            if (!err)
-              res.send({ status: 'success', data: { pid: med.id, comment: com } });
-            else
-              res.send({ status: 'error', message: err.message });
-          });
-        } else
-          res.send({ status: 'error', message: err.message });
-      });
-    } else
-      res.send({ status: 'error', message: err.message });
-  });
+app.put('/comment/:mediaId', function (req, res, next) {
+  // TODO: permissions...
+  var props = {
+    media_id: req.params.mediaId,
+    member_id: req.user._id,
+    body: req.body.body,
+  };
+  memberDb.createComment(props, function (err, com) {
+    if (err) return fail(err);
+    everyone.now.distributeComment(com);
+    res.send({ status: 'success', data: {
+             comment: com } });
+  });  
+  function fail(err) {
+    res.send({ status: 'error',
+             message: err.stack });
+  }
 });
 
 
 // Add hearts
-app.put('/hearts/:id.:format?', function (req, res, next) {
-  Media.findById(req.body.id, function (err, med) {
-    if (!err) {
-      var num = med.meta.ratings ? med.meta.ratings.length : 0
-        , cnt = 0
-      ;
-      if (num == 0) {
-        med.meta.ratings = [];
-        med.meta.ratings.push({
-            member_id : req.currentMember.id
-          , hearts    : req.body.hearts
-        });
-        med.save(function (err) {
-          if (!err) {
-            res.send({ status: 'success', data: { hearts: med.meta.hearts } });
-          } else
-            res.send({ status: 'error', message: err.message });
-        });
-      } else
-        med.meta.ratings.forEach(function (rat) {
-          if (rat.mid == req.currentMember.id) {
-            rat.hearts = req.body.hearts;
-            med.save(function (err) {
-              if (!err) {
-                res.send({ status: 'success', data: { hearts: med.meta.hearts } });
-              } else
-                res.send({ status: 'error', message: err.message });
-            });
-            return;
-          }
-          cnt++;
-          if (cnt == num) {
-            med.meta.ratings.push({
-                member_id : req.currentMember.id
-              , hearts    : req.body.hearts
-            });
-            med.save(function (err) {
-              if (!err) {
-                res.send({ status: 'success', data: { hearts: med.meta.hearts } });
-              } else
-                res.send({ status: 'error', message: err.message });
-            });
-          }
-        });
-    } else
-      res.send({ status: 'error', message: err.message });
+app.put('/hearts/:mediaId', function (req, res, next) {
+  // TODO: permissions...
+  var props = {
+    member_id: req.user._id,
+    hearts: req.body.hearts,
+  };
+  memberDb.addRating(req.body.mediaId, props, function (err, num) {
+    if (err) return fail(err);
+    res.send({ status: 'success', data: {
+             hearts: num }});
   });
+  function fail(err) {
+    res.send({ status: 'error',
+             message: err.stack });
+  }  
+  // memberDb.findMediaById(req.body.mediaId, function (err, med) {
+  //   if (!err) {
+  //     var num = med.meta.ratings ? med.meta.ratings.length : 0
+  //       , cnt = 0
+  //     ;
+  //     if (num == 0) {
+  //       med.meta.ratings = [];
+  //       med.meta.ratings.push({
+  //           member_id : req.currentMember.id
+  //         , hearts    : req.body.hearts
+  //       });
+  //       med.save(function (err) {
+  //         if (!err) {
+  //           res.send({ status: 'success', data: { hearts: med.meta.hearts } });
+  //         } else
+  //           res.send({ status: 'error', message: err.message });
+  //       });
+  //     } else
+  //       med.meta.ratings.forEach(function (rat) {
+  //         if (rat.mid == req.currentMember.id) {
+  //           rat.hearts = req.body.hearts;
+  //           med.save(function (err) {
+  //             if (!err) {
+  //               res.send({ status: 'success', data: { hearts: med.meta.hearts } });
+  //             } else
+  //               res.send({ status: 'error', message: err.message });
+  //           });
+  //           return;
+  //         }
+  //         cnt++;
+  //         if (cnt == num) {
+  //           med.meta.ratings.push({
+  //               member_id : req.currentMember.id
+  //             , hearts    : req.body.hearts
+  //           });
+  //           med.save(function (err) {
+  //             if (!err) {
+  //               res.send({ status: 'success', data: { hearts: med.meta.hearts } });
+  //             } else
+  //               res.send({ status: 'error', message: err.message });
+  //           });
+  //         }
+  //       });
+  //   } else
+  //     res.send({ status: 'error', message: err.message });
+  // });
 });
 
 
@@ -516,24 +480,23 @@ if (!module.parent) {
       app.listen(argv.port);
 
       // init now.js
-      var everyone = now.initialize(app);
+      everyone = now.initialize(app);
 
       // add new object to everyone's page
-      everyone.now.distributeMedia = function (id) {
-        memberDb.findMediaById(id, function (err, obj) {
-          if (err) return everyone.now.receiveMedia(err);
-          renderObject(obj, function (err, html) {
-            if (err) return everyone.now.receiveMedia(err);
-            everyone.now.receiveMedia(null, html);
-          });
+      everyone.now.distributeMedia = function (media) {
+        renderMedia(media, function (err, html) {
+          if (err) return log('\nFailed to render media - ' + inspect(media)
+                              + '\nError: ' + inspect(err));
+          everyone.now.receiveMedia(html);
         });
       };
 
       // add new comment to everyone's page
-      everyone.now.distributeComment = function (data) {
-        renderComment(data.comment, function (err, html) {
-          if (err) return everyone.now.receiveComment(err);
-          everyone.now.receiveComment(null, html);
+      everyone.now.distributeComment = function (comment) {
+        renderComment(comment, function (err, html) {
+          if (err) return log('\nFailed to render comment - ' + inspect(comment)
+                              + '\nError: ' + inspect(err));
+          everyone.now.receiveComment(html, comment.media._id);
         });
       };
 

@@ -168,13 +168,13 @@ Island = (function ($) {
    * search media
    */
    
-    , search = function (by, val, fn) {
+    , search = function (query, fn) {
         jrid.empty();
-        var data = {
-              by  : by
-            , val : val
-          };
-        $.get('/search/' + val + '.json', data, fn);
+        // var data = {
+        //       by  : by
+        //     , val : val
+        //   };
+        $.get('/search/' + query, fn);
       }
     
   /**
@@ -193,7 +193,7 @@ Island = (function ($) {
                 $(thumbs[h]).hide();
                 $(thumbs[i]).show();
                 i += i == num - 1 ? 1 - num : 1;
-              }, 500)
+              }, 2000)
           ;
           $(this).data({ timer: timer });
         });
@@ -242,6 +242,7 @@ Island = (function ($) {
               holder.css({ marginTop: top });
             }
           , receive: function (trends) {
+            
               newKids = [];
               for (var i=0; i < trends.length; i++)
                 newKids.push($(trends[i]));
@@ -368,9 +369,9 @@ Island = (function ($) {
         $(this).fadeOut();
       }
       
-    , log = function (m) {
-        console.log(m);
-      }
+    // , log = function (m) {
+    //     console.log(m);
+    //   }
   ;
   
   
@@ -387,7 +388,7 @@ Island = (function ($) {
         
         
         // extras
-        if (!window.console) window.console = { log: function () {} };
+        // if (!window.console) window.console = { log: function () {} };
         String.prototype.trim = function() { return this.replace(/^\s+|\s+$/g,""); }
         String.prototype.ltrim = function() { return this.replace(/^\s+/,""); }
         String.prototype.rtrim = function() { return this.replace(/\s+$/,""); }
@@ -427,17 +428,21 @@ Island = (function ($) {
         
         
         // server PUT
-        $.put = function (url, data, success) {
+        $.put = function (url, data, cb) {
+          if ('function' === typeof data) {
+            cb = data;
+            data = {};
+          }
           data._method = 'PUT';
-          $.post(url, data, success, 'json');
+          $.post(url, data, cb, 'json');
         };
         
         
         // server GET
-        $.get = function (url, data, success) {
-          data._method = 'GET';
-          $.post(url, data, success, 'json');
-        };
+        // $.get = function (url, data, success) {
+        //   data._method = 'GET';
+        //   $.post(url, data, success, 'json');
+        // };
         
         
         // map form data to JSON
@@ -853,17 +858,14 @@ Island = (function ($) {
         $('#search-box').bind('keyup search', function (e) {
           var txt = $(this).val().trim();
           jrid.empty();
-          search(['meta.tags', 'terms'], txt, function (serv) {
-            if (serv.status == 'success') {
-              var objects = serv.data.objects;
-              for (var i=0; i < objects.length; i++)
-                $(objects[i]).appendTo(jrid);
+          search(txt, function (res) {
+            if ('success' === res.status) {
+              for (var i=0; i < res.data.results.length; i++)
+                $(res.data.results[i]).appendTo(jrid);
               if (jrid.hasClass('adjustable-grid'))
                 grid.collage(true);
-              else
-                grid.collage();
-            } else
-              log(serv.message);
+              else grid.collage();
+            } else console.log(res.message);
             initVideoSlides();
           });
         }).live('focus', adjustGridHeight);
@@ -884,7 +886,7 @@ Island = (function ($) {
               else
                 grid.collage();
             } else
-              log(serv.message);
+              console.log(serv.message);
             initVideoSlides();
           });
         });
@@ -909,23 +911,19 @@ Island = (function ($) {
         
         // add comment on media
         $('.add-comment').live('click', function () {
-          var comment = $(this.previousElementSibling).val().trim();
-          if (comment == '') 
-            return false;
+          var str = $(this.previousElementSibling).val().trim();
+          if (str == '') return false;
           $(this.previousElementSibling).val('').css({ height: 32 });
           $(this.parentNode).hide();
           $(this.parentNode.previousElementSibling).show();
-          var pid = $(this).itemID()
-            , data = {
-                comment : comment 
-              , pid     : pid
-            };
-          $.put('/comment/' + pid + '.json', data, function (serv) {
-            if (serv.status == 'success')
-              // update everyone
-              now.distributeComment(serv.data);
-            else
-              log(serv.message);
+          var mediaId = $(this).itemID();
+          $.put('/comment/' + mediaId,
+                { body: str }, function (res) {
+            if ('error' === res.status)
+              return console.log(res.message);
+            // console.log(com);
+            // update everyone
+            // now.distributeComment(com);
           });
         });
         
@@ -962,16 +960,10 @@ Island = (function ($) {
           h = selectHearts(x);
         }).live('click', function (e) {
           currentHearts = h;
-          var id = rater.itemID()
-            , data = {
-                id  : id
-              , hearts : h
-            };
-          $.put('/hearts/' + id + '.json', data, function (serv) {
-            if (serv.status == 'success') {
-              // do something ?
-            } else
-              log(serv.message);
+          var id = rater.itemID();
+          $.put('/hearts/' + id, { hearts: h }, function (res) {
+            if ('error' === res.status)
+              return console.log(res.message);
           });
         });
         
@@ -1047,17 +1039,15 @@ Island = (function ($) {
               var data = mediaForm.serializeObject();
               data.params = JSON.parse(data.params);
               data.assembly = assembly;
-              $.put('/insert', data, function (serv) {
-                if (serv.status == 'success') {
-                  // clear form
-                  mediaTitle.val('');
-                  mediaBody.val('');
-                  mediaTags.val('');
-                  mediaFile = $('input[name="my_file"]');
-                  // update everyone
-                  now.distributeObject(serv.data.id);
-                } else
-                  log(serv.message);
+              $.put('/insert', data, function (res) {
+                if ('error' === res.status)
+                  return console.log(err);
+                mediaTitle.val('');
+                mediaBody.val('');
+                mediaTags.val('');
+                mediaFile = $('input[name="my_file"]');
+                // update everyone
+                // now.distributeObject(mediaId);
               });
             }
         });
@@ -1068,63 +1058,56 @@ Island = (function ($) {
    * Push a media object to all clients.
    */
 
-    , receiveObject: function (serv) {
-        if (serv.status == 'success') {
-          var obj = $(serv.data.obj);
-          obj.prependTo(jrid).css({ opacity: 0 });
-          if (jrid.hasClass('adjustable-grid'))
-            grid.collage(true);
-          else
-            grid.collage();
-          obj.animate({ opacity: 1 }, 500);
-        } else
-          log(serv.message);
+    , receiveMedia: function (str) {
+        var html = $(str);
+        html.prependTo(jrid).css({ opacity: 0 });
+        if (jrid.hasClass('adjustable-grid'))
+          grid.collage(true);
+        else
+          grid.collage();
+        html.animate({ opacity: 1 }, 500);
       }
 
   /**
    * Push a comment to all clients.
    */
 
-    , receiveComment: function (serv) {
-        if (serv.status == 'success') {
-          var com = $(serv.data.com)
-            , rec = $(serv.data.rec)
-            , comHolder = $('#coms-' + serv.data.pid)
-            , recHolder = $('#recent-comments')
-          ;
-          if (recHolder.length > 0) {
-            $(recHolder.children()[recHolder.children().length - 1]).remove();
-            rec.hide().css({ opacity: 0 }).appendTo(recHolder);
-            grid.collage(true, rec.height());
-            var time = $('.comment-added', rec);
+    , receiveComment: function (str, mediaId) {
+        var com = $(str)
+          , comHolder = $('#coms-' + mediaId)
+          , recHolder = $('#recent-comments')
+        ;
+        console.log(com, mediaId);
+        if (recHolder.length > 0) {
+          $(recHolder.children()[recHolder.children().length - 1]).remove();
+          com.hide().css({ opacity: 0 }).appendTo(recHolder);
+          grid.collage(true, com.height());
+          var time = $('.comment-added', com);
+          time.data('ts', time.text());
+          time.text(relativeTime(time.data('ts')));
+          setTimeout(function () {
+            com.prependTo(recHolder).show(250).animate({ opacity: 1 }, 500);
+          }, 100);
+        } else if (comHolder.length > 0) {
+          com.hide().css({ opacity: 0 }).prependTo(comHolder);
+          $('a.comment-title-parent', com).remove();
+          grid.collage(true, com.height());
+          setTimeout(function () {
+            com.show(250).animate({ opacity: 1 }, 500);
+            var time = $('.comment-added', com);
             time.data('ts', time.text());
             time.text(relativeTime(time.data('ts')));
-            setTimeout(function () {
-              rec.prependTo(recHolder).show(250).animate({ opacity: 1 }, 500);
-            }, 100);
-          } else if (comHolder.length > 0) {
-            com.hide().css({ opacity: 0 }).prependTo(comHolder);
-            grid.collage(true, com.height());
-            setTimeout(function () {
-              com.show(250).animate({ opacity: 1 }, 500);
-              var time = $('.comment-added', com);
-              time.data('ts', time.text());
-              time.text(relativeTime(time.data('ts')));
-            }, 100);
-          }
-        } else
-          log(serv.message);
+          }, 100);
+        }
       }
 
   /**
    * Push new trends to all clients.
    */
 
-    , receiveTrends: function (serv) {
-        if (serv.status == 'success')
-          trending.receive(serv.data.trends);
-        else
-          log(serv.message);
+    , receiveTrends: function (err, media) {
+        if (err) return console.log(err);
+        trending.receive(media);
       }
   }
 
@@ -1135,7 +1118,7 @@ Island = (function ($) {
  * Now.JS handlers
  */
 
-now.receiveObject = Island.receiveObject;
+now.receiveMedia = Island.receiveMedia;
 now.receiveComment = Island.receiveComment;
 now.receiveTrends = Island.receiveTrends;
 

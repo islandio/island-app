@@ -5,6 +5,7 @@
 
 var log = require('console').log;
 var mongodb = require('mongodb');
+var search = require('reds').createSearch('media');
 var util = require('util'), error = util.error,
     debug = util.debug, inspect = util.inspect;
 var Step = require('step');
@@ -148,7 +149,11 @@ Step(
         var _next = _.after(media.length, next);
         _.each(media, function (med) {
           med.created = med.created || med.added;
+          med.ratings = med.meta.ratings;
+          med.hits = med.meta.hits;
           delete med.added;
+          delete med.meta;
+          delete med.terms;
           log('\nUpdated media: ' + inspect(med));
           memberDb.collections.media.update({ _id: med._id },
                                               med, { safe: true }, _next);
@@ -171,9 +176,72 @@ Step(
           delete com.parent_id;
           delete com.added;
           delete com.comments;
-          log('\nUpdated comments: ' + inspect(com));
+          log('\nUpdated comment: ' + inspect(com));
           memberDb.collections.comment.update({ _id: com._id },
                                               com, { safe: true }, _next);
+        });
+      } else next();
+    });
+  },
+  // Redo ratings...
+  function (err) {
+    var next = this;
+    errCheck(err, 'updating comments');
+    memberDb.collections.media.find({})
+            .toArray(function (err, media) {
+      errCheck(err, 'finding media');
+      if (media.length > 0) {
+        var _next = _.after(media.length, next);
+        _.each(media, function (med) {
+          var oldRatings = med.ratings;
+          Step(
+            function () {
+              memberDb.collections.media.update({ _id: med._id },
+                                                { $set : { ratings : [] } }, { safe: true }, this);
+            },
+            function (err) {
+              errCheck(err, 'clearing ratings');
+              if (oldRatings && oldRatings.length > 0) {
+                var __next = _.after(oldRatings.length, _next);
+                _.each(oldRatings, function (rat) {
+                  var props = {
+                    member_id: med.member_id,
+                    media_id: med._id,
+                    val: rat.hearts,
+                  };
+                  memberDb.createRating(props, function (err, rat) {
+                    errCheck(err, 'adding rating');
+                    log('\nAdded rating: ' + inspect(rat));
+                    __next();
+                  });
+                });
+              } else _next();
+            }
+          );
+        });
+      } else next();
+    });
+  },
+  // Index media
+  function (err) {
+    var next = this;
+    errCheck(err, 'redo ratings');
+    memberDb.collections.media.find({})
+            .toArray(function (err, media) {
+      errCheck(err, 'finding media');
+      if (media.length > 0) {
+        var _next = _.after(media.length, next);
+        _.each(media, function (med) {
+          memberDb.collections.member.findOne({ _id: med.member_id },
+                                              function (err, mem) {
+            errCheck(err, 'finding member for media update');
+            search.index(med.title, med._id);
+            search.index(med.body, med._id);
+            if (mem.displayName && mem.displayName !== '')
+              search.index(mem.displayName, med._id);
+            log('\nIndexing media: ' + inspect(med));
+            _next();
+          });
         });
       } else next();
     });
@@ -181,14 +249,16 @@ Step(
   // Update my twitter name.
   function (err) {
     var next = this;
-    errCheck(err, 'updating comments');
+    errCheck(err, 'indexing media');
     memberDb.collections.member.findOne({ primaryEmail: 'sanderpick@gmail.com' },
                                         function (err, me) {
       errCheck(err, 'finding Sander');
-      me.twitter = 'sanderpick';
-      log('\nUpdated Sander\'s twitter name.');
-      memberDb.collections.member.update({ _id: me._id },
-                                          me, { safe: true }, next);
+      if (me) {
+        me.twitter = 'sanderpick';
+        log('\nUpdated Sander\'s twitter name.');
+        memberDb.collections.member.update({ _id: me._id },
+                                            me, { safe: true }, next);
+      } else next();
     });
   },
   // Done.
@@ -198,3 +268,8 @@ Step(
     process.exit(0);
   }
 );
+
+
+// reverse comments
+// index all the media to reds
+
