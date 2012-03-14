@@ -858,6 +858,8 @@ Island = (function ($) {
         $('#search-box').bind('keyup search', function (e) {
           var txt = $(this).val().trim();
           jrid.empty();
+          if ('' === txt)
+            txt = '__clear__';
           search(txt, function (res) {
             if ('success' === res.status) {
               for (var i=0; i < res.data.results.length; i++)
@@ -961,7 +963,7 @@ Island = (function ($) {
         }).live('click', function (e) {
           currentHearts = h;
           var id = rater.itemID();
-          $.put('/hearts/' + id, { hearts: h }, function (res) {
+          $.put('/rate/' + id, { val: h }, function (res) {
             if ('error' === res.status)
               return console.log(res.message);
           });
@@ -1073,11 +1075,9 @@ Island = (function ($) {
    */
 
     , receiveComment: function (str, mediaId) {
-        var com = $(str)
-          , comHolder = $('#coms-' + mediaId)
-          , recHolder = $('#recent-comments')
-        ;
-        console.log(com, mediaId);
+        var com = $(str);
+        var comHolder = $('#coms-' + mediaId);
+        var recHolder = $('#recent-comments');
         if (recHolder.length > 0) {
           $(recHolder.children()[recHolder.children().length - 1]).remove();
           com.hide().css({ opacity: 0 }).appendTo(recHolder);

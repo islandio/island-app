@@ -150,7 +150,7 @@ function getMedia(limit, cb) {
 }
 function getTrending(limit, cb) {
   memberDb.findMedia({}, { limit: limit,
-                    sort: { 'meta.hearts': -1 } }, cb);
+                    sort: { hits: -1 } }, cb);
 }
 function getRecentComments(limit, cb) {
   memberDb.findComments({}, { limit: limit,
@@ -264,8 +264,11 @@ app.get('/add', authorize, function (req, res) {
 
 // Media search
 app.get('/search/:query', function (req, res) {
-  memberDb.searchMedia(req.params.query,
-                      function (err, docs) {
+  var fn = '__clear__' === req.params.query ?
+            _.bind(getMedia, {}, 50) :
+            _.bind(memberDb.searchMedia, memberDb,
+                  req.params.query);
+  fn(function (err, docs) {
     if (err) return fail(err);
     Step(
       function () {
@@ -293,7 +296,7 @@ app.get('/:key', authorize, function (req, res) {
   Step(
     function () {
       memberDb.findMedia({ key: req.params.key },
-                        { limit: 1 }, this.parallel());
+                        { limit: 1, hit: true }, this.parallel());
       getMedia(50, this.parallel());
       getTwitterNames(this.parallel());
     },
@@ -301,17 +304,16 @@ app.get('/:key', authorize, function (req, res) {
       if (err || !med)
         return res.render('404');
       med = _.first(med);
-      var rating = _.find(med.meta.ratings,
-                          function (rate) {
-        // console.log(rate);
-        return req.user._id.toString() === rate.member_id;
+      var rating = _.find(med.ratings.reverse(), function (rat) {
+        return req.user._id.toString() === rat.member_id.toString();
       });
-      // med.meta.hits++;
-      // med.save(function (err) {
+      _.each(med.comments, function (com) {
+        delete com.media;
+      });
       res.render('index', {
         part: 'single',
         media: med,
-        hearts: rating ? rating.hearts : 0,
+        hearts: rating ? rating.val : 0,
         grid: media,
         member: req.user,
         twitters: [],

@@ -191,21 +191,49 @@ MemberDb.prototype.findMedia = function (query, opts, cb) {
     cb = opts;
     opts = {};
   }
+  var hit = opts.hit;
+  delete opts.hit;
   find.call(self, self.collections.media, query, opts,
           function (err, media) {
-    var _cb = _.after(media.length, cb);
+    if (err) return cb(err);
+    if (media.length === 0)
+      return cb(null, media);
+    var _cb = _.after(2 * media.length, cb);
     _.each(media, function (med) {
+      // Gather comments if present.
       if (med.comments.length === 0)
-        return _cb(null, media);
-      var __cb = _.after(med.comments.length, _cb);
-      _.each(med.comments, function (commentId, i) {
-        self.findCommentById(commentId,
-                            function (err, comment) {
-          if (err) return cb(err);
-          med.comments[i] = comment;
-          __cb(null, media);
+        _cb(null, media);
+      else
+        var _commentCb = _.after(med.comments.length, _cb);
+        _.each(med.comments, function (commentId, i) {
+          self.findCommentById(commentId,
+                              function (err, comment) {
+            if (err) return cb(err);
+            med.comments[i] = comment;
+            _commentCb(null, media);
+          });
         });
-      });
+      // Gather ratings if present.
+      if (med.ratings.length === 0)
+        _cb(null, media);
+      else
+        var _ratingCb = _.after(med.ratings.length, _cb);
+        _.each(med.ratings, function (ratingId, i) {
+          self.findRatingById(ratingId, true,
+                              function (err, rating) {
+            if (err) return cb(err);
+            med.ratings[i] = rating;
+            _ratingCb(null, media);
+          });
+        });
+      // Increment hits field.
+      if (hit) {
+        self.collections.media.update({ _id: med._id },
+                                      { $inc : { hits: 1 } },
+                                      { safe: true }, function (err) {
+          if (err) return cb(err);
+        });
+      }
     });
   });
 }
@@ -241,6 +269,14 @@ MemberDb.prototype.findCommentById = function (id, bare, cb) {
   findOne.call(this, this.collections.comment,
               { _id: id }, { bare: bare}, cb);
 }
+MemberDb.prototype.findRatingById = function (id, bare, cb) {
+  if ('function' === typeof bare) {
+    cb = bare;
+    bare = false;
+  }
+  findOne.call(this, this.collections.rating,
+              { _id: id }, { bare: bare}, cb);
+}
 
 
 /*
@@ -261,6 +297,7 @@ MemberDb.prototype.findTwitterNames = function (cb) {
  * Add a rating to existing media.
  */
 MemberDb.prototype.searchMedia = function (str, cb) {
+  console.log(str);
   var self = this;
   self.search.query(str).end(function (err, ids) {
     if (err) return cb(err);
