@@ -316,7 +316,7 @@ app.get('/:key', authorize, function (req, res) {
         hearts: rating ? rating.val : 0,
         grid: media,
         member: req.user,
-        twitters: [],
+        twitters: twitters,
       });
     }
   );

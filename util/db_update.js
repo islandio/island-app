@@ -154,7 +154,7 @@ Step(
           delete med.added;
           delete med.meta;
           delete med.terms;
-          log('\nUpdated media: ' + inspect(med));
+          log('\nUpdated media: ' + med.title);
           memberDb.collections.media.update({ _id: med._id },
                                               med, { safe: true }, _next);
         });
@@ -239,7 +239,7 @@ Step(
             search.index(med.body, med._id);
             if (mem.displayName && mem.displayName !== '')
               search.index(mem.displayName, med._id);
-            log('\nIndexing media: ' + inspect(med));
+            log('\nIndexing media: ' + med.title);
             _next();
           });
         });

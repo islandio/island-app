@@ -1,7 +1,7 @@
 - if (object.type == 'image')
   div(id='obj-' + object.key, class='each-grid-obj ' + 'is-' + object.type)
-    a.grid-obj-title(href=object.key)
-      =object.title
+    // a.grid-obj-title(href=object.key)
+    // =object.title
     a.grid-obj(href=object.key)
       div.grid-obj-hover.matte(style='width: ' + object.attached.image_thumb.meta.width + 'px; height: ' + object.attached.image_thumb.meta.height + 'px')
         h1.grid-obj-hover-txt
@@ -17,8 +17,8 @@
     // =object.meta.tags[i]
 - if (object.type == 'video')
   div(id='obj-' + object.key, class='each-grid-obj ' + 'is-' + object.type)
-    a.grid-obj-title(href=object.key)
-      =object.title
+    // a.grid-obj-title(href=object.key)
+    // =object.title
     a.grid-obj(href=object.key)
       div.grid-obj-hover.matte(style='width: ' + object.attached.video_thumbs[0].meta.width + 'px; height: ' + object.attached.video_thumbs[0].meta.height + 'px')
         h1.grid-obj-hover-txt
