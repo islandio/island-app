@@ -331,7 +331,7 @@ Island = (function ($) {
   function comsOffset() {
     var coms = $('#recent-comments').length > 0 ?
               $('#recent-comments') : $('.obj-comments');
-    return coms.offset().top + coms.height() + 20;
+    return coms.length > 0 ? coms.offset().top + coms.height() + 20 : 0;
   }
 
   /**
@@ -512,6 +512,17 @@ Island = (function ($) {
           callback: twat,
         });
 
+      $(window).resize(fitSignInBG);
+
+      function fitSignInBG () {
+        var bg = $('.signin-bg > img');
+        if (bg.length === 0) return;
+        var win = $(this);
+        var aspect = bg.width() / bg.height();
+        bg.width(win.width());
+        bg.height(win.width() / aspect);
+      }
+      fitSignInBG();
 
       /////////////////////////// ACTIONS
 
@@ -780,7 +791,8 @@ Island = (function ($) {
 
 
       // search box
-      $('#search-box').bind('keyup search', function (e) {
+      var searchBox = $('#search-box');
+      searchBox.bind('keyup search', function (e) {
         var txt = $(this).val().trim();
         jrid.empty();
         if ('' === txt)
@@ -796,6 +808,9 @@ Island = (function ($) {
           initVideoSlides();
         });
       }).live('focus', adjustGridHeight);
+
+      if (searchBox.val() !== '')
+        searchBox.trigger('keyup');
 
 
       // filter grid by tag

@@ -17,7 +17,9 @@ _.mixin(require('underscore.string'));
 var util = require('util');
 var debug = util.debug, inspect = util.inspect;
 var Step = require('step');
-
+var Facebook = require('node-fb');
+var fbInfo = { SECRET: 'af79cdc8b5ca447366e87b12c3ddaed2',
+               ID: 203397619757208 };
 
 /*
  * Create a db instance.
@@ -29,7 +31,7 @@ var MemberDb = exports.MemberDb = function (db, options, cb) {
   self.search = reds.createSearch('media');
 
   var collections = {
-    member: { index: { primaryEmail: 1, role: 1 } },
+    member: { index: { primaryEmail: 1, key: 1, role: 1 } },
     media: { index: { key: 1, type: 1, member_id: 1 } },
     comment: { index: { member_id: 1, media_id: 1 } },
     rating: { index: { member_id: 1, media_id: 1 } },
@@ -74,20 +76,65 @@ MemberDb.prototype.findOrCreateMemberFromFacebook = function (props, cb) {
   self.collections.member.findOne({ primaryEmail: props.primaryEmail },
                                   function (err, member) {
     if (err) return cb(err);
-    if (member && !member.provider) {
-      _.defaults(props, member);
+    if (member && member.provider) {
       self.collections.member.update({ primaryEmail: props.primaryEmail },
-                                      props, { safe: true }, function (err) {
+                                    { $set : { accessToken: props.accessToken } },
+                                    { safe: true }, function (err) {
         if (err) return cb(err);
-        cb(null, props);
+        member.accessToken = props.accessToken;
+        cb(null, member);
       });
-    } else if (!member) {
-      _.defaults(props, {
-        role: 1,
-        twitter: '',
+    } else {
+      createUniqueURLKey(self.collections.member,
+                          8, function (err, key) {
+        if (err) return cb(err);
+        props.key = key;
+        var facebook = new Facebook(fbInfo);
+        Step(
+          function () {
+            facebook.get(props.username,
+                        { access_token: props.accessToken }, this);
+          },
+          function (err, data) {
+            if (err) return cb(err);
+            _.extend(props, {
+              location: data.location.name,
+              hometown: data.hometown.name,
+              locale: data.locale,
+              timezone: data.timezone,
+              gender: data.gender,
+              birthday: data.birthday,
+              website: data.website,
+            });
+            facebook.get(props.username + '/albums',
+                        { access_token: props.accessToken }, this);
+          },
+          function (err, data) {
+            if (err) return cb(err);
+            facebook.get(data[0].cover_photo,
+                        { access_token: props.accessToken }, this);
+          },
+          function (err, data) {
+            if (err) return cb(err);
+            props.picture = data.source;
+            if (member && !member.provider) {
+              _.defaults(props, member);
+              self.collections.member.update({ primaryEmail: props.primaryEmail },
+                                            props, { safe: true }, function (err) {
+                if (err) return cb(err);
+                cb(null, props);
+              });
+            } else if (!member) {
+              _.defaults(props, {
+                role: 1,
+                twitter: '',
+              });
+              createDoc(self.collections.member, props, cb);
+            }
+          }
+        );
       });
-      createDoc(self.collections.member, props, cb);
-    } else cb(null, member);
+    }
   });
 }
 
@@ -278,6 +325,15 @@ MemberDb.prototype.findRatingById = function (id, bare, cb) {
               { _id: id }, { bare: bare}, cb);
 }
 
+MemberDb.prototype.findMemberByKey = function (key, bare, cb) {
+  if ('function' === typeof bare) {
+    cb = bare;
+    bare = false;
+  }
+  findOne.call(this, this.collections.member,
+              { key: key }, { bare: bare}, cb);
+}
+
 
 /*
  * Get a list of all twitter names from members.
@@ -297,7 +353,6 @@ MemberDb.prototype.findTwitterNames = function (cb) {
  * Add a rating to existing media.
  */
 MemberDb.prototype.searchMedia = function (str, cb) {
-  console.log(str);
   var self = this;
   self.search.query(str).end(function (err, ids) {
     if (err) return cb(err);

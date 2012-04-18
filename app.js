@@ -152,8 +152,13 @@ function getTrending(limit, cb) {
   memberDb.findMedia({}, { limit: limit,
                     sort: { hits: -1 } }, cb);
 }
-function getRecentComments(limit, cb) {
-  memberDb.findComments({}, { limit: limit,
+function getRecentComments(limit, memberId, cb) {
+  if ('function' === typeof memberId) {
+    cb = memberId;
+    memberId = null;
+  }
+  var query = memberId ? { member_id: memberId } : {};
+  memberDb.findComments(query, { limit: limit,
                         sort: { created: -1 } }, cb);
 }
 function getTwitterNames(cb) {
@@ -222,8 +227,13 @@ app.get('/auth/facebook', function (req, res, next) {
       });
     }
   ));
-  passport.authenticate('facebook', { scope: ['email',
-                        'user_status'] })(req, res, next);
+  passport.authenticate('facebook', { scope: [
+                        'email',
+                        'user_about_me',
+                        'user_birthday',
+                        'user_website',
+                        'user_status',
+                        'user_photos'] })(req, res, next);
 });
 
 // Facebook will redirect the user to this URL
@@ -288,6 +298,33 @@ app.get('/search/:query', function (req, res) {
     res.send({ status: 'error',
              message: err.stack });
   }
+});
+
+// Media search
+app.get('/member/:key', function (req, res) {
+  Step(
+    function () {
+      memberDb.findMemberByKey(req.params.key, this.parallel());
+      getMedia(50, this.parallel());
+      getTwitterNames(this.parallel());
+    },
+    function (err, member, media, twitters) {
+      if (err || !member)
+        return res.render('404');
+      getRecentComments(5, member._id, function (err, coms) {
+        if (err)
+          return res.render('500');
+        res.render('index', {
+        part: 'profile',
+        data: member,
+        comments: coms,
+        grid: media,
+        twitters: twitters,
+        member: req.user,
+      });
+      });
+    }
+  );
 });
 
 
