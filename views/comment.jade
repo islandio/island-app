@@ -1,9 +1,11 @@
+- var parentStyle = showMember ? '' : 'left:0; padding-left:10px;'
 div.comment.matte
   div.comment-title
-    span.comment-title-name
-      =comment.member.displayName
+    - if (showMember)
+      a.comment-title-name(href='/member/' + comment.member.key)
+        =comment.member.displayName
     - if (comment.media)
-      a.comment-title-parent(href=comment.media.key)
+      a.comment-title-parent(href='/' + comment.media.key, style=parentStyle)
         =comment.media.title
   div.comment-body
     p.comment-txt

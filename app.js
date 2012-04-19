@@ -169,8 +169,8 @@ function renderMedia(med, cb) {
   cb(null, templates.object({ object: med }));
 }
 
-function renderComment(com, cb) {
-  cb(null, templates.comment({ comment: com }));
+function renderComment(params, cb) {
+  cb(null, templates.comment(params));
 }
 
 
@@ -487,7 +487,7 @@ if (!module.parent) {
 
       // add new comment to everyone's page
       everyone.now.distributeComment = function (comment) {
-        renderComment(comment, function (err, html) {
+        renderComment({ comment: comment, showMember: true }, function (err, html) {
           if (err) return log('\nFailed to render comment - ' + inspect(comment)
                               + '\nError: ' + inspect(err));
           everyone.now.receiveComment(html, comment.media._id);

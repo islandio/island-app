@@ -98,20 +98,22 @@ MemberDb.prototype.findOrCreateMemberFromFacebook = function (props, cb) {
           function (err, data) {
             if (err) return cb(err);
             _.extend(props, {
-              location: data.location.name,
-              hometown: data.hometown.name,
               locale: data.locale,
               timezone: data.timezone,
               gender: data.gender,
               birthday: data.birthday,
               website: data.website,
             });
+            facebook.get(data.location.id, {}, this.parallel());
+            facebook.get(data.hometown.id, {}, this.parallel());
             facebook.get(props.username + '/albums',
-                        { access_token: props.accessToken }, this);
+                        { access_token: props.accessToken }, this.parallel());
           },
-          function (err, data) {
+          function (err, location, hometown, albums) {
             if (err) return cb(err);
-            facebook.get(data[0].cover_photo,
+            props.location = location.location;
+            props.hometown = hometown.location;
+            facebook.get(albums[0].cover_photo,
                         { access_token: props.accessToken }, this);
           },
           function (err, data) {
@@ -474,6 +476,7 @@ function getDocIds(docs, cb) {
           case 'member':
             doc[collection] = {
               _id: d._id.toString(),
+              key: d.key,
               displayName: d.displayName,
             };
             if (d.twitter !== '')

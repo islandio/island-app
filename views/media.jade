@@ -9,7 +9,7 @@
   div.recent-comments-wrap
     h1.title-right / Recent Comments
     #recent-comments
-      !=partial('comment', comments)
+      !=partial('comment', { collection: comments, showMember: true })
 div.grid-wrap
   #search
     h1.title-bottom / Browse

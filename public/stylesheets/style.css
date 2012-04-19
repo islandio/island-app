@@ -864,6 +864,10 @@ img.heart-img {
   background-color: #b1dc36;
   z-index: 1;
 }
+.comment-title-name:hover {
+  color: #1a1a1a;
+  background-color: #b1dc36;
+}
 .comment-title-parent {
   color: #b3b3b3;
   background-color: #fcfcfb;
@@ -891,9 +895,7 @@ img.heart-img {
   overflow: hidden;
 }
 .member-info {
-  margin: 23px 0 0;
-  font-size: 14px;
-  line-height: 15px;
+  margin: 0 0 5px;
 }
 .member-info-content {
   font-weight: bold;

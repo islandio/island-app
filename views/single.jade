@@ -40,8 +40,7 @@ div.single-left
     div.obj-desc-txt-wrap
       p.obj-desc-txt
         =media.body
-      h3.obj-details.obj-details Added 
-        =media.created
+      h3.obj-details(data-date=media.created, data-type='media')
       //div(style='position: relative; height: 17px')
       //img.social-icons(src='/graphics/sn/b/facebook_16.png', alt='/graphics/sn/facebook_16.png', title='Post, to Profile', style='left:0px;')
       //img.social-icons(src='/graphics/sn/b/twitter_16.png', alt='/graphics/sn/twitter_16.png', title='Tweet', style='left:21px;')
@@ -63,7 +62,7 @@ div.single-right
       span(style='font-style: italic')
         =member.displayName
   div.obj-comments(id='coms-' + media._id)
-    !=partial('comment', media.comments.reverse())
+    !=partial('comment', { collection: media.comments.reverse(), showMember: true })
 div.grid-wrap
   #search
     h1.title-bottom / Browse

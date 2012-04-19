@@ -905,6 +905,20 @@ Island = (function ($) {
         });
       });
 
+      $('.obj-details[data-date]').each(function () {
+        var _this = $(this);
+        var date = new Date(_this.data('date'));
+        var txt;
+        switch (_this.data('type')) {
+          case 'media':
+            txt = 'Added ' + Util.toLocaleString(date, 'mmm d, yyyy');
+            break;
+          case 'profile':
+            txt = 'Contributor since ' + Util.toLocaleString(date,'m/d/yy');
+            break;
+        }
+        _this.text(txt);
+      });
 
       // new media
       var mediaForm = $('#media-form');
