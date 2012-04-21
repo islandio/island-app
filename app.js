@@ -28,7 +28,7 @@ var LOCAL = process.NODE_ENV !== 'production';
  * Module dependencies.
  */
 var express = require('express');
-var connect = require('connect');
+// var connect = require('connect');
 var now = require('now');
 var mongodb = require('mongodb');
 var mongoStore = require('connect-mongodb');
@@ -48,7 +48,7 @@ _.mixin(require('underscore.string'));
 var Step = require('step');
 var color = require('cli-color');
 
-var Notify = require('./notify');
+// var Notify = require('./notify');
 
 var MemberDb = require('./member_db.js').MemberDb;
 
@@ -72,12 +72,12 @@ var everyone;
 
 app.configure('development', function () {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-  Notify.active = false;
+  // Notify.active = false;
 });
 
 app.configure('production', function () {
   app.use(express.errorHandler());
-  Notify.active = true;
+  // Notify.active = true;
 });
 
 app.set('sessionStore', new mongoStore({
@@ -361,54 +361,65 @@ app.get('/:key', authorize, function (req, res) {
 
 
 // Add media from transloadit.com
-app.put('/insert', authorize, function (req, res, next) {
+app.put('/insert', authorize, function (req, res) {
+  if (!req.body.media || !req.body.assembly
+      || req.body.assembly.results.length === 0)
+    return fail(new Error('Failed to add media.'))
+  
+  function done(err, data) {
+    if (err)
+      return res.send({ status: 'error',
+                      message: err.stack });
+    everyone.now.distributeMedia(data);
+    res.send({ status: 'success', data: {
+            mediaId: data._id } });
+  }
+
   var props = req.body.media;
-  var results = req.body.assembly.results;
   props.member = req.user;
 
-  if (req.body.assembly.results.image_thumb) {
-    var attachment = {
-      image_thumb: results.image_thumb['0'],
-      image_full: results.image_full['0']
+  var _done = _.after(req.body.assembly.results.length, done);
+  _.each(req.body.assembly.results, function (result) {
+    if (req.body.assembly.results.image_thumb) {
+      var attachment = {
+        image_thumb: results.image_thumb['0'],
+        image_full: results.image_full['0']
+      }
+      props.attached = attachment;
+      props.type = props.attached.image_full.type;
+      _.each(props.attached, function (att) {
+        att.cf_url = cloudfrontImageUrl + att.id.substr(0, 2)
+                      + '/' + att.id.substr(2) + '.' + att.ext; });
+    } else if (results.video_encode) {
+      var attachment = {
+        video_thumbs: results.video_thumbs,
+        video_placeholder: results.video_placeholder['0'],
+        video_poster: results.video_poster['0'],
+        video_encode: results.video_encode['0'],
+      }
+      props.attached = attachment;
+      props.type = props.attached.video_encode.type;
+      _.each(props.attached.video_thumbs, function (thu) {
+        thu.cf_url = cloudfrontVideoUrl + thu.id.substr(0, 2)
+                      + '/' + thu.id.substr(2) + '.' + thu.ext; });
+      _.each([props.attached.video_placeholder,
+      props.attached.video_poster,
+      props.attached.video_encode], function (att) {
+        att.cf_url = cloudfrontVideoUrl + att.id.substr(0, 2)
+                      + '/' + att.id.substr(2) + '.' + att.ext; });
     }
-    props.attached = attachment;
-    props.type = props.attached.image_full.type;
-    _.each(props.attached, function (att) {
-      att.cf_url = cloudfrontImageUrl + att.id.substr(0, 2)
-                    + '/' + att.id.substr(2) + '.' + att.ext; });
-  } else if (results.video_encode) {
-    var attachment = {
-      video_thumbs: results.video_thumbs,
-      video_placeholder: results.video_placeholder['0'],
-      video_poster: results.video_poster['0'],
-      video_encode: results.video_encode['0'],
-    }
-    props.attached = attachment;
-    props.type = props.attached.video_encode.type;
-    _.each(props.attached.video_thumbs, function (thu) {
-      thu.cf_url = cloudfrontVideoUrl + thu.id.substr(0, 2)
-                    + '/' + thu.id.substr(2) + '.' + thu.ext; });
-    _.each([props.attached.video_placeholder,
-    props.attached.video_poster,
-    props.attached.video_encode], function (att) {
-      att.cf_url = cloudfrontVideoUrl + att.id.substr(0, 2)
-                    + '/' + att.id.substr(2) + '.' + att.ext; });
-  }
-  memberDb.createMedia(props, function (err, media) {
-    if (err) return fail(err);
-    everyone.now.distributeMedia(media);
-    res.send({ status: 'success', data: {
-             mediaId: media._id } });   
+    memberDb.createMedia(props, function (err, media) {
+      if (err) return fail(err);
+      everyone.now.distributeMedia(media);
+      res.send({ status: 'success', data: {
+               mediaId: media._id } });   
+    });
   });
-  function fail(err) {
-    res.send({ status: 'error',
-             message: err.stack });
-  }
 });
 
 
 // Add comment
-app.put('/comment/:mediaId', function (req, res, next) {
+app.put('/comment/:mediaId', function (req, res) {
   // TODO: permissions...
   var props = {
     media_id: req.params.mediaId,
@@ -429,7 +440,7 @@ app.put('/comment/:mediaId', function (req, res, next) {
 
 
 // Add rating
-app.put('/rate/:mediaId', function (req, res, next) {
+app.put('/rate/:mediaId', function (req, res) {
   // TODO: permissions...
   var props = {
     media_id: req.params.mediaId,

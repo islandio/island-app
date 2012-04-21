@@ -18,7 +18,10 @@ Util.newFilledArray = function (len, val) {
 }
 
 Util.getRelativeTime = function (ts) {
-  var parsedDate = new Date(Math.round(ts));
+  if ('number' === typeof ts)
+    ts = Math.round(ts);
+  var parsedDate = new Date(ts);
+
   var relativeDate = arguments.length > 1 ? arguments[1] : new Date();
   var delta = (relativeDate.getTime() - parsedDate.getTime()) / 1e3;
   if (delta < 5) return 'just now';

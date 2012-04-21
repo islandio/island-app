@@ -98,41 +98,41 @@ Island = (function ($) {
    * handle relative time
    */
 
-  function relativeTime(ts) {
-    var parsed_date = Date.parse(ts);
-    var relative_to = (arguments.length > 1) ? arguments[1] : new Date();
-    var delta = parseInt((relative_to.getTime() - parsed_date) / 1000);
-    if (delta < 5)
-      return 'just now';
-    else if (delta < 15)
-      return 'just a moment ago';
-    else if (delta < 30)
-      return 'just a few moments ago';
-    else if (delta < 60) 
-      return 'less than a minute ago';
-    else if (delta < 120) 
-      return 'about a minute ago';
-    else if (delta < (45 * 60)) 
-      return (parseInt(delta / 60)).toString() + ' minutes ago';
-    else if (delta < (90 * 60)) 
-      return 'about an hour ago';
-    else if (delta < (24 * 60 * 60)) 
-      return 'about ' + (parseInt(delta / 3600)).toString() + ' hours ago';
-    else if (delta < (2 * 24 * 60 * 60)) 
-      return 'about a day ago';
-    else if (delta < (10 * 24 * 60 * 60))
-      return (parseInt(delta / 86400)).toString() + ' days ago';
-    else
-      return
-        new Date(ts).toLocaleDateString();
-  }
+  // function relativeTime(ts) {
+  //   var parsed_date = Date.parse(ts);
+  //   var relative_to = (arguments.length > 1) ? arguments[1] : new Date();
+  //   var delta = parseInt((relative_to.getTime() - parsed_date) / 1000);
+  //   if (delta < 5)
+  //     return 'just now';
+  //   else if (delta < 15)
+  //     return 'just a moment ago';
+  //   else if (delta < 30)
+  //     return 'just a few moments ago';
+  //   else if (delta < 60) 
+  //     return 'less than a minute ago';
+  //   else if (delta < 120) 
+  //     return 'about a minute ago';
+  //   else if (delta < (45 * 60)) 
+  //     return (parseInt(delta / 60)).toString() + ' minutes ago';
+  //   else if (delta < (90 * 60)) 
+  //     return 'about an hour ago';
+  //   else if (delta < (24 * 60 * 60)) 
+  //     return 'about ' + (parseInt(delta / 3600)).toString() + ' hours ago';
+  //   else if (delta < (2 * 24 * 60 * 60)) 
+  //     return 'about a day ago';
+  //   else if (delta < (10 * 24 * 60 * 60))
+  //     return (parseInt(delta / 86400)).toString() + ' days ago';
+  //   else
+  //     return
+  //       new Date(ts).toLocaleDateString();
+  // }
 
   function updateTimes() {
     $('.comment-added').each(function (i) {
       var time = $(this);
       if (!time.data('ts'))
         time.data('ts', time.text());
-      time.text(relativeTime(time.data('ts')));
+      time.text(Util.getRelativeTime(time.data('ts')));
     });
   }
 
@@ -1028,7 +1028,7 @@ Island = (function ($) {
         grid.collage(true, com.height());
         var time = $('.comment-added', com);
         time.data('ts', time.text());
-        time.text(relativeTime(time.data('ts')));
+        time.text(Util.getRelativeTime(time.data('ts')));
         setTimeout(function () {
           com.prependTo(recHolder).show(250).animate({ opacity: 1 }, 500);
         }, 100);
@@ -1040,7 +1040,7 @@ Island = (function ($) {
           com.show(250).animate({ opacity: 1 }, 500);
           var time = $('.comment-added', com);
           time.data('ts', time.text());
-          time.text(relativeTime(time.data('ts')));
+          time.text(Util.getRelativeTime(time.data('ts')));
         }, 100);
       }
     },
