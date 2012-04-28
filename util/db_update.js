@@ -45,7 +45,7 @@ Step(
     memberDb = mDb;
     this();
   },
-  // Rename medias collection to media
+  // Rename medias collection to post
   function (err) {
     var next = this;
     memberDb.db.collection('medias', function (err, col) {
@@ -53,8 +53,8 @@ Step(
       col.findOne({}, function (err, doc) {
         if (err || !doc) next(err);
         else {
-          log('\nRenamed `medias` collection to `media`.');
-          col.rename('media', next);
+          log('\nRenamed `medias` collection to `post`.');
+          col.rename('post', next);
         } 
       });
     });
@@ -138,32 +138,62 @@ Step(
       } else next();
     });
   },
-  // Reformat media
+  // Reformat posts
   function (err) {
     errCheck(err, 'updating members');
     var next = this;
-    memberDb.collections.media.find({})
-            .toArray(function (err, media) {
-      errCheck(err, 'finding media');
-      if (media.length > 0) {
-        var _next = _.after(media.length, next);
-        _.each(media, function (med) {
-          med.created = med.created || med.added;
-          med.ratings = med.meta.ratings;
-          med.hits = med.meta.hits;
-          delete med.added;
-          delete med.meta;
-          delete med.terms;
-          log('\nUpdated media: ' + med.title);
-          memberDb.collections.media.update({ _id: med._id },
-                                              med, { safe: true }, _next);
+    memberDb.collections.post.find({})
+            .toArray(function (err, posts) {
+      errCheck(err, 'finding posts');
+      if (posts.length > 0) {
+        var _next = _.after(posts.length, next);
+        _.each(posts, function (post) {
+          post.created = post.created || post.added;
+          post.ratings = post.meta.ratings;
+          post.hits = post.meta.hits;
+          delete post.added;
+          delete post.meta;
+          delete post.terms;
+          delete post.type;
+          var media = {
+            key: post.key,
+            member_id: post.member_id,
+            ratings: post.ratings,
+            hits: post.hits,
+            created: post.created,
+          };
+          var att = post.attached;
+          if (att.image_full)
+            _.extend(media, {
+              type: 'image',
+              image: att.image_full,
+              thumbs: [att.image_thumb],
+            });
+          else
+            _.extend(media, {
+              type: 'video',
+              video: att.video_encode,
+              image: att.video_placeholder,
+              poster: att.video_poster,
+              thumbs: att.video_thumbs,
+            });
+          memberDb.createMedia(media, function (err, doc) {
+            errCheck(err, 'creating post media');
+            delete post.attached;
+            delete post.ratings;
+            delete post.hits;
+            post.medias = [doc._id];
+            log('\nUpdated post: ' + post.title);
+            memberDb.collections.post.update({ _id: post._id },
+                                              post, { safe: true }, _next);
+          });
         });
       } else next();
     });
   },
   // Reformat comments
   function (err) {
-    errCheck(err, 'updating media');
+    errCheck(err, 'updating posts');
     var next = this;
     memberDb.collections.comment.find({})
             .toArray(function (err, comments) {
@@ -171,8 +201,9 @@ Step(
       if (comments.length > 0) {
         var _next = _.after(comments.length, next);
         _.each(comments, function (com) {
-          com.media_id = com.media_id || com.parent_id;
+          com.post_id = com.media_id || com.parent_id;
           com.created = com.created || com.added;
+          delete com.media_id;
           delete com.parent_id;
           delete com.added;
           delete com.comments;
@@ -197,7 +228,8 @@ Step(
           Step(
             function () {
               memberDb.collections.media.update({ _id: med._id },
-                                                { $set : { ratings : [] } }, { safe: true }, this);
+                                                { $set : { ratings : [] } },
+                                                { safe: true }, this);
             },
             function (err) {
               errCheck(err, 'clearing ratings');
@@ -222,24 +254,24 @@ Step(
       } else next();
     });
   },
-  // Index media
+  // Index posts
   function (err) {
     var next = this;
     errCheck(err, 'redo ratings');
-    memberDb.collections.media.find({})
-            .toArray(function (err, media) {
-      errCheck(err, 'finding media');
-      if (media.length > 0) {
-        var _next = _.after(media.length, next);
-        _.each(media, function (med) {
-          memberDb.collections.member.findOne({ _id: med.member_id },
+    memberDb.collections.post.find({})
+            .toArray(function (err, posts) {
+      errCheck(err, 'finding posts');
+      if (posts.length > 0) {
+        var _next = _.after(posts.length, next);
+        _.each(posts, function (post) {
+          memberDb.collections.member.findOne({ _id: post.member_id },
                                               function (err, mem) {
-            errCheck(err, 'finding member for media update');
-            search.index(med.title, med._id);
-            search.index(med.body, med._id);
+            errCheck(err, 'finding member for post update');
+            search.index(post.title, post._id);
+            search.index(post.body, post._id);
             if (mem.displayName && mem.displayName !== '')
-              search.index(mem.displayName, med._id);
-            log('\nIndexing media: ' + med.title);
+              search.index(mem.displayName, post._id);
+            log('\nIndexing post: ' + post.title);
             _next();
           });
         });
@@ -249,7 +281,7 @@ Step(
   // Update my twitter name.
   function (err) {
     var next = this;
-    errCheck(err, 'indexing media');
+    errCheck(err, 'indexing posts');
     memberDb.collections.member.findOne({ primaryEmail: 'sanderpick@gmail.com' },
                                         function (err, me) {
       errCheck(err, 'finding Sander');
@@ -268,8 +300,3 @@ Step(
     process.exit(0);
   }
 );
-
-
-// reverse comments
-// index all the media to reds
-

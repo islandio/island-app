@@ -1,6 +1,2 @@
-- if (trend.type == 'image')
-  a.trending(href=trend.key)
-    img.trending-img(id='trend-' + trend.key, src=trend.attached.image_full.cf_url, width=trend.attached.image_full.meta.width, height=trend.attached.image_full.meta.height)
-- if (trend.type == 'video')
-  a.trending(href=trend.key)
-    img.trending-img(id='trend-' + trend.key, src=trend.attached.video_placeholder.cf_url, width=trend.attached.video_placeholder.meta.width, height=trend.attached.video_placeholder.meta.height)
+a.trending(href='/' + trend.key)
+  img.trending-img(id='trend-' + trend.key, src=trend.image.cf_url, width=trend.image.meta.width, height=trend.image.meta.height)

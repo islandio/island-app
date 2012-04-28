@@ -32,7 +32,8 @@ var MemberDb = exports.MemberDb = function (db, options, cb) {
 
   var collections = {
     member: { index: { primaryEmail: 1, key: 1, role: 1 } },
-    media: { index: { key: 1, type: 1, member_id: 1 } },
+    post: { index: { key: 1, member_id: 1 } },
+    media: { index: { type: 1, member_id: 1 } },
     comment: { index: { member_id: 1, media_id: 1 } },
     rating: { index: { member_id: 1, media_id: 1 } },
     sessions: {},
@@ -85,6 +86,8 @@ MemberDb.prototype.findOrCreateMemberFromFacebook = function (props, cb) {
         cb(null, member);
       });
     } else {
+      delete props._raw;
+      delete props._json;
       createUniqueURLKey(self.collections.member,
                           8, function (err, key) {
         if (err) return cb(err);
@@ -92,7 +95,7 @@ MemberDb.prototype.findOrCreateMemberFromFacebook = function (props, cb) {
         var facebook = new Facebook(fbInfo);
         Step(
           function () {
-            facebook.get(props.username,
+            facebook.get(props.id,
                         { access_token: props.accessToken }, this);
           },
           function (err, data) {
@@ -104,21 +107,37 @@ MemberDb.prototype.findOrCreateMemberFromFacebook = function (props, cb) {
               birthday: data.birthday,
               website: data.website,
             });
-            facebook.get(data.location.id, {}, this.parallel());
-            facebook.get(data.hometown.id, {}, this.parallel());
-            facebook.get(props.username + '/albums',
+            if (data.location)
+              facebook.get(data.location.id, {}, this.parallel());
+            else this.parallel()();
+            if (data.hometown)
+              facebook.get(data.hometown.id, {}, this.parallel());
+            else this.parallel()();
+            facebook.get(props.id + '/albums',
                         { access_token: props.accessToken }, this.parallel());
           },
           function (err, location, hometown, albums) {
             if (err) return cb(err);
-            props.location = location.location;
-            props.hometown = hometown.location;
-            facebook.get(albums[0].cover_photo,
-                        { access_token: props.accessToken }, this);
+            if (location) {
+              props.location = { name: location.name };
+              _.extend(props.location, location.location);
+            } else props.location = null;
+            if (hometown) {
+              props.hometown = { name: hometown.name };
+              _.extend(props.hometown, hometown.location);
+            } else props.hometown = null;
+            console.log(albums)
+            var photo = _.find(albums, function (album) {
+                                return album.name === 'Cover Photos'; });
+            console.log(photo, photo.cover_photo);
+            if (photo && photo.cover_photo)
+              facebook.get(photo.cover_photo,
+                          { access_token: props.accessToken }, this);
+            else this();
           },
           function (err, data) {
             if (err) return cb(err);
-            props.picture = data.source;
+            props.picture = data || null;
             if (member && !member.provider) {
               _.defaults(props, member);
               self.collections.member.update({ primaryEmail: props.primaryEmail },
@@ -142,26 +161,22 @@ MemberDb.prototype.findOrCreateMemberFromFacebook = function (props, cb) {
 
 
 /*
- * Create methods for media and comments.
+ * Create methods for posts and comments.
  */
-MemberDb.prototype.createMedia = function (props, cb) {
+MemberDb.prototype.createPost = function (props, cb) {
   var self = this;
-  if (!validate(props, ['title', 'body',
-      'type', 'member', 'attached']))
-    return cb(new Error('Invalid media'));
+  if (!validate(props, ['title', 'body', 'member', 'medias']))
+    return cb(new Error('Invalid post'));
   props.member_id = props.member._id;
   var memberName = props.member.displayName;
   delete props.member;
-  delete props['meta.tags'];
-  createUniqueURLKey(self.collections.media,
+  createUniqueURLKey(self.collections.post,
                     8, function (err, key) {
     _.defaults(props, {
       key: key,
       comments: [],
-      ratings: [],
-      hits: 0,
     });
-    createDoc(self.collections.media, props,
+    createDoc(self.collections.post, props,
               function (err, doc) {
       if (err) return cb(err);
       self.search.index(doc.title, doc._id);
@@ -171,9 +186,23 @@ MemberDb.prototype.createMedia = function (props, cb) {
     });
   });
 }
+MemberDb.prototype.createMedia = function (props, cb) {
+  var self = this;
+  if (!validate(props, ['type', 'key', 'member_id']))
+    return cb(new Error('Invalid media'));
+  _.defaults(props, {
+    ratings: [],
+    hits: 0,
+  });
+  createDoc(self.collections.media, props,
+            function (err, doc) {
+    if (err) return cb(err);
+    getDocIds.call(self, doc, cb);
+  });
+}
 MemberDb.prototype.createComment = function (props, cb) {
   var self = this;
-  if (!validate(props, ['member_id', 'media_id', 'body']))
+  if (!validate(props, ['member_id', 'post_id', 'body']))
     return cb(new Error('Invalid comment'));
   _.defaults(props, {
     likes: 0,
@@ -182,17 +211,17 @@ MemberDb.prototype.createComment = function (props, cb) {
     // TODO: Verify that the user has
     // permission to comment.
     function () {
-      self.findMediaById(props.media_id, this);
+      self.findPostById(props.post_id, this);
     },
-    function (err, med) {
+    function (err, post) {
       if (err) return cb(err);
-      if (!med) return cb(new Error('Media not found'));
-      props.media_id = med._id;
+      if (!post) return cb(new Error('Post not found'));
+      props.post_id = post._id;
       createDoc(self.collections.comment, props, this);
     },
     function (err, doc) {
       if (err) return cb(err);
-      self.collections.media.update({ _id: doc.media_id },
+      self.collections.post.update({ _id: doc.post_id },
                                     { $push : { comments: doc._id } },
                                     { safe: true }, function (err) {
         if (err) return cb(err);
@@ -210,21 +239,35 @@ MemberDb.prototype.createRating = function (props, cb) {
     // TODO: Verify that the user has
     // permission to add a rating.
     function () {
-      self.findMediaById(props.media_id, this);
+      self.findMediaById(props.media_id, true, this);
     },
     function (err, med) {
+      var next = this;
       if (err) return cb(err);
       if (!med) return cb(new Error('Media not found'));
       props.media_id = med._id;
-      createDoc(self.collections.rating, props, this);
+      findOne.call(self, self.collections.rating,
+                  { media_id: props.media_id,
+                  member_id: props.member_id }, { bare: true },
+                  function (err, doc) {
+        if (err) return cb(err);
+        if (!doc)
+          return createDoc(self.collections.rating, props, next);
+        self.collections.rating.update({ _id: doc._id },
+                                      { $set : { val: props.val } },
+                                      { safe: true }, function (err) {
+          doc.val = props.val;
+          cb(err, doc);
+        });
+      });
+      
     },
     function (err, doc) {
       if (err) return cb(err);
       self.collections.media.update({ _id: doc.media_id },
                                     { $push : { ratings: doc._id } },
                                     { safe: true }, function (err) {
-        if (err) return cb(err);
-        cb(null, doc);
+        cb(err, doc);
       });
     }
   );
@@ -232,58 +275,61 @@ MemberDb.prototype.createRating = function (props, cb) {
 
 
 /*
- * Find methods for media and comments.
+ * Find methods for posts and comments.
  */
+MemberDb.prototype.findPosts = function (query, opts, cb) {
+  var self = this;
+  if ('function' === typeof opts) {
+    cb = opts;
+    opts = {};
+  }
+  find.call(self, self.collections.post, query, opts,
+          function (err, posts) {
+    if (err) return cb(err);
+    if (posts.length === 0)
+      return cb(null, []);
+    var _cb = _.after(2 * posts.length, cb);
+    _.each(posts, function (post) {
+      // Gather media if present.
+      if (post.medias.length === 0)
+        _cb(null, posts);
+      else
+        var _mediaCb = _.after(post.medias.length, _cb);
+        _.each(post.medias, function (mediaId, i) {
+          self.findMediaById(mediaId, true,
+                              function (err, med) {
+            if (err) return cb(err);
+            post.medias[i] = med;
+            _mediaCb(null, posts);
+          });
+        });
+      // Gather comments if present.
+      if (post.comments.length === 0)
+        _cb(null, posts);
+      else
+        var _commentCb = _.after(post.comments.length, _cb);
+        _.each(post.comments, function (commentId, i) {
+          self.findCommentById(commentId,
+                              function (err, comment) {
+            if (err) return cb(err);
+            post.comments[i] = comment;
+            _commentCb(null, posts);
+          });
+        });
+    });
+  });
+}
 MemberDb.prototype.findMedia = function (query, opts, cb) {
   var self = this;
   if ('function' === typeof opts) {
     cb = opts;
     opts = {};
   }
-  var hit = opts.hit;
-  delete opts.hit;
   find.call(self, self.collections.media, query, opts,
           function (err, media) {
     if (err) return cb(err);
-    if (media.length === 0)
-      return cb(null, media);
-    var _cb = _.after(2 * media.length, cb);
-    _.each(media, function (med) {
-      // Gather comments if present.
-      if (med.comments.length === 0)
-        _cb(null, media);
-      else
-        var _commentCb = _.after(med.comments.length, _cb);
-        _.each(med.comments, function (commentId, i) {
-          self.findCommentById(commentId,
-                              function (err, comment) {
-            if (err) return cb(err);
-            med.comments[i] = comment;
-            _commentCb(null, media);
-          });
-        });
-      // Gather ratings if present.
-      if (med.ratings.length === 0)
-        _cb(null, media);
-      else
-        var _ratingCb = _.after(med.ratings.length, _cb);
-        _.each(med.ratings, function (ratingId, i) {
-          self.findRatingById(ratingId, true,
-                              function (err, rating) {
-            if (err) return cb(err);
-            med.ratings[i] = rating;
-            _ratingCb(null, media);
-          });
-        });
-      // Increment hits field.
-      if (hit) {
-        self.collections.media.update({ _id: med._id },
-                                      { $inc : { hits: 1 } },
-                                      { safe: true }, function (err) {
-          if (err) return cb(err);
-        });
-      }
-    });
+    cb(null, media);
+    // self.fillMediaRatings(media, cb);
   });
 }
 MemberDb.prototype.findComments = function (query, opts, cb) {
@@ -300,15 +346,26 @@ MemberDb.prototype.findMemberById = function (id, bare, cb) {
     bare = false;
   }
   findOne.call(this, this.collections.member,
-              { _id: id }, { bare: bare}, cb);
+              { _id: id }, { bare: bare }, cb);
+}
+MemberDb.prototype.findPostById = function (id, bare, cb) {
+  if ('function' === typeof bare) {
+    cb = bare;
+    bare = false;
+  }
+  findOne.call(this, this.collections.post,
+              { _id: id }, { bare: bare }, cb);
 }
 MemberDb.prototype.findMediaById = function (id, bare, cb) {
+  var self = this;
   if ('function' === typeof bare) {
     cb = bare;
     bare = false;
   }
   findOne.call(this, this.collections.media,
-              { _id: id }, { bare: bare}, cb);
+              { _id: id }, { bare: bare }, function (err, med) {
+    self.fillMediaRatings(med, cb);
+  });
 }
 MemberDb.prototype.findCommentById = function (id, bare, cb) {
   if ('function' === typeof bare) {
@@ -316,7 +373,7 @@ MemberDb.prototype.findCommentById = function (id, bare, cb) {
     bare = false;
   }
   findOne.call(this, this.collections.comment,
-              { _id: id }, { bare: bare}, cb);
+              { _id: id }, { bare: bare }, cb);
 }
 MemberDb.prototype.findRatingById = function (id, bare, cb) {
   if ('function' === typeof bare) {
@@ -324,7 +381,7 @@ MemberDb.prototype.findRatingById = function (id, bare, cb) {
     bare = false;
   }
   findOne.call(this, this.collections.rating,
-              { _id: id }, { bare: bare}, cb);
+              { _id: id }, { bare: bare }, cb);
 }
 
 MemberDb.prototype.findMemberByKey = function (key, bare, cb) {
@@ -333,7 +390,56 @@ MemberDb.prototype.findMemberByKey = function (key, bare, cb) {
     bare = false;
   }
   findOne.call(this, this.collections.member,
-              { key: key }, { bare: bare}, cb);
+              { key: key }, { bare: bare }, cb);
+}
+
+
+/*
+ * Increment media hits (times clicked from grid)
+ */
+MemberDb.prototype.hitMedia = function (mediaId, cb) {
+  var self = this;
+  if ('string' === typeof mediaId)
+    mediaId = new ObjectID(mediaId);
+  self.collections.media.update({ _id: mediaId },
+                                { $inc : { hits: 1 } },
+                                { safe: true }, function (err) {
+    if (err) return cb(err);
+    cb(null);
+  });
+}
+
+
+/*
+ * Get the ratings associated with the media.
+ */
+MemberDb.prototype.fillMediaRatings = function (media, cb) {
+  var self = this;
+  var isArray = _.isArray(media);
+  if (!isArray)
+    media = [media];
+  if (media.length === 0)
+    return done();
+  var _done = _.after(media.length, done);
+  _.each(media, function (med) {
+    // Gather ratings if present.
+    if (med.ratings.length === 0)
+      return _done();  
+    var __done = _.after(med.ratings.length, _done);
+    _.each(med.ratings, function (ratingId, i) {
+      self.findRatingById(ratingId, true,
+                          function (err, rating) {
+        if (err) return cb(err);
+        med.ratings[i] = rating;
+        __done();
+      });
+    });
+  });
+  function done() {
+    if (!isArray)
+      media = _.first(media);
+    cb(null, media);
+  }
 }
 
 
@@ -354,20 +460,35 @@ MemberDb.prototype.findTwitterNames = function (cb) {
 /*
  * Add a rating to existing media.
  */
-MemberDb.prototype.searchMedia = function (str, cb) {
+MemberDb.prototype.searchPosts = function (str, cb) {
   var self = this;
-  self.search.query(str).end(function (err, ids) {
+  self.search.query(str).end(function (err, postIds) {
     if (err) return cb(err);
-    if (ids.length === 0) return cb(null);
+    if (postIds.length === 0) return cb(null);
+    var mediaIds = [];
     var results = [];
-    var _cb = _.after(ids.length, cb);
-    _.each(ids, function (id) {
-      self.findMediaById(id, function (err, med) {
-        if (err) return cb(err);
-        if (med) results.push(med);
-        _cb(null, results);
-      });
-    });
+    Step(
+      function () {
+        var _next = _.after(postIds.length, this);
+        _.each(postIds, function (id) {
+          self.findPostById(id, function (err, post) {
+            if (err) return cb(err);
+            if (post) mediaIds = mediaIds.concat(post.medias);
+            _next(null);
+          });
+        });
+      },
+      function (err) {
+        var _cb = _.after(mediaIds.length, cb);
+        _.each(mediaIds, function (id) {
+          self.findMediaById(id, function (err, med) {
+            if (err) return cb(err);
+            if (med) results.push(med);
+            _cb(null, results);
+          });
+        });
+      }
+    )
   });
 }
 
@@ -478,16 +599,22 @@ function getDocIds(docs, cb) {
               _id: d._id.toString(),
               key: d.key,
               displayName: d.displayName,
+              role: d.role,
             };
             if (d.twitter !== '')
               doc[collection].twitter = d.twitter;
+            break;
+          case 'post':
+            doc[collection] = {
+              _id: d._id.toString(),
+              key: d.key,
+              title: d.title,
+            };
             break;
           case 'media':
             doc[collection] = {
               _id: d._id.toString(),
               key: d.key,
-              type: d.type,
-              title: d.title,
             };
             break;
         }

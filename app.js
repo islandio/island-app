@@ -63,6 +63,8 @@ var cloudfrontImageUrl = LOCAL ? 'https://d2a89oeknmk80g.cloudfront.net/' :
                                 'https://d1da6a4is4i5z6.cloudfront.net/';
 var cloudfrontVideoUrl = LOCAL ? 'https://d2c2zu8qn6mgju.cloudfront.net/' :
                                 'https://d1ehvayr9dfk4s.cloudfront.net/';
+var cloudfrontAudioUrl = LOCAL ? 'https://d2oapa8usgizyg.cloudfront.net/' :
+                                'https://dp3piv67f7p06.cloudfront.net/';
 
 
 // Configuration
@@ -89,6 +91,7 @@ app.set('sessionStore', new mongoStore({
 app.configure(function () {
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
+  app.use(express.favicon(__dirname + '/public/graphics/favicon.ico'));
   app.use(express.bodyParser());
   app.use(express.cookieParser());
 
@@ -276,7 +279,7 @@ app.get('/add', authorize, function (req, res) {
 app.get('/search/:query', function (req, res) {
   var fn = '__clear__' === req.params.query ?
             _.bind(getMedia, {}, 50) :
-            _.bind(memberDb.searchMedia, memberDb,
+            _.bind(memberDb.searchPosts, memberDb,
                   req.params.query);
   fn(function (err, docs) {
     if (err) return fail(err);
@@ -332,26 +335,28 @@ app.get('/member/:key', function (req, res) {
 app.get('/:key', authorize, function (req, res) {
   Step(
     function () {
-      memberDb.findMedia({ key: req.params.key },
-                        { limit: 1, hit: true }, this.parallel());
+      memberDb.findPosts({ key: req.params.key },
+                        { limit: 1 }, this.parallel());
       getMedia(50, this.parallel());
       getTwitterNames(this.parallel());
     },
-    function (err, med, media, twitters) {
-      if (err || !med)
+    function (err, post, grid, twitters) {
+      if (err || !post || post.length === 0)
         return res.render('404');
-      med = _.first(med);
-      var rating = _.find(med.ratings.reverse(), function (rat) {
-        return req.user._id.toString() === rat.member_id.toString();
+      post = _.first(post);
+      _.each(post.medias, function (med) {
+        var rating = _.find(med.ratings.reverse(), function (rat) {
+          return req.user._id.toString() === rat.member_id.toString();
+        });
+        med.hearts = rating ? rating.val : 0;
       });
-      _.each(med.comments, function (com) {
-        delete com.media;
+      _.each(post.comments, function (com) {
+        delete com.post;
       });
       res.render('index', {
         part: 'single',
-        media: med,
-        hearts: rating ? rating.val : 0,
-        grid: media,
+        post: post,
+        grid: grid,
         member: req.user,
         twitters: twitters,
       });
@@ -360,69 +365,118 @@ app.get('/:key', authorize, function (req, res) {
 });
 
 
-// Add media from transloadit.com
+// Add media from Transloadit
 app.put('/insert', authorize, function (req, res) {
-  if (!req.body.media || !req.body.assembly
+  if (!req.body.post || !req.body.assembly
       || req.body.assembly.results.length === 0)
-    return fail(new Error('Failed to add media.'))
-  
-  function done(err, data) {
-    if (err)
-      return res.send({ status: 'error',
+    return done(new Error('Failed to insert post'))
+  var results = req.body.assembly.results;
+  function done(err) {
+    if (err) res.send({ status: 'error',
                       message: err.stack });
-    everyone.now.distributeMedia(data);
-    res.send({ status: 'success', data: {
-            mediaId: data._id } });
+    else res.send({ status: 'success' });
   }
+  Step(
+    function () {
+      var post = req.body.post;
+      post.member = req.user;
+      post.medias = [];
+      memberDb.createPost(post, this);
+    },
+    function (err, doc) {
+      if (err) return done(err);
+      if (!doc) return done(new Error('Failed to create post'));
+      var num = 0;
+      if (results.image_full)
+        num += results.image_full.length;
+      if (results.video_encode)
+        num += results.video_encode.length;
+      if (results.audio_encode)
+        num += results.audio_encode.length;
+      if (num === 0)
+        return done(new Error('Nothing was received from Transloadit'));
+      var _next = _.after(num, this);
+      _.each(results, function (val, key) {
+        _.each(val, function (result) {
+          var prefix;
+          switch (_.words(key, '_')[0]) {
+            case 'image': prefix = cloudfrontImageUrl; break;
+            case 'video': prefix = cloudfrontVideoUrl; break;
+            case 'audio': prefix = cloudfrontAudioUrl; break;
+          }
+          result.cf_url = prefix + result.id.substr(0, 2)
+                          + '/' + result.id.substr(2)
+                          + '.' + result.ext;
+          if ('image_full' !== key && 'video_encode' !== key
+              && 'audio_encode' !== key) return;
+          var media = {
+            type: result.type,
+            key: doc.key,
+            member_id: req.user._id,
+          };
+          media[result.type] = result;
+          switch (key) {
+            case 'image_full':
+              _.extend(media, {
+                thumbs: _.filter(results.image_thumb, function (img) {
+                          return img.original_id === result.original_id; }),
+              });
+              break;
+            case 'video_encode':
+              _.extend(media, {
+                image: _.find(results.video_placeholder, function (img) {
+                          return img.original_id === result.original_id; }),
+                poster: _.find(results.video_poster, function (img) {
+                          return img.original_id === result.original_id; }),
+                thumbs: _.filter(results.video_thumbs, function (img) {
+                          return img.original_id === result.original_id; }),
+              });
+              break;
+            case 'audio_encode':
+              _.extend(media, {});
+              break;
+          }
+          memberDb.createMedia(media, function (err, med) {
+            if (err) return done(err);
+            doc.medias.push(med._id);
+            everyone.now.distributeMedia(med);
+            _next(null, doc);
+          });
+        });
+      });
+    },
+    function (err, doc) {
+      memberDb.collections.post.update({ _id: doc._id },
+                                      { $set : { medias: doc.medias } },
+                                      { safe: true }, this);
+    }, done
+  );
+});
 
-  var props = req.body.media;
-  props.member = req.user;
 
-  var _done = _.after(req.body.assembly.results.length, done);
-  _.each(req.body.assembly.results, function (result) {
-    if (req.body.assembly.results.image_thumb) {
-      var attachment = {
-        image_thumb: results.image_thumb['0'],
-        image_full: results.image_full['0']
-      }
-      props.attached = attachment;
-      props.type = props.attached.image_full.type;
-      _.each(props.attached, function (att) {
-        att.cf_url = cloudfrontImageUrl + att.id.substr(0, 2)
-                      + '/' + att.id.substr(2) + '.' + att.ext; });
-    } else if (results.video_encode) {
-      var attachment = {
-        video_thumbs: results.video_thumbs,
-        video_placeholder: results.video_placeholder['0'],
-        video_poster: results.video_poster['0'],
-        video_encode: results.video_encode['0'],
-      }
-      props.attached = attachment;
-      props.type = props.attached.video_encode.type;
-      _.each(props.attached.video_thumbs, function (thu) {
-        thu.cf_url = cloudfrontVideoUrl + thu.id.substr(0, 2)
-                      + '/' + thu.id.substr(2) + '.' + thu.ext; });
-      _.each([props.attached.video_placeholder,
-      props.attached.video_poster,
-      props.attached.video_encode], function (att) {
-        att.cf_url = cloudfrontVideoUrl + att.id.substr(0, 2)
-                      + '/' + att.id.substr(2) + '.' + att.ext; });
-    }
-    memberDb.createMedia(props, function (err, media) {
-      if (err) return fail(err);
-      everyone.now.distributeMedia(media);
-      res.send({ status: 'success', data: {
-               mediaId: media._id } });   
-    });
+// Click media
+app.put('/hit/:mediaId', function (req, res) {
+  // TODO: permissions...
+  if (!req.params.mediaId)
+    fail(new Error('Failed to hit media'));
+  memberDb.hitMedia(req.params.mediaId, function (err) {
+    if (err) return fail(err);
+    res.send({ status: 'success' });
   });
+  function fail(err) {
+    res.send({ status: 'error',
+             message: err.stack });
+  }
 });
 
 
 // Add comment
-app.put('/comment/:mediaId', function (req, res) {
+app.put('/comment/:postId', function (req, res) {
   // TODO: permissions...
+  if (!req.params.postId || !req.body.body)
+    fail(new Error('Failed to insert comment'));
   var props = {
-    media_id: req.params.mediaId,
+    post_id: req.params.postId,
     member_id: req.user._id,
     body: req.body.body,
   };
@@ -431,7 +485,7 @@ app.put('/comment/:mediaId', function (req, res) {
     everyone.now.distributeComment(doc);
     res.send({ status: 'success', data: {
              comment: doc } });
-  });  
+  });
   function fail(err) {
     res.send({ status: 'error',
              message: err.stack });
@@ -442,6 +496,8 @@ app.put('/comment/:mediaId', function (req, res) {
 // Add rating
 app.put('/rate/:mediaId', function (req, res) {
   // TODO: permissions...
+  if (!req.params.mediaId || !req.body.val)
+    fail(new Error('Failed to insert rating'));
   var props = {
     media_id: req.params.mediaId,
     member_id: req.user._id,
@@ -455,7 +511,7 @@ app.put('/rate/:mediaId', function (req, res) {
   function fail(err) {
     res.send({ status: 'error',
              message: err.stack });
-  }  
+  }
 });
 
 
@@ -501,7 +557,7 @@ if (!module.parent) {
         renderComment({ comment: comment, showMember: true }, function (err, html) {
           if (err) return log('\nFailed to render comment - ' + inspect(comment)
                               + '\nError: ' + inspect(err));
-          everyone.now.receiveComment(html, comment.media._id);
+          everyone.now.receiveComment(html, comment.post._id);
         });
       };
 
@@ -528,7 +584,7 @@ if (!module.parent) {
       //     }
       //     if (!sess) {
       //       // log("Error: Invalid session", '(sid:' + sid + ')');
-      //       return cb(new Error('Could not find session.'));
+      //       return cb(new Error('Could not find session'));
       //     }
       //     log("Session opened", '(sid:' + sid + ')');
       //     data.session = sess;

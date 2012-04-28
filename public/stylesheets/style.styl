@@ -500,6 +500,10 @@ input::-moz-focus-inner
 .button-mask-wrap
   position relative
 
+#add-media
+  width 100%
+  margin 10px 0 0
+
 #add-media-mask
   position absolute
   right 0
@@ -623,7 +627,7 @@ input[type=submit]
   -webkit-user-select none
   user-select none
 
-  cursor default
+  cursor pointer
 
   -moz-transition-timing-function ease-out
   -moz-transition-duration 100ms
@@ -631,6 +635,9 @@ input[type=submit]
   -webkit-transition-duration 100ms
   transition-timing-function ease-out
   transition-duration 100ms
+
+input[type=submit]
+  height 25px
 
 a.button:hover,
 button:hover,
@@ -664,11 +671,7 @@ a.signin-strategy-btn
   display block
 
   background rgba(75, 184, 215, 0.25)
-  // background-image -webkit-linear-gradient(top,rgba(196, 245, 61, 0.6),rgba(177, 220, 54, 0.6))
-  // background-image -moz-linear-gradient(top,rgba(196, 245, 61, 0.8),rgba(177, 220, 54, 0.8))
-  // background-image -ms-linear-gradient(top,rgba(196, 245, 61, 0.8),rgba(177, 220, 54, 0.8))
-  // background-image -o-linear-gradient(top,rgba(196, 245, 61, 0.8),rgba(177, 220, 54, 0.8))
-  // background-image linear-gradient(top,rgba(196, 245, 61, 0.8),rgba(177, 220, 54, 0.8))
+  
   color black
   border 1px solid #ddd
   border-radius 5px
@@ -679,8 +682,11 @@ a.signin-strategy-btn
 
 a.signin-strategy-btn:hover
   border 1px solid gray
-  // border none
-  // background rgba(75, 184, 215, 0.25)
+  background rgba(75, 184, 215, 0.35)
+
+a.signin-strategy-btn:active
+  border 1px solid gray
+  background rgba(75, 184, 215, 0.25)
 
 
 
@@ -711,14 +717,14 @@ a.signin-strategy-btn:hover
   margin 0 0 40px
 
 #media-form table
-  width 100%
-  margin 10px 0 0 0
+  width 640px
+  margin 20px 0 0 0
 
-#media-form input[name='media[title]']
-  width 284px
+#media-form input[name='post[title]']
+  width 632px
 
 #media-form textarea
-  width 974px
+  width 630px
   height 150px
   color darkgray
   overflow hidden
@@ -727,7 +733,12 @@ a.signin-strategy-btn:hover
   padding 0 0 10px 10px
 
 #media-form td
-  padding 0 0 10px
+  padding 0 0 5px
+
+.media-instructions
+  font-size 11px
+  line-height 15px
+  font-style italic
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
@@ -905,7 +916,10 @@ img.heart-img
   padding 3px 0 0
   max-width 314px
 
-.comment-title-name, .comment-title-parent
+.comment-title-name,
+.comment-title-name-inactive,
+.comment-title-parent,
+.comment-title-parent-solo
   font-weight bold
   font-size 10px
   padding 3px 20px 3px 10px
@@ -918,12 +932,18 @@ img.heart-img
 
 .comment-title-name
   color backgray
-  background-color green
+  background-color blue
   z-index 1
 
 .comment-title-name:hover
   color black
+  background-color blue
+
+.comment-title-name-inactive
+  color backgray
   background-color green
+  z-index 1
+  cursor default
 
 .comment-title-parent
   color lightgray
@@ -933,6 +953,17 @@ img.heart-img
   left -15px
 
 .comment-title-parent:hover
+  color black
+  background-color backgray
+
+.comment-title-parent-solo
+  color lightgray
+  background-color backgray
+  padding-left 20px
+  z-index 0
+  left -15px
+
+.comment-title-parent-solo:hover
   color black
   background-color backgray
 

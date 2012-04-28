@@ -1,68 +1,75 @@
-input(type='hidden', name='hearts', value=hearts)
 div.single-left
   div.obj-title
     span.slash /
     h1.title-left
-      =media.title
+      =post.title
     h1.title-sub from 
-      =media.member.displayName
-  - if (media.type == 'image')
-    div.obj-holder(style='height: ' + media.attached.image_full.meta.height + 'px')
-      img.matte(id='image-' + media._id, src=media.attached.image_full.cf_url, width=media.attached.image_full.meta.width, height=media.attached.image_full.meta.height)
-      div.hearts
-        div.hearts-wrap
-          img.heart-img(src='/graphics/heart.png')
-          img.heart-img(src='/graphics/heart.png')
-          img.heart-img(src='/graphics/heart.png')
-          img.heart-img(src='/graphics/heart.png')
-          img.heart-img(src='/graphics/heart.png')
-        div.hearts-back(id='like-' + media._id)
-          img(src='/graphics/hearts.png')
-  - if (media.type == 'video')
-    div.obj-holder
-      video.matte(id='video-' + media._id, poster=media.attached.video_poster.cf_url, controls='controls', preload='none', width='640', height=(media.attached.video_encode.meta.height / media.attached.video_encode.meta.width) * 640)
-        source(type='video/mp4', src=media.attached.video_encode.cf_url)
-        object(type='application/x-shockwave-flash', data='/mediaelement/flashmediaelement.swf', width='640', height=(media.attached.video_encode.meta.height / media.attached.video_encode.meta.width) * 640)
-            param(name='movie', value='/mediaelement/flashmediaelement.swf')
-            param(name='flashvars', value='controls=true&poster=' + media.attached.video_poster.cf_url + '&file=' + media.attached.video_encode.cf_url)
-            img(src=media.attached.video_placeholder.cf_url, title='No video playback capabilities', width=media.attached.video_placeholder.meta.width, height=media.attached.video_placeholder.meta.height)
-      div.hearts
-        div.hearts-wrap
-          img.heart-img(src='/graphics/heart.png')
-          img.heart-img(src='/graphics/heart.png')
-          img.heart-img(src='/graphics/heart.png')
-          img.heart-img(src='/graphics/heart.png')
-          img.heart-img(src='/graphics/heart.png')
-        div.hearts-back(id='like-' + media._id)
-          img(src='/graphics/hearts.png')
+      =post.member.displayName
+  - post.medias.forEach(function (med) {
+    - if (med.type === 'image')
+      div.obj-holder(style='height: ' + med.image.meta.height + 'px')
+        img.matte(id='image-' + med._id, src=med.image.cf_url, width=med.image.meta.width, height=med.image.meta.height)
+        div.hearts(data-num=med.hearts)
+          div.hearts-wrap
+            img.heart-img(src='/graphics/heart.png')
+            img.heart-img(src='/graphics/heart.png')
+            img.heart-img(src='/graphics/heart.png')
+            img.heart-img(src='/graphics/heart.png')
+            img.heart-img(src='/graphics/heart.png')
+          div.hearts-back(id='hrt-' + med._id)
+            img(src='/graphics/hearts.png')
+    - if (med.type === 'video')
+      div.obj-holder
+        video.matte(id='video-' + med._id, poster=med.poster.cf_url, controls='controls', preload='none', width='640', height=(med.video.meta.height / med.video.meta.width) * 640)
+          source(type='video/mp4', src=med.video.cf_url)
+          object(type='application/x-shockwave-flash', data='/mediaelement/flashmediaelement.swf', width='640', height=(med.video.meta.height / med.video.meta.width) * 640)
+              param(name='movie', value='/mediaelement/flashmediaelement.swf')
+              param(name='flashvars', value='controls=true&poster=' + med.poster.cf_url + '&file=' + med.video.cf_url)
+              img(src=med.image.cf_url, title='No video playback capabilities', width=med.image.meta.width, height=med.image.meta.height)
+        div.hearts(data-num=med.hearts)
+          div.hearts-wrap
+            img.heart-img(src='/graphics/heart.png')
+            img.heart-img(src='/graphics/heart.png')
+            img.heart-img(src='/graphics/heart.png')
+            img.heart-img(src='/graphics/heart.png')
+            img.heart-img(src='/graphics/heart.png')
+          div.hearts-back(id='hrt-' + med._id)
+            img(src='/graphics/hearts.png')
+    - if (med.type === 'audio')
+      div.obj-holder
+        audio.matte(id='audio-' + med._id, controls='controls', preload='none', width='640')
+          source(type='audio/mp3', src=med.audio.cf_url)
+          object(type='application/x-shockwave-flash', data='/mediaelement/flashmediaelement.swf', width='640')
+              param(name='movie', value='/mediaelement/flashmediaelement.swf')
+        div.hearts(data-num=med.hearts)
+          div.hearts-wrap
+            img.heart-img(src='/graphics/heart.png')
+            img.heart-img(src='/graphics/heart.png')
+            img.heart-img(src='/graphics/heart.png')
+            img.heart-img(src='/graphics/heart.png')
+            img.heart-img(src='/graphics/heart.png')
+          div.hearts-back(id='hrt-' + med._id)
+            img(src='/graphics/hearts.png')
+  - });
   div.obj-desc.matte
     img.left(src='/graphics/is-obj-info.gif', alt='info', align='top')
     div.obj-desc-txt-wrap
       p.obj-desc-txt
-        =media.body
-      h3.obj-details(data-date=media.created.toString(), data-type='media')
-      //div(style='position: relative; height: 17px')
-      //img.social-icons(src='/graphics/sn/b/facebook_16.png', alt='/graphics/sn/facebook_16.png', title='Post, to Profile', style='left:0px;')
-      //img.social-icons(src='/graphics/sn/b/twitter_16.png', alt='/graphics/sn/twitter_16.png', title='Tweet', style='left:21px;')
-      //img.social-icons(src='/graphics/sn/b/myspace_16.png', alt='/graphics/sn/myspace_16.png', title='Post to Profile', style='left:42px;')
-      //img.social-icons(src='/graphics/sn/b/digg_16.png', alt='/graphics/sn/digg_16.png', title='Digg It', style='left:63px;')
-      //img.social-icons(src='/graphics/sn/b/delicious_16.png', alt='/graphics/sn/delicious_16.png', title='Share', style='left:84px;')
-      //img.social-icons(src='/graphics/sn/b/stumbleupon_16.png', alt='/graphics/sn/stumbleupon_16.png', title='Share', style='left:105px;')
-      //img.social-icons(src='/graphics/sn/b/tumblr_16.png', alt='/graphics/sn/tumblr_16.png', title='Share', style='left:126px;')
-      //img.social-icons(src='/graphics/sn/b/email_16.png', alt='/graphics/sn/email_16.png', title='Email', style='left:147px;')
-      //img.social-icons(src='/graphics/sn/b/rss_16.png', alt='/graphics/sn/rss_16.png', title='Follow', style='left:168px;')
+        =post.body
+      h3.obj-details(data-date=post.created.toString(), data-type='media')
+      
 div.single-right
   div(style='padding-top: 4px')
     img(src='/graphics/is-bubble.png', alt='is-bubble', align='top')
   textarea.commentor-input-dummy.matte(name='Write a comment...') Write a comment...
   div.commentor
     textarea.commentor-input.matte
-    input.is-button.add-comment(id='addto-' + media._id, type='submit', title='Add Comment', value='Comment')
+    input.is-button.add-comment(id='addto-' + post._id, type='submit', title='Add Comment', value='Comment')
     span.commentor-whois Logged in as 
       span(style='font-style: italic')
         =member.displayName
-  div.obj-comments(id='coms-' + media._id)
-    !=partial('comment', { collection: media.comments.reverse(), showMember: true })
+  div.obj-comments(id='coms-' + post._id)
+    !=partial('comment', { collection: post.comments.reverse(), showMember: true })
 div.grid-wrap
   #search
     h1.title-bottom / Browse

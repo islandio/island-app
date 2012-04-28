@@ -1,12 +1,22 @@
 - var parentStyle = showMember ? '' : 'left:0; padding-left:10px;'
 div.comment.matte
   div.comment-title
-    - if (showMember)
-      a.comment-title-name(href='/member/' + comment.member.key)
-        =comment.member.displayName
-    - if (comment.media)
-      a.comment-title-parent(href='/' + comment.media.key, style=parentStyle)
-        =comment.media.title
+    - if (showMember) {
+      - if (comment.member.role === 0 && comment.member.key)
+        a.comment-title-name(href='/member/' + comment.member.key)
+          =comment.member.displayName
+      - else
+        span.comment-title-name-inactive
+          =comment.member.displayName
+    - }
+    - if (comment.post) {
+      - if (showMember)
+        a.comment-title-parent(href='/' + comment.post.key, style=parentStyle)
+          =comment.post.title
+      - else
+        a.comment-title-parent-solo(href='/' + comment.post.key, style=parentStyle)
+          =comment.post.title
+    - }
   div.comment-body
     p.comment-txt
       =comment.body

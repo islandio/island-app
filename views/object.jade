@@ -1,42 +1,24 @@
 - if (object.type == 'image')
   div(id='obj-' + object.key, class='each-grid-obj ' + 'is-' + object.type)
-    // a.grid-obj-title(href=object.key)
-    // =object.title
-    a.grid-obj(href='/' + object.key)
-      div.grid-obj-hover.matte(style='width: ' + object.attached.image_thumb.meta.width + 'px; height: ' + object.attached.image_thumb.meta.height + 'px')
+    a.grid-obj(href='/' + object.key, data-id=object._id.toString(), data-key=object.key)
+      div.grid-obj-hover.matte(style='width: ' + object.thumbs[0].meta.width + 'px; height: ' + object.thumbs[0].meta.height + 'px')
         h1.grid-obj-hover-txt
-          =object.member.displayName// + ' / ' + object.meta.hits
-      img.grid-obj-img.matte(id='img-' + object.key, class='page-0', src=object.attached.image_thumb.cf_url, width=object.attached.image_thumb.meta.width, height=object.attached.image_thumb.meta.height)
-    // - if (object.meta.tags[0])
-    // div.grid-obj-tags-wrap
-    // span.grid-obj-tag-title tags:
-    // span.grid-obj-tags
-    // - for (var i=0; i < object.meta.tags.length; i++)
-    // | &nbsp;
-    // a.grid-obj-tag(href='javascript:;')
-    // =object.meta.tags[i]
+          =object.member.displayName
+      img.grid-obj-img.matte(id='img-' + object.key, class='page-0', src=object.thumbs[0].cf_url, width=object.thumbs[0].meta.width, height=object.thumbs[0].meta.height)
+    
 - if (object.type == 'video')
   div(id='obj-' + object.key, class='each-grid-obj ' + 'is-' + object.type)
-    // a.grid-obj-title(href=object.key)
-    // =object.title
-    a.grid-obj(href='/' + object.key)
-      div.grid-obj-hover.matte(style='width: ' + object.attached.video_thumbs[0].meta.width + 'px; height: ' + object.attached.video_thumbs[0].meta.height + 'px')
+    a.grid-obj(href='/' + object.key, data-id=object._id.toString(), data-key=object.key)
+      div.grid-obj-hover.matte(style='width: ' + object.thumbs[0].meta.width + 'px; height: ' + object.thumbs[0].meta.height + 'px')
         h1.grid-obj-hover-txt
-          =object.member.displayName// + ' / ' + object.meta.hits
-      img.grid-obj-img.matte(id='vid-' + object.key + '-0', class='page-0', src=object.attached.video_thumbs[0].cf_url, width=object.attached.video_thumbs[0].meta.width, height=object.attached.video_thumbs[0].meta.height)
-      img.grid-obj-img.matte.hidden(id='vid-' + object.key + '-1', class='page-0', src=object.attached.video_thumbs[1].cf_url, width=object.attached.video_thumbs[1].meta.width, height=object.attached.video_thumbs[1].meta.height)
-      img.grid-obj-img.matte.hidden(id='vid-' + object.key + '-2', class='page-0', src=object.attached.video_thumbs[2].cf_url, width=object.attached.video_thumbs[2].meta.width, height=object.attached.video_thumbs[2].meta.height)
-      img.grid-obj-img.matte.hidden(id='vid-' + object.key + '-3', class='page-0', src=object.attached.video_thumbs[3].cf_url, width=object.attached.video_thumbs[3].meta.width, height=object.attached.video_thumbs[3].meta.height)
-      img.grid-obj-img.matte.hidden(id='vid-' + object.key + '-4', class='page-0', src=object.attached.video_thumbs[4].cf_url, width=object.attached.video_thumbs[4].meta.width, height=object.attached.video_thumbs[4].meta.height)
-      img.grid-obj-img.matte.hidden(id='vid-' + object.key + '-3', class='page-0', src=object.attached.video_thumbs[5].cf_url, width=object.attached.video_thumbs[5].meta.width, height=object.attached.video_thumbs[5].meta.height)
-      img.grid-obj-img.matte.hidden(id='vid-' + object.key + '-6', class='page-0', src=object.attached.video_thumbs[6].cf_url, width=object.attached.video_thumbs[6].meta.width, height=object.attached.video_thumbs[6].meta.height)
-      img.grid-obj-img.matte.hidden(id='vid-' + object.key + '-7', class='page-0', src=object.attached.video_thumbs[7].cf_url, width=object.attached.video_thumbs[7].meta.width, height=object.attached.video_thumbs[7].meta.height)
-    // - if (object.meta.tags[0])
-    // div.grid-obj-tags-wrap
-    // span.grid-obj-tag-title tags:
-    // span.grid-obj-tags
-    // - for (var i=0; i < object.meta.tags.length; i++)
-    // | &nbsp;
-    // a.grid-obj-tag(href='javascript:;')
-    // =object.meta.tags[i]
+          =object.member.displayName
+      img.grid-obj-img.matte(id='vid-' + object.key + '-0', class='page-0', src=object.thumbs[0].cf_url, width=object.thumbs[0].meta.width, height=object.thumbs[0].meta.height)
+      img.grid-obj-img.matte.hidden(id='vid-' + object.key + '-1', class='page-0', src=object.thumbs[1].cf_url, width=object.thumbs[1].meta.width, height=object.thumbs[1].meta.height)
+      img.grid-obj-img.matte.hidden(id='vid-' + object.key + '-2', class='page-0', src=object.thumbs[2].cf_url, width=object.thumbs[2].meta.width, height=object.thumbs[2].meta.height)
+      img.grid-obj-img.matte.hidden(id='vid-' + object.key + '-3', class='page-0', src=object.thumbs[3].cf_url, width=object.thumbs[3].meta.width, height=object.thumbs[3].meta.height)
+      img.grid-obj-img.matte.hidden(id='vid-' + object.key + '-4', class='page-0', src=object.thumbs[4].cf_url, width=object.thumbs[4].meta.width, height=object.thumbs[4].meta.height)
+      img.grid-obj-img.matte.hidden(id='vid-' + object.key + '-3', class='page-0', src=object.thumbs[5].cf_url, width=object.thumbs[5].meta.width, height=object.thumbs[5].meta.height)
+      img.grid-obj-img.matte.hidden(id='vid-' + object.key + '-6', class='page-0', src=object.thumbs[6].cf_url, width=object.thumbs[6].meta.width, height=object.thumbs[6].meta.height)
+      img.grid-obj-img.matte.hidden(id='vid-' + object.key + '-7', class='page-0', src=object.thumbs[7].cf_url, width=object.thumbs[7].meta.width, height=object.thumbs[7].meta.height)
+    
 

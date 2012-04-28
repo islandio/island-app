@@ -96,6 +96,18 @@ Util.getTimeZone = function () {
   return dst ? std_time_offset + 1 : std_time_offset;
 }
 
+Util.getAge = function (str) {
+  var day = Number(str.substr(3,2));
+  var month = Number(str.substr(0,2)) - 1;
+  var year = Number(str.substr(6,4));
+  var today = new Date();
+  var age = today.getFullYear() - year;
+  if (today.getMonth() < month ||
+      (today.getMonth() == month && today.getDate() < day))
+    age--;
+  return age;
+}
+
 Util.getBlurb = function (str, max) {
   if (str.length < max)
     return str;
@@ -160,7 +172,7 @@ Util.HashSearch = new function () {
   })();
 }
 
-Util.formatNoteText = function (str) {
+Util.formatCommentText = function (str) {
   var linkExp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
   str = str.replace(/\n/g, '<br/>');
   str = str.replace(/\s/g, '&nbsp;');

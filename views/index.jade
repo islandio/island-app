@@ -11,11 +11,11 @@
     #menu.list
       ul
         li
-          a#nav-logout.button(href='/logout', title='Log Out Island') 
+          a#nav-logout.button(href='/logout') 
             | Log Out
         - if (member.role === 0)
           li(style='margin: 0 5px 0 0')
-            a#nav-add.button(href='/add', title='Add Media') 
+            a#nav-add.button(href='/add') 
               | Add Media
         li
           span.welcome-member Hi, 
@@ -28,4 +28,4 @@
 footer#footer
   div
     div
-      small We Are Island © 2011
+      small We Are Island © 2012

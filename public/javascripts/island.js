@@ -141,11 +141,10 @@ Island = (function ($) {
    * select hearts for rating
    */
 
-  var rater;
-  var hearts;
-  var selectHearts = function (x, h) {
-    if (!h) {
-      var h;
+  // var rater;
+  // var hearts;
+  var selectHearts = function (hearts, x, h) {
+    if (!h && h !== 0) {
       if (x < 10) h = 0;
       else if (x < 30) h = 1;
       else if (x < 55) h = 2;
@@ -443,7 +442,7 @@ Island = (function ($) {
       /////////////////////////// SETUP
 
       // flash messages
-      $('.flash').hide().fadeIn(1000).live('click', hideFlashMessages);
+      $('.flash').hide().fadeIn(1000).bind('click', hideFlashMessages);
       $('.is-highlight, .is-error').dropIn();
       setTimeout(function () {
         $('.flash').each(hideFlashMessages);
@@ -527,7 +526,7 @@ Island = (function ($) {
       /////////////////////////// ACTIONS
 
       // forms
-      $('form input[type="text"], form input[type="password"], form textarea').live('focus', function () {
+      $('form input[type="text"], form input[type="password"], form textarea').bind('focus', function () {
         if ($(this).hasClass('is-input-alert'))
           $(this).removeClass('is-input-alert');
       });
@@ -616,10 +615,10 @@ Island = (function ($) {
         registerForm.css({ visibility: 'visible' });
       }
 
-      $('a', gotoRegisterButton).live('click', function () {
+      $('a', gotoRegisterButton).bind('click', function () {
         gotoRegister();
       });
-      $('a', gotoLoginButton).live('click', function () {
+      $('a', gotoLoginButton).bind('click', function () {
         gotoLogin();
       });
       loginEmail.focus();
@@ -638,7 +637,7 @@ Island = (function ($) {
         }
       }).bind('mouseleave', exitLoginButton);
 
-      loginButton.live('click', function (e) {
+      loginButton.bind('click', function (e) {
         e.preventDefault();
         landingError.hide();
         var data = loginForm.serializeObject();
@@ -692,7 +691,7 @@ Island = (function ($) {
         }
       }).bind('mouseleave', exitRegisterButton);
 
-      registerButton.live('click', function (e) {
+      registerButton.bind('click', function (e) {
         e.preventDefault();
         hideLandingForms();
         landingError.hide();
@@ -740,7 +739,7 @@ Island = (function ($) {
       });
 
       // resend confirmation email
-      $('.resend-conf').live('click', function () {
+      $('.resend-conf').bind('click', function () {
         hideLandingForms();
         landingError.hide();
         landingMessage.fadeIn('fast');
@@ -807,52 +806,61 @@ Island = (function ($) {
           } else console.log(res.message);
           initVideoSlides();
         });
-      }).live('focus', adjustGridHeight);
+      }).bind('focus', adjustGridHeight);
 
       if (searchBox.val() !== '')
         searchBox.trigger('keyup');
 
 
       // filter grid by tag
-      $('.grid-obj-tag').live('click', function () {
-        adjustGridHeight();
-        var tag = $(this).text();
-        $('#search-box').val(tag);
-        search(['meta.tags'], tag, function (serv) {
-          if (serv.status == 'success') {
-            var objects = serv.data.objects;
-            for (var i=0; i < objects.length; i++)
-              $(objects[i]).appendTo(jrid);
-            if (jrid.hasClass('adjustable-grid'))
-              grid.collage(true);
-            else
-              grid.collage();
-          } else
-            console.log(serv.message);
-          initVideoSlides();
+      // $('.grid-obj-tag').bind('click', function () {
+      //   adjustGridHeight();
+      //   var tag = $(this).text();
+      //   $('#search-box').val(tag);
+      //   search(['meta.tags'], tag, function (serv) {
+      //     if (serv.status == 'success') {
+      //       var objects = serv.data.objects;
+      //       for (var i=0; i < objects.length; i++)
+      //         $(objects[i]).appendTo(jrid);
+      //       if (jrid.hasClass('adjustable-grid'))
+      //         grid.collage(true);
+      //       else
+      //         grid.collage();
+      //     } else
+      //       console.log(serv.message);
+      //     initVideoSlides();
+      //   });
+      // });
+
+      $('.grid-obj').live('click', function (e) {
+        e.preventDefault();
+        var data = $(this).data();
+        $.put('/hit/' + data.id, function (res) {
+          if ('error' === res.status)
+            return console.log(res.message);
+          window.location = '/' + data.key;
         });
       });
 
-
       // comment input behavior
-      $('.commentor-input-dummy').live('focus', function () {
+      $('.commentor-input-dummy').bind('focus', function () {
         $(this).hide();
         $(this.nextElementSibling).show();
         $(this.nextElementSibling.firstElementChild).focus();
         checkComsSpace();
       });
-      $('.commentor-input').live('blur', function () {
+      $('.commentor-input').bind('blur', function () {
         if (this.value.trim() == '') {
           $(this.parentNode).hide();
           $(this).val('').css({ height: 32 });
           $(this.parentNode.previousElementSibling).show();
           checkComsSpace();
         }
-      }).live('keyup', checkComsSpace);
+      }).bind('keyup', checkComsSpace);
 
 
       // add comment on media
-      $('.add-comment').live('click', function () {
+      $('.add-comment').bind('click', function () {
         var str = $(this.previousElementSibling).val().trim();
         if (str == '') return false;
         $(this.previousElementSibling).val('').css({ height: 32 });
@@ -868,40 +876,41 @@ Island = (function ($) {
 
 
       // show like heart
-      $('.obj-holder').live('mouseenter', function () {
+      $('.obj-holder').bind('mouseenter', function () {
         $('.hearts', this).show();
-      }).live('mouseleave', function () {
+      }).bind('mouseleave', function () {
         $('.hearts', this).hide();
       });
 
 
       // no dragging hearts
-      $('.hearts-wrap img, .hearts-back img').live('mousedown', function (e) {
+      $('.hearts-wrap img, .hearts-back img').bind('mousedown', function (e) {
         e.preventDefault();
       });
 
 
       // rate media with hearts
-      var currentHearts = parseInt($('input[name="hearts"]').val());
-      var x = 0;
-      var h = 0;
-      rater = $('.hearts-back');
-      hearts = $('.hearts-wrap');
-      if (currentHearts)
-        selectHearts(null, currentHearts);
-      rater.live('mouseenter', function (e) {
-
-      }).live('mouseleave', function (e) {
-        selectHearts(null, currentHearts);
-      }).live('mousemove', function (e) {
-        x = e.pageX - rater.offset().left;
-        h = selectHearts(x);
-      }).live('click', function (e) {
-        currentHearts = h;
-        var id = rater.itemID();
-        $.put('/rate/' + id, { val: h }, function (res) {
-          if ('error' === res.status)
-            return console.log(res.message);
+      $('.hearts').each(function () {
+        var _this = $(this);
+        var currentHearts = parseInt(_this.data('num'));
+        var x = 0;
+        var h = 0;
+        var rater = $('.hearts-back', this);
+        var hearts = $('.hearts-wrap', this);
+        if (currentHearts > 0)
+          selectHearts(hearts, null, currentHearts);
+        rater.bind('mouseleave', function (e) {
+          selectHearts(hearts, null, currentHearts);
+        }).bind('mousemove', function (e) {
+          x = e.pageX - rater.offset().left;
+          h = selectHearts(hearts, x);
+        }).bind('click', function (e) {
+          currentHearts = h;
+          var id = rater.itemID();
+          $.put('/rate/' + id, { val: h }, function (res) {
+            if ('error' === res.status)
+              return console.log(res.message);
+          });
         });
       });
 
@@ -920,17 +929,22 @@ Island = (function ($) {
         _this.text(txt);
       });
 
+      $('.birthday').each(function () {
+        var _this = $(this);
+        _this.text(Util.getAge(_this.text()));
+      });
+
       // new media
       var mediaForm = $('#media-form');
       var mediaButton = $('#add-media');
       var mediaButtonMask = $('#add-media-mask');
-      var mediaTitle = $('input[name="media[title]"]');
-      var mediaBody = $('textarea[name="media[body]"]');
-      var mediaTags = $('input[name="media[meta.tags]"]');
+      var mediaTitle = $('input[name="post[title]"]');
+      var mediaBody = $('textarea[name="post[body]"]');
+      var mediaTags = $('input[name="post[meta.tags]"]');
       var mediaFile = $('input[name="my_file"]');
-      var mediaTitleLabel = $('label[for="media[title]"]');
-      var mediaBodyLabel = $('label[for="media[body]"]');
-      var mediaTagsLabel = $('label[for="media[meta.tags]"]');
+      var mediaTitleLabel = $('label[for="post[title]"]');
+      var mediaBodyLabel = $('label[for="post[body]"]');
+      var mediaTagsLabel = $('label[for="post[meta.tags]"]');
       var mediaFileLabel = $('label[for="my_file"]');
 
       function exitMediaButton() {
@@ -990,7 +1004,7 @@ Island = (function ($) {
           data.assembly = assembly;
           $.put('/insert', data, function (res) {
             if ('error' === res.status)
-              return console.log(err);
+              return console.log(res.message);
             mediaTitle.val('');
             mediaBody.val('');
             mediaTags.val('');

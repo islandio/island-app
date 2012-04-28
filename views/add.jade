@@ -1,36 +1,43 @@
-div.media-form-wrap
+div.single-left
   form#media-form(action='/transloadit', enctype='multipart/form-data', method='POST')
     input(type='hidden', name='params', value=JSON.stringify(tlip))
-    h1.title-left / Add new Island media
+    span.slash /
+    h1.title-left Create Island Post
+    h1.title-sub image / video / audio
     table
       tbody
         tr
-          td
-            label(for='media[title]') Title
-          td(align='right')
-            input#add-media.is-button(type='submit', title='Add New', value='Add New')
+          td(colspan='2')
+            label(for='post[title]') Title
+        tr
+          td(colspan='2')
+            input(name='post[title]', type='text')
+        tr
+          td(style="padding-top:10px;")
+            input(type="file", name="my_file", multiple="true", style="font-size:11px;")
+          // td(align="right", style="padding-top:10px;")
+          // input(type="checkbox", name="is_album", checked="checked")
+          // label(for='is_album', style="font-style:italic; vertical-align:-1px;") &nbsp; Add multiple files as an album?
+        tr
+          td(colspan='2', style="padding-top:10px;")
+            label(for='post[body]') Description
+        tr
+          td(colspan='2')
+            textarea.matte(name='post[body]')
+        tr
+          td(colspan='2', style="padding-bottom: 0px;")
+            input#add-media.is-button(type='submit', value='Submit New Post')
             div.button-mask-wrap
               div#add-media-mask
-        tr
-          td(colspan='2')
-            input(name='media[title]', type='text')
-        tr
-          td(colspan='2')
-            label(for='media[body]') Write something about this...
-        tr
-          td(colspan='2')
-            textarea.matte(name='media[body]')
-        tr
-          td(width='100')
-            label(for='media[meta.tags]') Tags
-          td
-            input(name='media[meta.tags]', type='text')
-        tr
-          td
-            label(for='my_file') Choose file
-          td
-            input(type='file', name='my_file')
+div.recent-comments-wrap
+  h1.title-right / How does this work?
+  p.media-instructions(style="margin-top:32px;") Use this form to upload your images, videos, and sounds.
+  br
+  p.media-instructions An Island Post is at least one image, video, or audio file. Text-only posts will be added in the near future along with status updates.
+  br
+  p.media-instructions You can choose multiple files of various types at once. If you don't select to group them into an album, a new post will be created for each file (with the same title and description).
 div.clear
-h1.title-bottom / All Media
+h1.title-bottom / Results
 #grid
-  !=partial('object', grid)
+  p(style="margin-top:-20px;") Waiting on you ...
+  !=partial('object', [])

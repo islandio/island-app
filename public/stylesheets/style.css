@@ -479,6 +479,10 @@ input::-moz-focus-inner {
 .button-mask-wrap {
   position: relative;
 }
+#add-media {
+  width: 100%;
+  margin: 10px 0 0;
+}
 #add-media-mask {
   position: absolute;
   right: 0;
@@ -586,13 +590,16 @@ input[type=submit] {
   -moz-user-select: none;
   -webkit-user-select: none;
   user-select: none;
-  cursor: default;
+  cursor: pointer;
   -moz-transition-timing-function: ease-out;
   -moz-transition-duration: 100ms;
   -webkit-transition-timing-function: ease-out;
   -webkit-transition-duration: 100ms;
   transition-timing-function: ease-out;
   transition-duration: 100ms;
+}
+input[type=submit] {
+  height: 25px;
 }
 a.button:hover,
 button:hover,
@@ -636,6 +643,11 @@ a.signin-strategy-btn {
 }
 a.signin-strategy-btn:hover {
   border: 1px solid #808080;
+  background: rgba(75,184,215,0.35);
+}
+a.signin-strategy-btn:active {
+  border: 1px solid #808080;
+  background: rgba(75,184,215,0.25);
 }
 #login-form {
   position: absolute;
@@ -652,14 +664,14 @@ a.signin-strategy-btn:hover {
   margin: 0 0 40px;
 }
 #media-form table {
-  width: 100%;
-  margin: 10px 0 0 0;
+  width: 640px;
+  margin: 20px 0 0 0;
 }
-#media-form input[name='media[title]'] {
-  width: 284px;
+#media-form input[name='post[title]'] {
+  width: 632px;
 }
 #media-form textarea {
-  width: 974px;
+  width: 630px;
   height: 150px;
   color: #404040;
   overflow: hidden;
@@ -668,7 +680,12 @@ a.signin-strategy-btn:hover {
   padding: 0 0 10px 10px;
 }
 #media-form td {
-  padding: 0 0 10px;
+  padding: 0 0 5px;
+}
+.media-instructions {
+  font-size: 11px;
+  line-height: 15px;
+  font-style: italic;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 .trending-media-wrap {
@@ -846,7 +863,9 @@ img.heart-img {
   max-width: 314px;
 }
 .comment-title-name,
-.comment-title-parent {
+.comment-title-name-inactive,
+.comment-title-parent,
+.comment-title-parent-solo {
   font-weight: bold;
   font-size: 10px;
   padding: 3px 20px 3px 10px;
@@ -861,12 +880,18 @@ img.heart-img {
 }
 .comment-title-name {
   color: #fcfcfb;
-  background-color: #b1dc36;
+  background-color: #4bb8d7;
   z-index: 1;
 }
 .comment-title-name:hover {
   color: #1a1a1a;
+  background-color: #4bb8d7;
+}
+.comment-title-name-inactive {
+  color: #fcfcfb;
   background-color: #b1dc36;
+  z-index: 1;
+  cursor: default;
 }
 .comment-title-parent {
   color: #b3b3b3;
@@ -876,6 +901,17 @@ img.heart-img {
   left: -15px;
 }
 .comment-title-parent:hover {
+  color: #1a1a1a;
+  background-color: #fcfcfb;
+}
+.comment-title-parent-solo {
+  color: #b3b3b3;
+  background-color: #fcfcfb;
+  padding-left: 20px;
+  z-index: 0;
+  left: -15px;
+}
+.comment-title-parent-solo:hover {
   color: #1a1a1a;
   background-color: #fcfcfb;
 }

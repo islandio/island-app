@@ -6,33 +6,36 @@ div.single-left
     h1.title-sub from 
       =data.hometown.country
   div.obj-holder.member-picture
-    img.matte(src=data.picture, width='640')
+    - var top = -(data.picture.height / data.picture.width) * 320;
+    img.matte(src=data.picture.source, width='640', style='position: relative; top:' + top + 'px;')
   div.obj-desc.matte
     img.left(src='/graphics/is-obj-info.gif', alt='info', align='top')
     div.obj-desc-txt-wrap
       div.member-info
         ul
-          li \// 
-            span Lives in 
-            span.member-info-content #{data.location.city}, #{data.location.state}
-          li \// 
-            span From 
-            span.member-info-content #{data.hometown.country}
-          li \// 
-            span.member-info-content #{data.birthday} 
-            span year old 
-            span.member-info-content #{data.gender}
+          - if (data.location)
+            li \// 
+              span Lives in 
+              span.member-info-content #{data.location.name}
+          - if (data.hometown)
+            li \// 
+              span From 
+              span.member-info-content #{data.hometown.country}
+          - if (data.birthday && data.gender)
+            li \// 
+              span.member-info-content.birthday #{data.birthday}
+              span &nbsp;year old 
+              span.member-info-content #{data.gender}
           li \// 
             span More from #{data.displayName} at 
-            span.member-info-content #{data.website}
-          li \// 
-            span Supported by 
-            span.member-info-content #{data.sponsors} FiveTen, North Face
+            span.member-info-content
+              a(href=data.website, target="_blank") #{data.website}
       h3.obj-details(data-date=data.created.toString(), data-type='profile')
 div.recent-comments-wrap
     h1.title-right / Recent Comments
     #recent-comments
       !=partial('comment', { collection: comments, showMember: false })
+div.clear
 div.grid-wrap
   #search
     h1.title-bottom / Browse
