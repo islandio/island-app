@@ -233,6 +233,16 @@ td {
   -moz-border-radius: 5px;
   border-radius: 5px;
 }
+.mask {
+  position: absolute;
+  z-index: 1;
+  width: 640px;
+  height: 288px;
+}
+.masked {
+  position: absolute;
+  z-index: 0;
+}
 .list {
   list-style-type: none;
 }
@@ -348,8 +358,8 @@ a.resend-conf {
   border-radius: 0 0 83px 0;
 }
 #header-left:hover {
-  border-bottom: 5px solid #d12b83;
-  border-right: 5px solid #d12b83;
+  border-bottom: 5px solid rgba(209,43,131,0.75);
+  border-right: 5px solid rgba(209,43,131,0.75);
 }
 #logo {
   width: 300px;
@@ -831,7 +841,7 @@ img.heart-img {
   overflow: hidden;
 }
 .commentor-input-dummy {
-  height: 13px;
+  height: 32px;
   color: #808080;
 }
 .commentor-whois {
@@ -920,12 +930,17 @@ img.heart-img {
 }
 .comment-txt {
   padding: 5px 0;
+  overflow-y: auto;
+}
+.comment-txt a {
+  text-decoration: underline;
 }
 .comment-added {
   color: #b3b3b3;
   font-size: 9px;
 }
 .member-picture {
+  position: relative;
   width: 640px;
   height: 288px;
   overflow: hidden;

@@ -7,7 +7,8 @@ div.single-left
       =data.hometown.country
   div.obj-holder.member-picture
     - var top = -(data.picture.height / data.picture.width) * 320;
-    img.matte(src=data.picture.source, width='640', style='position: relative; top:' + top + 'px;')
+    img.mask(src="/graphics/corner-mask.png", width='640', height='288')
+    img.masked(src=data.picture.source, width='640', style='top:' + top + 'px;')
   div.obj-desc.matte
     img.left(src='/graphics/is-obj-info.gif', alt='info', align='top')
     div.obj-desc-txt-wrap

@@ -126,6 +126,18 @@ passport.deserializeUser(function (id, cb) {
   });
 });
 
+////////////// Utils
+
+app.util = {
+  formatCommentText: function (str) {
+    var linkExp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    str = str.replace(/\n/g, '<br/>');
+    // str = str.replace(/\s/g, '&nbsp;');
+    str = str.replace(linkExp,"<a href='$1' target='_blank'>$1</a>");
+    return str;
+  },
+};
+
 
 ////////////// Helpers
 
@@ -152,8 +164,31 @@ function getMedia(limit, cb) {
                     sort: { created: -1 } }, cb);
 }
 function getTrending(limit, cb) {
-  memberDb.findMedia({}, { limit: limit,
-                    sort: { hits: -1 } }, cb);
+  Step(
+    function () {
+      memberDb.findMedia({}, { limit: 100, sort: { created: -1 },
+                        fill: ['rating', 'hit'] }, this);
+    },
+    function (err, media) {
+      if (err) return cb(err);
+      _.each(media, function (med) {
+        med.edges = 0;
+        _.each(med.ratings, function (e) {
+          med.edges += decay(e.val, (new Date(e.created)).getTime());
+        });
+        _.each(med.hits, function (e) {
+          med.edges += decay(1, (new Date(e.created)).getTime());
+        });
+      });
+      media.sort(function (a, b) {
+        return b.edges - a.edges;
+      });
+      cb(err, _.first(media, limit));
+    }
+  );
+  function decay(e, t) {
+    return e * Math.exp(-((new Date()).getTime() - t) / 17280000);
+  }
 }
 function getRecentComments(limit, memberId, cb) {
   if ('function' === typeof memberId) {
@@ -173,6 +208,8 @@ function renderMedia(med, cb) {
 }
 
 function renderComment(params, cb) {
+  // HACK!!
+  params.app = app;
   cb(null, templates.comment(params));
 }
 
@@ -184,11 +221,10 @@ app.get('/', authorize, function (req, res) {
   Step(
     function () {
       getMedia(50, this.parallel());
-      getTrending(5, this.parallel());
       getRecentComments(5, this.parallel());
       getTwitterNames(this.parallel());
     },
-    function (err, media, trends, comments, twitters) {
+    function (err, media, comments, twitters) {
       res.render('index', {
         part: 'media',
         media: media,
@@ -459,7 +495,11 @@ app.put('/hit/:mediaId', function (req, res) {
   // TODO: permissions...
   if (!req.params.mediaId)
     fail(new Error('Failed to hit media'));
-  memberDb.hitMedia(req.params.mediaId, function (err) {
+  var props = {
+    media_id: req.params.mediaId,
+    member_id: req.user._id,
+  };
+  memberDb.createHit(props, function (err, doc) {
     if (err) return fail(err);
     res.send({ status: 'success' });
   });
@@ -482,6 +522,7 @@ app.put('/comment/:postId', function (req, res) {
   };
   memberDb.createComment(props, function (err, doc) {
     if (err) return fail(err);
+    console.log('ggggggggggg');
     everyone.now.distributeComment(doc);
     res.send({ status: 'success', data: {
              comment: doc } });
@@ -518,6 +559,7 @@ app.put('/rate/:mediaId', function (req, res) {
 ////////////// Initialize and Listen
 
 var memberDb;
+var trends;
 
 if (!module.parent) {
 
@@ -564,15 +606,17 @@ if (!module.parent) {
       // update everyone with new trends
       var distributeTrends = function () {
         getTrending(5, function (err, media) {
+          if (err) throw new Error('Failed to create trends');
+          trends = media;
           var rendered = [];
-          _.each(media, function (med) {
-            rendered.push(templates.trend({ trend: med }));
+          _.each(trends, function (trend) {
+            rendered.push(templates.trend({ trend: trend }));
           });
           if (everyone.now.receiveTrends)
             everyone.now.receiveTrends(null, rendered);
         });
       };
-      setInterval(distributeTrends, 5000);
+      setInterval(distributeTrends, 5000); distributeTrends();
       
       // .server.socket.set('authorization', function (data, cb) {
       //   var cookies = connect.utils.parseCookie(data.headers.cookie);
@@ -592,6 +636,7 @@ if (!module.parent) {
       //   });
       //   // TODO: Keep the session alive on with a timeout.
       // });
+
       log("Express server listening on port", app.address().port);
     }
   );

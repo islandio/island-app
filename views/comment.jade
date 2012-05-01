@@ -19,6 +19,6 @@ div.comment.matte
     - }
   div.comment-body
     p.comment-txt
-      =comment.body
+      !{app.util.formatCommentText(comment.body)}
     h3.comment-added
       =comment.created

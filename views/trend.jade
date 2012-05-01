@@ -1,2 +1,2 @@
-a.trending(href='/' + trend.key)
+a.trending(href='/' + trend.key, data-id=trend._id.toString(), data-key=trend.key)
   img.trending-img(id='trend-' + trend.key, src=trend.image.cf_url, width=trend.image.meta.width, height=trend.image.meta.height)

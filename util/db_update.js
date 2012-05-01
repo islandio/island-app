@@ -240,6 +240,7 @@ Step(
                     member_id: med.member_id,
                     media_id: med._id,
                     val: rat.hearts,
+                    created: new Date((new Date()).getTime() - (60*60*24*1000*Math.random()*365)),
                   };
                   memberDb.createRating(props, function (err, rat) {
                     errCheck(err, 'adding rating');
@@ -254,10 +255,55 @@ Step(
       } else next();
     });
   },
-  // Index posts
+
+
+  // Redo ratings...
   function (err) {
     var next = this;
     errCheck(err, 'redo ratings');
+    memberDb.collections.media.find({})
+            .toArray(function (err, media) {
+      errCheck(err, 'finding media');
+      if (media.length > 0) {
+        var _next = _.after(media.length, next);
+        _.each(media, function (med) {
+          var numHits = med.hits;
+          Step(
+            function () {
+              memberDb.collections.media.update({ _id: med._id },
+                                                { $set : { hits : [] } },
+                                                { safe: true }, this);
+            },
+            function (err) {
+              errCheck(err, 'clearing hits');
+              if (numHits > 0) {
+                var __next = _.after(numHits, _next);
+                for (var i = 0; i < numHits; ++i) {
+                  var props = {
+                    member_id: med.member_id,
+                    media_id: med._id,
+                    created: new Date((new Date()).getTime() - (60*60*24*1000*Math.random()*365)),
+                  };
+                  memberDb.createHit(props, function (err, hit) {
+                    errCheck(err, 'adding hit');
+                    log('\nAdded hit: ' + inspect(hit));
+                    __next();
+                  });
+                }
+              } else _next();
+            }
+          );
+        });
+      } else next();
+    });
+  },
+
+
+
+  // Index posts
+  function (err) {
+    var next = this;
+    errCheck(err, 'redo hits');
     memberDb.collections.post.find({})
             .toArray(function (err, posts) {
       errCheck(err, 'finding posts');

@@ -811,7 +811,6 @@ Island = (function ($) {
       if (searchBox.val() !== '')
         searchBox.trigger('keyup');
 
-
       // filter grid by tag
       // $('.grid-obj-tag').bind('click', function () {
       //   adjustGridHeight();
@@ -832,7 +831,7 @@ Island = (function ($) {
       //   });
       // });
 
-      $('.grid-obj').live('click', function (e) {
+      $('.grid-obj, .trending').live('click', function (e) {
         e.preventDefault();
         var data = $(this).data();
         $.put('/hit/' + data.id, function (res) {
@@ -861,8 +860,9 @@ Island = (function ($) {
 
       // add comment on media
       $('.add-comment').bind('click', function () {
-        var str = $(this.previousElementSibling).val().trim();
-        if (str == '') return false;
+        var str = $(this.previousElementSibling).val();
+        str = $('<div>').html(str).text().trim();
+        if (str === '') return false;
         $(this.previousElementSibling).val('').css({ height: 32 });
         $(this.parentNode).hide();
         $(this.parentNode.previousElementSibling).show();
@@ -1034,6 +1034,7 @@ Island = (function ($) {
 
     receiveComment: function (str, mediaId) {
       var com = $(str);
+      // $('.comment-txt', com).html($('.comment-txt', com).text());
       var comHolder = $('#coms-' + mediaId);
       var recHolder = $('#recent-comments');
       if (recHolder.length > 0) {

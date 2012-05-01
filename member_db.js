@@ -21,6 +21,7 @@ var Facebook = require('node-fb');
 var fbInfo = { SECRET: 'af79cdc8b5ca447366e87b12c3ddaed2',
                ID: 203397619757208 };
 
+
 /*
  * Create a db instance.
  */
@@ -35,6 +36,7 @@ var MemberDb = exports.MemberDb = function (db, options, cb) {
     post: { index: { key: 1, member_id: 1 } },
     media: { index: { type: 1, member_id: 1 } },
     comment: { index: { member_id: 1, media_id: 1 } },
+    hit: { index: { member_id: 1, media_id: 1 } },
     rating: { index: { member_id: 1, media_id: 1 } },
     sessions: {},
   };
@@ -126,10 +128,8 @@ MemberDb.prototype.findOrCreateMemberFromFacebook = function (props, cb) {
               props.hometown = { name: hometown.name };
               _.extend(props.hometown, hometown.location);
             } else props.hometown = null;
-            console.log(albums)
             var photo = _.find(albums, function (album) {
                                 return album.name === 'Cover Photos'; });
-            console.log(photo, photo.cover_photo);
             if (photo && photo.cover_photo)
               facebook.get(photo.cover_photo,
                           { access_token: props.accessToken }, this);
@@ -192,7 +192,7 @@ MemberDb.prototype.createMedia = function (props, cb) {
     return cb(new Error('Invalid media'));
   _.defaults(props, {
     ratings: [],
-    hits: 0,
+    hits: [],
   });
   createDoc(self.collections.media, props,
             function (err, doc) {
@@ -205,7 +205,7 @@ MemberDb.prototype.createComment = function (props, cb) {
   if (!validate(props, ['member_id', 'post_id', 'body']))
     return cb(new Error('Invalid comment'));
   _.defaults(props, {
-    likes: 0,
+    likes: 0, // ??
   });
   Step(
     // TODO: Verify that the user has
@@ -254,7 +254,7 @@ MemberDb.prototype.createRating = function (props, cb) {
         if (!doc)
           return createDoc(self.collections.rating, props, next);
         self.collections.rating.update({ _id: doc._id },
-                                      { $set : { val: props.val } },
+                                      { $set : { val: props.val, created: new Date } },
                                       { safe: true }, function (err) {
           doc.val = props.val;
           cb(err, doc);
@@ -266,6 +266,33 @@ MemberDb.prototype.createRating = function (props, cb) {
       if (err) return cb(err);
       self.collections.media.update({ _id: doc.media_id },
                                     { $push : { ratings: doc._id } },
+                                    { safe: true }, function (err) {
+        cb(err, doc);
+      });
+    }
+  );
+}
+MemberDb.prototype.createHit = function (props, cb) {
+  var self = this;
+  if (!validate(props, ['member_id', 'media_id']))
+    return cb(new Error('Invalid hit'));
+  _.defaults(props, {});
+  Step(
+    // TODO: Verify that the user has
+    // permission to add a hit. ?
+    function () {
+      self.findMediaById(props.media_id, true, this);
+    },
+    function (err, med) {
+      if (err) return cb(err);
+      if (!med) return cb(new Error('Media not found'));
+      props.media_id = med._id;
+      createDoc(self.collections.hit, props, this);
+    },
+    function (err, doc) {
+      if (err) return cb(err);
+      self.collections.media.update({ _id: doc.media_id },
+                                    { $push : { hits: doc._id } },
                                     { safe: true }, function (err) {
         cb(err, doc);
       });
@@ -288,35 +315,22 @@ MemberDb.prototype.findPosts = function (query, opts, cb) {
     if (err) return cb(err);
     if (posts.length === 0)
       return cb(null, []);
-    var _cb = _.after(2 * posts.length, cb);
-    _.each(posts, function (post) {
-      // Gather media if present.
-      if (post.medias.length === 0)
-        _cb(null, posts);
-      else
-        var _mediaCb = _.after(post.medias.length, _cb);
-        _.each(post.medias, function (mediaId, i) {
-          self.findMediaById(mediaId, true,
-                              function (err, med) {
-            if (err) return cb(err);
-            post.medias[i] = med;
-            _mediaCb(null, posts);
-          });
+    Step(
+      function () {
+        fillDocList.call(self, 'media', posts, { bare: true }, this.parallel());
+        fillDocList.call(self, 'comment', posts, this.parallel());
+      },
+      function (err) {
+        if (err) return cb(err);
+        var _next = _.after(posts.length, this);
+        _.each(posts, function (post) {
+          fillDocList.call(self, 'rating', post.medias, { bare: true }, _next);
         });
-      // Gather comments if present.
-      if (post.comments.length === 0)
-        _cb(null, posts);
-      else
-        var _commentCb = _.after(post.comments.length, _cb);
-        _.each(post.comments, function (commentId, i) {
-          self.findCommentById(commentId,
-                              function (err, comment) {
-            if (err) return cb(err);
-            post.comments[i] = comment;
-            _commentCb(null, posts);
-          });
-        });
-    });
+      },
+      function (err) {
+        cb(err, posts);
+      }
+    );
   });
 }
 MemberDb.prototype.findMedia = function (query, opts, cb) {
@@ -325,11 +339,24 @@ MemberDb.prototype.findMedia = function (query, opts, cb) {
     cb = opts;
     opts = {};
   }
+  var fill = opts.fill;
+  delete opts.fill;
   find.call(self, self.collections.media, query, opts,
           function (err, media) {
     if (err) return cb(err);
-    cb(null, media);
-    // self.fillMediaRatings(media, cb);
+    if (!fill || fill.length === 0)
+      return cb(null, media);
+    Step(
+      function () {
+        var next = this;
+        _.each(fill, function (f) {
+          fillDocList.call(self, f, media, { bare: true }, next.parallel());
+        });
+      },
+      function (err) {
+        cb(err, media);
+      }
+    );
   });
 }
 MemberDb.prototype.findComments = function (query, opts, cb) {
@@ -363,9 +390,11 @@ MemberDb.prototype.findMediaById = function (id, bare, cb) {
     bare = false;
   }
   findOne.call(this, this.collections.media,
-              { _id: id }, { bare: bare }, function (err, med) {
-    self.fillMediaRatings(med, cb);
-  });
+              { _id: id }, { bare: bare }, cb);
+  // findOne.call(self, self.collections.media,
+  //             { _id: id }, { bare: bare }, function (err, med) {
+  //   fillDocList.call(self, 'rating', med, cb);
+  // });
 }
 MemberDb.prototype.findCommentById = function (id, bare, cb) {
   if ('function' === typeof bare) {
@@ -383,6 +412,14 @@ MemberDb.prototype.findRatingById = function (id, bare, cb) {
   findOne.call(this, this.collections.rating,
               { _id: id }, { bare: bare }, cb);
 }
+MemberDb.prototype.findHitById = function (id, bare, cb) {
+  if ('function' === typeof bare) {
+    cb = bare;
+    bare = false;
+  }
+  findOne.call(this, this.collections.hit,
+              { _id: id }, { bare: bare }, cb);
+}
 
 MemberDb.prototype.findMemberByKey = function (key, bare, cb) {
   if ('function' === typeof bare) {
@@ -394,53 +431,20 @@ MemberDb.prototype.findMemberByKey = function (key, bare, cb) {
 }
 
 
-/*
+/* // REPLACED BY CREATE HIT
  * Increment media hits (times clicked from grid)
  */
-MemberDb.prototype.hitMedia = function (mediaId, cb) {
-  var self = this;
-  if ('string' === typeof mediaId)
-    mediaId = new ObjectID(mediaId);
-  self.collections.media.update({ _id: mediaId },
-                                { $inc : { hits: 1 } },
-                                { safe: true }, function (err) {
-    if (err) return cb(err);
-    cb(null);
-  });
-}
-
-
-/*
- * Get the ratings associated with the media.
- */
-MemberDb.prototype.fillMediaRatings = function (media, cb) {
-  var self = this;
-  var isArray = _.isArray(media);
-  if (!isArray)
-    media = [media];
-  if (media.length === 0)
-    return done();
-  var _done = _.after(media.length, done);
-  _.each(media, function (med) {
-    // Gather ratings if present.
-    if (med.ratings.length === 0)
-      return _done();  
-    var __done = _.after(med.ratings.length, _done);
-    _.each(med.ratings, function (ratingId, i) {
-      self.findRatingById(ratingId, true,
-                          function (err, rating) {
-        if (err) return cb(err);
-        med.ratings[i] = rating;
-        __done();
-      });
-    });
-  });
-  function done() {
-    if (!isArray)
-      media = _.first(media);
-    cb(null, media);
-  }
-}
+// MemberDb.prototype.hitMedia = function (mediaId, cb) {
+//   var self = this;
+//   if ('string' === typeof mediaId)
+//     mediaId = new ObjectID(mediaId);
+//   self.collections.media.update({ _id: mediaId },
+//                                 { $inc : { hits: 1 } },
+//                                 { safe: true }, function (err) {
+//     if (err) return cb(err);
+//     cb(null);
+//   });
+// }
 
 
 /*
@@ -556,6 +560,44 @@ function findOne(collection, query, opts, cb) {
     if (bare) return cb(null, doc);
     getDocIds.call(self, doc, cb);
   });
+}
+
+
+/*
+ * Fill document _id lists.
+ */
+function fillDocList(list, docs, opts, cb) {
+  var self = this;
+  if ('function' === typeof opts) {
+    cb = opts;
+    opts = {};
+  }
+  var collection = self.collections[list];
+  list += 's';
+  var isArray = _.isArray(docs);
+  if (!isArray)
+    docs = [docs];
+  if (docs.length === 0)
+    return done();
+  var _done = _.after(docs.length, done);
+  _.each(docs, function (doc) {
+    if (doc[list].length === 0)
+      return _done();  
+    var __done = _.after(doc[list].length, _done);
+    _.each(doc[list], function (id, i) {
+      findOne.call(self, collection,
+              { _id: id }, { bare: opts.bare }, function (err, el) {
+        if (err) return cb(err);
+        doc[list][i] = el;
+        __done();
+      });
+    });
+  });
+  function done() {
+    if (!isArray)
+      docs = _.first(docs);
+    cb(null, docs);
+  }
 }
 
 
