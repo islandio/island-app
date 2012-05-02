@@ -183,6 +183,7 @@ Step(
             delete post.ratings;
             delete post.hits;
             post.medias = [doc._id];
+            post.views = [];
             log('\nUpdated post: ' + post.title);
             memberDb.collections.post.update({ _id: post._id },
                                               post, { safe: true }, _next);

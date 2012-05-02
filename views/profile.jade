@@ -4,7 +4,7 @@ div.single-left
     h1.title-left
       =member.displayName
     h1.title-sub from 
-      =data.hometown.country
+      =data.hometown.name
   div.obj-holder.member-picture
     - var top = -(data.picture.height / data.picture.width) * 320;
     img.mask(src="/graphics/corner-mask.png", width='640', height='288')
@@ -21,7 +21,7 @@ div.single-left
           - if (data.hometown)
             li \// 
               span From 
-              span.member-info-content #{data.hometown.country}
+              span.member-info-content #{data.hometown.name}
           - if (data.birthday && data.gender)
             li \// 
               span.member-info-content.birthday #{data.birthday}
@@ -34,7 +34,7 @@ div.single-left
       h3.obj-details(data-date=data.created.toString(), data-type='profile')
 div.recent-comments-wrap
     h1.title-right / Recent Comments
-    #recent-comments
+    #recent-comments.no-member
       !=partial('comment', { collection: comments, showMember: false })
 div.clear
 div.grid-wrap

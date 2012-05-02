@@ -21,14 +21,12 @@ if (argv._.length || argv.help) {
 /**
  * Environment
  */
- 
 var LOCAL = process.NODE_ENV !== 'production';
 
 /**
  * Module dependencies.
  */
 var express = require('express');
-// var connect = require('connect');
 var now = require('now');
 var mongodb = require('mongodb');
 var mongoStore = require('connect-mongodb');
@@ -166,19 +164,29 @@ function getMedia(limit, cb) {
 function getTrending(limit, cb) {
   Step(
     function () {
-      memberDb.findMedia({}, { limit: 100, sort: { created: -1 },
-                        fill: ['rating', 'hit'] }, this);
+      memberDb.findPosts({}, { limit: 100, sort: { created: -1 }}, this);
     },
-    function (err, media) {
+    function (err, posts) {
       if (err) return cb(err);
-      _.each(media, function (med) {
-        med.edges = 0;
-        _.each(med.ratings, function (e) {
-          med.edges += decay(e.val, (new Date(e.created)).getTime());
+      var media = [];
+      _.each(posts, function (post) {
+        post.edges = 0;
+        _.each(post.views, function (e) {
+          post.edges += decay(0.5, (new Date(e.created)).getTime());
         });
-        _.each(med.hits, function (e) {
-          med.edges += decay(1, (new Date(e.created)).getTime());
+        _.each(post.comments, function (e) {
+          post.edges += decay(2, (new Date(e.created)).getTime());
         });
+        _.each(post.medias, function (med) {
+          med.edges = post.edges;
+          _.each(med.ratings, function (e) {
+            med.edges += decay(e.val, (new Date(e.created)).getTime());
+          });
+          _.each(med.hits, function (e) {
+            med.edges += decay(1, (new Date(e.created)).getTime());
+          });
+        });
+        media = media.concat(post.medias);
       });
       media.sort(function (a, b) {
         return b.edges - a.edges;
@@ -380,6 +388,14 @@ app.get('/:key', authorize, function (req, res) {
       if (err || !post || post.length === 0)
         return res.render('404');
       post = _.first(post);
+      // record view
+      memberDb.createView({
+        post_id: post._id,
+        member_id: req.user._id,
+      }, function (err, doc) {
+        if (err) throw new Error('Failed to create view');
+      });
+      // prepare document
       _.each(post.medias, function (med) {
         var rating = _.find(med.ratings.reverse(), function (rat) {
           return req.user._id.toString() === rat.member_id.toString();
@@ -475,7 +491,7 @@ app.put('/insert', authorize, function (req, res) {
           memberDb.createMedia(media, function (err, med) {
             if (err) return done(err);
             doc.medias.push(med._id);
-            everyone.now.distributeMedia(med);
+            everyone.distributeMedia(med);
             _next(null, doc);
           });
         });
@@ -522,8 +538,7 @@ app.put('/comment/:postId', function (req, res) {
   };
   memberDb.createComment(props, function (err, doc) {
     if (err) return fail(err);
-    console.log('ggggggggggg');
-    everyone.now.distributeComment(doc);
+    everyone.distributeComment(doc);
     res.send({ status: 'success', data: {
              comment: doc } });
   });
@@ -586,7 +601,7 @@ if (!module.parent) {
       everyone = now.initialize(app);
 
       // add new object to everyone's page
-      everyone.now.distributeMedia = function (media) {
+      everyone.distributeMedia = function (media) {
         renderMedia(media, function (err, html) {
           if (err) return log('\nFailed to render media - ' + inspect(media)
                               + '\nError: ' + inspect(err));
@@ -595,8 +610,9 @@ if (!module.parent) {
       };
 
       // add new comment to everyone's page
-      everyone.now.distributeComment = function (comment) {
-        renderComment({ comment: comment, showMember: true }, function (err, html) {
+      everyone.distributeComment = function (comment) {
+        renderComment({ comment: comment, showMember: true },
+                      function (err, html) {
           if (err) return log('\nFailed to render comment - ' + inspect(comment)
                               + '\nError: ' + inspect(err));
           everyone.now.receiveComment(html, comment.post._id);
@@ -605,7 +621,7 @@ if (!module.parent) {
 
       // update everyone with new trends
       var distributeTrends = function () {
-        getTrending(5, function (err, media) {
+        getTrending(10, function (err, media) {
           if (err) throw new Error('Failed to create trends');
           trends = media;
           var rendered = [];

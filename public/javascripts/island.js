@@ -1039,6 +1039,8 @@ Island = (function ($) {
       var recHolder = $('#recent-comments');
       if (recHolder.length > 0) {
         $(recHolder.children()[recHolder.children().length - 1]).remove();
+        if (recHolder.hasClass('no-member'))
+          $('.comment-title-name', com).remove();
         com.hide().css({ opacity: 0 }).appendTo(recHolder);
         grid.collage(true, com.height());
         var time = $('.comment-added', com);

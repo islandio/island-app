@@ -36,6 +36,7 @@ var MemberDb = exports.MemberDb = function (db, options, cb) {
     post: { index: { key: 1, member_id: 1 } },
     media: { index: { type: 1, member_id: 1 } },
     comment: { index: { member_id: 1, media_id: 1 } },
+    view: { index: { member_id: 1, media_id: 1 } },
     hit: { index: { member_id: 1, media_id: 1 } },
     rating: { index: { member_id: 1, media_id: 1 } },
     sessions: {},
@@ -175,6 +176,7 @@ MemberDb.prototype.createPost = function (props, cb) {
     _.defaults(props, {
       key: key,
       comments: [],
+      views: [],
     });
     createDoc(self.collections.post, props,
               function (err, doc) {
@@ -200,12 +202,39 @@ MemberDb.prototype.createMedia = function (props, cb) {
     getDocIds.call(self, doc, cb);
   });
 }
+MemberDb.prototype.createView = function (props, cb) {
+  var self = this;
+  if (!validate(props, ['member_id', 'post_id']))
+    return cb(new Error('Invalid view'));
+  _.defaults(props, {});
+  Step(
+    // TODO: Verify that the user has
+    // permission to add a view.
+    function () {
+      self.findPostById(props.post_id, true, this);
+    },
+    function (err, post) {
+      if (err) return cb(err);
+      if (!post) return cb(new Error('Post not found'));
+      props.post_id = post._id;
+      createDoc(self.collections.view, props, this);
+    },
+    function (err, doc) {
+      if (err) return cb(err);
+      self.collections.post.update({ _id: doc.post_id },
+                                    { $push : { views: doc._id } },
+                                    { safe: true }, function (err) {
+        cb(err, doc);
+      });
+    }
+  );
+}
 MemberDb.prototype.createComment = function (props, cb) {
   var self = this;
   if (!validate(props, ['member_id', 'post_id', 'body']))
     return cb(new Error('Invalid comment'));
   _.defaults(props, {
-    likes: 0, // ??
+    likes: 0, // ?
   });
   Step(
     // TODO: Verify that the user has
@@ -319,12 +348,14 @@ MemberDb.prototype.findPosts = function (query, opts, cb) {
       function () {
         fillDocList.call(self, 'media', posts, { bare: true }, this.parallel());
         fillDocList.call(self, 'comment', posts, this.parallel());
+        fillDocList.call(self, 'view', posts, this.parallel());
       },
       function (err) {
         if (err) return cb(err);
-        var _next = _.after(posts.length, this);
+        var next = this;
         _.each(posts, function (post) {
-          fillDocList.call(self, 'rating', post.medias, { bare: true }, _next);
+          fillDocList.call(self, 'rating', post.medias, { bare: true }, next.parallel());
+          fillDocList.call(self, 'hit', post.medias, { bare: true }, next.parallel());
         });
       },
       function (err) {
@@ -391,35 +422,31 @@ MemberDb.prototype.findMediaById = function (id, bare, cb) {
   }
   findOne.call(this, this.collections.media,
               { _id: id }, { bare: bare }, cb);
-  // findOne.call(self, self.collections.media,
-  //             { _id: id }, { bare: bare }, function (err, med) {
-  //   fillDocList.call(self, 'rating', med, cb);
-  // });
 }
-MemberDb.prototype.findCommentById = function (id, bare, cb) {
-  if ('function' === typeof bare) {
-    cb = bare;
-    bare = false;
-  }
-  findOne.call(this, this.collections.comment,
-              { _id: id }, { bare: bare }, cb);
-}
-MemberDb.prototype.findRatingById = function (id, bare, cb) {
-  if ('function' === typeof bare) {
-    cb = bare;
-    bare = false;
-  }
-  findOne.call(this, this.collections.rating,
-              { _id: id }, { bare: bare }, cb);
-}
-MemberDb.prototype.findHitById = function (id, bare, cb) {
-  if ('function' === typeof bare) {
-    cb = bare;
-    bare = false;
-  }
-  findOne.call(this, this.collections.hit,
-              { _id: id }, { bare: bare }, cb);
-}
+// MemberDb.prototype.findCommentById = function (id, bare, cb) {
+//   if ('function' === typeof bare) {
+//     cb = bare;
+//     bare = false;
+//   }
+//   findOne.call(this, this.collections.comment,
+//               { _id: id }, { bare: bare }, cb);
+// }
+// MemberDb.prototype.findRatingById = function (id, bare, cb) {
+//   if ('function' === typeof bare) {
+//     cb = bare;
+//     bare = false;
+//   }
+//   findOne.call(this, this.collections.rating,
+//               { _id: id }, { bare: bare }, cb);
+// }
+// MemberDb.prototype.findHitById = function (id, bare, cb) {
+//   if ('function' === typeof bare) {
+//     cb = bare;
+//     bare = false;
+//   }
+//   findOne.call(this, this.collections.hit,
+//               { _id: id }, { bare: bare }, cb);
+// }
 
 MemberDb.prototype.findMemberByKey = function (key, bare, cb) {
   if ('function' === typeof bare) {

@@ -515,6 +515,8 @@ input::-moz-focus-inner {
 }
 .signin-bg {
   position: absolute;
+  top: 0;
+  left: 0;
   z-index: -1;
   overflow: hidden;
   width: 100%;
