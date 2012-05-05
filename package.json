@@ -28,5 +28,6 @@
   "optionalDependencies": {},
   "engines": {
     "node": "*"
-  }
+  },
+  "scripts": { "start": "./start.sh" }
 }
