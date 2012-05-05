@@ -1,3 +1,3 @@
-#!/bin/zsh
+#!/bin/sh
 
-exec node app.js --port 3644 --db 'mongo://10.112.1.168:27017/island'
+exec node app.js --port 80 --db 'mongo://10.112.1.168:27017/island'
