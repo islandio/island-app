@@ -1,7 +1,8 @@
 div.single-left
   form#media-form(action='/transloadit', enctype='multipart/form-data', method='POST')
     input(type='hidden', name='params', value=JSON.stringify(tlip))
-    span.slash /
+    span.slash
+      | /
     h1.title-left Create Island Post
     h1.title-sub image / video / audio
     table
