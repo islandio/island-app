@@ -170,20 +170,20 @@ function getTrending(limit, cb) {
       if (err) return cb(err);
       var media = [];
       _.each(posts, function (post) {
-        post.edges = 0;
+        post.edges = edgeToPresent(1, post, 24);
         _.each(post.views, function (e) {
-          post.edges += decay(0.5, (new Date(e.created)).getTime());
+          post.edges += edgeToPresent(0.5, e, 12);
         });
         _.each(post.comments, function (e) {
-          post.edges += decay(2, (new Date(e.created)).getTime());
+          post.edges += edgeToPresent(2, e, 48);
         });
         _.each(post.medias, function (med) {
-          med.edges = post.edges;
-          _.each(med.ratings, function (e) {
-            med.edges += decay(e.val, (new Date(e.created)).getTime());
-          });
+          med.edges = post.edges + edgeToPresent(1, med, 24);
           _.each(med.hits, function (e) {
-            med.edges += decay(1, (new Date(e.created)).getTime());
+            med.edges += edgeToPresent(1, e, 12);
+          });
+          _.each(med.ratings, function (e) {
+            med.edges += edgeToPresent(e.val, e, 24);
           });
         });
         media = media.concat(post.medias);
@@ -194,8 +194,10 @@ function getTrending(limit, cb) {
       cb(err, _.first(media, limit));
     }
   );
-  function decay(e, t) {
-    return e * Math.exp(-((new Date()).getTime() - t) / 17280000);
+  function edgeToPresent(initial, edge, span) {
+    var created = (new Date(edge.created)).getTime();
+    var constant = span * 60 * 60 * 1000 / 5;
+    return initial * Math.exp(-((new Date()).getTime() - created) / constant);
   }
 }
 function getRecentComments(limit, memberId, cb) {
@@ -657,8 +659,3 @@ if (!module.parent) {
     }
   );
 }
-
-
-
-
-

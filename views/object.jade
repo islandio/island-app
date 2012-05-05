@@ -5,7 +5,6 @@
         h1.grid-obj-hover-txt
           =object.member.displayName
       img.grid-obj-img.matte(id='img-' + object.key, class='page-0', src=object.thumbs[0].cf_url, width=object.thumbs[0].meta.width, height=object.thumbs[0].meta.height)
-    
 - if (object.type == 'video')
   div(id='obj-' + object.key, class='each-grid-obj ' + 'is-' + object.type)
     a.grid-obj(href='/' + object.key, data-id=object._id.toString(), data-key=object.key)
@@ -20,5 +19,11 @@
       img.grid-obj-img.matte.hidden(id='vid-' + object.key + '-3', class='page-0', src=object.thumbs[5].cf_url, width=object.thumbs[5].meta.width, height=object.thumbs[5].meta.height)
       img.grid-obj-img.matte.hidden(id='vid-' + object.key + '-6', class='page-0', src=object.thumbs[6].cf_url, width=object.thumbs[6].meta.width, height=object.thumbs[6].meta.height)
       img.grid-obj-img.matte.hidden(id='vid-' + object.key + '-7', class='page-0', src=object.thumbs[7].cf_url, width=object.thumbs[7].meta.width, height=object.thumbs[7].meta.height)
-    
+- if (object.type == 'audio')
+  div(id='obj-' + object.key, class='each-grid-obj ' + 'is-' + object.type)
+    a.grid-obj(href='/' + object.key, data-id=object._id.toString(), data-key=object.key)
+      div.grid-obj-hover.matte(style='width: ' + 232 + 'px; height: ' + 232 + 'px')
+        h1.grid-obj-hover-txt
+          =object.member.displayName
+      img.grid-obj-img.matte(id='img-' + object.key, class='page-0', src='https://d271mvlc6gc7bl.cloudfront.net/main/speaker.jpg', width=232, height=232)    
 

@@ -20,12 +20,7 @@ div.single-left
             img(src='/graphics/hearts.png')
     - if (med.type === 'video')
       div.obj-holder
-        video.matte(id='video-' + med._id, poster=med.poster.cf_url, controls='controls', preload='none', width='640', height=(med.video.meta.height / med.video.meta.width) * 640)
-          source(type='video/mp4', src=med.video.cf_url)
-          object(type='application/x-shockwave-flash', data='/mediaelement/flashmediaelement.swf', width='640', height=(med.video.meta.height / med.video.meta.width) * 640)
-              param(name='movie', value='/mediaelement/flashmediaelement.swf')
-              param(name='flashvars', value='controls=true&poster=' + med.poster.cf_url + '&file=' + med.video.cf_url)
-              img(src=med.image.cf_url, title='No video playback capabilities', width=med.image.meta.width, height=med.image.meta.height)
+        video.matte(src=med.video.cf_url, id='video-' + med._id, poster=med.poster.cf_url, controls='controls', preload='none', width='640', height=(med.video.meta.height / med.video.meta.width) * 640)
         div.hearts(data-num=med.hearts)
           div.hearts-wrap
             img.heart-img(src='/graphics/heart.png')
@@ -37,10 +32,7 @@ div.single-left
             img(src='/graphics/hearts.png')
     - if (med.type === 'audio')
       div.obj-holder
-        audio.matte(id='audio-' + med._id, controls='controls', preload='none', width='640')
-          source(type='audio/mp3', src=med.audio.cf_url)
-          object(type='application/x-shockwave-flash', data='/mediaelement/flashmediaelement.swf', width='640')
-              param(name='movie', value='/mediaelement/flashmediaelement.swf')
+        audio.matte(src=med.audio.cf_url, id='audio-' + med._id, controls='controls', preload='none', width='640', height='100')
         div.hearts(data-num=med.hearts)
           div.hearts-wrap
             img.heart-img(src='/graphics/heart.png')

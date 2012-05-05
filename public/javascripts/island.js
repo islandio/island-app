@@ -475,9 +475,9 @@ Island = (function ($) {
       ) {
 
         // init the videos
-        if ($('video').length > 0) {
-          new MediaElementPlayer('video');
-        }
+        // if ($('video').length > 0) {
+        //   new MediaElementPlayer('video');
+        // }
 
         // hide footer
         $('#footer').hide();
@@ -485,11 +485,19 @@ Island = (function ($) {
       } else {
 
         // init the videos with flash shim
-        if ($('video').length > 0) {
-          new MediaElementPlayer('video', { mode: 'shim' });
-        }
+        // if ($('video').length > 0) {
+        //   new MediaElementPlayer('video', { mode: 'shim' });
+        // }
 
       }
+
+      $('video, audio').each(function () {
+        jwplayer($(this).attr('id')).setup({
+          flashplayer: '/jwplayer/player.swf',
+          skin: '/jwplayer/skins/bekle.zip',
+          poster: '/graphics/white.jpg',
+        });
+      });
 
       // start all video thumb timers
       initVideoSlides();      

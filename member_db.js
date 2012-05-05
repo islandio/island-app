@@ -493,11 +493,11 @@ MemberDb.prototype.findTwitterNames = function (cb) {
  */
 MemberDb.prototype.searchPosts = function (str, cb) {
   var self = this;
+  var mediaIds = [];
+  var results = [];
   self.search.query(str).end(function (err, postIds) {
     if (err) return cb(err);
     if (postIds.length === 0) return cb(null);
-    var mediaIds = [];
-    var results = [];
     Step(
       function () {
         var _next = _.after(postIds.length, this);
@@ -510,7 +510,8 @@ MemberDb.prototype.searchPosts = function (str, cb) {
         });
       },
       function (err) {
-        var _cb = _.after(mediaIds.length, cb);
+        if (err) return cb(err);
+        var _cb = _.after(mediaIds.length, done);
         _.each(mediaIds, function (id) {
           self.findMediaById(id, function (err, med) {
             if (err) return cb(err);
@@ -521,6 +522,11 @@ MemberDb.prototype.searchPosts = function (str, cb) {
       }
     )
   });
+  function done() {
+    cb(null, results.sort(function (a, b) {
+      return b.created - a.created;
+    }));
+  }
 }
 
 
