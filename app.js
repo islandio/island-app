@@ -19,13 +19,6 @@ if (argv._.length || argv.help) {
 
 
 /**
- * Environment
- */
-// HACK!
-var LOCAL = process.NODE_ENV !== 'production';
-console.log(process);
-console.log('Local is: ', LOCAL);
-/**
  * Module dependencies.
  */
 var express = require('express');
@@ -56,15 +49,19 @@ var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 
 var transloadit = { auth: { key: '8a36aa56062f49c79976fa24a74db6cc' }};
-transloadit.template_id = LOCAL ? '29c60cfc5b9f4e8b8c8bf7a9b1191147' :
-                          'dd77fc95cfff48e8bf4af6159fd6b2e7';
+transloadit.template_id = process.env.NODE_ENV !== 'production' ?
+                            'dd77fc95cfff48e8bf4af6159fd6b2e7' :
+                            '29c60cfc5b9f4e8b8c8bf7a9b1191147';
 
-var cloudfrontImageUrl = LOCAL ? 'https://d2a89oeknmk80g.cloudfront.net/' :
-                                'https://d1da6a4is4i5z6.cloudfront.net/';
-var cloudfrontVideoUrl = LOCAL ? 'https://d2c2zu8qn6mgju.cloudfront.net/' :
-                                'https://d1ehvayr9dfk4s.cloudfront.net/';
-var cloudfrontAudioUrl = LOCAL ? 'https://d2oapa8usgizyg.cloudfront.net/' :
-                                'https://dp3piv67f7p06.cloudfront.net/';
+var cloudfrontImageUrl = process.env.NODE_ENV === 'production' ?
+                            'https://d1da6a4is4i5z6.cloudfront.net/' :
+                            'https://d2a89oeknmk80g.cloudfront.net/';
+var cloudfrontVideoUrl = process.env.NODE_ENV === 'production' ?
+                            'https://d1ehvayr9dfk4s.cloudfront.net/' :
+                            'https://d2c2zu8qn6mgju.cloudfront.net/';
+var cloudfrontAudioUrl = process.env.NODE_ENV === 'production' ?
+                            'https://dp3piv67f7p06.cloudfront.net/' :
+                            'https://d2oapa8usgizyg.cloudfront.net/';
 
 
 // Configuration
@@ -264,11 +261,10 @@ app.get('/auth/facebook', function (req, res, next) {
   // This way we can preserve query params in links.
   req.session.referer = req.headers.referer;
   var host = req.headers.host.split(':')[0];
-  var home = process.env.PORT ?
+  var home = process.env.NODE_ENV === 'production' ?
               'http://' + host + '/' :
               'http://' + host + ':' + argv.port + '/';
-  var callback = LOCAL ? 'http://island.io:' + argv.port + '/auth/facebook/callback' :
-                          'http://beta.island.io/auth/facebook/callback';
+  var callback = home + 'auth/facebook/callback';
   console.log(callback);
   passport.use(new FacebookStrategy({
       clientID: 203397619757208,
