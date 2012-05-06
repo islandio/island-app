@@ -495,7 +495,7 @@ Island = (function ($) {
         jwplayer($(this).attr('id')).setup({
           flashplayer: '/jwplayer/player.swf',
           skin: '/jwplayer/skins/bekle.zip',
-          poster: '/graphics/white.jpg',
+          // poster: '/graphics/white.jpg',
         });
       });
 

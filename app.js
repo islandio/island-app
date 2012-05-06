@@ -263,11 +263,15 @@ app.get('/auth/facebook', function (req, res, next) {
   // This way we can preserve query params in links.
   req.session.referer = req.headers.referer;
   var host = req.headers.host.split(':')[0];
-  var home = 'http://' + host + ':' + argv.port + '/';
+  console.log(req.headers.host, host);
+  var home = process.env.PORT ?
+              'http://' + host + '/' :
+              'http://' + host + ':' + argv.port + '/';
   passport.use(new FacebookStrategy({
       clientID: 203397619757208,
       clientSecret: 'af79cdc8b5ca447366e87b12c3ddaed2',
-      callbackURL: 'http://island.io:3644/' + 'auth/facebook/callback',
+      callbackURL: LOCAL ? 'http://island.io:' + argv.port + '/auth/facebook/callback'
+                    : 'http://beta.island.io/auth/facebook/callback',
     },
     function (accessToken, refreshToken, profile, done) {
       profile.accessToken = accessToken;

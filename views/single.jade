@@ -12,40 +12,40 @@ div.single-left
         img.matte(id='image-' + med._id, src=med.image.cf_url, width=med.image.meta.width, height=med.image.meta.height)
         div.hearts(data-num=med.hearts)
           div.hearts-wrap
-            img.heart-img(src='/graphics/heart.png')
-            img.heart-img(src='/graphics/heart.png')
-            img.heart-img(src='/graphics/heart.png')
-            img.heart-img(src='/graphics/heart.png')
-            img.heart-img(src='/graphics/heart.png')
+            img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/gfx/heart.png')
+            img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/gfx/heart.png')
+            img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/gfx/heart.png')
+            img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/gfx/heart.png')
+            img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/gfx/heart.png')
           div.hearts-back(id='hrt-' + med._id)
-            img(src='/graphics/hearts.png')
+            img(src='https://d271mvlc6gc7bl.cloudfront.net/gfx/hearts.png')
     - if (med.type === 'video')
       div.obj-holder
         video.matte(src=med.video.cf_url, id='video-' + med._id, poster=med.poster.cf_url, controls='controls', preload='none', width='640', height=(med.video.meta.height / med.video.meta.width) * 640)
         div.hearts(data-num=med.hearts)
           div.hearts-wrap
-            img.heart-img(src='/graphics/heart.png')
-            img.heart-img(src='/graphics/heart.png')
-            img.heart-img(src='/graphics/heart.png')
-            img.heart-img(src='/graphics/heart.png')
-            img.heart-img(src='/graphics/heart.png')
+            img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/gfx/heart.png')
+            img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/gfx/heart.png')
+            img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/gfx/heart.png')
+            img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/gfx/heart.png')
+            img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/gfx/heart.png')
           div.hearts-back(id='hrt-' + med._id)
-            img(src='/graphics/hearts.png')
+            img(src='https://d271mvlc6gc7bl.cloudfront.net/gfx/hearts.png')
     - if (med.type === 'audio')
       div.obj-holder
         audio.matte(src=med.audio.cf_url, id='audio-' + med._id, controls='controls', preload='none', width='640', height='100')
         div.hearts(data-num=med.hearts)
           div.hearts-wrap
-            img.heart-img(src='/graphics/heart.png')
-            img.heart-img(src='/graphics/heart.png')
-            img.heart-img(src='/graphics/heart.png')
-            img.heart-img(src='/graphics/heart.png')
-            img.heart-img(src='/graphics/heart.png')
+            img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/gfx/heart.png')
+            img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/gfx/heart.png')
+            img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/gfx/heart.png')
+            img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/gfx/heart.png')
+            img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/gfx/heart.png')
           div.hearts-back(id='hrt-' + med._id)
-            img(src='/graphics/hearts.png')
+            img(src='https://d271mvlc6gc7bl.cloudfront.net/gfx/hearts.png')
   - });
   div.obj-desc.matte
-    img.left(src='/graphics/is-obj-info.gif', alt='info', align='top')
+    img.left(src='https://d271mvlc6gc7bl.cloudfront.net/gfx/is-obj-info.gif', alt='info', align='top')
     div.obj-desc-txt-wrap
       p.obj-desc-txt
         =post.body
@@ -53,7 +53,7 @@ div.single-left
       
 div.single-right
   div(style='padding-top: 4px')
-    img(src='/graphics/is-bubble.png', alt='is-bubble', align='top')
+    img(src='https://d271mvlc6gc7bl.cloudfront.net/gfx/is-bubble.png', alt='is-bubble', align='top')
   textarea.commentor-input-dummy.matte(name='Write a comment...') Write a comment...
   div.commentor
     textarea.commentor-input.matte
