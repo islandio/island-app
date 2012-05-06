@@ -23,7 +23,8 @@ if (argv._.length || argv.help) {
  */
 // HACK!
 var LOCAL = process.NODE_ENV !== 'production';
-
+console.log(process);
+console.log('Local is: ', LOCAL);
 /**
  * Module dependencies.
  */
