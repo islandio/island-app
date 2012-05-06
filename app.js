@@ -231,7 +231,7 @@ function renderComment(params, cb) {
 app.get('/', authorize, function (req, res) {
   Step(
     function () {
-      getMedia(50, this.parallel());
+      getMedia(100, this.parallel());
       getRecentComments(5, this.parallel());
       getTwitterNames(this.parallel());
     },
@@ -263,15 +263,16 @@ app.get('/auth/facebook', function (req, res, next) {
   // This way we can preserve query params in links.
   req.session.referer = req.headers.referer;
   var host = req.headers.host.split(':')[0];
-  console.log(req.headers.host, host);
   var home = process.env.PORT ?
               'http://' + host + '/' :
               'http://' + host + ':' + argv.port + '/';
+  var callback = LOCAL ? 'http://island.io:' + argv.port + '/auth/facebook/callback' :
+                          'http://beta.island.io/auth/facebook/callback';
+  console.log(callback);
   passport.use(new FacebookStrategy({
       clientID: 203397619757208,
       clientSecret: 'af79cdc8b5ca447366e87b12c3ddaed2',
-      callbackURL: LOCAL ? 'http://island.io:' + argv.port + '/auth/facebook/callback'
-                    : 'http://beta.island.io/auth/facebook/callback',
+      callbackURL: callback,
     },
     function (accessToken, refreshToken, profile, done) {
       profile.accessToken = accessToken;
@@ -311,14 +312,12 @@ app.get('/add', authorize, function (req, res) {
     return res.redirect('/');
   Step(
     function () {
-      getMedia(50, this.parallel());
       getTwitterNames(this.parallel());
     },
-    function (err, media, twitters) {
+    function (err, twitters) {
       res.render('index', {
         part: 'add',
         tlip: transloadit,
-        grid: media,
         member: req.user,
         twitters: twitters,
       });
@@ -329,7 +328,7 @@ app.get('/add', authorize, function (req, res) {
 // Media search
 app.get('/search/:query', function (req, res) {
   var fn = '__clear__' === req.params.query ?
-            _.bind(getMedia, {}, 50) :
+            _.bind(getMedia, {}, 100) :
             _.bind(memberDb.searchPosts, memberDb,
                   req.params.query);
   fn(function (err, docs) {
@@ -359,7 +358,7 @@ app.get('/member/:key', function (req, res) {
   Step(
     function () {
       memberDb.findMemberByKey(req.params.key, this.parallel());
-      getMedia(50, this.parallel());
+      getMedia(100, this.parallel());
       getTwitterNames(this.parallel());
     },
     function (err, member, media, twitters) {
@@ -388,7 +387,7 @@ app.get('/:key', authorize, function (req, res) {
     function () {
       memberDb.findPosts({ key: req.params.key },
                         { limit: 1 }, this.parallel());
-      getMedia(50, this.parallel());
+      getMedia(100, this.parallel());
       getTwitterNames(this.parallel());
     },
     function (err, post, grid, twitters) {

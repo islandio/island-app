@@ -8,10 +8,11 @@ div.single-left
       =data.hometown.name
   div.obj-holder.member-picture
     - var top = -(data.picture.height / data.picture.width) * 320;
-    img.mask(src="/graphics/corner-mask.png", width='640', height='288')
-    img.masked(src=data.picture.source, width='640', style='top:' + top + 'px;')
+    img.mask(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-top.png", width="640", style="top: 0;")
+    img.mask(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-btm.png", width="640", style="top: 280px;")
+    img.masked(src=data.picture.source, width="640", style="top:" + top + "px;")
   div.obj-desc.matte
-    img.left(src='/graphics/is-obj-info.gif', alt='info', align='top')
+    img.left(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-obj-info.gif", alt="info", align="top")
     div.obj-desc-txt-wrap
       div.member-info
         ul
@@ -32,7 +33,7 @@ div.single-left
             span More from #{data.displayName} at 
             span.member-info-content
               a(href=data.website, target="_blank") #{data.website}
-      h3.obj-details(data-date=data.created.toString(), data-type='profile')
+      h3.obj-details(data-date=data.created.toString(), data-type="profile")
 div.recent-comments-wrap
     h1.title-right / Recent Comments
     #recent-comments.no-member
@@ -41,6 +42,6 @@ div.clear
 div.grid-wrap
   #search
     h1.title-bottom / Browse
-    input#search-box.matte(type='search', placeholder='Search', value=member.displayName.toLowerCase())
+    input#search-box.matte(type="search", placeholder="Search", value=member.displayName.toLowerCase())
   #grid.adjustable-grid
     !=partial('object', grid)
