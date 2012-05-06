@@ -49,17 +49,17 @@ var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 
 var transloadit = { auth: { key: '8a36aa56062f49c79976fa24a74db6cc' }};
-transloadit.template_id = process.env.NODE_ENV !== 'production' ?
+transloadit.template_id = process.env.NODE_ENV === 'production' ?
                             'dd77fc95cfff48e8bf4af6159fd6b2e7' :
                             '29c60cfc5b9f4e8b8c8bf7a9b1191147';
 
-var cloudfrontImageUrl = process.env.NODE_ENV !== 'production' ?
+var cloudfrontImageUrl = process.env.NODE_ENV === 'production' ?
                             'https://d1da6a4is4i5z6.cloudfront.net/' :
                             'https://d2a89oeknmk80g.cloudfront.net/';
-var cloudfrontVideoUrl = process.env.NODE_ENV !== 'production' ?
+var cloudfrontVideoUrl = process.env.NODE_ENV === 'production' ?
                             'https://d1ehvayr9dfk4s.cloudfront.net/' :
                             'https://d2c2zu8qn6mgju.cloudfront.net/';
-var cloudfrontAudioUrl = process.env.NODE_ENV !== 'production' ?
+var cloudfrontAudioUrl = process.env.NODE_ENV === 'production' ?
                             'https://dp3piv67f7p06.cloudfront.net/' :
                             'https://d2oapa8usgizyg.cloudfront.net/';
 
