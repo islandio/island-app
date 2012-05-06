@@ -29,5 +29,7 @@
   "engines": {
     "node": "*"
   },
-  "scripts": { "start": "./start.sh" }
+  "scripts": {
+    "start": "./start.sh"
+  }
 }
