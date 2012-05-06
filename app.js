@@ -585,7 +585,7 @@ if (!module.parent) {
     // Connect to MemberDb:
     function () {
       log('Connecting to MemberDb:', argv.db);
-      mongodb.connect(argv.db, { server: { poolSize: 4 } }, this);
+      mongodb.connect(argv.db, {server: { poolSize: 4 }}, this);
     }, function (err, db) {
       if (err) return this(err);
       new MemberDb(db, { ensureIndexes: true }, this);
