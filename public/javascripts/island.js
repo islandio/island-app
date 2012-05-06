@@ -490,6 +490,13 @@ Island = (function ($) {
         // }
 
       }
+      
+      // Clear the shit that come back from Facebook
+      if (window.location.hash !== '') {
+        try {
+          window.history.replaceState('', '', window.location.pathname);
+        } catch(err) {}
+      }
 
       $('video, audio').each(function () {
         jwplayer($(this).attr('id')).setup({
@@ -541,232 +548,232 @@ Island = (function ($) {
 
 
       // landing page login - register
-      var loginForm = $('#login-form');
-      var registerForm = $('#register-form');
-      var gotoLoginButton = $('#goto-login-form');
-      var gotoRegisterButton = $('#goto-register-form');
+      // var loginForm = $('#login-form');
+      // var registerForm = $('#register-form');
+      // var gotoLoginButton = $('#goto-login-form');
+      // var gotoRegisterButton = $('#goto-register-form');
 
-      // login member
-      var loginButton = $('#login');
-      var loginEmail = $('input[name="member[email]"]');
-      var loginPassword = $('input[name="member[password]"]');
-      var loginEmailLabel = $('label[for="member[email]"]');
-      var loginPasswordLabel = $('label[for="member[password]"]');
+      // // login member
+      // var loginButton = $('#login');
+      // var loginEmail = $('input[name="member[email]"]');
+      // var loginPassword = $('input[name="member[password]"]');
+      // var loginEmailLabel = $('label[for="member[email]"]');
+      // var loginPasswordLabel = $('label[for="member[password]"]');
 
-      // register member
-      var registerButton = $('#add-member');
-      var registerNameFirst = $('input[name="newmember[name.first]"]');
-      var registerNameLast = $('input[name="newmember[name.last]"]');
-      var registerEmail = $('input[name="newmember[email]"]');
-      var registerEmail2 = $('input[name="newmember[email2]"]');
-      var registerPassword = $('input[name="newmember[password]"]');
-      var registerNameFirstLabel = $('label[for="newmember[name.first]"]');
-      var registerNameLastLabel = $('label[for="newmember[name.last]"]');
-      var registerEmailLabel = $('label[for="newmember[email]"]');
-      var registerEmail2Label = $('label[for="newmember[email2]"]');
-      var registerPasswordLabel = $('label[for="newmember[password]"]');
-      var landingMessage = $('#landing-message');
-      var landingSuccess = $('#landing-success');
-      var landingError = $('#landing-error');
-      var landingSuccessText = $('#landing-success p');
-      var landingErrorText = $('#landing-error p');
+      // // register member
+      // var registerButton = $('#add-member');
+      // var registerNameFirst = $('input[name="newmember[name.first]"]');
+      // var registerNameLast = $('input[name="newmember[name.last]"]');
+      // var registerEmail = $('input[name="newmember[email]"]');
+      // var registerEmail2 = $('input[name="newmember[email2]"]');
+      // var registerPassword = $('input[name="newmember[password]"]');
+      // var registerNameFirstLabel = $('label[for="newmember[name.first]"]');
+      // var registerNameLastLabel = $('label[for="newmember[name.last]"]');
+      // var registerEmailLabel = $('label[for="newmember[email]"]');
+      // var registerEmail2Label = $('label[for="newmember[email2]"]');
+      // var registerPasswordLabel = $('label[for="newmember[password]"]');
+      // var landingMessage = $('#landing-message');
+      // var landingSuccess = $('#landing-success');
+      // var landingError = $('#landing-error');
+      // var landingSuccessText = $('#landing-success p');
+      // var landingErrorText = $('#landing-error p');
 
-      // switch between forms
-      function gotoLogin() {
-        registerForm.hide();
-        loginForm.fadeIn('fast');
-        gotoLoginButton.hide();
-        gotoRegisterButton.show();
-        landingError.hide();
-        loginEmail.focus();
-      }
-      function gotoRegister() {
-        loginForm.hide();
-        registerForm.fadeIn('fast');
-        gotoRegisterButton.hide();
-        gotoLoginButton.show();
-        landingError.hide();
-        registerNameFirst.focus();
-      }
+      // // switch between forms
+      // function gotoLogin() {
+      //   registerForm.hide();
+      //   loginForm.fadeIn('fast');
+      //   gotoLoginButton.hide();
+      //   gotoRegisterButton.show();
+      //   landingError.hide();
+      //   loginEmail.focus();
+      // }
+      // function gotoRegister() {
+      //   loginForm.hide();
+      //   registerForm.fadeIn('fast');
+      //   gotoRegisterButton.hide();
+      //   gotoLoginButton.show();
+      //   landingError.hide();
+      //   registerNameFirst.focus();
+      // }
 
-      // form control
-      function exitLoginButton() {
-        loginButton.removeClass('is-button-alert');
-        resetLoginStyles();
-      }
-      function resetLoginStyles() {
-        loginEmailLabel.css('color', 'gray');
-        loginPasswordLabel.css('color', 'gray');
-      }
-      function exitRegisterButton() {
-        registerButton.removeClass('is-button-alert');
-        resetRegisterStyles();
-      }
-      function resetRegisterStyles() {
-        registerNameFirstLabel.css('color', 'gray');
-        registerNameLastLabel.css('color', 'gray');
-        registerEmailLabel.css('color', 'gray');
-        registerEmail2Label.css('color', 'gray');
-        registerPasswordLabel.css('color', 'gray');
-      }
+      // // form control
+      // function exitLoginButton() {
+      //   loginButton.removeClass('is-button-alert');
+      //   resetLoginStyles();
+      // }
+      // function resetLoginStyles() {
+      //   loginEmailLabel.css('color', 'gray');
+      //   loginPasswordLabel.css('color', 'gray');
+      // }
+      // function exitRegisterButton() {
+      //   registerButton.removeClass('is-button-alert');
+      //   resetRegisterStyles();
+      // }
+      // function resetRegisterStyles() {
+      //   registerNameFirstLabel.css('color', 'gray');
+      //   registerNameLastLabel.css('color', 'gray');
+      //   registerEmailLabel.css('color', 'gray');
+      //   registerEmail2Label.css('color', 'gray');
+      //   registerPasswordLabel.css('color', 'gray');
+      // }
 
-      function hideLandingForms() {
-        gotoLoginButton.css({ visibility: 'hidden' });
-        gotoRegisterButton.css({ visibility: 'hidden' });
-        loginForm.css({ visibility: 'hidden' });
-        registerForm.css({ visibility: 'hidden' });
-      }
-      function showLandingForms() {
-        gotoLoginButton.css({ visibility: 'visible' });
-        gotoRegisterButton.css({ visibility: 'visible' });
-        loginForm.css({ visibility: 'visible' });
-        registerForm.css({ visibility: 'visible' });
-      }
+      // function hideLandingForms() {
+      //   gotoLoginButton.css({ visibility: 'hidden' });
+      //   gotoRegisterButton.css({ visibility: 'hidden' });
+      //   loginForm.css({ visibility: 'hidden' });
+      //   registerForm.css({ visibility: 'hidden' });
+      // }
+      // function showLandingForms() {
+      //   gotoLoginButton.css({ visibility: 'visible' });
+      //   gotoRegisterButton.css({ visibility: 'visible' });
+      //   loginForm.css({ visibility: 'visible' });
+      //   registerForm.css({ visibility: 'visible' });
+      // }
 
-      $('a', gotoRegisterButton).bind('click', function () {
-        gotoRegister();
-      });
-      $('a', gotoLoginButton).bind('click', function () {
-        gotoLogin();
-      });
-      loginEmail.focus();
+      // $('a', gotoRegisterButton).bind('click', function () {
+      //   gotoRegister();
+      // });
+      // $('a', gotoLoginButton).bind('click', function () {
+      //   gotoLogin();
+      // });
+      // loginEmail.focus();
 
-      loginButton.bind('mouseenter', function () {
-        var email = loginEmail.val().trim();
-        var password = loginPassword.val().trim();
-        if (email !== '' && password !== '') {
-          resetLoginStyles();
-        } else {
-          loginButton.addClass('is-button-alert');
-          if (email == '') 
-            loginEmailLabel.css('color', colors.orange);
-          if (password == '') 
-            loginPasswordLabel.css('color', colors.orange);
-        }
-      }).bind('mouseleave', exitLoginButton);
+      // loginButton.bind('mouseenter', function () {
+      //   var email = loginEmail.val().trim();
+      //   var password = loginPassword.val().trim();
+      //   if (email !== '' && password !== '') {
+      //     resetLoginStyles();
+      //   } else {
+      //     loginButton.addClass('is-button-alert');
+      //     if (email == '') 
+      //       loginEmailLabel.css('color', colors.orange);
+      //     if (password == '') 
+      //       loginPasswordLabel.css('color', colors.orange);
+      //   }
+      // }).bind('mouseleave', exitLoginButton);
 
-      loginButton.bind('click', function (e) {
-        e.preventDefault();
-        landingError.hide();
-        var data = loginForm.serializeObject();
-        $.post('/sessions', data, function (serv) {
-          if (serv.status == 'success') {
-            window.location = serv.data.path;
-          } else if (serv.status == 'fail') {
-            landingErrorText.html(serv.data.message);
-            landingError.fadeIn('fast');
-            switch (serv.data.code) {
-              case 'MISSING_FIELD':
-                var missing = serv.data.missing;
-                for (var i=0; i < missing.length; i++) {
-                  $('input[name="member[' + missing[i] + ']"]').addClass('is-input-alert');
-                }
-                break;
-              case 'BAD_AUTH':
-                loginPassword.val('').focus();
-                break;
-              case 'NOT_CONFIRMED':
-                break;
-            }
-          } else if (serv.status == 'error') {
-            landingErrorText.html(serv.message);
-            landingError.fadeIn('fast');
-          }
-        }, 'json');
-      });
+      // loginButton.bind('click', function (e) {
+      //   e.preventDefault();
+      //   landingError.hide();
+      //   var data = loginForm.serializeObject();
+      //   $.post('/sessions', data, function (serv) {
+      //     if (serv.status == 'success') {
+      //       window.location = serv.data.path;
+      //     } else if (serv.status == 'fail') {
+      //       landingErrorText.html(serv.data.message);
+      //       landingError.fadeIn('fast');
+      //       switch (serv.data.code) {
+      //         case 'MISSING_FIELD':
+      //           var missing = serv.data.missing;
+      //           for (var i=0; i < missing.length; i++) {
+      //             $('input[name="member[' + missing[i] + ']"]').addClass('is-input-alert');
+      //           }
+      //           break;
+      //         case 'BAD_AUTH':
+      //           loginPassword.val('').focus();
+      //           break;
+      //         case 'NOT_CONFIRMED':
+      //           break;
+      //       }
+      //     } else if (serv.status == 'error') {
+      //       landingErrorText.html(serv.message);
+      //       landingError.fadeIn('fast');
+      //     }
+      //   }, 'json');
+      // });
 
-      registerButton.bind('mouseenter', function () {
-        var first = registerNameFirst.val().trim();
-        var last = registerNameLast.val().trim();
-        var email = registerEmail.val().trim();
-        var email2 = registerEmail2.val().trim();
-        var password = registerPassword.val().trim();
+      // registerButton.bind('mouseenter', function () {
+      //   var first = registerNameFirst.val().trim();
+      //   var last = registerNameLast.val().trim();
+      //   var email = registerEmail.val().trim();
+      //   var email2 = registerEmail2.val().trim();
+      //   var password = registerPassword.val().trim();
 
-        if (first != '' && last != '' && email != '' && email2 != '' && password != '') {
-          resetRegisterStyles();
-        } else {
-          registerButton.addClass('is-button-alert');
-          if (first == '')
-            registerNameFirstLabel.css('color', colors.orange);
-          if (last == '')
-            registerNameLastLabel.css('color', colors.orange);
-          if (email == '')
-            registerEmailLabel.css('color', colors.orange);
-          if (email2 == '')
-            registerEmail2Label.css('color', colors.orange);
-          if (password == '')
-            registerPasswordLabel.css('color', colors.orange);
-        }
-      }).bind('mouseleave', exitRegisterButton);
+      //   if (first != '' && last != '' && email != '' && email2 != '' && password != '') {
+      //     resetRegisterStyles();
+      //   } else {
+      //     registerButton.addClass('is-button-alert');
+      //     if (first == '')
+      //       registerNameFirstLabel.css('color', colors.orange);
+      //     if (last == '')
+      //       registerNameLastLabel.css('color', colors.orange);
+      //     if (email == '')
+      //       registerEmailLabel.css('color', colors.orange);
+      //     if (email2 == '')
+      //       registerEmail2Label.css('color', colors.orange);
+      //     if (password == '')
+      //       registerPasswordLabel.css('color', colors.orange);
+      //   }
+      // }).bind('mouseleave', exitRegisterButton);
 
-      registerButton.bind('click', function (e) {
-        e.preventDefault();
-        hideLandingForms();
-        landingError.hide();
-        landingMessage.fadeIn('fast');
-        packman.start();
-        var data = registerForm.serializeObject();
-        $.put('/members', data, function (serv) {
-          landingMessage.hide();
-          packman.stop();
-          if (serv.status == 'success') {
-            landingSuccessText.html(serv.data.message);
-            landingSuccess.fadeIn('fast');
-            registerNameFirst.val('');
-            registerNameLast.val('');
-            registerEmail.val('');
-            registerEmail2.val('');
-            registerPassword.val('');
-            resetRegisterStyles();
-          } else if (serv.status == 'fail') {
-            showLandingForms();
-            landingErrorText.html(serv.data.message);
-            landingError.fadeIn('fast');
-            switch (serv.data.code) {
-              case 'MISSING_FIELD':
-                var missing = serv.data.missing;
-                for (var i=0; i < missing.length; i++) {
-                  $('input[name="newmember[' + missing[i] + ']"]').addClass('is-input-alert');
-                }
-                break;
-              case 'INVALID_EMAIL':
-              case 'DUPLICATE_EMAIL':
-                registerEmail.val('');
-                registerEmail2.val('');
-                registerEmailLabel.css('color', colors.orange);
-                registerEmail2Label.css('color', colors.orange);
-                registerEmail.focus();
-                break;
-            }
-          } else if (serv.status == 'error') {
-            showLandingForms();
-            landingErrorText.html(serv.message);
-            landingError.fadeIn('fast');
-          }
-        });
-      });
+      // registerButton.bind('click', function (e) {
+      //   e.preventDefault();
+      //   hideLandingForms();
+      //   landingError.hide();
+      //   landingMessage.fadeIn('fast');
+      //   packman.start();
+      //   var data = registerForm.serializeObject();
+      //   $.put('/members', data, function (serv) {
+      //     landingMessage.hide();
+      //     packman.stop();
+      //     if (serv.status == 'success') {
+      //       landingSuccessText.html(serv.data.message);
+      //       landingSuccess.fadeIn('fast');
+      //       registerNameFirst.val('');
+      //       registerNameLast.val('');
+      //       registerEmail.val('');
+      //       registerEmail2.val('');
+      //       registerPassword.val('');
+      //       resetRegisterStyles();
+      //     } else if (serv.status == 'fail') {
+      //       showLandingForms();
+      //       landingErrorText.html(serv.data.message);
+      //       landingError.fadeIn('fast');
+      //       switch (serv.data.code) {
+      //         case 'MISSING_FIELD':
+      //           var missing = serv.data.missing;
+      //           for (var i=0; i < missing.length; i++) {
+      //             $('input[name="newmember[' + missing[i] + ']"]').addClass('is-input-alert');
+      //           }
+      //           break;
+      //         case 'INVALID_EMAIL':
+      //         case 'DUPLICATE_EMAIL':
+      //           registerEmail.val('');
+      //           registerEmail2.val('');
+      //           registerEmailLabel.css('color', colors.orange);
+      //           registerEmail2Label.css('color', colors.orange);
+      //           registerEmail.focus();
+      //           break;
+      //       }
+      //     } else if (serv.status == 'error') {
+      //       showLandingForms();
+      //       landingErrorText.html(serv.message);
+      //       landingError.fadeIn('fast');
+      //     }
+      //   });
+      // });
 
-      // resend confirmation email
-      $('.resend-conf').bind('click', function () {
-        hideLandingForms();
-        landingError.hide();
-        landingMessage.fadeIn('fast');
-        packman.start();
-        var id = $(this).itemID()
-        var data = { id: id };
+      // // resend confirmation email
+      // $('.resend-conf').bind('click', function () {
+      //   hideLandingForms();
+      //   landingError.hide();
+      //   landingMessage.fadeIn('fast');
+      //   packman.start();
+      //   var id = $(this).itemID()
+      //   var data = { id: id };
 
-        $.post('/resendconf/' + id, data, function (serv) {
-          landingMessage.hide(packman.stop);
-          if (serv.status == 'success') {
-            landingSuccessText.html(serv.data.message);
-            landingSuccess.fadeIn('fast');
-          } else if (serv.status == 'error') {
-            showLandingForms();
-            landingErrorText.html(serv.message);
-            landingError.fadeIn('fast');
-          }
-        }, 'json');
-      });
+      //   $.post('/resendconf/' + id, data, function (serv) {
+      //     landingMessage.hide(packman.stop);
+      //     if (serv.status == 'success') {
+      //       landingSuccessText.html(serv.data.message);
+      //       landingSuccess.fadeIn('fast');
+      //     } else if (serv.status == 'error') {
+      //       showLandingForms();
+      //       landingErrorText.html(serv.message);
+      //       landingError.fadeIn('fast');
+      //     }
+      //   }, 'json');
+      // });
 
 
       // pulse logo on mouseover

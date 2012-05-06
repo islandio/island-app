@@ -79,8 +79,10 @@ app.configure('production', function () {
   // Notify.active = true;
 });
 
+var tester = mongodb.connect(argv.db, { noOpen: true }, function () {});
+console.log(tester);
 app.set('sessionStore', new mongoStore({
-  db: mongodb.connect(argv.db, { noOpen: true }, function () {}),
+  db: tester,
 }, function (err) {
   if (err) log('Error creating mongoStore: ' + err);
 }));
@@ -264,12 +266,10 @@ app.get('/auth/facebook', function (req, res, next) {
   var home = process.env.NODE_ENV === 'production' ?
               'http://' + host + '/' :
               'http://' + host + ':' + argv.port + '/';
-  var callback = home + 'auth/facebook/callback';
-  console.log(callback);
   passport.use(new FacebookStrategy({
       clientID: 203397619757208,
       clientSecret: 'af79cdc8b5ca447366e87b12c3ddaed2',
-      callbackURL: callback,
+      callbackURL: home + 'auth/facebook/callback',
     },
     function (accessToken, refreshToken, profile, done) {
       profile.accessToken = accessToken;
