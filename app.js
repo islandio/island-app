@@ -53,13 +53,13 @@ transloadit.template_id = process.env.NODE_ENV !== 'production' ?
                             'dd77fc95cfff48e8bf4af6159fd6b2e7' :
                             '29c60cfc5b9f4e8b8c8bf7a9b1191147';
 
-var cloudfrontImageUrl = process.env.NODE_ENV === 'production' ?
+var cloudfrontImageUrl = process.env.NODE_ENV !== 'production' ?
                             'https://d1da6a4is4i5z6.cloudfront.net/' :
                             'https://d2a89oeknmk80g.cloudfront.net/';
-var cloudfrontVideoUrl = process.env.NODE_ENV === 'production' ?
+var cloudfrontVideoUrl = process.env.NODE_ENV !== 'production' ?
                             'https://d1ehvayr9dfk4s.cloudfront.net/' :
                             'https://d2c2zu8qn6mgju.cloudfront.net/';
-var cloudfrontAudioUrl = process.env.NODE_ENV === 'production' ?
+var cloudfrontAudioUrl = process.env.NODE_ENV !== 'production' ?
                             'https://dp3piv67f7p06.cloudfront.net/' :
                             'https://d2oapa8usgizyg.cloudfront.net/';
 
@@ -79,10 +79,10 @@ app.configure('production', function () {
   // Notify.active = true;
 });
 
-var tester = mongodb.connect(argv.db, { noOpen: true }, function () {});
-console.log(tester);
 app.set('sessionStore', new mongoStore({
-  db: tester,
+  db: mongodb.connect(argv.db, { noOpen: true }, function () {}),
+  username: 'islander',
+  password: 'V[AMF?UV{b'
 }, function (err) {
   if (err) log('Error creating mongoStore: ' + err);
 }));

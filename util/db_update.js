@@ -105,8 +105,12 @@ Step(
   function (err) {
     // drop indexes
     memberDb.collections.member.dropIndexes(this.parallel());
+    memberDb.collections.post.dropIndexes(this.parallel());
     memberDb.collections.media.dropIndexes(this.parallel());
     memberDb.collections.comment.dropIndexes(this.parallel());
+    memberDb.collections.rating.dropIndexes(this.parallel());
+    memberDb.collections.hit.dropIndexes(this.parallel());
+    memberDb.collections.view.dropIndexes(this.parallel());
     memberDb.collections.sessions.drop(this.parallel());
   },
   // Reformat members.
