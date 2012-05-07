@@ -865,6 +865,7 @@ img.heart-img {
   margin: 15px 0 0;
 }
 .comment {
+  overflow: hidden;
   background-color: #f2f2f2;
   width: 314px;
   margin: 5px 0 0;
