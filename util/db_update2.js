@@ -51,10 +51,36 @@ Step(
     memberDb.collections.media.update({}, { $unset : { ratings: 1, hits: 1 } },
                                     { safe: true, multi: true }, this.parallel());
   },
+  function (err) {
+    errCheck(err, 'removing embedded edge refs');
+    log('\nRemoved all embedded edge refereces.');
+    var next = this;
+    memberDb.collections.media.find({})
+            .toArray(function (err, medias) {
+      errCheck(err, 'finding medias');
+      if (medias.length > 0) {
+        var _next = _.after(medias.length, next);
+        _.each(medias, function (media) {
+          Step(
+            function () {
+              memberDb.findPosts({ key: media.key }, { limit: 1 }, this);
+            },
+            function (err, post) {
+              errCheck(err, 'finding post');
+              post = _.first(post);
+              log('\nUpdated media: ' + inspect(media));
+              memberDb.collections.media.update({ _id: media._id },
+                                              { $set : { post_id : post._id } },
+                                              { safe: true }, _next);
+            }
+          );
+        });
+      } else next();
+    });
+  },
   // Done.
   function (err) {
     errCheck(err, 'at end');
-    log('\nRemoved all embedded edge refereces.');
     log('\nAll done!\n');
     process.exit(0);
   }
