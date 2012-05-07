@@ -60,6 +60,6 @@ div.clear
 div.grid-wrap
   #search
     h1.title-bottom / Browse
-    input#search-box.matte(type="search", placeholder="Search", value=member.displayName.toLowerCase())
+    input#search-box.matte(type="search", placeholder="Search", value=data.displayName.toLowerCase())
   #grid.adjustable-grid
     !=partial('object', grid)
