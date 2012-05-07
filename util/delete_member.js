@@ -46,33 +46,24 @@ Step(
   },
   // remove member
   function (err) {
-    var next = this;
-    memberDb.collections.hit.find({ member_id: _id })
-            .toArray(function (err, docs) {
-
-    ]
-  },
-  // remove member
-  function (err) {
     log('\nDeleted member.');
     memberDb.collections.member.remove({ _id: _id }, this);
   },
-  // delete all hits, views, ratings, posts, medias
+  // delete all hits, views, ratings, comments, posts, medias
   function (err) {
-    this();
-    // errCheck(err, 'removing member');
-    // log('Deleted member\'s hits.');
-    // memberDb.collections.hit.remove({ member_id: _id }, this.parallel());
-    // log('Deleted member\'s views.');
-    // memberDb.collections.view.remove({ member_id: _id }, this.parallel());
-    // log('Deleted member\'s ratings.');
-    // memberDb.collections.rating.remove({ member_id: _id }, this.parallel());
-    // log('Deleted member\'s comments.');
-    // memberDb.collections.comment.remove({ member_id: _id }, this.parallel());
-    // log('Deleted member\'s posts.');
-    // memberDb.collections.post.remove({ member_id: _id }, this.parallel());
-    // log('Deleted member\'s medias.');
-    // memberDb.collections.media.remove({ member_id: _id }, this.parallel());
+    errCheck(err, 'removing member');
+    log('Deleted member\'s hits.');
+    memberDb.collections.hit.remove({ member_id: _id }, this.parallel());
+    log('Deleted member\'s views.');
+    memberDb.collections.view.remove({ member_id: _id }, this.parallel());
+    log('Deleted member\'s ratings.');
+    memberDb.collections.rating.remove({ member_id: _id }, this.parallel());
+    log('Deleted member\'s comments.');
+    memberDb.collections.comment.remove({ member_id: _id }, this.parallel());
+    log('Deleted member\'s posts.');
+    memberDb.collections.post.remove({ member_id: _id }, this.parallel());
+    log('Deleted member\'s medias.');
+    memberDb.collections.media.remove({ member_id: _id }, this.parallel());
   },
   // Done.
   function (err) {

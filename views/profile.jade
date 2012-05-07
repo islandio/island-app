@@ -7,6 +7,13 @@ div.single-left
     h1.title-sub from 
       =data.hometown.name
   div.obj-holder.member-picture
+    - if (!data.picture) {
+      - data.picture = { width: 640, height: 288 };
+      - if (!data.gender || 'male' === data.gender)
+        - data.picture.source = "https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-blnk-pic-m.jpg";
+      - else
+        - data.picture.source = "https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-blnk-pic-f.jpg";
+    - }
     - var _w = 640, _h = 288
     - var w, h, o
     - w = _w

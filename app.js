@@ -348,7 +348,7 @@ app.get('/member/:key', function (req, res) {
       getMedia(100, this.parallel());
     },
     function (err, member, media) {
-      if (err || !member)
+      if (err || !member || member.role !== 0)
         return res.render('404');
       getRecentComments(5, member._id, function (err, coms) {
         if (err)
