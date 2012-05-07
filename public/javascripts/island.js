@@ -500,9 +500,8 @@ Island = (function ($) {
 
       $('video, audio').each(function () {
         jwplayer($(this).attr('id')).setup({
-          flashplayer: '/jwplayer/player.swf',
-          skin: '/jwplayer/skins/bekle.zip',
-          // poster: '/graphics/white.jpg',
+          flashplayer: 'https://d271mvlc6gc7bl.cloudfront.net/main/jwplayer/player.swf',
+          skin: 'https://d271mvlc6gc7bl.cloudfront.net/main/jwplayer/skins/bekle.zip',
         });
       });
 
