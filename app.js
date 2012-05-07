@@ -612,7 +612,7 @@ if (!module.parent) {
         });
       };
 
-      // update everyone with new trends
+      // update everyone with new trend
       var distributeTrendingMedia = function () {
         findTrendingMedia(10, function (err, media) {
           if (err) throw new Error('Failed to find media trends');
