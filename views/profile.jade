@@ -3,14 +3,24 @@ div.single-left
     span.slash
       | /
     h1.title-left
-      =member.displayName
+      =data.displayName
     h1.title-sub from 
       =data.hometown.name
   div.obj-holder.member-picture
-    - var top = -(data.picture.height / data.picture.width) * 320;
+    - var _w = 640, _h = 288
+    - var w, h, o
+    - w = _w
+    - h = (data.picture.height / data.picture.width) * _w
+    - if (h - _h >= 0) {
+      - o = 'top:' + (-(h - _h) / 2) + 'px;'
+    - } else {
+      - w = (data.picture.width / data.picture.height) * _h
+      - h = _h
+      - o = 'left:' + (-(w - _w) / 2) + 'px;'
+    - }
     img.mask(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-top.png", width="640", style="top: 0;")
     img.mask(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-btm.png", width="640", style="top: 280px;")
-    img.masked(src=data.picture.source, width="640", style="top:" + top + "px;")
+    img.masked(src=data.picture.source, width=w, height=h, style=o)
   div.obj-desc.matte
     img.left(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-obj-info.gif", alt="info", align="top")
     div.obj-desc-txt-wrap
@@ -29,6 +39,7 @@ div.single-left
               span.member-info-content.birthday #{data.birthday}
               span &nbsp;year old 
               span.member-info-content #{data.gender}
+          - if (data.website)
           li \// 
             span More from #{data.displayName} at 
             span.member-info-content

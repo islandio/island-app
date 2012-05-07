@@ -1,8 +1,5 @@
 #!/usr/bin/env node
 
-// Update existing data to the new
-// user, team, vehicle ,fleet format.
-
 var log = require('console').log;
 var mongodb = require('mongodb');
 var search = require('reds').createSearch('media');
@@ -161,6 +158,7 @@ Step(
           delete post.type;
           var media = {
             key: post.key,
+            post_id: post._id,
             member_id: post.member_id,
             ratings: post.ratings,
             hits: post.hits,

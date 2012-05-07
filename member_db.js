@@ -166,7 +166,7 @@ MemberDb.prototype.findOrCreateMemberFromFacebook = function (props, cb) {
  */
 MemberDb.prototype.createPost = function (props, cb) {
   var self = this;
-  if (!validate(props, ['title', 'body', 'member', 'medias']))
+  if (!validate(props, ['title', 'body', 'member']))
     return cb(new Error('Invalid post'));
   props.member_id = props.member._id;
   var memberName = props.member.displayName;
@@ -175,8 +175,8 @@ MemberDb.prototype.createPost = function (props, cb) {
                     8, function (err, key) {
     _.defaults(props, {
       key: key,
-      comments: [],
-      views: [],
+      // comments: [],
+      // views: [],
     });
     createDoc(self.collections.post, props,
               function (err, doc) {
@@ -190,11 +190,11 @@ MemberDb.prototype.createPost = function (props, cb) {
 }
 MemberDb.prototype.createMedia = function (props, cb) {
   var self = this;
-  if (!validate(props, ['type', 'key', 'member_id']))
+  if (!validate(props, ['type', 'key', 'member_id', 'post_id']))
     return cb(new Error('Invalid media'));
   _.defaults(props, {
-    ratings: [],
-    hits: [],
+    // ratings: [],
+    // hits: [],
   });
   createDoc(self.collections.media, props,
             function (err, doc) {
@@ -217,16 +217,16 @@ MemberDb.prototype.createView = function (props, cb) {
       if (err) return cb(err);
       if (!post) return cb(new Error('Post not found'));
       props.post_id = post._id;
-      createDoc(self.collections.view, props, this);
-    },
-    function (err, doc) {
-      if (err) return cb(err);
-      self.collections.post.update({ _id: doc.post_id },
-                                    { $push : { views: doc._id } },
-                                    { safe: true }, function (err) {
-        cb(err, doc);
-      });
+      createDoc(self.collections.view, props, cb);
     }
+    // function (err, doc) {
+    //   if (err) return cb(err);
+    //   self.collections.post.update({ _id: doc.post_id },
+    //                                 { $push : { views: doc._id } },
+    //                                 { safe: true }, function (err) {
+    //     cb(err, doc);
+    //   });
+    // }
   );
 }
 MemberDb.prototype.createComment = function (props, cb) {
@@ -246,17 +246,21 @@ MemberDb.prototype.createComment = function (props, cb) {
       if (err) return cb(err);
       if (!post) return cb(new Error('Post not found'));
       props.post_id = post._id;
-      createDoc(self.collections.comment, props, this);
-    },
-    function (err, doc) {
-      if (err) return cb(err);
-      self.collections.post.update({ _id: doc.post_id },
-                                    { $push : { comments: doc._id } },
-                                    { safe: true }, function (err) {
+      createDoc(self.collections.comment, props,
+                function (err, doc) {
         if (err) return cb(err);
         getDocIds.call(self, doc, cb);
       });
     }
+    // function (err, doc) {
+    //   if (err) return cb(err);
+    //   self.collections.post.update({ _id: doc.post_id },
+    //                                 { $push : { comments: doc._id } },
+    //                                 { safe: true }, function (err) {
+    //     if (err) return cb(err);
+    //     getDocIds.call(self, doc, cb);
+    //   });
+    // }
   );
 }
 MemberDb.prototype.createRating = function (props, cb) {
@@ -281,24 +285,24 @@ MemberDb.prototype.createRating = function (props, cb) {
                   function (err, doc) {
         if (err) return cb(err);
         if (!doc)
-          return createDoc(self.collections.rating, props, next);
+          return createDoc(self.collections.rating, props, cb);
         self.collections.rating.update({ _id: doc._id },
-                                      { $set : { val: props.val, created: new Date } },
+                                      { $set : { val: props.val,
+                                        created: new Date } },
                                       { safe: true }, function (err) {
           doc.val = props.val;
           cb(err, doc);
         });
       });
-      
-    },
-    function (err, doc) {
-      if (err) return cb(err);
-      self.collections.media.update({ _id: doc.media_id },
-                                    { $push : { ratings: doc._id } },
-                                    { safe: true }, function (err) {
-        cb(err, doc);
-      });
     }
+    // function (err, doc) {
+    //   if (err) return cb(err);
+    //   self.collections.media.update({ _id: doc.media_id },
+    //                                 { $push : { ratings: doc._id } },
+    //                                 { safe: true }, function (err) {
+    //     cb(err, doc);
+    //   });
+    // }
   );
 }
 MemberDb.prototype.createHit = function (props, cb) {
@@ -316,16 +320,16 @@ MemberDb.prototype.createHit = function (props, cb) {
       if (err) return cb(err);
       if (!med) return cb(new Error('Media not found'));
       props.media_id = med._id;
-      createDoc(self.collections.hit, props, this);
-    },
-    function (err, doc) {
-      if (err) return cb(err);
-      self.collections.media.update({ _id: doc.media_id },
-                                    { $push : { hits: doc._id } },
-                                    { safe: true }, function (err) {
-        cb(err, doc);
-      });
+      createDoc(self.collections.hit, props, cb);
     }
+    // function (err, doc) {
+    //   if (err) return cb(err);
+    //   self.collections.media.update({ _id: doc.media_id },
+    //                                 { $push : { hits: doc._id } },
+    //                                 { safe: true }, function (err) {
+    //     cb(err, doc);
+    //   });
+    // }
   );
 }
 
@@ -346,16 +350,21 @@ MemberDb.prototype.findPosts = function (query, opts, cb) {
       return cb(null, []);
     Step(
       function () {
-        fillDocList.call(self, 'media', posts, { bare: true }, this.parallel());
-        fillDocList.call(self, 'comment', posts, this.parallel());
-        fillDocList.call(self, 'view', posts, this.parallel());
+        fillDocList.call(self, 'media', posts, 'post_id',
+                        { bare: true }, this.parallel());
+        fillDocList.call(self, 'comment', posts, 'post_id',
+                        this.parallel());
+        fillDocList.call(self, 'view', posts, 'post_id',
+                        this.parallel());
       },
       function (err) {
         if (err) return cb(err);
         var next = this;
         _.each(posts, function (post) {
-          fillDocList.call(self, 'rating', post.medias, { bare: true }, next.parallel());
-          fillDocList.call(self, 'hit', post.medias, { bare: true }, next.parallel());
+          fillDocList.call(self, 'rating', post.medias, 'media_id',
+                          { bare: true }, next.parallel());
+          fillDocList.call(self, 'hit', post.medias, 'media_id',
+                          { bare: true }, next.parallel());
         });
       },
       function (err) {
@@ -381,7 +390,8 @@ MemberDb.prototype.findMedia = function (query, opts, cb) {
       function () {
         var next = this;
         _.each(fill, function (f) {
-          fillDocList.call(self, f, media, { bare: true }, next.parallel());
+          fillDocList.call(self, f, media, 'media_id',
+                          { bare: true }, next.parallel());
         });
       },
       function (err) {
@@ -477,7 +487,7 @@ MemberDb.prototype.findMemberByKey = function (key, bare, cb) {
 /*
  * Get a list of all twitter names from members.
  */
-MemberDb.prototype.findTwitterNames = function (cb) {
+MemberDb.prototype.findTwitterHandles = function (cb) {
   var self = this;
   self.collections.member.find({})
       .toArray(function (err, members) {
@@ -599,7 +609,45 @@ function findOne(collection, query, opts, cb) {
 /*
  * Fill document _id lists.
  */
-function fillDocList(list, docs, opts, cb) {
+// function fillDocList(list, docs, opts, cb) {
+//   var self = this;
+//   if ('function' === typeof opts) {
+//     cb = opts;
+//     opts = {};
+//   }
+//   var collection = self.collections[list];
+//   list += 's';
+//   var isArray = _.isArray(docs);
+//   if (!isArray)
+//     docs = [docs];
+//   if (docs.length === 0)
+//     return done();
+//   var _done = _.after(docs.length, done);
+//   _.each(docs, function (doc) {
+//     if (doc[list].length === 0)
+//       return _done();  
+//     var __done = _.after(doc[list].length, _done);
+//     _.each(doc[list], function (id, i) {
+//       findOne.call(self, collection,
+//               { _id: id }, { bare: opts.bare }, function (err, el) {
+//         if (err) return cb(err);
+//         doc[list][i] = el;
+//         __done();
+//       });
+//     });
+//   });
+//   function done() {
+//     if (!isArray)
+//       docs = _.first(docs);
+//     cb(null, docs);
+//   }
+// }
+
+
+/*
+ * Fill document lists.
+ */
+function fillDocList(list, docs, key, opts, cb) {
   var self = this;
   if ('function' === typeof opts) {
     cb = opts;
@@ -614,16 +662,15 @@ function fillDocList(list, docs, opts, cb) {
     return done();
   var _done = _.after(docs.length, done);
   _.each(docs, function (doc) {
-    if (doc[list].length === 0)
-      return _done();  
-    var __done = _.after(doc[list].length, _done);
-    _.each(doc[list], function (id, i) {
-      findOne.call(self, collection,
-              { _id: id }, { bare: opts.bare }, function (err, el) {
-        if (err) return cb(err);
-        doc[list][i] = el;
-        __done();
-      });
+    var query = {};
+    query[key] = doc._id;
+    find.call(self, collection, query, { bare: opts.bare },
+              function (err, results) {
+      // if (results.length !== 0)
+      //   console.log(list, query, typeof query[key])
+      if (err) return cb(err);
+      doc[list] = results;
+      _done();
     });
   });
   function done() {

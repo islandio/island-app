@@ -162,7 +162,7 @@ function getMedia(limit, cb) {
   memberDb.findMedia({}, { limit: limit,
                     sort: { created: -1 } }, cb);
 }
-function getTrending(limit, cb) {
+function findTrendingMedia(limit, cb) {
   Step(
     function () {
       memberDb.findPosts({}, { limit: 100, sort: { created: -1 }}, this);
@@ -201,6 +201,7 @@ function getTrending(limit, cb) {
     return initial * Math.exp(-((new Date()).getTime() - created) / constant);
   }
 }
+
 function getRecentComments(limit, memberId, cb) {
   if ('function' === typeof memberId) {
     cb = memberId;
@@ -209,9 +210,6 @@ function getRecentComments(limit, memberId, cb) {
   var query = memberId ? { member_id: memberId } : {};
   memberDb.findComments(query, { limit: limit,
                         sort: { created: -1 } }, cb);
-}
-function getTwitterNames(cb) {
-  memberDb.findTwitterNames(cb);
 }
 
 function renderMedia(med, cb) {
@@ -233,16 +231,15 @@ app.get('/', authorize, function (req, res) {
     function () {
       getMedia(100, this.parallel());
       getRecentComments(5, this.parallel());
-      getTwitterNames(this.parallel());
     },
     function (err, media, comments, twitters) {
       res.render('index', {
         part: 'media',
         media: media,
-        trends: trends,
+        trends: mediaTrends,
         comments: comments,
         member: req.user,
-        twitters: twitters,
+        twitters: twitterHandles,
       });
     }
   );
@@ -307,19 +304,12 @@ app.get('/logout', function (req, res) {
 app.get('/add', authorize, function (req, res) {
   if (req.user.role !== 0)
     return res.redirect('/');
-  Step(
-    function () {
-      getTwitterNames(this.parallel());
-    },
-    function (err, twitters) {
-      res.render('index', {
-        part: 'add',
-        tlip: transloadit,
-        member: req.user,
-        twitters: twitters,
-      });
-    }
-  );
+  res.render('index', {
+    part: 'add',
+    tlip: transloadit,
+    member: req.user,
+    twitters: twitterHandles,
+  });
 });
 
 // Media search
@@ -356,9 +346,8 @@ app.get('/member/:key', function (req, res) {
     function () {
       memberDb.findMemberByKey(req.params.key, this.parallel());
       getMedia(100, this.parallel());
-      getTwitterNames(this.parallel());
     },
-    function (err, member, media, twitters) {
+    function (err, member, media) {
       if (err || !member)
         return res.render('404');
       getRecentComments(5, member._id, function (err, coms) {
@@ -369,7 +358,7 @@ app.get('/member/:key', function (req, res) {
         data: member,
         comments: coms,
         grid: media,
-        twitters: twitters,
+        twitters: twitterHandles,
         member: req.user,
       });
       });
@@ -385,9 +374,8 @@ app.get('/:key', authorize, function (req, res) {
       memberDb.findPosts({ key: req.params.key },
                         { limit: 1 }, this.parallel());
       getMedia(100, this.parallel());
-      getTwitterNames(this.parallel());
     },
-    function (err, post, grid, twitters) {
+    function (err, post, grid) {
       if (err || !post || post.length === 0)
         return res.render('404');
       post = _.first(post);
@@ -413,7 +401,7 @@ app.get('/:key', authorize, function (req, res) {
         post: post,
         grid: grid,
         member: req.user,
-        twitters: twitters,
+        twitters: twitterHandles,
       });
     }
   );
@@ -435,7 +423,7 @@ app.put('/insert', authorize, function (req, res) {
     function () {
       var post = req.body.post;
       post.member = req.user;
-      post.medias = [];
+      // post.medias = [];
       memberDb.createPost(post, this);
     },
     function (err, doc) {
@@ -450,7 +438,7 @@ app.put('/insert', authorize, function (req, res) {
         num += results.audio_encode.length;
       if (num === 0)
         return done(new Error('Nothing was received from Transloadit'));
-      var _next = _.after(num, this);
+      var _next = _.after(num, done);
       _.each(results, function (val, key) {
         _.each(val, function (result) {
           var prefix;
@@ -467,6 +455,7 @@ app.put('/insert', authorize, function (req, res) {
           var media = {
             type: result.type,
             key: doc.key,
+            post_id: doc._id,
             member_id: req.user._id,
           };
           media[result.type] = result;
@@ -493,18 +482,18 @@ app.put('/insert', authorize, function (req, res) {
           }
           memberDb.createMedia(media, function (err, med) {
             if (err) return done(err);
-            doc.medias.push(med._id);
+            // doc.medias.push(med._id);
             everyone.distributeMedia(med);
             _next(null, doc);
           });
         });
       });
-    },
-    function (err, doc) {
-      memberDb.collections.post.update({ _id: doc._id },
-                                      { $set : { medias: doc.medias } },
-                                      { safe: true }, this);
-    }, done
+    }
+    // function (err, doc) {
+    //   // memberDb.collections.post.update({ _id: doc._id },
+    //   //                                 { $set : { medias: doc.medias } },
+    //   //                                 { safe: true }, this);
+    // }, done
   );
 });
 
@@ -577,7 +566,8 @@ app.put('/rate/:mediaId', function (req, res) {
 ////////////// Initialize and Listen
 
 var memberDb;
-var trends;
+var mediaTrends;
+var twitterHandles;
 
 if (!module.parent) {
 
@@ -623,20 +613,29 @@ if (!module.parent) {
       };
 
       // update everyone with new trends
-      var distributeTrends = function () {
-        getTrending(10, function (err, media) {
-          if (err) throw new Error('Failed to create trends');
-          trends = media;
+      var distributeTrendingMedia = function () {
+        findTrendingMedia(10, function (err, media) {
+          if (err) throw new Error('Failed to find media trends');
+          mediaTrends = media;
           var rendered = [];
-          _.each(trends, function (trend) {
+          _.each(mediaTrends, function (trend) {
             rendered.push(templates.trend({ trend: trend }));
           });
           if (everyone.now.receiveTrends)
             everyone.now.receiveTrends(null, rendered);
         });
       };
-      setInterval(distributeTrends, 5000); distributeTrends();
+      setInterval(distributeTrendingMedia, 5000); distributeTrendingMedia();
       
+      // get a current list of contributor twitter handles
+      var findTwitterHandles = function () {
+        memberDb.findTwitterHandles(function (err, handles) {
+          if (err) throw new Error('Failed to find twitter handles');
+          twitterHandles = handles;
+        });
+      };
+      setInterval(findTwitterHandles, 60000); findTwitterHandles();
+
       // .server.socket.set('authorization', function (data, cb) {
       //   var cookies = connect.utils.parseCookie(data.headers.cookie);
       //   var sid = cookies['connect.sid'];
