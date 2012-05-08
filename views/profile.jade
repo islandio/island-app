@@ -5,7 +5,10 @@ div.single-left
     h1.title-left
       =data.displayName
     h1.title-sub from 
-      =data.hometown.name
+      - if (data.hometown)
+        =data.hometown.name
+      - else
+        | Earth
   div.obj-holder.member-picture
     - if (!data.picture) {
       - data.picture = { width: 640, height: 288 };
