@@ -313,7 +313,7 @@ app.get('/add', authorize, function (req, res) {
 });
 
 // Media search
-app.get('/search/:query', function (req, res) {
+app.get('/search/:query', authorize, function (req, res) {
   var fn = '__clear__' === req.params.query ?
             _.bind(getMedia, {}, 100) :
             _.bind(memberDb.searchPosts, memberDb,
@@ -341,7 +341,7 @@ app.get('/search/:query', function (req, res) {
 });
 
 // Media search
-app.get('/member/:key', function (req, res) {
+app.get('/member/:key', authorize, function (req, res) {
   Step(
     function () {
       memberDb.findMemberByKey(req.params.key, this.parallel());
@@ -423,7 +423,6 @@ app.put('/insert', authorize, function (req, res) {
     function () {
       var post = req.body.post;
       post.member = req.user;
-      // post.medias = [];
       memberDb.createPost(post, this);
     },
     function (err, doc) {
@@ -482,24 +481,18 @@ app.put('/insert', authorize, function (req, res) {
           }
           memberDb.createMedia(media, function (err, med) {
             if (err) return done(err);
-            // doc.medias.push(med._id);
             everyone.distributeMedia(med);
             _next(null, doc);
           });
         });
       });
     }
-    // function (err, doc) {
-    //   // memberDb.collections.post.update({ _id: doc._id },
-    //   //                                 { $set : { medias: doc.medias } },
-    //   //                                 { safe: true }, this);
-    // }, done
   );
 });
 
 
 // Click media
-app.put('/hit/:mediaId', function (req, res) {
+app.put('/hit/:mediaId', authorize, function (req, res) {
   // TODO: permissions...
   if (!req.params.mediaId)
     fail(new Error('Failed to hit media'));
@@ -519,7 +512,7 @@ app.put('/hit/:mediaId', function (req, res) {
 
 
 // Add comment
-app.put('/comment/:postId', function (req, res) {
+app.put('/comment/:postId', authorize, function (req, res) {
   // TODO: permissions...
   if (!req.params.postId || !req.body.body)
     fail(new Error('Failed to insert comment'));
@@ -542,7 +535,7 @@ app.put('/comment/:postId', function (req, res) {
 
 
 // Add rating
-app.put('/rate/:mediaId', function (req, res) {
+app.put('/rate/:mediaId', authorize, function (req, res) {
   // TODO: permissions...
   if (!req.params.mediaId || !req.body.val)
     fail(new Error('Failed to insert rating'));

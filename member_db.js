@@ -89,7 +89,7 @@ MemberDb.prototype.findOrCreateMemberFromFacebook = function (props, cb) {
                           8, function (err, key) {
         if (err) return cb(err);
         props.key = key;
-        updateFBInfo(null);
+        updateFBInfo(member);
       });
   });
   function updateFBInfo(member) {
