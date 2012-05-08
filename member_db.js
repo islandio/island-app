@@ -76,88 +76,85 @@ var MemberDb = exports.MemberDb = function (db, options, cb) {
  */
 MemberDb.prototype.findOrCreateMemberFromFacebook = function (props, cb) {
   var self = this;
+  delete props._raw;
+  delete props._json;
   props.primaryEmail = props.emails[0].value;
   self.collections.member.findOne({ primaryEmail: props.primaryEmail },
                                   function (err, member) {
     if (err) return cb(err);
-    if (member && member.provider) {
-      self.collections.member.update({ primaryEmail: props.primaryEmail },
-                                    { $set : { accessToken: props.accessToken } },
-                                    { safe: true }, function (err) {
-        if (err) return cb(err);
-        member.accessToken = props.accessToken;
-        cb(null, member);
-      });
-    } else {
-      delete props._raw;
-      delete props._json;
+    if (member)
+      updateFBInfo(member);
+    else
       createUniqueURLKey(self.collections.member,
                           8, function (err, key) {
         if (err) return cb(err);
         props.key = key;
-        var facebook = new Facebook(fbInfo);
-        Step(
-          function () {
-            facebook.get(props.id,
-                        { access_token: props.accessToken }, this);
-          },
-          function (err, data) {
-            if (err) return cb(err);
-            _.extend(props, {
-              locale: data.locale,
-              timezone: data.timezone,
-              gender: data.gender,
-              birthday: data.birthday,
-              website: data.website,
-            });
-            if (data.location)
-              facebook.get(data.location.id, {}, this.parallel());
-            else this.parallel()();
-            if (data.hometown)
-              facebook.get(data.hometown.id, {}, this.parallel());
-            else this.parallel()();
-            facebook.get(props.id + '/albums',
-                        { access_token: props.accessToken }, this.parallel());
-          },
-          function (err, location, hometown, albums) {
-            if (err) return cb(err);
-            if (location) {
-              props.location = { name: location.name };
-              _.extend(props.location, location.location);
-            } else props.location = null;
-            if (hometown) {
-              props.hometown = { name: hometown.name };
-              _.extend(props.hometown, hometown.location);
-            } else props.hometown = null;
-            var photo = _.find(albums, function (album) {
-                                return album.name === 'Cover Photos'; });
-            if (photo && photo.cover_photo)
-              facebook.get(photo.cover_photo,
-                          { access_token: props.accessToken }, this);
-            else this();
-          },
-          function (err, data) {
-            if (err) return cb(err);
-            props.picture = data || null;
-            if (member && !member.provider) {
-              _.defaults(props, member);
-              self.collections.member.update({ primaryEmail: props.primaryEmail },
-                                            props, { safe: true }, function (err) {
-                if (err) return cb(err);
-                cb(null, props);
-              });
-            } else if (!member) {
-              _.defaults(props, {
-                role: 1,
-                twitter: '',
-              });
-              createDoc(self.collections.member, props, cb);
-            }
-          }
-        );
+        updateFBInfo(null);
       });
-    }
   });
+  function updateFBInfo(member) {
+    var facebook = new Facebook(fbInfo);
+    Step(
+      function () {
+        facebook.get(props.id,
+                    { access_token: props.accessToken }, this);
+      },
+      function (err, data) {
+        if (err) return cb(err);
+        _.extend(props, {
+          locale: data.locale,
+          timezone: data.timezone,
+          gender: data.gender,
+          birthday: data.birthday,
+          website: data.website,
+        });
+        if (data.location)
+          facebook.get(data.location.id, {}, this.parallel());
+        else this.parallel()();
+        if (data.hometown)
+          facebook.get(data.hometown.id, {}, this.parallel());
+        else this.parallel()();
+        facebook.get(props.id + '/albums',
+                    { access_token: props.accessToken }, this.parallel());
+      },
+      function (err, location, hometown, albums) {
+        if (err) return cb(err);
+        if (location) {
+          props.location = { name: location.name };
+          _.extend(props.location, location.location);
+        } else props.location = null;
+        if (hometown) {
+          props.hometown = { name: hometown.name };
+          _.extend(props.hometown, hometown.location);
+        } else props.hometown = null;
+        var photo = _.find(albums, function (album) {
+                            return album.name === 'Cover Photos'; });
+        if (photo && photo.cover_photo)
+          facebook.get(photo.cover_photo,
+                      { access_token: props.accessToken }, this);
+        else this();
+      },
+      function (err, data) {
+        if (err) return cb(err);
+        props.picture = data || null;
+        if (member) {
+          _.defaults(props, member);
+          self.collections.member.update({ primaryEmail: props.primaryEmail },
+                                          props, { safe: true }, function (err) {
+            if (err) return cb(err);
+            cb(null, props);
+          });
+        } else if (!member) {
+          _.defaults(props, {
+            role: 1,
+            twitter: '',
+          });
+          createDoc(self.collections.member, props, cb);
+        }
+      }
+    );
+  }
+
 }
 
 
