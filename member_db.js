@@ -82,7 +82,7 @@ MemberDb.prototype.findOrCreateMemberFromFacebook = function (props, cb) {
   self.collections.member.findOne({ primaryEmail: props.primaryEmail },
                                   function (err, member) {
     if (err) return cb(err);
-    if (member)
+    if (member && member.key)
       updateFBInfo(member);
     else
       createUniqueURLKey(self.collections.member,
