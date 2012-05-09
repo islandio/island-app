@@ -1,4 +1,4 @@
-- if (data.website) console.log(data.website, typeof data.website);
+- var websites = data.website ? data.website.split('\n') : null;
 div.single-left
   div.obj-title
     span.slash
@@ -50,11 +50,17 @@ div.single-left
               span.member-info-content.birthday #{data.birthday}
               span &nbsp;year old 
               span.member-info-content #{data.gender}
-          - if (data.website)
+          - if (websites)
             li \// 
               span More from #{data.displayName} at 
               span.member-info-content
-                a(href=data.website, target="_blank") #{data.website}
+                - websites.forEach(function (site, i) {
+                  - if (site !== '') {
+                    a(href=site, target="_blank") #{site}
+                    - if (i !== websites.length - 1)
+                      | , 
+                  - }
+                - })
       h3.obj-details(data-date=data.created.toString(), data-type="profile")
 div.recent-comments-wrap
     h1.title-right / Recent Comments

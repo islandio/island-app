@@ -949,8 +949,8 @@ img.heart-img {
 .member-info {
   margin: 0 0 5px;
 }
-.member-info-content {
-  font-weight: bold;
+.member-info a {
+  text-decoration: underline;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 div.each-grid-obj {
