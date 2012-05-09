@@ -19,7 +19,10 @@
               | Add Media
         li
           span.welcome-member Hi, 
-            =member.displayName
+            - if (member.role === 0)
+              a(href='/member/' + member.key) #{member.displayName}
+            - else
+              #{member.displayName}
     #twitter.tweet
       p loading contributor tweets...
   div.clear

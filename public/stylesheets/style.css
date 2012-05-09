@@ -261,6 +261,17 @@ span.welcome-member {
   color: #444;
   margin: 7px 20px 0 0;
 }
+span.welcome-member a {
+  text-decoration: underline;
+  background: none;
+}
+span.welcome-member a:hover {
+  text-decoration: underline;
+  background: rgba(75,184,215,0.25);
+}
+span.welcome-member a:active {
+  background: rgba(75,184,215,0.1);
+}
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 #twitter-names {
   display: none;
