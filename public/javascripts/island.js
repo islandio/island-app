@@ -498,7 +498,17 @@ Island = (function ($) {
         } catch(err) {}
       }
 
-      $('video, audio').each(function () {
+      $('.jp-jplayer').jPlayer({
+        ready: function (event) {
+          $(this).jPlayer("setMedia", {
+            mp3:$(this).data('src'),
+          });
+        },
+        swfPath: "js",
+        wmode: "window"
+      });
+
+      $('video').each(function () {
         jwplayer($(this).attr('id')).setup({
           flashplayer: 'https://d271mvlc6gc7bl.cloudfront.net/main/jwplayer/player.swf',
           skin: 'https://d271mvlc6gc7bl.cloudfront.net/main/jwplayer/skins/bekle.zip',

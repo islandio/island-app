@@ -35,7 +35,51 @@ div.single-left
             img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/hearts.png')
     - if (med.type === 'audio')
       div.obj-holder
-        audio(src=med.audio.cf_url, id='audio-' + med._id, controls='controls', preload='none', width='640', height='100')
+        - console.log(med.audio)
+        div.jp-jplayer(data-src=med.audio.cf_url)
+        #jp_container_1.jp-audio
+          div.jp-type-single
+            div.jp-title
+              ul
+                li #{med.audio.basename} by #{med.audio.meta.artist}
+            div.jp-gui.jp-interface.matte
+              ul.jp-controls
+                li
+                  a.jp-play(href="javascript:;", tabindex="1") play
+                li
+                  a.jp-pause(href="javascript:;", tabindex="1") pause
+                li
+                  a.jp-stop(href="javascript:;", tabindex="1") stop
+                li
+                  a.jp-mute(href="javascript:;", tabindex="1", title="mute") mute
+                li
+                  a.jp-unmute(href="javascript:;", tabindex="1", title="unmute") unmute
+                li
+                  a.jp-volume-max(href="javascript:;", tabindex="1", title="max volume") max volume
+              div.jp-progress
+                div.jp-seek-bar
+                  div.jp-play-bar
+              div.jp-volume-bar
+                div.jp-volume-bar-value
+              div.jp-time-holder
+                div.jp-current-time
+                div.jp-duration
+                ul.jp-toggles
+                  li
+                    a.jp-repeat(href="javascript:;", tabindex="1", title="repeat") repeat
+                  li
+                    a.jp-repeat-off(href="javascript:;", tabindex="1", title="repeat off") repeat off
+
+
+
+
+
+
+
+
+
+
+
         div.hearts(data-num=med.hearts)
           div.hearts-wrap
             img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
