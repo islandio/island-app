@@ -387,12 +387,24 @@ app.get('/:key', authorize, function (req, res) {
         if (err) throw new Error('Failed to create view');
       });
       // prepare document
+      var img = [];
+      var vid = [];
+      var aud = [];
       _.each(post.medias, function (med) {
         var rating = _.find(med.ratings.reverse(), function (rat) {
           return req.user._id.toString() === rat.member_id.toString();
         });
         med.hearts = rating ? rating.val : 0;
+        switch (med.type) {
+          case 'image': img.push(med); break;
+          case 'video': vid.push(med); break;
+          case 'audio':
+            aud.push(med);
+            med.audioIndex = aud.length;
+            break;
+        }
       });
+      post.medias = [].concat(img, aud, vid);
       _.each(post.comments, function (com) {
         delete com.post;
       });

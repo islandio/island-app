@@ -6,7 +6,7 @@ div.single-left
       =post.title
     h1.title-sub from 
       =post.member.displayName
-  - post.medias.forEach(function (med) {
+  - post.medias.forEach(function (med, i) {
     - if (med.type === 'image')
       div.obj-holder(style='height: ' + med.image.meta.height + 'px')
         img.matte(id='image-' + med._id, src=med.image.cf_url, width=med.image.meta.width, height=med.image.meta.height)
@@ -35,10 +35,9 @@ div.single-left
             img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/hearts.png')
     - if (med.type === 'audio')
       div.obj-holder
-        - console.log(med.audio)
-        div.jp-jplayer(data-src=med.audio.cf_url)
-        #jp_container_1.jp-audio
+        div.jp-audio(id="jp_container_" + med.audioIndex)
           div.jp-type-single
+            div.jp-jplayer(id="jquery_jplayer_" + med.audioIndex, data-src=med.audio.cf_url)
             div.jp-title
               ul
                 li #{med.audio.basename} by #{med.audio.meta.artist}
@@ -69,17 +68,6 @@ div.single-left
                     a.jp-repeat(href="javascript:;", tabindex="1", title="repeat") repeat
                   li
                     a.jp-repeat-off(href="javascript:;", tabindex="1", title="repeat off") repeat off
-
-
-
-
-
-
-
-
-
-
-
         div.hearts(data-num=med.hearts)
           div.hearts-wrap
             img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')

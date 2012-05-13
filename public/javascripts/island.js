@@ -474,20 +474,8 @@ Island = (function ($) {
        navigator.userAgent.match(/iPod/i)
       ) {
 
-        // init the videos
-        // if ($('video').length > 0) {
-        //   new MediaElementPlayer('video');
-        // }
-
         // hide footer
         $('#footer').hide();
-
-      } else {
-
-        // init the videos with flash shim
-        // if ($('video').length > 0) {
-        //   new MediaElementPlayer('video', { mode: 'shim' });
-        // }
 
       }
       
@@ -498,14 +486,20 @@ Island = (function ($) {
         } catch(err) {}
       }
 
-      $('.jp-jplayer').jPlayer({
-        ready: function (event) {
-          $(this).jPlayer("setMedia", {
-            mp3:$(this).data('src'),
-          });
-        },
-        swfPath: "js",
-        wmode: "window"
+      $('.jp-jplayer').each(function (i) {
+        $('#' + $(this).attr('id')).jPlayer({
+          ready: function (event) {
+            $(this).jPlayer('setMedia', {
+              mp3: $(this).data('src'),
+            });
+          },
+          play: function () {
+            $(this).jPlayer('pauseOthers');
+          },
+          swfPath: 'https://d271mvlc6gc7bl.cloudfront.net/main/jplayer/js',
+          wmode: 'window',
+          cssSelectorAncestor: '#jp_container_' + (i + 1),
+        });
       });
 
       $('video').each(function () {
