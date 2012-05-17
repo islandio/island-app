@@ -287,21 +287,6 @@ span.welcome-member a:active
 #twitter-names
   display none
 
-.landing-wrap
-  width 100%
-  
-.landing-center
-  margin 0 auto
-  width 984px
-  
-.landing-back
-  background black
-  margin 10px 0
-  padding 5px
-  
-.landing-reports
-  position relative
-
 #landing-message, #landing-success, #landing-error
   position absolute
   top -143px
@@ -337,25 +322,41 @@ h1.landing-report-title
 a.resend-conf
   font-weight bold
 
-.landing-logo
-  margin 200px 500px 0 0
-  
-.landing-forms-wrap
-  position absolute
+.signin-controls, 
+.signin-forms, 
+.signin-reports
+  display -moz-box
+  display -webkit-box
+  display box
 
-.landing-forms
-  float right
+  -moz-box-pack center
+  -webkit-box-pack center
+  box-pack center
 
-.landing-form-controls
-  white-space nowrap
-  text-align right
+.signin-controls
+  margin 20px 0 0
 
-.landing-archipelago
-  float right
-  margin 5px 25px 0 0
-  text-align right
+.signin-controls a
+  background none
+  text-decoration underline
 
-.landing-copy
+.signin-controls a:hover
+  text-decoration underline
+  background rgba(75, 184, 215, 0.25)
+
+.signin-controls a:active
+  background rgba(75, 184, 215, 0.1)
+
+.signin-forms
+  margin 20px 0 0
+  position relative
+
+.signin-reports
+  margin 20px 0 0
+
+.signin-copy
+  padding 5px
+  display block
   color gray
   font-size 9px
 
@@ -473,10 +474,10 @@ input[type=text], input[type=password]
   background backgray
   width 142px
   margin 0
-  padding 3px
-  font-size 12px
+  padding 5px
+  font-size 11px
   display inline
-  color gray
+  color darkgray
   border 1px solid bordergray
   border-radius 5px
 
@@ -510,9 +511,9 @@ input::-moz-focus-inner
 //   background-image -moz-linear-gradient(center bottom, rgb(255,255,255) 0%, rgb(236,236,236) 100%)
 //   background-image -webkit-gradient(linear, 0% 100%, 0% 0%, from(rgb(255,255,255)), to(rgb(236,236,236)))
 
-// input.is-button-alert[type=submit]
-//   color orange !important
-//   border 1px solid orange !important
+input.is-button-alert[type=submit]
+  color orange !important
+  border 1px solid orange !important
 
 .is-input-alert
   border 1px solid orange !important
@@ -559,7 +560,7 @@ input::-moz-focus-inner
   opacity 0.5
 
 .signin-logo
-  margin 100px 0 0
+  margin 90px 0 0
 
   display -moz-box
   display -webkit-box
@@ -577,8 +578,13 @@ input::-moz-focus-inner
 .signin-logo > div > img
   position absolute
 
+.signin-action
+  background rgba(255, 255, 255, 0.6)
+  padding 20px 0
+  margin 20px 0 0 0
+
 .signin-strategies
-  margin 30px 0 0
+  // margin 30px 0 0
 
   display -moz-box
   display -webkit-box
@@ -594,11 +600,12 @@ input::-moz-focus-inner
 
 .signin-or
   margin 0 20px
-  vertical-align -10px
+  vertical-align -7px
   font-style italic
 
 .signin-quote
   margin 50px 0 0
+  text-align center
 
   display -moz-box
   display -webkit-box
@@ -690,10 +697,10 @@ input[type=submit]:focus
 
 a.signin-strategy-btn
   width 200px
-  font-size 12px
+  font-size 11px
   font-weight bold
   font-family standard
-  padding 4px 0
+  padding 0px 0
   display block
 
   background rgba(75, 184, 215, 0.25)
@@ -714,29 +721,13 @@ a.signin-strategy-btn:active
   border 1px solid #898989
   background rgba(75, 184, 215, 0.25)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #login-form
-  position absolute
-  top 0
-  right 0
+  position relative
+  left 0
 
 #register-form
-  position absolute
-  bottom -50px
-  right 0
+  position relative
+  left 0
   display none
 
 .media-form-wrap
@@ -754,9 +745,6 @@ a.signin-strategy-btn:active
   height 150px
   color darkgray
   overflow hidden
-
-#register-form td
-  padding 0 0 10px 10px
 
 #media-form td
   padding 0 0 5px

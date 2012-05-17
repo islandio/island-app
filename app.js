@@ -33,6 +33,7 @@ var templates = require('./templates');
 var util = require('util'), debug = util.debug, inspect = util.inspect;
 var fs = require('fs');
 var path = require('path');
+var url = require('url');
 var log = require('./log.js').log;
 var logTimestamp = require('./log.js').logTimestamp;
 
@@ -41,12 +42,14 @@ _.mixin(require('underscore.string'));
 var Step = require('step');
 var color = require('cli-color');
 
-// var Notify = require('./notify');
+var Notify = require('./notify');
 
 var MemberDb = require('./member_db.js').MemberDb;
 
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
+var TwitterStrategy = require('passport-twitter').Strategy;
+var LocalStrategy = require('passport-local').Strategy;
 
 var transloadit = { auth: { key: '8a36aa56062f49c79976fa24a74db6cc' }};
 transloadit.template_id = process.env.NODE_ENV === 'production' ?
@@ -63,11 +66,23 @@ var cloudfrontAudioUrl = process.env.NODE_ENV === 'production' ?
                             'https://dp3piv67f7p06.cloudfront.net/' :
                             'https://d2oapa8usgizyg.cloudfront.net/';
 
-
-// Configuration
-
 var app = module.exports = express.createServer();
 var everyone;
+
+////////////// Utils
+
+// TODO: Deal with this ugliness.
+app.util = {
+  formatCommentText: function (str) {
+    var linkExp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    str = str.replace(/\n/g, '<br/>');
+    str = str.replace(linkExp,"<a href='$1' target='_blank'>$1</a>");
+    return str;
+  },
+};
+
+
+////////////// Configuration
 
 app.configure('development', function () {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
@@ -113,7 +128,7 @@ app.configure(function () {
 });
 
 
-// Passport session cruft
+// Authentication methods
 
 passport.serializeUser(function (member, cb) {
   cb(null, member._id.toString());
@@ -125,102 +140,46 @@ passport.deserializeUser(function (id, cb) {
   });
 });
 
-////////////// Utils
-
-app.util = {
-  formatCommentText: function (str) {
-    var linkExp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-    str = str.replace(/\n/g, '<br/>');
-    // str = str.replace(/\s/g, '&nbsp;');
-    str = str.replace(linkExp,"<a href='$1' target='_blank'>$1</a>");
-    return str;
+passport.use(new FacebookStrategy({
+    clientID: 203397619757208,
+    clientSecret: 'af79cdc8b5ca447366e87b12c3ddaed2'
   },
-};
-
-
-////////////// Helpers
-
-function authorize(req, res, cb) {
-  var memberId = req.session.passport.user;
-  if (memberId) {
-    memberDb.findMemberById(memberId, function (err, member) {
-      if (err) return cb(err);
-      if (!member) {
-        res.redirect('/login');
-        return cb('Member and Session do NOT match!');
-      }
-      req.user = member;
-      cb(null, member);
+  function (token, refreshToken, profile, cb) {
+    profile.facebookToken = token;
+    memberDb.findOrCreateMemberFromFacebook(profile,
+        function (err, member) {
+      cb(err, member);
     });
-  } else {
-    res.redirect('/login');
-    cb('Session has no Member.');
   }
-}
+));
 
-function getMedia(limit, cb) {
-  memberDb.findMedia({}, { limit: limit,
-                    sort: { created: -1 } }, cb);
-}
-function findTrendingMedia(limit, cb) {
-  Step(
-    function () {
-      memberDb.findPosts({}, { limit: 100, sort: { created: -1 }}, this);
-    },
-    function (err, posts) {
+passport.use(new TwitterStrategy({
+    consumerKey: 'ithvzW8h1tEsUBewL3jxQ',
+    consumerSecret: 'HiGnwoc8BBgsURlKshWsb1pGH8IQWE2Ve8Mqzz8'
+  },
+  function (token, tokenSecret, profile, cb) {
+    profile.twitterToken = token;
+    memberDb.findOrCreateMemberFromTwitter(profile,
+          function (err, member) {
+      cb(err, member);
+    });
+  }
+));
+
+passport.use(new LocalStrategy(
+  function (email, password, cb) {
+    memberDb.collections.member.findOne({ primaryEmail: email },
+                                    function (err, member) {
       if (err) return cb(err);
-      var media = [];
-      _.each(posts, function (post) {
-        post.edges = edgeToPresent(1, post, 24);
-        _.each(post.views, function (e) {
-          post.edges += edgeToPresent(0.5, e, 12);
-        });
-        _.each(post.comments, function (e) {
-          post.edges += edgeToPresent(2, e, 48);
-        });
-        _.each(post.medias, function (med) {
-          med.edges = post.edges + edgeToPresent(1, med, 24);
-          _.each(med.hits, function (e) {
-            med.edges += edgeToPresent(1, e, 12);
-          });
-          _.each(med.ratings, function (e) {
-            med.edges += edgeToPresent(e.val, e, 24);
-          });
-        });
-        media = media.concat(post.medias);
-      });
-      media.sort(function (a, b) {
-        return b.edges - a.edges;
-      });
-      cb(err, _.first(media, limit));
-    }
-  );
-  function edgeToPresent(initial, edge, span) {
-    var created = (new Date(edge.created)).getTime();
-    var constant = span * 60 * 60 * 1000 / 5;
-    return initial * Math.exp(-((new Date()).getTime() - created) / constant);
+      if (!member) return cb(null, false);
+      if ('local' !== member.provider)
+        return cb(null, false);
+      if (!MemberDb.authenticateLocalMember(member, password))
+        return cb(null, false);
+      return cb(null, member);
+    });
   }
-}
-
-function getRecentComments(limit, memberId, cb) {
-  if ('function' === typeof memberId) {
-    cb = memberId;
-    memberId = null;
-  }
-  var query = memberId ? { member_id: memberId } : {};
-  memberDb.findComments(query, { limit: limit,
-                        sort: { created: -1 } }, cb);
-}
-
-function renderMedia(med, cb) {
-  cb(null, templates.object({ object: med }));
-}
-
-function renderComment(params, cb) {
-  // HACK!!
-  params.app = app;
-  cb(null, templates.comment(params));
-}
+));
 
 
 ////////////// Web Routes
@@ -250,47 +209,94 @@ app.get('/login', function (req, res) {
   res.render('login');
 });
 
-// Redirect the user to Facebook for authentication.
-// When complete, Facebook will redirect the user
-// back to the application at /auth/facebook/return.
-// ** The passport strategy initialization must
-// happen here becuase host needs to be snarfed from req.
-app.get('/auth/facebook', function (req, res, next) {
-  // Add referer to session so we can use it on return.
-  // This way we can preserve query params in links.
-  req.session.referer = req.headers.referer;
-  var host = req.headers.host.split(':')[0];
-  var home = process.env.NODE_ENV === 'production' ?
-              'http://' + host + '/' :
-              'http://' + host + ':' + argv.port + '/';
-  passport.use(new FacebookStrategy({
-      clientID: 203397619757208,
-      clientSecret: 'af79cdc8b5ca447366e87b12c3ddaed2',
-      callbackURL: home + 'auth/facebook/callback',
-    },
-    function (accessToken, refreshToken, profile, done) {
-      profile.accessToken = accessToken;
-      memberDb.findOrCreateMemberFromFacebook(profile,
-            function (err, member) {
-        done(err, member);
+// Basic password authentication
+app.post('/login', function (req, res, next) {
+  var missing = [];
+  if (!req.body.username)
+    missing.push('username');
+  if (!req.body.password)
+    missing.push('password');
+  if (missing.length !== 0) {
+    return res.send({
+      status: 'fail', 
+      data: { code: 'MISSING_FIELD', 
+              message: 'All fields are required.',
+              missing: missing },
+    });
+  }
+  passport.authenticate('local', function (err, member, info) {
+    if (err) return next(err);
+    if (!member)
+      return res.send({
+        status: 'fail',
+        data: {
+          code: 'BAD_AUTH',
+          message: 'Your email or password is incorrect.'
+        }
       });
-    }
-  ));
+    if (!member.confirmed)
+      return res.send({
+        status: 'fail',
+        data: {
+          code: 'NOT_CONFIRMED',
+          message: member.displayName + ', please confirm your email address by '
+                  + 'following the link in your confirmation email. '
+                  + '<a href="javascript:;" id="noconf-' + member._id + '" class="resend-conf">'
+                  + 'Re-send the confirmation email</a> if you need to.'
+        }
+      });
+    req.logIn(member, function (err) {
+      if (err) return next(err);
+      var referer = url.parse(req.headers.referer);
+      referer.search = referer.query = referer.hash = null;
+      referer.pathname = '/';
+      return res.send({
+        status: 'success',
+        data: { path: url.format(referer) }
+      });
+    });
+  })(req, res, next);
+});
+
+// Facebook authentication
+app.get('/auth/facebook', function (req, res, next) {
+  var referer = url.parse(req.headers.referer);
+  referer.search = referer.query = referer.hash = null;
+  referer.pathname = '/auth/facebook/callback';
+  var returnUrl = url.format(referer);
+  referer.pathname = '/';
+  var realm = url.format(referer);
+  passport._strategies['facebook']._callbackURL = returnUrl;
   passport.authenticate('facebook', { scope: [
                         'email',
                         'user_about_me',
                         'user_birthday',
                         'user_website',
                         'user_status',
-                        'user_photos'] })(req, res, next);
+                        'user_photos']})(req, res, next);
 });
 
-// Facebook will redirect the user to this URL
-// after authentication. Finish the process by
-// verifying the assertion. If valid, the user will be
-// logged in. Otherwise, authentication has failed.
+// Facebook returns here
 app.get('/auth/facebook/callback', function (req, res, next) {
   passport.authenticate('facebook', { successRedirect: '/',
+                                    failureRedirect: '/login' })(req, res, next);
+});
+
+// Twitter authentication
+app.get('/auth/twitter', function (req, res, next) {
+  var referer = url.parse(req.headers.referer);
+  referer.search = referer.query = referer.hash = null;
+  referer.pathname = '/auth/twitter/callback';
+  var returnUrl = url.format(referer);
+  referer.pathname = '/';
+  var realm = url.format(referer);
+  passport._strategies['twitter']._oauth._authorize_callback = returnUrl;
+  passport.authenticate('twitter')(req, res, next);
+});
+
+// Twitter returns here
+app.get('/auth/twitter/callback', function (req, res, next) {
+  passport.authenticate('twitter', { successRedirect: '/',
                                     failureRedirect: '/login' })(req, res, next);
 });
 
@@ -299,6 +305,158 @@ app.get('/logout', function (req, res) {
   req.logOut();
   res.redirect('/');
 });
+
+// Create a new member with local authentication
+app.put('/signup', function (req, res) {
+  var missing = [];
+  if (!req.body.newname)
+    missing.push('newname');
+  if (!req.body.newusername)
+    missing.push('newusername');
+  if (!req.body.newpassword)
+    missing.push('newpassword');
+  if (missing.length !== 0) {
+    return res.send({
+      status: 'fail', 
+      data: { code: 'MISSING_FIELD',
+              message: 'All fields are required.',
+              missing: missing },
+    });
+  }
+  var props = {
+    primaryEmail: req.body.newusername,
+    emails: [ { value: req.body.newusername } ],
+    displayName: req.body.newname,
+    password: req.body.newpassword,
+    provider: 'local',
+  };
+  memberDb.findOrCreateMemberFromPrimaryEmail(props,
+      { safe: true }, function (err, member) {
+    if (err)
+      return res.send({
+        status: 'fail',
+        data: {
+          code: 'DUPLICATE_EMAIL',
+          message: 'That email address is already in use.'
+        }
+      });
+    var referer = url.parse(req.headers.referer);
+    referer.search = referer.query = referer.hash = null;
+    referer.pathname = '/';
+    var confirm = path.join(url.format(referer), 'confirm', member._id.toString());
+    Notify.welcome(member, confirm, function (err) {
+      if (err) return next(err);
+      return res.send({
+        status: 'success',
+        data: {
+          message: 'Excellent. Please check your inbox for the last step.',
+          member: member,
+        },
+      });
+    });
+  });
+});
+
+
+// Confirm page
+app.get('/confirm/:id', function (req, res, next) {
+  if (!req.params.id)
+    return res.render('404');
+  memberDb.findMemberById(req.params.id, function (err, member) {
+    if (err) return next(err);
+    if (!member)
+      return res.render('404');
+    memberDb.collections.member.update({ _id: member._id },
+                                      { $set : { confirmed: true }},
+                                      { safe: true }, function (err, result) {
+      if (err) return next(err);
+      if (!result) return res.render('404');
+      req.logIn(member, function (err) {
+        if (err) return next(err);
+        res.redirect('/');
+      });
+    });
+  });
+});
+
+
+
+
+// // Resend Confirmation Email
+// app.post('/resendconf/:id?', function (req, res) {
+//   if (!req.params.id) {
+//     res.send({ status: 'error', message: 'Invalid request.' });
+//     return;
+//   } else {
+//     Member.findById(req.body.id, function (err, mem) {
+//       if (mem) {
+//         var confirm = 'http://' + path.join(req.headers.host, 'confirm', mem.id);
+//         Notify.welcome(mem, confirm, function (err, message) {
+//           if (!err)
+//             res.send({ status: 'success', data: { message: 'Excellent, ' + mem.name.first + '. Please check your inbox for the next step. There\'s only one more... I promise.', member: mem } });
+//           else {
+//             res.send({ status: 'error', message: '#FML. We\'re experiencing an unknown problem but are looking into it now. Please try registering again later.' });
+//             Notify.problem(err);
+//           }
+//         });
+//       } else
+//         res.send({ status: 'error', message: 'Oops, we lost your account info. Please register again.' });
+//     });
+//   }
+// });
+
+// // Add Member
+// app.put('/members', function (req, res) {
+//   //res.send({ status: 'error', message: 'Hey, you can\'t do that yet!' });
+//   //return;
+//   // check fields
+//   var missing = [];
+//   if (!req.body.newmember['name.first'])
+//     missing.push('name.first');
+//   if (!req.body.newmember['name.last'])
+//     missing.push('name.last');
+//   if (!req.body.newmember.email)
+//     missing.push('email');
+//   if (!req.body.newmember.email2)
+//     missing.push('email2');
+//   if (!req.body.newmember.password)
+//     missing.push('password');
+//   if (missing.length != 0) {
+//     res.send({ status: 'fail', data: { code: 'MISSING_FIELD', message: 'Hey, we need all those fields for this to work.', missing: missing } });
+//     return;
+//   }
+//   // compare emails
+//   if (req.body.newmember.email2 != req.body.newmember.email) {
+//     res.send({ status: 'fail', data: { code: 'INVALID_EMAIL', message: 'Oops. You didn\'t re-enter your email address correctly. Please do it right and try registering again.' } });
+//     return;
+//   } else
+//     delete req.body.newmember.email2;
+//   // create new member
+//   var member = new Member(req.body.newmember);
+//   member.save(function (err) {
+//     if (!err) {
+//       var confirm = 'http://' + path.join(req.headers.host, 'confirm', member.id);
+//       Notify.welcome(member, confirm, function (err, message) {
+//         if (!err)
+//           res.send({ status: 'success', data: { message: 'Excellent. Please check your inbox for the next step. There\'s only one more, I promise.', member: member } });
+//         else {
+//           res.send({ status: 'error', message: '#FML. We\'re experiencing an unknown problem but are looking into it now. Please try registering again later.' });
+//           Notify.problem(err);
+//         }
+//       });
+//     } else
+//       res.send({ status: 'fail', data: { code: 'DUPLICATE_EMAIL', message: 'Your email address is already being used on our system. Please try registering with a different address.' } });
+//   });
+// });
+
+
+
+
+
+
+
+
+
 
 // Add media form
 app.get('/add', authorize, function (req, res) {
@@ -365,7 +523,6 @@ app.get('/member/:key', authorize, function (req, res) {
     }
   );
 });
-
 
 // Single object
 app.get('/:key', authorize, function (req, res) {
@@ -502,7 +659,6 @@ app.put('/insert', authorize, function (req, res) {
   );
 });
 
-
 // Click media
 app.put('/hit/:mediaId', authorize, function (req, res) {
   // TODO: permissions...
@@ -521,7 +677,6 @@ app.put('/hit/:mediaId', authorize, function (req, res) {
              message: err.stack });
   }
 });
-
 
 // Add comment
 app.put('/comment/:postId', authorize, function (req, res) {
@@ -545,7 +700,6 @@ app.put('/comment/:postId', authorize, function (req, res) {
   }
 });
 
-
 // Add rating
 app.put('/rate/:mediaId', authorize, function (req, res) {
   // TODO: permissions...
@@ -566,6 +720,91 @@ app.put('/rate/:mediaId', authorize, function (req, res) {
              message: err.stack });
   }
 });
+
+
+////////////// Helpers
+
+function authorize(req, res, cb) {
+  var memberId = req.session.passport.user;
+  if (memberId) {
+    memberDb.findMemberById(memberId, function (err, member) {
+      if (err) return cb(err);
+      if (!member) {
+        res.redirect('/login');
+        return cb('Member and Session do NOT match!');
+      }
+      req.user = member;
+      cb(null, member);
+    });
+  } else {
+    res.redirect('/login');
+    cb('Session has no Member.');
+  }
+}
+
+function getMedia(limit, cb) {
+  memberDb.findMedia({}, { limit: limit,
+                    sort: { created: -1 } }, cb);
+}
+function findTrendingMedia(limit, cb) {
+  Step(
+    function () {
+      memberDb.findPosts({}, { limit: 100, sort: { created: -1 }}, this);
+    },
+    function (err, posts) {
+      if (err) return cb(err);
+      var media = [];
+      _.each(posts, function (post) {
+        post.edges = edgeToPresent(1, post, 24);
+        _.each(post.views, function (e) {
+          post.edges += edgeToPresent(0.5, e, 12);
+        });
+        _.each(post.comments, function (e) {
+          post.edges += edgeToPresent(2, e, 48);
+        });
+        _.each(post.medias, function (med) {
+          med.edges = post.edges + edgeToPresent(1, med, 24);
+          _.each(med.hits, function (e) {
+            med.edges += edgeToPresent(1, e, 12);
+          });
+          _.each(med.ratings, function (e) {
+            med.edges += edgeToPresent(e.val, e, 24);
+          });
+        });
+        media = media.concat(post.medias);
+      });
+      media.sort(function (a, b) {
+        return b.edges - a.edges;
+      });
+      cb(err, _.first(media, limit));
+    }
+  );
+  function edgeToPresent(initial, edge, span) {
+    var created = (new Date(edge.created)).getTime();
+    var constant = span * 60 * 60 * 1000 / 5;
+    return initial * Math.exp(-((new Date()).getTime() - created) / constant);
+  }
+}
+
+function getRecentComments(limit, memberId, cb) {
+  if ('function' === typeof memberId) {
+    cb = memberId;
+    memberId = null;
+  }
+  var query = memberId ? { member_id: memberId } : {};
+  memberDb.findComments(query, { limit: limit,
+                        sort: { created: -1 } }, cb);
+}
+
+function renderMedia(med, cb) {
+  cb(null, templates.object({ object: med }));
+}
+
+function renderComment(params, cb) {
+  // HACK!!
+  params.app = app;
+  cb(null, templates.comment(params));
+}
 
 
 ////////////// Initialize and Listen

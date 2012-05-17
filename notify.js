@@ -25,7 +25,7 @@ var emailDefaults = {
  * @param function fn
  */
 var email = exports.email = function (options, template, fn) {
-  if ('function' == typeof template) {
+  if ('function' === typeof template) {
     fn = template;
     template = false;
   }
@@ -42,17 +42,14 @@ var email = exports.email = function (options, template, fn) {
 
   if (template)
     jade.renderFile(path.join(__dirname, 'views', template.file),
-        { locals: template.locals }, function (err, body) {
-      if (err) {
-        console.log(err);
-        return;
-      }
+        template.locals, function (err, body) {
+      if (err) return fn(err);
       // create the message
+      var message;
       if (template.html) {
-        var message = mailer.message.create(options);
+        message = mailer.message.create(options);
         message.attach_alternative(body);
-      } else
-        var message = options;
+      } else message = options;
       message.text = body;
       // send email
       SMTP.send(message, fn);
@@ -67,7 +64,7 @@ var email = exports.email = function (options, template, fn) {
  * @param object user
  */
 var welcome = exports.welcome = function (member, confirm, fn) {
-  var to = member.name.first + ' ' + member.name.last + '<' + member.email + '>';
+  var to = member.displayName + '<' + member.primaryEmail + '>';
   email({
     to: to,
     subject: 'Please activate your new account'

@@ -1,50 +1,61 @@
 div.signin
+  span.signin-copy
+    | Island © 2012
   div.signin-bg
     img(src="https://d271mvlc6gc7bl.cloudfront.net/main/img/is-signin_bg_lo.jpg")
   div.signin-logo
     div
       img(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-signin_lg_archs.png")
       img(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-signin_lg.png")
-  div.signin-strategies
-    a.button.signin-strategy-btn(href='/auth/facebook') Sign in with Facebook
-    // span.signin-or - or -
-    // a.button.signin-strategy-btn(href='javascript:;') Create Account
+  div.signin-action
+    div.signin-strategies
+      a.button.signin-strategy-btn(href='/auth/facebook') Connect with Facebook
+      span.signin-or - or -
+      a.button.signin-strategy-btn(href='/auth/twitter') Connect with Twitter
+    div.signin-controls
+      p#goto-register-form
+        span You don't want to use Facebook or Twitter? 
+        a(href='javascript:;', title='Sign up', style='font-weight:bold;') Sign up &rarr;
+      p#goto-login-form(style='display: none')
+        a(href='javascript:;', title='Log in', style='font-weight:bold;') &larr; Log in
+    div.signin-forms
+      form#login-form(method='post', action='/login')
+        table
+          tbody
+            tr
+              td
+                input(name='username', type='text', placeholder='email')
+              td
+                input(name='password', type='password', placeholder='password')
+              td
+                input#login.is-button(type='submit', title='Log in', value='Log in')
+      form#register-form(method='post', action='/signup')
+        table
+          tbody
+            tr
+              td
+                input(name='newname', type='text', placeholder='your name')
+              td
+                input(name='newusername', type='text', placeholder='your email')
+              td
+                input(name='newpassword', type='password', placeholder='password')
+              td
+                input#add-member.is-button(type='submit', title='Sign up', value='Sign up')
+    //- div.signin-reports
+    //-   #landing-message
+    //-     h1.landing-report-title / Just a moment...
+    //-     img#landing-loader(src='/graphics/is-landing-loading-pink.gif')
+    //-   #landing-success
+    //-     h1.landing-report-title / Success
+    //-     p.landing-report.matte
+    //-   #landing-error
+    //-     h1.landing-report-title / Failure
+    //-     p.landing-report.matte
   div.signin-quote
     p
-      // span.quote &ldquo;
       | &ldquo;The chance to directly connect with like minded individuals gives us an enormous outlet, a chance to create opportunities, to bridge greater gaps. We are doing this for our community, which includes ourselves. We hope to connect and relate lives, individually and communally, to become a movement, a force of energy, an embodiment of all the passion on our planet, in one place. Welcome to the Island.&rdquo;
-      //- span.quote &rdquo;
       br
       br
       span(style="float: right;") -David Graham
-//- div.landing-wrap
-//-   div.landing-center
-//-     div.landing-form-controls
-//-       p#goto-register-form
-//-         span Not a member? 
-//-         a(href='javascript:;', title='Register for free access to Island.') Register for free access to Island.
-//-       p#goto-login-form(style='display: none')
-//-         a(href='javascript:;', title='Go back to Log In.') Go back to Log In.
-//-   div.landing-center(style="height: 64px;")
-//-     a.is-button(href='/auth/facebook') Login with Facebook
-//-     div.landing-reports
-//-       #landing-message
-//-         h1.landing-report-title / Just a moment...
-//-         img#landing-loader(src='/graphics/is-landing-loading-pink.gif')
-//-       #landing-success
-//-         h1.landing-report-title / Success
-//-         p.landing-report.matte
-//-       #landing-error
-//-         h1.landing-report-title / Failure
-//-         p.landing-report.matte
-//-     div.landing-logo
-//-       img(src='/graphics/is-logo.png', alt='is-landing')
-//-   div.landing-back
-//-     div.landing-center
-//-       div.landing-archipelago
-//-         img.is-archipelago(src='/graphics/is-archipelago.png', title='Archipelago', alt='/graphics/is-archipelago-hover.png')
-//-       p.mission-txt
-//-         | Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-//-   div.landing-center(style='text-align: right')
-//-     span.landing-copy
-//-       | We Are Island © 2011
+
+
