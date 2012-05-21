@@ -239,7 +239,7 @@ app.post('/login', function (req, res, next) {
         status: 'fail',
         data: {
           code: 'NOT_CONFIRMED',
-          message: member.displayName + ', please confirm your email address by '
+          message: member.displayName + ', please confirm your account by '
                   + 'following the link in your confirmation email. '
                   + '<a href="javascript:;" id="noconf-' + member._id + '" class="resend-conf">'
                   + 'Re-send the confirmation email</a> if you need to.'
@@ -344,19 +344,20 @@ app.put('/signup', function (req, res) {
     referer.search = referer.query = referer.hash = null;
     referer.pathname = '/';
     var confirm = path.join(url.format(referer), 'confirm', member._id.toString());
-    Notify.welcome(member, confirm, function (err) {
+    Notify.welcome(member, confirm, function (err, msg) {
       if (err) return next(err);
       return res.send({
         status: 'success',
         data: {
-          message: 'Excellent. Please check your inbox for the last step.',
+          message: 'That\'s great, ' + member.displayName + '. We just sent you a message.'
+                    + ' Please follow the enclosed link to confirm your account...'
+                    + ' and thanks for checking out Island!',
           member: member,
         },
       });
     });
   });
 });
-
 
 // Confirm page
 app.get('/confirm/:id', function (req, res, next) {
@@ -379,84 +380,38 @@ app.get('/confirm/:id', function (req, res, next) {
   });
 });
 
-
-
-
-// // Resend Confirmation Email
-// app.post('/resendconf/:id?', function (req, res) {
-//   if (!req.params.id) {
-//     res.send({ status: 'error', message: 'Invalid request.' });
-//     return;
-//   } else {
-//     Member.findById(req.body.id, function (err, mem) {
-//       if (mem) {
-//         var confirm = 'http://' + path.join(req.headers.host, 'confirm', mem.id);
-//         Notify.welcome(mem, confirm, function (err, message) {
-//           if (!err)
-//             res.send({ status: 'success', data: { message: 'Excellent, ' + mem.name.first + '. Please check your inbox for the next step. There\'s only one more... I promise.', member: mem } });
-//           else {
-//             res.send({ status: 'error', message: '#FML. We\'re experiencing an unknown problem but are looking into it now. Please try registering again later.' });
-//             Notify.problem(err);
-//           }
-//         });
-//       } else
-//         res.send({ status: 'error', message: 'Oops, we lost your account info. Please register again.' });
-//     });
-//   }
-// });
-
-// // Add Member
-// app.put('/members', function (req, res) {
-//   //res.send({ status: 'error', message: 'Hey, you can\'t do that yet!' });
-//   //return;
-//   // check fields
-//   var missing = [];
-//   if (!req.body.newmember['name.first'])
-//     missing.push('name.first');
-//   if (!req.body.newmember['name.last'])
-//     missing.push('name.last');
-//   if (!req.body.newmember.email)
-//     missing.push('email');
-//   if (!req.body.newmember.email2)
-//     missing.push('email2');
-//   if (!req.body.newmember.password)
-//     missing.push('password');
-//   if (missing.length != 0) {
-//     res.send({ status: 'fail', data: { code: 'MISSING_FIELD', message: 'Hey, we need all those fields for this to work.', missing: missing } });
-//     return;
-//   }
-//   // compare emails
-//   if (req.body.newmember.email2 != req.body.newmember.email) {
-//     res.send({ status: 'fail', data: { code: 'INVALID_EMAIL', message: 'Oops. You didn\'t re-enter your email address correctly. Please do it right and try registering again.' } });
-//     return;
-//   } else
-//     delete req.body.newmember.email2;
-//   // create new member
-//   var member = new Member(req.body.newmember);
-//   member.save(function (err) {
-//     if (!err) {
-//       var confirm = 'http://' + path.join(req.headers.host, 'confirm', member.id);
-//       Notify.welcome(member, confirm, function (err, message) {
-//         if (!err)
-//           res.send({ status: 'success', data: { message: 'Excellent. Please check your inbox for the next step. There\'s only one more, I promise.', member: member } });
-//         else {
-//           res.send({ status: 'error', message: '#FML. We\'re experiencing an unknown problem but are looking into it now. Please try registering again later.' });
-//           Notify.problem(err);
-//         }
-//       });
-//     } else
-//       res.send({ status: 'fail', data: { code: 'DUPLICATE_EMAIL', message: 'Your email address is already being used on our system. Please try registering with a different address.' } });
-//   });
-// });
-
-
-
-
-
-
-
-
-
+// Resend Confirmation Email
+app.post('/resendconf/:id', function (req, res) {
+  if (!req.params.id)
+    return res.send({
+      status: 'error',
+      message: 'Invalid request.',
+    });
+  memberDb.findMemberById(req.params.id, function (err, member) {
+    if (err) return next(err);
+    if (!member)
+      return res.send({
+        status: 'error',
+        message: 'Something went wrong. Please register again.',
+      });
+    var referer = url.parse(req.headers.referer);
+    referer.search = referer.query = referer.hash = null;
+    referer.pathname = '/';
+    var confirm = path.join(url.format(referer), 'confirm', member._id.toString());
+    Notify.welcome(member, confirm, function (err) {
+      if (err) return next(err);
+      return res.send({
+        status: 'success',
+        data: {
+          message: 'That\'s great, ' + member.displayName + '. We just sent you a message.'
+                    + ' Please follow the enclosed link to confirm your account...'
+                    + ' and thanks for checking out Island!',
+          member: member,
+        },
+      });
+    });
+  });
+});
 
 // Add media form
 app.get('/add', authorize, function (req, res) {
@@ -869,7 +824,7 @@ if (!module.parent) {
             everyone.now.receiveTrends(null, rendered);
         });
       };
-      setInterval(distributeTrendingMedia, 5000); distributeTrendingMedia();
+      setInterval(distributeTrendingMedia, 30000); distributeTrendingMedia();
       
       // get a current list of contributor twitter handles
       var findTwitterHandles = function () {

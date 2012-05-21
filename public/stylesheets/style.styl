@@ -172,24 +172,24 @@ small
   font-size 10px
   line-height 12px
 
-h2.message, h2.error
-  float right
-  font-size 10px
-  font-weight normal
-  display inline
-  vertical-align bottom
-  padding 4px 0 0 0 
+//h2.message, h2.error
+//  float right
+//  font-size 10px
+//  font-weight normal
+//  display inline
+//  vertical-align bottom
+//  padding 4px 0 0 0 
 
-h2.message
-  color #c2c2c2
+//h2.message
+//  color #c2c2c2
 
-h2.error
-  color orange
+//h2.error
+//  color orange
 
-h2.welcome
-  color black
-  font-weight normal
-  display inline
+//h2.welcome
+//  color black
+//  font-weight normal
+//  display inline
 
 h3.obj-details
   text-transform uppercase
@@ -286,38 +286,6 @@ span.welcome-member a:active
 
 #twitter-names
   display none
-
-#landing-message, #landing-success, #landing-error
-  position absolute
-  top -143px
-  left 0
-  display none
-
-p.landing-report
-  margin 20px 0 0 0
-  padding 10px
-  max-width 350px
-  font-style italic
-  color gray
-  background-color mattegray
-
-h1.landing-report-title
-  font-family title
-  font-size 24px
-
-#landing-message h1
-  color blue
-
-#landing-success h1
-  color green
-
-#landing-error h1
-  color orange
-
-#landing-loader
-  position relative
-  left 0
-  margin 20px 0 0 0
   
 a.resend-conf
   font-weight bold
@@ -353,6 +321,25 @@ a.resend-conf
 
 .signin-reports
   margin 20px 0 0
+
+.signin-spinner
+  margin 52px 0 0
+
+  display -moz-box
+  display -webkit-box
+  display box
+  display none
+
+  -moz-box-pack center
+  -webkit-box-pack center
+  box-pack center
+
+  -moz-box-orient horizontal
+  -webkit-box-orient horizontal
+  box-orient horizontal
+
+.signin-spinner > div
+  left 50% !important
 
 .signin-copy
   padding 5px
@@ -469,8 +456,8 @@ input[type=checkbox], input[type=radio]
   display inline
 
 input[type=text], input[type=password]
-  font-family monospace
-  font-weight bold
+  // font-family monospace
+  // font-weight bold
   background backgray
   width 142px
   margin 0
@@ -582,6 +569,7 @@ input.is-button-alert[type=submit]
   background rgba(255, 255, 255, 0.6)
   padding 20px 0
   margin 20px 0 0 0
+  height 105px
 
 .signin-strategies
   // margin 30px 0 0

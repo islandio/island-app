@@ -159,26 +159,6 @@ small {
   font-size: 10px;
   line-height: 12px;
 }
-h2.message,
-h2.error {
-  float: right;
-  font-size: 10px;
-  font-weight: normal;
-  display: inline;
-  vertical-align: bottom;
-  padding: 4px 0 0 0;
-}
-h2.message {
-  color: #c2c2c2;
-}
-h2.error {
-  color: #d04c38;
-}
-h2.welcome {
-  color: #1a1a1a;
-  font-weight: normal;
-  display: inline;
-}
 h3.obj-details {
   text-transform: uppercase;
   color: #b3b3b3;
@@ -276,40 +256,6 @@ span.welcome-member a:active {
 #twitter-names {
   display: none;
 }
-#landing-message,
-#landing-success,
-#landing-error {
-  position: absolute;
-  top: -143px;
-  left: 0;
-  display: none;
-}
-p.landing-report {
-  margin: 20px 0 0 0;
-  padding: 10px;
-  max-width: 350px;
-  font-style: italic;
-  color: #808080;
-  background-color: #f2f2f2;
-}
-h1.landing-report-title {
-  font-family: Title, Verdana, Arial, sans-serif;
-  font-size: 24px;
-}
-#landing-message h1 {
-  color: #4bb8d7;
-}
-#landing-success h1 {
-  color: #b1dc36;
-}
-#landing-error h1 {
-  color: #d04c38;
-}
-#landing-loader {
-  position: relative;
-  left: 0;
-  margin: 20px 0 0 0;
-}
 a.resend-conf {
   font-weight: bold;
 }
@@ -343,6 +289,22 @@ a.resend-conf {
 }
 .signin-reports {
   margin: 20px 0 0;
+}
+.signin-spinner {
+  margin: 52px 0 0;
+  display: -moz-box;
+  display: -webkit-box;
+  display: box;
+  display: none;
+  -moz-box-pack: center;
+  -webkit-box-pack: center;
+  box-pack: center;
+  -moz-box-orient: horizontal;
+  -webkit-box-orient: horizontal;
+  box-orient: horizontal;
+}
+.signin-spinner > div {
+  left: 50% !important;
 }
 .signin-copy {
   padding: 5px;
@@ -467,8 +429,6 @@ input[type=radio] {
 }
 input[type=text],
 input[type=password] {
-  font-family: monospace;
-  font-weight: bold;
   background: #fcfcfb;
   width: 142px;
   margin: 0;
@@ -558,6 +518,7 @@ input.is-button-alert[type=submit] {
   background: rgba(255,255,255,0.6);
   padding: 20px 0;
   margin: 20px 0 0 0;
+  height: 105px;
 }
 .signin-strategies {
   display: -moz-box;

@@ -8,6 +8,7 @@ div.signin
       img(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-signin_lg_archs.png")
       img(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-signin_lg.png")
   div.signin-action
+    div.signin-spinner
     div.signin-strategies
       a.button.signin-strategy-btn(href='/auth/facebook') Connect with Facebook
       span.signin-or - or -
@@ -41,16 +42,6 @@ div.signin
                 input(name='newpassword', type='password', placeholder='password')
               td
                 input#add-member.is-button(type='submit', title='Sign up', value='Sign up')
-    //- div.signin-reports
-    //-   #landing-message
-    //-     h1.landing-report-title / Just a moment...
-    //-     img#landing-loader(src='/graphics/is-landing-loading-pink.gif')
-    //-   #landing-success
-    //-     h1.landing-report-title / Success
-    //-     p.landing-report.matte
-    //-   #landing-error
-    //-     h1.landing-report-title / Failure
-    //-     p.landing-report.matte
   div.signin-quote
     p
       | &ldquo;The chance to directly connect with like minded individuals gives us an enormous outlet, a chance to create opportunities, to bridge greater gaps. We are doing this for our community, which includes ourselves. We hope to connect and relate lives, individually and communally, to become a movement, a force of energy, an embodiment of all the passion on our planet, in one place. Welcome to the Island.&rdquo;

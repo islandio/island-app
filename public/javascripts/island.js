@@ -45,6 +45,32 @@ Island = (function ($) {
     },
   };
 
+  var spinOpts = {
+    lines: 17, // The number of lines to draw
+    length: 0, // The length of each line
+    width: 3, // The line thickness
+    radius: 40, // The radius of the inner circle
+    rotate: 0, // The rotation offset
+    color: '#000', // #rgb or #rrggbb
+    speed: 2.2, // Rounds per second
+    trail: 100, // Afterglow percentage
+    shadow: false, // Whether to render a shadow
+    hwaccel: true, // Whether to use hardware acceleration
+    className: 'spinner', // The CSS class to assign to the spinner
+    zIndex: 2e9, // The z-index (defaults to 2000000000)
+    top: 'auto', // Top position relative to parent in px
+    left: 'auto' // Left position relative to parent in px
+  };
+
+  var Spin = function () {
+    var spinTarget = $('.signin-spinner').get(0);
+    var spinner = new Spinner(spinOpts).spin(spinTarget);
+    return {
+      start: function () { spinner.spin(spinTarget); },
+      stop: function () { spinner.stop(); }
+    };
+  }
+
   /**
    * logo pulse
    */
@@ -94,39 +120,6 @@ Island = (function ($) {
     }
   };
 
-  /**
-   * handle relative time
-   */
-
-  // function relativeTime(ts) {
-  //   var parsed_date = Date.parse(ts);
-  //   var relative_to = (arguments.length > 1) ? arguments[1] : new Date();
-  //   var delta = parseInt((relative_to.getTime() - parsed_date) / 1000);
-  //   if (delta < 5)
-  //     return 'just now';
-  //   else if (delta < 15)
-  //     return 'just a moment ago';
-  //   else if (delta < 30)
-  //     return 'just a few moments ago';
-  //   else if (delta < 60) 
-  //     return 'less than a minute ago';
-  //   else if (delta < 120) 
-  //     return 'about a minute ago';
-  //   else if (delta < (45 * 60)) 
-  //     return (parseInt(delta / 60)).toString() + ' minutes ago';
-  //   else if (delta < (90 * 60)) 
-  //     return 'about an hour ago';
-  //   else if (delta < (24 * 60 * 60)) 
-  //     return 'about ' + (parseInt(delta / 3600)).toString() + ' hours ago';
-  //   else if (delta < (2 * 24 * 60 * 60)) 
-  //     return 'about a day ago';
-  //   else if (delta < (10 * 24 * 60 * 60))
-  //     return (parseInt(delta / 86400)).toString() + ' days ago';
-  //   else
-  //     return
-  //       new Date(ts).toLocaleDateString();
-  // }
-
   function updateTimes() {
     $('.comment-added').each(function (i) {
       var time = $(this);
@@ -141,8 +134,6 @@ Island = (function ($) {
    * select hearts for rating
    */
 
-  // var rater;
-  // var hearts;
   var selectHearts = function (hearts, x, h) {
     if (!h && h !== 0) {
       if (x < 10) h = 0;
@@ -541,6 +532,8 @@ Island = (function ($) {
       }
       fitSignInBG();
 
+      var spin = new Spin();
+
       /////////////////////////// ACTIONS
 
       // forms
@@ -560,22 +553,12 @@ Island = (function ($) {
       var loginButton = $('#login');
       var loginEmail = $('input[name="username"]');
       var loginPassword = $('input[name="password"]');
-      // var loginEmailLabel = $('label[for="member[primaryEmail]"]');
-      // var loginPasswordLabel = $('label[for="member[password]"]');
 
       // register member
       var registerButton = $('#add-member');
       var registerName = $('input[name="newname"]');
       var registerEmail = $('input[name="newusername"]');
       var registerPassword = $('input[name="newpassword"]');
-      // var registerNameLabel = $('label[for="newmember[displayName]"]');
-      // var registerEmailLabel = $('label[for="newmember[primaryEmail]"]');
-      // var registerPasswordLabel = $('label[for="newmember[password]"]');
-      var landingMessage = $('#landing-message');
-      var landingSuccess = $('#landing-success');
-      var landingError = $('#landing-error');
-      var landingSuccessText = $('#landing-success p');
-      var landingErrorText = $('#landing-error p');
 
       // switch between forms
       function gotoLogin() {
@@ -590,7 +573,6 @@ Island = (function ($) {
         });
         gotoLoginButton.hide();
         gotoRegisterButton.show();
-        landingError.hide();
       }
       function gotoRegister() {
         loginForm.animate({
@@ -604,7 +586,6 @@ Island = (function ($) {
         });
         gotoRegisterButton.hide();
         gotoLoginButton.show();
-        landingError.hide();
       }
 
       // form control
@@ -626,25 +607,23 @@ Island = (function ($) {
         registerPassword.removeClass('is-input-alert');
       }
 
-      function hideLandingForms() {
-        gotoLoginButton.css({ visibility: 'hidden' });
-        gotoRegisterButton.css({ visibility: 'hidden' });
-        loginForm.css({ visibility: 'hidden' });
-        registerForm.css({ visibility: 'hidden' });
+      function showSpinner() {
+        $('.signin-strategies').hide();
+        $('.signin-controls').hide();
+        $('.signin-forms').hide();
+        $('.signin-spinner').show();
       }
-      function showLandingForms() {
-        gotoLoginButton.css({ visibility: 'visible' });
-        gotoRegisterButton.css({ visibility: 'visible' });
-        loginForm.css({ visibility: 'visible' });
-        registerForm.css({ visibility: 'visible' });
+      function hideSpinner() {
+        $('.signin-strategies').show();
+        $('.signin-controls').show();
+        $('.signin-forms').show();
+        $('.signin-spinner').hide();
       }
 
-      $('a', gotoRegisterButton).bind('click', function () {
-        gotoRegister();
-      });
-      $('a', gotoLoginButton).bind('click', function () {
-        gotoLogin();
-      });
+      $('a', gotoRegisterButton).bind('click',
+          function () { gotoRegister(); });
+      $('a', gotoLoginButton).bind('click',
+          function () { gotoLogin(); });
       loginEmail.focus();
 
       loginButton.bind('mouseenter', function () {
@@ -663,21 +642,21 @@ Island = (function ($) {
 
       loginButton.bind('click', function (e) {
         e.preventDefault();
-        landingError.hide();
+        spin.start();
+        showSpinner();
         var data = loginForm.serializeObject();
         $.post('/login', data, function (serv) {
-          console.log(serv)
-          if (serv.status == 'success') {
+          if ('success' === serv.status) {
             window.location = serv.data.path;
           } else if ('fail' === serv.status) {
-            landingErrorText.html(serv.data.message);
-            landingError.fadeIn('fast');
+            hideSpinner();
+            spin.stop();
+            ui.error(serv.data.message).closable().hide(8000).effect('fade');
             switch (serv.data.code) {
               case 'MISSING_FIELD':
                 var missing = serv.data.missing;
-                for (var i=0; i < missing.length; i++) {
+                for (var i=0; i < missing.length; ++i)
                   $('input[name="' + missing[i] + '"]').addClass('is-input-alert');
-                }
                 break;
               case 'BAD_AUTH':
                 loginPassword.val('').focus();
@@ -685,9 +664,6 @@ Island = (function ($) {
               case 'NOT_CONFIRMED':
                 break;
             }
-          } else if ('error' === serv.status) {
-            landingErrorText.html(serv.message);
-            landingError.fadeIn('fast');
           }
         }, 'json');
       });
@@ -696,7 +672,6 @@ Island = (function ($) {
         var name = registerName.val().trim();
         var email = registerEmail.val().trim();
         var password = registerPassword.val().trim();
-
         if (name != '' && email != '' && password != '') {
           resetRegisterStyles();
         } else {
@@ -712,32 +687,26 @@ Island = (function ($) {
 
       registerButton.bind('click', function (e) {
         e.preventDefault();
-        hideLandingForms();
-        landingError.hide();
-        landingMessage.fadeIn('fast');
-        packman.start();
+        spin.start();
+        showSpinner();
         var data = registerForm.serializeObject();
         $.put('/signup', data, function (serv) {
-          console.log(serv)
-          landingMessage.hide();
-          packman.stop();
-          if (serv.status == 'success') {
-            landingSuccessText.html(serv.data.message);
-            landingSuccess.fadeIn('fast');
+          hideSpinner();
+          spin.stop();
+          if ('success' === serv.status) {
+            ui.notify(serv.data.message).sticky().effect('fade');
             registerName.val('');
             registerEmail.val('');
             registerPassword.val('');
             resetRegisterStyles();
-          } else if (serv.status == 'fail') {
-            showLandingForms();
-            landingErrorText.html(serv.data.message);
-            landingError.fadeIn('fast');
+            gotoLogin();
+          } else if ('fail' === serv.status) {
+            ui.error(serv.data.message).closable().hide(8000).effect('fade');
             switch (serv.data.code) {
               case 'MISSING_FIELD':
                 var missing = serv.data.missing;
-                for (var i=0; i < missing.length; i++) {
+                for (var i=0; i < missing.length; ++i)
                   $('input[name="' + missing[i] + '"]').addClass('is-input-alert');
-                }
                 break;
               case 'INVALID_EMAIL':
               case 'DUPLICATE_EMAIL':
@@ -745,33 +714,23 @@ Island = (function ($) {
                 registerEmail.focus();
                 break;
             }
-          } else if (serv.status == 'error') {
-            showLandingForms();
-            landingErrorText.html(serv.message);
-            landingError.fadeIn('fast');
           }
         });
       });
+      
+      // Hide everything when a strategy is clicked
+      $('.signin-strategy-btn').click(function (e) { showSpinner(); });
 
       // resend confirmation email
-      $('.resend-conf').bind('click', function () {
-        hideLandingForms();
-        landingError.hide();
-        landingMessage.fadeIn('fast');
+      $('.resend-conf').live('click', function (e) {
         packman.start();
         var id = $(this).itemID()
-        var data = { id: id };
-
-        $.post('/resendconf/' + id, data, function (serv) {
-          landingMessage.hide(packman.stop);
-          if (serv.status == 'success') {
-            landingSuccessText.html(serv.data.message);
-            landingSuccess.fadeIn('fast');
-          } else if (serv.status == 'error') {
-            showLandingForms();
-            landingErrorText.html(serv.message);
-            landingError.fadeIn('fast');
-          }
+        $.post('/resendconf/' + id, { id: id }, function (serv) {
+          packman.stop();
+          if ('success' === serv.status)
+            ui.notify(serv.data.message).closable().hide(8000).effect('fade');
+          else if ('error' === serv.status)
+            ui.error(serv.data.message).closable().hide(8000).effect('fade');
         }, 'json');
       });
 
@@ -1029,7 +988,6 @@ Island = (function ($) {
 
     receiveComment: function (str, mediaId) {
       var com = $(str);
-      // $('.comment-txt', com).html($('.comment-txt', com).text());
       var comHolder = $('#coms-' + mediaId);
       var recHolder = $('#recent-comments');
       if (recHolder.length > 0) {
