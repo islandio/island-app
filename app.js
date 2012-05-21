@@ -86,12 +86,10 @@ app.util = {
 
 app.configure('development', function () {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-  // Notify.active = false;
 });
 
 app.configure('production', function () {
   app.use(express.errorHandler());
-  // Notify.active = true;
 });
 
 app.set('sessionStore', new mongoStore({
@@ -206,6 +204,8 @@ app.get('/', authorize, function (req, res) {
 
 // Landing page
 app.get('/login', function (req, res) {
+  var memberId = req.session.passport.user;
+  if (memberId) return res.redirect('/');
   res.render('login');
 });
 
@@ -681,20 +681,16 @@ app.put('/rate/:mediaId', authorize, function (req, res) {
 
 function authorize(req, res, cb) {
   var memberId = req.session.passport.user;
-  if (memberId) {
-    memberDb.findMemberById(memberId, function (err, member) {
-      if (err) return cb(err);
-      if (!member) {
-        res.redirect('/login');
-        return cb('Member and Session do NOT match!');
-      }
-      req.user = member;
-      cb(null, member);
-    });
-  } else {
-    res.redirect('/login');
-    cb('Session has no Member.');
-  }
+  if (!memberId) return res.redirect('/login');
+  memberDb.findMemberById(memberId, function (err, member) {
+    if (err) return cb(err);
+    if (!member) {
+      res.redirect('/login');
+      return cb(new Error('Member and Session do NOT match'));
+    }
+    req.user = member;
+    cb(null, member);
+  });
 }
 
 function getMedia(limit, cb) {
