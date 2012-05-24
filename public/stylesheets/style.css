@@ -462,7 +462,6 @@ input:focus {
 input::-moz-focus-inner {
   border: none;
 }
-/*for submits*/
 input.is-button-alert[type=submit] {
   color: #d04c38 !important;
   border: 1px solid #d04c38 !important;
