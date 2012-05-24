@@ -40,7 +40,7 @@ var MemberDb = exports.MemberDb = function (db, options, cb) {
   self.search = reds.createSearch('media');
 
   var collections = {
-    member: { index: { primaryEmail: 1, key: 1, role: 1 } },
+    member: { index: { primaryEmail: 1, username: 1, key: 1, role: 1 } },
     post: { index: { key: 1, member_id: 1 } },
     media: { index: { type: 1, member_id: 1 } },
     comment: { index: { member_id: 1, media_id: 1 } },
@@ -79,16 +79,20 @@ var MemberDb = exports.MemberDb = function (db, options, cb) {
 
 
 /*
- * Find a member by its primaryEmail. If it does not exist
+ * Find a member by its email(s) or facebookId. If it does not exist
  * create one using the given props and the Facebook API.
  */
-MemberDb.prototype.findOrCreateMemberFromFacebook = function (props, cb) {
+MemberDb.prototype.findOrCreateMemberFromFacebook =
+    function (props, cb) {
   var self = this;
   delete props._raw;
   delete props._json;
-  props.primaryEmail = props.emails[0].value;
-  self.collections.member.findOne({ primaryEmail: props.primaryEmail },
-                                  function (err, member) {
+  props.emails = props.emails ? _.without(props.emails, null) : [];
+  props.facebookId = props.id;
+  delete props.id;
+  self.collections.member.findOne({ $or: [{ emails: { $in: props.emails }},
+                                  { facebookId: props.facebookId }
+                                  ]}, function (err, member) {
     if (err) return cb(err);
     if (member && member.key)
       updateFacebookData(member);
@@ -104,7 +108,7 @@ MemberDb.prototype.findOrCreateMemberFromFacebook = function (props, cb) {
     var facebook = new Facebook(facebookCredentials);
     Step(
       function () {
-        facebook.get(props.id,
+        facebook.get(props.facebookId,
                     { access_token: props.facebookToken }, this);
       },
       function (err, data) {
@@ -122,7 +126,7 @@ MemberDb.prototype.findOrCreateMemberFromFacebook = function (props, cb) {
         if (data.hometown)
           facebook.get(data.hometown.id, {}, this.parallel());
         else this.parallel()();
-        facebook.get(props.id + '/albums',
+        facebook.get(props.facebookId + '/albums',
                     { access_token: props.facebookToken }, this.parallel());
       },
       function (err, location, hometown, albums) {
@@ -146,9 +150,15 @@ MemberDb.prototype.findOrCreateMemberFromFacebook = function (props, cb) {
         if (err) return cb(err);
         props.picture = data || null;
         if (member) {
+          delete props.displayName;
+          if (member.name) delete props.name;
+          if (member.username) delete props.username;
+          props.emails = mergeMemberEmails(props.emails, member.emails,
+                                          member.primaryEmail);
           _.defaults(props, member);
+          props.primaryEmail = member.primaryEmail;
           delete props.accessToken; // TEMP: delete this for now.
-          self.collections.member.update({ primaryEmail: props.primaryEmail },
+          self.collections.member.update({ _id: member._id },
                                           props, { safe: true }, function (err) {
             if (err) return cb(err);
             cb(null, props);
@@ -157,7 +167,10 @@ MemberDb.prototype.findOrCreateMemberFromFacebook = function (props, cb) {
           _.defaults(props, {
             role: 1,
             twitter: '',
+            confirmed: false,
           });
+          props.primaryEmail = props.emails.length > 0 ?
+                                props.emails[0].value : null;
           createDoc(self.collections.member, props, cb);
         }
       }
@@ -167,19 +180,18 @@ MemberDb.prototype.findOrCreateMemberFromFacebook = function (props, cb) {
 
 
 /*
- * Find a member by its primaryEmail. If it does not exist
+ * Find a member by its email(s) or twitterId. If it does not exist
  * create one using the given props and the Twitter API.
  */
-MemberDb.prototype.findOrCreateMemberFromTwitter = function (props, cb) {
+MemberDb.prototype.findOrCreateMemberFromTwitter =
+    function (props, cb) {
   var self = this;
-  delete props._raw;
-  // delete props._json;
-  console.log(props);
-  return;
-  props.primaryEmail = props.emails[0].value;
-
-  self.collections.member.findOne({ primaryEmail: props.primaryEmail },
-                                  function (err, member) {
+  props.emails = props.emails ? _.without(props.emails, null) : [];
+  props.twitterId = props.id;
+  delete props.id;
+  self.collections.member.findOne({ $or: [{ emails: { $in: props.emails }},
+                                  { twitterId: props.twitterId }
+                                  ]}, function (err, member) {
     if (err) return cb(err);
     if (member && member.key)
       updateTwitterData(member);
@@ -192,55 +204,87 @@ MemberDb.prototype.findOrCreateMemberFromTwitter = function (props, cb) {
       });
   });
   function updateTwitterData(member) {
-    var facebook = new Facebook(twitterCredentials);
-    Step(
-      function () {
-        facebook.get(props.id,
-                    { access_token: props.twitterToken }, this);
-      },
-      function (err, data) {
+    _.extend(props, _.pick(props._json, 
+          'description', 'location', 'url',
+          'time_zone', 'lang'));
+    delete props._raw;
+    delete props._json;
+    props.twitter = props.username;
+    if (props.url)
+      props.website = props.url;
+    delete props.url;
+    if (props.location)
+      props.location = { name: props.location };
+    if (props.lang)
+      props.locale = props.lang;
+    delete props.lang;
+    if (props.time_zone)
+      props.timezone = props.time_zone;
+    delete props.time_zone;
+    props.name = MemberDb.getMemberNameFromDisplayName(props.displayName);
+    if (member) {
+      delete props.displayName;
+      if (member.name) delete props.name;
+      if (member.username) delete props.username;
+      props.emails = mergeMemberEmails(props.emails, member.emails,
+                                      member.primaryEmail);
+      _.defaults(props, member);
+      props.primaryEmail = member.primaryEmail;
+      delete props.accessToken; // TEMP: delete this for now.
+      self.collections.member.update({ _id: member._id },
+                                      props, { safe: true },
+                                      function (err) {
         if (err) return cb(err);
-        _.extend(props, {
-          locale: data.locale,
-          timezone: data.timezone,
-          gender: data.gender,
-          birthday: data.birthday,
-          website: data.website,
-        });
-        if (data.location)
-          facebook.get(data.location.id, {}, this.parallel());
-        else this.parallel()();
-        if (data.hometown)
-          facebook.get(data.hometown.id, {}, this.parallel());
-        else this.parallel()();
-        facebook.get(props.id + '/albums',
-                    { access_token: props.twitterToken }, this.parallel());
-      },
-      function (err, location, hometown, albums) {
+        cb(null, props);
+      });
+    } else if (!member) {
+      _.defaults(props, {
+        role: 1,
+        confirmed: false,
+      });
+      createDoc(self.collections.member, props, cb);
+    }
+  }
+}
+
+
+/*
+ * Finds a member by its email(s). If it does not exist
+ * create one using the given props.
+ */
+MemberDb.prototype.findOrCreateMemberFromEmail =
+    function (props, options, cb) {
+  var self = this;
+  if ('function' === typeof options) {
+    cb = options;
+    options = null;
+  }
+  if (props.password && !props.salt)
+    MemberDb.dealWithPassword(props);
+  self.collections.member.findOne({ emails: { $in: props.emails }},
+                                  function (err, member) {
+    if (err) return cb(err);
+    if (member && member.key)
+      if (options.safe)
+        cb(new Error('DUPLICATE_KEY'));
+      else cb(null, member);
+    else
+      createUniqueURLKey(self.collections.member,
+                          8, function (err, key) {
         if (err) return cb(err);
-        if (location) {
-          props.location = { name: location.name };
-          _.extend(props.location, location.location);
-        } else props.location = null;
-        if (hometown) {
-          props.hometown = { name: hometown.name };
-          _.extend(props.hometown, hometown.location);
-        } else props.hometown = null;
-        var photo = _.find(albums, function (album) {
-                            return album.name === 'Cover Photos'; });
-        if (photo && photo.cover_photo)
-          facebook.get(photo.cover_photo,
-                      { access_token: props.twitterToken }, this);
-        else this();
-      },
-      function (err, data) {
-        if (err) return cb(err);
-        props.picture = data || null;
+        props.key = key;
+        props.name = MemberDb.getMemberNameFromDisplayName(props.displayName);
+        props.displayName = props.name.givenName + (props.name.middleName ?
+                            ' ' + props.name.middleName : '') +
+                            ' ' + props.name.familyName;
+        props.username = (props.name.givenName + (props.name.middleName || '')
+                          + props.name.familyName).toLowerCase();
+        props.confirmed = false;
         if (member) {
           _.defaults(props, member);
-          delete props.accessToken; // TEMP: delete this for now.
-          self.collections.member.update({ primaryEmail: props.primaryEmail },
-                                          props, { safe: true }, function (err) {
+          self.collections.member.update({ _id: member._id },
+                                          props, { safe: true }, 
+                                          function (err) {
             if (err) return cb(err);
             cb(null, props);
           });
@@ -251,51 +295,7 @@ MemberDb.prototype.findOrCreateMemberFromTwitter = function (props, cb) {
           });
           createDoc(self.collections.member, props, cb);
         }
-      }
-    );
-  }
-}
-
-
-/*
- * Finds a member by its primaryEmail. If it does not exist
- * create one using the given props.
- */
-MemberDb.prototype.findOrCreateMemberFromPrimaryEmail =
-    function (props, options, cb) {
-  var self = this;
-  if ('function' === typeof options) {
-    cb = options;
-    options = null;
-  }
-  if (!props.primaryEmail)
-    if (props.emails)
-      props.primaryEmail = props.emails[0].value;
-    else return cb(new Error('Member profile missing email address'));
-  if (props.password && !props.salt) {
-    props.salt = makeSalt();
-    props.password = encryptPassword(props.password, props.salt);
-  }
-  self.collections.member.findOne({ primaryEmail: props.primaryEmail },
-                                  function (err, member) {
-    if (err) return cb(err);
-    if (!member)
-      createUniqueURLKey(self.collections.member,
-                          8, function (err, key) {
-        if (err) return cb(err);
-        _.defaults(props, {
-          key: key,
-          confirmed: false,
-          role: 1,
-          twitter: '',
-        });
-        createDoc(self.collections.member, props, cb);
       });
-    else {
-      if (options.safe)
-        cb(new Error('DUPLICATE_KEY'));
-      else cb(null, member);
-    }
   });
 }
 
@@ -549,7 +549,7 @@ MemberDb.prototype.findMemberByKey = function (key, bare, cb) {
  */
 MemberDb.prototype.findTwitterHandles = function (cb) {
   var self = this;
-  self.collections.member.find({})
+  self.collections.member.find({ role: 0 })
       .toArray(function (err, members) {
     if (err) return cb(err);
     cb(null, _.chain(members).pluck('twitter')
@@ -590,12 +590,46 @@ MemberDb.prototype.searchPosts = function (str, cb) {
 }
 
 
+/**
+  * Takes a member, makes salt
+  * and encrypts password.
+  * Exists only for public access
+  * to password methods.
+  */
+MemberDb.dealWithPassword = function (member) {
+  member.salt = makeSalt();
+  member.password = encryptPassword(member.password,
+                                    member.salt);
+  return member;
+}
+
 /*
  * Determine whether or not the given string is
  * the user's actual password.
  */
 MemberDb.authenticateLocalMember = function (member, str) {
   return encryptPassword(str, member.salt) === member.password;
+}
+
+
+/**
+  * Parse displayName into name parts.
+  */
+MemberDb.getMemberNameFromDisplayName = function (displayName) {
+  var name = _.without(displayName.split(' '), '');
+  var family = null;
+  var given = _.capitalize(name[0]);
+  var middle = null;
+  if (name.length > 2) {
+    middle = _.capitalize(name[1]);
+    family = _.capitalize(name[2]);
+  } else if (name.length > 1)
+    family = _.capitalize(name[1]);
+  return {
+    familyName: family,
+    givenName: given,
+    middleName: middle,
+  };
 }
 
 
@@ -715,7 +749,6 @@ function getDocIds(docs, cb) {
     _cb = cb;
     handleDoc(docs);
   }
-  
   function handleDoc(doc) {
     var collections = {};
     _.each(doc, function (id, key) {
@@ -734,6 +767,10 @@ function getDocIds(docs, cb) {
       findOne.call(self, self.collections[collection],
                   { _id: id }, function (err, d) {
         if (err) return cb(err);
+        if (!d) {
+          doc[collection] = null;
+          return __cb(null, docs);
+        }
         switch (collection) {
           case 'member':
             doc[collection] = {
@@ -763,6 +800,26 @@ function getDocIds(docs, cb) {
       });
     });
   }
+}
+
+
+/**
+  * Combine shitty passport email lists.
+  */
+function mergeMemberEmails(a, b, first) {
+  if (!a) a = [];
+  if (!b) b = [];
+  var tmpA = _.pluck(a, 'value');
+  var tmpB = _.pluck(b, 'value');
+  var tmpC = _.union(tmpA, tmpB);
+  if (first)
+    tmpC = _.without(tmpC, first);
+  var c = [];
+  _.each(tmpC, function (val) {
+    c.push({ value: val }); });
+  if (first)
+    c.unshift({ value: first });
+  return c;
 }
 
 

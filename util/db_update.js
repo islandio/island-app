@@ -258,8 +258,6 @@ Step(
       } else next();
     });
   },
-
-
   // Redo ratings...
   function (err) {
     var next = this;
@@ -300,9 +298,6 @@ Step(
       } else next();
     });
   },
-
-
-
   // Index posts
   function (err) {
     var next = this;

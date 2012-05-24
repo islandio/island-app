@@ -407,9 +407,9 @@ Island = (function ($) {
           if (o[this.name]) {
             if (!o[this.name].push)
               o[this.name] = [o[this.name]];
-            o[this.name].push(this.value || '');
+            o[this.name].push(this.value.trim() || '');
           } else
-            o[this.name] = this.value || '';
+            o[this.name] = this.value.trim() || '';
         });
         return o;
       };
@@ -425,19 +425,19 @@ Island = (function ($) {
       };
 
       // custom fade in for flashes
-      $.fn.dropIn = function () {
-        $(this).css({ bottom: 40 }).animate({ bottom: '-=20' }, 2000, 'easeOutExpo');
-      };
+      // $.fn.dropIn = function () {
+      //   $(this).css({ bottom: 40 }).animate({ bottom: '-=20' }, 2000, 'easeOutExpo');
+      // };
 
 
       /////////////////////////// SETUP
 
       // flash messages
-      $('.flash').hide().fadeIn(1000).bind('click', hideFlashMessages);
-      $('.is-highlight, .is-error').dropIn();
-      setTimeout(function () {
-        $('.flash').each(hideFlashMessages);
-      }, 10000);
+      // $('.flash').hide().fadeIn(1000).bind('click', hideFlashMessages);
+      // $('.is-highlight, .is-error').dropIn();
+      // setTimeout(function () {
+      //   $('.flash').each(hideFlashMessages);
+      // }, 10000);
 
       // init trending
       trending = new Trending('#trend');
@@ -469,11 +469,11 @@ Island = (function ($) {
         $('#footer').hide();
 
       }
-      
+
       // Clear the shit that come back from Facebook
       if (window.location.hash !== '') {
         try {
-          window.history.replaceState('', '', window.location.pathname);
+          window.history.replaceState('', '', window.location.pathname + window.location.search);
         } catch(err) {}
       }
 
@@ -611,12 +611,14 @@ Island = (function ($) {
         $('.signin-strategies').hide();
         $('.signin-controls').hide();
         $('.signin-forms').hide();
+        $('.signin-almost-there').hide();
         $('.signin-spinner').show();
       }
       function hideSpinner() {
         $('.signin-strategies').show();
         $('.signin-controls').show();
         $('.signin-forms').show();
+        $('.signin-almost-there').show();
         $('.signin-spinner').hide();
       }
 
@@ -690,17 +692,19 @@ Island = (function ($) {
         spin.start();
         showSpinner();
         var data = registerForm.serializeObject();
+        data.id = registerButton.data('id');
         $.put('/signup', data, function (serv) {
-          hideSpinner();
-          spin.stop();
           if ('success' === serv.status) {
-            ui.notify(serv.data.message).sticky().effect('fade');
-            registerName.val('');
-            registerEmail.val('');
-            registerPassword.val('');
-            resetRegisterStyles();
-            gotoLogin();
+            // ui.notify(serv.data.message).sticky().effect('fade');
+            // registerName.val('');
+            // registerEmail.val('');
+            // registerPassword.val('');
+            // resetRegisterStyles();
+            // gotoLogin();
+            window.location = serv.data.path;
           } else if ('fail' === serv.status) {
+            hideSpinner();
+            spin.stop();
             ui.error(serv.data.message).closable().hide(8000).effect('fade');
             switch (serv.data.code) {
               case 'MISSING_FIELD':

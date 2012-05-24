@@ -170,8 +170,6 @@ passport.use(new LocalStrategy(
                                     function (err, member) {
       if (err) return cb(err);
       if (!member) return cb(null, false);
-      if ('local' !== member.provider)
-        return cb(null, false);
       if (!MemberDb.authenticateLocalMember(member, password))
         return cb(null, false);
       return cb(null, member);
@@ -204,9 +202,11 @@ app.get('/', authorize, function (req, res) {
 
 // Landing page
 app.get('/login', function (req, res) {
-  var memberId = req.session.passport.user;
-  if (memberId) return res.redirect('/');
-  res.render('login');
+  if (req.session.passport.user)
+    return res.redirect('/');
+  var opts = { session: req.session.temp };
+  delete req.session.temp;
+  res.render('login', opts);
 });
 
 // Basic password authentication
@@ -216,14 +216,13 @@ app.post('/login', function (req, res, next) {
     missing.push('username');
   if (!req.body.password)
     missing.push('password');
-  if (missing.length !== 0) {
+  if (missing.length !== 0)
     return res.send({
       status: 'fail', 
       data: { code: 'MISSING_FIELD', 
               message: 'All fields are required.',
               missing: missing },
     });
-  }
   passport.authenticate('local', function (err, member, info) {
     if (err) return next(err);
     if (!member)
@@ -234,23 +233,23 @@ app.post('/login', function (req, res, next) {
           message: 'Your email or password is incorrect.'
         }
       });
-    if (!member.confirmed)
-      return res.send({
-        status: 'fail',
-        data: {
-          code: 'NOT_CONFIRMED',
-          message: member.displayName + ', please confirm your account by '
-                  + 'following the link in your confirmation email. '
-                  + '<a href="javascript:;" id="noconf-' + member._id + '" class="resend-conf">'
-                  + 'Re-send the confirmation email</a> if you need to.'
-        }
-      });
+    // if (!member.confirmed)
+    //   return res.send({
+    //     status: 'fail',
+    //     data: {
+    //       code: 'NOT_CONFIRMED',
+    //       message: member.displayName + ', please confirm your account by '
+    //               + 'following the link in your confirmation email. '
+    //               + '<a href="javascript:;" id="noconf-' + member._id + '" class="resend-conf">'
+    //               + 'Re-send the confirmation email</a> if you need to.'
+    //     }
+    //   });
     req.logIn(member, function (err) {
       if (err) return next(err);
       var referer = url.parse(req.headers.referer);
       referer.search = referer.query = referer.hash = null;
       referer.pathname = '/';
-      return res.send({
+      res.send({
         status: 'success',
         data: { path: url.format(referer) }
       });
@@ -278,8 +277,19 @@ app.get('/auth/facebook', function (req, res, next) {
 
 // Facebook returns here
 app.get('/auth/facebook/callback', function (req, res, next) {
-  passport.authenticate('facebook', { successRedirect: '/',
-                                    failureRedirect: '/login' })(req, res, next);
+  passport.authenticate('facebook', function (err, member, info) {
+    if (err) return next(err);
+    if (!member)
+      return res.redirect('/login');
+    if (!member.password) {
+      req.session.temp = { provider: 'facebook', member: member };
+      return res.redirect('/login');
+    }
+    req.logIn(member, function (err) {
+      if (err) return next(err);
+      res.redirect('/');
+    });
+  })(req, res, next); 
 });
 
 // Twitter authentication
@@ -296,8 +306,19 @@ app.get('/auth/twitter', function (req, res, next) {
 
 // Twitter returns here
 app.get('/auth/twitter/callback', function (req, res, next) {
-  passport.authenticate('twitter', { successRedirect: '/',
-                                    failureRedirect: '/login' })(req, res, next);
+  passport.authenticate('twitter', function (err, member, info) {
+    if (err) return next(err);
+    if (!member)
+      return res.redirect('/login');
+    if (!member.password) {
+      req.session.temp = { provider: 'twitter', member: member };
+      return res.redirect('/login');
+    }
+    req.logIn(member, function (err) {
+      if (err) return next(err);
+      res.redirect('/');
+    });
+  })(req, res, next);
 });
 
 // We logout via an ajax request.
@@ -307,7 +328,7 @@ app.get('/logout', function (req, res) {
 });
 
 // Create a new member with local authentication
-app.put('/signup', function (req, res) {
+app.put('/signup', function (req, res, next) {
   var missing = [];
   if (!req.body.newname)
     missing.push('newname');
@@ -315,31 +336,88 @@ app.put('/signup', function (req, res) {
     missing.push('newusername');
   if (!req.body.newpassword)
     missing.push('newpassword');
-  if (missing.length !== 0) {
+  if (missing.length !== 0)
     return res.send({
       status: 'fail', 
       data: { code: 'MISSING_FIELD',
               message: 'All fields are required.',
               missing: missing },
     });
-  }
-  var props = {
-    primaryEmail: req.body.newusername,
-    emails: [ { value: req.body.newusername } ],
-    displayName: req.body.newname,
-    password: req.body.newpassword,
-    provider: 'local',
-  };
-  memberDb.findOrCreateMemberFromPrimaryEmail(props,
-      { safe: true }, function (err, member) {
-    if (err)
-      return res.send({
-        status: 'fail',
-        data: {
-          code: 'DUPLICATE_EMAIL',
-          message: 'That email address is already in use.'
-        }
+  req.body.newusername = req.body.newusername.toLowerCase();
+  if (req.body.id) {
+    Step(
+      function () {
+        var _this = this;
+        memberDb.findMemberById(req.body.id, true, function (err, member) {
+          if (err) return next(err);
+          if (!member)
+            return res.send({
+              status: 'fail', 
+              data: { code: 'INTERNAL_ERROR',
+                      message: 'Oops! Something went wrong :( Please start over.' },
+            });
+          memberDb.collections.member.findOne({ emails: {
+                                              value: req.body.newusername }},
+                                              function (err, doc) {
+            if (err) return next(err);
+            if (doc && doc._id.toString() !== member._id.toString()) {
+              // TEMP: match new admins with old accounts.
+              if (doc.role === 0 && !doc.key) {
+                memberDb.collections.member.remove({ _id: member._id },
+                                                  { safe: true },
+                                                  function (err, result) {
+                  if (err) return next(err);
+                  _.defaults(doc, member);
+                  _this(null, doc);
+                });
+              } else return duplicate();
+            } else _this(null, member);
+          });
+        });
+      },
+      function (err, member) {
+        member.primaryEmail = req.body.newusername;
+        var tempEmails = _.pluck(member.emails, 'value');
+        if (!_.include(tempEmails, member.primaryEmail))
+          member.emails.unshift({ value: member.primaryEmail });
+        member.name = MemberDb.getMemberNameFromDisplayName(req.body.newname);
+        member.displayName = member.name.givenName + (member.name.middleName ?
+                            ' ' + member.name.middleName : '') +
+                            ' ' + member.name.familyName;
+        member.username = (member.name.givenName + (member.name.middleName || '')
+                          + member.name.familyName).toLowerCase();
+        member.password = req.body.newpassword;
+        MemberDb.dealWithPassword(member);
+        memberDb.collections.member.update({ _id: member._id },
+                                            member, { safe: true },
+                                            function (err) {
+          if (err) return next(err);
+          req.logIn(member, function (err) {
+            if (err) return next(err);
+            sendMessage(member);
+          });
+        });
+      }
+    );
+  } else {
+    var props = {
+      primaryEmail: req.body.newusername,
+      emails: [ { value: req.body.newusername } ],
+      displayName: req.body.newname,
+      password: req.body.newpassword,
+      provider: 'local',
+    };
+    memberDb.findOrCreateMemberFromEmail(props,
+        { safe: true }, function (err, member) {
+      if (err)
+        return duplicate();
+      req.logIn(member, function (err) {
+        if (err) return next(err);
+        sendMessage(member);
       });
+    });
+  }
+  function sendMessage(member) {
     var referer = url.parse(req.headers.referer);
     referer.search = referer.query = referer.hash = null;
     referer.pathname = '/';
@@ -349,14 +427,24 @@ app.put('/signup', function (req, res) {
       return res.send({
         status: 'success',
         data: {
-          message: 'That\'s great, ' + member.displayName + '. We just sent you a message.'
-                    + ' Please follow the enclosed link to confirm your account...'
-                    + ' and thanks for checking out Island!',
+          path: url.format(referer),
+          // message: 'That\'s great, ' + member.displayName + '. We just sent you a message.'
+          //           + ' Please follow the enclosed link to confirm your account ...'
+          //           + ' and thanks for checking out Island!',
           member: member,
         },
       });
     });
-  });
+  }
+  function duplicate() {
+    res.send({
+      status: 'fail',
+      data: {
+        code: 'DUPLICATE_EMAIL',
+        message: 'That email address is already in use.'
+      },
+    });
+  }
 });
 
 // Confirm page
@@ -685,6 +773,7 @@ function authorize(req, res, cb) {
   memberDb.findMemberById(memberId, function (err, member) {
     if (err) return cb(err);
     if (!member) {
+      req.session.passport = {};
       res.redirect('/login');
       return cb(new Error('Member and Session do NOT match'));
     }
@@ -692,7 +781,6 @@ function authorize(req, res, cb) {
     cb(null, member);
   });
 }
-
 function getMedia(limit, cb) {
   memberDb.findMedia({}, { limit: limit,
                     sort: { created: -1 } }, cb);
@@ -736,7 +824,6 @@ function findTrendingMedia(limit, cb) {
     return initial * Math.exp(-((new Date()).getTime() - created) / constant);
   }
 }
-
 function getRecentComments(limit, memberId, cb) {
   if ('function' === typeof memberId) {
     cb = memberId;
@@ -746,11 +833,9 @@ function getRecentComments(limit, memberId, cb) {
   memberDb.findComments(query, { limit: limit,
                         sort: { created: -1 } }, cb);
 }
-
 function renderMedia(med, cb) {
   cb(null, templates.object({ object: med }));
 }
-
 function renderComment(params, cb) {
   // HACK!!
   params.app = app;

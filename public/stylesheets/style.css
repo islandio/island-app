@@ -261,13 +261,22 @@ a.resend-conf {
 }
 .signin-controls,
 .signin-forms,
-.signin-reports {
+.signin-almost-there {
   display: -moz-box;
   display: -webkit-box;
   display: box;
   -moz-box-pack: center;
   -webkit-box-pack: center;
   box-pack: center;
+}
+.signin-almost-there {
+  text-align: center;
+  margin: 0 0 30px;
+}
+.signin-message {
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 28px;
 }
 .signin-controls {
   margin: 20px 0 0;
@@ -928,6 +937,9 @@ img.heart-img {
 }
 .member-info a {
   text-decoration: underline;
+}
+.member-info-content {
+  font-weight: bold;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 div.each-grid-obj {

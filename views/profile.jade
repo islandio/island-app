@@ -36,31 +36,41 @@ div.single-left
     img.left(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-obj-info.gif", alt="info", align="top")
     div.obj-desc-txt-wrap
       div.member-info
-        ul
-          - if (data.location)
-            li \// 
-              span Lives in 
-              span.member-info-content #{data.location.name}
-          - if (data.hometown)
-            li \// 
-              span From 
-              span.member-info-content #{data.hometown.name}
-          - if (data.birthday && data.gender)
-            li \// 
-              span.member-info-content.birthday #{data.birthday}
-              span &nbsp;year old 
-              span.member-info-content #{data.gender}
-          - if (websites)
-            li \// 
-              span More from #{data.displayName} at 
-              span.member-info-content
-                - websites.forEach(function (site, i) {
-                  - if (site !== '') {
-                    a(href=site, target="_blank") #{site}
-                    - if (i !== websites.length - 1)
-                      | , 
-                  - }
-                - })
+        - if (!data.location && !data.hometown && !(data.birthday && data.gender) && !websites)
+          | \// #{data.displayName} is a 
+          span.member-info-content human 
+          | from 
+          span.member-info-content Earth
+          | .
+        - else
+          ul
+            - if (data.description)
+              li \// 
+                span #{data.description}
+            - if (data.location)
+              li \// 
+                span Lives in 
+                span.member-info-content #{data.location.name}
+            - if (data.hometown)
+              li \// 
+                span From 
+                span.member-info-content #{data.hometown.name}
+            - if (data.birthday && data.gender)
+              li \// 
+                span.member-info-content.birthday #{data.birthday}
+                span &nbsp;year old 
+                span.member-info-content #{data.gender}
+            - if (websites)
+              li \// 
+                span More from #{data.displayName} at 
+                span.member-info-content
+                  - websites.forEach(function (site, i) {
+                    - if (site !== '') {
+                      a(href=site, target="_blank") #{site}
+                      - if (i !== websites.length - 1)
+                        | , 
+                    - }
+                  - })
       h3.obj-details(data-date=data.created.toString(), data-type="profile")
 div.recent-comments-wrap
     h1.title-right / Recent Comments
