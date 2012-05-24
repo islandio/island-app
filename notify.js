@@ -15,7 +15,7 @@ var emailServer = {
   ssl: true,
 };
 var emailDefaults = {
-  from: 'Island <robot@island.io>',
+  from: 'ISLAND <robot@island.io>',
 };
 
 /**
@@ -67,7 +67,7 @@ var welcome = exports.welcome = function (member, confirm, fn) {
   var to = member.displayName + '<' + member.primaryEmail + '>';
   email({
     to: to,
-    subject: 'Confirm your new account, pretty please :)'
+    subject: 'Welcome to our home.'
   }, {
     file: 'welcome.jade',
     html: true,

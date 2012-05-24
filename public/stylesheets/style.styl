@@ -243,28 +243,32 @@ span.welcome-member a:active
 a.resend-conf
   font-weight bold
 
-.signin-controls, 
-.signin-forms, 
-.signin-almost-there
-  display -moz-box
-  display -webkit-box
-  display box
+//.signin-controls, 
+//.signin-forms, 
+//.signin-almost-there
+//display -moz-box
+//display -webkit-box
+//display box
 
-  -moz-box-pack center
-  -webkit-box-pack center
-  box-pack center
+//-moz-box-pack center
+//-webkit-box-pack center
+//box-pack center
 
 .signin-almost-there
   text-align center
-  margin 0 0 30px
+  margin 0 auto 41px
 
 .signin-message
   font-weight bold
   font-size 14px
-  line-height 28px
+  line-height 24px
 
 .signin-controls
-  margin 20px 0 0
+  margin 20px auto 0
+  width 400px
+
+.signin-controls > p
+  text-align center
 
 .signin-controls a
   background none
@@ -279,26 +283,38 @@ a.resend-conf
 
 .signin-forms
   margin 20px 0 0
+  width 100%
   position relative
 
-.signin-reports
-  margin 20px 0 0
+.signin-forms form
+  width 100%
+
+.signin-forms table
+  margin 0 auto
+
+.signin-forms td
+  padding-top 0
+
+//.signin-reports
+//margin 20px 0 0
 
 .signin-spinner
-  margin 52px 0 0
-
-  display -moz-box
-  display -webkit-box
-  display box
+  margin 52px auto 0
+  width 86px
   display none
 
-  -moz-box-pack center
-  -webkit-box-pack center
-  box-pack center
+  //display -moz-box
+  //display -webkit-box
+  //display box
+  //display none
 
-  -moz-box-orient horizontal
-  -webkit-box-orient horizontal
-  box-orient horizontal
+  //-moz-box-pack center
+  //-webkit-box-pack center
+  //box-pack center
+
+  //-moz-box-orient horizontal
+  //-webkit-box-orient horizontal
+  //box-orient horizontal
 
 .signin-spinner > div
   left 50% !important
@@ -463,18 +479,19 @@ input.is-button-alert[type=submit]
 .signin
   width 100%
   height 100%
+  overflow hidden
 
-  display -moz-box
-  display -webkit-box
-  display box
+  //display -moz-box
+  //display -webkit-box
+  //display box
 
-  -moz-box-pack center
-  -webkit-box-pack center
-  box-pack center
+  //-moz-box-pack center
+  //-webkit-box-pack center
+  //box-pack center
 
-  -moz-box-orient vertical
-  -webkit-box-orient vertical
-  box-orient vertical
+  //-moz-box-orient vertical
+  //-webkit-box-orient vertical
+  //box-orient vertical
 
 .signin-bg
   position absolute
@@ -488,19 +505,21 @@ input.is-button-alert[type=submit]
 
 .signin-logo
   margin 90px 0 0
+  width 100%
 
-  display -moz-box
-  display -webkit-box
-  display box
+  //display -moz-box
+  //display -webkit-box
+  //display box
 
-  -moz-box-pack center
-  -webkit-box-pack center
-  box-pack center
+  //-moz-box-pack center
+  //-webkit-box-pack center
+  //box-pack center
 
 .signin-logo > div
   position relative
   width 604px
   height 148px
+  margin 0 auto
 
 .signin-logo > div > img
   position absolute
@@ -509,49 +528,74 @@ input.is-button-alert[type=submit]
   background rgba(255, 255, 255, 0.6)
   padding 20px 0
   margin 20px 0 0 0
+  width 100%
   height 105px
 
+  //display -moz-box
+  //display -webkit-box
+  //display box
+
+  //-moz-box-pack center
+  //-webkit-box-pack center
+  //box-pack center
+
+  //-moz-box-orient vertical
+  //-webkit-box-orient vertical
+  //box-orient vertical
+
 .signin-strategies
-  // margin 30px 0 0
+  margin 0 auto
+  width 471px
+  //display -moz-box
+  //display -webkit-box
+  //display box
 
-  display -moz-box
-  display -webkit-box
-  display box
+  //-moz-box-pack center
+  //-webkit-box-pack center
+  //box-pack center
 
-  -moz-box-pack center
-  -webkit-box-pack center
-  box-pack center
+  //-moz-box-orient horizontal
+  //-webkit-box-orient horizontal
+  //box-orient horizontal
 
-  -moz-box-orient horizontal
-  -webkit-box-orient horizontal
-  box-orient horizontal
+.signin-strategies td
+  padding 0
 
 .signin-or
-  margin 0 20px
-  vertical-align -7px
+  margin 7px 20px 0
   font-style italic
+
+  //display -moz-box
+  //display -webkit-box
+  //display box
+
+  //-moz-box-pack center
+  //-webkit-box-pack center
+  //box-pack center
+
+  //-moz-box-orient horizontal
+  //-webkit-box-orient horizontal
+  //box-orient horizontal
 
 .signin-quote
   margin 50px 0 0
-  text-align center
+  width 100%
+  //display -moz-box
+  //display -webkit-box
+  //display box
 
-  display -moz-box
-  display -webkit-box
-  display box
-
-  -moz-box-pack center
-  -webkit-box-pack center
-  box-pack center
+  //-moz-box-pack center
+  //-webkit-box-pack center
+  //box-pack center
 
 .signin-quote > p
+  margin 0 auto
+  width 500px
   font-size 14px
   font-family title
   line-height 19px
-  width 500px
+  text-align center
   color #333
-
-
-
 
 a.button,
 button,
@@ -635,6 +679,18 @@ a.signin-strategy-btn
   -webkit-text-shadow 0px 1px white
   -moz-text-shadow 0px 1px white
   text-shadow 0px 1px white
+
+  //display -moz-box
+  //display -webkit-box
+  //display box
+
+  //-moz-box-pack center
+  //-webkit-box-pack center
+  //box-pack center
+
+  //-moz-box-orient horizontal
+  //-webkit-box-orient horizontal
+  //box-orient horizontal
 
 a.signin-strategy-btn:hover
   border 1px solid #898989

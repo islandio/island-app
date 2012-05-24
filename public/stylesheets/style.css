@@ -260,27 +260,21 @@ span.welcome-member a:active {
 a.resend-conf {
   font-weight: bold;
 }
-.signin-controls,
-.signin-forms,
-.signin-almost-there {
-  display: -moz-box;
-  display: -webkit-box;
-  display: box;
-  -moz-box-pack: center;
-  -webkit-box-pack: center;
-  box-pack: center;
-}
 .signin-almost-there {
   text-align: center;
-  margin: 0 0 30px;
+  margin: 0 auto 41px;
 }
 .signin-message {
   font-weight: bold;
   font-size: 14px;
-  line-height: 28px;
+  line-height: 24px;
 }
 .signin-controls {
-  margin: 20px 0 0;
+  margin: 20px auto 0;
+  width: 400px;
+}
+.signin-controls > p {
+  text-align: center;
 }
 .signin-controls a {
   background: none;
@@ -295,23 +289,22 @@ a.resend-conf {
 }
 .signin-forms {
   margin: 20px 0 0;
+  width: 100%;
   position: relative;
 }
-.signin-reports {
-  margin: 20px 0 0;
+.signin-forms form {
+  width: 100%;
+}
+.signin-forms table {
+  margin: 0 auto;
+}
+.signin-forms td {
+  padding-top: 0;
 }
 .signin-spinner {
-  margin: 52px 0 0;
-  display: -moz-box;
-  display: -webkit-box;
-  display: box;
+  margin: 52px auto 0;
+  width: 86px;
   display: none;
-  -moz-box-pack: center;
-  -webkit-box-pack: center;
-  box-pack: center;
-  -moz-box-orient: horizontal;
-  -webkit-box-orient: horizontal;
-  box-orient: horizontal;
 }
 .signin-spinner > div {
   left: 50% !important;
@@ -486,15 +479,7 @@ input.is-button-alert[type=submit] {
 .signin {
   width: 100%;
   height: 100%;
-  display: -moz-box;
-  display: -webkit-box;
-  display: box;
-  -moz-box-pack: center;
-  -webkit-box-pack: center;
-  box-pack: center;
-  -moz-box-orient: vertical;
-  -webkit-box-orient: vertical;
-  box-orient: vertical;
+  overflow: hidden;
 }
 .signin-bg {
   position: absolute;
@@ -508,17 +493,13 @@ input.is-button-alert[type=submit] {
 }
 .signin-logo {
   margin: 90px 0 0;
-  display: -moz-box;
-  display: -webkit-box;
-  display: box;
-  -moz-box-pack: center;
-  -webkit-box-pack: center;
-  box-pack: center;
+  width: 100%;
 }
 .signin-logo > div {
   position: relative;
   width: 604px;
   height: 148px;
+  margin: 0 auto;
 }
 .signin-logo > div > img {
   position: absolute;
@@ -527,39 +508,31 @@ input.is-button-alert[type=submit] {
   background: rgba(255,255,255,0.6);
   padding: 20px 0;
   margin: 20px 0 0 0;
+  width: 100%;
   height: 105px;
 }
 .signin-strategies {
-  display: -moz-box;
-  display: -webkit-box;
-  display: box;
-  -moz-box-pack: center;
-  -webkit-box-pack: center;
-  box-pack: center;
-  -moz-box-orient: horizontal;
-  -webkit-box-orient: horizontal;
-  box-orient: horizontal;
+  margin: 0 auto;
+  width: 471px;
+}
+.signin-strategies td {
+  padding: 0;
 }
 .signin-or {
-  margin: 0 20px;
-  vertical-align: -7px;
+  margin: 7px 20px 0;
   font-style: italic;
 }
 .signin-quote {
   margin: 50px 0 0;
-  text-align: center;
-  display: -moz-box;
-  display: -webkit-box;
-  display: box;
-  -moz-box-pack: center;
-  -webkit-box-pack: center;
-  box-pack: center;
+  width: 100%;
 }
 .signin-quote > p {
+  margin: 0 auto;
+  width: 500px;
   font-size: 14px;
   font-family: Title, Verdana, Arial, sans-serif;
   line-height: 19px;
-  width: 500px;
+  text-align: center;
   color: #333;
 }
 a.button,
