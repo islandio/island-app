@@ -831,9 +831,11 @@ Island = (function ($) {
         $(this.parentNode.previousElementSibling).show();
         var mediaId = $(this).itemID();
         $.put('/comment/' + mediaId,
-              { body: str }, function (res) {
-          if ('error' === res.status)
-            return console.log(res.message);
+              { body: str }, function (serv) {
+          if ('error' === serv.status)
+            return console.log(serv.message);
+          if ('fail' === serv.status)
+            ui.error(serv.data.message).closable().hide(12000).effect('fade');
         });
       });
 

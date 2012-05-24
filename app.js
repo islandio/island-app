@@ -428,7 +428,7 @@ app.put('/signup', function (req, res, next) {
         status: 'success',
         data: {
           path: url.format(referer),
-          // message: 'That\'s great, ' + member.displayName + '. We just sent you a message.'
+          // message: 'Cool, ' + member.displayName + '. We just sent you a message.'
           //           + ' Please follow the enclosed link to confirm your account ...'
           //           + ' and thanks for checking out Island!',
           member: member,
@@ -491,9 +491,9 @@ app.post('/resendconf/:id', function (req, res) {
       return res.send({
         status: 'success',
         data: {
-          message: 'That\'s great, ' + member.displayName + '. We just sent you a message.'
+          message: 'Cool, ' + member.displayName + '. We just sent you a message.'
                     + ' Please follow the enclosed link to confirm your account...'
-                    + ' and thanks for checking out Island!',
+                    + ' then you can comment and stuff.',
           member: member,
         },
       });
@@ -733,8 +733,21 @@ app.put('/comment/:postId', authorize, function (req, res) {
              comment: doc } });
   });
   function fail(err) {
-    res.send({ status: 'error',
-             message: err.stack });
+    if ('NOT_CONFIRMED' === err.code)
+      res.send({
+        status: 'fail',
+        data: {
+          code: err.code,
+          message: err.member.displayName + ', please confirm your account by '
+                  + 'following the link in your confirmation email. '
+                  + '<a href="javascript:;" id="noconf-'
+                  + err.member._id.toString() + '" class="resend-conf">'
+                  + 'Re-send the confirmation email</a> if you need to.'
+        }
+      });
+    else
+      res.send({ status: 'error',
+              message: err.stack });
   }
 });
 

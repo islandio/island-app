@@ -67,7 +67,7 @@ var welcome = exports.welcome = function (member, confirm, fn) {
   var to = member.displayName + '<' + member.primaryEmail + '>';
   email({
     to: to,
-    subject: 'Please confirm your new account'
+    subject: 'Confirm your new account, pretty please :)'
   }, {
     file: 'welcome.jade',
     html: true,

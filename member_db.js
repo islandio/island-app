@@ -366,11 +366,17 @@ MemberDb.prototype.createComment = function (props, cb) {
     // TODO: Verify that the user has
     // permission to comment.
     function () {
-      self.findPostById(props.post_id, this);
+      self.findMemberById(props.member_id, this.parallel());
+      self.findPostById(props.post_id, this.parallel());
     },
-    function (err, post) {
+    function (err, member, post) {
       if (err) return cb(err);
-      if (!post) return cb(new Error('Post not found'));
+      if (!member)
+        return cb(new Error('Member not found'));
+      if (!member.confirmed)
+        return cb({ code: 'NOT_CONFIRMED', member: member });
+      if (!post)
+        return cb(new Error('Post not found'));
       props.post_id = post._id;
       createDoc(self.collections.comment, props,
                 function (err, doc) {
@@ -617,7 +623,7 @@ MemberDb.authenticateLocalMember = function (member, str) {
   */
 MemberDb.getMemberNameFromDisplayName = function (displayName) {
   var name = _.without(displayName.split(' '), '');
-  var family = null;
+  var family = '';
   var given = _.capitalize(name[0]);
   var middle = null;
   if (name.length > 2) {
