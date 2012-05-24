@@ -2,15 +2,17 @@
   div(id='obj-' + object.key, class='each-grid-obj ' + 'is-' + object.type)
     a.grid-obj(href='/' + object.key, data-id=object._id.toString(), data-key=object.key)
       div.grid-obj-hover.matte(style='width: ' + object.thumbs[0].meta.width + 'px; height: ' + object.thumbs[0].meta.height + 'px')
-        h1.grid-obj-hover-txt
-          =object.member.displayName
-      img.grid-obj-img.matte(id='img-' + object.key, class='page-0', src=(object.thumbs[0].cf_url || object.thumbs[0].url), width=object.thumbs[0].meta.width, height=object.thumbs[0].meta.height)
+        div.grid-obj-hover-inner
+          h1.grid-obj-hover-txt
+            =object.member.displayName
+      img.grid-obj-img.matte(id='img-' + object.key, class='page-0', src=object.thumbs[0].cf_url, width=object.thumbs[0].meta.width, height=object.thumbs[0].meta.height)
 - if (object.type == 'video')
   div(id='obj-' + object.key, class='each-grid-obj ' + 'is-' + object.type)
     a.grid-obj(href='/' + object.key, data-id=object._id.toString(), data-key=object.key)
       div.grid-obj-hover.matte(style='width: ' + object.thumbs[0].meta.width + 'px; height: ' + object.thumbs[0].meta.height + 'px')
-        h1.grid-obj-hover-txt
-          =object.member.displayName
+        div.grid-obj-hover-inner
+          h1.grid-obj-hover-txt
+            =object.member.displayName
       img.grid-obj-img.matte(id='vid-' + object.key + '-0', class='page-0', src=object.thumbs[0].cf_url, width=object.thumbs[0].meta.width, height=object.thumbs[0].meta.height)
       img.grid-obj-img.matte.hidden(id='vid-' + object.key + '-1', class='page-0', src=object.thumbs[1].cf_url, width=object.thumbs[1].meta.width, height=object.thumbs[1].meta.height)
       img.grid-obj-img.matte.hidden(id='vid-' + object.key + '-2', class='page-0', src=object.thumbs[2].cf_url, width=object.thumbs[2].meta.width, height=object.thumbs[2].meta.height)
@@ -23,7 +25,7 @@
   div(id='obj-' + object.key, class='each-grid-obj ' + 'is-' + object.type)
     a.grid-obj(href='/' + object.key, data-id=object._id.toString(), data-key=object.key)
       div.grid-obj-hover.matte(style='width: ' + 232 + 'px; height: ' + 232 + 'px')
-        h1.grid-obj-hover-txt
-          =object.member.displayName
+        div.grid-obj-hover-inner
+          h1.grid-obj-hover-txt
+            =object.member.displayName
       img.grid-obj-img.matte(id='img-' + object.key, class='page-0', src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-speaker.jpg', width=232, height=232)    
-

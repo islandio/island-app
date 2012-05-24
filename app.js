@@ -640,16 +640,7 @@ app.put('/insert', authorize, function (req, res) {
     function (err, doc) {
       if (err) return done(err);
       if (!doc) return done(new Error('Failed to create post'));
-      var num = 0;
-      if (results.image_full)
-        num += results.image_full.length;
-      if (results.video_encode)
-        num += results.video_encode.length;
-      if (results.audio_encode)
-        num += results.audio_encode.length;
-      if (num === 0)
-        return done(new Error('Nothing was received from Transloadit'));
-      var _next = _.after(num, done);
+      var medias = [];
       _.each(results, function (val, key) {
         _.each(val, function (result) {
           var prefix;
@@ -691,11 +682,15 @@ app.put('/insert', authorize, function (req, res) {
               _.extend(media, {});
               break;
           }
-          memberDb.createMedia(media, function (err, med) {
-            if (err) return done(err);
-            everyone.distributeMedia(med);
-            _next(null, doc);
-          });
+          medias.push(media);
+        });
+      });
+      var _done = _.after(medias.length, done);
+      _.each(medias, function (media) {
+        memberDb.createMedia(media, function (err, med) {
+          if (err) return done(err);
+          everyone.distributeMedia(med);
+          _done();
         });
       });
     }

@@ -769,6 +769,11 @@ Island = (function ($) {
 
       // search box
       var searchBox = $('#search-box');
+
+      // HACK
+      if (navigator.userAgent.indexOf('Firefox') !== -1)
+        searchBox.css({ padding: '5px 10px' });
+
       searchBox.bind('keyup search', function (e) {
         var txt = $(this).val().trim();
         jrid.empty();

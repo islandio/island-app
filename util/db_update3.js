@@ -14,6 +14,7 @@ var MemberDb = require('../member_db.js').MemberDb;
 var optimist = require('optimist');
 var argv = optimist
     .default('db', 'mongo://localhost:27018/island')
+    .default('env', 'dev')
     .argv;
 
 function errCheck(err, op) {
@@ -23,9 +24,12 @@ function errCheck(err, op) {
   };
 }
 
+var cloudfrontImageUrl = argv.env === 'pro' ?
+                            'https://d1da6a4is4i5z6.cloudfront.net/' :
+                            'https://d2a89oeknmk80g.cloudfront.net/';
+
 // Connect to DB.
 var memberDb;
-var _id = new ObjectID(argv.id);
 
 Step(
   function () {
@@ -71,7 +75,23 @@ Step(
   function (err) {
     errCheck(err, 'tweaking members');
     var next = this;
-    next();
+    memberDb.collections.media.find({ type: 'image' })
+            .toArray(function (err, meds) {
+      errCheck(err, 'finding medias');
+      if (meds.length > 0) {
+        var _next = _.after(meds.length, next);
+        _.each(meds, function (med) {
+          if (!med.thumbs[0].cf_url) {
+            med.thumbs[0].cf_url = cloudfrontImageUrl + med.thumbs[0].id.substr(0, 2)
+                          + '/' + med.thumbs[0].id.substr(2)
+                          + '.' + med.thumbs[0].ext;
+          }
+          log('\nUpdated media: ' + inspect(med));
+          memberDb.collections.media.update({ _id: med._id },
+                                              med, { safe: true }, _next);
+        });
+      } else next();
+    });
   },
   // Done.
   function (err) {

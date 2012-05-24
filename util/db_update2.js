@@ -25,7 +25,6 @@ function errCheck(err, op) {
 
 // Connect to DB.
 var memberDb;
-var _id = new ObjectID(argv.id);
 
 Step(
   function () {
