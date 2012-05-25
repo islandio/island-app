@@ -5,7 +5,11 @@ div.single-left
     h1.title-left
       =post.title
     h1.title-sub from 
-      =post.member.displayName
+      - if (post.member.key)
+        a(href='/member/' + post.member.key)
+          =post.member.displayName
+      - else
+        =post.member.displayName
   - post.medias.forEach(function (med, i) {
     - if (med.type === 'image')
       div.obj-holder(style='height: ' + med.image.meta.height + 'px')
@@ -100,6 +104,6 @@ div.single-right
 div.grid-wrap
   #search
     h1.title-bottom / Browse
-    input#search-box.matte(type='search', placeholder='Search')
+    input#search-box.matte(type='search', placeholder='Search', value=(post.title).toLowerCase())
   #grid.adjustable-grid
     !=partial('object', grid)

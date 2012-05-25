@@ -842,7 +842,7 @@ Island = (function ($) {
         searchBox.css({ padding: '5px 10px' });
 
       searchBox.bind('keyup search', function (e) {
-        var txt = $(this).val().trim();
+        var txt = $(this).val().trim().toLowerCase();
         jrid.empty();
         if ('' === txt)
           txt = '__clear__';
@@ -864,8 +864,10 @@ Island = (function ($) {
         });
       }).bind('focus', adjustGridHeight);
 
-      if (searchBox.val() !== '')
+      if (searchBox.val() !== '') {
+        jrid.addClass('search-results');
         searchBox.trigger('keyup');
+      }
 
       $('.grid-obj, .trending').live('click', function (e) {
         e.preventDefault();
