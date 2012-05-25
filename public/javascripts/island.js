@@ -4,6 +4,35 @@
  * Copyright(c) 2012 Sander Pick <sanderpick@gmail.com>
  */
 
+
+// Polyfills
+
+(function() {
+  var lastTime = 0;
+  var vendors = ['ms', 'moz', 'webkit', 'o'];
+  for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+    window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+    window.cancelAnimationFrame = 
+      window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+  }
+
+  if (!window.requestAnimationFrame)
+    window.requestAnimationFrame = function(callback, element) {
+      var currTime = new Date().getTime();
+      var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+      var id = window.setTimeout(function() { callback(currTime + timeToCall); }, 
+        timeToCall);
+      lastTime = currTime + timeToCall;
+      return id;
+    };
+
+  if (!window.cancelAnimationFrame)
+    window.cancelAnimationFrame = function(id) {
+      clearTimeout(id);
+    };
+}());
+
+
 Island = (function ($) {
 
   /**
@@ -29,21 +58,21 @@ Island = (function ($) {
     mattegray: '#f2f2f2',
   };
 
-  var man;
-  var packer;
-  var manX = 0;
-  var packman = {
-    start: function () {
-      packer = setInterval(this.go, 250);
-      this.go();
-    },
-    stop: function () { clearInterval(packer); },
-    go: function () {
-      if (manX > 350) manX = 0;
-      else manX += 20;
-      man.css({ left: manX });
-    },
-  };
+  // var man;
+  // var packer;
+  // var manX = 0;
+  // var packman = {
+  //   start: function () {
+  //     packer = setInterval(this.go, 250);
+  //     this.go();
+  //   },
+  //   stop: function () { clearInterval(packer); },
+  //   go: function () {
+  //     if (manX > 350) manX = 0;
+  //     else manX += 20;
+  //     man.css({ left: manX });
+  //   },
+  // };
 
   var spinOpts = {
     lines: 17, // The number of lines to draw
@@ -183,40 +212,74 @@ Island = (function ($) {
 
   var trending;
   function Trending(el) {
-    var scroller;
+    var req;
+    var last;
+    var delay = 40;
     var holder;
+    var holderOff;
     var holderHeight;
-    var kids;
     var top = 0;
     var newKids = [];
-
+    var offsets = [];
+    var animate = true;
+    var nextIndex = null;
     return {
-      init: function() {
+      init: function () {
         holder = $(el);
+        if (holder.length === 0) return;
+        holderOff = holder.offset().top;
         this.start();
       },
-      start: function() {
+      start: function () {
         holderHeight = holder.height();
-        kids = holder.children();
-        $(kids[0]).clone().appendTo(holder);
-        scroller = $.setIntervalObj(this, 40, this.scroll);
+        $(holder.children()[0]).clone().appendTo(holder);
+        offsets = _.map(holder.children(), function (child) {
+            return $('img', child).offset().top - holderOff; });
+        req = requestAnimationFrame(_.bind(this.scroll, this));
       },
       update: function () {
-        clearInterval(scroller);
+        cancelAnimationFrame(req);
         this.start();
       },
-      scroll: function () {
-        top -= 4;
-        if (-top >= holderHeight) {
-          top = 0;
-          if (newKids.length != 0) {
-            holder.empty();
-            for (var i=0; i < newKids.length; i++)
-              newKids[i].appendTo(holder);
-            this.update();
+      scroll: function (time) {
+        var _this = this;
+        if (!last || time - last > delay) {
+          last = Date.now();
+          top -= 1;
+          if (-top >= holderHeight) {
+            top = 0;
+            holder.css({ marginTop: top });
+            if (newKids.length !== 0) {
+              holder.empty();
+              for (var i = 0; i < newKids.length; ++i)
+                newKids[i].appendTo(holder);
+              this.update();
+            }
+          } else holder.css({ marginTop: top });
+
+          var tmp = nextIndex;
+          var next = _.find(offsets, function (off, i) {
+            tmp = i;
+            return (-top - off) < 0;
+          });
+          if (tmp !== nextIndex) {
+            nextIndex = tmp;
+            animate = true;
           }
-        }
-        holder.css({ marginTop: top });
+          if (animate && nextIndex !== null
+              && nextIndex !== 0 && offsets[nextIndex - 1]
+              + ((next - offsets[nextIndex - 1]) / 2) < -top) {
+            animate = false;
+            cancelAnimationFrame(req);
+            holder.animate({ marginTop: -next + 'px' }, 200,
+                          'easeOutExpo', function () {
+              top = -next;
+              req = requestAnimationFrame(_.bind(_this.scroll, _this));
+            });
+          } else
+            req = requestAnimationFrame(_.bind(_this.scroll, _this));
+        } else
+          req = requestAnimationFrame(_.bind(_this.scroll, _this));
       },
       receive: function (trends) {
         newKids = [];
@@ -260,7 +323,7 @@ Island = (function ($) {
       collage: function (single, extra) {
 
         // hide hovers
-        $('.grid-obj-hover').hide();
+        //$('.grid-obj-hover').hide();
 
         // calc num cols once
         var nc = num_cols();
@@ -297,11 +360,14 @@ Island = (function ($) {
             col_heights[obj_col + x] = parseInt(self.outerHeight()) + COL_GAP_Y + obj_y;
 
           // set the object's css position
-          self.css('left', obj_col * (COL_WIDTH + COL_GAP_X) + x_off).css('top', obj_y + y_off);
+          self.css('left', obj_col * (COL_WIDTH + COL_GAP_X) + x_off).css('top', obj_y + y_off).show();
         });
 
         // get max column height
         gridHeight = Math.max.apply(null, col_heights);
+
+        // add some extra space below the grid
+        wrap.height(gridHeight + 100);
       }
     }
   }
@@ -351,6 +417,7 @@ Island = (function ($) {
 
     go: function () {
 
+      // $('.each-grid-obj').hide();
 
       /////////////////////////// UTILS
 
@@ -504,9 +571,9 @@ Island = (function ($) {
       initVideoSlides();      
 
       // packman loader
-      man = $('#landing-loader');
-      if (man.length === 0)
-        packman.start = function () {};
+      // man = $('#landing-loader');
+      // if (man.length === 0)
+      //   packman.start = function () {};
 
       // tweets
       twitterNames = $('#twitter-names').text().split(',');

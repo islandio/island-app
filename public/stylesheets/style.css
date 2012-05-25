@@ -920,6 +920,7 @@ div.each-grid-obj {
   opacity: 1;
   padding: 0;
   width: 231px;
+  display: none;
 }
 a.grid-obj {
   text-decoration: none;
@@ -936,6 +937,7 @@ div.grid-obj-hover {
   background: #1a1a1a;
   opacity: 0.8;
   position: absolute;
+  display: none;
 }
 div.grid-obj-hover-inner {
   width: 100%;
