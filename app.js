@@ -184,7 +184,7 @@ passport.use(new LocalStrategy(
 app.get('/', authorize, function (req, res) {
   Step(
     function () {
-      getMedia(100, this.parallel());
+      getMedia(30, this.parallel());
       getRecentComments(5, this.parallel());
     },
     function (err, media, comments, twitters) {
@@ -424,7 +424,7 @@ app.put('/signup', function (req, res, next) {
     var confirm = path.join(url.format(referer), 'confirm', member._id.toString());
     Notify.welcome(member, confirm, function (err, msg) {
       if (err) return next(err);
-      return res.send({
+      res.send({
         status: 'success',
         data: {
           path: url.format(referer),
@@ -469,7 +469,7 @@ app.get('/confirm/:id', function (req, res, next) {
 });
 
 // Resend Confirmation Email
-app.post('/resendconf/:id', function (req, res) {
+app.post('/resendconf/:id', authorize, function (req, res) {
   if (!req.params.id)
     return res.send({
       status: 'error',
@@ -488,7 +488,7 @@ app.post('/resendconf/:id', function (req, res) {
     var confirm = path.join(url.format(referer), 'confirm', member._id.toString());
     Notify.welcome(member, confirm, function (err) {
       if (err) return next(err);
-      return res.send({
+      res.send({
         status: 'success',
         data: {
           message: 'Cool, ' + member.displayName + '. We just sent you a message.'
@@ -499,6 +499,35 @@ app.post('/resendconf/:id', function (req, res) {
       });
     });
   });
+});
+
+// pagination
+app.post('/page/:n', authorize, function (req, res) {
+  if (!req.params.n)
+    return res.send({
+      status: 'error',
+      message: 'Invalid request.',
+    });
+  getMedia(30, 30 * (req.params.n - 1), function (err, docs) {
+    if (err) return fail(err);
+    Step(
+      function () {
+        var group = this.group();
+        _.each(docs, function (doc) {
+          renderMedia(doc, group());
+        });
+      },
+      function (err, results) {
+        if (err) return fail(err);
+        res.send({ status: 'success',
+                 data: { results: results } });
+      }
+    );
+  });
+  function fail(err) {
+    res.send({ status: 'error',
+             message: err.stack });
+  }
 });
 
 // Add media form
@@ -516,7 +545,7 @@ app.get('/add', authorize, function (req, res) {
 // Media search
 app.get('/search/:query', authorize, function (req, res) {
   var fn = '__clear__' === req.params.query ?
-            _.bind(getMedia, {}, 100) :
+            _.bind(getMedia, {}, 30) :
             _.bind(memberDb.searchPosts, memberDb,
                   req.params.query);
   fn(function (err, docs) {
@@ -546,7 +575,7 @@ app.get('/member/:key', authorize, function (req, res) {
   Step(
     function () {
       memberDb.findMemberByKey(req.params.key, this.parallel());
-      getMedia(100, this.parallel());
+      getMedia(30, this.parallel());
     },
     function (err, member, media) {
       if (err || !member || member.role !== 0)
@@ -573,7 +602,7 @@ app.get('/:key', authorize, function (req, res) {
     function () {
       memberDb.findPosts({ key: req.params.key },
                         { limit: 1 }, this.parallel());
-      getMedia(100, this.parallel());
+      getMedia(30, this.parallel());
     },
     function (err, post, grid) {
       if (err || !post || post.length === 0)
@@ -789,8 +818,12 @@ function authorize(req, res, cb) {
     cb(null, member);
   });
 }
-function getMedia(limit, cb) {
-  memberDb.findMedia({}, { limit: limit,
+function getMedia(limit, skip, cb) {
+  if ('function' === typeof skip) {
+    cb = skip;
+    skip = 0;
+  }
+  memberDb.findMedia({}, { limit: limit, skip: skip,
                     sort: { created: -1 } }, cb);
 }
 function findTrendingMedia(limit, cb) {

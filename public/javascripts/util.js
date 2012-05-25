@@ -172,6 +172,17 @@ Util.HashSearch = new function () {
   })();
 }
 
+Util.getQueryVariable = function (variable) {
+  var query = window.location.search.substring(1);
+  var vars = query.split('&');
+  for (var i = 0; i < vars.length; i++) {
+    var pair = vars[i].split('=');
+    if (pair[0] === variable)
+      return unescape(pair[1]);
+  }
+  return false;
+}
+
 Util.formatCommentText = function (str) {
   var linkExp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
   str = str.replace(/\n/g, '<br/>');

@@ -4,7 +4,6 @@
  * Copyright(c) 2012 Sander Pick <sanderpick@gmail.com>
  */
 
-
 // Polyfills
 
 (function() {
@@ -58,37 +57,21 @@ Island = (function ($) {
     mattegray: '#f2f2f2',
   };
 
-  // var man;
-  // var packer;
-  // var manX = 0;
-  // var packman = {
-  //   start: function () {
-  //     packer = setInterval(this.go, 250);
-  //     this.go();
-  //   },
-  //   stop: function () { clearInterval(packer); },
-  //   go: function () {
-  //     if (manX > 350) manX = 0;
-  //     else manX += 20;
-  //     man.css({ left: manX });
-  //   },
-  // };
-
   var spinOpts = {
-    lines: 17, // The number of lines to draw
-    length: 0, // The length of each line
-    width: 3, // The line thickness
-    radius: 40, // The radius of the inner circle
-    rotate: 0, // The rotation offset
-    color: '#000', // #rgb or #rrggbb
-    speed: 2.2, // Rounds per second
-    trail: 100, // Afterglow percentage
-    shadow: false, // Whether to render a shadow
-    hwaccel: true, // Whether to use hardware acceleration
-    className: 'spinner', // The CSS class to assign to the spinner
-    zIndex: 2e9, // The z-index (defaults to 2000000000)
-    top: 'auto', // Top position relative to parent in px
-    left: 'auto' // Left position relative to parent in px
+    lines: 17,
+    length: 0,
+    width: 3,
+    radius: 40,
+    rotate: 0,
+    color: '#000',
+    speed: 2.2,
+    trail: 100,
+    shadow: false,
+    hwaccel: true,
+    className: 'spinner',
+    zIndex: 2e9,
+    top: 'auto',
+    left: 'auto'
   };
 
   var Spin = function () {
@@ -322,9 +305,6 @@ Island = (function ($) {
     return {
       collage: function (single, extra) {
 
-        // hide hovers
-        //$('.grid-obj-hover').hide();
-
         // calc num cols once
         var nc = num_cols();
 
@@ -417,8 +397,6 @@ Island = (function ($) {
 
     go: function () {
 
-      // $('.each-grid-obj').hide();
-
       /////////////////////////// UTILS
 
       // extras
@@ -499,13 +477,6 @@ Island = (function ($) {
 
       /////////////////////////// SETUP
 
-      // flash messages
-      // $('.flash').hide().fadeIn(1000).bind('click', hideFlashMessages);
-      // $('.is-highlight, .is-error').dropIn();
-      // setTimeout(function () {
-      //   $('.flash').each(hideFlashMessages);
-      // }, 10000);
-
       // init trending
       trending = new Trending('#trend');
       trending.init();
@@ -568,12 +539,7 @@ Island = (function ($) {
       });
 
       // start all video thumb timers
-      initVideoSlides();      
-
-      // packman loader
-      // man = $('#landing-loader');
-      // if (man.length === 0)
-      //   packman.start = function () {};
+      initVideoSlides();
 
       // tweets
       twitterNames = $('#twitter-names').text().split(',');
@@ -587,20 +553,60 @@ Island = (function ($) {
           callback: twat,
         });
 
-      $(window).resize(fitSignInBG);
-
+      // Fit the sign in page background
+      var bg = $('.signin-bg > img');
       function fitSignInBG () {
-        var bg = $('.signin-bg > img');
         if (bg.length === 0) return;
         var win = $(this);
         var aspect = bg.width() / bg.height();
         bg.width(win.width());
         bg.height(win.width() / aspect);
       }
-      fitSignInBG();
+      if (bg.length > 0) { $(window).resize(fitSignInBG); fitSignInBG(); }
 
+      // Create the spinner
       var spin = new Spin();
 
+      // Handle pagination
+      var pageQuery = Util.getQueryVariable('p');
+      var page = pageQuery && pageQuery !== '' ?
+                    Number(pageQuery) : 1;
+      if ($('#grid').length !== 0) {
+        var doc = $(document);
+        var win = $(window);
+        var fetching = false;
+        var abort = false;
+        var paginate = _.throttle(function (e) {
+          var pos = doc.height()
+                    - win.height()
+                    - doc.scrollTop();
+          if (!fetching && !abort && pos < 100
+              && !jrid.hasClass('search-results')) {
+            fetching = true;
+            $.post('/page/' + (page + 1), function (res) {
+              if ('success' === res.status) {
+                if (res.data.results.length === 0) {
+                  abort = true;
+                  return;
+                }
+                ++page;
+                for (var i = 0; i < res.data.results.length; ++i)
+                  $(res.data.results[i]).appendTo(jrid);
+                if (jrid.hasClass('adjustable-grid'))
+                  grid.collage(true);
+                else grid.collage();
+                initVideoSlides();
+                // window.history.replaceState({}, '',
+                //     window.location.pathname + '?p=' + page);
+              } else console.log(res.message);
+              fetching = false;
+            }, 'json');
+          }
+        }, 100);
+        win.scroll(paginate).resize(paginate);
+      }
+
+      
       /////////////////////////// ACTIONS
 
       // forms
@@ -762,12 +768,6 @@ Island = (function ($) {
         data.id = registerButton.data('id');
         $.put('/signup', data, function (serv) {
           if ('success' === serv.status) {
-            // ui.notify(serv.data.message).sticky().effect('fade');
-            // registerName.val('');
-            // registerEmail.val('');
-            // registerPassword.val('');
-            // resetRegisterStyles();
-            // gotoLogin();
             window.location = serv.data.path;
           } else if ('fail' === serv.status) {
             hideSpinner();
@@ -794,14 +794,14 @@ Island = (function ($) {
 
       // resend confirmation email
       $('.resend-conf').live('click', function (e) {
-        packman.start();
         var id = $(this).itemID()
         $.post('/resendconf/' + id, { id: id }, function (serv) {
-          packman.stop();
           if ('success' === serv.status)
-            ui.notify(serv.data.message).closable().hide(8000).effect('fade');
-          else if ('error' === serv.status)
-            ui.error(serv.data.message).closable().hide(8000).effect('fade');
+            return ui.notify(serv.data.message)
+                      .closable().hide(8000).effect('fade');
+          if ('error' === serv.status)
+            ui.error(serv.data.message)
+                      .closable().hide(8000).effect('fade');
         }, 'json');
       });
 
@@ -853,6 +853,12 @@ Island = (function ($) {
             if (jrid.hasClass('adjustable-grid'))
               grid.collage(true);
             else grid.collage();
+            if ('__clear__' === txt) {
+              jrid.removeClass('search-results');
+              page = 1;
+            }
+            else
+              jrid.addClass('search-results');
           } else console.log(res.message);
           initVideoSlides();
         });
