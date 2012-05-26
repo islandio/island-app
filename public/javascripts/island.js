@@ -197,7 +197,8 @@ Island = (function ($) {
   function Trending(el) {
     var req;
     var last;
-    var delay = 40;
+    var delay = 20;
+    var inc = 1;
     var holder;
     var holderOff;
     var holderHeight;
@@ -228,7 +229,7 @@ Island = (function ($) {
         var _this = this;
         if (!last || time - last > delay) {
           last = Date.now();
-          top -= 1;
+          top -= inc;
           if (-top >= holderHeight) {
             top = 0;
             holder.css({ marginTop: top });
