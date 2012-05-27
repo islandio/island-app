@@ -578,15 +578,17 @@ MemberDb.prototype.searchPosts = function (str, cb) {
     Step(
       function () {
         var group = this.group();
+        console.log(postIds);
         _.each(postIds, function (id) {
           self.findPostById(id, group());
         });
       },
       function (err, posts) {
         if (err) return cb(err);
-        if (!posts || posts.length === 0)
+        if (!posts) return cb(null, []);
+        posts = _.without(posts, null);
+        if (posts.length === 0)
           return cb(null, []);
-        console.log(posts);
         posts.sort(function (a, b) {
           return b.created - a.created;
         });
