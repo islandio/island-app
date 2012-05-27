@@ -584,6 +584,8 @@ MemberDb.prototype.searchPosts = function (str, cb) {
       },
       function (err, posts) {
         if (err) return cb(err);
+        if (!posts || posts.length === 0)
+          return cb(null, []);
         posts.sort(function (a, b) {
           return b.created - a.created;
         });
@@ -621,7 +623,8 @@ MemberDb.prototype.searchPosts = function (str, cb) {
                   return m._id.toString() === med._id.toString();
                 });
               });
-              results = results.concat(post.medias);
+              if (post.medias && post.medias.length > 0)
+                results = results.concat(post.medias);
             });
             cb(null, results);
           }
