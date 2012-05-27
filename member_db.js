@@ -586,9 +586,8 @@ MemberDb.prototype.searchPosts = function (str, cb) {
         if (err) return cb(err);
         if (!posts || posts.length === 0)
           return cb(null, []);
+        console.log(posts);
         posts.sort(function (a, b) {
-          if(!a) console.log(a);
-          if(!b) console.log(b);
           return b.created - a.created;
         });
         Step(
