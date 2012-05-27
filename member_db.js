@@ -87,7 +87,8 @@ MemberDb.prototype.findOrCreateMemberFromFacebook =
   var self = this;
   delete props._raw;
   delete props._json;
-  props.emails = props.emails ? _.without(props.emails, null) : [];
+  props.emails = props.emails ? _.filter(props.emails,
+                    function (e) { return e !== null; }) : [];
   props.facebookId = props.id;
   delete props.id;
   self.collections.member.findOne({ $or: [{ emails: { $in: props.emails }},
@@ -186,7 +187,8 @@ MemberDb.prototype.findOrCreateMemberFromFacebook =
 MemberDb.prototype.findOrCreateMemberFromTwitter =
     function (props, cb) {
   var self = this;
-  props.emails = props.emails ? _.without(props.emails, null) : [];
+  props.emails = props.emails ? _.filter(props.emails,
+                    function (e) { return e !== null; }) : [];
   props.twitterId = props.id;
   delete props.id;
   self.collections.member.findOne({ $or: [{ emails: { $in: props.emails }},
@@ -578,7 +580,6 @@ MemberDb.prototype.searchPosts = function (str, cb) {
     Step(
       function () {
         var group = this.group();
-        console.log(postIds);
         _.each(postIds, function (id) {
           self.findPostById(id, group());
         });
@@ -586,7 +587,7 @@ MemberDb.prototype.searchPosts = function (str, cb) {
       function (err, posts) {
         if (err) return cb(err);
         if (!posts) return cb(null, []);
-        posts = _.without(posts, null);
+        posts = _.filter(posts, function (p) { return p !== null; });
         if (posts.length === 0)
           return cb(null, []);
         posts.sort(function (a, b) {
