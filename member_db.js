@@ -450,6 +450,8 @@ MemberDb.prototype.findPosts = function (query, opts, cb) {
     cb = opts;
     opts = {};
   }
+  var coms = opts.comments;
+  delete opts.comments;
   find.call(self, self.collections.post, query, opts,
           function (err, posts) {
     if (err) return cb(err);
@@ -460,9 +462,9 @@ MemberDb.prototype.findPosts = function (query, opts, cb) {
         fillDocList.call(self, 'media', posts, 'post_id',
                         { bare: true }, this.parallel());
         fillDocList.call(self, 'comment', posts, 'post_id',
-                        this.parallel());
+                        { bare: !coms }, this.parallel());
         fillDocList.call(self, 'view', posts, 'post_id',
-                        this.parallel());
+                        { bare: true }, this.parallel());
       },
       function (err) {
         if (err) return cb(err);
@@ -565,7 +567,7 @@ MemberDb.prototype.findTwitterHandles = function (cb) {
 
 
 /*
- * Add a rating to existing media.
+ * Search redis store for matching posts.
  */
 MemberDb.prototype.searchPosts = function (str, cb) {
   var self = this;
@@ -573,26 +575,60 @@ MemberDb.prototype.searchPosts = function (str, cb) {
   self.search.query(str).end(function (err, postIds) {
     if (err) return cb(err);
     if (postIds.length === 0) return cb(null);
-    var _next = _.after(postIds.length, done);
-    _.each(postIds, function (id) {
-      self.findPostById(id, function (err, post) {
-        if (err) return cb(err);
-        if (!post) return _next(null);
-        fillDocList.call(self, 'media', post,
-                        'post_id', function (err) {
-          if (err) return cb(err);
-          if (post.medias && post.medias.length > 0)
-            results = results.concat(post.medias);
-          _next(null);
+    Step(
+      function () {
+        var group = this.group();
+        _.each(postIds, function (id) {
+          self.findPostById(id, group());
         });
-      });
-    });
+      },
+      function (err, posts) {
+        if (err) return cb(err);
+        posts.sort(function (a, b) {
+          return b.created - a.created;
+        });
+        Step(
+          function () {
+            fillDocList.call(self, 'media', posts, 'post_id',
+                            { bare: true }, this.parallel());
+            fillDocList.call(self, 'comment', posts, 'post_id',
+                            { bare: true }, this.parallel());
+            fillDocList.call(self, 'view', posts, 'post_id',
+                            { bare: true }, this.parallel());
+          },
+          function (err) {
+            if (err) return cb(err);
+            var next = this;
+            _.each(posts, function (post) {
+              fillDocList.call(self, 'rating', post.medias, 'media_id',
+                              { bare: true }, next.parallel());
+              fillDocList.call(self, 'hit', post.medias, 'media_id',
+                              { bare: true }, next.parallel());
+            });
+          },
+          function (err) {
+            if (err) return cb(err);
+            _.each(posts, function (post) {
+              _.each(post.medias, function (med) {
+                med.hearts = 0;
+                _.each(med.ratings, function (rat) {
+                  med.hearts += Number(rat.val);
+                });
+                med.post = post;
+                med.index = null;
+                var match = _.find(post.medias, function (m, i) {
+                  med.index = i;
+                  return m._id.toString() === med._id.toString();
+                });
+              });
+              results = results.concat(post.medias);
+            });
+            cb(null, results);
+          }
+        );
+      }
+    );
   });
-  function done() {
-    cb(null, results.sort(function (a, b) {
-      return b.created - a.created;
-    }));
-  }
 }
 
 

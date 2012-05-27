@@ -184,7 +184,7 @@ passport.use(new LocalStrategy(
 app.get('/', authorize, function (req, res) {
   Step(
     function () {
-      getMedia(30, this.parallel());
+      getGrid({}, this.parallel());
       getRecentComments(5, this.parallel());
     },
     function (err, media, comments, twitters) {
@@ -251,7 +251,7 @@ app.post('/login', function (req, res, next) {
       referer.pathname = '/';
       res.send({
         status: 'success',
-        data: { path: url.format(referer) }
+        data: { path: url.format(req.session.referer || referer) },
       });
     });
   })(req, res, next);
@@ -287,7 +287,7 @@ app.get('/auth/facebook/callback', function (req, res, next) {
     }
     req.logIn(member, function (err) {
       if (err) return next(err);
-      res.redirect('/');
+      res.redirect(req.session.referer || '/');
     });
   })(req, res, next); 
 });
@@ -316,7 +316,7 @@ app.get('/auth/twitter/callback', function (req, res, next) {
     }
     req.logIn(member, function (err) {
       if (err) return next(err);
-      res.redirect('/');
+      res.redirect(req.session.referer || '/');
     });
   })(req, res, next);
 });
@@ -427,7 +427,7 @@ app.put('/signup', function (req, res, next) {
       res.send({
         status: 'success',
         data: {
-          path: url.format(referer),
+          path: url.format(req.session.referer || referer),
           // message: 'Cool, ' + member.displayName + '. We just sent you a message.'
           //           + ' Please follow the enclosed link to confirm your account ...'
           //           + ' and thanks for checking out Island!',
@@ -508,7 +508,8 @@ app.post('/page/:n', authorize, function (req, res) {
       status: 'error',
       message: 'Invalid request.',
     });
-  getMedia(30, 30 * (req.params.n - 1), function (err, docs) {
+  getGrid({}, { limit: 30, skip: 30 * (req.params.n - 1)},
+          function (err, docs) {
     if (err) return fail(err);
     Step(
       function () {
@@ -545,7 +546,7 @@ app.get('/add', authorize, function (req, res) {
 // Media search
 app.get('/search/:query', authorize, function (req, res) {
   var fn = '__clear__' === req.params.query ?
-            _.bind(getMedia, {}, 30) :
+            _.bind(getGrid, {}, {}) :
             _.bind(memberDb.searchPosts, memberDb,
                   req.params.query);
   fn(function (err, docs) {
@@ -575,7 +576,7 @@ app.get('/member/:key', authorize, function (req, res) {
   Step(
     function () {
       memberDb.findMemberByKey(req.params.key, this.parallel());
-      getMedia(30, this.parallel());
+      getGrid({}, this.parallel());
     },
     function (err, member, media) {
       if (err || !member || member.role !== 0)
@@ -601,8 +602,8 @@ app.get('/:key', authorize, function (req, res) {
   Step(
     function () {
       memberDb.findPosts({ key: req.params.key },
-                        { limit: 1 }, this.parallel());
-      getMedia(30, this.parallel());
+                        { limit: 1, comments: true }, this.parallel());
+      getGrid({}, this.parallel());
     },
     function (err, post, grid) {
       if (err || !post || post.length === 0)
@@ -655,10 +656,12 @@ app.put('/insert', authorize, function (req, res) {
       || req.body.assembly.results.length === 0)
     return done(new Error('Failed to insert post'))
   var results = req.body.assembly.results;
-  function done(err) {
-    if (err) res.send({ status: 'error',
+  function done(err, docId) {
+    if (err)
+      return res.send({ status: 'error',
                       message: err.stack });
-    else res.send({ status: 'success' });
+    res.send({ status: 'success' });
+    everyone.distributeGrid(docId);
   }
   Step(
     function () {
@@ -718,8 +721,8 @@ app.put('/insert', authorize, function (req, res) {
       _.each(medias, function (media) {
         memberDb.createMedia(media, function (err, med) {
           if (err) return done(err);
-          everyone.distributeMedia(med);
-          _done();
+          // everyone.distributeMedia(med);
+          _done(null, doc._id);
         });
       });
     }
@@ -806,7 +809,10 @@ app.put('/rate/:mediaId', authorize, function (req, res) {
 
 function authorize(req, res, cb) {
   var memberId = req.session.passport.user;
-  if (!memberId) return res.redirect('/login');
+  if (!memberId) {
+    req.session.referer = req.originalUrl;
+    return res.redirect('/login');
+  }
   memberDb.findMemberById(memberId, function (err, member) {
     if (err) return cb(err);
     if (!member) {
@@ -818,13 +824,37 @@ function authorize(req, res, cb) {
     cb(null, member);
   });
 }
-function getMedia(limit, skip, cb) {
-  if ('function' === typeof skip) {
-    cb = skip;
-    skip = 0;
+function getGrid(query, opts, cb) {
+  if ('function' === typeof opts) {
+    cb = opts;
+    opts = { limit: 30, skip: 0 };
   }
-  memberDb.findMedia({}, { limit: limit, skip: skip,
-                    sort: { created: -1 } }, cb);
+  opts.sort = { created: -1 };
+  Step(
+    function () {
+      memberDb.findPosts(query, opts, this);
+    },
+    function (err, posts) {
+      if (err) return cb(err);
+      var media = [];
+      _.each(posts, function (post) {
+        _.each(post.medias, function (med) {
+          med.hearts = 0;
+          _.each(med.ratings, function (rat) {
+            med.hearts += Number(rat.val);
+          });
+          med.post = post;
+          med.index = null;
+          var match = _.find(post.medias, function (m, i) {
+            med.index = i;
+            return m._id.toString() === med._id.toString();
+          });
+        });
+        media = media.concat(post.medias);
+      });
+      cb(null, media);
+    }
+  );
 }
 function findTrendingMedia(limit, cb) {
   Step(
@@ -856,7 +886,7 @@ function findTrendingMedia(limit, cb) {
       media.sort(function (a, b) {
         return b.edges - a.edges;
       });
-      cb(err, _.first(media, limit));
+      cb(null, _.first(media, limit));
     }
   );
   function edgeToPresent(initial, edge, span) {
@@ -915,12 +945,25 @@ if (!module.parent) {
       everyone = now.initialize(app);
 
       // add new object to everyone's page
-      everyone.distributeMedia = function (media) {
-        renderMedia(media, function (err, html) {
-          if (err) return log('\nFailed to render media - ' + inspect(media)
-                              + '\nError: ' + inspect(err));
-          everyone.now.receiveMedia(html);
-        });
+      everyone.distributeGrid = function (id) {
+        Step(
+          function () {
+            getGrid({ _id: id }, { limit: 1}, this);
+          },
+          function (err, media) {
+            if (err) return fail(err);
+            _.each(media, function (med) {
+              renderMedia(med, function (err, html) {
+                if (err) return fail(err);
+                everyone.now.receiveMedia(html);
+              });
+            });
+          }
+        );
+        function fail(err) {
+          log('\nAt distributeGrid(' + id.toString() + ')'
+              + '\nError: ' + inspect(err));
+        }
       };
 
       // add new comment to everyone's page

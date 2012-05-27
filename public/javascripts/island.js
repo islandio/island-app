@@ -57,7 +57,7 @@ Island = (function ($) {
     mattegray: '#f2f2f2',
   };
 
-  var spinOpts = {
+  var signinSpinOpts = {
     lines: 17,
     length: 0,
     width: 3,
@@ -67,16 +67,35 @@ Island = (function ($) {
     speed: 2.2,
     trail: 100,
     shadow: false,
-    hwaccel: true,
+    hwaccel: false,
     className: 'spinner',
     zIndex: 2e9,
     top: 'auto',
     left: 'auto'
   };
 
-  var Spin = function () {
-    var spinTarget = $('.signin-spinner').get(0);
-    var spinner = new Spinner(spinOpts).spin(spinTarget);
+  var searchSpinOpts = {
+    lines: 13,
+    length: 0,
+    width: 2,
+    radius: 10,
+    rotate: 0,
+    color: '#000',
+    speed: 2.2,
+    trail: 60,
+    shadow: false,
+    hwaccel: false,
+    className: 'spinner',
+    zIndex: 2e9,
+    top: 'auto',
+    left: 'auto'
+  };
+
+  var Spin = function (el) {
+    if (el.length === 0) return;
+    var spinTarget = el.get(0);
+    var opts = el.hasClass('search-spinner') ? searchSpinOpts : signinSpinOpts;
+    var spinner = new Spinner(opts).spin(spinTarget).stop();
     return {
       start: function () { spinner.spin(spinTarget); },
       stop: function () { spinner.stop(); }
@@ -133,7 +152,7 @@ Island = (function ($) {
   };
 
   function updateTimes() {
-    $('.comment-added').each(function (i) {
+    $('.comment-added, .object-added').each(function (i) {
       var time = $(this);
       if (!time.data('ts'))
         time.data('ts', time.text());
@@ -177,7 +196,7 @@ Island = (function ($) {
   function initVideoSlides() {
     $('.is-video').each(function (v) {
       if ($(this).data().timer) return;
-      var thumbs = $('img', this);
+      var thumbs = $('.thumb', this);
       var num = thumbs.length, i = 1;
       var timer = setInterval(function () {
         var h = i === 0 ? num - 1 : i - 1;
@@ -289,7 +308,7 @@ Island = (function ($) {
     var GRID_OBJ_FREQ = { '482px': 1, '231px': '*' };
     var COL_WIDTH = 231;
     var COL_GAP_X = 20;
-    var COL_GAP_Y = 20;
+    var COL_GAP_Y = 40;
     var MIN_COLS = 2;
     var MAX_COLS = 4;
     var SIN_COLS = 2;
@@ -566,7 +585,8 @@ Island = (function ($) {
       if (bg.length > 0) { $(window).resize(fitSignInBG); fitSignInBG(); }
 
       // Create the spinner
-      var spin = new Spin();
+      var signinSpin = new Spin($('.signin-spinner'));
+      var searchSpin = new Spin($('.search-spinner'));
 
       // Handle pagination
       var pageQuery = Util.getQueryVariable('p');
@@ -596,6 +616,7 @@ Island = (function ($) {
                 if (jrid.hasClass('adjustable-grid'))
                   grid.collage(true);
                 else grid.collage();
+                updateTimes();
                 initVideoSlides();
                 // window.history.replaceState({}, '',
                 //     window.location.pathname + '?p=' + page);
@@ -718,7 +739,7 @@ Island = (function ($) {
 
       loginButton.bind('click', function (e) {
         e.preventDefault();
-        spin.start();
+        signinSpin.start();
         showSpinner();
         var data = loginForm.serializeObject();
         $.post('/login', data, function (serv) {
@@ -726,7 +747,7 @@ Island = (function ($) {
             window.location = serv.data.path;
           } else if ('fail' === serv.status) {
             hideSpinner();
-            spin.stop();
+            signinSpin.stop();
             ui.error(serv.data.message).closable().hide(8000).effect('fade');
             switch (serv.data.code) {
               case 'MISSING_FIELD':
@@ -763,7 +784,7 @@ Island = (function ($) {
 
       registerButton.bind('click', function (e) {
         e.preventDefault();
-        spin.start();
+        signinSpin.start();
         showSpinner();
         var data = registerForm.serializeObject();
         data.id = registerButton.data('id');
@@ -772,7 +793,7 @@ Island = (function ($) {
             window.location = serv.data.path;
           } else if ('fail' === serv.status) {
             hideSpinner();
-            spin.stop();
+            signinSpin.stop();
             ui.error(serv.data.message).closable().hide(8000).effect('fade');
             switch (serv.data.code) {
               case 'MISSING_FIELD':
@@ -791,7 +812,10 @@ Island = (function ($) {
       });
       
       // Hide everything when a strategy is clicked
-      $('.signin-strategy-btn').click(function (e) { showSpinner(); });
+      $('.signin-strategy-btn').click(function (e) { 
+        signinSpin.start();
+        showSpinner();
+      });
 
       // resend confirmation email
       $('.resend-conf').live('click', function (e) {
@@ -827,12 +851,12 @@ Island = (function ($) {
       $('textarea').autogrow();
 
       // rollover each object
-      $('.grid-obj-img').live('mouseenter', function () {
-        $('.grid-obj-hover', this.parentNode).show();
-      });
-      $('.grid-obj-hover').live('mouseleave', function () {
-        $(this).fadeOut(100);
-      });
+      // $('.grid-obj-img').live('mouseenter', function () {
+      //   $('.grid-obj-hover', this.parentNode).show();
+      // });
+      // $('.grid-obj-hover').live('mouseleave', function () {
+      //   $(this).fadeOut(100);
+      // });
 
 
       // search box
@@ -843,6 +867,7 @@ Island = (function ($) {
         searchBox.css({ padding: '5px 10px' });
 
       searchBox.bind('keyup search', function (e) {
+        searchSpin.start();
         var txt = $(this).val().trim().toLowerCase();
         jrid.empty();
         if ('' === txt)
@@ -854,6 +879,8 @@ Island = (function ($) {
             if (jrid.hasClass('adjustable-grid'))
               grid.collage(true);
             else grid.collage();
+            updateTimes();
+            initVideoSlides();
             if ('__clear__' === txt) {
               jrid.removeClass('search-results');
               page = 1;
@@ -861,7 +888,7 @@ Island = (function ($) {
             else
               jrid.addClass('search-results');
           } else console.log(res.message);
-          initVideoSlides();
+          searchSpin.stop();
         });
       }).bind('focus', adjustGridHeight);
 
@@ -870,7 +897,7 @@ Island = (function ($) {
         searchBox.trigger('keyup');
       }
 
-      $('.grid-obj, .trending').live('click', function (e) {
+      $('.grid-obj, .trending, .object-title-parent').live('click', function (e) {
         e.preventDefault();
         var data = $(this).data();
         $.put('/hit/' + data.id, function (res) {
@@ -1067,6 +1094,8 @@ Island = (function ($) {
         grid.collage(true);
       else grid.collage();
       html.animate({ opacity: 1 }, 500);
+      updateTimes();
+      initVideoSlides();
     },
 
     /**
@@ -1083,9 +1112,10 @@ Island = (function ($) {
           $('.comment-title-name', com).remove();
         com.hide().css({ opacity: 0 }).appendTo(recHolder);
         grid.collage(true, com.height());
-        var time = $('.comment-added', com);
-        time.data('ts', time.text());
-        time.text(Util.getRelativeTime(time.data('ts')));
+        updateTimes();
+        // var time = $('.comment-added', com);
+        // time.data('ts', time.text());
+        // time.text(Util.getRelativeTime(time.data('ts')));
         setTimeout(function () {
           com.prependTo(recHolder).show(250).animate({ opacity: 1 }, 500);
         }, 100);
@@ -1093,11 +1123,12 @@ Island = (function ($) {
         com.hide().css({ opacity: 0 }).prependTo(comHolder);
         $('a.comment-title-parent', com).remove();
         grid.collage(true, com.height());
+        updateTimes();
         setTimeout(function () {
           com.show(250).animate({ opacity: 1 }, 500);
-          var time = $('.comment-added', com);
-          time.data('ts', time.text());
-          time.text(Util.getRelativeTime(time.data('ts')));
+          // var time = $('.comment-added', com);
+          // time.data('ts', time.text());
+          // time.text(Util.getRelativeTime(time.data('ts')));
         }, 100);
       }
     },
