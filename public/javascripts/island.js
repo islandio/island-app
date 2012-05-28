@@ -851,11 +851,12 @@ Island = (function ($) {
       $('textarea').autogrow();
 
       // rollover each object
-      // $('.grid-obj-img').live('mouseenter', function () {
-      //   $('.grid-obj-hover', this.parentNode).show();
-      // });
-      // $('.grid-obj-hover').live('mouseleave', function () {
-      //   $(this).fadeOut(100);
+      // $('.each-grid-obj').live('mouseover', function () {
+      //   $('.object-added', this).hide();
+      //   $('.object-meta', this).show();
+      // }).live('mouseout', function () {
+      //   $('.object-added', this).show();
+      //   $('.object-meta', this).hide();
       // });
 
 
@@ -1084,7 +1085,7 @@ Island = (function ($) {
     },
 
     /**
-     * Push a media object to all clients.
+     * Receive and render media.
      */
 
     receiveMedia: function (str) {
@@ -1099,7 +1100,7 @@ Island = (function ($) {
     },
 
     /**
-     * Push a comment to all clients.
+     * Receive and render a comment.
      */
 
     receiveComment: function (str, mediaId) {
@@ -1113,9 +1114,6 @@ Island = (function ($) {
         com.hide().css({ opacity: 0 }).appendTo(recHolder);
         grid.collage(true, com.height());
         updateTimes();
-        // var time = $('.comment-added', com);
-        // time.data('ts', time.text());
-        // time.text(Util.getRelativeTime(time.data('ts')));
         setTimeout(function () {
           com.prependTo(recHolder).show(250).animate({ opacity: 1 }, 500);
         }, 100);
@@ -1126,15 +1124,25 @@ Island = (function ($) {
         updateTimes();
         setTimeout(function () {
           com.show(250).animate({ opacity: 1 }, 500);
-          // var time = $('.comment-added', com);
-          // time.data('ts', time.text());
-          // time.text(Util.getRelativeTime(time.data('ts')));
         }, 100);
       }
     },
 
     /**
-     * Push new trends to all clients.
+     * Receive and render an update.
+     */
+
+    receiveUpdate: function (ids, type, count) {
+      _.each(ids, function (id) {
+        var ctx = $('#' + id);
+        if (ctx.length > 0)
+          $('.meta-' + type + 's', ctx)
+            .text(Util.addCommas(count) + ' x ');
+      });
+    },
+
+    /**
+     * Receive and display current trends.
      */
 
     receiveTrends: function (err, media) {
@@ -1153,4 +1161,5 @@ Island = (function ($) {
 
 now.receiveMedia = Island.receiveMedia;
 now.receiveComment = Island.receiveComment;
+now.receiveUpdate = Island.receiveUpdate;
 now.receiveTrends = Island.receiveTrends;

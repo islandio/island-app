@@ -24,6 +24,7 @@ if (argv._.length || argv.help) {
 var express = require('express');
 var now = require('now');
 var mongodb = require('mongodb');
+var ObjectID = require('mongodb').BSONPure.ObjectID;
 var mongoStore = require('connect-mongodb');
 
 var stylus = require('stylus');
@@ -602,7 +603,8 @@ app.get('/:key', authorize, function (req, res) {
   Step(
     function () {
       memberDb.findPosts({ key: req.params.key },
-                        { limit: 1, comments: true }, this.parallel());
+                        { limit: 1, comments: true },
+                        this.parallel());
       getGrid({}, this.parallel());
     },
     function (err, post, grid) {
@@ -615,6 +617,7 @@ app.get('/:key', authorize, function (req, res) {
         member_id: req.user._id,
       }, function (err, doc) {
         if (err) throw new Error('Failed to create view');
+        else everyone.distributeUpdate('view', 'post', doc.post_id);
       });
       // prepare document
       var img = [];
@@ -660,8 +663,8 @@ app.put('/insert', authorize, function (req, res) {
     if (err)
       return res.send({ status: 'error',
                       message: err.stack });
-    res.send({ status: 'success' });
     everyone.distributeGrid(docId);
+    res.send({ status: 'success' });
   }
   Step(
     function () {
@@ -721,7 +724,6 @@ app.put('/insert', authorize, function (req, res) {
       _.each(medias, function (media) {
         memberDb.createMedia(media, function (err, med) {
           if (err) return done(err);
-          // everyone.distributeMedia(med);
           _done(null, doc._id);
         });
       });
@@ -731,7 +733,6 @@ app.put('/insert', authorize, function (req, res) {
 
 // Click media
 app.put('/hit/:mediaId', authorize, function (req, res) {
-  // TODO: permissions...
   if (!req.params.mediaId)
     fail(new Error('Failed to hit media'));
   var props = {
@@ -740,6 +741,7 @@ app.put('/hit/:mediaId', authorize, function (req, res) {
   };
   memberDb.createHit(props, function (err, doc) {
     if (err) return fail(err);
+    everyone.distributeUpdate('hit', 'media', doc.media_id);
     res.send({ status: 'success' });
   });
   function fail(err) {
@@ -750,7 +752,6 @@ app.put('/hit/:mediaId', authorize, function (req, res) {
 
 // Add comment
 app.put('/comment/:postId', authorize, function (req, res) {
-  // TODO: permissions...
   if (!req.params.postId || !req.body.body)
     fail(new Error('Failed to insert comment'));
   var props = {
@@ -761,6 +762,7 @@ app.put('/comment/:postId', authorize, function (req, res) {
   memberDb.createComment(props, function (err, doc) {
     if (err) return fail(err);
     everyone.distributeComment(doc);
+    everyone.distributeUpdate('comment', 'post', doc.post._id);
     res.send({ status: 'success', data: {
              comment: doc } });
   });
@@ -785,7 +787,6 @@ app.put('/comment/:postId', authorize, function (req, res) {
 
 // Add rating
 app.put('/rate/:mediaId', authorize, function (req, res) {
-  // TODO: permissions...
   if (!req.params.mediaId || !req.body.val)
     fail(new Error('Failed to insert rating'));
   var props = {
@@ -795,6 +796,7 @@ app.put('/rate/:mediaId', authorize, function (req, res) {
   };
   memberDb.createRating(props, function (err, doc) {
     if (err) return fail(err);
+    everyone.distributeUpdate('rating', 'media', doc.media_id);
     res.send({ status: 'success', data: {
              val: doc.val }});
   });
@@ -970,10 +972,50 @@ if (!module.parent) {
       everyone.distributeComment = function (comment) {
         renderComment({ comment: comment, showMember: true },
                       function (err, html) {
-          if (err) return log('\nFailed to render comment - ' + inspect(comment)
+          if (err) return log('\ndistributeComment ('
+                              + inspect(comment) + ')'
                               + '\nError: ' + inspect(err));
           everyone.now.receiveComment(html, comment.post._id);
         });
+      };
+
+      // tell everyone about some meta change
+      everyone.distributeUpdate = function (type, target, id) {
+        if ('string' === typeof id)
+          id = new ObjectID(id);
+        var query = {};
+        query[target + '_id'] = id;
+        Step(
+          function () {
+            var next = this;
+            if ('rating' !== type)
+              memberDb.collections[type].count(query, this);
+            else
+              memberDb.collections[type].find(query)
+                      .toArray(function (err, docs) {
+                if (err) return fail(err);
+                next(null, _.reduce(_.pluck(docs, 'val'),
+                      function (m, n) { return m + Number(n); }, 0));
+              });
+          },
+          function (err, count) {
+            if (err) return fail(err);
+            if ('media' === target)
+              return everyone.now.receiveUpdate([id.toString()], type, count);
+            memberDb.collections.media.find({ post_id: id })
+                    .toArray(function (err, docs) {
+              if (err) return fail(err);
+              var ids = _.map(docs, function (doc) {
+                              return doc._id.toString(); });
+              everyone.now.receiveUpdate(ids, type, count);
+            });
+          }
+        );
+        function fail(err) {
+          log('\ndistributeUpdate (' + type + ', '
+              + target + ',' + id.toString() + ')'
+              + '\nError: ' + inspect(err));
+        }
       };
 
       // update everyone with new trends
@@ -999,25 +1041,6 @@ if (!module.parent) {
         });
       };
       setInterval(findTwitterHandles, 60000); findTwitterHandles();
-
-      // .server.socket.set('authorization', function (data, cb) {
-      //   var cookies = connect.utils.parseCookie(data.headers.cookie);
-      //   var sid = cookies['connect.sid'];
-      //   app.settings.sessionStore.load(sid, function (err, sess) {
-      //     if (err) {
-      //       log("Error: Failed finding session", '(' + sid + ')');
-      //       return cb(err);
-      //     }
-      //     if (!sess) {
-      //       // log("Error: Invalid session", '(sid:' + sid + ')');
-      //       return cb(new Error('Could not find session'));
-      //     }
-      //     log("Session opened", '(sid:' + sid + ')');
-      //     data.session = sess;
-      //     cb(null, true);
-      //   });
-      //   // TODO: Keep the session alive on with a timeout.
-      // });
 
       log("Express server listening on port", app.address().port);
     }
