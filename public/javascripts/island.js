@@ -1135,9 +1135,12 @@ Island = (function ($) {
     receiveUpdate: function (ids, type, count) {
       _.each(ids, function (id) {
         var ctx = $('#' + id);
-        if (ctx.length > 0)
-          $('.meta-' + type + 's', ctx)
-            .text(Util.addCommas(count) + ' x ');
+        if (ctx.length > 0) {
+          var txt = $('.meta-' + type + 's', ctx);
+          txt.text(Util.addCommas(count) + ' x ');
+          // txt.siblings().hide();
+          // _.delay(function () { txt.siblings().show(); }, 250);
+        }
       });
     },
 
