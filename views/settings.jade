@@ -1,0 +1,126 @@
+div.single-left
+  form#settings-form(action='/save/member', enctype='multipart/form-data', method='POST')
+    input(type='hidden', name='params', value=JSON.stringify(transloaditParams))
+    input(type='hidden', name='member[_id]', value=data._id.toString())
+    input(type='hidden', name='member[assembly]')
+    input(type='hidden', name='member[bannerLeft]')
+    input(type='hidden', name='member[bannerTop]')
+    span.slash
+      | /
+    h1.title-left Edit Yourself
+    h1.title-sub profile / settings / etc
+    table
+      tbody
+        tr
+          td
+            label(for='member[displayName]') Display Name
+          td
+            label(for='member[primaryEmail]') Email Address
+          td
+            label(for='member[username]') Username
+        tr
+          td
+            input(style='width:91%;', name='member[displayName]', type='text', value=data.displayName)
+          td
+            input(style='width:91%;', name='member[primaryEmail]', type='text', value=data.primaryEmail)
+          td
+            input(style='width:92.5%;', name='member[username]', type='text', value=data.username)
+        tr
+          td(colspan='3', style="padding-top:10px;")
+            label(for='my_file') Banner Image
+        tr
+          td(width=242, height=104, style='vertical-align:top;')
+            - var banner = data.thumbs ? data.thumbs[0] : null;
+            - if (!banner) {
+              - banner = { meta: { width: 232, height: 104 }};
+              - if (!data.gender || 'male' === data.gender)
+                - banner.cf_url = "https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-blnk-pic-m.jpg";
+              - else
+                - banner.cf_url = "https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-blnk-pic-f.jpg";
+            - }
+            - var _w = 232, _h = 104
+            - var w, h
+            - var l = 'left:0;'
+            - var t = 'top:0;'
+            - w = _w
+            - h = (banner.meta.height / banner.meta.width) * _w
+            - if (h - _h >= 0) {
+              - t = 'top:' + (banner.meta.top !== undefined ? banner.meta.top : (-(h - _h) / 2)) + 'px;'
+            - } else {
+              - w = (banner.meta.width / banner.meta.height) * _h
+              - h = _h
+              - l = 'left:' + (banner.meta.left !== undefined ? banner.meta.left : (-(w - _w) / 2)) + 'px;'
+            - }
+            div.settings-banner-wrap
+              img.mask(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-sml-top.png", width="232",style="top:0;")
+              img.mask(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-sml-btm.png", width="232", style="top:96px;")
+              img.masked.settings-banner(src=banner.cf_url, width=w, height=h, style=(t + l))
+              div.upload-spinner(style='height:100%;')
+          td(style='vertical-align:top;')
+            input(type="file", name="my_file", multiple="true", accept="image/gif, image/jpeg, image/png", style="font-size:11px;")
+        tr
+          td(colspan='3', style="padding-top:10px;")
+            label(for='member[description]') Bio
+        tr
+          td(colspan='3')
+            textarea.matte(name='member[description]', placeholder='Something about you...') #{data.description}
+        tr
+          td(style="padding-top:10px;")
+            label(for='member[location]') Current City
+          td(style="padding-top:10px;")
+            label(for='member[hometown]') From
+        tr
+          td
+            input(style='width:91%;', name='member[location]', type='text', placeholder='e.g. San Francisco, California', value=(data.location ? data.location.name : ''))
+          td
+            input(style='width:91%;', name='member[hometown]', type='text', placeholder='e.g. Bozeman, Montana', value=(data.hometown ? data.hometown.name : ''))
+        tr
+          td(style="padding-top:10px;")
+            label(for='member[birthday]') Birthday
+          td(style="padding-top:10px;")
+            label(for='member[gender]') Gender
+        tr
+          td
+            input(style='width:91%;', name='member[birthday]', type='text', placeholder='e.g. 01/06/1983', value=data.birthday)
+          td
+            input(style='width:91%;', name='member[gender]', type='text', placeholder='e.g. male, female, or get creative!', value=data.gender)
+        tr
+          td(colspan='2', style="padding-top:10px;")
+            label(for='member[website]') Websites
+          td(style="padding-top:10px;")
+            label(for='member[twitter]') Twitter Handle
+        tr
+          td(colspan='2')
+            textarea.matte(style='width:96%;', name='member[website]', placeholder='One URL per line...') #{data.website}
+          td(style='vertical-align:top;')
+            input(style='width:92.5%;', name='member[twitter]', type='text', placeholder='e.g. ladygaga', value=data.twitter)
+        tr
+          td(colspan='3', style="padding-bottom: 0px;")
+            input#save-settings.is-button(type='submit', value='Save')
+            div.button-mask-wrap
+              div#save-settings-mask
+div.recent-comments-wrap(style='display:none;')
+  h1.title-right / Services
+  p.settings-instructions(style="margin-top:32px;") Link Island to your preferred social network account.
+  br
+  p.settings-instructions Quickly sign into Island with Facebook or Twitter. Optionally push your Island Posts to your connected services.
+  br
+  br
+  - if (!data.facebookToken)
+    a.button.signin-strategy-btn(href='/auth/facebook', style='margin:0 auto; width:100%;') Connect with Facebook
+  - else
+    a.signin-strategy-btn-disabled(href='javascript:;', style='margin:0 auto; width:100%;') Connected with Facebook
+  br
+  - if (!data.twitterToken)
+    a.button.signin-strategy-btn(href='/auth/twitter', style='margin:0 auto; width:100%;') Connect with Twitter
+  - else
+    a.signin-strategy-btn-disabled(href='javascript:;', style='margin:0 auto; width:100%;') Connected with Twitter
+div.clear
+div.grid-wrap
+  #search
+    h1.title-bottom / Browse
+    input#search-box.matte(type="search", placeholder="Search")
+    div.search-spinner
+  #grid.adjustable-grid
+    !=partial('object', grid)
+

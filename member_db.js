@@ -20,8 +20,11 @@ var debug = util.debug, inspect = util.inspect;
 var Step = require('step');
 var Facebook = require('node-fb');
 var Twitter = require('twitter');
-var facebookCredentials = { SECRET: 'af79cdc8b5ca447366e87b12c3ddaed2',
-                            ID: 203397619757208 };
+var facebookCredentials = {
+  ID: 203397619757208,
+  KEY: 203397619757208,
+  SECRET: 'af79cdc8b5ca447366e87b12c3ddaed2'
+};
 var twitterCredentials = {
   consumer_key: 'ithvzW8h1tEsUBewL3jxQ',
   consumer_secret: 'HiGnwoc8BBgsURlKshWsb1pGH8IQWE2Ve8Mqzz8',
@@ -95,9 +98,20 @@ MemberDb.prototype.findOrCreateMemberFromFacebook =
                                   { facebookId: props.facebookId }
                                   ]}, function (err, member) {
     if (err) return cb(err);
-    if (member && member.key)
-      updateFacebookData(member);
-    else
+    if (member && member.key) {
+      if (member.modified) {
+        var update = { 
+          facebookToken: props.facebookToken,
+          facebookId: props.facebookId
+        };
+        self.collections.member.update({ _id: member._id },
+                                      { $set: update }, { safe: true },
+                                      function (err) {
+          if (err) return cb(err);
+          cb(null, _.extend(member, update));
+        });
+      } else updateFacebookData(member);
+    } else
       createUniqueURLKey(self.collections.member,
                           8, function (err, key) {
         if (err) return cb(err);
@@ -149,11 +163,19 @@ MemberDb.prototype.findOrCreateMemberFromFacebook =
       },
       function (err, data) {
         if (err) return cb(err);
-        props.picture = data || null;
+        if (data) {
+          props.image = {
+            cf_url: data.source,
+            meta: { width: data.width, height: data.height },
+          };
+          props.thumbs = [props.image];
+        }
+        props.facebook = props.username;
         if (member) {
           delete props.displayName;
           if (member.name) delete props.name;
-          if (member.username) delete props.username;
+          delete member.username;
+          props.username = member.username || member.key;
           props.emails = mergeMemberEmails(props.emails, member.emails,
                                           member.primaryEmail);
           _.defaults(props, member);
@@ -168,10 +190,14 @@ MemberDb.prototype.findOrCreateMemberFromFacebook =
           _.defaults(props, {
             role: 1,
             twitter: '',
+            image: null,
+            thumbs: null,
             confirmed: false,
+            modified: false,
           });
           props.primaryEmail = props.emails.length > 0 ?
                                 props.emails[0].value : null;
+          props.username = props.key;
           createDoc(self.collections.member, props, cb);
         }
       }
@@ -195,9 +221,20 @@ MemberDb.prototype.findOrCreateMemberFromTwitter =
                                   { twitterId: props.twitterId }
                                   ]}, function (err, member) {
     if (err) return cb(err);
-    if (member && member.key)
-      updateTwitterData(member);
-    else
+    if (member && member.key) {
+      if (member.modified) {
+        var update = { 
+          twitterToken: props.twitterToken,
+          twitterId: props.twitterId
+        };
+        self.collections.member.update({ _id: member._id },
+                                      { $set: update }, { safe: true },
+                                      function (err) {
+          if (err) return cb(err);
+          cb(null, _.extend(member, update));
+        });
+      } else updateTwitterData(member);
+    } else
       createUniqueURLKey(self.collections.member,
                           8, function (err, key) {
         if (err) return cb(err);
@@ -227,7 +264,7 @@ MemberDb.prototype.findOrCreateMemberFromTwitter =
     if (member) {
       delete props.displayName;
       if (member.name) delete props.name;
-      if (member.username) delete props.username;
+      props.username = member.username || member.key;
       props.emails = mergeMemberEmails(props.emails, member.emails,
                                       member.primaryEmail);
       _.defaults(props, member);
@@ -242,8 +279,12 @@ MemberDb.prototype.findOrCreateMemberFromTwitter =
     } else if (!member) {
       _.defaults(props, {
         role: 1,
+        image: null,
+        thumbs: null,
         confirmed: false,
+        modified: false,
       });
+      props.username = props.key;
       createDoc(self.collections.member, props, cb);
     }
   }
@@ -279,8 +320,7 @@ MemberDb.prototype.findOrCreateMemberFromEmail =
         props.displayName = props.name.givenName + (props.name.middleName ?
                             ' ' + props.name.middleName : '') +
                             ' ' + props.name.familyName;
-        props.username = (props.name.givenName + (props.name.middleName || '')
-                          + props.name.familyName).toLowerCase();
+        props.username = key;
         props.confirmed = false;
         if (member) {
           _.defaults(props, member);
@@ -294,6 +334,10 @@ MemberDb.prototype.findOrCreateMemberFromEmail =
           _.defaults(props, {
             role: 1,
             twitter: '',
+            image: null,
+            thumbs: null,
+            confirmed: false,
+            modified: false,
           });
           createDoc(self.collections.member, props, cb);
         }
@@ -368,8 +412,8 @@ MemberDb.prototype.createComment = function (props, cb) {
     // TODO: Verify that the user has
     // permission to comment.
     function () {
-      self.findMemberById(props.member_id, this.parallel());
-      self.findPostById(props.post_id, this.parallel());
+      self.findMemberById(props.member_id, true, this.parallel());
+      self.findPostById(props.post_id, true, this.parallel());
     },
     function (err, member, post) {
       if (err) return cb(err);

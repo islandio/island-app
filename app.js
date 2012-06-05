@@ -52,10 +52,15 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var TwitterStrategy = require('passport-twitter').Strategy;
 var LocalStrategy = require('passport-local').Strategy;
 
-var transloadit = { auth: { key: '8a36aa56062f49c79976fa24a74db6cc' }};
-transloadit.template_id = process.env.NODE_ENV === 'production' ?
+var transloaditMediaParams = { auth: { key: '8a36aa56062f49c79976fa24a74db6cc' }};
+transloaditMediaParams.template_id = process.env.NODE_ENV === 'production' ?
                             'dd77fc95cfff48e8bf4af6159fd6b2e7' :
                             '29c60cfc5b9f4e8b8c8bf7a9b1191147';
+
+var transloaditProfileParams = { auth: { key: '8a36aa56062f49c79976fa24a74db6cc' }};
+transloaditProfileParams.template_id = process.env.NODE_ENV === 'production' ?
+                            'ddc4239217f34c8185178d2552f8ef9a' :
+                            '396d7cb3a2a5437eb258c3e86000f3bf';
 
 var cloudfrontImageUrl = process.env.NODE_ENV === 'production' ?
                             'https://d1da6a4is4i5z6.cloudfront.net/' :
@@ -80,6 +85,11 @@ app.util = {
     str = str.replace(linkExp,"<a href='$1' target='_blank'>$1</a>");
     return str;
   },
+  isValidDate: function (d) {
+    if (Object.prototype.toString.call(d) !== '[object Date]')
+      return false;
+    return !isNaN(d.getTime());
+  }
 };
 
 
@@ -134,7 +144,7 @@ passport.serializeUser(function (member, cb) {
 });
 
 passport.deserializeUser(function (id, cb) {
-  memberDb.findMemberById(id, function (err, member) {
+  memberDb.findMemberById(id, true, function (err, member) {
     cb(err, member);
   });
 });
@@ -452,7 +462,7 @@ app.put('/signup', function (req, res, next) {
 app.get('/confirm/:id', function (req, res, next) {
   if (!req.params.id)
     return res.render('404');
-  memberDb.findMemberById(req.params.id, function (err, member) {
+  memberDb.findMemberById(req.params.id, true, function (err, member) {
     if (err) return next(err);
     if (!member)
       return res.render('404');
@@ -476,7 +486,7 @@ app.post('/resendconf/:id', authorize, function (req, res) {
       status: 'error',
       message: 'Invalid request.',
     });
-  memberDb.findMemberById(req.params.id, function (err, member) {
+  memberDb.findMemberById(req.params.id, true, function (err, member) {
     if (err) return next(err);
     if (!member)
       return res.send({
@@ -492,7 +502,7 @@ app.post('/resendconf/:id', authorize, function (req, res) {
       res.send({
         status: 'success',
         data: {
-          message: 'Cool, ' + member.displayName + '. We just sent you a message.'
+          message: 'Cool, ' + member.name.givenName + '. We just sent you a message.'
                     + ' Please follow the enclosed link to confirm your account...'
                     + ' then you can comment and stuff.',
           member: member,
@@ -538,7 +548,7 @@ app.get('/add', authorize, function (req, res) {
     return res.redirect('/');
   res.render('index', {
     part: 'add',
-    tlip: transloadit,
+    transloaditParams: transloaditMediaParams,
     member: req.user,
     twitters: twitterHandles,
   });
@@ -572,7 +582,7 @@ app.get('/search/:query', authorize, function (req, res) {
   }
 });
 
-// Media search
+// Member profile
 app.get('/member/:key', authorize, function (req, res) {
   Step(
     function () {
@@ -586,14 +596,136 @@ app.get('/member/:key', authorize, function (req, res) {
         if (err)
           return res.render('500');
         res.render('index', {
-        part: 'profile',
+          part: 'profile',
+          data: member,
+          comments: coms,
+          grid: media,
+          twitters: twitterHandles,
+          member: req.user,
+        });
+      });
+    }
+  );
+});
+
+// Edit member profile and settings
+app.get('/settings/:key', authorize, function (req, res) {
+  Step(
+    function () {
+      memberDb.findMemberByKey(req.params.key, this.parallel());
+      getGrid({}, this.parallel());
+    },
+    function (err, member, media) {
+      if (err || !member || member._id.toString()
+          !== req.user._id.toString() || member.role !== 0)
+        return res.render('404');
+      res.render('index', {
+        part: 'settings',
         data: member,
-        comments: coms,
+        transloaditParams: transloaditProfileParams,
         grid: media,
         twitters: twitterHandles,
         member: req.user,
       });
+    }
+  );
+});
+
+// Save member settings
+app.put('/save/settings', authorize, function (req, res) {
+  if (!req.body.member || !req.body.member.primaryEmail
+      || !req.body.member.username || req.body.member._id
+      !== req.user._id.toString())
+    return done(new Error('Failed to save member settings'));
+  var member = req.body.member;
+  var assembly = req.body.member.assembly ?
+                  JSON.parse(req.body.member.assembly) : null;
+  function done(err) {
+    if (err)
+      return res.send({
+        status: 'error',
+        data: 'string' === typeof err ?
+              null : err.data || err.stack,
       });
+    res.send({ status: 'success' });
+  }
+  Step(
+    function () {
+      memberDb.findMemberById(req.user._id, true, this.parallel());
+      memberDb.collections.member.findOne({ emails: { value: member.primaryEmail }},
+                                          this.parallel());
+      memberDb.collections.member.findOne({ $or: [{ username: member.username },
+                                          { key: member.username }]}, this.parallel());
+    },
+    function (err, doc, byEmail, byUsername) {
+      if (err) return done(err);
+      if (!doc) return done('Could not find member');
+      if (byEmail && byEmail._id.toString() !== doc._id.toString())
+        return done({ data: { inUse: 'primaryEmail' }});
+      if (byUsername && byUsername._id.toString() !== doc._id.toString())
+        return done({ data: { inUse: 'username' }});
+      doc.username = member.username;
+      var tempEmails = _.pluck(doc.emails, 'value');
+      if (!_.include(tempEmails, member.primaryEmail))
+        doc.emails.unshift({ value: member.primaryEmail });
+      doc.primaryEmail = member.primaryEmail;
+      doc.displayName = member.displayName;
+      doc.name = MemberDb.getMemberNameFromDisplayName(doc.displayName);
+      if (assembly) {
+        doc.image = assembly.results.image_full[0];
+        doc.image.cf_url = cloudfrontImageUrl
+                            + doc.image.id.substr(0, 2)
+                            + '/' + doc.image.id.substr(2)
+                            + '.' + doc.image.ext;
+        doc.thumbs = assembly.results.image_thumb;
+        _.each(doc.thumbs, function (thumb) {
+          thumb.cf_url = cloudfrontImageUrl
+                          + thumb.id.substr(0, 2)
+                          + '/' + thumb.id.substr(2)
+                          + '.' + thumb.ext;
+        });
+      }
+      if (member.bannerLeft !== '') {
+        doc.image.meta.left = member.bannerLeft * (640/232);
+        doc.thumbs[0].meta.left = member.bannerLeft;
+      }
+      if (member.bannerTop !== '') {
+        doc.image.meta.top = member.bannerTop * (640/232);
+        doc.thumbs[0].meta.top = member.bannerTop;
+      }
+      doc.description = member.description;
+      if (doc.location)
+        doc.location.name = member.location;
+      else
+        doc.location = { name: member.location };
+      if (doc.hometown)
+        doc.hometown.name = member.hometown;
+      else
+        doc.hometown = { name: member.hometown };
+      if ('' !== member.birthday) {
+        var birthday = new Date(member.birthday);
+        if (!app.util.isValidDate(birthday))
+          return done({ data: { invalid: 'birthday' }});
+        
+        var month = String(birthday.getMonth() + 1);
+        if (month.length < 2) month = '0' + month;
+        var date = String(birthday.getDate());
+        if (date.length < 2) date = '0' + date;
+        var year = String(birthday.getFullYear());
+        doc.birthday = month + '/' + date + '/' + year;
+      }
+      doc.gender = member.gender;
+      var urls = member.website.match(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig);
+      doc.website = '';
+      _.each(urls, function (url, i) {
+        doc.website += url;
+        if (i !== urls.length - 1)
+          doc.website += '\n';
+      });
+      doc.twitter = member.twitter;
+      doc.modified = true;
+      memberDb.collections.member.update({ _id: doc._id },
+                                          doc, { safe: true }, done);
     }
   );
 });
@@ -772,7 +904,7 @@ app.put('/comment/:postId', authorize, function (req, res) {
         status: 'fail',
         data: {
           code: err.code,
-          message: err.member.displayName + ', please confirm your account by '
+          message: err.member.name.givenName + ', please confirm your account by '
                   + 'following the link in your confirmation email. '
                   + '<a href="javascript:;" id="noconf-'
                   + err.member._id.toString() + '" class="resend-conf">'
@@ -815,7 +947,7 @@ function authorize(req, res, cb) {
     req.session.referer = req.originalUrl;
     return res.redirect('/login');
   }
-  memberDb.findMemberById(memberId, function (err, member) {
+  memberDb.findMemberById(memberId, true, function (err, member) {
     if (err) return cb(err);
     if (!member) {
       req.session.passport = {};

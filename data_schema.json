@@ -1,0 +1,101 @@
+{
+        "provider" : "facebook",
+        "gender" : "male",
+        "profileUrl" : "http://www.facebook.com/sanderpick",
+        "emails" : [
+                {
+                        "value" : "sanderpick@gmail.com"
+                }
+        ],
+        "facebookToken" : "AAAC4ZCTLfsJgBAChY9G5gfFnPnDA4rRhEoLdPP4PUcll1k4NXZBFuULw5t2xsWxbIZATMZCDh7inHQKVKnfPWarjZBgusMr6RZBqEMACZAptwZDZD",
+        "facebookId" : "10217195",
+        "locale" : "en_US",
+        "timezone" : -7,
+        "birthday" : "01/06/1983",
+        "website" : "http://plebeian.tv",
+        "location" : {
+                "name" : "San Francisco, California",
+                "latitude" : 37.7793,
+                "longitude" : -122.4192
+        },
+        "hometown" : {
+                "name" : "Bozeman, Montana",
+                "latitude" : 45.6797,
+                "longitude" : -111.038
+        },
+        "picture" : {
+                "id" : "10100884815983573",
+                "from" : {
+                        "name" : "Sander Pick",
+                        "id" : "10217195"
+                },
+                "picture" : "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-ash3/549332_10100884815983573_10217195_57507361_1733296037_s.jpg",
+                "source" : "https://sphotos.xx.fbcdn.net/hphotos-ash3/549332_10100884815983573_10217195_57507361_1733296037_n.jpg",
+                "height" : 604,
+                "width" : 483,
+                "images" : [
+                        {
+                                "height" : 2048,
+                                "width" : 1637,
+                                "source" : "https://sphotos.xx.fbcdn.net/hphotos-ash3/s2048x2048/549332_10100884815983573_10217195_57507361_1733296037_n.jpg"
+                        },
+                        {
+                                "height" : 604,
+                                "width" : 483,
+                                "source" : "https://sphotos.xx.fbcdn.net/hphotos-ash3/549332_10100884815983573_10217195_57507361_1733296037_n.jpg"
+                        },
+                        {
+                                "height" : 604,
+                                "width" : 483,
+                                "source" : "https://sphotos.xx.fbcdn.net/hphotos-ash3/549332_10100884815983573_10217195_57507361_1733296037_n.jpg"
+                        },
+                        {
+                                "height" : 480,
+                                "width" : 383,
+                                "source" : "https://sphotos.xx.fbcdn.net/hphotos-ash3/s480x480/549332_10100884815983573_10217195_57507361_1733296037_n.jpg"
+                        },
+                        {
+                                "height" : 320,
+                                "width" : 255,
+                                "source" : "https://sphotos.xx.fbcdn.net/hphotos-ash3/s320x320/549332_10100884815983573_10217195_57507361_1733296037_n.jpg"
+                        },
+                        {
+                                "height" : 225,
+                                "width" : 180,
+                                "source" : "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-ash3/549332_10100884815983573_10217195_57507361_1733296037_a.jpg"
+                        },
+                        {
+                                "height" : 130,
+                                "width" : 103,
+                                "source" : "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-ash3/549332_10100884815983573_10217195_57507361_1733296037_s.jpg"
+                        },
+                        {
+                                "height" : 130,
+                                "width" : 103,
+                                "source" : "https://fbcdn-photos-a.akamaihd.net/hphotos-ak-ash3/s75x225/549332_10100884815983573_10217195_57507361_1733296037_s.jpg"
+                        }
+                ],
+                "link" : "http://www.facebook.com/photo.php?fbid=10100884815983573&set=a.10100731969015123.2827697.10217195&type=1",
+                "icon" : "https://s-static.ak.facebook.com/rsrc.php/v2/yz/r/StEh3RhPvjk.gif",
+                "created_time" : "2012-05-14T18:44:34+0000",
+                "position" : 1,
+                "updated_time" : "2012-05-14T18:44:35+0000"
+        },
+        "id" : "10217195",
+        "username" : "sanderpick",
+        "displayName" : "Sander Pick",
+        "name" : {
+                "familyName" : "Pick",
+                "givenName" : "Sander",
+                "middleName" : null
+        },
+        "primaryEmail" : "sanderpick@gmail.com",
+        "_id" : ObjectId("4dc78c61ed47376c0b000001"),
+        "created" : ISODate("2011-05-09T06:40:33.787Z"),
+        "key" : "XLpSKaCU",
+        "role" : 0,
+        "twitter" : "sanderpick",
+        "confirmed" : true,
+        "password" : "a65c0b929abc5f72b14ee5e25feade2a2740f30f",
+        "salt" : "1118034192449"
+}

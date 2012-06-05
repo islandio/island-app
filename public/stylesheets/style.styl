@@ -199,7 +199,6 @@ td
 .mask
   position absolute
   z-index 1
-  width 640px
 
 .masked
   position absolute
@@ -242,17 +241,6 @@ span.welcome-member a:active
   
 a.resend-conf
   font-weight bold
-
-//.signin-controls, 
-//.signin-forms, 
-//.signin-almost-there
-//display -moz-box
-//display -webkit-box
-//display box
-
-//-moz-box-pack center
-//-webkit-box-pack center
-//box-pack center
 
 .signin-almost-there
   text-align center
@@ -407,7 +395,7 @@ textarea
   vertical-align top
 
 textarea:focus
-  background none
+  background white
   border 1px solid darkgray
   outline none
 
@@ -429,7 +417,7 @@ input[type=text], input[type=password]
   border-radius 5px
 
 input[type=text]:focus, input[type=password]:focus
-  background none
+  background white
   border 1px solid darkgray
 
 input:focus
@@ -448,11 +436,13 @@ input.is-button-alert[type=submit]
 .button-mask-wrap
   position relative
 
-#add-media
+#add-media,
+#save-settings
   width 100%
   margin 10px 0 0
 
-#add-media-mask
+#add-media-mask,
+#save-settings-mask
   position absolute
   right 0
   bottom 0
@@ -464,18 +454,6 @@ input.is-button-alert[type=submit]
   width 100%
   height 100%
   overflow hidden
-
-  //display -moz-box
-  //display -webkit-box
-  //display box
-
-  //-moz-box-pack center
-  //-webkit-box-pack center
-  //box-pack center
-
-  //-moz-box-orient vertical
-  //-webkit-box-orient vertical
-  //box-orient vertical
 
 .signin-bg
   position absolute
@@ -490,14 +468,6 @@ input.is-button-alert[type=submit]
 .signin-logo
   margin 90px 0 0
   width 100%
-
-  //display -moz-box
-  //display -webkit-box
-  //display box
-
-  //-moz-box-pack center
-  //-webkit-box-pack center
-  //box-pack center
 
 .signin-logo > div
   position relative
@@ -515,32 +485,9 @@ input.is-button-alert[type=submit]
   width 100%
   height 105px
 
-  //display -moz-box
-  //display -webkit-box
-  //display box
-
-  //-moz-box-pack center
-  //-webkit-box-pack center
-  //box-pack center
-
-  //-moz-box-orient vertical
-  //-webkit-box-orient vertical
-  //box-orient vertical
-
 .signin-strategies
   margin 0 auto
   width 471px
-  //display -moz-box
-  //display -webkit-box
-  //display box
-
-  //-moz-box-pack center
-  //-webkit-box-pack center
-  //box-pack center
-
-  //-moz-box-orient horizontal
-  //-webkit-box-orient horizontal
-  //box-orient horizontal
 
 .signin-strategies td
   padding 0
@@ -549,28 +496,9 @@ input.is-button-alert[type=submit]
   margin 7px 20px 0
   font-style italic
 
-  //display -moz-box
-  //display -webkit-box
-  //display box
-
-  //-moz-box-pack center
-  //-webkit-box-pack center
-  //box-pack center
-
-  //-moz-box-orient horizontal
-  //-webkit-box-orient horizontal
-  //box-orient horizontal
-
 .signin-quote
   margin 50px 0 0
   width 100%
-  //display -moz-box
-  //display -webkit-box
-  //display box
-
-  //-moz-box-pack center
-  //-webkit-box-pack center
-  //box-pack center
 
 .signin-quote > p
   margin 0 auto
@@ -646,7 +574,8 @@ div[role=button]:focus,
 input[type=submit]:focus
   border 1px solid #98c1e6
 
-a.signin-strategy-btn
+a.signin-strategy-btn,
+a.signin-strategy-btn-disabled
   width 200px
   font-size 11px
   font-weight bold
@@ -658,23 +587,19 @@ a.signin-strategy-btn
   
   color #444
   border 1px solid #A8A8A8
-  border-radius 5px
+  border-radius 2px
   
   -webkit-text-shadow 0px 1px white
   -moz-text-shadow 0px 1px white
   text-shadow 0px 1px white
 
-  //display -moz-box
-  //display -webkit-box
-  //display box
-
-  //-moz-box-pack center
-  //-webkit-box-pack center
-  //box-pack center
-
-  //-moz-box-orient horizontal
-  //-webkit-box-orient horizontal
-  //box-orient horizontal
+a.signin-strategy-btn-disabled
+  cursor default
+  opacity 0.5
+  height 23px
+  line-height 24px
+  outline 0
+  text-align center
 
 a.signin-strategy-btn:hover
   border 1px solid #898989
@@ -693,14 +618,13 @@ a.signin-strategy-btn:active
   left 0
   display none
 
-.media-form-wrap
-  margin 0 0 40px
-
-#media-form table
+#media-form table,
+#settings-form table
   width 640px
   margin 20px 0 0 0
 
-#media-form input[name='post[title]']
+#media-form input[name='post[title]'],
+#settings-form input[name='edit[displayName]']
   width 632px
 
 #media-form textarea
@@ -709,13 +633,32 @@ a.signin-strategy-btn:active
   color darkgray
   overflow hidden
 
-#media-form td
+#settings-form textarea
+  width 630px
+  height 32px
+  color darkgray
+  overflow hidden
+
+#media-form td,
+#settings-form td
   padding 0 0 5px
 
-.media-instructions
+.media-instructions,
+.settings-instructions
   font-size 11px
   line-height 15px
   font-style italic
+
+.settings-banner-wrap
+  position relative
+  width 232px
+  height 104px
+  overflow hidden
+  cursor move
+
+.settings-banner
+  left 0
+  top 0
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
@@ -894,7 +837,8 @@ img.heart-img
   width 314px
   margin 5px 0 0
 
-.comment-title
+.comment-title,
+.object-title
   padding 3px 0 0
   max-width 314px
 
@@ -980,8 +924,6 @@ img.heart-img
 
 .member-info
   margin 0 0 5px
-  // font-size 14px
-  // line-height 15px
 
 .member-info a
   text-decoration underline
@@ -1057,7 +999,6 @@ div.object-parent-types li
   padding 0 5px
 
 div.object-meta
-  //display none
   border-top 1px solid #FCFCFB
 
 div.object-meta table

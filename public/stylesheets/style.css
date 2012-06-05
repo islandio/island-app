@@ -217,7 +217,6 @@ td {
 .mask {
   position: absolute;
   z-index: 1;
-  width: 640px;
 }
 .masked {
   position: absolute;
@@ -419,7 +418,7 @@ textarea {
   vertical-align: top;
 }
 textarea:focus {
-  background: none;
+  background: #fff;
   border: 1px solid #404040;
   outline: none;
 }
@@ -446,7 +445,7 @@ input[type=password] {
 }
 input[type=text]:focus,
 input[type=password]:focus {
-  background: none;
+  background: #fff;
   border: 1px solid #404040;
 }
 input:focus {
@@ -465,11 +464,13 @@ input.is-button-alert[type=submit] {
 .button-mask-wrap {
   position: relative;
 }
-#add-media {
+#add-media,
+#save-settings {
   width: 100%;
   margin: 10px 0 0;
 }
-#add-media-mask {
+#add-media-mask,
+#save-settings-mask {
   position: absolute;
   right: 0;
   bottom: 0;
@@ -597,7 +598,8 @@ div[role=button]:focus,
 input[type=submit]:focus {
   border: 1px solid #98c1e6;
 }
-a.signin-strategy-btn {
+a.signin-strategy-btn,
+a.signin-strategy-btn-disabled {
   width: 200px;
   font-size: 11px;
   font-weight: bold;
@@ -607,12 +609,20 @@ a.signin-strategy-btn {
   background: rgba(75,184,215,0.25);
   color: #444;
   border: 1px solid #a8a8a8;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
   -webkit-text-shadow: 0px 1px #fff;
   -moz-text-shadow: 0px 1px #fff;
   text-shadow: 0px 1px #fff;
+}
+a.signin-strategy-btn-disabled {
+  cursor: default;
+  opacity: 0.5;
+  height: 23px;
+  line-height: 24px;
+  outline: 0;
+  text-align: center;
 }
 a.signin-strategy-btn:hover {
   border: 1px solid #898989;
@@ -631,14 +641,13 @@ a.signin-strategy-btn:active {
   left: 0;
   display: none;
 }
-.media-form-wrap {
-  margin: 0 0 40px;
-}
-#media-form table {
+#media-form table,
+#settings-form table {
   width: 640px;
   margin: 20px 0 0 0;
 }
-#media-form input[name='post[title]'] {
+#media-form input[name='post[title]'],
+#settings-form input[name='edit[displayName]'] {
   width: 632px;
 }
 #media-form textarea {
@@ -647,13 +656,32 @@ a.signin-strategy-btn:active {
   color: #404040;
   overflow: hidden;
 }
-#media-form td {
+#settings-form textarea {
+  width: 630px;
+  height: 32px;
+  color: #404040;
+  overflow: hidden;
+}
+#media-form td,
+#settings-form td {
   padding: 0 0 5px;
 }
-.media-instructions {
+.media-instructions,
+.settings-instructions {
   font-size: 11px;
   line-height: 15px;
   font-style: italic;
+}
+.settings-banner-wrap {
+  position: relative;
+  width: 232px;
+  height: 104px;
+  overflow: hidden;
+  cursor: move;
+}
+.settings-banner {
+  left: 0;
+  top: 0;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 .trending-media-wrap {
@@ -834,7 +862,8 @@ img.heart-img {
   width: 314px;
   margin: 5px 0 0;
 }
-.comment-title {
+.comment-title,
+.object-title {
   padding: 3px 0 0;
   max-width: 314px;
 }

@@ -91,10 +91,33 @@ Island = (function ($) {
     left: 'auto'
   };
 
+  var uploadSpinOpts = {
+    lines: 17,
+    length: 0,
+    width: 2,
+    radius: 20,
+    rotate: 0,
+    color: '#000',
+    speed: 2.2,
+    trail: 60,
+    shadow: false,
+    hwaccel: false,
+    className: 'spinner',
+    zIndex: 2e9,
+    top: 'auto',
+    left: 'auto'
+  };
+
   var Spin = function (el) {
     if (el.length === 0) return;
     var spinTarget = el.get(0);
-    var opts = el.hasClass('search-spinner') ? searchSpinOpts : signinSpinOpts;
+    var opts;
+    if (el.hasClass('signin-spinner'))
+      opts = signinSpinOpts;
+    else if (el.hasClass('search-spinner'))
+      opts = searchSpinOpts;
+    else if (el.hasClass('upload-spinner'))
+      opts = uploadSpinOpts;
     var spinner = new Spinner(opts).spin(spinTarget).stop();
     return {
       start: function () { spinner.spin(spinTarget); },
@@ -587,6 +610,7 @@ Island = (function ($) {
       // Create the spinner
       var signinSpin = new Spin($('.signin-spinner'));
       var searchSpin = new Spin($('.search-spinner'));
+      var uploadSpin = new Spin($('.upload-spinner'));
 
       // Handle pagination
       var pageQuery = Util.getQueryVariable('p');
@@ -924,10 +948,11 @@ Island = (function ($) {
         }
       }).bind('keyup', checkComsSpace);
 
-
       // add comment on media
       $('.add-comment').bind('click', function () {
         var str = $(this.previousElementSibling).val();
+        str = str.replace(/\<script\>/ig, '');
+        str = str.replace(/\<\/script\>/ig, '');
         str = $('<div>').html(str).text().trim();
         if (str === '') return false;
         $(this.previousElementSibling).val('').css({ height: 32 });
@@ -943,7 +968,6 @@ Island = (function ($) {
         });
       });
 
-
       // show like heart
       $('.obj-holder').bind('mouseenter', function () {
         $('.hearts', this).show();
@@ -951,12 +975,10 @@ Island = (function ($) {
         $('.hearts', this).hide();
       });
 
-
       // no dragging hearts
       $('.hearts-wrap img, .hearts-back img').bind('mousedown', function (e) {
         e.preventDefault();
       });
-
 
       // rate media with hearts
       $('.hearts').each(function () {
@@ -1003,6 +1025,197 @@ Island = (function ($) {
         _this.text(Util.getAge(_this.text()));
       });
 
+      // edit profile
+      var settingsForm = $('#settings-form');
+      var settingsButton = $('#save-settings');
+      var settingsButtonMask = $('#save-settings-mask');
+
+      var settingsName = $('input[name="member[displayName]"]');
+      var settingsUsername = $('input[name="member[username]"]');
+      var settingsEmail = $('input[name="member[primaryEmail]"]');
+      var settingsBanner = $('img.settings-banner');
+      var settingsBannerFile = $('input[name="my_file"]');
+      var settingsBannerData = $('input[name="member[assembly]"]');
+      var settingsBannerLeft = $('input[name="member[bannerLeft]"]');
+      var settingsBannerTop = $('input[name="member[bannerTop]"]');
+      var settingsDescription = $('input[name="member[description]"]');
+      var settingsLocation = $('input[name="member[location]"]');
+      var settingsHometown = $('input[name="member[hometown]"]');
+      var settingsBirthday = $('input[name="member[birthday]"]');
+      var settingsGender = $('input[name="member[gender]"]');
+      var settingsWebsite = $('input[name="member[website]"]');
+      var settingsTwitter = $('input[name="member[twitter]"]');
+
+      var settingsNameLabel = $('label[for="member[displayName]"]');
+      var settingsUsernameLabel = $('label[for="member[username]"]');
+      var settingsEmailLabel = $('label[for="member[primaryEmail]"]');
+      var settingsBannerLabel = $('label[for="my_file"]');
+      var settingsDescriptionLabel = $('label[for="member[description]"]');
+      var settingsLocationLabel = $('label[for="member[location]"]');
+      var settingsHometownLabel = $('label[for="member[hometown]"]');
+      var settingsBirthdayLabel = $('label[for="member[birthday]"]');
+      var settingsGenderLabel = $('label[for="member[gender]"]');
+      var settingsWebsiteLabel = $('label[for="member[website]"]');
+      var settingsTwitterLabel = $('label[for="member[twitter]"]');
+
+      var settingsUploading = false;
+
+      function exitSettingsButton() {
+        settingsButtonMask.show();
+        settingsButton.removeClass('is-button-alert');
+        resetSettingsStyles();
+      }
+      function resetSettingsStyles() {
+        settingsNameLabel.css('color', 'gray');
+        settingsUsernameLabel.css('color', 'gray');
+        settingsEmailLabel.css('color', 'gray');
+        settingsBirthdayLabel.css('color', 'gray');
+      }
+
+      settingsButtonMask.each(function (i) {
+        var w = settingsButton.outerWidth();
+        var h = settingsButton.outerHeight();
+        settingsButtonMask.css({ width: w, height: h });
+      });
+
+      settingsButtonMask.bind('mouseenter', function () {
+        var name = settingsName.val().trim();
+        var username = settingsUsername.val().trim();
+        var email = settingsEmail.val().trim();
+        if (name !== '' && username !== ''
+            && email !== '' && !settingsUploading) {
+          settingsButtonMask.css('bottom', 10000).hide();
+          resetSettingsStyles();
+        } else {
+          settingsButton.addClass('is-button-alert');
+          if (name === '') 
+            settingsNameLabel.css('color', colors.orange);
+          if (username === '')
+            settingsUsernameLabel.css('color', colors.orange);
+          if (email === '') 
+            settingsEmailLabel.css('color', colors.orange);
+        }
+      }).bind('mouseleave', exitSettingsButton);
+
+      settingsButton.bind('mouseleave', function () {
+        settingsButtonMask.css('bottom', 0);
+        exitSettingsButton();
+      });
+
+      settingsButton.bind('click', function (e) {
+        e.preventDefault();
+        if (settingsUploading) return;
+        var data = settingsForm.serializeObject();
+        delete data.params;
+        $.put('/save/settings', data, function (res) {
+          if ('success' === res.status)
+            return ui.notify('Edits saved.')
+                     .closable().hide(8000).effect('fade');
+          if ('error' === res.status && res.data.inUse) {
+            switch (res.data.inUse) {
+              case 'primaryEmail':
+                ui.error('Email address is already in use.')
+                  .closable().hide(8000).effect('fade');
+                settingsEmail.focus();
+                settingsEmailLabel.css('color', colors.orange);
+                break;
+              case 'username':
+                ui.error('Username is already in use.')
+                  .closable().hide(8000).effect('fade');
+                settingsUsername.focus();
+                settingsUsernameLabel.css('color', colors.orange);
+                break;
+            }
+          } else if ('error' === res.status && res.data.invalid) {
+            switch (res.data.invalid) {
+              case 'birthday':
+                ui.error('Birthday not a valid date.')
+                  .closable().hide(8000).effect('fade');
+                settingsBirthday.val('').focus();
+                settingsBirthdayLabel.css('color', colors.orange);
+                break;
+            }
+          }
+        });
+        return false;
+      });
+
+      settingsForm.transloadit({
+        wait: true,
+        autoSubmit: false,
+        modal: false,
+        processZeroFiles: false,
+        onSuccess: function (assembly) {
+          uploadSpin.stop();
+          settingsBanner.show();
+          if (assembly.ok !== 'ASSEMBLY_COMPLETED')
+            return ui.error('Upload failed. Please try again.')
+              .closable().hide(8000).effect('fade');
+          if ($.isEmpty(assembly.results) && settingsUploading)
+            return ui.error('You must choose a file.')
+              .closable().hide(8000).effect('fade');
+          if (settingsUploading) {
+            var banner = assembly.results.image_thumb[0];
+            var _w = 232, _h = 104;
+            var w, h, o;
+            w = _w;
+            h = (banner.meta.height / banner.meta.width) * _w;
+            if (h - _h >= 0) {
+              o = 'top:' + (-(h - _h) / 2) + 'px;';
+            } else {
+              w = (banner.meta.width / banner.meta.height) * _h;
+              h = _h;
+              o = 'left:' + (-(w - _w) / 2) + 'px;';
+            }
+            settingsBanner.attr({
+              src: banner.url,
+              width: w,
+              height: h,
+              style: o,
+            });
+            settingsBannerData.val(JSON.stringify(assembly));
+            settingsUploading = false;
+            return;
+          }
+        },
+      });
+
+      settingsBannerFile.bind('change', function () {
+        settingsUploading = true;
+        settingsBanner.hide();
+        uploadSpin.start();
+        settingsForm.submit();
+      });
+
+      settingsBanner.bind('mousedown', function (e) {
+        e.preventDefault();
+        var w = { x: settingsBanner.width(),
+                  y: settingsBanner.height() };
+        var m = { x: e.pageX, y: e.pageY };
+        var p = { x: parseInt(settingsBanner.css('left')),
+                  y: parseInt(settingsBanner.css('top'))};
+        var move = function (e) {
+          var d = { x: e.pageX - m.x,
+                    y: e.pageY - m.y };
+          var top = d.y + p.y;
+          var left = d.x + p.x;
+          if (top <= 0 && w.y + top >= 104) {
+            settingsBannerTop.val(top);
+            settingsBanner.css({ top: top + 'px' });
+          }
+          if (left <= 0 && w.x + left >= 232) {
+            settingsBannerLeft.val(left);
+            settingsBanner.css({ left: left + 'px' });
+          }
+        };
+        settingsBanner.bind('mousemove', move);
+        settingsBanner.bind('mouseup', function (e) {
+          settingsBanner.unbind('mousemove', move);
+          settingsBanner.unbind('mouseup', arguments.callee);
+        });
+      });
+
+
       // new media
       var mediaForm = $('#media-form');
       var mediaButton = $('#add-media');
@@ -1014,7 +1227,6 @@ Island = (function ($) {
       var mediaTitleLabel = $('label[for="post[title]"]');
       var mediaBodyLabel = $('label[for="post[body]"]');
       var mediaTagsLabel = $('label[for="post[meta.tags]"]');
-      var mediaFileLabel = $('label[for="my_file"]');
 
       function exitMediaButton() {
         mediaButtonMask.show();
@@ -1024,7 +1236,7 @@ Island = (function ($) {
       function resetMediaStyles() {
         mediaTitleLabel.css('color', 'gray');
         mediaBodyLabel.css('color', 'gray');
-        mediaFileLabel.css('color', 'gray');
+        mediaFile.css('color', 'gray');
       }
 
       mediaButtonMask.each(function (i) {
@@ -1037,17 +1249,17 @@ Island = (function ($) {
         var title = mediaTitle.val().trim();
         var body = mediaBody.val().trim();
         var file = mediaFile.val();
-        if (title != '' && body != '' && file != '') {
+        if (title !== '' && body !== '' && file !== '') {
           mediaButtonMask.css('bottom', 10000).hide();
           resetMediaStyles();
         } else {
           mediaButton.addClass('is-button-alert');
-          if (title == '') 
+          if (title === '') 
             mediaTitleLabel.css('color', colors.orange);
-          if (body == '')
+          if (body === '')
             mediaBodyLabel.css('color', colors.orange);
-          if (file == '') 
-            mediaFileLabel.css('color', colors.orange);
+          if (file === '') 
+            mediaFile.css('color', colors.orange);
         }
       }).bind('mouseleave', exitMediaButton);
 
@@ -1060,16 +1272,15 @@ Island = (function ($) {
         wait: true,
         autoSubmit: false,
         onSuccess: function (assembly) {
-          if (assembly.ok != 'ASSEMBLY_COMPLETED') {
-            alert('Upload failed. Please try again.');
-            return;
-          }
-          if ($.isEmpty(assembly.results)) {
-            alert('You must choose a file to contribute.');
-            return;
-          }
+          if (assembly.ok !== 'ASSEMBLY_COMPLETED')
+            return ui.error('Upload failed. Please try again.')
+              .closable().hide(8000).effect('fade');
+          if ($.isEmpty(assembly.results))
+            return ui.error('You must choose a file.')
+              .closable().hide(8000).effect('fade');
           var data = mediaForm.serializeObject();
-          data.params = JSON.parse(data.params);
+          delete data.params;
+          // data.params = JSON.parse(data.params);
           data.assembly = assembly;
           $.put('/insert', data, function (res) {
             if ('error' === res.status)
@@ -1081,7 +1292,6 @@ Island = (function ($) {
           });
         },
       });
-
     },
 
     /**

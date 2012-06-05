@@ -1,40 +1,45 @@
 - var websites = data.website ? data.website.split('\n') : null;
 div.single-left
+  - if (member._id.toString() === data._id.toString())
+    a.button(href='/settings/' + member.key, style='float:right; margin-top:12px;') 
+      | Edit Profile
   div.obj-title
     span.slash
       | /
     h1.title-left
       =data.displayName
     h1.title-sub from 
-      - if (data.hometown)
+      - if (data.hometown && data.hometown.name !== '')
         =data.hometown.name
       - else
         | Earth
   div.obj-holder.member-picture
-    - if (!data.picture) {
-      - data.picture = { width: 640, height: 288 };
+    - if (!data.image) {
+      - data.image = { meta: { width: 640, height: 288 }};
       - if (!data.gender || 'male' === data.gender)
-        - data.picture.source = "https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-blnk-pic-m.jpg";
+        - data.image.cf_url = "https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-blnk-pic-m.jpg";
       - else
-        - data.picture.source = "https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-blnk-pic-f.jpg";
+        - data.image.cf_url = "https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-blnk-pic-f.jpg";
     - }
     - var _w = 640, _h = 288
-    - var w, h, o
+    - var w, h
+    - var l = 'left:0;'
+    - var t = 'top:0;'
     - w = _w
-    - h = (data.picture.height / data.picture.width) * _w
+    - h = (data.image.meta.height / data.image.meta.width) * _w
     - if (h - _h >= 0) {
-      - o = 'top:' + (-(h - _h) / 2) + 'px;'
+      - t = 'top:' + (data.image.meta.top !== undefined ? data.image.meta.top : (-(h - _h) / 2)) + 'px;'
     - } else {
-      - w = (data.picture.width / data.picture.height) * _h
+      - w = (data.image.meta.width / data.image.meta.height) * _h
       - h = _h
-      - o = 'left:' + (-(w - _w) / 2) + 'px;'
+      - l = 'left:' + (data.image.meta.left !== undefined ? data.image.meta.left : (-(w - _w) / 2)) + 'px;'
     - }
-    img.mask(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-top.png", width="640", style="top: 0;")
-    img.mask(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-btm.png", width="640", style="top: 280px;")
-    img.masked(src=data.picture.source, width=w, height=h, style=o)
+    img.mask(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-top.png", width="640", style="top:0;")
+    img.mask(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-btm.png", width="640", style="top:280px;")
+    img.masked(src=data.image.cf_url, width=w, height=h, style=(t + l))
   div.obj-desc.matte
     img.left(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-obj-info.gif", alt="info", align="top")
-    div.obj-desc-txt-wrap
+    div.obj-desc-txt-wrap.profile-info
       div.member-info
         - if (!data.location && !data.hometown && !(data.birthday && data.gender) && !websites)
           | \// #{data.displayName} is a 
@@ -47,11 +52,11 @@ div.single-left
             - if (data.description)
               li \// 
                 span #{data.description}
-            - if (data.location)
+            - if (data.location && data.location.name !== '')
               li \// 
                 span Lives in 
                 span.member-info-content #{data.location.name}
-            - if (data.hometown)
+            - if (data.hometown && data.hometown.name !== '')
               li \// 
                 span From 
                 span.member-info-content #{data.hometown.name}
@@ -59,7 +64,7 @@ div.single-left
               li \// 
                 span.member-info-content.birthday #{data.birthday}
                 span &nbsp;year old 
-                span.member-info-content #{data.gender}
+                span.member-info-content #{data.gender.toLowerCase()}
             - if (websites)
               li \// 
                 span More from #{data.displayName} at 

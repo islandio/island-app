@@ -1,6 +1,6 @@
 div.single-left
   form#media-form(action='/transloadit', enctype='multipart/form-data', method='POST')
-    input(type='hidden', name='params', value=JSON.stringify(tlip))
+    input(type='hidden', name='params', value=JSON.stringify(transloaditParams))
     span.slash
       | /
     h1.title-left Create Island Post
@@ -14,13 +14,10 @@ div.single-left
           td(colspan='2')
             input(name='post[title]', type='text')
         tr
-          td(style="padding-top:10px;")
-            input(type="file", name="my_file", multiple="true", style="font-size:11px;")
-          // td(align="right", style="padding-top:10px;")
-          // input(type="checkbox", name="is_album", checked="checked")
-          // label(for='is_album', style="font-style:italic; vertical-align:-1px;") &nbsp; Add multiple files as an album?
+          td(style='padding-top:10px;')
+            input(type='file', name='my_file', multiple='true', style='font-size:11px;')
         tr
-          td(colspan='2', style="padding-top:10px;")
+          td(colspan='2', style='padding-top:10px;')
             label(for='post[body]') Description
         tr
           td(colspan='2')
