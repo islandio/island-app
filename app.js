@@ -162,6 +162,23 @@ passport.use(new FacebookStrategy({
   }
 ));
 
+passport.use('facebook-authz', new FacebookStrategy({
+    clientID: 203397619757208,
+    clientSecret: 'af79cdc8b5ca447366e87b12c3ddaed2'
+  },
+  function (token, refreshToken, profile, cb) {
+    memberDb.collections.member.findOne({ facebookId: profile.id },
+                                        function (err, member) {
+      if (err) return cb(err);
+      cb(null, member, {
+        facebookToken: token,
+        facebookId: profile.id,
+        facebook: profile.username,
+      });
+    });
+  }
+));
+
 passport.use(new TwitterStrategy({
     consumerKey: 'ithvzW8h1tEsUBewL3jxQ',
     consumerSecret: 'HiGnwoc8BBgsURlKshWsb1pGH8IQWE2Ve8Mqzz8'
@@ -171,6 +188,23 @@ passport.use(new TwitterStrategy({
     memberDb.findOrCreateMemberFromTwitter(profile,
           function (err, member) {
       cb(err, member);
+    });
+  }
+));
+
+passport.use('twitter-authz', new TwitterStrategy({
+    consumerKey: 'ithvzW8h1tEsUBewL3jxQ',
+    consumerSecret: 'HiGnwoc8BBgsURlKshWsb1pGH8IQWE2Ve8Mqzz8'
+  },
+  function (token, tokenSecret, profile, cb) {
+    memberDb.collections.member.findOne({ twitterId: profile.id },
+                                        function (err, member) {
+      if (err) return cb(err);
+      cb(null, member, {
+        twitterToken: token,
+        twitterId: profile.id,
+        twitter: profile.username,
+      });
     });
   }
 ));
@@ -274,8 +308,6 @@ app.get('/auth/facebook', function (req, res, next) {
   referer.search = referer.query = referer.hash = null;
   referer.pathname = '/auth/facebook/callback';
   var returnUrl = url.format(referer);
-  referer.pathname = '/';
-  var realm = url.format(referer);
   passport._strategies['facebook']._callbackURL = returnUrl;
   passport.authenticate('facebook', { scope: [
                         'email',
@@ -303,19 +335,48 @@ app.get('/auth/facebook/callback', function (req, res, next) {
   })(req, res, next); 
 });
 
+// Facebook authorization
+app.get('/connect/facebook', function (req, res, next) {
+  var referer = url.parse(req.headers.referer);
+  referer.search = referer.query = referer.hash = null;
+  req.session.referer = url.format(referer);
+  referer.pathname = '/connect/facebook/callback';
+  var returnUrl = url.format(referer);
+  passport._strategies['facebook-authz']._callbackURL = returnUrl;
+  passport.authorize('facebook-authz', { scope: [
+                        'email',
+                        'user_about_me',
+                        'user_birthday',
+                        'user_website',
+                        'user_status',
+                        'user_photos']})(req, res, next);
+});
+
+// Facebook authorization returns here
+app.get('/connect/facebook/callback', function (req, res, next) {
+  passport.authorize('facebook-authz', function (err, member, info) {
+    if (err) return next(err);
+    info.modified = true;
+    memberDb.collections.member.update({ _id: req.user._id },
+                                        { $set: info }, { safe: true },
+                                        function (err) {
+      if (err) return next(err);
+      res.redirect(req.session.referer || '/');
+    });
+  })(req, res, next);
+});
+
 // Twitter authentication
 app.get('/auth/twitter', function (req, res, next) {
   var referer = url.parse(req.headers.referer);
   referer.search = referer.query = referer.hash = null;
   referer.pathname = '/auth/twitter/callback';
   var returnUrl = url.format(referer);
-  referer.pathname = '/';
-  var realm = url.format(referer);
   passport._strategies['twitter']._oauth._authorize_callback = returnUrl;
   passport.authenticate('twitter')(req, res, next);
 });
 
-// Twitter returns here
+// Twitter authentication returns here
 app.get('/auth/twitter/callback', function (req, res, next) {
   passport.authenticate('twitter', function (err, member, info) {
     if (err) return next(err);
@@ -326,6 +387,31 @@ app.get('/auth/twitter/callback', function (req, res, next) {
       return res.redirect('/login');
     }
     req.logIn(member, function (err) {
+      if (err) return next(err);
+      res.redirect(req.session.referer || '/');
+    });
+  })(req, res, next);
+});
+
+// Twitter authorization
+app.get('/connect/twitter', function (req, res, next) {
+  var referer = url.parse(req.headers.referer);
+  referer.search = referer.query = referer.hash = null;
+  req.session.referer = url.format(referer);
+  referer.pathname = '/connect/twitter/callback';
+  var returnUrl = url.format(referer);
+  passport._strategies['twitter-authz']._oauth._authorize_callback = returnUrl;
+  passport.authorize('twitter-authz')(req, res, next);
+});
+
+// Twitter authorization returns here
+app.get('/connect/twitter/callback', function (req, res, next) {
+  passport.authorize('twitter-authz', function (err, member, info) {
+    if (err) return next(err);
+    info.modified = true;
+    memberDb.collections.member.update({ _id: req.user._id },
+                                        { $set: info }, { safe: true },
+                                        function (err) {
       if (err) return next(err);
       res.redirect(req.session.referer || '/');
     });
@@ -590,11 +676,14 @@ app.get('/member/:key', authorize, function (req, res) {
       getGrid({}, this.parallel());
     },
     function (err, member, media) {
-      if (err || !member || member.role !== 0)
+      if (err || !member)
         return res.render('404');
       getRecentComments(5, member._id, function (err, coms) {
         if (err)
           return res.render('500');
+        _.each(member, function (v, k) {
+          if (v === '') member[k] = null;
+        });
         res.render('index', {
           part: 'profile',
           data: member,
@@ -617,8 +706,11 @@ app.get('/settings/:key', authorize, function (req, res) {
     },
     function (err, member, media) {
       if (err || !member || member._id.toString()
-          !== req.user._id.toString() || member.role !== 0)
+          !== req.user._id.toString())
         return res.render('404');
+      _.each(member, function (v, k) {
+        if (v === '') member[k] = null;
+      });
       res.render('index', {
         part: 'settings',
         data: member,

@@ -84,35 +84,43 @@ div.single-left
             input(style='width:91%;', name='member[birthday]', type='text', placeholder='e.g. 01/06/1983', value=data.birthday)
           td
             input(style='width:91%;', name='member[gender]', type='text', placeholder='e.g. male, female, or get creative!', value=data.gender)
-        tr
-          td(colspan='2', style="padding-top:10px;")
-            label(for='member[website]') Websites
-          td(style="padding-top:10px;")
-            label(for='member[twitter]') Twitter Handle
-        tr
-          td(colspan='2')
-            textarea.matte(style='width:96%;', name='member[website]', placeholder='One URL per line...') #{data.website}
-          td(style='vertical-align:top;')
-            input(style='width:92.5%;', name='member[twitter]', type='text', placeholder='e.g. ladygaga', value=data.twitter)
+        - if (!data.twitterId)
+          tr
+            td(colspan='2', style="padding-top:10px;")
+              label(for='member[website]') Websites
+            td(style="padding-top:10px;")
+              label(for='member[twitter]') Twitter Handle
+          tr
+            td(colspan='2')
+              textarea.matte(style='width:96%;', name='member[website]', placeholder='One URL per line...') #{data.website}
+            td(style='vertical-align:top;')
+              input(style='width:92.5%;', name='member[twitter]', type='text', placeholder='e.g. ladygaga', value=data.twitter)
+        - else
+          tr
+            td(colspan='3', style="padding-top:10px;")
+              label(for='member[website]') Websites
+          tr
+            td(colspan='3')
+                textarea.matte(style='width:630px;', name='member[website]', placeholder='One URL per line...') #{data.website}
         tr
           td(colspan='3', style="padding-bottom: 0px;")
             input#save-settings.is-button(type='submit', value='Save')
             div.button-mask-wrap
               div#save-settings-mask
-div.recent-comments-wrap(style='display:none;')
+div.recent-comments-wrap
   h1.title-right / Services
   p.settings-instructions(style="margin-top:32px;") Link Island to your preferred social network account.
   br
   p.settings-instructions Quickly sign into Island with Facebook or Twitter. Optionally push your Island Posts to your connected services.
   br
   br
-  - if (!data.facebookToken)
-    a.button.signin-strategy-btn(href='/auth/facebook', style='margin:0 auto; width:100%;') Connect with Facebook
+  - if (!data.facebookId)
+    a.button.signin-strategy-btn(href='/connect/facebook', style='margin:0 auto; width:100%;') Connect with Facebook
   - else
     a.signin-strategy-btn-disabled(href='javascript:;', style='margin:0 auto; width:100%;') Connected with Facebook
   br
-  - if (!data.twitterToken)
-    a.button.signin-strategy-btn(href='/auth/twitter', style='margin:0 auto; width:100%;') Connect with Twitter
+  - if (!data.twitterId)
+    a.button.signin-strategy-btn(href='/connect/twitter', style='margin:0 auto; width:100%;') Connect with Twitter
   - else
     a.signin-strategy-btn-disabled(href='javascript:;', style='margin:0 auto; width:100%;') Connected with Twitter
 div.clear

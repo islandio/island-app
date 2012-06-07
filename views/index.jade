@@ -19,7 +19,7 @@
               | Add Media
         li
           span.welcome-member Hi, 
-            - if (member.role === 0)
+            - if (member.role !== 2)
               a(href='/member/' + member.key) #{member.displayName}
             - else
               #{member.displayName}

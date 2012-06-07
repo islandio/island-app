@@ -836,7 +836,7 @@ Island = (function ($) {
       });
       
       // Hide everything when a strategy is clicked
-      $('.signin-strategy-btn').click(function (e) { 
+      $('.from-login').click(function (e) { 
         signinSpin.start();
         showSpinner();
       });
@@ -853,7 +853,6 @@ Island = (function ($) {
                       .closable().hide(8000).effect('fade');
         }, 'json');
       });
-
 
       // pulse logo on mouseover
       var logoA = $('#logo-a');
@@ -1214,7 +1213,6 @@ Island = (function ($) {
           settingsBanner.unbind('mouseup', arguments.callee);
         });
       });
-
 
       // new media
       var mediaForm = $('#media-form');

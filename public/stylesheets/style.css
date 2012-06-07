@@ -313,6 +313,7 @@ a.resend-conf {
   display: block;
   color: #808080;
   font-size: 9px;
+  text-align: center;
 }
 #remember_me {
   margin: 0 5px 0 0;
@@ -950,6 +951,7 @@ img.heart-img {
   overflow: hidden;
 }
 .member-info {
+  font-size: 9px;
   margin: 0 0 5px;
 }
 .member-info a {

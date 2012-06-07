@@ -94,10 +94,13 @@ MemberDb.prototype.findOrCreateMemberFromFacebook =
                     function (e) { return e !== null; }) : [];
   props.facebookId = props.id;
   delete props.id;
-  self.collections.member.findOne({ $or: [{ emails: { $in: props.emails }},
-                                  { facebookId: props.facebookId }
-                                  ]}, function (err, member) {
+  self.collections.member.find({ $or: [{ emails: { $in: props.emails }},
+                              { facebookId: props.facebookId }
+                              ]}, { sort: { created: 1 }, limit: 1 })
+                         .toArray(function (err, member) {
     if (err) return cb(err);
+    if (member)
+      member = _.first(member);
     if (member && member.key) {
       if (member.modified) {
         var update = { 
@@ -217,10 +220,13 @@ MemberDb.prototype.findOrCreateMemberFromTwitter =
                     function (e) { return e !== null; }) : [];
   props.twitterId = props.id;
   delete props.id;
-  self.collections.member.findOne({ $or: [{ emails: { $in: props.emails }},
+  self.collections.member.find({ $or: [{ emails: { $in: props.emails }},
                                   { twitterId: props.twitterId }
-                                  ]}, function (err, member) {
+                                  ]}, { sort: { created: 1 }, limit: 1 })
+                         .toArray(function (err, member) {
     if (err) return cb(err);
+    if (member)
+      member = _.first(member);
     if (member && member.key) {
       if (member.modified) {
         var update = { 
