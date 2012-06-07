@@ -836,9 +836,14 @@ Island = (function ($) {
       });
       
       // Hide everything when a strategy is clicked
-      $('.from-login').click(function (e) { 
+      $('.from-login').click(function (e) {
         signinSpin.start();
         showSpinner();
+      });
+      $('.from-settings').click(function (e) {
+        $('.signin-strategy-btn, .signin-strategy-btn-disabled').hide();
+        signinSpin.start();
+        $('.signin-spinner').show();
       });
 
       // resend confirmation email

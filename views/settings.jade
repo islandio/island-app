@@ -113,14 +113,15 @@ div.recent-comments-wrap
   br
   p.settings-instructions Quickly sign into Island with Facebook or Twitter. Optionally push your Island Posts to your connected services.
   br
+  div.signin-spinner
   br
   - if (!data.facebookId)
-    a.button.signin-strategy-btn(href='/connect/facebook', style='margin:0 auto; width:100%;') Connect with Facebook
+    a.button.signin-strategy-btn.from-settings(href='/connect/facebook', style='margin:0 auto; width:100%;') Connect with Facebook
   - else
     a.signin-strategy-btn-disabled(href='javascript:;', style='margin:0 auto; width:100%;') Connected with Facebook
   br
   - if (!data.twitterId)
-    a.button.signin-strategy-btn(href='/connect/twitter', style='margin:0 auto; width:100%;') Connect with Twitter
+    a.button.signin-strategy-btn.from-settings(href='/connect/twitter', style='margin:0 auto; width:100%;') Connect with Twitter
   - else
     a.signin-strategy-btn-disabled(href='javascript:;', style='margin:0 auto; width:100%;') Connected with Twitter
 div.clear
