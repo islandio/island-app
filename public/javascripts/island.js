@@ -512,6 +512,13 @@ Island = (function ($) {
         }
       };
 
+      // size notifications
+      ui.Notification.prototype.fit = function () {
+        var w = (($(window).width() - 984) / 2) - 26;
+        $('.notification').css({ minWidth: w, maxWidth: w });
+        return this;
+      }
+
       // custom fade in for flashes
       // $.fn.dropIn = function () {
       //   $(this).css({ bottom: 40 }).animate({ bottom: '-=20' }, 2000, 'easeOutExpo');
@@ -772,12 +779,13 @@ Island = (function ($) {
           } else if ('fail' === serv.status) {
             hideSpinner();
             signinSpin.stop();
-            ui.error(serv.data.message).closable().hide(8000).effect('fade');
+            ui.error(serv.data.message).closable().hide(80000).effect('fade').fit();
             switch (serv.data.code) {
               case 'MISSING_FIELD':
+              case 'ACCOUNT_WAITING':
                 var missing = serv.data.missing;
                 for (var i=0; i < missing.length; ++i)
-                  $('input[name="' + missing[i] + '"]').addClass('is-input-alert');
+                  $('input[name="' + missing[i] + '"]').addClass('is-input-alert').val('');
                 break;
               case 'BAD_AUTH':
                 loginPassword.val('').focus();
@@ -818,7 +826,7 @@ Island = (function ($) {
           } else if ('fail' === serv.status) {
             hideSpinner();
             signinSpin.stop();
-            ui.error(serv.data.message).closable().hide(8000).effect('fade');
+            ui.error(serv.data.message).closable().hide(8000).effect('fade').fit();
             switch (serv.data.code) {
               case 'MISSING_FIELD':
                 var missing = serv.data.missing;
@@ -852,10 +860,10 @@ Island = (function ($) {
         $.post('/resendconf/' + id, { id: id }, function (serv) {
           if ('success' === serv.status)
             return ui.notify(serv.data.message)
-                      .closable().hide(8000).effect('fade');
+                      .closable().hide(8000).effect('fade').fit();
           if ('error' === serv.status)
             ui.error(serv.data.message)
-                      .closable().hide(8000).effect('fade');
+                      .closable().hide(8000).effect('fade').fit();
         }, 'json');
       });
 
@@ -968,7 +976,7 @@ Island = (function ($) {
           if ('error' === serv.status)
             return console.log(serv.message);
           if ('fail' === serv.status)
-            ui.error(serv.data.message).closable().hide(12000).effect('fade');
+            ui.error(serv.data.message).closable().hide(12000).effect('fade').fit();
         });
       });
 
@@ -1114,18 +1122,18 @@ Island = (function ($) {
         $.put('/save/settings', data, function (res) {
           if ('success' === res.status)
             return ui.notify('Edits saved.')
-                     .closable().hide(8000).effect('fade');
+                     .closable().hide(8000).effect('fade').fit();
           if ('error' === res.status && res.data.inUse) {
             switch (res.data.inUse) {
               case 'primaryEmail':
                 ui.error('Email address is already in use.')
-                  .closable().hide(8000).effect('fade');
+                  .closable().hide(8000).effect('fade').fit();
                 settingsEmail.focus();
                 settingsEmailLabel.css('color', colors.orange);
                 break;
               case 'username':
                 ui.error('Username is already in use.')
-                  .closable().hide(8000).effect('fade');
+                  .closable().hide(8000).effect('fade').fit();
                 settingsUsername.focus();
                 settingsUsernameLabel.css('color', colors.orange);
                 break;
@@ -1134,7 +1142,7 @@ Island = (function ($) {
             switch (res.data.invalid) {
               case 'birthday':
                 ui.error('Birthday not a valid date.')
-                  .closable().hide(8000).effect('fade');
+                  .closable().hide(8000).effect('fade').fit();
                 settingsBirthday.val('').focus();
                 settingsBirthdayLabel.css('color', colors.orange);
                 break;
@@ -1154,10 +1162,10 @@ Island = (function ($) {
           settingsBanner.show();
           if (assembly.ok !== 'ASSEMBLY_COMPLETED')
             return ui.error('Upload failed. Please try again.')
-              .closable().hide(8000).effect('fade');
+              .closable().hide(8000).effect('fade').fit();
           if ($.isEmpty(assembly.results) && settingsUploading)
             return ui.error('You must choose a file.')
-              .closable().hide(8000).effect('fade');
+              .closable().hide(8000).effect('fade').fit();
           if (settingsUploading) {
             var banner = assembly.results.image_thumb[0];
             var _w = 232, _h = 104;
@@ -1277,10 +1285,10 @@ Island = (function ($) {
         onSuccess: function (assembly) {
           if (assembly.ok !== 'ASSEMBLY_COMPLETED')
             return ui.error('Upload failed. Please try again.')
-              .closable().hide(8000).effect('fade');
+              .closable().hide(8000).effect('fade').fit();
           if ($.isEmpty(assembly.results))
             return ui.error('You must choose a file.')
-              .closable().hide(8000).effect('fade');
+              .closable().hide(8000).effect('fade').fit();
           var data = mediaForm.serializeObject();
           delete data.params;
           // data.params = JSON.parse(data.params);

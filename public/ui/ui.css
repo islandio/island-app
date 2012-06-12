@@ -120,7 +120,7 @@
 #notifications {
   position: fixed;
   top: 12px;
-  left: 12px;
+  right: 12px;
 }
 
 #notifications li {

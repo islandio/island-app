@@ -211,10 +211,12 @@ passport.use('twitter-authz', new TwitterStrategy({
 
 passport.use(new LocalStrategy(
   function (email, password, cb) {
-    memberDb.collections.member.findOne({ primaryEmail: email },
-                                    function (err, member) {
+    memberDb.collections.member.findOne({ emails: { value: email }},
+                                        function (err, member) {
       if (err) return cb(err);
       if (!member) return cb(null, false);
+      if (!member.password)
+        return cb(null, member, { waiting: true });
       if (!MemberDb.authenticateLocalMember(member, password))
         return cb(null, false);
       return cb(null, member);
@@ -264,7 +266,7 @@ app.post('/login', function (req, res, next) {
   if (missing.length !== 0)
     return res.send({
       status: 'fail', 
-      data: { code: 'MISSING_FIELD', 
+      data: { code: 'MISSING_FIELD',
               message: 'All fields are required.',
               missing: missing },
     });
@@ -278,6 +280,21 @@ app.post('/login', function (req, res, next) {
           message: 'Your email or password is incorrect.'
         }
       });
+    if (info && info.waiting) {
+      missing.push('password');
+      return res.send({
+        status: 'fail',
+        data: {
+          code: 'ACCOUNT_WAITING',
+          message: member.displayName
+                  + ', Island underwent some changes since we last saw you. '
+                  + 'To reactivate your account, please set a new password by '
+                  + 'following the 1-step signup process using this '
+                  + 'email address (' + member.primaryEmail + ').',
+          missing: missing
+        }
+      });
+    }
     // if (!member.confirmed)
     //   return res.send({
     //     status: 'fail',
