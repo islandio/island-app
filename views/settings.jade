@@ -111,19 +111,27 @@ div.recent-comments-wrap
   h1.title-right / Services
   p.settings-instructions(style="margin-top:32px;") Link Island to your preferred social network account.
   br
-  p.settings-instructions Quickly sign into Island with Facebook or Twitter. Optionally push your Island Posts to your connected services.
+  p.settings-instructions Quickly sign into Island with Facebook or Twitter. Optionally push your Island Posts to either service.
+  br
+  p.settings-instructions Adding #island to an Instagram photo will automagically create an Island Post.
   br
   div.signin-spinner
   br
   - if (!data.facebookId)
-    a.button.signin-strategy-btn.from-settings(href='/connect/facebook', style='margin:0 auto; width:100%;') Connect with Facebook
+    a.button.signin-strategy-btn.facebook-btn.from-settings(href='/connect/facebook', style='margin:0 auto; width:100%;') Connect with Facebook
   - else
-    a.signin-strategy-btn-disabled(href='javascript:;', style='margin:0 auto; width:100%;') Connected with Facebook
+    a.signin-strategy-btn-disabled.facebook-btn-disabled(href='javascript:;', style='margin:0 auto; width:100%;') Connected with Facebook
   br
   - if (!data.twitterId)
-    a.button.signin-strategy-btn.from-settings(href='/connect/twitter', style='margin:0 auto; width:100%;') Connect with Twitter
+    a.button.signin-strategy-btn.twitter-btn.from-settings(href='/connect/twitter', style='margin:0 auto; width:100%;') Connect with Twitter
   - else
-    a.signin-strategy-btn-disabled(href='javascript:;', style='margin:0 auto; width:100%;') Connected with Twitter
+    a.signin-strategy-btn-disabled.twitter-btn-disabled(href='javascript:;', style='margin:0 auto; width:100%;') Connected with Twitter
+  br
+  - if (data.displayName === 'Sander Pick')
+    - if (!data.instagramId && data.displayName === 'Sander Pick')
+      a.button.signin-strategy-btn.instagram-btn.from-settings(href='/connect/instagram', style='margin:0 auto; width:100%;') Connect with Instagram
+    - else
+      a.signin-strategy-btn-disabled.instagram-btn-disabled(href='javascript:;', style='margin:0 auto; width:100%;') Connected with Instagram
 div.clear
 div.grid-wrap
   #search

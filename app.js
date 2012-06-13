@@ -52,6 +52,8 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var TwitterStrategy = require('passport-twitter').Strategy;
 var LocalStrategy = require('passport-local').Strategy;
 
+var InstagramStrategy = require('passport-instagram').Strategy;
+
 var transloaditMediaParams = { auth: { key: '8a36aa56062f49c79976fa24a74db6cc' }};
 transloaditMediaParams.template_id = process.env.NODE_ENV === 'production' ?
                             'dd77fc95cfff48e8bf4af6159fd6b2e7' :
@@ -71,6 +73,15 @@ var cloudfrontVideoUrl = process.env.NODE_ENV === 'production' ?
 var cloudfrontAudioUrl = process.env.NODE_ENV === 'production' ?
                             'https://dp3piv67f7p06.cloudfront.net/' :
                             'https://d2oapa8usgizyg.cloudfront.net/';
+
+var instagramCredentials = process.env.NODE_ENV === 'production' ?
+                            { clientID: 'a3003554a308427d8131cef13ef2619f',
+                              clientSecret: '369ae2fbc8924c158316530ca8688647',
+                              callbackURL: 'http://beta.island.io/connect/instagram/callback' } :
+                            { clientID: 'b6e0d7d608a14a578cf94763f70f1b49',
+                              clientSecret: 'a3937ee32072457d92eaa2165bd7dd37',
+                              callbackURL: 'http://local.island.io:3644/connect/instagram/callback' };
+
 
 var app = module.exports = express.createServer();
 var everyone;
@@ -220,6 +231,21 @@ passport.use(new LocalStrategy(
       if (!MemberDb.authenticateLocalMember(member, password))
         return cb(null, false);
       return cb(null, member);
+    });
+  }
+));
+
+passport.use('instagram-authz', new InstagramStrategy(
+  instagramCredentials,
+  function (token, refreshToken, profile, cb) {
+    memberDb.collections.member.findOne({ instagramId: profile.id },
+                                        function (err, member) {
+      if (err) return cb(err);
+      cb(null, member, {
+        instagramToken: token,
+        instagramId: profile.id,
+        instagram: profile.username,
+      });
     });
   }
 ));
@@ -424,6 +450,31 @@ app.get('/connect/twitter', function (req, res, next) {
 // Twitter authorization returns here
 app.get('/connect/twitter/callback', function (req, res, next) {
   passport.authorize('twitter-authz', function (err, member, info) {
+    if (err) return next(err);
+    info.modified = true;
+    memberDb.collections.member.update({ _id: req.user._id },
+                                        { $set: info }, { safe: true },
+                                        function (err) {
+      if (err) return next(err);
+      res.redirect(req.session.referer || '/');
+    });
+  })(req, res, next);
+});
+
+// Instagram authorization
+app.get('/connect/instagram', function (req, res, next) {
+  var referer = url.parse(req.headers.referer);
+  referer.search = referer.query = referer.hash = null;
+  req.session.referer = url.format(referer);
+  referer.pathname = '/connect/instagram/callback';
+  var returnUrl = url.format(referer);
+  passport._strategies['instagram-authz']._callbackURL = returnUrl;
+  passport.authorize('instagram-authz')(req, res, next);
+});
+
+// Instagram authorization returns here
+app.get('/connect/instagram/callback', function (req, res, next) {
+  passport.authorize('instagram-authz', function (err, member, info) {
     if (err) return next(err);
     info.modified = true;
     memberDb.collections.member.update({ _id: req.user._id },
@@ -1047,6 +1098,11 @@ app.put('/rate/:mediaId', authorize, function (req, res) {
   }
 });
 
+// Publish updates from Instagram
+app.get('/publish/instagram', function (req, res) {
+  console.log(req);
+  res.end();
+});
 
 ////////////// Helpers
 
@@ -1272,9 +1328,11 @@ if (!module.parent) {
             everyone.now.receiveTrends(null, rendered);
         });
       };
-      setInterval(distributeTrendingMedia, 30000); distributeTrendingMedia();
+      setInterval(distributeTrendingMedia, 30000);
+      distributeTrendingMedia();
       
       // get a current list of contributor twitter handles
+      // TODO: Use the Twitter realtime API instead
       var findTwitterHandles = function () {
         memberDb.findTwitterHandles(function (err, handles) {
           if (err) throw new Error('Failed to find twitter handles');
@@ -1283,7 +1341,38 @@ if (!module.parent) {
       };
       setInterval(findTwitterHandles, 60000); findTwitterHandles();
 
+      // Create service subscriptions
+      var request = require('request');
+      request({
+        uri: 'https://api.instagram.com/v1/subscriptions',
+        method: 'POST',
+        qs: {
+          client_id: instagramCredentials.clientID,
+          client_secret: instagramCredentials.clientSecret,
+          object: 'user',
+          aspect: 'media',
+          verify_token: 'pleaseandthanks',
+          callback_url: 'http://beta.island.io/publish/instagram',
+          // callback_url: instagramCredentials.callbackURL,
+        }
+      }, function (error, response, body) {
+        console.log(response.statusCode)
+        if (!error && response.statusCode == 200) {
+          console.log(body);
+        }
+      });
+
       log("Express server listening on port", app.address().port);
     }
   );
 }
+
+
+
+
+
+
+
+
+
+
