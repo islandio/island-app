@@ -519,11 +519,6 @@ Island = (function ($) {
         return this;
       }
 
-      // custom fade in for flashes
-      // $.fn.dropIn = function () {
-      //   $(this).css({ bottom: 40 }).animate({ bottom: '-=20' }, 2000, 'easeOutExpo');
-      // };
-
 
       /////////////////////////// SETUP
 

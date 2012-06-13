@@ -1099,9 +1099,16 @@ app.put('/rate/:mediaId', authorize, function (req, res) {
 });
 
 // Publish updates from Instagram
-app.get('/publish/instagram', function (req, res) {
-  console.log(req);
+app.post('/publish/instagram', function (req, res) {
+  console.log('INSTAGRAM POST');
   res.end();
+});
+
+app.get('/publish/instagram', function (req, res) {
+  console.log('INSTAGRAM GET');
+  console.log('PARAMS: ', req.params);
+  console.log('BODY: ', req.body);
+  res.send();
 });
 
 ////////////// Helpers
