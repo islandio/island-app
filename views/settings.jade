@@ -127,8 +127,8 @@ div.recent-comments-wrap
   - else
     a.signin-strategy-btn-disabled.twitter-btn-disabled(href='javascript:;', style='margin:0 auto; width:100%;') Connected with Twitter
   br
-  - if (data.displayName === 'Sander Pick')
-    - if (!data.instagramId && data.displayName === 'Sander Pick')
+  - if (data.role === 0)
+    - if (!data.instagramId)
       a.button.signin-strategy-btn.instagram-btn.from-settings(href='/connect/instagram', style='margin:0 auto; width:100%;') Connect with Instagram
     - else
       a.signin-strategy-btn-disabled.instagram-btn-disabled(href='javascript:;', style='margin:0 auto; width:100%;') Connected with Instagram

@@ -1024,6 +1024,8 @@ Island = (function ($) {
             txt = 'Contributor since ' + Util.toLocaleString(date,'m/d/yy');
             break;
         }
+        if (_this.data('location'))
+          txt += ' At ' + _this.data('location');
         _this.text(txt);
       });
 

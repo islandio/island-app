@@ -22,7 +22,7 @@
         - })
       a.grid-obj(href='/' + object.key, data-id=object._id.toString(), data-key=object.key)
         - if (object.type === 'image')
-          img.thumb(src=object.thumbs[0].cf_url, width=232, height=object.thumbs[0].meta.height)
+          img.thumb(src=(object.thumbs[0].cf_url || object.thumbs[0].url), width=232, height=(object.instagram ? 232 : object.thumbs[0].meta.height))
         - else
           img.thumb(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-speaker.jpg', width=232, height=232)
       h3.object-added

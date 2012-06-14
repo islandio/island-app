@@ -847,6 +847,7 @@ img.heart-img {
 }
 .obj-desc-txt {
   padding: 0 40px 5px 0;
+  min-height: 13px;
 }
 .commentor {
   display: none;

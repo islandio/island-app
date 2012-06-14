@@ -1,3 +1,4 @@
 - var image = trend.image || { cf_url: 'https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cassette.jpg', meta: { width: 640, height: 320 } };
+- var height = trend.instagram ? 640 : image.meta.height
 a.trending(href='/' + trend.key, data-id=trend._id.toString(), data-key=trend.key)
-  img.trending-img(id='trend-' + trend.key, src=image.cf_url, width=image.meta.width, height=image.meta.height)
+  img.trending-img(id='trend-' + trend.key, src=(image.cf_url || image.url), width=640, height=height)

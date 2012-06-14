@@ -371,9 +371,9 @@ MemberDb.prototype.createPost = function (props, cb) {
               function (err, doc) {
       if (err) return cb(err);
       self.search.index(doc.title, doc._id);
-      self.search.index(doc.body, doc._id);
+      self.search.index(doc.body.replace(/#island/g, ''), doc._id);
       self.search.index(memberName, doc._id);
-      getDocIds.call(self, doc, cb);
+      cb(null, doc);
     });
   });
 }
@@ -382,11 +382,7 @@ MemberDb.prototype.createMedia = function (props, cb) {
   if (!validate(props, ['type', 'key', 'member_id', 'post_id']))
     return cb(new Error('Invalid media'));
   _.defaults(props, {});
-  createDoc(self.collections.media, props,
-            function (err, doc) {
-    if (err) return cb(err);
-    getDocIds.call(self, doc, cb);
-  });
+  createDoc(self.collections.media, props, cb);
 }
 MemberDb.prototype.createView = function (props, cb) {
   var self = this;

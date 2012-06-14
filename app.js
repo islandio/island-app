@@ -26,6 +26,7 @@ var now = require('now');
 var mongodb = require('mongodb');
 var ObjectID = require('mongodb').BSONPure.ObjectID;
 var mongoStore = require('connect-mongodb');
+var request = require('request');
 
 var stylus = require('stylus');
 var jade = require('jade');
@@ -81,6 +82,7 @@ var instagramCredentials = process.env.NODE_ENV === 'production' ?
                             { clientID: 'b6e0d7d608a14a578cf94763f70f1b49',
                               clientSecret: 'a3937ee32072457d92eaa2165bd7dd37',
                               callbackURL: 'http://local.island.io:3644/connect/instagram/callback' };
+var instagramVerifyToken = 'doesthisworkyet';
 
 
 var app = module.exports = express.createServer();
@@ -944,20 +946,12 @@ app.get('/:key', authorize, function (req, res) {
   );
 });
 
-
 // Add media from Transloadit
 app.put('/insert', authorize, function (req, res) {
   if (!req.body.post || !req.body.assembly
       || req.body.assembly.results.length === 0)
     return done(new Error('Failed to insert post'))
   var results = req.body.assembly.results;
-  function done(err, docId) {
-    if (err)
-      return res.send({ status: 'error',
-                      message: err.stack });
-    everyone.distributeGrid(docId);
-    res.send({ status: 'success' });
-  }
   Step(
     function () {
       var post = req.body.post;
@@ -1021,6 +1015,13 @@ app.put('/insert', authorize, function (req, res) {
       });
     }
   );
+  function done(err, docId) {
+    if (err)
+      return res.send({ status: 'error',
+                      message: err.stack });
+    everyone.distributeGrid(docId);
+    res.send({ status: 'success' });
+  }
 });
 
 // Click media
@@ -1100,15 +1101,138 @@ app.put('/rate/:mediaId', authorize, function (req, res) {
 
 // Publish updates from Instagram
 app.post('/publish/instagram', function (req, res) {
-  console.log('INSTAGRAM POST');
-  res.end();
+  if (!req.body.length)
+    return res.end();
+  var instagramUserIds = _.chain(req.body).pluck('object_id')
+                          .reject(function (i) {return !i; }).value();
+  if (instagramUserIds.length === 0)
+    return res.end();
+  Step(
+    function () {
+      var group = this.group();
+      _.each(instagramUserIds, function (id) {
+        memberDb.collections.member.findOne({ instagramId: id }, group());
+      });
+    },
+    function (err, members) {
+      if (err) return done(err);
+      if (!members || !members.length)
+        return done(new Error('Cannot find members from Instagram update'));
+      var group = this.group();
+      _.each(members, function (mem) {
+        getInstagram(mem, group());
+      });
+    },
+    function (err, instagrams) {
+      if (err) return done(err);
+      if (!instagrams || !instagrams.length)
+        return done(new Error('Cannot find data from Instagram update'));
+      var group = this.group();
+      instagrams = _.filter(instagrams, function (ins) {
+        return _.include(ins.tags, 'island');
+      });
+      if (!instagrams.length)
+        return done(null, []);
+      _.each(instagrams, function (instagram) {
+        instagramToPost(instagram, group());
+      });
+    },
+    function (err, postIds) {
+      if (err) return done(err);
+      done(null, postIds);
+    }
+  );
+  function getInstagram(member, cb) {
+    request.get({
+      uri: 'https://api.instagram.com/v1/users/'
+            + member.instagramId + '/media/recent',
+      qs: {
+        count: 1,
+        access_token: member.instagramToken
+      }
+    }, function (err, response, body) {
+      if (err) return cb(err);
+      var instagram;
+      if (body) {
+        body = JSON.parse(body);
+        instagram = _.first(body.data);
+        instagram.member = member;
+      }
+      cb(null, instagram);
+    });
+  }
+  function instagramToPost(data, cb) {
+    Step(
+      function () {
+        memberDb.createPost({
+          title: '@' + data.user.username,
+          body: data.caption ? data.caption.text : '',
+          location: data.location,
+          member: data.member,
+        }, this);
+      },
+      function (err, doc) {
+        if (err) return cb(err);
+        if (!doc) return cb(new Error('Failed to create post'));
+        var media = {
+          type: 'image',
+          key: doc.key,
+          post_id: doc._id,
+          member_id: data.member._id,
+        };
+        delete data.member;
+        media.image = {
+          url: data.images.standard_resolution.url,
+          meta: {
+            width: data.images.standard_resolution.width,
+            height: data.images.standard_resolution.height,
+          },
+        };
+        media.thumbs = [
+          {
+            url: data.images.low_resolution.url,
+            meta: {
+              width: data.images.low_resolution.width,
+              height: data.images.low_resolution.height,
+            },
+          },
+          {
+            url: data.images.thumbnail.url,
+            meta: {
+              width: data.images.thumbnail.width,
+              height: data.images.thumbnail.height,
+            },
+          }
+        ];
+        delete data.images;
+        media.instagram = data;
+        memberDb.createMedia(media, function (err, med) {
+          cb(err, doc._id);
+        });
+      }
+    );
+  }
+  function done(err, docIds) {
+    if (err) {
+      log(inspect(err));
+      return res.end();
+    }
+    _.each(docIds, function (id) {
+      everyone.distributeGrid(id);
+    });
+    res.end();
+  }
 });
 
 app.get('/publish/instagram', function (req, res) {
-  console.log('INSTAGRAM GET');
-  console.log('PARAMS: ', req.params);
-  console.log('BODY: ', req.body);
-  res.send();
+  if (instagramVerifyToken !== req.query['hub.verify_token']
+      || 'subscribe' !== req.query['hub.mode']
+      || '' === req.query['hub.challenge']) {
+    log('Instagram subscription challenge attempt failed');
+    return res.end();
+  }
+  log('Instagram subscription challenge accepted');
+  res.send(req.query['hub.challenge']);
 });
 
 ////////////// Helpers
@@ -1349,37 +1473,28 @@ if (!module.parent) {
       setInterval(findTwitterHandles, 60000); findTwitterHandles();
 
       // Create service subscriptions
-      var request = require('request');
-      request({
+      request.post({
         uri: 'https://api.instagram.com/v1/subscriptions',
-        method: 'POST',
-        qs: {
+        form: {
           client_id: instagramCredentials.clientID,
           client_secret: instagramCredentials.clientSecret,
           object: 'user',
           aspect: 'media',
-          verify_token: 'pleaseandthanks',
-          callback_url: 'http://beta.island.io/publish/instagram',
-          // callback_url: instagramCredentials.callbackURL,
+          verify_token: instagramVerifyToken,
+          callback_url: process.env.NODE_ENV === 'production' ?
+                          'http://beta.island.io/publish/instagram' :
+                          'https://please.showoff.io/publish/instagram'
         }
       }, function (error, response, body) {
-        console.log(response.statusCode)
-        if (!error && response.statusCode == 200) {
-          console.log(body);
-        }
+        if (error)
+          return log(inspect(error));
+        if (response.statusCode === 200)
+          log('Subscribed to connected Instagram users (id ' + JSON.parse(body).data.id + ')');
+        else
+          log('Instagram subscription failed', body);
       });
 
-      log("Express server listening on port", app.address().port);
+      log('Express server listening on port', app.address().port);
     }
   );
 }
-
-
-
-
-
-
-
-
-
-

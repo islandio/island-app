@@ -12,8 +12,9 @@ div.single-left
         =post.member.displayName
   - post.medias.forEach(function (med, i) {
     - if (med.type === 'image')
-      div.obj-holder(style='height: ' + med.image.meta.height + 'px')
-        img.matte(id='image-' + med._id, src=med.image.cf_url, width=med.image.meta.width, height=med.image.meta.height)
+      - var height = med.instagram ? 640 : med.image.meta.height
+      div.obj-holder(style='height: ' + height + 'px')
+        img.matte(id='image-' + med._id, src=(med.image.cf_url || med.image.url), width=640, height=height)
         div.hearts(data-num=med.hearts)
           div.hearts-wrap
             img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
@@ -87,8 +88,8 @@ div.single-left
     div.obj-desc-txt-wrap
       p.obj-desc-txt
         =post.body
-      h3.obj-details(data-date=post.created.toString(), data-type='media')
-      
+      - var location = post.location && post.location.name ? post.location.name : null;
+      h3.obj-details(data-date=post.created.toString(), data-type='media', data-location=location)
 div.single-right
   div(style='padding-top: 4px')
     img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-bubble.png', alt='is-bubble', align='top', width=26, height=20)
