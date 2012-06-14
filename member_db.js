@@ -703,7 +703,6 @@ MemberDb.dealWithPassword = function (member) {
  * the user's actual password.
  */
 MemberDb.authenticateLocalMember = function (member, str) {
-  console.log('authenticateLocalMember( ' + member.displayName + ' )');
   return encryptPassword(str, member.salt) === member.password;
 }
 
@@ -974,7 +973,6 @@ function makeSalt() {
  * Encrypt password.
  */
 function encryptPassword(password, salt) {
-  console.log('pass: ' + password, 'salt: ' + salt);
   return crypto.createHmac('sha1', salt)
                .update(password)
                .digest('hex');
