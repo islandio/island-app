@@ -1207,6 +1207,7 @@ app.post('/publish/instagram', function (req, res) {
         delete data.images;
         media.instagram = data;
         memberDb.createMedia(media, function (err, med) {
+          console.log(med);
           cb(err, doc._id);
         });
       }
