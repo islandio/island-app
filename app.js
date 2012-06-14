@@ -1101,10 +1101,12 @@ app.put('/rate/:mediaId', authorize, function (req, res) {
 
 // Publish updates from Instagram
 app.post('/publish/instagram', function (req, res) {
+  console.log(req.body);
   if (!req.body.length)
     return res.end();
   var instagramUserIds = _.chain(req.body).pluck('object_id')
                           .reject(function (i) {return !i; }).value();
+  console.log(instagramUserIds);
   if (instagramUserIds.length === 0)
     return res.end();
   Step(
@@ -1115,6 +1117,7 @@ app.post('/publish/instagram', function (req, res) {
       });
     },
     function (err, members) {
+      console.log(members);
       if (err) return done(err);
       if (!members || !members.length)
         return done(new Error('Cannot find members from Instagram update'));
