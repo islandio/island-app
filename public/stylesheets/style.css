@@ -313,7 +313,7 @@ a.resend-conf {
   display: block;
   color: #808080;
   font-size: 9px;
-  text-align: right;
+  text-align: left;
 }
 #remember_me {
   margin: 0 5px 0 0;
