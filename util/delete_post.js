@@ -15,7 +15,6 @@ var optimist = require('optimist');
 var argv = optimist
     .demand('key')
     .default('env', 'dev')
-    .default('db', 'mongo://localhost:27018/island')
     .argv;
 
 var db = argv.env === 'dev' ?
@@ -67,6 +66,7 @@ Step(
       errCheck(err, 'finding medias');
       if (meds.length > 0) {
         var _next = _.after(meds.length * 3, next);
+        // delete all media and all hits and ratings
         _.each(meds, function (med) {
           log('\nDeleted media: ' + inspect(med));
           memberDb.collections.media.remove({ _id: med._id }, _next);
@@ -78,7 +78,7 @@ Step(
       } else next();
     });
   },
-  // delete all hits, views, ratings, comments, posts, medias
+  // delete post and all ratings and comments
   function (err) {
     errCheck(err, 'removing post');
     log('\nDeleted post: ' + inspect(post));

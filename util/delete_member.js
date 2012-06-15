@@ -13,9 +13,13 @@ var MemberDb = require('../member_db.js').MemberDb;
 
 var optimist = require('optimist');
 var argv = optimist
-    .demand('id')
-    .default('db', 'mongo://localhost:27018/island')
+    .demand('key')
+    .default('env', 'dev')
     .argv;
+
+var db = argv.env === 'dev' ?
+          'mongo://localhost:27018/island' :
+          'mongo://islander:V[AMF?UV{b@10.112.1.168:27017/island';
 
 function errCheck(err, op) {
   if (err) {
@@ -26,17 +30,17 @@ function errCheck(err, op) {
 
 // Connect to DB.
 var memberDb;
-var _id = new ObjectID(argv.id);
+var _id;
 
 Step(
   function () {
     var next = this;
-    mongodb.connect(argv.db, {
+    mongodb.connect(db, {
                       server: { poolSize: 4 },
                       db: { native_parser: false,
                             reaperTimeout: 600000 },
                     }, function (err, db) {
-      errCheck(err, 'connect(' + argv.db + ')');
+      errCheck(err, 'connect(' + db + ')');
       new MemberDb(db, { ensureIndexes: false }, next);
     });
   },
@@ -44,14 +48,18 @@ Step(
     memberDb = mDb;
     this();
   },
-  // remove member
+  // find post
   function (err) {
-    log('\nDeleted member.');
-    memberDb.collections.member.remove({ _id: _id }, this);
+    memberDb.collections.member.findOne({ key: argv.key }, this);
   },
-  // delete all hits, views, ratings, comments, posts, medias
-  function (err) {
-    errCheck(err, 'removing member');
+  // delete member and all hits, views, ratings, comments, posts, medias
+  function (err, member) {
+    errCheck(err, 'finding member');
+    if (!member)
+      errCheck(new Error('not found'), 'could not find member');
+    _id = member._id;
+    log('\nDeleted member: ' + inspect(member));
+    memberDb.collections.member.remove({ _id: _id }, this.parallel());
     log('Deleted member\'s hits.');
     memberDb.collections.hit.remove({ member_id: _id }, this.parallel());
     log('Deleted member\'s views.');
