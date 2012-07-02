@@ -27,7 +27,7 @@ div.single-left
             input(style='width:92.5%;', name='member[username]', type='text', value=data.username)
         tr
           td(colspan='3', style="padding-top:10px;")
-            label(for='my_file') Banner Image
+            label(for='my_banner') Banner Image
         tr
           td(width=242, height=104, style='vertical-align:top;')
             - var banner = data.thumbs ? data.thumbs[0] : null;
@@ -57,7 +57,7 @@ div.single-left
               img.masked.settings-banner(src=banner.cf_url, width=w, height=h, style=(t + l))
               div.upload-spinner(style='height:100%;')
           td(style='vertical-align:top;')
-            input(type="file", name="my_file", multiple="true", accept="image/gif, image/jpeg, image/png", style="font-size:11px;")
+            input(type="file", name="my_banner", multiple="true", accept="image/gif, image/jpeg, image/png", style="font-size:11px;")
         tr
           td(colspan='3', style="padding-top:10px;")
             label(for='member[description]') Bio

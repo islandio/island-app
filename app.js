@@ -973,7 +973,8 @@ app.put('/insert', authorize, function (req, res) {
           result.cf_url = prefix + result.id.substr(0, 2)
                           + '/' + result.id.substr(2)
                           + '.' + result.ext;
-          if ('image_full' !== key && 'video_encode' !== key
+          if ('image_full' !== key && 'image_full_gif' !== key
+              && 'video_encode' !== key
               && 'audio_encode' !== key) return;
           var media = {
             type: result.type,
@@ -984,6 +985,7 @@ app.put('/insert', authorize, function (req, res) {
           media[result.type] = result;
           switch (key) {
             case 'image_full':
+            case 'image_full_gif':
               _.extend(media, {
                 thumbs: _.filter(results.image_thumb, function (img) {
                           return img.original_id === result.original_id; }),

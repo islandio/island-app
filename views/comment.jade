@@ -2,7 +2,7 @@
 div.comment.matte
   div.comment-title
     - if (showMember) {
-      - if (comment.member.role === 0 && comment.member.key)
+      - if (comment.member.key)
         a.comment-title-name(href='/member/' + comment.member.key)
           =comment.member.displayName
       - else

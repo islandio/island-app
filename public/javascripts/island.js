@@ -209,7 +209,7 @@ Island = (function ($) {
 
   function search(query, fn) {
     jrid.empty();
-    $.get('/search/' + query, fn);
+    $.get('/search/' + encodeURIComponent(query), fn);
   }
 
   /**
@@ -1043,7 +1043,7 @@ Island = (function ($) {
       var settingsUsername = $('input[name="member[username]"]');
       var settingsEmail = $('input[name="member[primaryEmail]"]');
       var settingsBanner = $('img.settings-banner');
-      var settingsBannerFile = $('input[name="my_file"]');
+      var settingsBannerFile = $('input[name="my_banner"]');
       var settingsBannerData = $('input[name="member[assembly]"]');
       var settingsBannerLeft = $('input[name="member[bannerLeft]"]');
       var settingsBannerTop = $('input[name="member[bannerTop]"]');
@@ -1058,7 +1058,7 @@ Island = (function ($) {
       var settingsNameLabel = $('label[for="member[displayName]"]');
       var settingsUsernameLabel = $('label[for="member[username]"]');
       var settingsEmailLabel = $('label[for="member[primaryEmail]"]');
-      var settingsBannerLabel = $('label[for="my_file"]');
+      var settingsBannerLabel = $('label[for="my_banner"]');
       var settingsDescriptionLabel = $('label[for="member[description]"]');
       var settingsLocationLabel = $('label[for="member[location]"]');
       var settingsHometownLabel = $('label[for="member[hometown]"]');
@@ -1288,7 +1288,6 @@ Island = (function ($) {
               .closable().hide(8000).effect('fade').fit();
           var data = mediaForm.serializeObject();
           delete data.params;
-          // data.params = JSON.parse(data.params);
           data.assembly = assembly;
           $.put('/insert', data, function (res) {
             if ('error' === res.status)

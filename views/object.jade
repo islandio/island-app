@@ -1,4 +1,4 @@
-- if ('image' === object.type || 'audio' === object.type)
+- if ('image' === object.type)
   div.each-grid-obj.matte(id=object._id.toString(), class='is-' + object.type)
     div.object-title
       - if (object.post.member.role === 0 && object.post.member.key)
