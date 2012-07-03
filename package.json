@@ -14,7 +14,6 @@
     "stylus": "~0.27.2",
     "mongodb": "~1.0.2",
     "node-fb": "~1.0.0",
-    "now": "~0.8.1",
     "passport": "~0.1.11",
     "passport-facebook": "~0.1.4",
     "reds": "~0.1.4",
