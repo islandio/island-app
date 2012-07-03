@@ -78,7 +78,7 @@ var cloudfrontAudioUrl = process.env.NODE_ENV === 'production' ?
 var instagramCredentials = process.env.NODE_ENV === 'production' ?
                             { clientID: 'a3003554a308427d8131cef13ef2619f',
                               clientSecret: '369ae2fbc8924c158316530ca8688647',
-                              callbackURL: 'http://beta.island.io/connect/instagram/callback' } :
+                              callbackURL: 'http://island.io/connect/instagram/callback' } :
                             { clientID: 'b6e0d7d608a14a578cf94763f70f1b49',
                               clientSecret: 'a3937ee32072457d92eaa2165bd7dd37',
                               callbackURL: 'http://local.island.io:3644/connect/instagram/callback' };
@@ -1486,7 +1486,7 @@ if (!module.parent) {
           aspect: 'media',
           verify_token: instagramVerifyToken,
           callback_url: process.env.NODE_ENV === 'production' ?
-                          'http://beta.island.io/publish/instagram' :
+                          'http://island.io/publish/instagram' :
                           'https://please.showoff.io/publish/instagram'
         }
       }, function (error, response, body) {
