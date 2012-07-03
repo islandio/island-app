@@ -45,7 +45,8 @@ div.single-left
           - if (data.description)
             li
               p(style='margin:0 0 5px; font-size:10px;') #{data.description}
-          li \// #{data.displayName} is a 
+          li
+            | // #{data.displayName} is a 
             - if (data.birthday)
               span.member-info-content.birthday #{data.birthday} 
               span &nbsp;year old 
@@ -60,7 +61,8 @@ div.single-left
               span.member-info-content Milky Way Galaxy
             | .
           - if (websites)
-            li \// 
+            li
+              | // 
               span More from #{data.displayName} at 
               span.member-info-content
                 - websites.forEach(function (site, i) {

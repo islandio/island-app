@@ -21,6 +21,7 @@ if (argv._.length || argv.help) {
 /**
  * Module dependencies.
  */
+var http = require('http');
 var express = require('express');
 var now = require('now');
 var mongodb = require('mongodb');
@@ -42,7 +43,6 @@ var logTimestamp = require('./log.js').logTimestamp;
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
 var Step = require('step');
-var color = require('cli-color');
 
 var Notify = require('./notify');
 
@@ -84,9 +84,11 @@ var instagramCredentials = process.env.NODE_ENV === 'production' ?
                               callbackURL: 'http://local.island.io:3644/connect/instagram/callback' };
 var instagramVerifyToken = 'doesthisworkyet';
 
-
-var app = module.exports = express.createServer();
+var app = express.createServer();
+var memberDb;
 var everyone;
+var mediaTrends;
+var twitterHandles;
 
 ////////////// Utils
 
@@ -108,6 +110,33 @@ app.util = {
 
 ////////////// Configuration
 
+app.configure(function () {
+  app.set('port', process.env.PORT || argv.port);
+  app.set('views', __dirname + '/views');
+  app.set('view engine', 'jade');
+  app.use(express.favicon(__dirname + '/public/graphics/favicon.ico'));
+  app.use(express.logger('dev'));
+  app.use(express.bodyParser());
+  app.use(express.cookieParser());
+  app.use(express.session({
+    cookie: { maxAge: 86400 * 1000 * 7 }, // one week
+    secret: '69topsecretislandshit69',
+    store: new mongoStore({
+      db: mongodb.connect(argv.db, { noOpen: true }, function () {}),
+      username: 'islander',
+      password: 'V[AMF?UV{b'
+    }, function (err) {
+      if (err) log('Error creating mongoStore: ' + err);
+    }),
+  }));
+  app.use(passport.initialize());
+  app.use(passport.session());
+  app.use(express.methodOverride());
+  app.use(app.router);
+  app.use(stylus.middleware({ src: __dirname + '/public' }));
+  app.use(express.static(__dirname + '/public'));
+});
+
 app.configure('development', function () {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
@@ -115,40 +144,6 @@ app.configure('development', function () {
 app.configure('production', function () {
   app.use(express.errorHandler());
 });
-
-app.set('sessionStore', new mongoStore({
-  db: mongodb.connect(argv.db, { noOpen: true }, function () {}),
-  username: 'islander',
-  password: 'V[AMF?UV{b'
-}, function (err) {
-  if (err) log('Error creating mongoStore: ' + err);
-}));
-
-app.configure(function () {
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
-  app.use(express.favicon(__dirname + '/public/graphics/favicon.ico'));
-  app.use(express.bodyParser());
-  app.use(express.cookieParser());
-
-  app.use(express.session({
-    cookie: { maxAge: 86400 * 1000 * 7 }, // one week
-    secret: '69topsecretislandshit69',
-    store: app.set('sessionStore'),
-  }));
-  app.use(passport.initialize());
-  app.use(passport.session());
-
-  app.use(express.logger({
-    format: '\x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms'
-  }));
-
-  app.use(express.methodOverride());
-  app.use(app.router);
-  app.use(stylus.middleware({ src: __dirname + '/public' }));
-  app.use(express.static(__dirname + '/public'));
-});
-
 
 // Authentication methods
 
@@ -1348,16 +1343,11 @@ function renderComment(params, cb) {
 }
 
 
-////////////// Initialize and Listen
-
-var memberDb;
-var mediaTrends;
-var twitterHandles;
+////////////// Connect and Listen
 
 if (!module.parent) {
 
   Step(
-    // Connect to MemberDb:
     function () {
       log('Connecting to MemberDb:', argv.db);
       mongodb.connect(argv.db, {server: { poolSize: 4 }}, this);
@@ -1370,12 +1360,15 @@ if (!module.parent) {
       this();
     },
 
-    // Listen:
     function (err) {
       if (err) return this(err);
-      app.listen(argv.port);
 
-      // init now.js
+      // init express
+      app.listen(argv.port, function () {
+        console.log("Server listening on port " + argv.port);
+      });
+
+      // init now
       everyone = now.initialize(app);
 
       // add new object to everyone's page
@@ -1497,8 +1490,6 @@ if (!module.parent) {
         else
           log('Instagram subscription failed', body);
       });
-
-      log('Express server listening on port', app.address().port);
     }
   );
 }
