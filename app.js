@@ -1098,7 +1098,6 @@ app.put('/rate/:mediaId', authorize, function (req, res) {
 
 // Publish updates from Instagram
 app.post('/publish/instagram', function (req, res) {
-  console.log('From Instagram:', req.body);
   if (!req.body.length)
     return res.end();
   var instagramUserIds = _.chain(req.body).pluck('object_id')
@@ -1205,7 +1204,6 @@ app.post('/publish/instagram', function (req, res) {
         delete data.images;
         media.instagram = data;
         memberDb.createMedia(media, function (err, med) {
-          console.log('Made media:', !!med);
           cb(err, doc._id);
         });
       }
