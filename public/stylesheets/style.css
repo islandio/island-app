@@ -408,6 +408,10 @@ a.resend-conf {
   font-size: 28px;
   font-family: Title;
 }
+.login-prompt {
+  font-style: italic;
+  color: #808080;
+}
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 textarea {
   font-size: 11px;

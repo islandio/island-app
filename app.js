@@ -134,15 +134,19 @@ app.configure(function () {
   app.use(express.methodOverride());
   app.use(app.router);
   app.use(stylus.middleware({ src: __dirname + '/public' }));
-  app.use(express.static(__dirname + '/public'));
 });
 
 app.configure('development', function () {
+  app.set('home_uri', 'http://local.island.io:3644');
+  app.use(express.static(__dirname + '/public'));
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
 app.configure('production', function () {
-  app.use(express.errorHandler());
+  app.set('home_uri', 'http://island.io');
+  var oneYear = 31557600000;
+  app.use(express.static(__dirname + '/public', { maxAge: oneYear }));
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
 // Authentication methods
@@ -163,6 +167,7 @@ passport.use(new FacebookStrategy({
   },
   function (token, refreshToken, profile, cb) {
     profile.facebookToken = token;
+    profile.facebookRefresh = refreshToken;
     memberDb.findOrCreateMemberFromFacebook(profile,
         function (err, member) {
       cb(err, member);
@@ -180,6 +185,7 @@ passport.use('facebook-authz', new FacebookStrategy({
       if (err) return cb(err);
       cb(null, member, {
         facebookToken: token,
+        facebookRefresh: refreshToken,
         facebookId: profile.id,
         facebook: profile.username,
       });
@@ -193,6 +199,7 @@ passport.use(new TwitterStrategy({
   },
   function (token, tokenSecret, profile, cb) {
     profile.twitterToken = token;
+    profile.twitterSecret = tokenSecret;
     memberDb.findOrCreateMemberFromTwitter(profile,
           function (err, member) {
       cb(err, member);
@@ -210,6 +217,7 @@ passport.use('twitter-authz', new TwitterStrategy({
       if (err) return cb(err);
       cb(null, member, {
         twitterToken: token,
+        twitterSecret: tokenSecret,
         twitterId: profile.id,
         twitter: profile.username,
       });
@@ -240,6 +248,7 @@ passport.use('instagram-authz', new InstagramStrategy(
       if (err) return cb(err);
       cb(null, member, {
         instagramToken: token,
+        instagramRefresh: refreshToken,
         instagramId: profile.id,
         instagram: profile.username,
       });
@@ -355,7 +364,9 @@ app.get('/auth/facebook', function (req, res, next) {
                         'user_birthday',
                         'user_website',
                         'user_status',
-                        'user_photos']})(req, res, next);
+                        'user_photos',
+                        'read_stream',
+                        'publish_stream']})(req, res, next);
 });
 
 // Facebook returns here
@@ -389,7 +400,9 @@ app.get('/connect/facebook', function (req, res, next) {
                         'user_birthday',
                         'user_website',
                         'user_status',
-                        'user_photos']})(req, res, next);
+                        'user_photos',
+                        'read_stream',
+                        'publish_stream']})(req, res, next);
 });
 
 // Facebook authorization returns here
@@ -506,6 +519,12 @@ app.put('/signup', function (req, res, next) {
               missing: missing },
     });
   req.body.newusername = req.body.newusername.toLowerCase();
+  if (!(/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/).test(req.body.newusername))
+    return res.send({
+      status: 'fail',
+      data: { code: 'INVALID_EMAIL',
+              message: 'Please use a valid email address.' },
+    });
   if (req.body.id) {
     Step(
       function () {
@@ -546,8 +565,6 @@ app.put('/signup', function (req, res, next) {
         member.displayName = member.name.givenName + (member.name.middleName ?
                             ' ' + member.name.middleName : '') +
                             ' ' + member.name.familyName;
-        member.username = (member.name.givenName + (member.name.middleName || '')
-                          + member.name.familyName).toLowerCase();
         member.password = req.body.newpassword;
         MemberDb.dealWithPassword(member);
         memberDb.collections.member.update({ _id: member._id },
@@ -670,7 +687,7 @@ app.post('/page/:n', authorize, function (req, res) {
       status: 'error',
       message: 'Invalid request.',
     });
-  getGrid({}, { limit: 30, skip: 30 * (req.params.n - 1)},
+  getGrid({}, { limit: 20, skip: 20 * (req.params.n - 1)},
           function (err, docs) {
     if (err) return fail(err);
     Step(
@@ -706,7 +723,7 @@ app.get('/add', authorize, function (req, res) {
 });
 
 // Media search
-app.get('/search/:query', authorize, function (req, res) {
+app.get('/search/:query', function (req, res) {
   var fn = '__clear__' === req.params.query ?
             _.bind(getGrid, {}, {}) :
             _.bind(memberDb.searchPosts, memberDb,
@@ -734,11 +751,15 @@ app.get('/search/:query', authorize, function (req, res) {
 });
 
 // Member profile
-app.get('/member/:key', authorize, function (req, res) {
+app.get('/member/:key', function (req, res) {
   Step(
     function () {
-      memberDb.findMemberByKey(req.params.key, this.parallel());
-      getGrid({}, this.parallel());
+      if (req.user) {
+        memberDb.findMemberByKey(req.params.key, this.parallel());
+        getGrid({}, this.parallel());
+      } else {
+        memberDb.findMemberByKey(req.params.key, this);
+      }
     },
     function (err, member, media) {
       if (err || !member)
@@ -888,34 +909,38 @@ app.put('/save/settings', authorize, function (req, res) {
 });
 
 // Single object
-app.get('/:key', authorize, function (req, res) {
+app.get('/:key', function (req, res) {
   Step(
     function () {
-      memberDb.findPosts({ key: req.params.key },
-                        { limit: 1, comments: true },
-                        this.parallel());
-      getGrid({}, this.parallel());
+      if (req.user) {
+        memberDb.findPosts({ key: req.params.key },
+                          { limit: 1, comments: true }, this.parallel());
+        getGrid({}, this.parallel());
+      } else
+        memberDb.findPosts({ key: req.params.key },
+                          { limit: 1, comments: true }, this);
     },
     function (err, post, grid) {
       if (err || !post || post.length === 0)
         return res.render('404');
       post = _.first(post);
       // record view
-      memberDb.createView({
-        post_id: post._id,
-        member_id: req.user._id,
-      }, function (err, doc) {
-        if (err) throw new Error('Failed to create view');
-        else everyone.distributeUpdate('view', 'post', doc.post_id);
-      });
+      if (req.user)
+        memberDb.createView({
+          post_id: post._id,
+          member_id: req.user._id,
+        }, function (err, doc) {
+          if (err) throw new Error('Failed to create view');
+          else everyone.now.distributeUpdate('view', 'post', doc.post_id);
+        });
       // prepare document
       var img = [];
       var vid = [];
       var aud = [];
       _.each(post.medias, function (med) {
-        var rating = _.find(med.ratings.reverse(), function (rat) {
+        var rating = req.user ? _.find(med.ratings.reverse(), function (rat) {
           return req.user._id.toString() === rat.member_id.toString();
-        });
+        }) : null;
         med.hearts = rating ? rating.val : 0;
         switch (med.type) {
           case 'image': img.push(med); break;
@@ -1016,22 +1041,28 @@ app.put('/insert', authorize, function (req, res) {
     if (err)
       return res.send({ status: 'error',
                       message: err.stack });
-    everyone.distributeGrid(docId);
+    everyone.now.distributeGrid(docId);
+    if (req.body.post.toFacebook)
+      memberDb.createFacebookPost(docId);
+    if (req.body.post.toTwitter)
+      memberDb.createTweet(docId);
     res.send({ status: 'success' });
   }
 });
 
 // Click media
-app.put('/hit/:mediaId', authorize, function (req, res) {
+app.put('/hit/:mediaId', function (req, res) {
   if (!req.params.mediaId)
     fail(new Error('Failed to hit media'));
+  if (!req.user)
+    return res.send({ status: 'success' });
   var props = {
     media_id: req.params.mediaId,
     member_id: req.user._id,
   };
   memberDb.createHit(props, function (err, doc) {
     if (err) return fail(err);
-    everyone.distributeUpdate('hit', 'media', doc.media_id);
+    everyone.now.distributeUpdate('hit', 'media', doc.media_id);
     res.send({ status: 'success' });
   });
   function fail(err) {
@@ -1041,9 +1072,17 @@ app.put('/hit/:mediaId', authorize, function (req, res) {
 });
 
 // Add comment
-app.put('/comment/:postId', authorize, function (req, res) {
+app.put('/comment/:postId', function (req, res) {
   if (!req.params.postId || !req.body.body)
     fail(new Error('Failed to insert comment'));
+  if (!req.user)
+    return res.send({
+      status: 'fail',
+      data: {
+        code: 'NOT_A_MEMBER',
+        message: 'Please login first.'
+      }
+    });
   var props = {
     post_id: req.params.postId,
     member_id: req.user._id,
@@ -1051,8 +1090,8 @@ app.put('/comment/:postId', authorize, function (req, res) {
   };
   memberDb.createComment(props, function (err, doc) {
     if (err) return fail(err);
-    everyone.distributeComment(doc);
-    everyone.distributeUpdate('comment', 'post', doc.post._id);
+    everyone.now.distributeComment(doc);
+    everyone.now.distributeUpdate('comment', 'post', doc.post._id);
     res.send({ status: 'success', data: {
              comment: doc } });
   });
@@ -1076,9 +1115,11 @@ app.put('/comment/:postId', authorize, function (req, res) {
 });
 
 // Add rating
-app.put('/rate/:mediaId', authorize, function (req, res) {
+app.put('/rate/:mediaId', function (req, res) {
   if (!req.params.mediaId || !req.body.val)
     fail(new Error('Failed to insert rating'));
+  if (!req.user)
+    return res.send({ status: 'success' });
   var props = {
     media_id: req.params.mediaId,
     member_id: req.user._id,
@@ -1086,7 +1127,7 @@ app.put('/rate/:mediaId', authorize, function (req, res) {
   };
   memberDb.createRating(props, function (err, doc) {
     if (err) return fail(err);
-    everyone.distributeUpdate('rating', 'media', doc.media_id);
+    everyone.now.distributeUpdate('rating', 'media', doc.media_id);
     res.send({ status: 'success', data: {
              val: doc.val }});
   });
@@ -1215,7 +1256,7 @@ app.post('/publish/instagram', function (req, res) {
       return res.end();
     }
     _.each(docIds, function (id) {
-      everyone.distributeGrid(id);
+      everyone.now.distributeGrid(id);
     });
     res.end();
   }
@@ -1254,7 +1295,7 @@ function authorize(req, res, cb) {
 function getGrid(query, opts, cb) {
   if ('function' === typeof opts) {
     cb = opts;
-    opts = { limit: 30, skip: 0 };
+    opts = { limit: 20, skip: 0 };
   }
   opts.sort = { created: -1 };
   Step(
@@ -1351,7 +1392,7 @@ if (!module.parent) {
       mongodb.connect(argv.db, {server: { poolSize: 4 }}, this);
     }, function (err, db) {
       if (err) return this(err);
-      new MemberDb(db, { ensureIndexes: true }, this);
+      new MemberDb(db, app, { ensureIndexes: true }, this);
     }, function (err, mDb) {
       if (err) return this(err);
       memberDb = mDb;
@@ -1363,14 +1404,14 @@ if (!module.parent) {
 
       // init express
       app.listen(argv.port, function () {
-        console.log("Server listening on port " + argv.port);
+        console.log('Server listening on port ' + argv.port);
       });
 
       // init now
       everyone = now.initialize(app);
 
       // add new object to everyone's page
-      everyone.distributeGrid = function (id) {
+      everyone.now.distributeGrid = function (id) {
         Step(
           function () {
             getGrid({ _id: id }, { limit: 1}, this);
@@ -1392,7 +1433,7 @@ if (!module.parent) {
       };
 
       // add new comment to everyone's page
-      everyone.distributeComment = function (comment) {
+      everyone.now.distributeComment = function (comment) {
         renderComment({ comment: comment, showMember: true },
                       function (err, html) {
           if (err) return log('\ndistributeComment ('
@@ -1403,7 +1444,7 @@ if (!module.parent) {
       };
 
       // tell everyone about some meta change
-      everyone.distributeUpdate = function (type, target, id) {
+      everyone.now.distributeUpdate = function (type, target, id) {
         if ('string' === typeof id)
           id = new ObjectID(id);
         var query = {};

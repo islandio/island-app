@@ -14,7 +14,7 @@ div.single-left
           td(colspan='2')
             input(name='post[title]', type='text')
         tr
-          td(style='padding-top:10px;')
+          td(colspan='2', style='padding-top:10px;')
             input(type='file', name='my_file', multiple='true', style='font-size:11px;')
         tr
           td(colspan='2', style='padding-top:10px;')
@@ -22,6 +22,15 @@ div.single-left
         tr
           td(colspan='2')
             textarea.matte(name='post[body]')
+        tr
+          - if (member.facebookId)
+            td(style="width:137px")
+              input(id='toFacebook', name='post[toFacebook]', type='checkbox', style='margin-top: 12px;')
+              label(for='toFacebook', style='vertical-align:-1px; padding-left:5px;') Post to Facebook
+          - if (member.twitterId)
+            td
+              input(id='toTwitter', name='post[toTwitter]', type='checkbox', style='margin-top: 12px;')
+              label(for='toTwitter', style='vertical-align:-1px; padding-left:5px;') Tweet post
         tr
           td(colspan='2', style="padding-bottom: 0px;")
             input#add-media.is-button(type='submit', value='Submit New Post')

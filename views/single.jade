@@ -97,15 +97,24 @@ div.single-right
   div.commentor
     textarea.commentor-input.matte(placeholder='Write a comment...')
     input.is-button.add-comment(id='addto-' + post._id, type='submit', title='Add Comment', value='Comment')
-    span.commentor-whois Logged in as 
-      span(style='font-style: italic')
-        =member.displayName
+    - if (member)
+      span.commentor-whois Logged in as 
+        span(style='font-style: italic')
+          =member.displayName
   div.obj-comments(id='coms-' + post._id)
     !=partial('comment', { collection: post.comments.reverse(), showMember: true })
-div.grid-wrap
+- if (member)
+  div.grid-wrap
+    #search
+      h1.title-bottom / Browse
+      input#search-box.matte(type='search', placeholder='Search', value=(post.title).toLowerCase())
+      div.search-spinner
+    #grid.adjustable-grid
+      !=partial('object', grid)
+- else
+  div.grid-wrap
   #search
     h1.title-bottom / Browse
-    input#search-box.matte(type='search', placeholder='Search', value=(post.title).toLowerCase())
-    div.search-spinner
-  #grid.adjustable-grid
-    !=partial('object', grid)
+  p(class="login-prompt") 
+    a(href="/login") Login
+    |  to browse media.

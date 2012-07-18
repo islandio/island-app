@@ -10,19 +10,23 @@
   header#header-right
     #menu.list
       ul
-        li
-          a#nav-logout.button(href='/logout') 
-            | Log Out
-        - if (member.role === 0)
-          li(style='margin: 0 5px 0 0')
-            a#nav-add.button(href='/add') 
-              | Add Media
-        li
-          span.welcome-member Hi, 
-            - if (member.role !== 2)
+        - if (member)
+          li
+            a#nav-logout.button(href='/logout') 
+              | Log Out
+          - if (member.role === 0)
+            li(style='margin: 0 5px 0 0')
+              a#nav-add.button(href='/add') 
+                | Add Media
+          li
+            span.welcome-member Hi, 
               a(href='/member/' + member.key) #{member.displayName}
-            - else
-              #{member.displayName}
+        - else
+          li
+            a#nav-login.button(href='/login') 
+              | Log In / Sign Up
+          li
+            span.welcome-member Oi !
     #twitter.tweet
       p loading contributor tweets...
   div.clear

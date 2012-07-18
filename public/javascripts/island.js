@@ -348,6 +348,8 @@ Island = (function ($) {
     return {
       collage: function (single, extra) {
 
+        if (!jrid || jrid.length === 0) return;
+        
         // calc num cols once
         var nc = num_cols();
 
@@ -1378,8 +1380,10 @@ Island = (function ($) {
 /**
  * Now.JS handlers
  */
-
-now.receiveMedia = Island.receiveMedia;
-now.receiveComment = Island.receiveComment;
-now.receiveUpdate = Island.receiveUpdate;
-now.receiveTrends = Island.receiveTrends;
+ 
+now.ready(function () {
+  now.receiveMedia = Island.receiveMedia;
+  now.receiveComment = Island.receiveComment;
+  now.receiveUpdate = Island.receiveUpdate;
+  now.receiveTrends = Island.receiveTrends;
+});

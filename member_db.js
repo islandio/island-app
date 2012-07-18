@@ -12,6 +12,7 @@
 */
 var ObjectID = require('mongodb').BSONPure.ObjectID;
 var crypto = require('crypto');
+var request = require('request');
 var reds = require('reds');
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
@@ -19,7 +20,6 @@ var util = require('util');
 var debug = util.debug, inspect = util.inspect;
 var Step = require('step');
 var Facebook = require('node-fb');
-var Twitter = require('twitter');
 var facebookCredentials = {
   ID: 203397619757208,
   KEY: 203397619757208,
@@ -36,9 +36,10 @@ var twitterCredentials = {
 /*
  * Create a db instance.
  */
-var MemberDb = exports.MemberDb = function (db, options, cb) {
+var MemberDb = exports.MemberDb = function (db, app, options, cb) {
   var self = this;
   self.db = db;
+  self.app = app;
   self.collections = {};
   self.search = reds.createSearch('media');
 
@@ -183,7 +184,6 @@ MemberDb.prototype.findOrCreateMemberFromFacebook =
                                           member.primaryEmail);
           _.defaults(props, member);
           props.primaryEmail = member.primaryEmail;
-          delete props.accessToken; // TEMP: delete this for now.
           self.collections.member.update({ _id: member._id },
                                           props, { safe: true }, function (err) {
             if (err) return cb(err);
@@ -192,7 +192,6 @@ MemberDb.prototype.findOrCreateMemberFromFacebook =
         } else if (!member) {
           _.defaults(props, {
             role: 1,
-            twitter: '',
             image: null,
             thumbs: null,
             confirmed: false,
@@ -275,7 +274,6 @@ MemberDb.prototype.findOrCreateMemberFromTwitter =
                                       member.primaryEmail);
       _.defaults(props, member);
       props.primaryEmail = member.primaryEmail;
-      delete props.accessToken; // TEMP: delete this for now.
       self.collections.member.update({ _id: member._id },
                                       props, { safe: true },
                                       function (err) {
@@ -339,7 +337,6 @@ MemberDb.prototype.findOrCreateMemberFromEmail =
         } else if (!member) {
           _.defaults(props, {
             role: 1,
-            twitter: '',
             image: null,
             thumbs: null,
             confirmed: false,
@@ -390,8 +387,6 @@ MemberDb.prototype.createView = function (props, cb) {
     return cb(new Error('Invalid view'));
   _.defaults(props, {});
   Step(
-    // TODO: Verify that the user has
-    // permission to add a view.
     function () {
       self.findPostById(props.post_id, true, this);
     },
@@ -411,8 +406,6 @@ MemberDb.prototype.createComment = function (props, cb) {
     likes: 0, // ?
   });
   Step(
-    // TODO: Verify that the user has
-    // permission to comment.
     function () {
       self.findMemberById(props.member_id, true, this.parallel());
       self.findPostById(props.post_id, true, this.parallel());
@@ -440,8 +433,6 @@ MemberDb.prototype.createRating = function (props, cb) {
     return cb(new Error('Invalid rating'));
   _.defaults(props, {});
   Step(
-    // TODO: Verify that the user has
-    // permission to add a rating.
     function () {
       self.findMediaById(props.media_id, true, this);
     },
@@ -474,8 +465,6 @@ MemberDb.prototype.createHit = function (props, cb) {
     return cb(new Error('Invalid hit'));
   _.defaults(props, {});
   Step(
-    // TODO: Verify that the user has
-    // permission to add a hit. ?
     function () {
       self.findMediaById(props.media_id, true, this);
     },
@@ -686,6 +675,141 @@ MemberDb.prototype.searchPosts = function (str, cb) {
 
 
 /**
+  * Create a Facebook post from a postId.
+  */
+MemberDb.prototype.createFacebookPost = function (postId, cb) {
+  var self = this;
+  var facebook = new Facebook(facebookCredentials);
+  Step(
+    function () {
+      self.findPostById(postId, this);
+    },
+    function (err, post) {
+      if (err) return cb(err);
+      if (!post) return cb(new Error('Post not found'));
+      fillDocList.call(self, 'media', post, 'post_id',
+                        { bare: true }, this);
+    },
+    function (err, post) {
+      var videos = _.filter(post.medias, function (media) {
+                            return 'video' === media.type; });
+      var audios = _.filter(post.medias, function (media) {
+                            return 'audio' === media.type; });
+      var images = _.filter(post.medias, function (media) {
+                            return 'image' === media.type; });
+      var caption = '';
+      if (videos.length > 0)
+        caption += videos.length + ' video';
+      if (videos.length > 1)
+        caption += 's';
+      if (audios.length > 0) {
+        if (caption.length > 0)
+          caption += ' | ';
+        caption += audios.length + ' sound';
+      } if (audios.length > 1)
+        caption += 's';
+      if (images.length > 0) {
+        if (caption.length > 0)
+          caption += ' | ';
+        caption += images.length + ' photo';
+      } if (images.length > 1)
+        caption += 's';
+      var params = {
+        name: post.title,
+        caption: caption,
+        description: post.body,
+        link: self.app.set('home_uri') + '/' + post.key,
+        application: { name: 'Island', id: 203397619757208 },
+        access_token: post.member.facebookToken
+      };
+      params.picture = images.length > 0 ? images[0].image.cf_url :
+                        (videos.length > 0 ? videos[0].image.cf_url : null);
+      facebook.post(post.member.facebookId + '/feed', params, this);
+    },
+    function (err, res) {
+      if (cb) cb(err, res);
+    }
+  );
+}
+
+
+/**
+  * Create a Tweet from a postId.
+  */
+MemberDb.prototype.createTweet = function (postId, cb) {
+  var self = this;
+  Step(
+    function () {
+      self.findPostById(postId, this);
+    },
+    function (err, post) {
+      if (err) return cb(err);
+      if (!post) return cb(new Error('Post not found'));
+      fillDocList.call(self, 'media', post, 'post_id',
+                        { bare: true }, this);
+    },
+    function (err, post) {
+      var videos = _.filter(post.medias, function (media) {
+                            return 'video' === media.type; });
+      var audios = _.filter(post.medias, function (media) {
+                            return 'audio' === media.type; });
+      var images = _.filter(post.medias, function (media) {
+                            return 'image' === media.type; });
+      var caption = '';
+      if (videos.length > 0)
+        caption += videos.length + ' video';
+      if (videos.length > 1)
+        caption += 's';
+      if (audios.length > 0) {
+        if (caption.length > 0)
+          caption += ', ';
+        caption += audios.length + ' sound';
+      } if (audios.length > 1)
+        caption += 's';
+      if (images.length > 0) {
+        if (caption.length > 0)
+          caption += ', ';
+        caption += images.length + ' photo';
+      } if (images.length > 1)
+        caption += 's';
+      var coms = caption.match(/,/g);
+      if (coms) {
+        var comIndex = coms.length > 1 ?
+                        caption.lastIndexOf(',') : caption.indexOf(',');
+        caption = caption.substr(0, comIndex)
+                  + ' and' + caption.substr(comIndex + 1);
+      }
+      var status = 'Just added ' + caption + ' to Island: "$" '
+                      + self.app.set('home_uri') + '/' + post.key;
+      var title = post.title;
+      // 1 for the $ sign and 7 for http://
+      var rem = 140 - (status.length + title.length - 1 - 7);
+      if (rem < 0)
+        title = title.substr(0, title.length + rem - 3) + '...';
+      status = status.replace('$', title);
+      request.post({
+        uri: 'https://api.twitter.com/1/statuses/update.json',
+        form: {
+          status: status,
+          include_entities: true,
+          trim_user: true
+        },
+        oauth: {
+          consumer_key: twitterCredentials.consumer_key,
+          consumer_secret: twitterCredentials.consumer_secret,
+          token: post.member.twitterToken,
+          token_secret: post.member.twitterSecret
+        }
+      }, 
+      function (err, res, body) {
+        if (cb) cb(err, body);
+      });
+    }
+  );
+}
+
+
+/**
   * Takes a member, makes salt
   * and encrypts password.
   * Exists only for public access
@@ -873,6 +997,13 @@ function getDocIds(docs, cb) {
               key: d.key,
               displayName: d.displayName,
               role: d.role,
+              facebookId: d.facebookId,
+              facebookToken: d.facebookToken,
+              twitterId: d.twitterId,
+              twitterToken: d.twitterToken,
+              twitterSecret: d.twitterSecret,
+              instagramId: d.instagramId,
+              instagramToken: d.instagramToken
             };
             if (d.twitter !== '')
               doc[collection].twitter = d.twitter;

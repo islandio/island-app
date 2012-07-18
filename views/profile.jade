@@ -1,6 +1,6 @@
 - var websites = data.website ? data.website.split('\n') : null;
 div.single-left
-  - if (member._id.toString() === data._id.toString())
+  - if (member && member._id.toString() === data._id.toString())
     a.button(href='/settings/' + member.key, style='float:right; margin-top:12px;') 
       | Edit Profile
   div.obj-title
@@ -79,10 +79,18 @@ div.recent-comments-wrap
     #recent-comments.no-member
       !=partial('comment', { collection: comments, showMember: false })
 div.clear
-div.grid-wrap
-  #search
-    h1.title-bottom / Browse
-    input#search-box.matte(type="search", placeholder="Search", value=(data.name.givenName + ' ' + data.name.familyName).toLowerCase())
-    div.search-spinner
-  #grid.adjustable-grid
-    !=partial('object', grid)
+- if (member)
+  div.grid-wrap
+    #search
+      h1.title-bottom / Browse
+      input#search-box.matte(type="search", placeholder="Search", value=(data.name.givenName + ' ' + data.name.familyName).toLowerCase())
+      div.search-spinner
+    #grid.adjustable-grid
+      !=partial('object', grid)
+- else
+  div.grid-wrap
+    #search
+      h1.title-bottom / Browse
+    p(class="login-prompt") 
+      a(href="/login") Login
+      |  to browse media.
