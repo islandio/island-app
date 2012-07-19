@@ -489,6 +489,16 @@ Island = (function ($) {
         $.post(url, data, cb, 'json');
       };
 
+      // server PUT
+      $.delete = function (url, data, cb) {
+        if ('function' === typeof data) {
+          cb = data;
+          data = {};
+        }
+        data._method = 'DELETE';
+        $.post(url, data, cb, 'json');
+      };
+
       // map form data to JSON
       $.fn.serializeObject = function () {
         var o = {};
@@ -869,15 +879,15 @@ Island = (function ($) {
       var logoB = $('#logo-b');
       var logos = [logoA, logoB];
       
-      $('#header-left').bind('mouseover', function () {
-        logoA.hide();
-        logoB.show();
-        pulse(logos[0], logos[1]);
-        pulseTimer = $.setIntervalObj(this, 500, pulse, logos);
-        pulseCancel = $.setTimeoutObj(this, 5000, cancelPulse);
-      }).bind('mouseout', function () {
-        cancelPulse();
-      });
+      // $('#header-left').bind('mouseover', function () {
+      //   logoA.hide();
+      //   logoB.show();
+      //   pulse(logos[0], logos[1]);
+      //   pulseTimer = $.setIntervalObj(this, 500, pulse, logos);
+      //   pulseCancel = $.setTimeoutObj(this, 5000, cancelPulse);
+      // }).bind('mouseout', function () {
+      //   cancelPulse();
+      // });
 
 
       // init autogrow text
@@ -1301,6 +1311,32 @@ Island = (function ($) {
           });
         },
       });
+
+      // delete a profile
+      $('#delete-profile').click(function (e) {
+        new ui.Confirmation({
+          title: 'Reeeaaally?',
+          message: $('<p>Your data will be removed, forever.'
+                    + '</p><input class="password-for-delete" '
+                    + 'type="password" name="password" placeholder="Your password, please ..." />')
+        }).modal().show(function (ok) {
+          if (ok) {
+            var pass = $('.password-for-delete').val().trim();
+            $.delete('/member', { password: pass }, function (res) {
+              if ('fail' === res.status)
+                return ui.error(res.data.message)
+                  .closable().hide(80000).effect('fade').fit();
+              if ('error' === res.status)
+                return console.log(res.message);
+              ui.dialog('Hasta la pasta! - Love, ISLAND').modal().show();
+              _.delay(function () {
+                window.location = '/login';
+              }, 3000);
+            });
+          }
+        }).ok('Delete');
+      });
+
     },
 
     /**

@@ -16,16 +16,19 @@
 #dialog h1 {
   margin: 0 0 5px 0;
   font-size: 16px;
-  font-weight: normal;
+  /*font-weight: bold;*/
+  font-family: Title, Verdana, Arial, sans-serif;
 }
 
 #dialog p {
   margin: 0;
   padding: 0;
-  font-size: .9em;
+  /*font-size: .9em;*/
 }
 
 #dialog.modal {
+  -webkit-box-shadow: 0 1px 8px 0 black;
+  -moz-box-shadow: 0 1px 8px 0 black;
   box-shadow: 0 1px 8px 0 black;
 }
 
@@ -59,6 +62,7 @@
 #dialog.slide {
   -webkit-transition: opacity 300ms, top 300ms;
   -moz-transition: opacity 300ms, top 300ms;
+  transition: opacity 300ms, top 300ms;
 }
 
 #dialog.slide.hide {
@@ -71,6 +75,7 @@
 #dialog.fade {
   -webkit-transition: opacity 300ms;
   -moz-transition: opacity 300ms;
+  transition: opacity 300ms;
 }
 
 #dialog.fade.hide {
@@ -82,14 +87,20 @@
 #dialog.scale {
   -webkit-transition: -webkit-transform 300ms;
   -moz-transition: -moz-transform 300ms;
+  transition: -moz-transform 300ms;
   -webkit-transform: scale(1);
   -moz-transform: scale(1);
+  transform: scale(1);
 }
 
 #dialog.scale.hide {
   -webkit-transform: scale(0);
+  transform: scale(0);
   -moz-transform: scale(0);
-}#overlay {
+  transform: scale(0);
+}
+
+#overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -97,6 +108,8 @@
   width: 100%;
   height: 100%;
   background: rgba(0,0,0,.75);
+  -webkit-transition: opacity 300ms;
+  -moz-transition: opacity 300ms;
   transition: opacity 300ms;
   z-index: 500;
 }
@@ -104,13 +117,19 @@
 #overlay.hide {
   pointer-events: none;
   opacity: 0;
-}.confirmation .actions {
+}
+
+.confirmation .actions {
   border-top: 1px solid #eee;
-  padding: 5px;
+  padding: 5px 18px;
   text-align: right;
   background: #fafafa;
+  -webkit-box-shadow: inset 0 1px 0 white;
+  -moz-box-shadow: inset 0 1px 0 white;
   box-shadow: inset 0 1px 0 white;
-}.color-picker canvas {
+}
+
+.color-picker canvas {
   border: 1px solid #888;
 }
 .color-picker canvas:active {
@@ -201,6 +220,7 @@
 .notification.slide {
   -webkit-transition: opacity 300ms, top 300ms;
   -moz-transition: opacity 300ms, top 300ms;
+  transition: opacity 300ms, top 300ms;
 }
 
 .notification.slide.hide {
@@ -213,6 +233,7 @@
 .notification.fade {
   -webkit-transition: opacity 300ms;
   -moz-transition: opacity 300ms;
+  transition: opacity 300ms;
 }
 
 .notification.fade.hide {
@@ -224,14 +245,19 @@
 .notification.scale {
   -webkit-transition: -webkit-transform 300ms;
   -moz-transition: -moz-transform 300ms;
+  transition: -moz-transform 300ms;
   -webkit-transform: scale(1);
   -moz-transform: scale(1);
+  transform: scale(1);
 }
 
 .notification.scale.hide {
   -webkit-transform: scale(0);
   -moz-transform: scale(0);
-}.split-button {
+  transform: scale(0);
+}
+
+.split-button {
   display: inline-block;
   border: 1px solid #eee;
 }
@@ -245,6 +271,7 @@
   text-decoration: none;
   -webkit-user-select: none;
   -moz-user-select: none;
+  user-select: none;
 }
 
 .split-button .toggle {
@@ -257,7 +284,9 @@
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
   border-top: 4px solid #888;
-}.menu {
+}
+
+.menu {
   position: absolute;
   top: 0;
   left: 0;
@@ -307,6 +336,8 @@
   -moz-transition: -moz-transform 500ms ease-in-out;
   border: 1px solid #eee;
   border-bottom-color: #cacaca;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
   border-radius: 3px;
   -webkit-box-shadow: inset 0 -1px 0 0 white, 0 1px 4px 0 #ddd;
   -moz-box-shadow: inset 0 -1px 0 0 white, 0 1px 4px 0 #ddd;
@@ -363,7 +394,11 @@
 }
 #dialog {
   border-bottom-color: #cacaca;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
   border-radius: 3px;
+  -webkit-box-shadow: 0 1px 4px 0 #ddd;
+  -moz-box-shadow: 0 1px 4px 0 #ddd;
   box-shadow: 0 1px 4px 0 #ddd;
 }
 #dialog .card p {
@@ -374,74 +409,90 @@
 }
 #dialog .actions button {
   padding: 5px;
-  background: transparent;
-  border: none;
+  /*background: transparent;*/
+  /*border: none;*/
   outline: none;
-  cursor: pointer;
+  /*cursor: pointer;*/
+  height: auto;
+  line-height: normal;
 }
 #dialog .actions button:hover {
-  text-decoration: underline;
+  /*text-decoration: underline;*/
 }
 #dialog .actions button.main {
   padding: 5px 15px;
-  background: -webkit-linear-gradient(top, #fff 20%, #eee);
-  background: -moz-linear-gradient(top, #fff 20%, #eee);
-  border: 1px solid #eee;
-  border-bottom-color: #cacaca;
-  border-radius: 3px;
+  /*background: -webkit-linear-gradient(top, #fff 20%, #eee);*/
+  /*background: -moz-linear-gradient(top, #fff 20%, #eee);*/
+  /*border: 1px solid #eee;*/
+  /*border-bottom-color: #cacaca;*/
+  /*border-radius: 3px;*/
   outline: none;
 }
 #dialog .actions button.main:hover {
   text-decoration: none;
-  background: -webkit-linear-gradient(top, #fff 50%, #eee);
-  background: -moz-linear-gradient(top, #fff 50%, #eee);
+  color: #d04c38 !important;
+  border: 1px solid #d04c38 !important;
+  /*background: -webkit-linear-gradient(top, #fff 50%, #eee);*/
+  /*background: -moz-linear-gradient(top, #fff 50%, #eee);*/
 }
 #dialog .actions button.main:active {
-  background: -webkit-linear-gradient(bottom, #fff 20%, #eee);
-  background: -moz-linear-gradient(bottom, #fff 20%, #eee);
+  /*background: -webkit-linear-gradient(bottom, #fff 20%, #eee);*/
+  /*background: -moz-linear-gradient(bottom, #fff 20%, #eee);*/
 }
 .menu {
   font-size: 12px;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
+  border-radius: 5px;
   -webkit-box-shadow: 0 10px 30px 0 rgba(0,0,0,0.1), 0 2px 6px 0 rgba(0,0,0,0.2);
   -moz-box-shadow: 0 10px 30px 0 rgba(0,0,0,0.1), 0 2px 6px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 10px 30px 0 rgba(0,0,0,0.1), 0 2px 6px 0 rgba(0,0,0,0.2);
 }
 .menu li:first-child a {
   -webkit-border-radius: 5px 5px 0 0;
   -moz-border-radius: 5px 5px 0 0;
+  border-radius: 5px 5px 0 0;
 }
 .menu li:last-child a {
   -webkit-border-radius: 0 0 5px 5px;
   -moz-border-radius: 0 0 5px 5px;
+  border-radius: 0 0 5px 5px;
 }
 .notification {
   border-bottom-color: #808080;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
+  border-radius: 3px;
   -webkit-box-shadow: 0 1px 4px 0 #ddd;
   -moz-box-shadow: 0 1px 4px 0 #ddd;
+  box-shadow: 0 1px 4px 0 #ddd;
 }
 .split-button {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
+  border-radius: 3px;
   margin: 5px;
   font-size: 12px;
 }
 .split-button a {
   background: -webkit-linear-gradient(top, #fff 20%, #eee);
   background: -moz-linear-gradient(top, #fff 20%, #eee);
+  background: linear-gradient(top, #fff 20%, #eee);
 }
 .split-button a:hover {
   background: -webkit-linear-gradient(top, #fff 40%, #efefef);
   background: -moz-linear-gradient(top, #fff 40%, #efefef);
+  background: linear-gradient(top, #fff 40%, #efefef);
   text-decoration: none;
 }
 .split-button a:active {
   background: -webkit-linear-gradient(bottom, #fff 40%, #efefef);
   background: -moz-linear-gradient(bottom, #fff 40%, #efefef);
+  background: linear-gradient(bottom, #fff 40%, #efefef);
   text-decoration: none;
 }
 .split-button a {
+  -webkit-box-shadow: inset 1px 0 rgba(255,255,255,.75), 0 1px #ddd;
+  -moz-box-shadow: inset 1px 0 rgba(255,255,255,.75), 0 1px #ddd;
   box-shadow: inset 1px 0 rgba(255,255,255,.75), 0 1px #ddd;
 }

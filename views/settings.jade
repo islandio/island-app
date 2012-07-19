@@ -1,4 +1,6 @@
 div.single-left
+  a#delete-profile.button(href='javascript:;', style='float:right; margin-top:12px;')
+    | Delete Yourself
   form#settings-form(action='/save/member', enctype='multipart/form-data', method='POST')
     input(type='hidden', name='params', value=JSON.stringify(transloaditParams))
     input(type='hidden', name='member[_id]', value=data._id.toString())

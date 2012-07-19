@@ -37,8 +37,6 @@ var util = require('util'), debug = util.debug, inspect = util.inspect;
 var fs = require('fs');
 var path = require('path');
 var url = require('url');
-var log = require('./log.js').log;
-var logTimestamp = require('./log.js').logTimestamp;
 
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
@@ -126,7 +124,7 @@ app.configure(function () {
       username: 'islander',
       password: 'V[AMF?UV{b'
     }, function (err) {
-      if (err) log('Error creating mongoStore: ' + err);
+      if (err) console.log('Error creating mongoStore: ' + err);
     }),
   }));
   app.use(passport.initialize());
@@ -327,17 +325,6 @@ app.post('/login', function (req, res, next) {
         }
       });
     }
-    // if (!member.confirmed)
-    //   return res.send({
-    //     status: 'fail',
-    //     data: {
-    //       code: 'NOT_CONFIRMED',
-    //       message: member.displayName + ', please confirm your account by '
-    //               + 'following the link in your confirmation email. '
-    //               + '<a href="javascript:;" id="noconf-' + member._id + '" class="resend-conf">'
-    //               + 'Re-send the confirmation email</a> if you need to.'
-    //     }
-    //   });
     req.logIn(member, function (err) {
       if (err) return next(err);
       var referer = url.parse(req.headers.referer);
@@ -1252,7 +1239,7 @@ app.post('/publish/instagram', function (req, res) {
   }
   function done(err, docIds) {
     if (err) {
-      log(inspect(err));
+      console.log(inspect(err));
       return res.end();
     }
     _.each(docIds, function (id) {
@@ -1266,11 +1253,39 @@ app.get('/publish/instagram', function (req, res) {
   if (instagramVerifyToken !== req.query['hub.verify_token']
       || 'subscribe' !== req.query['hub.mode']
       || '' === req.query['hub.challenge']) {
-    log('Instagram subscription challenge attempt failed');
+    console.log('Instagram subscription challenge attempt failed');
     return res.end();
   }
-  log('Instagram subscription challenge accepted');
+  console.log('Instagram subscription challenge accepted');
   res.send(req.query['hub.challenge']);
+});
+
+app.delete('/member', authorize, function (req, res) {
+  if (!MemberDb.authenticateLocalMember(req.user, req.body.password))
+    return res.send({ status: 'fail', data: { message: 'Invalid password.' }});
+  Step(
+    function () {
+      var id = req.user._id;
+      memberDb.collections.member.remove({ _id: id }, this.parallel());
+      memberDb.collections.hit.remove({ member_id: id }, this.parallel());
+      memberDb.collections.view.remove({ member_id: id }, this.parallel());
+      memberDb.collections.rating.remove({ member_id: id }, this.parallel());
+      memberDb.collections.comment.remove({ member_id: id }, this.parallel());
+      memberDb.collections.post.remove({ member_id: id }, this.parallel());
+      memberDb.collections.media.remove({ member_id: id }, this.parallel());
+    },
+    function (err) {
+      if (err) return fail(err);
+      console.log('\nDeleted member: ' + inspect(req.user));
+      req.logOut();
+      delete req.session.referer;
+      res.send({ status: 'success' });
+    }
+  );
+  function fail(err) {
+    res.send({ status: 'error',
+             message: err.stack });
+  }
 });
 
 ////////////// Helpers
@@ -1382,8 +1397,7 @@ function renderComment(params, cb) {
 }
 
 
-
-
+////////////// Everyone methods
 
 // add new object to everyone's page
 function distributeGrid(id) {
@@ -1487,7 +1501,7 @@ if (!module.parent) {
 
   Step(
     function () {
-      log('Connecting to MemberDb:', argv.db);
+      console.log('Connecting to MemberDb:', argv.db);
       mongodb.connect(argv.db, {server: { poolSize: 4 }}, this);
     }, function (err, db) {
       if (err) return this(err);
@@ -1532,9 +1546,9 @@ if (!module.parent) {
         if (error)
           return log(inspect(error));
         if (response.statusCode === 200)
-          log('Subscribed to connected Instagram users (id ' + JSON.parse(body).data.id + ')');
+          console.log('Subscribed to connected Instagram users (id ' + JSON.parse(body).data.id + ')');
         else
-          log('Instagram subscription failed', body);
+          console.log('Instagram subscription failed', body);
       });
     }
   );

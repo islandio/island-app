@@ -48,7 +48,7 @@ Step(
     memberDb = mDb;
     this();
   },
-  // find post
+  // find member
   function (err) {
     memberDb.collections.member.findOne({ key: argv.key }, this);
   },

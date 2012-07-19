@@ -333,8 +333,7 @@ a.resend-conf {
   border-radius: 0 0 83px 0;
 }
 #header-left:hover {
-  border-bottom: 5px solid rgba(209,43,131,0.75);
-  border-right: 5px solid rgba(209,43,131,0.75);
+  background: #f2f2f2;
 }
 #logo {
   width: 300px;
@@ -412,6 +411,10 @@ a.resend-conf {
   font-style: italic;
   color: #808080;
 }
+#delete-profile:hover {
+  color: #d04c38 !important;
+  border: 1px solid #d04c38 !important;
+}
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 textarea {
   font-size: 11px;
@@ -468,6 +471,10 @@ input.is-button-alert[type=submit] {
 }
 .button-mask-wrap {
   position: relative;
+}
+.password-for-delete {
+  margin: 10px 0 0 0 !important;
+  width: 198px !important;
 }
 #add-media,
 #save-settings {
