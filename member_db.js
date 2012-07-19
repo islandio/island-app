@@ -36,10 +36,10 @@ var twitterCredentials = {
 /*
  * Create a db instance.
  */
-var MemberDb = exports.MemberDb = function (db, app, options, cb) {
+var MemberDb = exports.MemberDb = function (db, options, cb) {
   var self = this;
   self.db = db;
-  self.app = app;
+  self.app = options.app;
   self.collections = {};
   self.search = reds.createSearch('media');
 

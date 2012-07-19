@@ -1392,7 +1392,7 @@ if (!module.parent) {
       mongodb.connect(argv.db, {server: { poolSize: 4 }}, this);
     }, function (err, db) {
       if (err) return this(err);
-      new MemberDb(db, app, { ensureIndexes: true }, this);
+      new MemberDb(db, { app: app, ensureIndexes: true }, this);
     }, function (err, mDb) {
       if (err) return this(err);
       memberDb = mDb;
