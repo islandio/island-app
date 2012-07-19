@@ -931,7 +931,7 @@ app.get('/:key', function (req, res) {
           member_id: req.user._id,
         }, function (err, doc) {
           if (err) throw new Error('Failed to create view');
-          else everyone.now.distributeUpdate('view', 'post', doc.post_id);
+          else distributeUpdate('view', 'post', doc.post_id);
         });
       // prepare document
       var img = [];
@@ -1041,7 +1041,7 @@ app.put('/insert', authorize, function (req, res) {
     if (err)
       return res.send({ status: 'error',
                       message: err.stack });
-    everyone.now.distributeGrid(docId);
+    distributeGrid(docId);
     if (req.body.post.toFacebook)
       memberDb.createFacebookPost(docId);
     if (req.body.post.toTwitter)
@@ -1062,7 +1062,7 @@ app.put('/hit/:mediaId', function (req, res) {
   };
   memberDb.createHit(props, function (err, doc) {
     if (err) return fail(err);
-    everyone.now.distributeUpdate('hit', 'media', doc.media_id);
+    distributeUpdate('hit', 'media', doc.media_id);
     res.send({ status: 'success' });
   });
   function fail(err) {
@@ -1090,8 +1090,8 @@ app.put('/comment/:postId', function (req, res) {
   };
   memberDb.createComment(props, function (err, doc) {
     if (err) return fail(err);
-    everyone.now.distributeComment(doc);
-    everyone.now.distributeUpdate('comment', 'post', doc.post._id);
+    distributeComment(doc);
+    distributeUpdate('comment', 'post', doc.post._id);
     res.send({ status: 'success', data: {
              comment: doc } });
   });
@@ -1127,7 +1127,7 @@ app.put('/rate/:mediaId', function (req, res) {
   };
   memberDb.createRating(props, function (err, doc) {
     if (err) return fail(err);
-    everyone.now.distributeUpdate('rating', 'media', doc.media_id);
+    distributeUpdate('rating', 'media', doc.media_id);
     res.send({ status: 'success', data: {
              val: doc.val }});
   });
@@ -1256,7 +1256,7 @@ app.post('/publish/instagram', function (req, res) {
       return res.end();
     }
     _.each(docIds, function (id) {
-      everyone.now.distributeGrid(id);
+      distributeGrid(id);
     });
     res.end();
   }
@@ -1382,6 +1382,105 @@ function renderComment(params, cb) {
 }
 
 
+
+
+
+// add new object to everyone's page
+function distributeGrid(id) {
+  Step(
+    function () {
+      getGrid({ _id: id }, { limit: 1}, this);
+    },
+    function (err, media) {
+      if (err) return fail(err);
+      _.each(media, function (med) {
+        renderMedia(med, function (err, html) {
+          if (err) return fail(err);
+          everyone.now.receiveMedia(html);
+        });
+      });
+    }
+  );
+  function fail(err) {
+    log('\nAt distributeGrid(' + id.toString() + ')'
+        + '\nError: ' + inspect(err));
+  }
+};
+
+// add new comment to everyone's page
+function distributeComment(comment) {
+  renderComment({ comment: comment, showMember: true },
+                function (err, html) {
+    if (err) return log('\ndistributeComment ('
+                        + inspect(comment) + ')'
+                        + '\nError: ' + inspect(err));
+    everyone.now.receiveComment(html, comment.post._id);
+  });
+};
+
+// tell everyone about some meta change
+function distributeUpdate(type, target, id) {
+  if ('string' === typeof id)
+    id = new ObjectID(id);
+  var query = {};
+  query[target + '_id'] = id;
+  Step(
+    function () {
+      var next = this;
+      if ('rating' !== type)
+        memberDb.collections[type].count(query, this);
+      else
+        memberDb.collections[type].find(query)
+                .toArray(function (err, docs) {
+          if (err) return fail(err);
+          next(null, _.reduce(_.pluck(docs, 'val'),
+                function (m, n) { return m + Number(n); }, 0));
+        });
+    },
+    function (err, count) {
+      if (err) return fail(err);
+      if ('media' === target)
+        return everyone.now.receiveUpdate([id.toString()], type, count);
+      memberDb.collections.media.find({ post_id: id })
+              .toArray(function (err, docs) {
+        if (err) return fail(err);
+        var ids = _.map(docs, function (doc) {
+                        return doc._id.toString(); });
+        everyone.now.receiveUpdate(ids, type, count);
+      });
+    }
+  );
+  function fail(err) {
+    log('\ndistributeUpdate (' + type + ', '
+        + target + ',' + id.toString() + ')'
+        + '\nError: ' + inspect(err));
+  }
+};
+
+// update everyone with new trends
+function distributeTrendingMedia() {
+  findTrendingMedia(10, function (err, media) {
+    if (err) throw new Error('Failed to find media trends');
+    mediaTrends = media;
+    var rendered = [];
+    _.each(mediaTrends, function (trend) {
+      rendered.push(templates.trend({ trend: trend }));
+    });
+    if (everyone.now.receiveTrends)
+      everyone.now.receiveTrends(null, rendered);
+  });
+};
+
+// get a current list of contributor twitter handles
+// TODO: Use the Twitter realtime API instead
+function findTwitterHandles() {
+  memberDb.findTwitterHandles(function (err, handles) {
+    if (err) throw new Error('Failed to find twitter handles');
+    twitterHandles = handles;
+  });
+};
+
+
 ////////////// Connect and Listen
 
 if (!module.parent) {
@@ -1409,104 +1508,12 @@ if (!module.parent) {
 
       // init now
       everyone = now.initialize(app);
-
-      // add new object to everyone's page
-      everyone.now.distributeGrid = function (id) {
-        Step(
-          function () {
-            getGrid({ _id: id }, { limit: 1}, this);
-          },
-          function (err, media) {
-            if (err) return fail(err);
-            _.each(media, function (med) {
-              renderMedia(med, function (err, html) {
-                if (err) return fail(err);
-                everyone.now.receiveMedia(html);
-              });
-            });
-          }
-        );
-        function fail(err) {
-          log('\nAt distributeGrid(' + id.toString() + ')'
-              + '\nError: ' + inspect(err));
-        }
-      };
-
-      // add new comment to everyone's page
-      everyone.now.distributeComment = function (comment) {
-        renderComment({ comment: comment, showMember: true },
-                      function (err, html) {
-          if (err) return log('\ndistributeComment ('
-                              + inspect(comment) + ')'
-                              + '\nError: ' + inspect(err));
-          everyone.now.receiveComment(html, comment.post._id);
-        });
-      };
-
-      // tell everyone about some meta change
-      everyone.now.distributeUpdate = function (type, target, id) {
-        if ('string' === typeof id)
-          id = new ObjectID(id);
-        var query = {};
-        query[target + '_id'] = id;
-        Step(
-          function () {
-            var next = this;
-            if ('rating' !== type)
-              memberDb.collections[type].count(query, this);
-            else
-              memberDb.collections[type].find(query)
-                      .toArray(function (err, docs) {
-                if (err) return fail(err);
-                next(null, _.reduce(_.pluck(docs, 'val'),
-                      function (m, n) { return m + Number(n); }, 0));
-              });
-          },
-          function (err, count) {
-            if (err) return fail(err);
-            if ('media' === target)
-              return everyone.now.receiveUpdate([id.toString()], type, count);
-            memberDb.collections.media.find({ post_id: id })
-                    .toArray(function (err, docs) {
-              if (err) return fail(err);
-              var ids = _.map(docs, function (doc) {
-                              return doc._id.toString(); });
-              everyone.now.receiveUpdate(ids, type, count);
-            });
-          }
-        );
-        function fail(err) {
-          log('\ndistributeUpdate (' + type + ', '
-              + target + ',' + id.toString() + ')'
-              + '\nError: ' + inspect(err));
-        }
-      };
-
-      // update everyone with new trends
-      var distributeTrendingMedia = function () {
-        findTrendingMedia(10, function (err, media) {
-          if (err) throw new Error('Failed to find media trends');
-          mediaTrends = media;
-          var rendered = [];
-          _.each(mediaTrends, function (trend) {
-            rendered.push(templates.trend({ trend: trend }));
-          });
-          if (everyone.now.receiveTrends)
-            everyone.now.receiveTrends(null, rendered);
-        });
-      };
+      
+      // continuous updates 
       setInterval(distributeTrendingMedia, 30000);
       distributeTrendingMedia();
-      
-      // get a current list of contributor twitter handles
-      // TODO: Use the Twitter realtime API instead
-      var findTwitterHandles = function () {
-        memberDb.findTwitterHandles(function (err, handles) {
-          if (err) throw new Error('Failed to find twitter handles');
-          twitterHandles = handles;
-        });
-      };
-      setInterval(findTwitterHandles, 60000); findTwitterHandles();
+      setInterval(findTwitterHandles, 60000);
+      findTwitterHandles();
 
       // Create service subscriptions
       request.post({
