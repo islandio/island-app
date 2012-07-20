@@ -983,7 +983,8 @@ Island = (function ($) {
           if ('error' === serv.status)
             return console.log(serv.message);
           if ('fail' === serv.status)
-            ui.error(serv.data.message).closable().hide(12000).effect('fade').fit();
+            ui.error(serv.data.message)
+              .closable().hide(12000).effect('fade').fit();
         });
       });
 
@@ -1317,6 +1318,16 @@ Island = (function ($) {
           if ($.isEmpty(assembly.results))
             return ui.error('You must choose a file.')
               .closable().hide(8000).effect('fade').fit();
+          var title = mediaTitle.val();
+          title = title.replace(/\<script\>/ig, '');
+          title = title.replace(/\<\/script\>/ig, '');
+          title = $('<p>').html(title).text().trim();
+          mediaTitle.val(title);
+          var body = mediaBody.val();
+          body = body.replace(/\<script\>/ig, '');
+          body = body.replace(/\<\/script\>/ig, '');
+          body = $('<p>').html(body).text().trim();
+          mediaBody.val(body);
           var data = mediaForm.serializeObject();
           delete data.params;
           data.assembly = assembly;

@@ -90,7 +90,7 @@ div.single-left
     img.left(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-obj-info.gif', alt='info', align='top')
     div.obj-desc-txt-wrap
       p.obj-desc-txt
-        =post.body
+        !{app.util.formatCommentText(post.body)}
       - var location = post.location && post.location.name ? post.location.name : null;
       h3.obj-details(data-date=post.created.toString(), data-type='media', data-location=location)
 div.single-right
