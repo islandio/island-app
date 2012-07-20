@@ -84,6 +84,7 @@ var instagramVerifyToken = 'doesthisworkyet';
 
 var app = express.createServer();
 var memberDb;
+var sessionStore;
 var everyone;
 var mediaTrends;
 var twitterHandles;
@@ -108,6 +109,14 @@ app.util = {
 
 ////////////// Configuration
 
+sessionStore = new mongoStore({
+  db: mongodb.connect(argv.db, { noOpen: true }, function () {}),
+  username: 'islander',
+  password: 'V[AMF?UV{b'
+}, function (err) {
+  if (err) console.log('Error creating mongoStore: ' + err);
+});
+
 app.configure(function () {
   app.set('port', process.env.PORT || argv.port);
   app.set('views', __dirname + '/views');
@@ -119,13 +128,7 @@ app.configure(function () {
   app.use(express.session({
     cookie: { maxAge: 86400 * 1000 * 7 }, // one week
     secret: '69topsecretislandshit69',
-    store: new mongoStore({
-      db: mongodb.connect(argv.db, { noOpen: true }, function () {}),
-      username: 'islander',
-      password: 'V[AMF?UV{b'
-    }, function (err) {
-      if (err) console.log('Error creating mongoStore: ' + err);
-    }),
+    store: sessionStore
   }));
   app.use(passport.initialize());
   app.use(passport.session());
@@ -1261,6 +1264,8 @@ app.get('/publish/instagram', function (req, res) {
 });
 
 app.delete('/member', authorize, function (req, res) {
+  if (!req.body.password)
+    fail(new Error('Failed to delete member.'));
   if (!MemberDb.authenticateLocalMember(req.user, req.body.password))
     return res.send({ status: 'fail', data: { message: 'Invalid password.' }});
   Step(
@@ -1276,7 +1281,7 @@ app.delete('/member', authorize, function (req, res) {
     },
     function (err) {
       if (err) return fail(err);
-      console.log('\nDeleted member: ' + inspect(req.user));
+      console.log('\nDeleted member: ' + inspect(req.user) + '\n');
       req.logOut();
       delete req.session.referer;
       res.send({ status: 'success' });
@@ -1287,6 +1292,81 @@ app.delete('/member', authorize, function (req, res) {
              message: err.stack });
   }
 });
+
+app.delete('/post/:key', authorize, function (req, res) {
+  if (!req.params.key)
+    fail(new Error('Failed to delete post'));
+  var post;
+  Step(
+    function () {
+      memberDb.collections.post.findOne({ key: req.params.key }, this);
+    },
+    function (err, p) {
+      if (err) return fail(err);
+      if (!p) return fail(new Error('Post not found'));
+      post = p;
+      var next = this;
+      memberDb.collections.media.find({ post_id: post._id })
+              .toArray(function (err, meds) {
+        if (err) return fail(err);
+        if (meds.length > 0) {
+          var _next = _.after(meds.length * 3, next);
+          _.each(meds, function (med) {
+            memberDb.collections.media.remove({ _id: med._id }, _next);
+            memberDb.collections.hit.remove({ media_id: med._id }, _next);
+            memberDb.collections.rating.remove({ media_id: med._id }, _next);
+          });
+        } else next();
+      });
+    },
+    function (err) {
+      if (err) return fail(err);
+      memberDb.collections.post.remove({ _id: post._id }, this.parallel());
+      memberDb.collections.view.remove({ post_id: post._id }, this.parallel());
+      memberDb.collections.comment.remove({ post_id: post._id }, this.parallel());
+    },
+    function (err) {
+      if (err) return fail(err);
+      console.log('\nDeleted post: ' + inspect(post) + '\n');
+      res.send({ status: 'success' });
+    }
+  );
+  function fail(err) {
+    res.send({ status: 'error',
+             message: err.stack });
+  }
+});
+
+app.delete('/comment/:id', authorize, function (req, res) {
+  if (!req.params.id)
+    fail(new Error('Failed to delete comment'));
+  var comment;
+  Step(
+    function () {
+      memberDb.collections.comment.findOne({ _id:
+          new ObjectID(req.params.id) }, this);
+    },
+    function (err, com) {
+      if (err) return fail(err);
+      if (!com) return fail(new Error('Comment not found'));
+      comment = com;
+      if (comment.member_id.toString() !== req.user._id.toString())
+        return fail(new Error('Insufficient privileges'));
+      memberDb.collections.comment.remove({ _id: comment._id }, this);
+    },
+    function (err) {
+      if (err) return fail(err);
+      console.log('\nDeleted comment: ' + inspect(comment) + '\n');
+      res.send({ status: 'success' });
+      everyone.now.deleteComment(comment._id.toString());
+    }
+  );
+  function fail(err) {
+    res.send({ status: 'error',
+             message: err.stack });
+  }
+});
+
 
 ////////////// Helpers
 
@@ -1416,20 +1496,13 @@ function distributeGrid(id) {
     }
   );
   function fail(err) {
-    log('\nAt distributeGrid(' + id.toString() + ')'
-        + '\nError: ' + inspect(err));
+    console.log(inspect(err));
   }
 };
 
 // add new comment to everyone's page
 function distributeComment(comment) {
-  renderComment({ comment: comment, showMember: true },
-                function (err, html) {
-    if (err) return log('\ndistributeComment ('
-                        + inspect(comment) + ')'
-                        + '\nError: ' + inspect(err));
-    everyone.now.receiveComment(html, comment.post._id);
-  });
+  everyone.now.notifyComment(comment);
 };
 
 // tell everyone about some meta change
@@ -1465,9 +1538,7 @@ function distributeUpdate(type, target, id) {
     }
   );
   function fail(err) {
-    log('\ndistributeUpdate (' + type + ', '
-        + target + ',' + id.toString() + ')'
-        + '\nError: ' + inspect(err));
+    console.log(inspect(err));
   }
 };
 
@@ -1521,8 +1592,24 @@ if (!module.parent) {
       });
 
       // init now
+      now.sessionStore = sessionStore;
       everyone = now.initialize(app);
-      
+
+      // client-server calls
+      everyone.now.renderComment = function (comment) {
+        var self = this;
+        var params = {
+          comment: comment,
+          showMember: true
+        };
+        if (self.user.session)
+          params.member = { _id: self.user.session.passport.user };
+        renderComment(params, function (err, html) {
+          if (err) return console.log(inspect(err));
+          self.now.receiveComment(html, comment.post._id);
+        });
+      }
+
       // continuous updates 
       setInterval(distributeTrendingMedia, 30000);
       distributeTrendingMedia();
@@ -1542,10 +1629,10 @@ if (!module.parent) {
                           'http://island.io/publish/instagram' :
                           'https://please.showoff.io/publish/instagram'
         }
-      }, function (error, response, body) {
-        if (error)
-          return log(inspect(error));
-        if (response.statusCode === 200)
+      }, function (err, res, body) {
+        if (err)
+          return console.log(inspect(err));
+        if (res.statusCode === 200)
           console.log('Subscribed to connected Instagram users (id ' + JSON.parse(body).data.id + ')');
         else
           console.log('Instagram subscription failed', body);

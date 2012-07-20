@@ -10,7 +10,7 @@
   div.recent-comments-wrap
     h1.title-right / Recent Comments
     #recent-comments
-      !=partial('comment', { collection: comments, showMember: true })
+      !=partial('comment', { collection: comments, showMember: true, member: member })
 div.grid-wrap
   #search
     h1.title-bottom / Browse

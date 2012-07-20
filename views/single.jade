@@ -1,4 +1,7 @@
 div.single-left
+  - if (member && member._id.toString() === post.member._id.toString())
+    a#delete-post.button(data-key=post.key, href='javascript:;', style='float:right; margin-top:12px;')
+      | Delete Post
   div.obj-title
     span.slash
       | /
@@ -102,7 +105,7 @@ div.single-right
         span(style='font-style: italic')
           =member.displayName
   div.obj-comments(id='coms-' + post._id)
-    !=partial('comment', { collection: post.comments.reverse(), showMember: true })
+    !=partial('comment', { collection: post.comments.reverse(), showMember: true, member: member })
 - if (member)
   div.grid-wrap
     #search

@@ -73,11 +73,11 @@ div.single-left
                       | , 
                   - }
                 - })
-      h3.obj-details(data-date=data.created.toString(), data-type="profile")
+      h3.obj-details(data-date=data.created.toString(), data-type="profile", data-role=member.role)
 div.recent-comments-wrap
     h1.title-right / Recent Comments
     #recent-comments.no-member
-      !=partial('comment', { collection: comments, showMember: false })
+      !=partial('comment', { collection: comments, showMember: false, member: member })
 div.clear
 - if (member)
   div.grid-wrap

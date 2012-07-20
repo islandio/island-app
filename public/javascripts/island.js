@@ -863,7 +863,7 @@ Island = (function ($) {
 
       // resend confirmation email
       $('.resend-conf').live('click', function (e) {
-        var id = $(this).itemID()
+        var id = $(this).itemID();
         $.post('/resendconf/' + id, { id: id }, function (serv) {
           if ('success' === serv.status)
             return ui.notify(serv.data.message)
@@ -987,6 +987,19 @@ Island = (function ($) {
         });
       });
 
+      // delete a profile
+      $('.delete-comment').live('click', function (e) {
+        var $this = $(this);
+        var id = $this.itemID();
+        $.delete('/comment/' + id, function (res) {
+          if ('fail' === res.status)
+            return ui.error(res.data.message)
+              .closable().hide(8000).effect('fade').fit();
+          if ('error' === res.status)
+            return console.log(res.message);
+        });
+      });
+
       // show like heart
       $('.obj-holder').bind('mouseenter', function () {
         $('.hearts', this).show();
@@ -1033,8 +1046,14 @@ Island = (function ($) {
             txt = 'Added ' + Util.toLocaleString(date, 'mmm d, yyyy');
             break;
           case 'profile':
-            txt = 'Contributor since ' + Util.toLocaleString(date,'m/d/yy');
-            break;
+            switch (_this.data('role')) {
+              case 0:
+                txt = 'Contributor since ' + Util.toLocaleString(date,'m/d/yy');
+                break;
+              case 1:
+                txt = 'Member since ' + Util.toLocaleString(date,'m/d/yy');
+                break;
+            }
         }
         if (_this.data('location'))
           txt += ' At ' + _this.data('location');
@@ -1312,6 +1331,29 @@ Island = (function ($) {
         },
       });
 
+      // delete a post
+      $('#delete-post').click(function (e) {
+        var key = $(this).data('key');
+        new ui.Confirmation({
+          title: 'Reeeaaally?',
+          message: 'Your post will be removed, forever.'
+        }).modal().show(function (ok) {
+          if (ok) {
+            $.delete('/post/' + key, function (res) {
+              if ('fail' === res.status)
+                return ui.error(res.data.message)
+                  .closable().hide(8000).effect('fade').fit();
+              if ('error' === res.status)
+                return console.log(res.message);
+              ui.dialog('I crushed it! - Love, ISLAND').modal().show();
+              _.delay(function () {
+                window.location = '/';
+              }, 2000);
+            });
+          }
+        }).ok('Delete');
+      });
+
       // delete a profile
       $('#delete-profile').click(function (e) {
         new ui.Confirmation({
@@ -1325,13 +1367,13 @@ Island = (function ($) {
             $.delete('/member', { password: pass }, function (res) {
               if ('fail' === res.status)
                 return ui.error(res.data.message)
-                  .closable().hide(80000).effect('fade').fit();
+                  .closable().hide(8000).effect('fade').fit();
               if ('error' === res.status)
                 return console.log(res.message);
               ui.dialog('Hasta la pasta! - Love, ISLAND').modal().show();
               _.delay(function () {
                 window.location = '/login';
-              }, 3000);
+              }, 2000);
             });
           }
         }).ok('Delete');
@@ -1393,8 +1435,6 @@ Island = (function ($) {
         if (ctx.length > 0) {
           var txt = $('.meta-' + type + 's', ctx);
           txt.text(Util.addCommas(count) + ' x ');
-          // txt.siblings().hide();
-          // _.delay(function () { txt.siblings().show(); }, 250);
         }
       });
     },
@@ -1406,6 +1446,25 @@ Island = (function ($) {
     receiveTrends: function (err, media) {
       if (err) return console.log(err);
       trending.receive(media);
+    },
+
+    /**
+     * There's a new comment.
+     */
+
+    notifyComment: function (comment) {
+      now.renderComment(comment);
+    },
+
+    /**
+     * Delete a comment.
+     */
+
+    deleteComment: function (comId) {
+      var comment = $('#com-' + comId);
+      comment.fadeOut('fast', function () {
+        comment.remove();
+      });
     },
 
   };
@@ -1422,4 +1481,6 @@ now.ready(function () {
   now.receiveComment = Island.receiveComment;
   now.receiveUpdate = Island.receiveUpdate;
   now.receiveTrends = Island.receiveTrends;
+  now.deleteComment = Island.deleteComment;
+  now.notifyComment = Island.notifyComment;
 });

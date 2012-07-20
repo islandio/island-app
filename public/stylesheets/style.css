@@ -411,6 +411,7 @@ a.resend-conf {
   font-style: italic;
   color: #808080;
 }
+#delete-post:hover,
 #delete-profile:hover {
   color: #d04c38 !important;
   border: 1px solid #d04c38 !important;
@@ -983,6 +984,20 @@ img.heart-img {
 .object-added {
   color: #b3b3b3;
   font-size: 9px;
+  display: inline-block;
+}
+a.delete-comment {
+  background: none;
+  font-size: 8px;
+  color: #b3b3b3;
+  float: right;
+  margin: 0 -30px 0 0;
+}
+a.delete-comment:hover {
+  color: #d04c38;
+}
+a.delete-comment:active {
+  color: #f00;
 }
 .member-picture {
   position: relative;

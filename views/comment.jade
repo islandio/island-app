@@ -1,5 +1,5 @@
 - var parentStyle = showMember ? '' : 'left:0; padding-left:10px;'
-div.comment.matte
+div.comment.matte(id='com-' + comment._id.toString())
   div.comment-title
     - if (showMember) {
       - if (comment.member.key)
@@ -22,3 +22,5 @@ div.comment.matte
       !{app.util.formatCommentText(comment.body)}
     h3.comment-added
       =comment.created
+    - if (typeof(member) === 'undefined' || member._id.toString() === comment.member._id.toString())
+        a.delete-comment(id='delcom-' + comment._id.toString()) DELETE
