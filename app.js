@@ -1033,9 +1033,13 @@ app.put('/insert', authorize, function (req, res) {
                       message: err.stack });
     distributeGrid(docId);
     if (req.body.post.toFacebook)
-      memberDb.createFacebookPost(docId);
+      memberDb.createFacebookPost(docId, function (err, data) {
+        console.log('Facebook: ', err, data);
+      });
     if (req.body.post.toTwitter)
-      memberDb.createTweet(docId);
+      memberDb.createTweet(docId, function (err, data) {
+        console.log('Twitter: ', err, data);
+      });
     res.send({ status: 'success' });
   }
 });
