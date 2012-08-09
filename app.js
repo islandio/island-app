@@ -280,6 +280,11 @@ app.get('/', authorize, function (req, res) {
   );
 });
 
+// Privacy Policy
+app.get('/privacy', function (req, res) {
+  res.render('privacy');
+});
+
 // Landing page
 app.get('/login', function (req, res) {
   if (req.session.passport.user)
