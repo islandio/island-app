@@ -174,8 +174,10 @@ Island = (function ($) {
     }
   };
 
-  function updateTimes() {
-    $('.comment-added, .object-added').each(function (i) {
+  function updateTimes(ctx) {
+    var elements = ctx ? $('.comment-added, .object-added', ctx)
+        : $('.comment-added, .object-added');
+    elements.each(function (i) {
       var time = $(this);
       if (!time.data('ts'))
         time.data('ts', time.text());
@@ -936,10 +938,11 @@ Island = (function ($) {
         });
       }).bind('focus', adjustGridHeight);
 
-      if (searchBox.val() !== '') {
-        jrid.addClass('search-results');
-        searchBox.trigger('keyup');
-      }
+      
+      // lazy load the grid
+      jrid.addClass('search-results');
+      searchBox.trigger('keyup');
+      
 
       $('.grid-obj, .trending, .object-title-parent').live('click', function (e) {
         e.preventDefault();
@@ -1007,6 +1010,19 @@ Island = (function ($) {
       }).bind('mouseleave', function () {
         $('.hearts', this).hide();
       });
+
+      // lazy load the comments
+      var commentCtx = $('#recent-comments');
+      if ($('#recent-comments').length > 0)
+        $.get('/comments/' + (commentCtx.data('id')) + '/'
+              + commentCtx.data('limit'), { showMember: commentCtx.data('showmember') },
+              function (res) {
+          if ('success' === res.status) {
+            for (var i=0; i < res.data.results.length; i++)
+              $(res.data.results[i]).appendTo(commentCtx);
+            updateTimes(commentCtx);
+          } else console.log(res.message);
+        });
 
       // no dragging hearts
       $('.hearts-wrap img, .hearts-back img').bind('mousedown', function (e) {
