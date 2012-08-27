@@ -104,7 +104,7 @@ div.single-right
       span.commentor-whois Logged in as 
         span(style='font-style: italic')
           =member.displayName
-  div.obj-comments(id='coms-' + post._id)(data-id=post._id.toString(), data-limit="0", data-showmember="true")
+  div.obj-comments(id='coms-' + post._id)(data-id=post._id.toString(), data-limit="0", data-showmember="true", data-showpost="false")
     span.loading Loading ...
 - if (member)
   div.grid-wrap

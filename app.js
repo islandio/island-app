@@ -751,7 +751,8 @@ app.get('/comments/:id/:limit', function (req, res) {
       function () {
         var group = this.group();
         _.each(docs, function (doc) {
-          delete doc.post;
+          if (req.query.showPost !== 'true')
+            delete doc.post;
           renderComment({
             comment: doc,
             member: req.user,

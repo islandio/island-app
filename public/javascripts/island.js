@@ -993,7 +993,9 @@ Island = (function ($) {
           $('#recent-comments') : $('.obj-comments');
       if (commentCtx.length > 0)
         $.get('/comments/' + (commentCtx.data('id')) + '/'
-              + commentCtx.data('limit'), { showMember: commentCtx.data('showmember') },
+              + commentCtx.data('limit'),
+              { showMember: commentCtx.data('showmember'),
+              showPost: commentCtx.data('showpost') },
               function (res) {
           if ('success' === res.status) {
             commentCtx.empty();
