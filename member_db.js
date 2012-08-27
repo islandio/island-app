@@ -496,6 +496,8 @@ MemberDb.prototype.findPosts = function (query, opts, cb) {
       function () {
         fillDocList.call(self, 'media', posts, 'post_id',
                         { bare: true }, this.parallel());
+        fillDocList.call(self, 'comment', posts, 'post_id',
+                        { bare: true }, this.parallel());
         fillDocList.call(self, 'view', posts, 'post_id',
                         { bare: true }, this.parallel());
       },
