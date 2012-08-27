@@ -138,8 +138,6 @@ div.clear
 div.grid-wrap
   #search
     h1.title-bottom / Browse
-    input#search-box.matte(type="search", placeholder="Search")
+    input#search-box.matte(type="search", placeholder="Search", value=(data.name.givenName + ' ' + data.name.familyName).toLowerCase())
     div.search-spinner
   #grid.adjustable-grid
-    !=partial('object', grid)
-

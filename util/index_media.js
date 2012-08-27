@@ -61,7 +61,7 @@ Step(
                                               function (err, mem) {
             errCheck(err, 'finding member for post update');
             search.index(post.title, post._id);
-            search.index(post.body.replace(/#island/g, ''), post._id);
+            // search.index(post.body.replace(/#island/g, ''), post._id);
             if (mem.displayName && mem.displayName !== '')
               search.index(mem.displayName, post._id);
             log('\nIndexing post: ' + post.title);
