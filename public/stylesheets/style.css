@@ -235,6 +235,9 @@ td {
   line-height: 12px;
   max-width: 300px;
 }
+span.loading {
+  color: #808080;
+}
 p.privacy {
   padding: 30px;
   max-width: 600px;

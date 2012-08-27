@@ -878,30 +878,9 @@ Island = (function ($) {
       var logoA = $('#logo-a');
       var logoB = $('#logo-b');
       var logos = [logoA, logoB];
-      
-      // $('#header-left').bind('mouseover', function () {
-      //   logoA.hide();
-      //   logoB.show();
-      //   pulse(logos[0], logos[1]);
-      //   pulseTimer = $.setIntervalObj(this, 500, pulse, logos);
-      //   pulseCancel = $.setTimeoutObj(this, 5000, cancelPulse);
-      // }).bind('mouseout', function () {
-      //   cancelPulse();
-      // });
-
 
       // init autogrow text
       $('textarea').autogrow();
-
-      // rollover each object
-      // $('.each-grid-obj').live('mouseover', function () {
-      //   $('.object-added', this).hide();
-      //   $('.object-meta', this).show();
-      // }).live('mouseout', function () {
-      //   $('.object-added', this).show();
-      //   $('.object-meta', this).hide();
-      // });
-
 
       // search box
       var searchBox = $('#search-box');
@@ -1017,6 +996,7 @@ Island = (function ($) {
               + commentCtx.data('limit'), { showMember: commentCtx.data('showmember') },
               function (res) {
           if ('success' === res.status) {
+            commentCtx.empty();
             for (var i=0; i < res.data.results.length; i++)
               $(res.data.results[i]).appendTo(commentCtx);
             updateTimes(commentCtx);
