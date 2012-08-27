@@ -749,7 +749,8 @@ app.get('/search/:query', function (req, res) {
 // Recent comments search
 app.get('/comments/:id/:limit', function (req, res) {
   var query = req.params.id === 'all' ? {} :
-      { $or: [ { member_id: req.params.id }, { post_id: req.params.id }]};
+      { $or: [ { member_id: new ObjectID(req.params.id) },
+               { post_id: new ObjectID(req.params.id) }]};
   memberDb.findComments(query, { limit: req.params.limit,
                         sort: { created: -1 } }, function (err, docs) {
     if (err) return fail(err);

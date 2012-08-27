@@ -76,8 +76,7 @@ div.single-left
       h3.obj-details(data-date=data.created.toString(), data-type="profile", data-role=data.role)
 div.recent-comments-wrap
     h1.title-right / Recent Comments
-    #recent-comments.no-member
-      !=partial('comment', { collection: comments, showMember: false, member: member })
+    #recent-comments.no-member(data-id=data._id.toString(), data-limit="10", data-showmember="false")
 div.clear
 - if (member)
   div.grid-wrap
