@@ -1023,7 +1023,7 @@ Island = (function ($) {
             updateTimes(commentCtx);
           } else console.log(res.message);
         });
-
+      
       // no dragging hearts
       $('.hearts-wrap img, .hearts-back img').bind('mousedown', function (e) {
         e.preventDefault();

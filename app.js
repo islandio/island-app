@@ -753,6 +753,8 @@ app.get('/comments/:id/:limit', function (req, res) {
   memberDb.findComments(query, { limit: req.params.limit,
                         sort: { created: -1 } }, function (err, docs) {
     if (err) return fail(err);
+    var showMember = req.query.showMember
+                    && req.query.showMember === 'true';
     Step(
       function () {
         var group = this.group();
@@ -760,7 +762,7 @@ app.get('/comments/:id/:limit', function (req, res) {
           renderComment({
             comment: doc,
             member: req.user,
-            showMember: req.body.showMember
+            showMember: showMember
           }, group());
         });
       },
