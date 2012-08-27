@@ -656,10 +656,8 @@ Island = (function ($) {
                 if (jrid.hasClass('adjustable-grid'))
                   grid.collage(true);
                 else grid.collage();
-                updateTimes();
+                updateTimes(comHolder);
                 initVideoSlides();
-                // window.history.replaceState({}, '',
-                //     window.location.pathname + '?p=' + page);
               } else console.log(res.message);
               fetching = false;
             }, 'json');
@@ -925,7 +923,7 @@ Island = (function ($) {
             if (jrid.hasClass('adjustable-grid'))
               grid.collage(true);
             else grid.collage();
-            updateTimes();
+            updateTimes(jrid);
             initVideoSlides();
             if ('__clear__' === txt) {
               jrid.removeClass('search-results');
@@ -1012,8 +1010,9 @@ Island = (function ($) {
       });
 
       // lazy load the comments
-      var commentCtx = $('#recent-comments');
-      if ($('#recent-comments').length > 0)
+      var commentCtx = $('#recent-comments').length > 0 ?
+          $('#recent-comments') : $('.obj-comments');
+      if (commentCtx.length > 0)
         $.get('/comments/' + (commentCtx.data('id')) + '/'
               + commentCtx.data('limit'), { showMember: commentCtx.data('showmember') },
               function (res) {
@@ -1419,7 +1418,7 @@ Island = (function ($) {
         grid.collage(true);
       else grid.collage();
       html.animate({ opacity: 1 }, 500);
-      updateTimes();
+      updateTimes(jrid);
       initVideoSlides();
     },
 
@@ -1437,7 +1436,7 @@ Island = (function ($) {
           $('.comment-title-name', com).remove();
         com.hide().css({ opacity: 0 }).appendTo(recHolder);
         grid.collage(true, com.height());
-        updateTimes();
+        updateTimes(comHolder);
         setTimeout(function () {
           com.prependTo(recHolder).show(250).animate({ opacity: 1 }, 500);
         }, 100);
@@ -1445,7 +1444,7 @@ Island = (function ($) {
         com.hide().css({ opacity: 0 }).prependTo(comHolder);
         $('a.comment-title-parent', com).remove();
         grid.collage(true, com.height());
-        updateTimes();
+        updateTimes(comHolder);
         setTimeout(function () {
           com.show(250).animate({ opacity: 1 }, 500);
         }, 100);

@@ -487,8 +487,6 @@ MemberDb.prototype.findPosts = function (query, opts, cb) {
     cb = opts;
     opts = {};
   }
-  var coms = opts.comments;
-  delete opts.comments;
   find.call(self, self.collections.post, query, opts,
           function (err, posts) {
     if (err) return cb(err);
@@ -498,8 +496,6 @@ MemberDb.prototype.findPosts = function (query, opts, cb) {
       function () {
         fillDocList.call(self, 'media', posts, 'post_id',
                         { bare: true }, this.parallel());
-        fillDocList.call(self, 'comment', posts, 'post_id',
-                        { bare: !coms }, this.parallel());
         fillDocList.call(self, 'view', posts, 'post_id',
                         { bare: true }, this.parallel());
       },

@@ -104,8 +104,8 @@ div.single-right
       span.commentor-whois Logged in as 
         span(style='font-style: italic')
           =member.displayName
-  div.obj-comments(id='coms-' + post._id)
-    !=partial('comment', { collection: post.comments.reverse(), showMember: true, member: member })
+  div.obj-comments(id='coms-' + post._id)(data-id=post._id.toString(), data-limit="0", data-showmember="true")
+    //- !=partial('comment', { collection: post.comments.reverse(), showMember: true, member: member })
 - if (member)
   div.grid-wrap
     #search

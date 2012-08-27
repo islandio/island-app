@@ -262,23 +262,12 @@ passport.use('instagram-authz', new InstagramStrategy(
 
 // Home
 app.get('/', authorize, function (req, res) {
-  // Step(
-  //   function () {
-  //     // getGrid({}, this.parallel());
-  //     getRecentComments(5, this.parallel());
-  //   },
-  //   // function (err, media, comments, twitters) {
-  //   function (err, comments, twitters) {
-      res.render('index', {
-        part: 'media',
-        // media: mediaGrid,
-        trends: mediaTrends,
-        // comments: comments,
-        member: req.user,
-        twitters: twitterHandles,
-      });
-  //   }
-  // );
+  res.render('index', {
+    part: 'media',
+    trends: mediaTrends || [],
+    member: req.user,
+    twitters: twitterHandles,
+  });
 });
 
 // Privacy Policy
@@ -751,8 +740,10 @@ app.get('/comments/:id/:limit', function (req, res) {
   var query = req.params.id === 'all' ? {} :
       { $or: [ { member_id: new ObjectID(req.params.id) },
                { post_id: new ObjectID(req.params.id) }]};
-  memberDb.findComments(query, { limit: req.params.limit,
-                        sort: { created: -1 } }, function (err, docs) {
+  var opts = { sort: { created: -1 } };
+  if (req.params.limit && req.params.limit !== '0')
+    opts.limit = req.params.limit;
+  memberDb.findComments(query, function (err, docs) {
     if (err) return fail(err);
     var showMember = req.query.showMember
                     && req.query.showMember === 'true';
@@ -760,6 +751,7 @@ app.get('/comments/:id/:limit', function (req, res) {
       function () {
         var group = this.group();
         _.each(docs, function (doc) {
+          delete doc.post;
           renderComment({
             comment: doc,
             member: req.user,
@@ -788,21 +780,16 @@ app.get('/member/:key', function (req, res) {
     },
     function (err, member) {
       if (err || !member)
-        return res.render('404');
-      // getRecentComments(5, member._id, function (err, coms) {
-      //   if (err)
-      //     return res.render('500');
-        _.each(member, function (v, k) {
-          if (v === '') member[k] = null;
-        });
-        res.render('index', {
-          part: 'profile',
-          data: member,
-          // comments: coms,
-          twitters: twitterHandles,
-          member: req.user,
-        });
-      // });
+      return res.render('404');
+      _.each(member, function (v, k) {
+        if (v === '') member[k] = null;
+      });
+      res.render('index', {
+        part: 'profile',
+        data: member,
+        twitters: twitterHandles,
+        member: req.user,
+      });
     }
   );
 });
@@ -934,13 +921,8 @@ app.put('/save/settings', authorize, function (req, res) {
 app.get('/:key', function (req, res) {
   Step(
     function () {
-      // if (req.user) {
-      //   memberDb.findPosts({ key: req.params.key },
-      //                     { limit: 1, comments: true }, this.parallel());
-      //   // getGrid({}, this.parallel());
-      // } else
-        memberDb.findPosts({ key: req.params.key },
-                          { limit: 1, comments: true }, this);
+      memberDb.findPosts({ key: req.params.key },
+                        { limit: 1, comments: false }, this);
     },
     function (err, post) {
       if (err || !post || post.length === 0)
@@ -974,13 +956,9 @@ app.get('/:key', function (req, res) {
         }
       });
       post.medias = [].concat(img, aud, vid);
-      _.each(post.comments, function (com) {
-        delete com.post;
-      });
       res.render('index', {
         part: 'single',
         post: post,
-        // grid: grid,
         member: req.user,
         twitters: twitterHandles,
       });
