@@ -262,22 +262,23 @@ passport.use('instagram-authz', new InstagramStrategy(
 
 // Home
 app.get('/', authorize, function (req, res) {
-  Step(
-    function () {
-      getGrid({}, this.parallel());
-      getRecentComments(5, this.parallel());
-    },
-    function (err, media, comments, twitters) {
+  // Step(
+  //   function () {
+  //     // getGrid({}, this.parallel());
+  //     getRecentComments(5, this.parallel());
+  //   },
+  //   // function (err, media, comments, twitters) {
+  //   function (err, comments, twitters) {
       res.render('index', {
         part: 'media',
-        media: media,
+        // media: mediaGrid,
         trends: mediaTrends,
-        comments: comments,
+        // comments: comments,
         member: req.user,
         twitters: twitterHandles,
       });
-    }
-  );
+  //   }
+  // );
 });
 
 // Privacy Policy
@@ -745,35 +746,60 @@ app.get('/search/:query', function (req, res) {
   }
 });
 
+// Recent comments search
+app.get('/comments/:id/:limit', function (req, res) {
+  var query = req.params.id === 'all' ? {} :
+      { $or: [ { member_id: req.params.id }, { post_id: req.params.id }]};
+  memberDb.findComments(query, { limit: req.params.limit,
+                        sort: { created: -1 } }, function (err, docs) {
+    if (err) return fail(err);
+    Step(
+      function () {
+        var group = this.group();
+        _.each(docs, function (doc) {
+          renderComment({
+            comment: doc,
+            member: req.user,
+            showMember: req.body.showMember
+          }, group());
+        });
+      },
+      function (err, results) {
+        if (err) return fail(err);
+        res.send({ status: 'success',
+                 data: { results: results } });
+      }
+    );
+  });
+  function fail(err) {
+    res.send({ status: 'error',
+             message: err.stack });
+  }
+});
+
 // Member profile
 app.get('/member/:key', function (req, res) {
   Step(
     function () {
-      if (req.user) {
-        memberDb.findMemberByKey(req.params.key, this.parallel());
-        getGrid({}, this.parallel());
-      } else {
-        memberDb.findMemberByKey(req.params.key, this);
-      }
+      memberDb.findMemberByKey(req.params.key, this);
     },
-    function (err, member, media) {
+    function (err, member) {
       if (err || !member)
         return res.render('404');
-      getRecentComments(5, member._id, function (err, coms) {
-        if (err)
-          return res.render('500');
+      // getRecentComments(5, member._id, function (err, coms) {
+      //   if (err)
+      //     return res.render('500');
         _.each(member, function (v, k) {
           if (v === '') member[k] = null;
         });
         res.render('index', {
           part: 'profile',
           data: member,
-          comments: coms,
-          grid: media,
+          // comments: coms,
           twitters: twitterHandles,
           member: req.user,
         });
-      });
+      // });
     }
   );
 });
@@ -783,9 +809,8 @@ app.get('/settings/:key', authorize, function (req, res) {
   Step(
     function () {
       memberDb.findMemberByKey(req.params.key, this.parallel());
-      getGrid({}, this.parallel());
     },
-    function (err, member, media) {
+    function (err, member) {
       if (err || !member || member._id.toString()
           !== req.user._id.toString())
         return res.render('404');
@@ -796,7 +821,6 @@ app.get('/settings/:key', authorize, function (req, res) {
         part: 'settings',
         data: member,
         transloaditParams: transloaditProfileParams,
-        grid: media,
         twitters: twitterHandles,
         member: req.user,
       });
@@ -907,15 +931,15 @@ app.put('/save/settings', authorize, function (req, res) {
 app.get('/:key', function (req, res) {
   Step(
     function () {
-      if (req.user) {
-        memberDb.findPosts({ key: req.params.key },
-                          { limit: 1, comments: true }, this.parallel());
-        getGrid({}, this.parallel());
-      } else
+      // if (req.user) {
+      //   memberDb.findPosts({ key: req.params.key },
+      //                     { limit: 1, comments: true }, this.parallel());
+      //   // getGrid({}, this.parallel());
+      // } else
         memberDb.findPosts({ key: req.params.key },
                           { limit: 1, comments: true }, this);
     },
-    function (err, post, grid) {
+    function (err, post) {
       if (err || !post || post.length === 0)
         return res.render('404');
       post = _.first(post);
@@ -953,7 +977,7 @@ app.get('/:key', function (req, res) {
       res.render('index', {
         part: 'single',
         post: post,
-        grid: grid,
+        // grid: grid,
         member: req.user,
         twitters: twitterHandles,
       });

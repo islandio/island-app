@@ -9,12 +9,11 @@
         !=partial('trend', trends)
   div.recent-comments-wrap
     h1.title-right / Recent Comments
-    #recent-comments
-      !=partial('comment', { collection: comments, showMember: true, member: member })
+    #recent-comments(data-id='all', data-limit="5", data-showmember="true")
+      //- !=partial('comment', { collection: comments, showMember: true, member: member })
 div.grid-wrap
   #search
     h1.title-bottom / Browse
-    input#search-box.matte(type='search', placeholder='Search')
+    input#search-box.matte(type="search", placeholder="Search", value="")
     div.search-spinner
   #grid.adjustable-grid
-    !=partial('object', media)
