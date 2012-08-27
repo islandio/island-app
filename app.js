@@ -743,7 +743,7 @@ app.get('/comments/:id/:limit', function (req, res) {
   var opts = { sort: { created: -1 } };
   if (req.params.limit && req.params.limit !== '0')
     opts.limit = req.params.limit;
-  memberDb.findComments(query, function (err, docs) {
+  memberDb.findComments(query, opts, function (err, docs) {
     if (err) return fail(err);
     var showMember = req.query.showMember
                     && req.query.showMember === 'true';
