@@ -742,6 +742,18 @@ a.instagram-btn:hover {
   top: 0;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+#banner {
+  margin: 0 0 40px 0;
+  display: none;
+}
+#banner a {
+  background: none;
+}
+#banner img {
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
 .trending-media-wrap {
   width: 640px;
 }

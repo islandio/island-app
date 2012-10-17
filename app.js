@@ -17,7 +17,6 @@ if (argv._.length || argv.help) {
   process.exit(1);
 }
 
-
 /**
  * Module dependencies.
  */
@@ -264,6 +263,7 @@ passport.use('instagram-authz', new InstagramStrategy(
 app.get('/', authorize, function (req, res) {
   res.render('index', {
     part: 'media',
+    title: 'You\'re Island',
     trends: mediaTrends || [],
     member: req.user,
     twitters: twitterHandles,
@@ -272,14 +272,14 @@ app.get('/', authorize, function (req, res) {
 
 // Privacy Policy
 app.get('/privacy', function (req, res) {
-  res.render('privacy');
+  res.render('privacy', { title: 'Privacy Policy'});
 });
 
 // Landing page
 app.get('/login', function (req, res) {
   if (req.session.passport.user)
     return res.redirect('/');
-  var opts = { session: req.session.temp };
+  var opts = { session: req.session.temp, title: 'You\'re Island' };
   delete req.session.temp;
   res.render('login', opts);
 });
@@ -614,16 +614,16 @@ app.put('/signup', function (req, res, next) {
 // Confirm page
 app.get('/confirm/:id', function (req, res, next) {
   if (!req.params.id)
-    return res.render('404');
+    return res.render('404', { title: 'Not Found' });
   memberDb.findMemberById(req.params.id, true, function (err, member) {
     if (err) return next(err);
     if (!member)
-      return res.render('404');
+      return res.render('404', { title: 'Not Found' });
     memberDb.collections.member.update({ _id: member._id },
                                       { $set : { confirmed: true }},
                                       { safe: true }, function (err, result) {
       if (err) return next(err);
-      if (!result) return res.render('404');
+      if (!result) return res.render('404', { title: 'Not Found' });
       req.logIn(member, function (err) {
         if (err) return next(err);
         res.redirect('/');
@@ -701,6 +701,7 @@ app.get('/add', authorize, function (req, res) {
     return res.redirect('/');
   res.render('index', {
     part: 'add',
+    title: 'Add Media',
     transloaditParams: transloaditMediaParams,
     member: req.user,
     twitters: twitterHandles,
@@ -781,12 +782,13 @@ app.get('/member/:key', function (req, res) {
     },
     function (err, member) {
       if (err || !member)
-      return res.render('404');
+      return res.render('404', { title: 'Not Found' });
       _.each(member, function (v, k) {
         if (v === '') member[k] = null;
       });
       res.render('index', {
         part: 'profile',
+        title: member.displayName,
         data: member,
         twitters: twitterHandles,
         member: req.user,
@@ -804,12 +806,13 @@ app.get('/settings/:key', authorize, function (req, res) {
     function (err, member) {
       if (err || !member || member._id.toString()
           !== req.user._id.toString())
-        return res.render('404');
+        return res.render('404', { title: 'Not Found' });
       _.each(member, function (v, k) {
         if (v === '') member[k] = null;
       });
       res.render('index', {
         part: 'settings',
+        title: 'Settings',
         data: member,
         transloaditParams: transloaditProfileParams,
         twitters: twitterHandles,
@@ -927,7 +930,7 @@ app.get('/:key', function (req, res) {
     },
     function (err, post) {
       if (err || !post || post.length === 0)
-        return res.render('404');
+        return res.render('404', { title: 'Not Found' });
       post = _.first(post);
       // record view
       if (req.user)
@@ -959,6 +962,7 @@ app.get('/:key', function (req, res) {
       post.medias = [].concat(img, aud, vid);
       res.render('index', {
         part: 'single',
+        title: post.title,
         post: post,
         member: req.user,
         twitters: twitterHandles,

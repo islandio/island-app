@@ -32,7 +32,6 @@ var twitterCredentials = {
   access_token_secret: 'Yr77Uo7n8uNRYjRwmCmgiPQF25jVQ6vjWyqHVGFNOg'
 };
 
-
 /*
  * Create a db instance.
  */
