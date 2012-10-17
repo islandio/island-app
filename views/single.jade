@@ -1,6 +1,7 @@
-#banner
-  a(href="http://google.com")
-    img(src="/images/banner.jpg", width="984", height="100")
+- if (post.key !== 'zzC6buzI')
+  #banner
+    a(href="/zzC6buzI")
+      img(src="https://d271mvlc6gc7bl.cloudfront.net/main/img/banner.jpg", width="984", height="100")
 div.single-left
   - if (member && member._id.toString() === post.member._id.toString())
     a#delete-post.button(data-key=post.key, href='javascript:;', style='float:right; margin-top:12px;')
