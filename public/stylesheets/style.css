@@ -744,6 +744,7 @@ a.instagram-btn:hover {
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 #banner {
   margin: 0 0 40px 0;
+  display: none;
 }
 #banner a {
   background: none;
