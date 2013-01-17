@@ -272,7 +272,7 @@ Island = (function ($) {
       scroll: function (time) {
         var _this = this;
         if (!last || time - last > delay) {
-          last = Date.now();
+          last = performance.now ? performance.now() : Date.now();
           top -= inc;
           if (-top >= holderHeight) {
             top = 0;
@@ -1002,6 +1002,7 @@ Island = (function ($) {
             for (var i=0; i < res.data.results.length; i++)
               $(res.data.results[i]).appendTo(commentCtx);
             updateTimes(commentCtx);
+            grid.collage(true);            
           } else console.log(res.message);
         });
       
@@ -1393,8 +1394,8 @@ Island = (function ($) {
      * Receive and render media.
      */
 
-    receiveMedia: function (str) {
-      var html = $(str);
+    receiveMedia: function (data) {
+      var html = $(data.html);
       html.prependTo(jrid).css({ opacity: 0 });
       if (jrid.hasClass('adjustable-grid'))
         grid.collage(true);
@@ -1408,10 +1409,14 @@ Island = (function ($) {
      * Receive and render a comment.
      */
 
-    receiveComment: function (str, mediaId) {
-      var com = $(str);
-      var comHolder = $('#coms-' + mediaId);
+    receiveComment: function (data) {
+      var com = $(data.html);
+      var comHolder = $('#coms-' + data.id);
       var recHolder = $('#recent-comments');
+      var mid = $('#_d').data('mid');
+      console.log(mid, data.mid)
+      if (!mid || mid !== data.mid)
+        $('.delete-comment', com).remove();
       if (recHolder.length > 0) {
         $(recHolder.children()[recHolder.children().length - 1]).remove();
         if (recHolder.hasClass('no-member'))
@@ -1437,12 +1442,12 @@ Island = (function ($) {
      * Receive and render an update.
      */
 
-    receiveUpdate: function (ids, type, count) {
-      _.each(ids, function (id) {
+    receiveUpdate: function (data) {
+      _.each(data.ids, function (id) {
         var ctx = $('#' + id);
         if (ctx.length > 0) {
-          var txt = $('.meta-' + type + 's', ctx);
-          txt.text(Util.addCommas(count) + ' x ');
+          var txt = $('.meta-' + data.type + 's', ctx);
+          txt.text(Util.addCommas(data.count) + ' x ');
         }
       });
     },
@@ -1451,25 +1456,16 @@ Island = (function ($) {
      * Receive and display current trends.
      */
 
-    receiveTrends: function (err, media) {
-      if (err) return console.log(err);
-      trending.receive(media);
-    },
-
-    /**
-     * There's a new comment.
-     */
-
-    notifyComment: function (comment) {
-      now.renderComment(comment);
+    receiveTrends: function (data) {
+      trending.receive(data.media);
     },
 
     /**
      * Delete a comment.
      */
 
-    deleteComment: function (comId) {
-      var comment = $('#com-' + comId);
+    deleteComment: function (data) {
+      var comment = $('#com-' + data.id);
       comment.fadeOut('fast', function () {
         comment.remove();
       });
@@ -1481,14 +1477,19 @@ Island = (function ($) {
 
 
 /**
- * Now.JS handlers
+ * Pusher init
  */
- 
-now.ready(function () {
-  now.receiveMedia = Island.receiveMedia;
-  now.receiveComment = Island.receiveComment;
-  now.receiveUpdate = Island.receiveUpdate;
-  now.receiveTrends = Island.receiveTrends;
-  now.deleteComment = Island.deleteComment;
-  now.notifyComment = Island.notifyComment;
-});
+(function ($) {
+  var pusher = new Pusher('c260ad31dfbb57bddd94');
+  var channel = pusher.subscribe('island');
+  var handlers = [
+    { fn: Island.receiveMedia, tpc: 'media.read' },
+    { fn: Island.receiveComment, tpc: 'comment.read' },
+    { fn: Island.receiveUpdate, tpc: 'update.read' },
+    { fn: Island.receiveTrends, tpc: 'trends.read' },
+    { fn: Island.deleteComment, tpc: 'comment.delete' },
+  ];
+  _.each(handlers, function (handler) {
+    channel.bind(handler.tpc, _.bind(handler.fn, Island));
+  });
+})(jQuery);

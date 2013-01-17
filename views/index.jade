@@ -1,40 +1,43 @@
-#twitter-names
-  - for (var n=0; n < twitters.length; ++n)
-    =twitters[n] + ','
-#wrap
-  header#header-left
-    a(href='/')
-      #logo
-        img#logo-a.centered(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-logo.png', alt='is-logo_img', width='300')
-        img#logo-b.centered(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-logo-pink.png', alt='is-logo_img', width='300', style='display:none;')
-  header#header-right
-    #menu.list
-      ul
-        - if (member)
-          li
-            a#nav-logout.button(href='/logout') 
-              | Log Out
-          - if (member.role === 0)
-            li(style='margin: 0 5px 0 0')
-              a#nav-add.button(href='/add') 
-                | Add Media
-          li
-            span.welcome-member Hi, 
-              a(href='/member/' + member.key) #{member.displayName}
-        - else
-          li
-            a#nav-login.button(href='/login') 
-              | Log In / Sign Up
-          li
-            span.welcome-member Oi !
-    #twitter.tweet
-      p loading contributor tweets...
-  div.clear
-  #main
-    !=partial(part)
-footer#footer
-  div
+extends layout
+
+block content
+  #twitter-names
+    - for (var n=0; n < twitters.length; ++n)
+      =twitters[n] + ','
+  #wrap
+    header#header-left
+      a(href='/')
+        #logo
+          img#logo-a.centered(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-logo.png', alt='is-logo_img', width='300')
+          img#logo-b.centered(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-logo-pink.png', alt='is-logo_img', width='300', style='display:none;')
+    header#header-right
+      #menu.list
+        ul
+          - if (member)
+            li
+              a#nav-logout.button(href='/logout') 
+                | Log Out
+            - if (member.role === 0)
+              li(style='margin: 0 5px 0 0')
+                a#nav-add.button(href='/add') 
+                  | Add Media
+            li
+              span.welcome-member Hi, 
+                a(href='/member/' + member.key) #{member.displayName}
+          - else
+            li
+              a#nav-login.button(href='/login') 
+                | Log In / Sign Up
+            li
+              span.welcome-member Oi !
+      #twitter.tweet
+        p loading contributor tweets...
+    div.clear
+    #main
+      block main
+  footer#footer
     div
-      small We Are Island © 2012
-        | &nbsp; | &nbsp;
-        a(href='/privacy', class='privacy-link') Privacy Policy
+      div
+        small We Are Island © 2012
+          | &nbsp; | &nbsp;
+          a(href='/privacy', class='privacy-link') Privacy Policy

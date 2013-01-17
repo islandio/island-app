@@ -379,6 +379,7 @@ a.resend-conf {
   position: fixed;
   bottom: 0;
   width: 100%;
+  z-index: 10001;
 }
 #footer > div {
   margin: 0 auto;

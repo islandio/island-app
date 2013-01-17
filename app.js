@@ -9,7 +9,7 @@ var argv = optimist
     .describe('port', 'Port to listen on')
       .default('port', 3644)
     .describe('db', 'MongoDb URL to connect to')
-      .default('db', 'mongo://localhost:27018/island')
+      .default('db', 'mongodb://localhost:27018/island')
     .argv;
 
 if (argv._.length || argv.help) {
@@ -22,10 +22,8 @@ if (argv._.length || argv.help) {
  */
 var http = require('http');
 var express = require('express');
-var now = require('now');
 var mongodb = require('mongodb');
 var ObjectID = require('mongodb').BSONPure.ObjectID;
-var mongoStore = require('connect-mongodb');
 var request = require('request');
 
 var stylus = require('stylus');
@@ -43,7 +41,9 @@ var Step = require('step');
 
 var Notify = require('./notify');
 
+var RedisStore = require('connect-redis')(express);
 var MemberDb = require('./member_db.js').MemberDb;
+var Pusher = require('pusher');
 
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
@@ -81,40 +81,24 @@ var instagramCredentials = process.env.NODE_ENV === 'production' ?
                               callbackURL: 'http://local.island.io:3644/connect/instagram/callback' };
 var instagramVerifyToken = 'doesthisworkyet';
 
-var app = express.createServer();
-var memberDb;
+var app = express();
 var sessionStore;
-var everyone;
+var memberDb;
 var mediaTrends;
 var twitterHandles;
 
-////////////// Utils
-
-// TODO: Deal with this ugliness.
-app.util = {
-  formatCommentText: function (str) {
-    var linkExp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-    str = str.replace(/\n/g, '<br/>');
-    str = str.replace(linkExp,"<a href='$1' target='_blank'>$1</a>");
-    return str;
-  },
-  isValidDate: function (d) {
-    if (Object.prototype.toString.call(d) !== '[object Date]')
-      return false;
-    return !isNaN(d.getTime());
-  }
-};
-
-
 ////////////// Configuration
 
-sessionStore = new mongoStore({
-  db: mongodb.connect(argv.db, { noOpen: true }, function () {}),
-  username: 'islander',
-  password: 'V[AMF?UV{b'
-}, function (err) {
-  if (err) console.log('Error creating mongoStore: ' + err);
+var pusher = new Pusher({
+  appId: '35474',
+  key: 'c260ad31dfbb57bddd94',
+  secret: 'b29cec4949ef7c0d14cd'
 });
+var channels = {
+  all: 'island'
+};
+
+sessionStore = new RedisStore({ maxAge: 86400 * 1000 * 7 });
 
 app.configure(function () {
   app.set('port', process.env.PORT || argv.port);
@@ -125,9 +109,8 @@ app.configure(function () {
   app.use(express.bodyParser());
   app.use(express.cookieParser());
   app.use(express.session({
-    cookie: { maxAge: 86400 * 1000 * 7 }, // one week
-    secret: '69topsecretislandshit69',
-    store: sessionStore
+    store: sessionStore,
+    secret: '69topsecretislandshit69'
   }));
   app.use(passport.initialize());
   app.use(passport.session());
@@ -257,12 +240,28 @@ passport.use('instagram-authz', new InstagramStrategy(
 ));
 
 
+////////////// Utils
+
+var templateUtil = {
+  formatCommentText: function (str) {
+    var linkExp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    str = str.replace(/\n/g, '<br/>');
+    str = str.replace(linkExp,"<a href='$1' target='_blank'>$1</a>");
+    return str;
+  },
+
+  isValidDate: function (d) {
+    if (Object.prototype.toString.call(d) !== '[object Date]')
+      return false;
+    return !isNaN(d.getTime());
+  },
+};
+
 ////////////// Web Routes
 
 // Home
 app.get('/', authorize, function (req, res) {
-  res.render('index', {
-    part: 'media',
+  res.render('media', {
     title: 'You\'re Island',
     trends: mediaTrends || [],
     member: req.user,
@@ -325,7 +324,7 @@ app.post('/login', function (req, res, next) {
     }
     req.logIn(member, function (err) {
       if (err) return next(err);
-      var referer = url.parse(req.headers.referer);
+      var referer = req.headers.referer ? url.parse(req.headers.referer) : {};
       referer.search = referer.query = referer.hash = null;
       referer.pathname = '/';
       res.send({
@@ -338,7 +337,7 @@ app.post('/login', function (req, res, next) {
 
 // Facebook authentication
 app.get('/auth/facebook', function (req, res, next) {
-  var referer = url.parse(req.headers.referer);
+  var referer = req.headers.referer ? url.parse(req.headers.referer) : {};
   referer.search = referer.query = referer.hash = null;
   referer.pathname = '/auth/facebook/callback';
   var returnUrl = url.format(referer);
@@ -373,7 +372,7 @@ app.get('/auth/facebook/callback', function (req, res, next) {
 
 // Facebook authorization
 app.get('/connect/facebook', function (req, res, next) {
-  var referer = url.parse(req.headers.referer);
+  var referer = req.headers.referer ? url.parse(req.headers.referer) : {};
   referer.search = referer.query = referer.hash = null;
   req.session.referer = url.format(referer);
   referer.pathname = '/connect/facebook/callback';
@@ -406,7 +405,7 @@ app.get('/connect/facebook/callback', function (req, res, next) {
 
 // Twitter authentication
 app.get('/auth/twitter', function (req, res, next) {
-  var referer = url.parse(req.headers.referer);
+  var referer = req.headers.referer ? url.parse(req.headers.referer) : {};
   referer.search = referer.query = referer.hash = null;
   referer.pathname = '/auth/twitter/callback';
   var returnUrl = url.format(referer);
@@ -433,7 +432,7 @@ app.get('/auth/twitter/callback', function (req, res, next) {
 
 // Twitter authorization
 app.get('/connect/twitter', function (req, res, next) {
-  var referer = url.parse(req.headers.referer);
+  var referer = req.headers.referer ? url.parse(req.headers.referer) : {};
   referer.search = referer.query = referer.hash = null;
   req.session.referer = url.format(referer);
   referer.pathname = '/connect/twitter/callback';
@@ -458,7 +457,7 @@ app.get('/connect/twitter/callback', function (req, res, next) {
 
 // Instagram authorization
 app.get('/connect/instagram', function (req, res, next) {
-  var referer = url.parse(req.headers.referer);
+  var referer = req.headers.referer ? url.parse(req.headers.referer) : {};
   referer.search = referer.query = referer.hash = null;
   req.session.referer = url.format(referer);
   referer.pathname = '/connect/instagram/callback';
@@ -582,7 +581,7 @@ app.put('/signup', function (req, res, next) {
     });
   }
   function sendMessage(member) {
-    var referer = url.parse(req.headers.referer);
+    var referer = req.headers.referer ? url.parse(req.headers.referer) : {};
     referer.search = referer.query = referer.hash = null;
     referer.pathname = '/';
     var confirm = path.join(url.format(referer), 'confirm', member._id.toString());
@@ -646,7 +645,7 @@ app.post('/resendconf/:id', authorize, function (req, res) {
         status: 'error',
         message: 'Something went wrong. Please register again.',
       });
-    var referer = url.parse(req.headers.referer);
+    var referer = req.headers.referer ? url.parse(req.headers.referer) : {};
     referer.search = referer.query = referer.hash = null;
     referer.pathname = '/';
     var confirm = path.join(url.format(referer), 'confirm', member._id.toString());
@@ -699,8 +698,7 @@ app.post('/page/:n', authorize, function (req, res) {
 app.get('/add', authorize, function (req, res) {
   if (req.user.role !== 0)
     return res.redirect('/');
-  res.render('index', {
-    part: 'add',
+  res.render('add', {
     title: 'Add Media',
     transloaditParams: transloaditMediaParams,
     member: req.user,
@@ -786,8 +784,7 @@ app.get('/member/:key', function (req, res) {
       _.each(member, function (v, k) {
         if (v === '') member[k] = null;
       });
-      res.render('index', {
-        part: 'profile',
+      res.render('profile', {
         title: member.displayName,
         data: member,
         twitters: twitterHandles,
@@ -810,8 +807,7 @@ app.get('/settings/:key', authorize, function (req, res) {
       _.each(member, function (v, k) {
         if (v === '') member[k] = null;
       });
-      res.render('index', {
-        part: 'settings',
+      res.render('settings', {
         title: 'Settings',
         data: member,
         transloaditParams: transloaditProfileParams,
@@ -895,7 +891,7 @@ app.put('/save/settings', authorize, function (req, res) {
         doc.hometown = { name: member.hometown };
       if ('' !== member.birthday) {
         var birthday = new Date(member.birthday);
-        if (!app.util.isValidDate(birthday))
+        if (!templateUtil.isValidDate(birthday))
           return done({ data: { invalid: 'birthday' }});
         
         var month = String(birthday.getMonth() + 1);
@@ -960,12 +956,12 @@ app.get('/:key', function (req, res) {
         }
       });
       post.medias = [].concat(img, aud, vid);
-      res.render('index', {
-        part: 'single',
+      res.render('single', {
         title: post.title,
         post: post,
         member: req.user,
         twitters: twitterHandles,
+        util: templateUtil
       });
     }
   );
@@ -1099,7 +1095,7 @@ app.put('/comment/:postId', function (req, res) {
   };
   memberDb.createComment(props, function (err, doc) {
     if (err) return fail(err);
-    distributeComment(doc);
+    distributeComment(doc, req.user);
     distributeUpdate('comment', 'post', doc.post._id);
     res.send({ status: 'success', data: {
              comment: doc } });
@@ -1377,7 +1373,9 @@ app.delete('/comment/:id', authorize, function (req, res) {
       if (err) return fail(err);
       console.log('\nDeleted comment: ' + inspect(comment) + '\n');
       res.send({ status: 'success' });
-      everyone.now.deleteComment(comment._id.toString());
+      pusher.trigger(channels.all, 'comment.delete', {
+        id: comment._id.toString()
+      });
     }
   );
   function fail(err) {
@@ -1490,9 +1488,7 @@ function renderMedia(med, cb) {
   cb(null, templates.object({ object: med }));
 }
 function renderComment(params, cb) {
-  // HACK!!
-  params.app = app;
-  cb(null, templates.comment(params));
+  cb(null, templates.comment(_.extend(params, { util: templateUtil })));
 }
 
 
@@ -1509,7 +1505,7 @@ function distributeGrid(id) {
       _.each(media, function (med) {
         renderMedia(med, function (err, html) {
           if (err) return fail(err);
-          everyone.now.receiveMedia(html);
+          pusher.trigger(channels.all, 'media.read', { html: html });
         });
       });
     }
@@ -1520,8 +1516,19 @@ function distributeGrid(id) {
 };
 
 // add new comment to everyone's page
-function distributeComment(comment) {
-  everyone.now.notifyComment(comment);
+function distributeComment(comment, member) {
+  var params = {
+    comment: comment,
+    showMember: true
+  };
+  renderComment(params, function (err, html) {
+    if (err) return console.log(inspect(err));
+    pusher.trigger(channels.all, 'comment.read', {
+      html: html,
+      id: comment.post._id,
+      mid: member._id
+    });
+  });
 };
 
 // tell everyone about some meta change
@@ -1546,13 +1553,21 @@ function distributeUpdate(type, target, id) {
     function (err, count) {
       if (err) return fail(err);
       if ('media' === target)
-        return everyone.now.receiveUpdate([id.toString()], type, count);
+        return pusher.trigger(channels.all, 'update.read', {
+          ids: [id.toString()],
+          type: type,
+          count: count
+        });
       memberDb.collections.media.find({ post_id: id })
               .toArray(function (err, docs) {
         if (err) return fail(err);
         var ids = _.map(docs, function (doc) {
                         return doc._id.toString(); });
-        everyone.now.receiveUpdate(ids, type, count);
+        pusher.trigger(channels.all, 'update.read', {
+          ids: [id.toString()],
+          type: type,
+          count: count
+        });
       });
     }
   );
@@ -1570,8 +1585,9 @@ function distributeTrendingMedia() {
     _.each(mediaTrends, function (trend) {
       rendered.push(templates.trend({ trend: trend }));
     });
-    if (everyone.now.receiveTrends)
-      everyone.now.receiveTrends(null, rendered);
+    pusher.trigger(channels.all, 'trends.read', {
+      media: rendered
+    });
   });
 };
 
@@ -1609,25 +1625,6 @@ if (!module.parent) {
       app.listen(argv.port, function () {
         console.log('Server listening on port ' + argv.port);
       });
-
-      // init now
-      now.sessionStore = sessionStore;
-      everyone = now.initialize(app);
-
-      // client-server calls
-      everyone.now.renderComment = function (comment) {
-        var self = this;
-        var params = {
-          comment: comment,
-          showMember: true
-        };
-        if (self.user.session)
-          params.member = { _id: self.user.session.passport.user };
-        renderComment(params, function (err, html) {
-          if (err) return console.log(inspect(err));
-          self.now.receiveComment(html, comment.post._id);
-        });
-      }
 
       // continuous updates 
       setInterval(distributeTrendingMedia, 30000);

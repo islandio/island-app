@@ -8,7 +8,9 @@ fs.readdir(path.join(__dirname, 'views'), function (err, files) {
       var dotAt = f.indexOf('.jade');
       if (dotAt !== -1) {
         var name = f.substr(0, dotAt);
-        exports[name] = jade.compile(fs.readFileSync(path.join(__dirname, 'views', f)));
+        exports[name] = jade.compile(fs.readFileSync(path.join(__dirname, 'views', f)), {
+          filename: path.join(__dirname, 'views', f)
+        });
       }
     }
   });

@@ -19,8 +19,8 @@ div.comment.matte(id='com-' + comment._id.toString())
     - }
   div.comment-body
     p.comment-txt
-      !{app.util.formatCommentText(comment.body)}
+      !{util.formatCommentText(comment.body)}
     h3.comment-added
       =comment.created
-    - if (typeof(member) !== 'undefined' && member._id.toString() === comment.member._id.toString())
+    - if (typeof(member) === 'undefined' || member._id.toString() === comment.member._id.toString())
         a.delete-comment(id='delcom-' + comment._id.toString()) DELETE
