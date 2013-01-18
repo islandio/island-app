@@ -656,7 +656,7 @@ Island = (function ($) {
                 if (jrid.hasClass('adjustable-grid'))
                   grid.collage(true);
                 else grid.collage();
-                updateTimes(comHolder);
+                updateTimes(jrid);
                 initVideoSlides();
               } else console.log(res.message);
               fetching = false;

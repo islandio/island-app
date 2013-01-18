@@ -18,6 +18,13 @@ var argv = optimist
     .default('env', 'dev')
     .argv;
 
+function errCheck(err, op) {
+  if (err) {
+    error('Error during ' + op + ':\n' + err.stack);
+    process.exit(1);
+  };
+}
+
 var db = 'mongodb://localhost:27018/island';
 var redis_host = 'localhost';
 var redis_pass = null;
@@ -29,31 +36,23 @@ if (argv.env === 'pro') {
   redis_pass = 'f327cfe980c971946e80b8e975fbebb4';
 }
 
-function errCheck(err, op) {
-  if (err) {
-    error('Error during ' + op + ':\n' + err.stack);
-    process.exit(1);
-  };
-}
-
-var redisClient = redis.createClient(argv.redis_port, argv.redis_host);
-if (argv.redis_pass && argv.redis_host !== 'localhost')
-  redisClient.auth(argv.redis_host + ':' + argv.redis_pass, function (err) {
-    if (err) throw err;
-  });
-
-reds.createClient = function () {
-  return exports.client || redisClient;
-};
-
-var search = reds.createSearch('media');
-
-// Connect to DB.
+var redisClient;
+var search;
 var memberDb;
 var _id;
 
 Step(
   function () {
+    redisClient = redis.createClient(argv.redis_port, argv.redis_host);
+    if (argv.redis_pass && argv.redis_host !== 'localhost') {
+      redisClient.auth(argv.redis_host + ':' + argv.redis_pass, function (err) {
+        if (err) throw err;
+      });
+    }
+    redisClient.on('ready', this);
+  },
+  function () {
+    log('Redis ready.');
     var next = this;
     mongodb.connect(db, {
                       server: { poolSize: 4 },
@@ -66,6 +65,10 @@ Step(
   },
   function (err, mDb) {
     memberDb = mDb;
+    reds.createClient = function () {
+      return exports.client || redisClient;
+    };
+    search = reds.createSearch('media');
     this();
   },
   // Index posts
@@ -84,7 +87,7 @@ Step(
             // search.index(post.body.replace(/#island/g, ''), post._id);
             if (mem.displayName && mem.displayName !== '')
               search.index(mem.displayName, post._id);
-            log('\nIndexing post: ' + post.title);
+            log('Indexing post: ' + post.title);
             _next();
           });
         });
@@ -94,7 +97,7 @@ Step(
   // Done.
   function (err) {
     errCheck(err, 'at end');
-    log('\nAll done!\n');
+    log('\nAll done!');
     process.exit(0);
   }
 );
