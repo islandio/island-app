@@ -2,7 +2,8 @@
 
 var log = require('console').log;
 var mongodb = require('mongodb');
-var search = require('reds').createSearch('media');
+var redis = require('redis');
+var reds = require('reds');
 var util = require('util'), error = util.error,
     debug = util.debug, inspect = util.inspect;
 var Step = require('step');
@@ -17,9 +18,16 @@ var argv = optimist
     .default('env', 'dev')
     .argv;
 
-var db = argv.env === 'dev' ?
-          'mongo://localhost:27018/island' :
-          'mongo://islander:V[AMF?UV{b@10.112.1.168:27017/island';
+var db = 'mongodb://localhost:27018/island';
+var redis_host = 'localhost';
+var redis_pass = null;
+var redis_port = 6379;
+if (argv.env === 'pro') {
+  log('Targeting production server!');
+  db = 'mongodb://nodejitsu_sanderpick:as3nonkk9502pe1ugseg3mj9ev@ds043947.mongolab.com:43947/nodejitsu_sanderpick_nodejitsudb9750563292';
+  redis_host = 'nodejitsudb2554783797.redis.irstack.com';
+  redis_pass = 'f327cfe980c971946e80b8e975fbebb4';
+}
 
 function errCheck(err, op) {
   if (err) {
@@ -27,6 +35,18 @@ function errCheck(err, op) {
     process.exit(1);
   };
 }
+
+var redisClient = redis.createClient(argv.redis_port, argv.redis_host);
+if (argv.redis_pass && argv.redis_host !== 'localhost')
+  redisClient.auth(argv.redis_host + ':' + argv.redis_pass, function (err) {
+    if (err) throw err;
+  });
+
+reds.createClient = function () {
+  return exports.client || redisClient;
+};
+
+var search = reds.createSearch('media');
 
 // Connect to DB.
 var memberDb;

@@ -1,22 +1,28 @@
 #!/usr/bin/env node
-
 /**
  * Arguments.
  */
 var optimist = require('optimist');
 var argv = optimist
     .describe('help', 'Get help')
+    .describe('dev', 'Port to listen on')
+      .boolean('dev')
     .describe('port', 'Port to listen on')
       .default('port', 3644)
     .describe('db', 'MongoDb URL to connect to')
-      .default('db', 'mongodb://localhost:27018/island')
-    .describe('redis_port', 'Port to listen on')
+      .default('db', 'mongodb://nodejitsu_sanderpick:as3nonkk9502pe1ugseg3mj9ev@ds043947.mongolab.com:43947/nodejitsu_sanderpick_nodejitsudb9750563292')
+    .describe('redis_port', 'Redis port')
       .default('redis_port', 6379)
     .describe('redis_host', 'Redis host')
-      .default('redis_host', 'localhost')
-    .describe('redis_password', 'Redis password')
-      .default('redis_password', null)
+      .default('redis_host', 'nodejitsudb2554783797.redis.irstack.com')
+    .describe('redis_pass', 'Redis password')
+      .default('redis_pass', 'f327cfe980c971946e80b8e975fbebb4')
     .argv;
+
+if (argv.dev) {
+  argv.db = 'mongodb://localhost:27018/island';
+  argv.redis_host = 'localhost';
+}
 
 if (argv._.length || argv.help) {
   optimist.showHelp();
@@ -29,6 +35,7 @@ if (argv._.length || argv.help) {
 var http = require('http');
 var express = require('express');
 var mongodb = require('mongodb');
+var redis = require('redis');
 var ObjectID = require('mongodb').BSONPure.ObjectID;
 var request = require('request');
 
@@ -104,9 +111,15 @@ var channels = {
   all: 'island'
 };
 
+console.log('Connecting to Redis:', argv.redis_host + ':' + argv.redis_port);
+var redisClient = redis.createClient(argv.redis_port, argv.redis_host);
+if (argv.redis_pass && argv.redis_host !== 'localhost')
+  redisClient.auth(argv.redis_host + ':' + argv.redis_pass, function (err) {
+    if (err) throw err;
+  });
+
 sessionStore = new RedisStore({
-  host: argv.redis_host,
-  port: argv.redis_port,
+  client: redisClient,
   maxAge: 86400 * 1000 * 7
 });
 
@@ -1589,7 +1602,7 @@ function distributeUpdate(type, target, id) {
 // update everyone with new trends
 function distributeTrendingMedia() {
   findTrendingMedia(10, function (err, media) {
-    if (err) throw new Error('Failed to find media trends');
+    if (err) return console.warn('Failed to find media trends');
     mediaTrends = media;
     var rendered = [];
     _.each(mediaTrends, function (trend) {
@@ -1605,7 +1618,7 @@ function distributeTrendingMedia() {
 // TODO: Use the Twitter realtime API instead
 function findTwitterHandles() {
   memberDb.findTwitterHandles(function (err, handles) {
-    if (err) throw new Error('Failed to find twitter handles');
+    if (err) return console.warn('Failed to find twitter handles');
     twitterHandles = handles;
   });
 };
@@ -1624,9 +1637,10 @@ if (!module.parent) {
       new MemberDb(db, {
         app: app,
         ensureIndexes: true,
-        redis_port: argv.redis_port,
-        redis_host: argv.redis_host,
-        redis_password: argv.redis_password,
+        redisClient: redisClient,
+        // redis_port: argv.redis_port,
+        // redis_host: argv.redis_host,
+        // redis_password: argv.redis_password,
       }, this);
     }, function (err, mDb) {
       if (err) return this(err);
