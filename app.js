@@ -10,6 +10,12 @@ var argv = optimist
       .default('port', 3644)
     .describe('db', 'MongoDb URL to connect to')
       .default('db', 'mongodb://localhost:27018/island')
+    .describe('redis_port', 'Port to listen on')
+      .default('redis_port', 6379)
+    .describe('redis_host', 'Redis host')
+      .default('redis_host', 'localhost')
+    .describe('redis_password', 'Redis password')
+      .default('redis_password', null)
     .argv;
 
 if (argv._.length || argv.help) {
@@ -98,7 +104,11 @@ var channels = {
   all: 'island'
 };
 
-sessionStore = new RedisStore({ maxAge: 86400 * 1000 * 7 });
+sessionStore = new RedisStore({
+  host: argv.redis_host,
+  port: argv.redis_port,
+  maxAge: 86400 * 1000 * 7
+});
 
 app.configure(function () {
   app.set('port', process.env.PORT || argv.port);
@@ -1611,7 +1621,13 @@ if (!module.parent) {
       mongodb.connect(argv.db, {server: { poolSize: 4 }}, this);
     }, function (err, db) {
       if (err) return this(err);
-      new MemberDb(db, { app: app, ensureIndexes: true }, this);
+      new MemberDb(db, {
+        app: app,
+        ensureIndexes: true,
+        redis_port: argv.redis_port,
+        redis_host: argv.redis_host,
+        redis_password: argv.redis_password,
+      }, this);
     }, function (err, mDb) {
       if (err) return this(err);
       memberDb = mDb;

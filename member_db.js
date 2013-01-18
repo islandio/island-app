@@ -13,6 +13,7 @@
 var ObjectID = require('mongodb').BSONPure.ObjectID;
 var crypto = require('crypto');
 var request = require('request');
+var redis = require('redis');
 var reds = require('reds');
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
@@ -40,6 +41,21 @@ var MemberDb = exports.MemberDb = function (db, options, cb) {
   self.db = db;
   self.app = options.app;
   self.collections = {};
+
+  reds.createClient = function () {
+    if (exports.client)
+      return exports.client;
+    console.log('Connecting to Redis:',
+                options.redis_host + ':' + options.redis_port);
+    exports.client = redis.createClient(options.redis_port, options.redis_host);
+    if (options.redis_password)
+      exports.client.auth(options.redis_host + ':'
+                          + options.redis_password, function (err) {
+        if (err) throw err;
+      });
+    return exports.client;
+  };
+
   self.search = reds.createSearch('media');
 
   var collections = {

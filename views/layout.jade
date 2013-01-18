@@ -10,8 +10,6 @@ html(lang="en")
     link(rel='stylesheet', href='https://d271mvlc6gc7bl.cloudfront.net/main/jplayer/skin/blue.monday/jplayer.blue.monday.css')
     
     link(rel='shortcut icon', href='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/favicon.ico', type='image/x-icon')
-    
-    //- script(src='/nowjs/now.js')
 
     script(type='text/javascript', src='https://d3dy5gmtp8yhk7.cloudfront.net/1.12/pusher.min.js')
     
@@ -46,6 +44,6 @@ html(lang="en")
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
   body
-    - if (member)
+    - if ('undefined' !== typeof(member))
       div(id='_d', data-mid=member._id.toString())
     block content
