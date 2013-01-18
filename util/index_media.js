@@ -43,9 +43,10 @@ var _id;
 
 Step(
   function () {
-    redisClient = redis.createClient(argv.redis_port, argv.redis_host);
-    if (argv.redis_pass && argv.redis_host !== 'localhost') {
-      redisClient.auth(argv.redis_host + ':' + argv.redis_pass, function (err) {
+    redisClient = redis.createClient(redis_port, redis_host);
+    if (redis_pass && redis_host !== 'localhost') {
+      redisClient.auth(redis_host + ':' + redis_pass, function (err) {
+        console.log('what the hell is going on here??????')
         if (err) throw err;
       });
     }
