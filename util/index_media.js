@@ -33,8 +33,8 @@ if (argv.env === 'pro') {
   log('Targeting production server!');
   db = 'mongodb://nodejitsu_sanderpick:as3nonkk9502pe1ugseg3mj9ev@ds043947.mongolab.com:43947/nodejitsu_sanderpick_nodejitsudb9750563292';
   redis_host = 'slimehead.redistogo.com';
-  redis_port = 6379;
-  redis_pass = 'redistogo:b1f23cd8645e79bfead95f1a999985cb';
+  redis_port = 9818;
+  redis_pass = 'b1f23cd8645e79bfead95f1a999985cb';
 }
 
 var redisClient;
@@ -85,7 +85,6 @@ Step(
                                               function (err, mem) {
             errCheck(err, 'finding member for post update');
             search.index(post.title, post._id);
-            // search.index(post.body.replace(/#island/g, ''), post._id);
             if (mem.displayName && mem.displayName !== '')
               search.index(mem.displayName, post._id);
             log('Indexing post: ' + post.title);
