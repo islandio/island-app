@@ -32,8 +32,9 @@ var redis_port = 6379;
 if (argv.env === 'pro') {
   log('Targeting production server!');
   db = 'mongodb://nodejitsu_sanderpick:as3nonkk9502pe1ugseg3mj9ev@ds043947.mongolab.com:43947/nodejitsu_sanderpick_nodejitsudb9750563292';
-  redis_host = 'nodejitsudb2554783797.redis.irstack.com';
-  redis_pass = 'f327cfe980c971946e80b8e975fbebb4';
+  redis_host = 'slimehead.redistogo.com';
+  redis_port = 6379;
+  redis_pass = 'redistogo:b1f23cd8645e79bfead95f1a999985cb';
 }
 
 var redisClient;
@@ -45,8 +46,7 @@ Step(
   function () {
     redisClient = redis.createClient(redis_port, redis_host);
     if (redis_pass && redis_host !== 'localhost') {
-      redisClient.auth(redis_host + ':' + redis_pass, function (err) {
-        console.log('what the hell is going on here??????')
+      redisClient.auth(redis_pass, function (err) {
         if (err) throw err;
       });
     }

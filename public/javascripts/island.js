@@ -272,7 +272,7 @@ Island = (function ($) {
       scroll: function (time) {
         var _this = this;
         if (!last || time - last > delay) {
-          last = performance.now ? performance.now() : Date.now();
+          last = performance && performance.now ? performance.now() : Date.now();
           top -= inc;
           if (-top >= holderHeight) {
             top = 0;
