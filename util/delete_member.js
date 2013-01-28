@@ -18,8 +18,8 @@ var argv = optimist
     .argv;
 
 var db = argv.env === 'dev' ?
-          'mongo://localhost:27018/island' :
-          'mongo://islander:V[AMF?UV{b@10.112.1.168:27017/island';
+          'mongodb://localhost:27018/island' :
+          'mongodb://islander:V[AMF?UV{b@10.112.1.168:27017/island';
 
 function errCheck(err, op) {
   if (err) {

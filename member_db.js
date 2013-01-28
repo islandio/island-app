@@ -131,11 +131,12 @@ MemberDb.prototype.findOrCreateMemberFromFacebook =
     var facebook = new Facebook(facebookCredentials);
     Step(
       function () {
+        console.log('FBCRED: ', props.facebookId, props.facebookToken);
         facebook.get(props.facebookId,
                     { access_token: props.facebookToken }, this);
       },
       function (err, data) {
-        if (err) return cb(err);
+        if (err) return this(true);
         _.extend(props, {
           locale: data.locale,
           timezone: data.timezone,
@@ -153,7 +154,7 @@ MemberDb.prototype.findOrCreateMemberFromFacebook =
                     { access_token: props.facebookToken }, this.parallel());
       },
       function (err, location, hometown, albums) {
-        if (err) return cb(err);
+        if (err) return this(true);
         if (location) {
           props.location = { name: location.name };
           _.extend(props.location, location.location);
@@ -170,7 +171,6 @@ MemberDb.prototype.findOrCreateMemberFromFacebook =
         else this();
       },
       function (err, data) {
-        if (err) return cb(err);
         if (data) {
           props.image = {
             cf_url: data.source,

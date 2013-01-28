@@ -14,13 +14,10 @@ var argv = optimist
       .default('db', 'mongodb://nodejitsu_sanderpick:as3nonkk9502pe1ugseg3mj9ev@ds043947.mongolab.com:43947/nodejitsu_sanderpick_nodejitsudb9750563292')
     .describe('redis_port', 'Redis port')
       .default('redis_port', 9818)
-      // .default('redis_port', 6379)
     .describe('redis_host', 'Redis host')
       .default('redis_host', 'slimehead.redistogo.com')
-      // .default('redis_host', 'nodejitsudb2554783797.redis.irstack.com')
     .describe('redis_pass', 'Redis password')
       .default('redis_pass', 'b1f23cd8645e79bfead95f1a999985cb')
-      // .default('redis_pass', 'f327cfe980c971946e80b8e975fbebb4')
     .argv;
 
 if (argv.dev) {
@@ -1466,6 +1463,7 @@ function getGrid(query, opts, cb) {
   );
 }
 function findTrendingMedia(limit, cb) {
+  return cb(null, []);
   Step(
     function () {
       memberDb.findPosts({}, { limit: 100, sort: { created: -1 }}, this);

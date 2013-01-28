@@ -17,9 +17,9 @@ var argv = optimist
     .default('env', 'dev')
     .argv;
 
-var db = argv.env === 'dev' ?
-          'mongo://localhost:27018/island' :
-          'mongo://islander:V[AMF?UV{b@10.112.1.168:27017/island';
+var db = argv.env === 'pro' ?
+          'mongodb://nodejitsu_sanderpick:as3nonkk9502pe1ugseg3mj9ev@ds043947.mongolab.com:43947/nodejitsu_sanderpick_nodejitsudb9750563292':
+          'mongodb://localhost:27018/island';
 
 function errCheck(err, op) {
   if (err) {
