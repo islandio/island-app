@@ -25,29 +25,31 @@ block main
         - var height = med.instagram ? 640 : med.image.meta.height
         div.obj-holder(style='height: ' + height + 'px')
           img.matte(id='image-' + med._id, src=(med.image.cf_url || med.image.url), width=640, height=height)
-          div.hearts(data-num=med.hearts)
-            div.hearts-wrap
-              img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
-              img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
-              img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
-              img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
-              img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
-            div.hearts-back(id='hrt-' + med._id)
-              img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/hearts.png')
+          - if (member)
+            div.hearts(data-num=med.hearts)
+              div.hearts-wrap
+                img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
+                img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
+                img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
+                img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
+                img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
+              div.hearts-back(id='hrt-' + med._id)
+                img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/hearts.png')
       - if (med.type === 'video')
         div.obj-holder
           img.mask(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-top.png", width="640", style="top: 0;")
           img.mask(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-btm.png", width="640", style="top: " + (((med.video.meta.height / med.video.meta.width) * 640)-8) + "px;")
           video(src=med.video.cf_url, id='video-' + med._id, poster=med.poster.cf_url, controls='controls', preload='none', width='640', height=(med.video.meta.height / med.video.meta.width) * 640)
-          div.hearts(data-num=med.hearts)
-            div.hearts-wrap
-              img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
-              img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
-              img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
-              img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
-              img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
-            div.hearts-back(id='hrt-' + med._id)
-              img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/hearts.png')
+          - if (member)
+            div.hearts(data-num=med.hearts)
+              div.hearts-wrap
+                img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
+                img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
+                img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
+                img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
+                img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
+              div.hearts-back(id='hrt-' + med._id)
+                img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/hearts.png')
       - if (med.type === 'audio')
         div.obj-holder
           div.jp-audio(id="jp_container_" + med.audioIndex)
@@ -103,14 +105,15 @@ block main
   div.single-right
     div(style='padding-top: 4px')
       img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-bubble.png', alt='is-bubble', align='top', width=26, height=20)
-    textarea.commentor-input-dummy.matte(name='Write a comment...', placeholder='Write a comment...')
-    div.commentor
-      textarea.commentor-input.matte(placeholder='Write a comment...')
-      input.is-button.add-comment(id='addto-' + post._id, type='submit', title='Add Comment', value='Comment')
-      - if (member)
-        span.commentor-whois Logged in as 
-          span(style='font-style: italic')
-            =member.displayName
+    - if (member)
+      textarea.commentor-input-dummy.matte(name='Write a comment...', placeholder='Write a comment...')
+      div.commentor
+        textarea.commentor-input.matte(placeholder='Write a comment...')
+        input.is-button.add-comment(id='addto-' + post._id, type='submit', title='Add Comment', value='Comment')
+        - if (member)
+          span.commentor-whois Logged in as 
+            span(style='font-style: italic')
+              =member.displayName
     div.obj-comments(id='coms-' + post._id)(data-id=post._id.toString(), data-limit="0", data-showmember="true", data-showpost="false")
       span.loading Loading ...
   - if (member)

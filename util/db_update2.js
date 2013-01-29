@@ -13,7 +13,7 @@ var MemberDb = require('../member_db.js').MemberDb;
 
 var optimist = require('optimist');
 var argv = optimist
-    .default('db', 'mongo://localhost:27018/island')
+    .default('db', 'mongodb://localhost:27018/island')
     .argv;
 
 function errCheck(err, op) {

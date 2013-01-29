@@ -21,7 +21,7 @@ var argv = optimist
     .argv;
 
 if (argv.dev) {
-  argv.db = 'mongodb://localhost:27018/island';
+  argv.db = 'mongodb://localhost:27018/nodejitsu_sanderpick_nodejitsudb9750563292';
   argv.redis_host = 'localhost';
   argv.redis_port = 6379;
 }
@@ -289,7 +289,7 @@ var templateUtil = {
 app.get('/', authorize, function (req, res) {
   res.render('media', {
     title: 'You\'re Island',
-    trends: mediaTrends || [],
+    trends: [] || [],
     member: req.user,
     twitters: twitterHandles,
   });
@@ -697,7 +697,7 @@ app.post('/page/:n', authorize, function (req, res) {
       status: 'error',
       message: 'Invalid request.',
     });
-  getGrid({}, { limit: 20, skip: 20 * (req.params.n - 1)},
+  getGrid({}, { limit: 10, skip: 10 * (req.params.n - 1)},
           function (err, docs) {
     if (err) return fail(err);
     Step(
@@ -961,17 +961,18 @@ app.get('/:key', function (req, res) {
           member_id: req.user._id,
         }, function (err, doc) {
           if (err) throw new Error('Failed to create view');
-          else distributeUpdate('view', 'post', doc.post_id);
+          else distributeUpdate('view', 'post', 'vcnt', doc.post_id);
         });
       // prepare document
       var img = [];
       var vid = [];
       var aud = [];
       _.each(post.medias, function (med) {
-        var rating = req.user ? _.find(med.ratings.reverse(), function (rat) {
+        var rating = req.user ? _.find(med.ratings, function (rat) {
           return req.user._id.toString() === rat.member_id.toString();
         }) : null;
         med.hearts = rating ? rating.val : 0;
+        delete med.ratings;
         switch (med.type) {
           case 'image': img.push(med); break;
           case 'video': vid.push(med); break;
@@ -1093,7 +1094,7 @@ app.put('/hit/:mediaId', function (req, res) {
   };
   memberDb.createHit(props, function (err, doc) {
     if (err) return fail(err);
-    distributeUpdate('hit', 'media', doc.media_id);
+    distributeUpdate('hit', 'media', 'tcnt', doc.media_id);
     res.send({ status: 'success' });
   });
   function fail(err) {
@@ -1122,7 +1123,7 @@ app.put('/comment/:postId', function (req, res) {
   memberDb.createComment(props, function (err, doc) {
     if (err) return fail(err);
     distributeComment(doc, req.user);
-    distributeUpdate('comment', 'post', doc.post._id);
+    distributeUpdate('comment', 'post', 'ccnt', doc.post._id);
     res.send({ status: 'success', data: {
              comment: doc } });
   });
@@ -1154,11 +1155,11 @@ app.put('/rate/:mediaId', function (req, res) {
   var props = {
     media_id: req.params.mediaId,
     member_id: req.user._id,
-    val: req.body.val,
+    val: Number(req.body.val),
   };
   memberDb.createRating(props, function (err, doc) {
     if (err) return fail(err);
-    distributeUpdate('rating', 'media', doc.media_id);
+    distributeUpdate('rating', 'media', 'hcnt', doc.media_id);
     res.send({ status: 'success', data: {
              val: doc.val }});
   });
@@ -1398,6 +1399,12 @@ app.delete('/comment/:id', authorize, function (req, res) {
     function (err) {
       if (err) return fail(err);
       console.log('\nDeleted comment: ' + inspect(comment) + '\n');
+      memberDb.collections.post.update({ _id: comment.post_id },
+                                      { $inc: { ccnt: -1 }}, {safe: true },
+                                      function (err) {
+        distributeUpdate('comment', 'post', 'ccnt', comment.post_id);
+      });
+      
       res.send({ status: 'success' });
       pusher.trigger(channels.all, 'comment.delete', {
         id: comment._id.toString()
@@ -1433,7 +1440,7 @@ function authorize(req, res, cb) {
 function getGrid(query, opts, cb) {
   if ('function' === typeof opts) {
     cb = opts;
-    opts = { limit: 20, skip: 0 };
+    opts = { limit: 10, skip: 0 };
   }
   opts.sort = { created: -1 };
   Step(
@@ -1445,10 +1452,6 @@ function getGrid(query, opts, cb) {
       var media = [];
       _.each(posts, function (post) {
         _.each(post.medias, function (med) {
-          med.hearts = 0;
-          _.each(med.ratings, function (rat) {
-            med.hearts += Number(rat.val);
-          });
           med.post = post;
           med.index = null;
           var match = _.find(post.medias, function (m, i) {
@@ -1502,15 +1505,6 @@ function findTrendingMedia(limit, cb) {
     return initial * Math.exp(-((new Date()).getTime() - created) / constant);
   }
 }
-function getRecentComments(limit, memberId, cb) {
-  if ('function' === typeof memberId) {
-    cb = memberId;
-    memberId = null;
-  }
-  var query = memberId ? { member_id: memberId } : {};
-  memberDb.findComments(query, { limit: limit,
-                        sort: { created: -1 } }, cb);
-}
 function renderMedia(med, cb) {
   cb(null, templates.object({ object: med }));
 }
@@ -1559,23 +1553,31 @@ function distributeComment(comment, member) {
 };
 
 // tell everyone about some meta change
-function distributeUpdate(type, target, id) {
+function distributeUpdate(type, target, counter, id) {
   if ('string' === typeof id)
     id = new ObjectID(id);
   var query = {};
-  query[target + '_id'] = id;
+  var proj = {};
+  query['_id'] = id;
+  proj[counter] = 1;
   Step(
     function () {
       var next = this;
-      if ('rating' !== type)
-        memberDb.collections[type].count(query, this);
-      else
-        memberDb.collections[type].find(query)
-                .toArray(function (err, docs) {
-          if (err) return fail(err);
-          next(null, _.reduce(_.pluck(docs, 'val'),
-                function (m, n) { return m + Number(n); }, 0));
-        });
+      memberDb.collections[target].findOne(query, proj,
+                                          function (err, doc) {
+        if (err) return fail(err);
+        console.log(counter, ':', doc[counter]);
+        next(null, doc[counter]);
+      });
+      // if ('rating' !== type)
+      //   memberDb.collections[type].count(query, this);
+      // else
+      //   memberDb.collections[type].find(query)
+      //           .toArray(function (err, docs) {
+      //     if (err) return fail(err);
+      //     next(null, _.reduce(_.pluck(docs, 'val'),
+      //           function (m, n) { return m + Number(n); }, 0));
+      //   });
     },
     function (err, count) {
       if (err) return fail(err);
@@ -1591,7 +1593,7 @@ function distributeUpdate(type, target, id) {
         var ids = _.map(docs, function (doc) {
                         return doc._id.toString(); });
         pusher.trigger(channels.all, 'update.read', {
-          ids: [id.toString()],
+          ids: ids,
           type: type,
           count: count
         });
@@ -1658,8 +1660,8 @@ if (!module.parent) {
       });
 
       // continuous updates 
-      setInterval(distributeTrendingMedia, 30000);
-      distributeTrendingMedia();
+      // setInterval(distributeTrendingMedia, 30000);
+      // distributeTrendingMedia();
       setInterval(findTwitterHandles, 60000);
       findTwitterHandles();
 

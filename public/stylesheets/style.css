@@ -425,7 +425,8 @@ a.resend-conf {
   font-size: 28px;
   font-family: Title;
 }
-.login-prompt {
+.login-prompt,
+.no-results {
   font-style: italic;
   color: #808080;
 }
@@ -929,7 +930,7 @@ img.heart-img {
   margin: 5px 0 0;
 }
 .obj-comments {
-  margin: 15px 0 0;
+  margin: 23px 0 0;
 }
 .comment {
   overflow: hidden;

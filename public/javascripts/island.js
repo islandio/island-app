@@ -897,13 +897,17 @@ Island = (function ($) {
           txt = '__clear__';
         search(txt, function (res) {
           if ('success' === res.status) {
-            for (var i=0; i < res.data.results.length; i++)
-              $(res.data.results[i]).appendTo(jrid);
-            if (jrid.hasClass('adjustable-grid'))
-              grid.collage(true);
-            else grid.collage();
-            updateTimes(jrid);
-            initVideoSlides();
+            if (res.data.results.length === 0) {
+              $('<span class="no-results">No results.</span>').appendTo(jrid);
+            } else {
+              for (var i=0; i < res.data.results.length; i++)
+                $(res.data.results[i]).appendTo(jrid);
+              if (jrid.hasClass('adjustable-grid'))
+                grid.collage(true);
+              else grid.collage();
+              updateTimes(jrid);
+              initVideoSlides();
+            }
             if ('__clear__' === txt) {
               jrid.removeClass('search-results');
               page = 1;
@@ -1001,6 +1005,8 @@ Island = (function ($) {
             commentCtx.empty();
             for (var i=0; i < res.data.results.length; i++)
               $(res.data.results[i]).appendTo(commentCtx);
+            if (!$('#_d').data('mid'))
+              $('.delete-comment').remove();
             updateTimes(commentCtx);
             grid.collage(true);            
           } else console.log(res.message);
@@ -1414,7 +1420,6 @@ Island = (function ($) {
       var comHolder = $('#coms-' + data.id);
       var recHolder = $('#recent-comments');
       var mid = $('#_d').data('mid');
-      console.log(mid, data.mid)
       if (!mid || mid !== data.mid)
         $('.delete-comment', com).remove();
       if (recHolder.length > 0) {
@@ -1448,6 +1453,7 @@ Island = (function ($) {
         if (ctx.length > 0) {
           var txt = $('.meta-' + data.type + 's', ctx);
           txt.text(Util.addCommas(data.count) + ' x ');
+          console.log(data.type, data.count)
         }
       });
     },

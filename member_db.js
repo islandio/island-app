@@ -40,9 +40,10 @@ var MemberDb = exports.MemberDb = function (db, options, cb) {
   self.db = db;
   self.app = options.app;
   self.collections = {};
+  self.redisClient = options.redisClient;
 
   reds.createClient = function () {
-    return exports.client || options.redisClient;
+    return exports.client || self.redisClient;
   };
 
   self.search = reds.createSearch('media');
@@ -50,12 +51,11 @@ var MemberDb = exports.MemberDb = function (db, options, cb) {
   var collections = {
     member: { index: { primaryEmail: 1, username: 1, key: 1, role: 1 } },
     post: { index: { key: 1, member_id: 1 } },
-    media: { index: { type: 1, member_id: 1 } },
-    comment: { index: { member_id: 1, media_id: 1 } },
-    view: { index: { member_id: 1, media_id: 1 } },
+    media: { index: { type: 1, member_id: 1, post_id: 1 } },
+    comment: { index: { member_id: 1, post_id: 1 } },
+    view: { index: { member_id: 1, post_id: 1 } },
     hit: { index: { member_id: 1, media_id: 1 } },
-    rating: { index: { member_id: 1, media_id: 1 } },
-    sessions: {},
+    rating: { index: { member_id: 1, media_id: 1 } }
   };
 
   Step(
@@ -131,7 +131,6 @@ MemberDb.prototype.findOrCreateMemberFromFacebook =
     var facebook = new Facebook(facebookCredentials);
     Step(
       function () {
-        console.log('FBCRED: ', props.facebookId, props.facebookToken);
         facebook.get(props.facebookId,
                     { access_token: props.facebookToken }, this);
       },
@@ -367,6 +366,8 @@ MemberDb.prototype.createPost = function (props, cb) {
                     8, function (err, key) {
     _.defaults(props, {
       key: key,
+      ccnt: 0,
+      vcnt: 0,
     });
     createDoc(self.collections.post, props,
               function (err, doc) {
@@ -382,7 +383,10 @@ MemberDb.prototype.createMedia = function (props, cb) {
   var self = this;
   if (!validate(props, ['type', 'key', 'member_id', 'post_id']))
     return cb(new Error('Invalid media'));
-  _.defaults(props, {});
+  _.defaults(props, {
+    tcnt: 0,
+    hcnt: 0,
+  });
   createDoc(self.collections.media, props, cb);
 }
 MemberDb.prototype.createView = function (props, cb) {
@@ -398,7 +402,11 @@ MemberDb.prototype.createView = function (props, cb) {
       if (err) return cb(err);
       if (!post) return cb(new Error('Post not found'));
       props.post_id = post._id;
-      createDoc(self.collections.view, props, cb);
+      createDoc(self.collections.view, props, function (err, doc) {
+        if (err) return cb(err);
+        self.collections.post.update({ _id: post._id }, { $inc: { vcnt: 1 }});
+        cb(null, doc);
+      });
     }
   );
 }
@@ -426,6 +434,7 @@ MemberDb.prototype.createComment = function (props, cb) {
       createDoc(self.collections.comment, props,
                 function (err, doc) {
         if (err) return cb(err);
+        self.collections.post.update({ _id: post._id }, { $inc: { ccnt: 1 }});
         getDocIds.call(self, doc, cb);
       });
     }
@@ -451,13 +460,31 @@ MemberDb.prototype.createRating = function (props, cb) {
                   function (err, doc) {
         if (err) return cb(err);
         if (!doc)
-          return createDoc(self.collections.rating, props, cb);
+          return createDoc(self.collections.rating, props, function (err, rat) {
+            console.log(err, rat);
+            if (err) return cb(err);
+            self.collections.media.update({ _id: med._id },
+                                          { $inc: { hcnt: props.val }},
+                                          { safe: true }, function (err) {
+              console.log('NEW', err, rat);
+              cb(err, rat);
+            });
+          });
+        console.log('OLD', err, doc);
         self.collections.rating.update({ _id: doc._id },
                                       { $set : { val: props.val,
                                         created: new Date } },
                                       { safe: true }, function (err) {
-          doc.val = props.val;
-          cb(err, doc);
+          if (err) return cb(err);
+          console.log('UPDATE', props.val);
+          self.collections.media.update({ _id: med._id },
+                                        { $inc: { hcnt: props.val - doc.val }},
+                                        { safe: true }, function (err) {
+            if (doc)
+              doc.val = props.val;
+            console.log('TOTAL', props.val);
+            cb(err, doc);
+          });
         });
       });
     }
@@ -476,7 +503,11 @@ MemberDb.prototype.createHit = function (props, cb) {
       if (err) return cb(err);
       if (!med) return cb(new Error('Media not found'));
       props.media_id = med._id;
-      createDoc(self.collections.hit, props, cb);
+      createDoc(self.collections.hit, props, function (err, doc) {
+        if (err) return cb(err);
+        self.collections.media.update({ _id: med._id }, { $inc: { tcnt: 1 }});
+        cb(null, doc);
+      });
     }
   );
 }
@@ -492,27 +523,29 @@ MemberDb.prototype.findPosts = function (query, opts, cb) {
     opts = {};
   }
   find.call(self, self.collections.post, query, opts,
-          function (err, posts) {
+            function (err, posts) {
     if (err) return cb(err);
     if (posts.length === 0)
       return cb(null, []);
     Step(
       function () {
         fillDocList.call(self, 'media', posts, 'post_id',
-                        { bare: true }, this.parallel());
-        fillDocList.call(self, 'comment', posts, 'post_id',
-                        { bare: true }, this.parallel());
-        fillDocList.call(self, 'view', posts, 'post_id',
-                        { bare: true }, this.parallel());
+                        { bare: true }, this);
+        // fillDocList.call(self, 'comment', posts, 'post_id',
+        //                 { bare: true }, this);
+        // fillDocList.call(self, 'view', posts, 'post_id',
+        //                 { bare: true }, this);
       },
       function (err) {
         if (err) return cb(err);
-        var next = this;
+        if (!('key' in query))
+          return this();
+        var next = _.after(posts.length, this);
         _.each(posts, function (post) {
           fillDocList.call(self, 'rating', post.medias, 'media_id',
-                          { bare: true }, next.parallel());
-          fillDocList.call(self, 'hit', post.medias, 'media_id',
-                          { bare: true }, next.parallel());
+                          { bare: true }, next);
+          // fillDocList.call(self, 'hit', post.medias, 'media_id',
+          //                 { bare: true }, next);
         });
       },
       function (err) {
@@ -521,35 +554,15 @@ MemberDb.prototype.findPosts = function (query, opts, cb) {
     );
   });
 }
-MemberDb.prototype.findMedia = function (query, opts, cb) {
-  var self = this;
-  if ('function' === typeof opts) {
-    cb = opts;
-    opts = {};
-  }
-  var fill = opts.fill;
-  delete opts.fill;
-  find.call(self, self.collections.media, query, opts,
-          function (err, media) {
-    if (err) return cb(err);
-    if (!fill || fill.length === 0)
-      return cb(null, media);
-    Step(
-      function () {
-        var next = this;
-        _.each(fill, function (f) {
-          fillDocList.call(self, f, media, 'media_id',
-                          { bare: true }, next.parallel());
-        });
-      },
-      function (err) {
-        cb(err, media);
-      }
-    );
-  });
-}
 MemberDb.prototype.findComments = function (query, opts, cb) {
-  find.call(this, this.collections.comment, query, opts, cb);
+  var self = this;
+  find.call(self, self.collections.comment, query, opts,
+            function (err, docs) {
+    if (err) return cb(err);
+    if (docs.length === 0)
+      return cb(null, []);
+    cb(err, docs);
+  });
 }
 
 
@@ -633,30 +646,12 @@ MemberDb.prototype.searchPosts = function (str, cb) {
         Step(
           function () {
             fillDocList.call(self, 'media', posts, 'post_id',
-                            { bare: true }, this.parallel());
-            fillDocList.call(self, 'comment', posts, 'post_id',
-                            { bare: true }, this.parallel());
-            fillDocList.call(self, 'view', posts, 'post_id',
-                            { bare: true }, this.parallel());
-          },
-          function (err) {
-            if (err) return cb(err);
-            var next = this;
-            _.each(posts, function (post) {
-              fillDocList.call(self, 'rating', post.medias, 'media_id',
-                              { bare: true }, next.parallel());
-              fillDocList.call(self, 'hit', post.medias, 'media_id',
-                              { bare: true }, next.parallel());
-            });
+                            { bare: true }, this);
           },
           function (err) {
             if (err) return cb(err);
             _.each(posts, function (post) {
               _.each(post.medias, function (med) {
-                med.hearts = 0;
-                _.each(med.ratings, function (rat) {
-                  med.hearts += Number(rat.val);
-                });
                 med.post = post;
                 med.index = null;
                 var match = _.find(post.medias, function (m, i) {
@@ -925,6 +920,7 @@ function findOne(collection, query, opts, cb) {
  */
 function fillDocList(list, docs, key, opts, cb) {
   var self = this;
+  var start = (new Date()).getTime();
   if ('function' === typeof opts) {
     cb = opts;
     opts = {};
@@ -942,6 +938,7 @@ function fillDocList(list, docs, key, opts, cb) {
     query[key] = doc._id;
     find.call(self, collection, query, { bare: opts.bare },
               function (err, results) {
+      console.log(((new Date()).getTime() - start) + 'ms ' + key);
       if (err) return cb(err);
       doc[list] = results;
       _done();

@@ -1,4 +1,4 @@
-- if ('image' === object.type)
+- if ('image' === object.type || 'audio' === object.type)
   div.each-grid-obj.matte(id=object._id.toString(), class='is-' + object.type)
     div.object-title
       - if (object.post.member.role === 0 && object.post.member.key)
@@ -33,19 +33,19 @@
             tr
               td
                 span.object-meta-txt.meta-views
-                  | #{object.post.views.length} x 
+                  | #{object.post.vcnt} x 
                 img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-eye.png', width=14, height=11)
               td
                 span.object-meta-txt.meta-hits
-                  | #{object.hits.length} x 
+                  | #{object.tcnt} x 
                 img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-click.png', width=11, height=10)
               td
                 span.object-meta-txt.meta-ratings
-                  | #{object.hearts} x 
+                  | #{object.hcnt} x 
                 img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-heart.png', width=11, height=11)
               td
                 span.object-meta-txt.meta-comments
-                  | #{object.post.comments.length} x 
+                  | #{object.post.ccnt} x 
                 img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-comment.png', width=10, height=11)
 - if ('video' === object.type)
   div.each-grid-obj.matte(id=object._id.toString(), class='is-' + object.type)
@@ -86,17 +86,17 @@
             tr
               td
                 span.object-meta-txt.meta-views
-                  | #{object.post.views.length} x 
+                  | #{object.post.vcnt} x 
                 img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-eye.png', width=14, height=11)
               td
                 span.object-meta-txt.meta-hits
-                  | #{object.hits.length} x 
+                  | #{object.tcnt} x 
                 img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-click.png', width=11, height=10)
               td
                 span.object-meta-txt.meta-ratings
-                  | #{object.hearts} x 
+                  | #{object.hcnt} x 
                 img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-heart.png', width=11, height=11)
               td
                 span.object-meta-txt.meta-comments
-                  | #{object.post.comments.length} x 
+                  | #{object.post.ccnt} x 
                 img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-comment.png', width=10, height=11)    
