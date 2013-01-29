@@ -14,6 +14,7 @@ var MemberDb = require('../member_db.js').MemberDb;
 var optimist = require('optimist');
 var argv = optimist
     .default('db', 'mongodb://localhost:27018/nodejitsu_sanderpick_nodejitsudb9750563292')
+    .boolean('pro')
     .argv;
 
 function errCheck(err, op) {
@@ -23,6 +24,8 @@ function errCheck(err, op) {
   };
 }
 
+if (argv.pro)
+  argv.db = 'mongodb://nodejitsu_sanderpick:as3nonkk9502pe1ugseg3mj9ev@ds043947.mongolab.com:43947/nodejitsu_sanderpick_nodejitsudb9750563292';
 
 // Connect to DB.
 var memberDb;
