@@ -1566,18 +1566,8 @@ function distributeUpdate(type, target, counter, id) {
       memberDb.collections[target].findOne(query, proj,
                                           function (err, doc) {
         if (err) return fail(err);
-        console.log(counter, ':', doc[counter]);
         next(null, doc[counter]);
       });
-      // if ('rating' !== type)
-      //   memberDb.collections[type].count(query, this);
-      // else
-      //   memberDb.collections[type].find(query)
-      //           .toArray(function (err, docs) {
-      //     if (err) return fail(err);
-      //     next(null, _.reduce(_.pluck(docs, 'val'),
-      //           function (m, n) { return m + Number(n); }, 0));
-      //   });
     },
     function (err, count) {
       if (err) return fail(err);

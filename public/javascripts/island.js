@@ -1453,7 +1453,6 @@ Island = (function ($) {
         if (ctx.length > 0) {
           var txt = $('.meta-' + data.type + 's', ctx);
           txt.text(Util.addCommas(data.count) + ' x ');
-          console.log(data.type, data.count)
         }
       });
     },
