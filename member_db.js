@@ -531,10 +531,6 @@ MemberDb.prototype.findPosts = function (query, opts, cb) {
       function () {
         fillDocList.call(self, 'media', posts, 'post_id',
                         { bare: true }, this);
-        // fillDocList.call(self, 'comment', posts, 'post_id',
-        //                 { bare: true }, this);
-        // fillDocList.call(self, 'view', posts, 'post_id',
-        //                 { bare: true }, this);
       },
       function (err) {
         if (err) return cb(err);
@@ -544,8 +540,6 @@ MemberDb.prototype.findPosts = function (query, opts, cb) {
         _.each(posts, function (post) {
           fillDocList.call(self, 'rating', post.medias, 'media_id',
                           { bare: true }, next);
-          // fillDocList.call(self, 'hit', post.medias, 'media_id',
-          //                 { bare: true }, next);
         });
       },
       function (err) {
