@@ -598,7 +598,7 @@ Island = (function ($) {
       });
 
       // start all video thumb timers
-      initVideoSlides();
+      // initVideoSlides();
 
       // tweets
       twitterNames = $('#twitter-names').text().split(',');
@@ -657,7 +657,7 @@ Island = (function ($) {
                   grid.collage(true);
                 else grid.collage();
                 updateTimes(jrid);
-                initVideoSlides();
+                // initVideoSlides();
               } else console.log(res.message);
               fetching = false;
             }, 'json');
@@ -906,7 +906,7 @@ Island = (function ($) {
                 grid.collage(true);
               else grid.collage();
               updateTimes(jrid);
-              initVideoSlides();
+              // initVideoSlides();
             }
             if ('__clear__' === txt) {
               jrid.removeClass('search-results');
@@ -1408,7 +1408,7 @@ Island = (function ($) {
       else grid.collage();
       html.animate({ opacity: 1 }, 500);
       updateTimes(jrid);
-      initVideoSlides();
+      // initVideoSlides();
     },
 
     /**

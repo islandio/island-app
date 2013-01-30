@@ -70,14 +70,14 @@
             img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/' + str + '.png', width=w, height=h)
         - })
       a.grid-obj(href='/' + object.key, data-id=object._id.toString(), data-key=object.key)
-        img.thumb(src=object.thumbs[0].cf_url, width=232, height=object.thumbs[0].meta.height)
-        img.thumb.hidden(src=object.thumbs[1].cf_url, width=232, height=object.thumbs[1].meta.height)
-        img.thumb.hidden(src=object.thumbs[2].cf_url, width=232, height=object.thumbs[2].meta.height)
-        img.thumb.hidden(src=object.thumbs[3].cf_url, width=232, height=object.thumbs[3].meta.height)
-        img.thumb.hidden(src=object.thumbs[4].cf_url, width=232, height=object.thumbs[4].meta.height)
-        img.thumb.hidden(src=object.thumbs[5].cf_url, width=232, height=object.thumbs[5].meta.height)
-        img.thumb.hidden(src=object.thumbs[6].cf_url, width=232, height=object.thumbs[6].meta.height)
-        img.thumb.hidden(src=object.thumbs[7].cf_url, width=232, height=object.thumbs[7].meta.height)
+        //- img.thumb.hidden(src=object.thumbs[0].cf_url, width=232, height=object.thumbs[0].meta.height)
+        //- img.thumb.hidden(src=object.thumbs[1].cf_url, width=232, height=object.thumbs[1].meta.height)
+        //- img.thumb.hidden(src=object.thumbs[2].cf_url, width=232, height=object.thumbs[2].meta.height)
+        //- img.thumb.hidden(src=object.thumbs[3].cf_url, width=232, height=object.thumbs[3].meta.height)
+        //- img.thumb.hidden(src=object.thumbs[4].cf_url, width=232, height=object.thumbs[4].meta.height)
+        img.thumb(src=object.thumbs[5].cf_url, width=232, height=object.thumbs[5].meta.height)
+        //- img.thumb.hidden(src=object.thumbs[6].cf_url, width=232, height=object.thumbs[6].meta.height)
+        //- img.thumb.hidden(src=object.thumbs[7].cf_url, width=232, height=object.thumbs[7].meta.height)
       h3.object-added
         =object.created
       div.object-meta
