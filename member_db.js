@@ -914,7 +914,6 @@ function findOne(collection, query, opts, cb) {
  */
 function fillDocList(list, docs, key, opts, cb) {
   var self = this;
-  var start = (new Date()).getTime();
   if ('function' === typeof opts) {
     cb = opts;
     opts = {};
@@ -932,7 +931,6 @@ function fillDocList(list, docs, key, opts, cb) {
     query[key] = doc._id;
     find.call(self, collection, query, { bare: opts.bare },
               function (err, results) {
-      console.log(((new Date()).getTime() - start) + 'ms ' + key);
       if (err) return cb(err);
       doc[list] = results;
       _done();

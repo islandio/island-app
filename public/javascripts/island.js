@@ -1462,7 +1462,8 @@ Island = (function ($) {
      */
 
     receiveTrends: function (data) {
-      trending.receive(data.media);
+      console.log('blarg.');
+      // trending.receive(data.media);
     },
 
     /**

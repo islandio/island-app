@@ -86,7 +86,7 @@ block main
     div.grid-wrap
       #search
         h1.title-bottom / Browse
-        input#search-box.matte(type="search", placeholder="Search", value=(data.name.givenName + ' ' + data.name.familyName).toLowerCase())
+        input#search-box.matte(type="search", placeholder="Search", value=(data.displayName).toLowerCase())
         div.search-spinner
       #grid.adjustable-grid
   - else

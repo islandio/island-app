@@ -25,7 +25,7 @@ function errCheck(err, op) {
   };
 }
 
-var db = 'mongodb://localhost:27018/island';
+var db = 'mongodb://localhost:27018/nodejitsu_sanderpick_nodejitsudb9750563292';
 var redis_host = 'localhost';
 var redis_pass = null;
 var redis_port = 6379;

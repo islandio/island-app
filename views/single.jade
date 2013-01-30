@@ -120,7 +120,7 @@ block main
     div.grid-wrap
       #search
         h1.title-bottom / Browse
-        input#search-box.matte(type='search', placeholder='Search', value=(post.title).toLowerCase())
+        input#search-box.matte(type='search', placeholder='Search', value=(post.member.displayName).toLowerCase())
         div.search-spinner
       #grid.adjustable-grid
   - else

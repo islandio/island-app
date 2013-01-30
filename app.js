@@ -99,7 +99,7 @@ var instagramVerifyToken = 'doesthisworkyet';
 var app = express();
 var sessionStore;
 var memberDb;
-var mediaTrends;
+// var mediaTrends;
 var twitterHandles;
 
 ////////////// Configuration
@@ -286,13 +286,21 @@ var templateUtil = {
 ////////////// Web Routes
 
 // Home
-app.get('/', authorize, function (req, res) {
-  res.render('media', {
-    title: 'You\'re Island',
-    trends: [] || [],
-    member: req.user,
-    twitters: twitterHandles,
-  });
+app.get('/', authorize, function (req, res, next) {
+  Step(
+    function () {
+      findTrendingMedia(10, this);
+    },
+    function (err, trends) {
+      if (err) return next(err);
+      res.render('media', {
+        title: 'You\'re Island',
+        trends: trends,
+        member: req.user,
+        twitters: twitterHandles,
+      });
+    }
+  );
 });
 
 // Privacy Policy
@@ -1466,44 +1474,27 @@ function getGrid(query, opts, cb) {
   );
 }
 function findTrendingMedia(limit, cb) {
-  return cb(null, []);
   Step(
     function () {
-      memberDb.findPosts({}, { limit: 100, sort: { created: -1 }}, this);
+      memberDb.findPosts({}, { limit: 20, sort: { created: -1 }}, this);
     },
     function (err, posts) {
       if (err) return cb(err);
       var media = [];
       _.each(posts, function (post) {
-        post.edges = edgeToPresent(1, post, 24);
-        _.each(post.views, function (e) {
-          post.edges += edgeToPresent(0.5, e, 12);
-        });
-        _.each(post.comments, function (e) {
-          post.edges += edgeToPresent(2, e, 48);
-        });
         _.each(post.medias, function (med) {
-          med.edges = post.edges + edgeToPresent(1, med, 24);
-          _.each(med.hits, function (e) {
-            med.edges += edgeToPresent(1, e, 12);
-          });
-          _.each(med.ratings, function (e) {
-            med.edges += edgeToPresent(e.val, e, 24);
-          });
+          med.vcnt = post.vcnt;
+          med.ccnt = post.ccnt;
         });
         media = media.concat(post.medias);
       });
       media.sort(function (a, b) {
-        return b.edges - a.edges;
+        return (b.vcnt + b.tcnt + b.hcnt + 10*b.ccnt)
+                - (a.vcnt + a.tcnt + a.hcnt + 10*a.ccnt);
       });
       cb(null, _.first(media, limit));
     }
   );
-  function edgeToPresent(initial, edge, span) {
-    var created = (new Date(edge.created)).getTime();
-    var constant = span * 60 * 60 * 1000 / 5;
-    return initial * Math.exp(-((new Date()).getTime() - created) / constant);
-  }
 }
 function renderMedia(med, cb) {
   cb(null, templates.object({ object: med }));
@@ -1596,19 +1587,19 @@ function distributeUpdate(type, target, counter, id) {
 };
 
 // update everyone with new trends
-function distributeTrendingMedia() {
-  findTrendingMedia(10, function (err, media) {
-    if (err) return console.warn('Failed to find media trends');
-    mediaTrends = media;
-    var rendered = [];
-    _.each(mediaTrends, function (trend) {
-      rendered.push(templates.trend({ trend: trend }));
-    });
-    pusher.trigger(channels.all, 'trends.read', {
-      media: rendered
-    });
-  });
-};
+// function distributeTrendingMedia() {
+//   findTrendingMedia(10, function (err, media) {
+//     if (err) return console.warn('Failed to find media trends');
+//     mediaTrends = media;
+//     var rendered = [];
+//     _.each(mediaTrends, function (trend) {
+//       rendered.push(templates.trend({ trend: trend }));
+//     });
+//     pusher.trigger(channels.all, 'trends.read', {
+//       media: rendered
+//     });
+//   });
+// };
 
 // get a current list of contributor twitter handles
 // TODO: Use the Twitter realtime API instead
@@ -1652,7 +1643,7 @@ if (!module.parent) {
       // continuous updates 
       // setInterval(distributeTrendingMedia, 30000);
       // distributeTrendingMedia();
-      setInterval(findTwitterHandles, 60000);
+      // setInterval(findTwitterHandles, 60000);
       findTwitterHandles();
 
       // Create service subscriptions
