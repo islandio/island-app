@@ -53,11 +53,11 @@ var url = require('url');
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
 var Step = require('step');
-
-var Notify = require('./notify');
+var Email = require('./email');
 
 var RedisStore = require('connect-redis')(express);
 var MemberDb = require('./member_db.js').MemberDb;
+var EventDb = require('./event_db.js').EventDb;
 var Pusher = require('pusher');
 
 var passport = require('passport');
@@ -99,19 +99,12 @@ var instagramVerifyToken = 'doesthisworkyet';
 var app = express();
 var sessionStore;
 var memberDb;
-// var mediaTrends;
+var eventDb;
+var pusher;
+var channels = { all: 'island_test' };
 var twitterHandles;
 
 ////////////// Configuration
-
-var pusher = new Pusher({
-  appId: '35474',
-  key: 'c260ad31dfbb57bddd94',
-  secret: 'b29cec4949ef7c0d14cd'
-});
-var channels = {
-  all: 'island'
-};
 
 console.log('Connecting to Redis:', argv.redis_host + ':' + argv.redis_port);
 var redisClient = redis.createClient(argv.redis_port, argv.redis_host);
@@ -619,7 +612,7 @@ app.put('/signup', function (req, res, next) {
     referer.search = referer.query = referer.hash = null;
     referer.pathname = '/';
     var confirm = path.join(url.format(referer), 'confirm', member._id.toString());
-    Notify.welcome(member, confirm, function (err, msg) {
+    Email.welcome(member, confirm, function (err, msg) {
       if (err) return next(err);
       res.send({
         status: 'success',
@@ -683,7 +676,7 @@ app.post('/resendconf/:id', authorize, function (req, res) {
     referer.search = referer.query = referer.hash = null;
     referer.pathname = '/';
     var confirm = path.join(url.format(referer), 'confirm', member._id.toString());
-    Notify.welcome(member, confirm, function (err) {
+    Email.welcome(member, confirm, function (err) {
       if (err) return next(err);
       res.send({
         status: 'success',
@@ -1132,6 +1125,22 @@ app.put('/comment/:postId', function (req, res) {
     if (err) return fail(err);
     distributeComment(doc, req.user);
     distributeUpdate('comment', 'post', 'ccnt', doc.post._id);
+    eventDb.subscribe({
+      member_id: req.user._id,
+      post_id: new ObjectID(req.params.postId),
+      channel: 'island-' + req.user.key,
+    });
+    eventDb.publish({
+      member_id: req.user._id,
+      post_id: new ObjectID(req.params.postId),
+      data: {
+        m: req.user.displayName,
+        a: 'commented on',
+        p: doc.post.title,
+        k: doc.post.key,
+        b: doc.body
+      }
+    });
     res.send({ status: 'success', data: {
              comment: doc } });
   });
@@ -1412,7 +1421,6 @@ app.delete('/comment/:id', authorize, function (req, res) {
                                       function (err) {
         distributeUpdate('comment', 'post', 'ccnt', comment.post_id);
       });
-      
       res.send({ status: 'success' });
       pusher.trigger(channels.all, 'comment.delete', {
         id: comment._id.toString()
@@ -1586,21 +1594,6 @@ function distributeUpdate(type, target, counter, id) {
   }
 };
 
-// update everyone with new trends
-// function distributeTrendingMedia() {
-//   findTrendingMedia(10, function (err, media) {
-//     if (err) return console.warn('Failed to find media trends');
-//     mediaTrends = media;
-//     var rendered = [];
-//     _.each(mediaTrends, function (trend) {
-//       rendered.push(templates.trend({ trend: trend }));
-//     });
-//     pusher.trigger(channels.all, 'trends.read', {
-//       media: rendered
-//     });
-//   });
-// };
-
 // get a current list of contributor twitter handles
 // TODO: Use the Twitter realtime API instead
 function findTwitterHandles() {
@@ -1617,18 +1610,30 @@ if (!module.parent) {
 
   Step(
     function () {
-      console.log('Connecting to MemberDb:', argv.db);
+      console.log('Connecting to database:', argv.db);
       mongodb.connect(argv.db, {server: { poolSize: 4 }}, this);
     }, function (err, db) {
       if (err) return this(err);
+      pusher = new Pusher({
+        appId: '35474',
+        key: 'c260ad31dfbb57bddd94',
+        secret: 'b29cec4949ef7c0d14cd'
+      });
       new MemberDb(db, {
         app: app,
         ensureIndexes: true,
         redisClient: redisClient
-      }, this);
-    }, function (err, mDb) {
+      }, this.parallel());
+      new EventDb(db, {
+        app: app,
+        ensureIndexes: true,
+        pusher: pusher,
+      }, this.parallel());
+    }, function (err, mDb, eDb) {
       if (err) return this(err);
       memberDb = mDb;
+      eventDb = eDb;
+      eventDb.memberDb = memberDb;
       this();
     },
 
@@ -1640,10 +1645,7 @@ if (!module.parent) {
         console.log('Server listening on port ' + argv.port);
       });
 
-      // continuous updates 
-      // setInterval(distributeTrendingMedia, 30000);
-      // distributeTrendingMedia();
-      // setInterval(findTwitterHandles, 60000);
+      // TODO: don't do it like this
       findTwitterHandles();
 
       // Create service subscriptions

@@ -35,15 +35,15 @@ html(lang="en")
     title= title
     //- link(rel='stylesheet', href='https://d271mvlc6gc7bl.cloudfront.net/main/css/style2.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
-    
     link(rel='stylesheet', href='https://d271mvlc6gc7bl.cloudfront.net/main/ui/ui6.css')
     //- link(rel='stylesheet', href='/ui/ui.css')
     link(rel='stylesheet', href='https://d271mvlc6gc7bl.cloudfront.net/main/jplayer/skin/blue.monday/jplayer.blue.monday.css')
-    
     link(rel='shortcut icon', href='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/favicon.ico', type='image/x-icon')
-
+  body
+    - if ('undefined' !== typeof(member))
+      div(id='_d', data-mid=member._id.toString(), data-mk=member.key)
+    block content
     script(type='text/javascript', src='https://d3dy5gmtp8yhk7.cloudfront.net/1.12/pusher.min.js')
-    
     script(type='text/javascript', src='https://d271mvlc6gc7bl.cloudfront.net/main/js/json2-min.js')
     script(type='text/javascript', src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js')
     script(type='text/javascript', src='https://d271mvlc6gc7bl.cloudfront.net/main/jwplayer/jwplayer.js')
@@ -74,7 +74,3 @@ html(lang="en")
         ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
-  body
-    - if ('undefined' !== typeof(member))
-      div(id='_d', data-mid=member._id.toString())
-    block content

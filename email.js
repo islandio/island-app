@@ -1,21 +1,28 @@
+// Handling for, wait for it ... email!
+
 
 /**
  * Module dependencies.
  */
+
 var mailer = require('emailjs');
 var path = require('path');
 var jade = require('jade');
+var _ = require('underscore');
+_.mixin(require('underscore.string'));
+var util = require('util');
+var debug = util.debug, inspect = util.inspect;
+var Step = require('step');
 
 var SMTP;
-
-var emailServer = {
+var server = {
   user: 'robot@island.io',
   password: 'I514nDr06ot',
   host: 'smtp.gmail.com',
   ssl: true,
 };
-var emailDefaults = {
-  from: 'ISLAND <robot@island.io>',
+var defaults = {
+  from: 'Island <robot@island.io>',
 };
 
 /**
@@ -24,7 +31,7 @@ var emailDefaults = {
  * @param object template
  * @param function fn
  */
-var email = exports.email = function (options, template, fn) {
+var send = exports.send = function (options, template, fn) {
   if ('function' === typeof template) {
     fn = template;
     template = false;
@@ -32,13 +39,10 @@ var email = exports.email = function (options, template, fn) {
 
   // connect to server
   if (!SMTP)
-    SMTP = mailer.server.connect(emailServer);
+    SMTP = mailer.server.connect(server);
 
   // merge options
-  var k = Object.keys(emailDefaults);
-  for (var i=0; i < k.length; i++)
-    if (!options.hasOwnProperty(k[i]))
-      options[k[i]] = emailDefaults[k[i]];
+  _.defaults(options, defaults);
 
   if (template)
     jade.renderFile(path.join(__dirname, 'views', template.file),
@@ -64,8 +68,8 @@ var email = exports.email = function (options, template, fn) {
  * @param object user
  */
 var welcome = exports.welcome = function (member, confirm, fn) {
-  var to = member.displayName + '<' + member.primaryEmail + '>';
-  email({
+  var to = member.displayName + ' <' + member.primaryEmail + '>';
+  send({
     to: to,
     subject: 'Welcome to our home.'
   }, {
@@ -76,11 +80,28 @@ var welcome = exports.welcome = function (member, confirm, fn) {
 }
 
 /**
+ * Send a notification.
+ * @param object user
+ */
+var notification = exports.notification = function (member, note, fn) {
+  var to = member.displayName + ' <' + member.primaryEmail + '>';
+  send({
+    to: to,
+    from: note.event.data.m + ' <robot@island.io>',
+    subject: '[Island] ' + note.event.data.p + ' from ' + note.event.data.o
+  }, {
+    file: 'notification.jade',
+    html: true,
+    locals: { note: note, link: 'http://island.io/' + note.event.data.k }
+  }, fn);
+}
+
+/**
  * Send the error to Sander.
  * @param object err
  */
 var problem = exports.problem = function (err) {
-  email({
+  send({
     to: 'Island Admin <sander@island.io>',
     subject: 'Something wrong at Island'
   }, {
@@ -89,4 +110,3 @@ var problem = exports.problem = function (err) {
     locals: { err: err }
   }, function () {});
 }
-

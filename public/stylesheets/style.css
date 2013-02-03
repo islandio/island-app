@@ -855,6 +855,7 @@ h1.title-sub {
 }
 .grid-wrap {
   position: absolute;
+  top: 2000px;
 }
 .obj-holder {
   position: relative;
