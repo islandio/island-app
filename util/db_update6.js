@@ -49,7 +49,7 @@ Step(
   function () {
     log('\nAdding config to members ...\n');
     var next = this;
-    memberDb.collections.member.find({})
+    memberDb.collections.member.find({ config: { $exists: false }})
             .toArray(function (err, members) {
       errCheck(err, 'finding members');
       if (members.length > 0) {
