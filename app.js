@@ -279,7 +279,7 @@ var templateUtil = {
 ////////////// Web Routes
 
 // Home
-app.get('/', authorize, function (req, res, next) {
+app.get('/', function (req, res, next) {
   Step(
     function () {
       findTrendingMedia(10, this);

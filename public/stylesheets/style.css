@@ -425,7 +425,11 @@ a.resend-conf {
   font-size: 28px;
   font-family: Title;
 }
-.login-prompt,
+.login-prompt {
+  margin-top: 23px;
+  font-style: italic;
+  color: #808080;
+}
 .no-results {
   font-style: italic;
   color: #808080;
@@ -561,10 +565,9 @@ input.is-button-alert[type=submit] {
 }
 .signin-quote > p {
   margin: 0 auto;
-  width: 500px;
-  font-size: 14px;
+  font-size: 32px;
   font-family: Title, Verdana, Arial, sans-serif;
-  line-height: 19px;
+  line-height: 32px;
   text-align: center;
   color: #333;
 }
@@ -931,7 +934,7 @@ img.heart-img {
   margin: 5px 0 0;
 }
 .obj-comments {
-  margin: 23px 0 0;
+  margin: 15px 0 0;
 }
 .comment {
   overflow: hidden;
