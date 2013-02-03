@@ -512,7 +512,7 @@ app.get('/connect/instagram/callback', function (req, res, next) {
 // We logout via an ajax request.
 app.get('/logout', function (req, res) {
   req.logOut();
-  res.redirect('/');
+  res.redirect('/login');
 });
 
 // Create a new member with local authentication
@@ -832,7 +832,7 @@ app.get('/settings/:key', authorize, function (req, res) {
     function (err, member) {
       if (err || !member || member._id.toString()
           !== req.user._id.toString())
-        return res.render('404', { title: 'Not Found' });
+        return res.redirect('/login');
       _.each(member, function (v, k) {
         if (v === '') member[k] = null;
       });
