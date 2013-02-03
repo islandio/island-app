@@ -6,6 +6,7 @@
  */
 
 var mailer = require('emailjs');
+var notifier = require('mail-notifier');
 var path = require('path');
 var jade = require('jade');
 var _ = require('underscore');
@@ -28,6 +29,22 @@ var HOME_URI;
 exports.setHomeURI = function (uri) {
   HOME_URI = uri;
 }
+
+var imap = {
+  username: 'notifications@island.io',
+  password: 'I514nDr06ot',
+  host: 'imap.gmail.com',
+  port: 993,
+  secure: true
+};
+
+notifier(imap).on('mail', function (mail) {
+  var parsed = mail.headers.to.match(/^notifications\+([a-z0-9]{24})@island\.io$/i);
+  if (parsed) {
+    var post_id = parsed[1];
+    console.log('POST_ID:', post_id);
+  }
+}).start();
 
 /**
  * Send an email.
@@ -97,6 +114,7 @@ var notification = exports.notification = function (member, note, fn) {
   send({
     to: to,
     from: note.event.data.m + ' <robot@island.io>',
+    'reply-to': 'notifications+' + note.event.post_id + '@island.io',
     subject: subject
   }, {
     file: 'notification.jade',
