@@ -91,7 +91,7 @@ var welcome = exports.welcome = function (member, confirm, fn) {
 var notification = exports.notification = function (member, note, fn) {
   if (!HOME_URI) return fn ? fn(): null;
   var to = member.displayName + ' <' + member.primaryEmail + '>';
-  var subject = member._id.toString() === note.event.poster_id.toString() ?
+  var subject = note.member_id.toString() === note.event.poster_id.toString() ?
              '[Island] Your post: ' + note.event.data.p:
              '[Island] ' + note.event.data.p + ' from ' + note.event.data.o;
   send({

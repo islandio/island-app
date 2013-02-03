@@ -1497,8 +1497,19 @@ Island = (function ($) {
   var mk = $('#_d').data('mk');
   if (mk) {
     var me = pusher.subscribe('island-' + mk);
-    me.bind('notification', function (data) {
-      console.log('Notification:', data);
+    me.bind('notification', function (n) {
+      console.log('Notification:', n);
+      var msg = n.member_id === n.event.poster_id ?
+                n.event.data.m + ' ' + n.event.data.a + ' your post, '
+                + n.event.data.p + ': "'
+                + n.event.data.b + '"':
+                n.event.data.m + ' also ' + n.event.data.a
+                + ' ' + n.event.data.p + ': "'
+                + n.event.data.b + '"';
+      var pop = ui.notify(msg).hide(8000).effect('fade').fit();
+      $(pop.el).bind('click', function (e) {
+        window.location = '/' + n.event.data.k;
+      });
     });
   }
 })(jQuery);

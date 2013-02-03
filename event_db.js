@@ -82,7 +82,8 @@ EventDb.prototype.publish = function (props, cb) {
             if (err) return next(err);
             self.pusher.trigger(sub.channel, 'notification', note);
             self.memberDb.findMemberById(sub.member_id, true, function (err, mem) {
-              if (!err && mem.config.notifications.comment.email)
+              if (!err && (mem.config.notifications.comment.email === true
+                  || mem.config.notifications.comment.email === 'true'))
                 Email.notification(mem, note);
             });
             next();

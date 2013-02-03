@@ -753,6 +753,12 @@ a.instagram-btn:hover {
   font-family: Title, Verdana, Arial, sans-serif;
   font-size: 16px;
 }
+li.notification:not(.closeable) {
+  cursor: pointer;
+}
+li.notification:not(.closeable):active {
+  opacity: 0.8;
+}
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 #banner {
   margin: 0 0 40px 0;

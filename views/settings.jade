@@ -116,7 +116,7 @@ block main
               span.notification-section
                 | Receive comment thread notifications?
             td(style="padding-top:10px;", align='right')
-              - if (data.config.notifications.comment.email === 'true')
+              - if (data.config.notifications.comment.email === true || data.config.notifications.comment.email === 'true')
                 input(type='checkbox', name='member[config][notifications][comment][email]', checked='checked')
               - else
                 input(type='checkbox', name='member[config][notifications][comment][email]')
