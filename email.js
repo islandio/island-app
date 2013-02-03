@@ -24,6 +24,10 @@ var server = {
 var defaults = {
   from: 'Island <robot@island.io>',
 };
+var HOME_URI;
+exports.setHomeURI = function (uri) {
+  HOME_URI = uri;
+}
 
 /**
  * Send an email.
@@ -68,10 +72,11 @@ var send = exports.send = function (options, template, fn) {
  * @param object user
  */
 var welcome = exports.welcome = function (member, confirm, fn) {
+  if (!HOME_URI) return fn ? fn(): null;
   var to = member.displayName + ' <' + member.primaryEmail + '>';
   send({
     to: to,
-    subject: 'Welcome to our home.'
+    subject: '[Island] Welcome to our home.'
   }, {
     file: 'welcome.jade',
     html: true,
@@ -84,6 +89,7 @@ var welcome = exports.welcome = function (member, confirm, fn) {
  * @param object user
  */
 var notification = exports.notification = function (member, note, fn) {
+  if (!HOME_URI) return fn ? fn(): null;
   var to = member.displayName + ' <' + member.primaryEmail + '>';
   var subject = member._id.toString() === note.event.poster_id.toString() ?
              '[Island] Your post: ' + note.event.data.p:
@@ -95,7 +101,11 @@ var notification = exports.notification = function (member, note, fn) {
   }, {
     file: 'notification.jade',
     html: true,
-    locals: { note: note, link: 'http://island.io/' + note.event.data.k }
+    locals: {
+      note: note,
+      link: HOME_URI + '/' + note.event.data.k,
+      sets_link: HOME_URI + '/settings/' + member.key
+    }
   }, fn);
 }
 
@@ -104,6 +114,7 @@ var notification = exports.notification = function (member, note, fn) {
  * @param object err
  */
 var problem = exports.problem = function (err) {
+  if (!HOME_URI) return;
   send({
     to: 'Island Admin <sander@island.io>',
     subject: 'Something wrong at Island'

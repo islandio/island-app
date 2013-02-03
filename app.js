@@ -93,7 +93,7 @@ var instagramCredentials = process.env.NODE_ENV === 'production' ?
                               callbackURL: 'http://island.io/connect/instagram/callback' } :
                             { clientID: 'b6e0d7d608a14a578cf94763f70f1b49',
                               clientSecret: 'a3937ee32072457d92eaa2165bd7dd37',
-                              callbackURL: 'http://local.island.io:3644/connect/instagram/callback' };
+                              callbackURL: 'http://local.island.io:' + argv.port + '/connect/instagram/callback' };
 var instagramVerifyToken = 'doesthisworkyet';
 
 var app = express();
@@ -139,13 +139,15 @@ app.configure(function () {
 });
 
 app.configure('development', function () {
-  app.set('home_uri', 'http://local.island.io:3644');
+  app.set('home_uri', 'http://local.island.io:' + argv.port);
+  Email.setHomeURI('http://local.island.io:' + argv.port);
   app.use(express.static(__dirname + '/public'));
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
 app.configure('production', function () {
   app.set('home_uri', 'http://island.io');
+  Email.setHomeURI('http://island.io');
   var oneYear = 31557600000;
   app.use(express.static(__dirname + '/public', { maxAge: oneYear }));
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
@@ -938,6 +940,7 @@ app.put('/save/settings', authorize, function (req, res) {
       });
       doc.twitter = member.twitter;
       doc.modified = true;
+      doc.config.notifications.comment.email = member.config.notifications.comment.email;
       memberDb.collections.member.update({ _id: doc._id },
                                           doc, { safe: true }, done);
     }

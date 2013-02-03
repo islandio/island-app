@@ -4,7 +4,7 @@ block main
   div.single-left
     a#delete-profile.button(href='javascript:;', style='float:right; margin-top:12px;')
       | Delete Yourself
-    form#settings-form(action='/save/member', enctype='multipart/form-data', method='POST')
+    form#settings-form(action='/save/settings', enctype='multipart/form-data', method='POST')
       input(type='hidden', name='params', value=JSON.stringify(transloaditParams))
       input(type='hidden', name='member[_id]', value=data._id.toString())
       input(type='hidden', name='member[assembly]')
@@ -107,6 +107,20 @@ block main
             tr
               td(colspan='3')
                   textarea.matte(style='width:630px;', name='member[website]', placeholder='One URL per line...') #{data.website}
+          tr
+            td(colspan='3', style="padding-top:20px;padding-bottom:0;")
+              span.settings-heading
+                | Notification Settings
+          tr
+            td(colspan='2', style="padding-top:0px;")
+              span.notification-section
+                | Receive comment thread notifications?
+            td(style="padding-top:10px;", align='right')
+              - if (data.config.notifications.comment.email === 'true')
+                input(type='checkbox', name='member[config][notifications][comment][email]', checked='checked')
+              - else
+                input(type='checkbox', name='member[config][notifications][comment][email]')
+              label(for='member[config][notifications][comment][email]', style='vertical-align:-1px; padding-left:5px;') Email
           tr
             td(colspan='3', style="padding-bottom: 0px;")
               input#save-settings.is-button(type='submit', value='Save')

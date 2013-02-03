@@ -1156,6 +1156,8 @@ Island = (function ($) {
         if (settingsUploading) return;
         var data = settingsForm.serializeObject();
         delete data.params;
+        data['member[config][notifications][comment][email]'] =
+          data['member[config][notifications][comment][email]'] ? true : false;
         $.put('/save/settings', data, function (res) {
           if ('success' === res.status)
             return ui.notify('Edits saved.')

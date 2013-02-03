@@ -192,6 +192,13 @@ MemberDb.prototype.findOrCreateMemberFromFacebook =
             thumbs: null,
             confirmed: false,
             modified: false,
+            config: {
+              notifications: {
+                comment: {
+                  email: true
+                }
+              }
+            }
           });
           props.primaryEmail = props.emails.length > 0 ?
                                 props.emails[0].value : null;
