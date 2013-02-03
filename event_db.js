@@ -3,6 +3,7 @@
 /**
 * Module dependencies.
 */
+var ObjectID = require('mongodb').BSONPure.ObjectID;
 var db = require('./db');
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
@@ -71,6 +72,8 @@ EventDb.prototype.publish = function (props, cb) {
       if (subs.length > 0) {
         var next = _.after(subs.length, this);
         _.each(subs, function (sub) {
+          if (sub.member_id.toString() === event.member_id.toString())
+            return next();
           self.createNotification({
             member_id: sub.member_id,
             subscription_id: sub._id,
@@ -122,6 +125,7 @@ EventDb.prototype.createEvent = function (props, cb) {
   });
   self.memberDb.findPostById(props.post_id, function (err, post) {
     if (err) return cb(err);
+    props.poster_id = new ObjectID(post.member._id);
     props.data.o = post.member.displayName;
     db.createDoc(self.collections.event, props, cb);
   });
@@ -136,6 +140,3 @@ EventDb.prototype.createNotification = function (props, cb) {
   });
   db.createDoc(self.collections.notification, props, cb);
 }
-
-
-

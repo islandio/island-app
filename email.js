@@ -85,10 +85,13 @@ var welcome = exports.welcome = function (member, confirm, fn) {
  */
 var notification = exports.notification = function (member, note, fn) {
   var to = member.displayName + ' <' + member.primaryEmail + '>';
+  var subject = member._id.toString() === note.event.poster_id.toString() ?
+             '[Island] Your post: ' + note.event.data.p:
+             '[Island] ' + note.event.data.p + ' from ' + note.event.data.o;
   send({
     to: to,
     from: note.event.data.m + ' <robot@island.io>',
-    subject: '[Island] ' + note.event.data.p + ' from ' + note.event.data.o
+    subject: subject
   }, {
     file: 'notification.jade',
     html: true,

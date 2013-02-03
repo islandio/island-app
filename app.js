@@ -1135,7 +1135,6 @@ app.put('/comment/:postId', function (req, res) {
       post_id: new ObjectID(req.params.postId),
       data: {
         m: req.user.displayName,
-        a: 'commented on',
         p: doc.post.title,
         k: doc.post.key,
         b: doc.body

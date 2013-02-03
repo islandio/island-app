@@ -230,21 +230,3 @@ var createUniqueURLKey = exports.createUniqueURLKey =
     else cb(null, key);
   });
 }
-
-
-/*
- * Make some random salt for a password.
- */
-var makeSalt = exports.makeSalt = function () {
-  return Math.round((new Date().valueOf() * Math.random())) + '';
-}
-
-
-/*
- * Encrypt password.
- */
- var encryptPassword = exports.encryptPassword = function (password, salt) {
-  return crypto.createHmac('sha1', salt)
-               .update(password)
-               .digest('hex');
-}

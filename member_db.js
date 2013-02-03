@@ -800,8 +800,8 @@ MemberDb.prototype.createTweet = function (postId, cb) {
   * to password methods.
   */
 MemberDb.dealWithPassword = function (member) {
-  member.salt = db.makeSalt();
-  member.password = db.encryptPassword(member.password,
+  member.salt = makeSalt();
+  member.password = encryptPassword(member.password,
                                     member.salt);
   return member;
 }
@@ -811,7 +811,7 @@ MemberDb.dealWithPassword = function (member) {
  * the user's actual password.
  */
 MemberDb.authenticateLocalMember = function (member, str) {
-  return db.encryptPassword(str, member.salt) === member.password;
+  return encryptPassword(str, member.salt) === member.password;
 }
 
 
@@ -853,4 +853,21 @@ function mergeMemberEmails(a, b, first) {
   if (first)
     c.unshift({ value: first });
   return c;
+}
+
+/*
+ * Make some random salt for a password.
+ */
+function makeSalt() {
+  return Math.round((new Date().valueOf() * Math.random())) + '';
+}
+
+
+/*
+ * Encrypt password.
+ */
+function encryptPassword(password, salt) {
+  return crypto.createHmac('sha1', salt)
+               .update(password)
+               .digest('hex');
 }
