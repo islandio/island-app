@@ -102,7 +102,7 @@ var sessionStore;
 var memberDb;
 var eventDb;
 var pusher;
-var channels = { all: 'island_test' };
+var channels = { all: 'island' };
 var twitterHandles;
 
 ////////////// Configuration

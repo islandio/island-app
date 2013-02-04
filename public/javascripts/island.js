@@ -1484,7 +1484,7 @@ Island = (function ($) {
  */
 (function ($) {
   var pusher = new Pusher('c260ad31dfbb57bddd94');
-  var all = pusher.subscribe('island_test');
+  var all = pusher.subscribe('island');
   var handlers = [
     { fn: Island.receiveMedia, tpc: 'media.read' },
     { fn: Island.receiveComment, tpc: 'comment.read' },
