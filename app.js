@@ -1014,6 +1014,11 @@ app.put('/insert', authorize, function (req, res) {
     function (err, doc) {
       if (err) return done(err);
       if (!doc) return done(new Error('Failed to create post'));
+      eventDb.subscribe({
+        member_id: req.user._id,
+        post_id: doc._id,
+        channel: 'island-' + req.user.key,
+      });
       var medias = [];
       _.each(results, function (val, key) {
         _.each(val, function (result) {
@@ -1302,6 +1307,12 @@ app.post('/publish/instagram', function (req, res) {
       function (err, doc) {
         if (err) return cb(err);
         if (!doc) return cb(new Error('Failed to create post'));
+        // console.log()
+        // eventDb.subscribe({
+        //   member_id: data.member._id,
+        //   post_id: doc._id,
+        //   channel: 'island-' + data.member.key,
+        // });
         var media = {
           type: 'image',
           key: doc.key,
