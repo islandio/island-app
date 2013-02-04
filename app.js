@@ -54,6 +54,7 @@ var _ = require('underscore');
 _.mixin(require('underscore.string'));
 var Step = require('step');
 var Email = require('./email');
+var notifier = require('mail-notifier');
 
 var RedisStore = require('connect-redis')(express);
 var MemberDb = require('./member_db.js').MemberDb;
@@ -1166,6 +1167,43 @@ app.put('/comment/:postId', function (req, res) {
   }
 });
 
+// crate a new comment (as above) from an email reply
+function createCommentFromMail(mail) {
+  var re = /^notifications\+([a-z0-9]{24})([a-z0-9]{24})@island\.io$/i;
+  var match;
+  _.each(mail.to, function (to) {
+    match = to.address.match(re) || match;
+  });
+  if (match) {
+    var last = mail.text.match(/^(.*wrote:\n)/im)[1];
+    var body = last ?
+              mail.text.substr(0, mail.text.indexOf(last)).trim():
+              mail.text;
+    var props = {
+      member_id: new ObjectID(match[1]),
+      post_id: new ObjectID(match[2]),
+      body: body,
+      email: true
+    };
+    memberDb.createComment(props, function (err, doc) {
+      if (err) return err;
+      distributeComment(doc, doc.member);
+      distributeUpdate('comment', 'post', 'ccnt', doc.post._id);
+      eventDb.publish({
+        member_id: new ObjectID(doc.member._id),
+        post_id: new ObjectID(doc.post._id),
+        data: {
+          m: doc.member.displayName,
+          a: 'commented on',
+          p: doc.post.title,
+          k: doc.post.key,
+          b: doc.body
+        }
+      });
+    });
+  }
+}
+
 // Add rating
 app.put('/rate/:mediaId', function (req, res) {
   if (!req.params.mediaId || !req.body.val)
@@ -1615,7 +1653,8 @@ if (!module.parent) {
     function () {
       console.log('Connecting to database:', argv.db);
       mongodb.connect(argv.db, {server: { poolSize: 4 }}, this);
-    }, function (err, db) {
+    },
+    function (err, db) {
       if (err) return this(err);
       pusher = new Pusher({
         appId: '35474',
@@ -1632,14 +1671,14 @@ if (!module.parent) {
         ensureIndexes: true,
         pusher: pusher,
       }, this.parallel());
-    }, function (err, mDb, eDb) {
+    },
+    function (err, mDb, eDb) {
       if (err) return this(err);
       memberDb = mDb;
       eventDb = eDb;
       eventDb.memberDb = memberDb;
       this();
     },
-
     function (err) {
       if (err) return this(err);
 
@@ -1648,8 +1687,14 @@ if (!module.parent) {
         console.log('Server listening on port ' + argv.port);
       });
 
-      // TODO: don't do it like this
-      findTwitterHandles();
+      // listen for new mail
+      notifier({
+        username: 'notifications@island.io',
+        password: 'I514nDr06ot',
+        host: 'imap.gmail.com',
+        port: 993,
+        secure: true
+      }).on('mail', createCommentFromMail).start();
 
       // Create service subscriptions
       request.post({
@@ -1672,6 +1717,9 @@ if (!module.parent) {
         else
           console.log('Instagram subscription failed', body);
       });
+
+      // TODO: don't do it like this
+      findTwitterHandles();
     }
   );
 }
