@@ -41,7 +41,7 @@ html(lang="en")
     link(rel='shortcut icon', href='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/favicon.ico', type='image/x-icon')
   body
     - if ('undefined' !== typeof(member))
-      div(id='_d', data-mid=member._id.toString(), data-mk=member.key)
+      div(id='_d', data-env=(process.env.NODE_ENV || 'dev'), data-mid=member._id.toString(), data-mk=member.key)
     block content
     script(type='text/javascript', src='https://d3dy5gmtp8yhk7.cloudfront.net/1.12/pusher.min.js')
     script(type='text/javascript', src='https://d271mvlc6gc7bl.cloudfront.net/main/js/json2-min.js')

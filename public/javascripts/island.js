@@ -1483,8 +1483,12 @@ Island = (function ($) {
  * Pusher init
  */
 (function ($) {
+  var env = $('#_d').data('env');
+  if (!env) return;
   var pusher = new Pusher('c260ad31dfbb57bddd94');
-  var all = pusher.subscribe('island');
+  var channel = env === 'dev' ? 'island_test' : 'island';
+  console.log(channel)
+  var all = pusher.subscribe(channel);
   var handlers = [
     { fn: Island.receiveMedia, tpc: 'media.read' },
     { fn: Island.receiveComment, tpc: 'comment.read' },
@@ -1496,7 +1500,7 @@ Island = (function ($) {
   });
   var mk = $('#_d').data('mk');
   if (mk) {
-    var me = pusher.subscribe('island-' + mk);
+    var me = pusher.subscribe(channel + '-' + mk);
     me.bind('notification', function (n) {
       console.log('Notification:', n);
       var msg = n.member_id === n.event.poster_id ?

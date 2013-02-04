@@ -102,7 +102,9 @@ var sessionStore;
 var memberDb;
 var eventDb;
 var pusher;
-var channels = { all: 'island' };
+var channels = process.env.NODE_ENV === 'production' ?
+                { all: 'island' } :
+                { all: 'island_test' };
 var twitterHandles;
 
 ////////////// Configuration
@@ -1017,7 +1019,7 @@ app.put('/insert', authorize, function (req, res) {
       eventDb.subscribe({
         member_id: req.user._id,
         post_id: doc._id,
-        channel: 'island-' + req.user.key,
+        channel: channels.all + '-' + req.user.key,
       });
       var medias = [];
       _.each(results, function (val, key) {
@@ -1137,7 +1139,7 @@ app.put('/comment/:postId', function (req, res) {
     eventDb.subscribe({
       member_id: req.user._id,
       post_id: new ObjectID(req.params.postId),
-      channel: 'island-' + req.user.key,
+      channel: channels.all + '-' + req.user.key,
     });
     eventDb.publish({
       member_id: req.user._id,
@@ -1311,7 +1313,7 @@ app.post('/publish/instagram', function (req, res) {
         // eventDb.subscribe({
         //   member_id: data.member._id,
         //   post_id: doc._id,
-        //   channel: 'island-' + data.member.key,
+        //   channel: channels.all + '-' + data.member.key,
         // });
         var media = {
           type: 'image',
