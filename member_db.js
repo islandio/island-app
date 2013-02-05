@@ -33,13 +33,14 @@ var MemberDb = exports.MemberDb = function (dB, options, cb) {
   self.dB = dB;
   self.app = options.app;
   self.collections = {};
-  self.redisClient = options.redisClient;
-
-  reds.createClient = function () {
-    return exports.client || self.redisClient;
-  };
-
-  self.search = reds.createSearch('media');
+  
+  if (options.redisClient) {
+    self.redisClient = options.redisClient;
+    reds.createClient = function () {
+      return exports.client || self.redisClient;
+    };
+    self.search = reds.createSearch('media');
+  }
 
   var collections = {
     member: { index: { primaryEmail: 1, username: 1, key: 1, role: 1 } },
