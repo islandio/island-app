@@ -1309,12 +1309,11 @@ app.post('/publish/instagram', function (req, res) {
       function (err, doc) {
         if (err) return cb(err);
         if (!doc) return cb(new Error('Failed to create post'));
-        // console.log()
-        // eventDb.subscribe({
-        //   member_id: data.member._id,
-        //   post_id: doc._id,
-        //   channel: channels.all + '-' + data.member.key,
-        // });
+        eventDb.subscribe({
+          member_id: data.member._id,
+          post_id: doc._id,
+          channel: channels.all + '-' + data.member.key,
+        });
         var media = {
           type: 'image',
           key: doc.key,

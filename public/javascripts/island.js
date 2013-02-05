@@ -1487,7 +1487,6 @@ Island = (function ($) {
   if (!env) return;
   var pusher = new Pusher('c260ad31dfbb57bddd94');
   var channel = env === 'dev' ? 'island_test' : 'island';
-  console.log(channel)
   var all = pusher.subscribe(channel);
   var handlers = [
     { fn: Island.receiveMedia, tpc: 'media.read' },
