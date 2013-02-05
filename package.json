@@ -6,7 +6,7 @@
     "www.island.io"
   ],
   "subdomain": "island",
-  "version": "0.1.0-74",
+  "version": "0.1.0-75",
   "homepage": "http://island.io",
   "repository": {
     "type": "git",
@@ -32,8 +32,7 @@
     "emailjs": "~0.3.0",
     "connect-redis": "~1.4.5",
     "redis": "~0.8.2",
-    "pusher": "~0.1.2",
-    "mail-notifier": "~0.1.0"
+    "pusher": "~0.1.2"
   },
   "engines": {
     "node": "~0.8.x"
