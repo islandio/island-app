@@ -697,7 +697,7 @@ app.post('/resendconf/:id', authorize, function (req, res) {
 });
 
 // pagination
-app.post('/page/:n', authorize, function (req, res) {
+app.post('/page/:n', function (req, res) {
   if (!req.params.n)
     return res.send({
       status: 'error',
