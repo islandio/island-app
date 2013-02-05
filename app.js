@@ -1390,6 +1390,7 @@ app.delete('/member', authorize, function (req, res) {
       memberDb.collections.comment.remove({ member_id: id }, this.parallel());
       memberDb.collections.post.remove({ member_id: id }, this.parallel());
       memberDb.collections.media.remove({ member_id: id }, this.parallel());
+      eventDb.collections.subscription.remove({ member_id: id }, this.parallel());
     },
     function (err) {
       if (err) return fail(err);
@@ -1436,6 +1437,7 @@ app.delete('/post/:key', authorize, function (req, res) {
       memberDb.collections.post.remove({ _id: post._id }, this.parallel());
       memberDb.collections.view.remove({ post_id: post._id }, this.parallel());
       memberDb.collections.comment.remove({ post_id: post._id }, this.parallel());
+      eventDb.collections.subscription.remove({ post_id: post._id }, this.parallel());
     },
     function (err) {
       if (err) return fail(err);
