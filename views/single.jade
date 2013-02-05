@@ -114,19 +114,15 @@ block main
           span.commentor-whois Logged in as 
             span(style='font-style: italic')
               =member.displayName
+    - else
+      p(class="login-prompt") 
+        a(href="/login") Login
+        |  to comment.
     div.obj-comments(id='coms-' + post._id)(data-id=post._id.toString(), data-limit="0", data-showmember="true", data-showpost="false")
       span.loading Loading ...
-  - if (member)
-    div.grid-wrap
-      #search
-        h1.title-bottom / Browse
-        input#search-box.matte(type='search', placeholder='Search', value=(post.member.displayName).toLowerCase())
-        div.search-spinner
-      #grid.adjustable-grid
-  - else
-    div.grid-wrap
+  div.grid-wrap
     #search
       h1.title-bottom / Browse
-    p(class="login-prompt") 
-      a(href="/login") Login
-      |  to browse media.
+      input#search-box.matte(type='search', placeholder='Search', value=(post.member.displayName).toLowerCase())
+      div.search-spinner
+    #grid.adjustable-grid

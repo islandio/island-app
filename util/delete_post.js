@@ -10,6 +10,7 @@ var _ = require('underscore');
 _.mixin(require('underscore.string'));
 
 var MemberDb = require('../member_db.js').MemberDb;
+var EventDb = require('./event_db.js').EventDb;
 
 var optimist = require('optimist');
 var argv = optimist
@@ -30,6 +31,7 @@ function errCheck(err, op) {
 
 // Connect to DB.
 var memberDb;
+var eventDb;
 var _id;
 var post;
 
@@ -42,11 +44,13 @@ Step(
                             reaperTimeout: 600000 },
                     }, function (err, db) {
       errCheck(err, 'connect(' + db + ')');
-      new MemberDb(db, { ensureIndexes: false }, next);
+      new MemberDb(db, { ensureIndexes: false }, next.parallel());
+      new EventDb(db, { ensureIndexes: false }, next.parallel());
     });
   },
-  function (err, mDb) {
+  function (err, mDb, eDb) {
     memberDb = mDb;
+    eventDb = eDb;
     this();
   },
   // find post
@@ -87,6 +91,8 @@ Step(
     memberDb.collections.view.remove({ post_id: _id }, this.parallel());
     log('Deleted post\'s comments.');
     memberDb.collections.comment.remove({ post_id: _id }, this.parallel());
+    log('Deleted post\'s subscriptions.');
+    eventDb.collections.subscription.remove({ post_id: _id }, this.parallel());
   },
   // Done.
   function (err) {
