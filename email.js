@@ -51,7 +51,7 @@ var send = exports.send = function (options, template, fn) {
   if (template)
     jade.renderFile(path.join(__dirname, 'views', template.file),
         template.locals, function (err, body) {
-      if (err) return fn(err);
+      if (err) return fn ? fn(): null;
       // create the message
       var message;
       if (template.html) {
