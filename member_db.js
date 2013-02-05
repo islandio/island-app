@@ -291,6 +291,13 @@ MemberDb.prototype.findOrCreateMemberFromTwitter =
         thumbs: null,
         confirmed: false,
         modified: false,
+        config: {
+          notifications: {
+            comment: {
+              email: true
+            }
+          }
+        }
       });
       props.username = props.key;
       db.createDoc(self.collections.member, props, cb);
@@ -345,6 +352,13 @@ MemberDb.prototype.findOrCreateMemberFromEmail =
             thumbs: null,
             confirmed: false,
             modified: false,
+            config: {
+              notifications: {
+                comment: {
+                  email: true
+                }
+              }
+            }
           });
           db.createDoc(self.collections.member, props, cb);
         }

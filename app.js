@@ -34,7 +34,6 @@ if (argv._.length || argv.help) {
 /**
  * Module dependencies.
  */
-var http = require('http');
 var express = require('express');
 var mongodb = require('mongodb');
 var redis = require('redis');
