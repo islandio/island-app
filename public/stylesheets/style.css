@@ -425,7 +425,11 @@ a.resend-conf {
   font-size: 28px;
   font-family: Title;
 }
-.login-prompt,
+.login-prompt {
+  margin-top: 23px;
+  font-style: italic;
+  color: #808080;
+}
 .no-results {
   font-style: italic;
   color: #808080;
@@ -499,7 +503,7 @@ input.is-button-alert[type=submit] {
 #add-media,
 #save-settings {
   width: 100%;
-  margin: 10px 0 0;
+  margin: 15px 0 0;
 }
 #add-media-mask,
 #save-settings-mask {
@@ -561,10 +565,9 @@ input.is-button-alert[type=submit] {
 }
 .signin-quote > p {
   margin: 0 auto;
-  width: 500px;
-  font-size: 14px;
+  font-size: 24px;
   font-family: Title, Verdana, Arial, sans-serif;
-  line-height: 19px;
+  line-height: 24px;
   text-align: center;
   color: #333;
 }
@@ -743,6 +746,19 @@ a.instagram-btn:hover {
   left: 0;
   top: 0;
 }
+.notification-section {
+  vertical-align: -10px;
+}
+.settings-heading {
+  font-family: Title, Verdana, Arial, sans-serif;
+  font-size: 16px;
+}
+li.notification:not(.closeable) {
+  cursor: pointer;
+}
+li.notification:not(.closeable):active {
+  opacity: 0.8;
+}
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 #banner {
   margin: 0 0 40px 0;
@@ -855,6 +871,7 @@ h1.title-sub {
 }
 .grid-wrap {
   position: absolute;
+  top: 2000px;
 }
 .obj-holder {
   position: relative;
@@ -930,7 +947,7 @@ img.heart-img {
   margin: 5px 0 0;
 }
 .obj-comments {
-  margin: 23px 0 0;
+  margin: 15px 0 0;
 }
 .comment {
   overflow: hidden;

@@ -34,6 +34,10 @@
 
 Island = (function ($) {
 
+  $(window).load(function () {
+    $('#search').show();
+  });
+
   /**
    * island color scheme
    */
@@ -1152,6 +1156,8 @@ Island = (function ($) {
         if (settingsUploading) return;
         var data = settingsForm.serializeObject();
         delete data.params;
+        data['member[config][notifications][comment][email]'] =
+          data['member[config][notifications][comment][email]'] ? true : false;
         $.put('/save/settings', data, function (res) {
           if ('success' === res.status)
             return ui.notify('Edits saved.')
@@ -1458,15 +1464,6 @@ Island = (function ($) {
     },
 
     /**
-     * Receive and display current trends.
-     */
-
-    receiveTrends: function (data) {
-      console.log('blarg.');
-      // trending.receive(data.media);
-    },
-
-    /**
      * Delete a comment.
      */
 
@@ -1486,16 +1483,36 @@ Island = (function ($) {
  * Pusher init
  */
 (function ($) {
+  var env = $('#_d').data('env');
+  if (!env) return;
   var pusher = new Pusher('c260ad31dfbb57bddd94');
-  var channel = pusher.subscribe('island');
+  var channel = env === 'dev' ? 'island_test' : 'island';
+  var all = pusher.subscribe(channel);
   var handlers = [
     { fn: Island.receiveMedia, tpc: 'media.read' },
     { fn: Island.receiveComment, tpc: 'comment.read' },
     { fn: Island.receiveUpdate, tpc: 'update.read' },
-    { fn: Island.receiveTrends, tpc: 'trends.read' },
     { fn: Island.deleteComment, tpc: 'comment.delete' },
   ];
   _.each(handlers, function (handler) {
-    channel.bind(handler.tpc, _.bind(handler.fn, Island));
+    all.bind(handler.tpc, _.bind(handler.fn, Island));
   });
+  var mk = $('#_d').data('mk');
+  if (mk) {
+    var me = pusher.subscribe(channel + '-' + mk);
+    me.bind('notification', function (n) {
+      console.log('Notification:', n);
+      var msg = n.member_id === n.event.poster_id ?
+                n.event.data.m + ' ' + n.event.data.a + ' your post, '
+                + n.event.data.p + ': "'
+                + n.event.data.b + '"':
+                n.event.data.m + ' also ' + n.event.data.a
+                + ' ' + n.event.data.p + ': "'
+                + n.event.data.b + '"';
+      var pop = ui.notify(msg).hide(8000).effect('fade').fit();
+      $(pop.el).bind('click', function (e) {
+        window.location = '/' + n.event.data.k;
+      });
+    });
+  }
 })(jQuery);

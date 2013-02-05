@@ -82,17 +82,9 @@ block main
       #recent-comments.no-member(data-id=data._id.toString(), data-limit="10", data-showmember="false", data-showpost="true")
         span.loading Loading ...
   div.clear
-  - if (member)
-    div.grid-wrap
-      #search
-        h1.title-bottom / Browse
-        input#search-box.matte(type="search", placeholder="Search", value=(data.displayName).toLowerCase())
-        div.search-spinner
-      #grid.adjustable-grid
-  - else
-    div.grid-wrap
-      #search
-        h1.title-bottom / Browse
-      p(class="login-prompt") 
-        a(href="/login") Login
-        |  to browse media.
+  div.grid-wrap
+    #search
+      h1.title-bottom / Browse
+      input#search-box.matte(type="search", placeholder="Search", value=(data.displayName).toLowerCase())
+      div.search-spinner
+    #grid.adjustable-grid

@@ -53,11 +53,12 @@ var url = require('url');
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
 var Step = require('step');
-
-var Notify = require('./notify');
+var Email = require('./email');
+var notifier = require('mail-notifier');
 
 var RedisStore = require('connect-redis')(express);
 var MemberDb = require('./member_db.js').MemberDb;
+var EventDb = require('./event_db.js').EventDb;
 var Pusher = require('pusher');
 
 var passport = require('passport');
@@ -93,25 +94,20 @@ var instagramCredentials = process.env.NODE_ENV === 'production' ?
                               callbackURL: 'http://island.io/connect/instagram/callback' } :
                             { clientID: 'b6e0d7d608a14a578cf94763f70f1b49',
                               clientSecret: 'a3937ee32072457d92eaa2165bd7dd37',
-                              callbackURL: 'http://local.island.io:3644/connect/instagram/callback' };
+                              callbackURL: 'http://local.island.io:' + argv.port + '/connect/instagram/callback' };
 var instagramVerifyToken = 'doesthisworkyet';
 
 var app = express();
 var sessionStore;
 var memberDb;
-// var mediaTrends;
+var eventDb;
+var pusher;
+var channels = process.env.NODE_ENV === 'production' ?
+                { all: 'island' } :
+                { all: 'island_test' };
 var twitterHandles;
 
 ////////////// Configuration
-
-var pusher = new Pusher({
-  appId: '35474',
-  key: 'c260ad31dfbb57bddd94',
-  secret: 'b29cec4949ef7c0d14cd'
-});
-var channels = {
-  all: 'island'
-};
 
 console.log('Connecting to Redis:', argv.redis_host + ':' + argv.redis_port);
 var redisClient = redis.createClient(argv.redis_port, argv.redis_host);
@@ -146,13 +142,15 @@ app.configure(function () {
 });
 
 app.configure('development', function () {
-  app.set('home_uri', 'http://local.island.io:3644');
+  app.set('home_uri', 'http://local.island.io:' + argv.port);
+  Email.setHomeURI('http://local.island.io:' + argv.port);
   app.use(express.static(__dirname + '/public'));
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
 app.configure('production', function () {
   app.set('home_uri', 'http://island.io');
+  Email.setHomeURI('http://island.io');
   var oneYear = 31557600000;
   app.use(express.static(__dirname + '/public', { maxAge: oneYear }));
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
@@ -286,7 +284,7 @@ var templateUtil = {
 ////////////// Web Routes
 
 // Home
-app.get('/', authorize, function (req, res, next) {
+app.get('/', function (req, res, next) {
   Step(
     function () {
       findTrendingMedia(10, this);
@@ -517,7 +515,7 @@ app.get('/connect/instagram/callback', function (req, res, next) {
 // We logout via an ajax request.
 app.get('/logout', function (req, res) {
   req.logOut();
-  res.redirect('/');
+  res.redirect('/login');
 });
 
 // Create a new member with local authentication
@@ -619,7 +617,7 @@ app.put('/signup', function (req, res, next) {
     referer.search = referer.query = referer.hash = null;
     referer.pathname = '/';
     var confirm = path.join(url.format(referer), 'confirm', member._id.toString());
-    Notify.welcome(member, confirm, function (err, msg) {
+    Email.welcome(member, confirm, function (err, msg) {
       if (err) return next(err);
       res.send({
         status: 'success',
@@ -683,7 +681,7 @@ app.post('/resendconf/:id', authorize, function (req, res) {
     referer.search = referer.query = referer.hash = null;
     referer.pathname = '/';
     var confirm = path.join(url.format(referer), 'confirm', member._id.toString());
-    Notify.welcome(member, confirm, function (err) {
+    Email.welcome(member, confirm, function (err) {
       if (err) return next(err);
       res.send({
         status: 'success',
@@ -837,7 +835,7 @@ app.get('/settings/:key', authorize, function (req, res) {
     function (err, member) {
       if (err || !member || member._id.toString()
           !== req.user._id.toString())
-        return res.render('404', { title: 'Not Found' });
+        return res.redirect('/login');
       _.each(member, function (v, k) {
         if (v === '') member[k] = null;
       });
@@ -945,6 +943,7 @@ app.put('/save/settings', authorize, function (req, res) {
       });
       doc.twitter = member.twitter;
       doc.modified = true;
+      doc.config.notifications.comment.email = member.config.notifications.comment.email;
       memberDb.collections.member.update({ _id: doc._id },
                                           doc, { safe: true }, done);
     }
@@ -1017,6 +1016,11 @@ app.put('/insert', authorize, function (req, res) {
     function (err, doc) {
       if (err) return done(err);
       if (!doc) return done(new Error('Failed to create post'));
+      eventDb.subscribe({
+        member_id: req.user._id,
+        post_id: doc._id,
+        channel: channels.all + '-' + req.user.key,
+      });
       var medias = [];
       _.each(results, function (val, key) {
         _.each(val, function (result) {
@@ -1132,6 +1136,22 @@ app.put('/comment/:postId', function (req, res) {
     if (err) return fail(err);
     distributeComment(doc, req.user);
     distributeUpdate('comment', 'post', 'ccnt', doc.post._id);
+    eventDb.subscribe({
+      member_id: req.user._id,
+      post_id: new ObjectID(req.params.postId),
+      channel: channels.all + '-' + req.user.key,
+    });
+    eventDb.publish({
+      member_id: req.user._id,
+      post_id: new ObjectID(req.params.postId),
+      data: {
+        m: req.user.displayName,
+        a: 'commented on',
+        p: doc.post.title,
+        k: doc.post.key,
+        b: doc.body
+      }
+    });
     res.send({ status: 'success', data: {
              comment: doc } });
   });
@@ -1153,6 +1173,43 @@ app.put('/comment/:postId', function (req, res) {
               message: err.stack });
   }
 });
+
+// crate a new comment (as above) from an email reply
+function createCommentFromMail(mail) {
+  var re = /^notifications\+([a-z0-9]{24})([a-z0-9]{24})@island\.io$/i;
+  var match;
+  _.each(mail.to, function (to) {
+    match = to.address.match(re) || match;
+  });
+  if (match) {
+    var last = mail.text.match(/^(.*wrote:\n)/im)[1];
+    var body = last ?
+              mail.text.substr(0, mail.text.indexOf(last)).trim():
+              mail.text;
+    var props = {
+      member_id: new ObjectID(match[1]),
+      post_id: new ObjectID(match[2]),
+      body: body,
+      email: true
+    };
+    memberDb.createComment(props, function (err, doc) {
+      if (err) return err;
+      distributeComment(doc, doc.member);
+      distributeUpdate('comment', 'post', 'ccnt', doc.post._id);
+      eventDb.publish({
+        member_id: new ObjectID(doc.member._id),
+        post_id: new ObjectID(doc.post._id),
+        data: {
+          m: doc.member.displayName,
+          a: 'commented on',
+          p: doc.post.title,
+          k: doc.post.key,
+          b: doc.body
+        }
+      });
+    });
+  }
+}
 
 // Add rating
 app.put('/rate/:mediaId', function (req, res) {
@@ -1252,6 +1309,11 @@ app.post('/publish/instagram', function (req, res) {
       function (err, doc) {
         if (err) return cb(err);
         if (!doc) return cb(new Error('Failed to create post'));
+        eventDb.subscribe({
+          member_id: data.member._id,
+          post_id: doc._id,
+          channel: channels.all + '-' + data.member.key,
+        });
         var media = {
           type: 'image',
           key: doc.key,
@@ -1328,6 +1390,7 @@ app.delete('/member', authorize, function (req, res) {
       memberDb.collections.comment.remove({ member_id: id }, this.parallel());
       memberDb.collections.post.remove({ member_id: id }, this.parallel());
       memberDb.collections.media.remove({ member_id: id }, this.parallel());
+      eventDb.collections.subscription.remove({ member_id: id }, this.parallel());
     },
     function (err) {
       if (err) return fail(err);
@@ -1374,6 +1437,7 @@ app.delete('/post/:key', authorize, function (req, res) {
       memberDb.collections.post.remove({ _id: post._id }, this.parallel());
       memberDb.collections.view.remove({ post_id: post._id }, this.parallel());
       memberDb.collections.comment.remove({ post_id: post._id }, this.parallel());
+      eventDb.collections.subscription.remove({ post_id: post._id }, this.parallel());
     },
     function (err) {
       if (err) return fail(err);
@@ -1412,7 +1476,6 @@ app.delete('/comment/:id', authorize, function (req, res) {
                                       function (err) {
         distributeUpdate('comment', 'post', 'ccnt', comment.post_id);
       });
-      
       res.send({ status: 'success' });
       pusher.trigger(channels.all, 'comment.delete', {
         id: comment._id.toString()
@@ -1586,21 +1649,6 @@ function distributeUpdate(type, target, counter, id) {
   }
 };
 
-// update everyone with new trends
-// function distributeTrendingMedia() {
-//   findTrendingMedia(10, function (err, media) {
-//     if (err) return console.warn('Failed to find media trends');
-//     mediaTrends = media;
-//     var rendered = [];
-//     _.each(mediaTrends, function (trend) {
-//       rendered.push(templates.trend({ trend: trend }));
-//     });
-//     pusher.trigger(channels.all, 'trends.read', {
-//       media: rendered
-//     });
-//   });
-// };
-
 // get a current list of contributor twitter handles
 // TODO: Use the Twitter realtime API instead
 function findTwitterHandles() {
@@ -1617,21 +1665,34 @@ if (!module.parent) {
 
   Step(
     function () {
-      console.log('Connecting to MemberDb:', argv.db);
+      console.log('Connecting to database:', argv.db);
       mongodb.connect(argv.db, {server: { poolSize: 4 }}, this);
-    }, function (err, db) {
+    },
+    function (err, db) {
       if (err) return this(err);
+      pusher = new Pusher({
+        appId: '35474',
+        key: 'c260ad31dfbb57bddd94',
+        secret: 'b29cec4949ef7c0d14cd'
+      });
       new MemberDb(db, {
         app: app,
         ensureIndexes: true,
         redisClient: redisClient
-      }, this);
-    }, function (err, mDb) {
+      }, this.parallel());
+      new EventDb(db, {
+        app: app,
+        ensureIndexes: true,
+        pusher: pusher,
+      }, this.parallel());
+    },
+    function (err, mDb, eDb) {
       if (err) return this(err);
       memberDb = mDb;
+      eventDb = eDb;
+      eventDb.memberDb = memberDb;
       this();
     },
-
     function (err) {
       if (err) return this(err);
 
@@ -1640,11 +1701,14 @@ if (!module.parent) {
         console.log('Server listening on port ' + argv.port);
       });
 
-      // continuous updates 
-      // setInterval(distributeTrendingMedia, 30000);
-      // distributeTrendingMedia();
-      // setInterval(findTwitterHandles, 60000);
-      findTwitterHandles();
+      // listen for new mail
+      notifier({
+        username: 'notifications@island.io',
+        password: 'I514nDr06ot',
+        host: 'imap.gmail.com',
+        port: 993,
+        secure: true
+      }).on('mail', createCommentFromMail).start();
 
       // Create service subscriptions
       request.post({
@@ -1667,6 +1731,9 @@ if (!module.parent) {
         else
           console.log('Instagram subscription failed', body);
       });
+
+      // TODO: don't do it like this
+      findTwitterHandles();
     }
   );
 }
