@@ -42,6 +42,8 @@ html(lang="en")
   body
     - if ('undefined' !== typeof(member))
       div(id='_d', data-env=(process.env.NODE_ENV || 'dev'), data-mid=member._id.toString(), data-mk=member.key)
+    - else
+      div(id='_d', data-env=(process.env.NODE_ENV || 'dev'))
     block content
     script(type='text/javascript', src='https://d3dy5gmtp8yhk7.cloudfront.net/1.12/pusher.min.js')
     script(type='text/javascript', src='https://d271mvlc6gc7bl.cloudfront.net/main/js/json2-min.js')
