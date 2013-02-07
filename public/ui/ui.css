@@ -467,6 +467,14 @@
   -moz-box-shadow: 0 1px 4px 0 #ddd;
   box-shadow: 0 1px 4px 0 #ddd;
 }
+.notification.from-login {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  background: rgba(249,249,249,0.8);
+  border: 1px solid #1a1a1a;
+  color: #333;
+}
 .split-button {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;

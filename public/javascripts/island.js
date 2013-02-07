@@ -67,7 +67,7 @@ Island = (function ($) {
     width: 3,
     radius: 40,
     rotate: 0,
-    color: '#000',
+    color: '#f9f9f9',
     speed: 2.2,
     trail: 100,
     shadow: false,
@@ -791,7 +791,8 @@ Island = (function ($) {
           } else if ('fail' === serv.status) {
             hideSpinner();
             signinSpin.stop();
-            ui.error(serv.data.message).closable().hide(80000).effect('fade').fit();
+            var uie = ui.error(serv.data.message).closable().hide(80000).effect('fade').fit();
+            $(uie.el).addClass('from-login');
             switch (serv.data.code) {
               case 'MISSING_FIELD':
               case 'ACCOUNT_WAITING':
@@ -838,7 +839,8 @@ Island = (function ($) {
           } else if ('fail' === serv.status) {
             hideSpinner();
             signinSpin.stop();
-            ui.error(serv.data.message).closable().hide(8000).effect('fade').fit();
+            var uie = ui.error(serv.data.message).closable().hide(8000).effect('fade').fit();
+            $(uie.el).addClass('from-login');
             switch (serv.data.code) {
               case 'MISSING_FIELD':
                 var missing = serv.data.missing;
@@ -856,7 +858,7 @@ Island = (function ($) {
       });
       
       // Hide everything when a strategy is clicked
-      $('.from-login').click(function (e) {
+      $('a.from-login').click(function (e) {
         signinSpin.start();
         showSpinner();
       });

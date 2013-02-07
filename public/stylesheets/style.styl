@@ -262,6 +262,7 @@ a.resend-conf
 .signin-almost-there
   text-align center
   margin 0 auto 41px
+  color #f9f9f9
 
 .signin-message
   font-weight bold
@@ -274,10 +275,12 @@ a.resend-conf
 
 .signin-controls > p
   text-align center
+  color #f9f9f9
 
 .signin-controls a
   background none
   text-decoration underline
+  color #f9f9f9
 
 .signin-controls a:hover
   text-decoration underline
@@ -311,7 +314,7 @@ a.resend-conf
 .signin-copy
   padding 5px
   display block
-  color gray
+  color black
   font-size 9px
   text-align left
 
@@ -418,6 +421,15 @@ a.resend-conf
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
+::-webkit-input-placeholder
+    color gray
+:-moz-placeholder
+    color gray
+::-moz-placeholder
+    color gray
+:-ms-input-placeholder
+    color gray
+
 textarea
   font-size 11px
   resize none
@@ -449,9 +461,15 @@ input[type=text], input[type=password]
   border 1px solid bordergray
   border-radius 5px
 
+input[type=text].from-login, input[type=password].from-login
+  border 1px solid black
+  color #333
+  background rgba(252, 252, 251, 0.65)
+
 input[type=text]:focus, input[type=password]:focus
   background white
   border 1px solid darkgray
+  background white
 
 input:focus
   outline none
@@ -488,8 +506,9 @@ input.is-button-alert[type=submit]
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
 .signin
+  position: absolute;
+  top: 15%;
   width 100%
-  height 100%
   overflow hidden
 
 .signin-bg
@@ -500,7 +519,6 @@ input.is-button-alert[type=submit]
   overflow hidden
   width 100%
   height 100%
-  opacity 0.5
 
 .signin-logo
   margin 90px 0 0
@@ -516,11 +534,17 @@ input.is-button-alert[type=submit]
   position absolute
 
 .signin-action
-  background rgba(255, 255, 255, 0.6)
-  padding 20px 0
   margin 20px 0 0 0
   width 100%
   height 105px
+
+.signin-action-inner
+  width 602px
+  height 103px
+  margin 0 auto
+  background rgba(242,242,242,0.1)
+  padding 30px 0
+  border-radius 5px
 
 .signin-strategies
   margin 0 auto
@@ -532,18 +556,19 @@ input.is-button-alert[type=submit]
 .signin-or
   margin 7px 20px 0
   font-style italic
+  color #f9f9f9
 
 .signin-quote
-  margin 50px 0 0
+  margin 120px 0 0
   width 100%
 
 .signin-quote > p
   margin 0 auto
-  font-size 24px
+  font-size 27px
   font-family title
-  line-height 24px
+  line-height 27px
   text-align center
-  color #333
+  color black
 
 a.button,
 button,
@@ -584,6 +609,10 @@ input[type=submit]
 input[type=submit]
   height 25px
 
+input[type=submit].from-login
+  color black
+  border 1px solid black
+
 a.button:hover,
 button:hover,
 div[role=button]:hover,
@@ -610,13 +639,27 @@ div[role=button]:focus,
 input[type=submit]:focus
   border 1px solid #98c1e6
 
+input[type=submit].from-login:hover
+  -moz-box-shadow 0 0 2px #1a1a1a
+  -webkit-box-shadow 0 0 2px #1a1a1a
+  box-shadow 0 0 2px #1a1a1a
+  color black
+  border 1px solid black
+
+input[type=submit].from-login:active
+  -moz-box-shadow none
+  -webkit-box-shadow none
+  box-shadow none
+  color black
+  border 1px solid black
+
 a.signin-strategy-btn,
 a.signin-strategy-btn-disabled
   width 200px
   font-size 11px
   font-weight bold
   font-family standard
-  padding 0px 0
+  padding 0 0
   display block
   
   color white
@@ -657,8 +700,14 @@ a.signin-strategy-btn:hover
 a.facebook-btn:hover
   background rgba(59, 89, 152, 0.75)
 
+a.facebook-btn.from-login:hover
+  background rgba(59, 89, 152, 1)
+
 a.twitter-btn:hover
   background rgba(60, 143, 201, 0.75)
+
+a.twitter-btn.from-login:hover
+  background rgba(60, 143, 201, 1)
 
 a.instagram-btn:hover
   background rgba(69, 63, 56, 0.75)
@@ -671,6 +720,9 @@ a.twitter-btn:active
 
 a.instagram-btn:hover
   background rgba(69, 63, 56, 0.55)
+
+a.signin-strategy-btn.from-login
+  border 1px solid black
 
 #login-form
   position relative
@@ -730,10 +782,10 @@ a.instagram-btn:hover
   font-family title
   font-size 16px
 
-li.notification:not(.closeable)
+li.notification:not(.closable)
   cursor pointer
 
-li.notification:not(.closeable):active
+li.notification:not(.closable):active
   opacity 0.8
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/

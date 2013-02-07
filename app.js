@@ -308,7 +308,11 @@ app.get('/privacy', function (req, res) {
 app.get('/login', function (req, res) {
   if (req.session.passport.user)
     return res.redirect('/');
-  var opts = { session: req.session.temp, title: 'You\'re Island' };
+  var opts = {
+    session: req.session.temp,
+    title: 'You\'re Island',
+    login: true,
+  };
   delete req.session.temp;
   res.render('login', opts);
 });

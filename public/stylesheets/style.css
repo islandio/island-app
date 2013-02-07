@@ -279,6 +279,7 @@ a.resend-conf {
 .signin-almost-there {
   text-align: center;
   margin: 0 auto 41px;
+  color: #f9f9f9;
 }
 .signin-message {
   font-weight: bold;
@@ -291,10 +292,12 @@ a.resend-conf {
 }
 .signin-controls > p {
   text-align: center;
+  color: #f9f9f9;
 }
 .signin-controls a {
   background: none;
   text-decoration: underline;
+  color: #f9f9f9;
 }
 .signin-controls a:hover {
   text-decoration: underline;
@@ -328,7 +331,7 @@ a.resend-conf {
 .signin-copy {
   padding: 5px;
   display: block;
-  color: #808080;
+  color: #1a1a1a;
   font-size: 9px;
   text-align: left;
 }
@@ -440,6 +443,18 @@ a.resend-conf {
   border: 1px solid #d04c38 !important;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+::-webkit-input-placeholder {
+  color: #808080;
+}
+:-moz-placeholder {
+  color: #808080;
+}
+::-moz-placeholder {
+  color: #808080;
+}
+:-ms-input-placeholder {
+  color: #808080;
+}
 textarea {
   font-size: 11px;
   resize: none;
@@ -475,10 +490,17 @@ input[type=password] {
   -moz-border-radius: 5px;
   border-radius: 5px;
 }
+input[type=text].from-login,
+input[type=password].from-login {
+  border: 1px solid #1a1a1a;
+  color: #333;
+  background: rgba(252,252,251,0.65);
+}
 input[type=text]:focus,
 input[type=password]:focus {
   background: #fff;
   border: 1px solid #404040;
+  background: #fff;
 }
 input:focus {
   outline: none;
@@ -514,8 +536,9 @@ input.is-button-alert[type=submit] {
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 .signin {
+  position: absolute;
+  top: 15%;
   width: 100%;
-  height: 100%;
   overflow: hidden;
 }
 .signin-bg {
@@ -526,7 +549,6 @@ input.is-button-alert[type=submit] {
   overflow: hidden;
   width: 100%;
   height: 100%;
-  opacity: 0.5;
 }
 .signin-logo {
   margin: 90px 0 0;
@@ -542,11 +564,19 @@ input.is-button-alert[type=submit] {
   position: absolute;
 }
 .signin-action {
-  background: rgba(255,255,255,0.6);
-  padding: 20px 0;
   margin: 20px 0 0 0;
   width: 100%;
   height: 105px;
+}
+.signin-action-inner {
+  width: 602px;
+  height: 103px;
+  margin: 0 auto;
+  background: rgba(242,242,242,0.1);
+  padding: 30px 0;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
 }
 .signin-strategies {
   margin: 0 auto;
@@ -558,18 +588,19 @@ input.is-button-alert[type=submit] {
 .signin-or {
   margin: 7px 20px 0;
   font-style: italic;
+  color: #f9f9f9;
 }
 .signin-quote {
-  margin: 50px 0 0;
+  margin: 120px 0 0;
   width: 100%;
 }
 .signin-quote > p {
   margin: 0 auto;
-  font-size: 24px;
+  font-size: 27px;
   font-family: Title, Verdana, Arial, sans-serif;
-  line-height: 24px;
+  line-height: 27px;
   text-align: center;
-  color: #333;
+  color: #1a1a1a;
 }
 a.button,
 button,
@@ -607,6 +638,10 @@ input[type=submit] {
 input[type=submit] {
   height: 25px;
 }
+input[type=submit].from-login {
+  color: #1a1a1a;
+  border: 1px solid #1a1a1a;
+}
 a.button:hover,
 button:hover,
 div[role=button]:hover,
@@ -633,13 +668,27 @@ div[role=button]:focus,
 input[type=submit]:focus {
   border: 1px solid #98c1e6;
 }
+input[type=submit].from-login:hover {
+  -moz-box-shadow: 0 0 2px #1a1a1a;
+  -webkit-box-shadow: 0 0 2px #1a1a1a;
+  box-shadow: 0 0 2px #1a1a1a;
+  color: #1a1a1a;
+  border: 1px solid #1a1a1a;
+}
+input[type=submit].from-login:active {
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  color: #1a1a1a;
+  border: 1px solid #1a1a1a;
+}
 a.signin-strategy-btn,
 a.signin-strategy-btn-disabled {
   width: 200px;
   font-size: 11px;
   font-weight: bold;
   font-family: Verdana, Arial, sans-serif;
-  padding: 0px 0;
+  padding: 0 0;
   display: block;
   color: #fff;
   border: 1px solid #808080;
@@ -680,8 +729,14 @@ a.signin-strategy-btn:hover {
 a.facebook-btn:hover {
   background: rgba(59,89,152,0.75);
 }
+a.facebook-btn.from-login:hover {
+  background: #3b5998;
+}
 a.twitter-btn:hover {
   background: rgba(60,143,201,0.75);
+}
+a.twitter-btn.from-login:hover {
+  background: #3c8fc9;
 }
 a.instagram-btn:hover {
   background: rgba(69,63,56,0.75);
@@ -694,6 +749,9 @@ a.twitter-btn:active {
 }
 a.instagram-btn:hover {
   background: rgba(69,63,56,0.55);
+}
+a.signin-strategy-btn.from-login {
+  border: 1px solid #1a1a1a;
 }
 #login-form {
   position: relative;
@@ -753,10 +811,10 @@ a.instagram-btn:hover {
   font-family: Title, Verdana, Arial, sans-serif;
   font-size: 16px;
 }
-li.notification:not(.closeable) {
+li.notification:not(.closable) {
   cursor: pointer;
 }
-li.notification:not(.closeable):active {
+li.notification:not(.closable):active {
   opacity: 0.8;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
