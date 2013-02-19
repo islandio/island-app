@@ -1487,7 +1487,6 @@ Island = (function ($) {
  */
 (function ($) {
   var env = $('#_d').data('env');
-  if (!env) return;
   var pusher = new Pusher('c260ad31dfbb57bddd94');
   var channel = env === 'dev' ? 'island_test' : 'island';
   var all = pusher.subscribe(channel);
