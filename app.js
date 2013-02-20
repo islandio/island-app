@@ -964,14 +964,13 @@ app.get('/:key', function (req, res) {
         return res.render('404', { title: 'Not Found' });
       post = _.first(post);
       // record view
-      if (req.user)
-        memberDb.createView({
-          post_id: post._id,
-          member_id: req.user._id,
-        }, function (err, doc) {
-          if (err) throw new Error('Failed to create view');
-          else distributeUpdate('view', 'post', 'vcnt', doc.post_id);
-        });
+      memberDb.createView({
+        post_id: post._id,
+        member_id: req.user ? req.user._id: '_anonymous_',
+      }, function (err, doc) {
+        if (err) throw new Error('Failed to create view');
+        else distributeUpdate('view', 'post', 'vcnt', doc.post_id);
+      });
       // prepare document
       var img = [];
       var vid = [];
@@ -1100,11 +1099,9 @@ app.put('/insert', authorize, function (req, res) {
 app.put('/hit/:mediaId', function (req, res) {
   if (!req.params.mediaId)
     fail(new Error('Failed to hit media'));
-  if (!req.user)
-    return res.send({ status: 'success' });
   var props = {
     media_id: req.params.mediaId,
-    member_id: req.user._id,
+    member_id: req.user ? req.user._id: '_anonymous_',
   };
   memberDb.createHit(props, function (err, doc) {
     if (err) return fail(err);
