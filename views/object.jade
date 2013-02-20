@@ -2,13 +2,13 @@
   div.each-grid-obj.matte(id=object._id.toString(), class='is-' + object.type)
     div.object-title
       - if (object.post.member.role === 0 && object.post.member.key)
-        a.object-title-name(href='/member/' + object.post.member.key)
+        a.object-title-name(href='/member/' + object.post.member.key, target='_blank')
           =object.post.member.displayName
       - else
         span.object-title-name-inactive
           =object.post.member.displayName
       - if (object.post)
-        a.object-title-parent(href='/' + object.post.key, data-id=object._id.toString(), data-key=object.key)
+        a.object-title-parent(href='/' + object.post.key, target='_blank', data-id=object._id.toString(), data-key=object.key)
           =object.post.title
     div.object-body
       div.object-parent-types
@@ -20,7 +20,7 @@
           li
             img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/' + str + '.png', width=w, height=h)
         - })
-      a.grid-obj(href='/' + object.key, data-id=object._id.toString(), data-key=object.key)
+      a.grid-obj(href='/' + object.key, target='_blank', data-id=object._id.toString(), data-key=object.key)
         - if (object.type === 'image')
           img.thumb(src=(object.thumbs[0].cf_url || object.thumbs[0].url), width=232, height=(object.instagram ? 232 : object.thumbs[0].meta.height))
         - else
@@ -69,7 +69,7 @@
           li
             img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/' + str + '.png', width=w, height=h)
         - })
-      a.grid-obj(href='/' + object.key, data-id=object._id.toString(), data-key=object.key)
+      a.grid-obj(href='/' + object.key, target='_blank', data-id=object._id.toString(), data-key=object.key)
         //- img.thumb.hidden(src=object.thumbs[0].cf_url, width=232, height=object.thumbs[0].meta.height)
         //- img.thumb.hidden(src=object.thumbs[1].cf_url, width=232, height=object.thumbs[1].meta.height)
         //- img.thumb.hidden(src=object.thumbs[2].cf_url, width=232, height=object.thumbs[2].meta.height)

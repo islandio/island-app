@@ -930,16 +930,16 @@ Island = (function ($) {
       // lazy load the grid
       jrid.addClass('search-results');
       searchBox.trigger('keyup');
-      
+
 
       $('.grid-obj, .trending, .object-title-parent').live('click', function (e) {
-        e.preventDefault();
-        var data = $(this).data();
-        $.put('/hit/' + data.id, function (res) {
-          if ('error' === res.status)
-            return console.log(res.message);
-          window.location = '/' + data.key;
-        });
+        // e.preventDefault();
+        $.put('/hit/' + $(this).data().id, function(){});
+        // $.put('/hit/' + data.id, function (res) {
+        //   if ('error' === res.status)
+        //     return console.log(res.message);
+        //   window.location = '/' + data.key;
+        // });
       });
 
       // comment input behavior

@@ -3,7 +3,7 @@ div.comment.matte(id='com-' + comment._id.toString())
   div.comment-title
     - if (showMember) {
       - if (comment.member.key)
-        a.comment-title-name(href='/member/' + comment.member.key)
+        a.comment-title-name(href='/member/' + comment.member.key, target='_blank')
           =comment.member.displayName
       - else
         span.comment-title-name-inactive
@@ -11,10 +11,10 @@ div.comment.matte(id='com-' + comment._id.toString())
     - }
     - if (comment.post) {
       - if (showMember)
-        a.comment-title-parent(href='/' + comment.post.key, style=parentStyle)
+        a.comment-title-parent(href='/' + comment.post.key, target='_blank', style=parentStyle)
           =comment.post.title
       - else
-        a.comment-title-parent-solo(href='/' + comment.post.key, style=parentStyle)
+        a.comment-title-parent-solo(href='/' + comment.post.key, target='_blank', style=parentStyle)
           =comment.post.title
     - }
   div.comment-body
