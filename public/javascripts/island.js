@@ -933,13 +933,7 @@ Island = (function ($) {
 
 
       $('.grid-obj, .trending, .object-title-parent').live('click', function (e) {
-        // e.preventDefault();
         $.put('/hit/' + $(this).data().id, function(){});
-        // $.put('/hit/' + data.id, function (res) {
-        //   if ('error' === res.status)
-        //     return console.log(res.message);
-        //   window.location = '/' + data.key;
-        // });
       });
 
       // comment input behavior
