@@ -671,7 +671,40 @@ Island = (function ($) {
         win.scroll(paginate).resize(paginate);
       }
 
-      
+      var addMap = $('#add_map');
+      if (addMap.length > 0) {
+
+        var mapOptions = {
+          zoom: 13,
+          center: new google.maps.LatLng(37.7749295, -122.4194155),
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById('add_map'), mapOptions);
+        var sql = new cartodb.SQL({ user: 'foodficiency' });
+
+        cartodb.createLayer(map, 'http://foodficiency.cartodb.com/api/v1/viz/21759/viz.json')
+         .on('done', function (layer) {
+          
+          map.overlayMapTypes.setAt(0, layer);
+          
+          layer.on('featureClick', function(e, pos, latlng, data) {
+            // cartodb.log.log(e, pos, latlng, data);
+          });
+
+          layer.on('featureOver', function(e, pos, latlng, data) {
+            // cartodb.log.log(e, pos, latlng, data);
+          });
+
+          layer.on('error', function(err) {
+            // cartodb.log.log('error: ' + err);
+          });
+
+        }).on('error', function() {
+          // cartodb.log.log("some error occurred");
+        });
+        
+      }
+
       /////////////////////////// ACTIONS
 
       // forms

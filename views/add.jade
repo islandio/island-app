@@ -26,6 +26,9 @@ block main
             td(colspan='2')
               textarea.matte(name='post[body]')
           tr
+            td(colspan='2')
+              div(id='add_map')
+          tr
             - if (member.facebookId)
               td(style="width:137px")
                 input(id='toFacebook', name='post[toFacebook]', type='checkbox', style='margin-top: 12px;')

@@ -534,6 +534,10 @@ input.is-button-alert[type=submit] {
   bottom: 0;
   cursor: pointer;
 }
+#add_map {
+  width: 640px;
+  height: 250px;
+}
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 .signin {
   position: absolute;
