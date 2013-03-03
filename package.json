@@ -33,7 +33,8 @@
     "connect-redis": "~1.4.5",
     "redis": "~0.8.2",
     "pusher": "~0.1.2",
-    "cartodb": "~0.1.0"
+    "cartodb": "~0.1.0",
+    "cli-color": "~0.2.2"
   },
   "engines": {
     "node": "~0.8.x"
