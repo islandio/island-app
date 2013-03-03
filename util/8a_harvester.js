@@ -40,13 +40,13 @@ var country_rx = new RegExp(/CountryCode=([A-Z]{3})">([^<]+)</gi);
 var geo_rx = new RegExp(/var point_([0-9]+) = new GLatLng\(([-0-9\.]+), ([-0-9\.]+)\);/gi);
 
 // Matches crag anchor tags:
-var crag_rx = new RegExp(/<a.+?CragId=([0-9]+).+?TITLE='(.+?)'.+?Country: (.+?)<br>City: (.+?)<br>/gi);
+var crag_rx = new RegExp(/<a.+?CragId=([0-9]+).+?TITLE='([^']+)'.+?Country: ([^<]+)<br>City: ([^<]+)?<br>/gi);
 
 // Matches ascent tr tags:
 var ascent_row_rx = new RegExp(/<tr class='Height20'.+?<\/tr>/gi);
 
 // Matches ascent details:
-var ascent_rx = /^<tr class='Height20'.+?<td><b>(.+?)<\/b><\/td><td>(.+?)<\/td>.+">(.+)<\/a>( \/ (.+))?<\/td><\/tr>$/;
+var ascent_rx = /^<tr class='Height20'.+?<td><b>([^<]+)<\/b><\/td><td>([^<]+)<\/td>.+">(.+)<\/a>( \/ (.+))?<\/td><\/tr>$/;
 
 // Open list for countries:
 var countries = {
@@ -76,6 +76,8 @@ var crags = [
     city: String,
     boulders: Number,
     routes: Number,
+    boulder_grade: Number,
+    route_grade: Number,
     lat: Number,
     lon: Number,
   }
@@ -86,7 +88,7 @@ var crags = [
 var ascents = [
   /*
   {
-    grade: String,
+    grade: Number,
     name: String,
     sector: String,
     type: String,
@@ -98,33 +100,13 @@ var ascents = [
   */
 ];
 
-// Maps Font boulder ratings to number scale.
-var boulder_map = {
-  '4': 1, '4+': 2, '5': 3, '5+': 4, '6A': 5, '6A+': 6, '6B': 7, '6B+': 8,
-  '6C': 9, '6C+': 10, '7A': 11, '7A+': 12, '7B': 13, '7B+': 14, '7C': 15,
-  '7C+': 16, '8A': 17, '8A+': 18, '8B': 19, '8B+': 20, '8C': 21, '8C+': 22,
+// Maps ratings to a number scale.
+var rating_map = {
+  '3': 1, '4': 2, '5a': 3, '5b': 4, '5c': 5, '6a': 6,  '6a+': 6, '6b': 8,
+  '6b+': 9, '6c': 10, '6c+': 11, '7a': 12, '7a+': 13, '7b': 14, '7b+': 15,
+  '7c': 16, '7c+': 17, '8a': 18, '8a+': 19, '8b': 20, '8b+': 21, '8c': 22,
+  '8c+': 23, '9a': 24, '9a+': 25, '9b': 26, '9b+': 27, '9c': 28, '9c+': 29,
 };
-
-// Maps French route ratings to number scale.
-var route_map = {
-  '1': 1, '2': 2, '3': 3, '4a': 4, '4b': 5, '4c': 6, '5a': 7, '5b': 8,
-  '5c': 9, '6a': 10, '6a+': 11, '6b': 12, '6b+': 13, '6c': 14, '6c+': 15,
-  '7a': 16, '7a+': 17, '7b': 18, '7b+': 19, '7c': 20, '7c+': 21, '8a': 22,
-  '8a+': 23, '8b': 24, '8b+': 25, '8c': 26, '8c+': 27, '9a': 28, '9a+': 29,
-  '9b': 30, '9b+': 31, '9c': 32, '9c+': 33,
-};
-
-// Returns ratings as Number.
-function rate(r, t) {
-  switch (t) {
-    case 'boulder':
-      return boulder_map[r.toUpperCase()];
-      break;
-    case 'route':
-      return route_map[r.toLowerCase()];
-      break;
-  }
-}
 
 // Walk steps.
 Step(
@@ -188,11 +170,11 @@ Step(
               country: v,
               country_code: k,
             };
-            if (match[4].trim() !== '')
+            if (match[4] && match[4].trim() !== '')
               c.city = format(match[4]);
             cs.push(c);
           }
-          log('Found ' + clc.green(cs.length) + ' ' + type
+          log('Found ' + clc.green(cs.length) + ' ' + clc.italic(type)
               + ' crags in ' + clc.underline(v) + '.');
           crags.push(cs);
           next();
@@ -210,6 +192,7 @@ Step(
       if (points[c.id] !== undefined)
         _.extend(c, points[c.id]);
     });
+    // crags = _.first(crags, 10);
     this();
   },
 
@@ -238,6 +221,7 @@ Step(
         if (batches.length !== 0) {
           var complete = Math.round((cnt / crags.length) * 100);
           log('Found ascents from ' + clc.green(complete + '%') + ' of crags.');
+          log(clc.blue('Waiting...'));
           _.delay(function () {
             post(batches.shift());
           }, batchDelay);
@@ -257,6 +241,7 @@ Step(
           }, function (err, res, body) {
             errCheck(err, res);
             var as = [];
+            var grades = 0;
             var match_row;
             while (match_row = ascent_row_rx.exec(body)) {
               var m = match_row[0].match(ascent_rx);
@@ -268,19 +253,21 @@ Step(
                 crag_name: c.name,
                 crag_id: c.id,
               };
-              a.grade = rate(a.grade, type);
               if (m[5] && m[5].trim() !== '')
                 a.sector = format(m[5]);
               if (c.lat && c.lon) {
                 a.lat = c.lat;
                 a.lon = c.lon;
               }
+              a.grade = a.grade ? rating_map[a.grade.toLowerCase()] || 0 : 0;
+              grades += a.grade;
               as.push(a);
-              log(a)
             }
             c[type + 's'] = as.length;
-            log('Found ' + clc.green(as.length) + ' ' + type + 's'
-                + ' in ' + clc.underline(c.name) + '.');
+            c[type + '_grade'] = as.length !== 0 ? grades / as.length : 0;
+            log('Found ' + clc.green(as.length) + ' ' + clc.italic(type + 's')
+                + ' in ' + clc.underline(c.name) + ' (GRADE_AVG='
+                + clc.magenta(c[type + '_grade']) + ').');
             ascents.push(as);
             _next();
           });
@@ -297,13 +284,7 @@ Step(
     this();
   },
 
-  // Determine crag stats.
-  function () {
-    
-    this();
-  },
-
-  // Clear crags cartodb table:
+  // Clear crags cartodb table.
   function () {
     log(clc.blue('Wiping cartodb crags table...'))
     request.post({
@@ -315,7 +296,7 @@ Step(
     }, this);
   },
 
-  // Add crags to cartodb
+  // Add crags to cartodb.
   function (err, res, body) {
     log(clc.blue('Mapping new cartodb crags table...'))
     errCheck(err, res);
@@ -323,11 +304,11 @@ Step(
       this();
     var next = _.after(crags.length, this);
     _.each(crags, function (c) {
-      var names = ["id", "name", "country",
-                  "country_code", "boulders", "routes"];
+      var names = ["id", "name", "country", "country_code",
+                  "boulders", "routes", "boulder_grade", "route_grade"];
       var values = [c.id, "'" + c.name + "'", "'" + c.country + "'",
-                    "'" + c.country_code + "'", "'" + c.boulders + "'",
-                    "'" + c.routes + "'"];
+                    "'" + c.country_code + "'", c.boulders,
+                    c.routes, c.boulder_grade, c.route_grade];
       if (c.lat && c.lon) {
         names.unshift("the_geom");
         values.unshift("CDB_LatLng(" + c.lat + "," + c.lon + ")");
@@ -346,7 +327,54 @@ Step(
         }
       }, function (err, res, body) {
         errCheck(err, res);
-        log('Mapped ' + clc.underline(c.name) + '.');
+        log('Mapped crag: ' + clc.underline(c.name));
+        next();
+      });
+    });
+  },
+
+  // Clear ascents cartodb table.
+  function () {
+    log(clc.blue('Wiping cartodb ascents table...'))
+    request.post({
+      uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
+      qs: {
+        q: 'DELETE FROM ascents',
+        api_key: cartodb.api_key
+      }
+    }, this);
+  },
+
+  // Add ascents to cartodb.
+  function (err, res, body) {
+    log(clc.blue('Mapping new cartodb ascents table...'))
+    errCheck(err, res);
+    if (ascents.length === 0)
+      this();
+    var next = _.after(ascents.length, this);
+    _.each(ascents, function (a) {
+      var names = ["grade", "name", "type", "crag_name", "crag_id"];
+      var values = [a.grade, "'" + a.name + "'", "'" + a.type + "'",
+                    "'" + a.crag_name + "'", a.crag_id];
+      if (a.lat && a.lon) {
+        names.unshift("the_geom");
+        values.unshift("CDB_LatLng(" + a.lat + "," + a.lon + ")");
+      }
+      if (a.sector) {
+        names.push("sector");
+        values.push("'" + a.sector + "'");
+      }
+      var q = "INSERT INTO ascents (" + _.join(",", names)
+              + ") VALUES (" + _.join(",", values) + ")";
+      request.post({
+        uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
+        qs: {
+          q: q,
+          api_key: cartodb.api_key
+        }
+      }, function (err, res, body) {
+        errCheck(err, res);
+        log('Mapped ascent: ' + clc.underline(a.name));
         next();
       });
     });
@@ -355,9 +383,9 @@ Step(
   // Done.
   function (err) {
     errCheck(err);
-    log(clc.blue('\nSuccessfully scraped 8a.nu:'));
-    log(clc.blue('Found ' + clc.green(crags.length)
-        + ' crags and ' + clc.green(ascents.length) + 'ascents.'));
+    log(clc.blue('\nSuccessfully scraped 8a.nu.'));
+    log('Found ' + clc.green(crags.length)
+        + ' crags and ' + clc.green(ascents.length) + ' ascents.\n');
     process.exit(0);
   }
 );
