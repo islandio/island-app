@@ -132,7 +132,7 @@ function mapCrag(c, cb) {
     }
   }, function (err, res, body) {
     errCheck(err, res);
-    log('Mapped crag: ' + clc.underline(c.name));
+    log(clc.bold('Mapped') + ' crag: ' + clc.underline(c.name));
     if (cb) cb();
   });
 }
@@ -160,7 +160,7 @@ function mapAscent(a, cb) {
     }
   }, function (err, res, body) {
     errCheck(err, res);
-    log('Mapped ascent: ' + clc.underline(a.name));
+    log(clc.bold('Mapped') + ' ascent: ' + clc.underline(a.name));
     if (cb) cb();
   });
 }
@@ -170,7 +170,7 @@ Step(
 
   // Clear crags cartodb table.
   function () {
-    log(clc.blue('Wiping cartodb crags table...'))
+    log(clc.blue('Wiping cartodb crags table...'));
     request.post({
       uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
       qs: {
@@ -182,7 +182,7 @@ Step(
 
   // Clear ascents cartodb table.
   function () {
-    log(clc.blue('Wiping cartodb ascents table...'))
+    log(clc.blue('Wiping cartodb ascents table...'));
     request.post({
       uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
       qs: {
@@ -216,13 +216,13 @@ Step(
       countries[match[1]] = format(match[2]);
     if (_.size(countries) === 0)
       errCheck(clc.red('No countries found.'));
-    log('Found ' + clc.green(_.size(countries)) + ' countries.');
+    log(clc.bold('Found ') + clc.green(_.size(countries)) + ' countries.');
     // Map:
     var match;
     while ((match = geo_rx.exec(map.body)) !== null)
       points[Number(match[1])] = {
             lat: Number(match[2]), lon: Number(match[3])};
-    log('Found ' + clc.green(_.size(points)) + ' crag locations.');
+    log(clc.bold('Found ') + clc.green(_.size(points)) + ' crag locations.');
     this();
   },
 
@@ -255,7 +255,7 @@ Step(
               c.city = format(match[4]);
             cs.push(c);
           }
-          log('Found ' + clc.green(cs.length) + ' ' + clc.italic(type)
+          log(clc.bold('Found ') + clc.green(cs.length) + ' ' + clc.italic(type)
               + ' crags in ' + clc.underline(v) + '.');
           crags.push(cs);
           next();
@@ -268,12 +268,11 @@ Step(
   function () {
     crags = _.reduceRight(crags, function (a, b) {
       return a.concat(b); }, []);
-    log('Found ' + clc.green(crags.length) + ' crags.');
+    log(clc.bold('Found ') + clc.green(crags.length) + ' crags.');
     _.each(crags, function (c) {
       if (points[c.id] !== undefined)
         _.extend(c, points[c.id]);
     });
-    // crags = _.first(crags, 10);
     this();
   },
 
@@ -298,17 +297,21 @@ Step(
     // Do post requests in batches.
     (function post(batch) {
       cnt += batch.length;
-      var _next = _.after(batch.length * types.length, function () {
+      var _next = _.after(batch.length, function() {
         if (batches.length !== 0) {
           var complete = Math.round((cnt / crags.length) * 100);
-          log('Found ascents from ' + clc.green(complete + '%') + ' of crags.');
+          log(clc.bold('Found') + ' ascents from ' + clc.green(complete + '%') + ' of crags.');
           log(clc.blue('Waiting...'));
-          _.delay(function () {
+          _.delay(function() {
             post(batches.shift());
           }, batchDelay);
         } else next();
       });
       _.each(batch, function (c) {
+        var __next = _.after(types.length, function() {
+          mapCrag(c);
+          _next();
+        });
         _.each(types, function (t) {
           var type = t ? 'boulder' : 'route';
           request.get({
@@ -347,91 +350,24 @@ Step(
             }
             c[type + 's'] = as.length;
             c[type + '_grade'] = as.length !== 0 ? grades / as.length : 0;
-            log('Found ' + clc.green(as.length) + ' ' + clc.italic(type + 's')
+            log(clc.bold('Found ') + clc.green(as.length) + ' ' + clc.italic(type + 's')
                 + ' in ' + clc.underline(c.name) + ' (GRADE_AVG='
                 + clc.magenta(c[type + '_grade']) + ').');
             ++ascents;
-            _next();
+            __next();
           });
         });
       });
     })(batches.shift());
   },
 
-  // // Join ascents.
+  // // Add crags to cartodb.
   // function () {
-  //   ascents = _.reduceRight(ascents, function (a, b) {
-  //     return a.concat(b); }, []);
-  //   log('Found ' + clc.green(ascents.length) + ' ascents.');
-  //   this();
-  // },
-
-  // // Clear crags cartodb table.
-  // function () {
-  //   log(clc.blue('Wiping cartodb crags table...'))
-  //   request.post({
-  //     uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
-  //     qs: {
-  //       q: 'DELETE FROM crags',
-  //       api_key: cartodb.api_key
-  //     }
-  //   }, this);
-  // },
-
-  // Add crags to cartodb.
-  function () {
-    if (crags.length === 0)
-      this();
-    var next = _.after(crags.length, this);
-    _.each(crags, function (c) {
-      mapCrag(s, next);
-    });
-  },
-
-  // // Clear ascents cartodb table.
-  // function () {
-  //   log(clc.blue('Wiping cartodb ascents table...'))
-  //   request.post({
-  //     uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
-  //     qs: {
-  //       q: 'DELETE FROM ascents',
-  //       api_key: cartodb.api_key
-  //     }
-  //   }, this);
-  // },
-
-  // // Add ascents to cartodb.
-  // function (err, res, body) {
-  //   log(clc.blue('Mapping new cartodb ascents table...'))
-  //   errCheck(err, res);
-  //   if (ascents.length === 0)
+  //   if (crags.length === 0)
   //     this();
-  //   var next = _.after(ascents.length, this);
-  //   _.each(ascents, function (a) {
-  //     var names = ["grade", "name", "type", "crag_name", "crag_id"];
-  //     var values = [a.grade, "'" + a.name + "'", "'" + a.type + "'",
-  //                   "'" + a.crag_name + "'", a.crag_id];
-  //     if (a.lat && a.lon) {
-  //       names.unshift("the_geom");
-  //       values.unshift("CDB_LatLng(" + a.lat + "," + a.lon + ")");
-  //     }
-  //     if (a.sector) {
-  //       names.push("sector");
-  //       values.push("'" + a.sector + "'");
-  //     }
-  //     var q = "INSERT INTO ascents (" + _.join(",", names)
-  //             + ") VALUES (" + _.join(",", values) + ")";
-  //     request.post({
-  //       uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
-  //       qs: {
-  //         q: q,
-  //         api_key: cartodb.api_key
-  //       }
-  //     }, function (err, res, body) {
-  //       errCheck(err, res);
-  //       log('Mapped ascent: ' + clc.underline(a.name));
-  //       next();
-  //     });
+  //   var next = _.after(crags.length, this);
+  //   _.each(crags, function (c) {
+  //     mapCrag(s, next);
   //   });
   // },
 
@@ -439,7 +375,7 @@ Step(
   function (err) {
     errCheck(err);
     log(clc.blue('\nSuccessfully scraped 8a.nu.'));
-    log('Found ' + clc.green(crags.length)
+    log(clc.bold('Found ') + clc.green(crags.length)
         + ' crags and ' + clc.green(ascents) + ' ascents.\n');
     process.exit(0);
   }
