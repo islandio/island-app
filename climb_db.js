@@ -53,12 +53,10 @@ var ClimbDb = exports.ClimbDb = function (dB, options, cb) {
   );
 }
 
-ClimbDb.prototype.createCounty = function (props, cb) {
+ClimbDb.prototype.createCountry = function (props, cb) {
   var self = this;
-  if (!db.validate(props, ['code', 'name']))
+  if (!db.validate(props, ['key', 'name']))
     return cb ? cb(new Error('Invalid country')) : false;
-  props.key = props.code;
-  delete props.code;
   _.defaults(props, {
     bcnt: 0,
     rcnt: 0,
@@ -72,9 +70,9 @@ ClimbDb.prototype.createCounty = function (props, cb) {
 
 ClimbDb.prototype.createCrag = function (props, cb) {
   var self = this;
-  if (!db.validate(props, ['name', 'country', 'country_code', 'country_id']))
+  if (!db.validate(props, ['name', 'country', 'country_key', 'country_id']))
     return cb ? cb(new Error('Invalid crag')) : false;
-  props.key = [props.country_code, _.slugify(props.crag)].join('/');
+  props.key = [props.country_key, _.slugify(props.name)].join('/');
   _.defaults(props, {
     city: null,
     bcnt: 0,
@@ -90,9 +88,9 @@ ClimbDb.prototype.createCrag = function (props, cb) {
 ClimbDb.prototype.createAscent = function (props, cb) {
   var self = this;
   if (!db.validate(props, ['name', 'grade', 'type', 'crag',
-                          'country', 'country_code', 'country_id', 'crag_id']))
+                          'country', 'country_key', 'country_id', 'crag_id']))
     return cb ? cb(new Error('Invalid ascent')) : false;
-  props.key = [props.country_code, _.slugify(props.crag),
+  props.key = [props.country_key, _.slugify(props.crag),
               _.slugify(props.name)].join('/');
   _.defaults(props, {
     sector: null,

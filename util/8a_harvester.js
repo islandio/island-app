@@ -31,7 +31,7 @@ function errCheck(err) {
 
 // Format title strings.
 function format(str) {
-  return _.capitalize(str.trim());
+  return _.capitalize(str.trim());//.string.replace(/\\/g, '');
 }
 
 // Default request headers:
@@ -57,7 +57,7 @@ var country_rx = new RegExp(/CountryCode=([A-Z]{3})">([^<]+)</gi);
 var geo_rx = new RegExp(/var point_([0-9]+) = new GLatLng\(([-0-9\.]+), ([-0-9\.]+)\);/gi);
 
 // Matches crag anchor tags:
-var crag_rx = new RegExp(/<a.+?CragId=([0-9]+).+?TITLE='([^']+)'.+?Country: ([^<]+)<br>City: ([^<]+)?<br>/gi);
+var crag_rx = new RegExp(/<a.+?CragId=([0-9]+).+?TITLE='(.+?)'.+?Country: ([^<]+)<br>City: ([^<]+)?<br>/gi);
 
 // Matches ascent tr tags:
 var ascent_row_rx = new RegExp(/<tr class='Height20'.+?<\/tr>/gi);
@@ -80,7 +80,7 @@ var countries = [
   /*
   {
     _id: String,
-    code: String,
+    key: String,
     name: String,
     bcnt: Number,
     rcnt: Number,
@@ -99,7 +99,7 @@ var crags = [
     _id: String,
     name: String,
     country: String,
-    country_code: String,
+    country_key: String,
     city: String,
     bcnt: Number,
     rcnt: Number,
@@ -112,10 +112,10 @@ var crags = [
   */
 ];
 
-// Counter for ascents:
-var ascents = 0;
+// Open list for ascents:
+var ascents = [
   /*
-  <ascent> = {
+  {
     _id: String,
     name: String,
     grade: Number,
@@ -124,13 +124,14 @@ var ascents = 0;
     crag: String,
     city: String,
     country: String,
-    country_code: String,
+    country_key: String,
     lat: Number,
     lon: Number,
     country_id: String,
     crag_id: String,
   }
   */
+];
 
 // Maps ratings to a number scale.
 var rating_map = {
@@ -142,10 +143,10 @@ var rating_map = {
 
 // Add a crag to cartodb.
 function mapCrag(c, cb) {
-  var names = ["id", "name", "country", "country_code",
+  var names = ["id", "name", "country", "country_key",
               "bcnt", "rcnt", "bgrd", "rgrd", "country_id"];
   var values = ["'" + c._id.toString() + "'", "'" + c.name + "'",
-                "'" + c.country + "'", "'" + c.country_code + "'", c.bcnt,
+                "'" + c.country + "'", "'" + c.country_key + "'", c.bcnt,
                 c.rcnt, c.bgrd, c.rgrd, "'" + c.country_id + "'"];
   if (c.lat && c.lon) {
     names.unshift("the_geom");
@@ -174,10 +175,10 @@ function mapCrag(c, cb) {
 // Add an ascent to cartodb.
 function mapAscent(a, cb) {
   var names = ["id", "name", "grade", "type", "crag",
-              "country", "country_code", "country_id", "crag_id"];
+              "country", "country_key", "country_id", "crag_id"];
   var values = ["'" + a._id.toString() + "'", "'" + a.name + "'", a.grade,
                 "'" + a.type + "'", "'" + a.crag + "'", "'" + a.country + "'",
-                "'" + a.country_code + "'", "'" + a.country_id.toString() + "'",
+                "'" + a.country_key + "'", "'" + a.country_id.toString() + "'",
                 "'" + a.crag_id.toString() + "'"];
   if (a.lat && a.lon) {
     names.unshift("the_geom");
@@ -279,10 +280,11 @@ Step(
     list.body = iconv.convert(new Buffer(list.body, 'binary')).toString();
     var match;
     while ((match = country_rx.exec(list.body)))
-      if (!_.find(countries, function (c) {return c.code === match[1];}))
+      if (!_.find(countries, function (c) {
+          return c.key === match[1].toLowerCase();}))
         countries.push({
           _id: new ObjectID(),
-          code: match[1],
+          key: match[1].toLowerCase(),
           name: format(match[2])
         });
     if (countries.length === 0)
@@ -297,6 +299,7 @@ Step(
             lat: Number(match[2]), lon: Number(match[3])};
     log(clc.bold('Found ') + clc.green(_.size(points))
         + ' crag locations.');
+    countries = _.first(countries, 2);
     this();
   },
 
@@ -310,7 +313,7 @@ Step(
         request.get({
           uri: 'http://www.8a.nu/crags/List.aspx',
           qs: {
-            CountryCode: y.code,
+            CountryCode: y.key.toUpperCase(),
             AscentType: t,
           },
           encoding: 'binary',
@@ -324,7 +327,7 @@ Step(
               _id: new ObjectID(),
               name: format(match[2]),
               country: y.name,
-              country_code: y.code,
+              country_key: y.key,
               country_id: y._id,
               id: Number(match[1].trim()),
             };
@@ -347,20 +350,18 @@ Step(
   function () {
     crags = _.reduceRight(crags, function (a, b) {
       return a.concat(b); }, []);
-    log(clc.bold('Found ') + clc.green(crags.length) + ' crags.');
     _.each(crags, function (c) {
       if (points[c.id] !== undefined)
         _.extend(c, points[c.id]);
       delete c.id;
     });
-    crags = _.first(crags, 4);
     this();
   },
 
   // Get the ascents from each crag.
   function () {
     if (crags.length === 0)
-      this();
+      return this();
     var next = this;
     var types = [0, 1];
     var batchSize = 100;
@@ -378,7 +379,7 @@ Step(
     (function post(batch) {
       log(clc.blue('Getting ascents...'));
       cnt += batch.length;
-      var _next = _.after(batch.length, function() {
+      var _next = _.after(batch.length * types.length, function() {
         if (batches.length !== 0) {
           var complete = Math.round((cnt / crags.length) * 100);
           log(clc.bold('Found') + ' ascents from '
@@ -390,11 +391,6 @@ Step(
         } else next();
       });
       _.each(batch, function (c) {
-        var __next = _.after(types.length, function() {
-          mapCrag(c);
-          db.createCrag(c);
-          _next();
-        });
         _.each(types, function (t) {
           var type = t ? 'b' : 'r';
           request.get({
@@ -422,7 +418,7 @@ Step(
                 type: type,
                 crag: c.name,
                 country: c.country,
-                country_code: c.country_code,
+                country_key: c.country_key,
                 country_id: c.country_id,
                 crag_id: c._id,
               };
@@ -437,8 +433,6 @@ Step(
               a.grade = a.grade ? rating_map[a.grade.toLowerCase()] || 0 : 0;
               grades += a.grade;
               as.push(a);
-              mapAscent(a);
-              db.createAscent(a);
             }
             c[type + 'cnt'] = as.length;
             c[type + 'grd'] = as.length !== 0 ? grades / as.length : 0;
@@ -447,15 +441,82 @@ Step(
                   + ' ' + clc.italic(t ? 'boulders' : 'routes')
                   + ' in ' + clc.underline(c.name) + ' (GRADE_AVG='
                   + clc.magenta(c[type + 'grd']) + ').');
-            ++ascents;
-            __next();
+            ascents.push(as);
+            _next();
           });
         });
       });
     })(batches.shift());
   },
 
+  // Join ascents.
   function () {
+    ascents = _.reduceRight(ascents, function (a, b) {
+      return a.concat(b); }, []);
+    this();
+  },
+
+  // Map ascents.
+  function () {
+    if (ascents.length === 0)
+      return this();
+    log(clc.blue('Mapping ascents...'));
+    var next = _.after(ascents.length, this);
+    _.each(ascents, function (a) {
+      mapAscent(a, next);
+    });
+  },
+
+  // Save ascents.
+  function () {
+    if (ascents.length === 0)
+      return this();
+    log(clc.blue('Saving ascents...'));
+    var next = _.after(ascents.length, this);
+    _.each(ascents, function (a) {
+      db.createAscent(a, function (err) {
+        if (argv.really_verbose)
+          log(clc.bold('Saved') + ' ascent: ' + clc.underline(a.name));
+        next(err);
+      });
+    });
+  },
+
+  // Map crags.
+  function (err) {
+    errCheck(err);
+    if (crags.length === 0)
+      return this();
+    log(clc.blue('Mapping crags...'));
+    var next = _.after(crags.length, this);
+    _.each(crags, function (c) {
+      mapCrag(c, next);
+    });
+  },
+
+  // Save crags.
+  function (err) {
+    errCheck(err);
+    if (crags.length === 0)
+      return this();
+    log(clc.blue('Saving crags...'));
+    var next = _.after(crags.length, this);
+    _.each(crags, function (c) {
+      db.createCrag(c, function (err) {
+        if (argv.really_verbose)
+          log(clc.bold('Saved') + ' crag: ' + clc.underline(c.name));
+        next(err);
+      });
+    });
+  },
+
+  // Get country stats and save.
+  function (err) {
+    errCheck(err);
+    if (countries.length === 0)
+      return this();
+    log(clc.blue('Saving countries...'));
+    var next = _.after(countries.length, this);
     _.each(countries, function (y) {
       y.bcnt = 0; 
       y.rcnt = 0;
@@ -473,14 +534,16 @@ Step(
       y.bgrd = y.bcnt !== 0 ? y.bgrd / y.bcnt : 0;
       y.rgrd = y.rcnt !== 0 ? y.rgrd / y.rcnt : 0;
       db.createCountry(y);
+      next();
     });
   },
 
   // Done.
   function () {
     log(clc.blue('\nSuccessfully scraped 8a.nu.'));
-    log(clc.bold('Found ') + clc.green(crags.length)
-        + ' crags and ' + clc.green(ascents) + ' ascents.\n');
+    log(clc.bold('Found ') + clc.green(countries.length) + ' countries, '
+        + clc.green(crags.length) + ' crags, and '
+        + clc.green(ascents.length) + ' ascents.\n');
     process.exit(0);
   }
 );
