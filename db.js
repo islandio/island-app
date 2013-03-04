@@ -17,15 +17,12 @@ var Step = require('step');
  * exist in the given props.
  */
 var createDoc = exports.createDoc = function (collection, props, cb) {
-  function insert() {
-    collection.insert(props, { safe: true },
-                      function (err, inserted) {
-      if (cb) cb(err, inserted[0]);
-    });
-  }
   if (!props.created)
     props.created = new Date;
-  insert();
+  collection.insert(props, { safe: true },
+                    function (err, inserted) {
+    if (cb) cb(err, inserted[0]);
+  });
 }
 
 
