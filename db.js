@@ -21,7 +21,7 @@ var createDoc = exports.createDoc = function (collection, props, cb) {
     props.created = new Date;
   collection.insert(props, { safe: true },
                     function (err, inserted) {
-    if (cb) cb(err, inserted[0]);
+    if (cb) cb(err, inserted ? inserted[0] : null);
   });
 }
 
