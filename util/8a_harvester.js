@@ -556,8 +556,9 @@ Step(
               c.type = 'b';
             else if (c.bcnt === 0 && c.rcnt > 0)
               c.type = 'r';
-            else if (c.bcnt === 0 && c.rcnt === 0)
+            else if (c.bcnt > 0 && c.rcnt > 0)
               c.type = 'c';
+            else c.type = 'n';
             db.createCrag(c, next);
           });
         },

@@ -72,7 +72,8 @@ ClimbDb.prototype.createCountry = function (props, cb) {
 
 ClimbDb.prototype.createCrag = function (props, cb) {
   var self = this;
-  if (!db.validate(props, ['name', 'country', 'country_key', 'country_id']))
+  if (!db.validate(props, ['name', 'type', 'country',
+                          'country_key', 'country_id']))
     return cb ? cb(new Error('Invalid crag')) : false;
   var name = _.slugify(props.name);
   if (name === '')
