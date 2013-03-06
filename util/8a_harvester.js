@@ -1,24 +1,25 @@
 #!/usr/bin/env node
 
 var request = require('request');
+var curl = require('curlrequest');
 var mongodb = require('mongodb');
 var ObjectID = require('mongodb').BSONPure.ObjectID;
 var ClimbDb = require('../climb_db.js').ClimbDb;
-var log = require('console').log;
-var util = require('util'), error = util.error,
-    debug = util.debug, inspect = util.inspect;
 var iconv = new require('iconv').Iconv('ISO-8859-1', 'UTF-8');
 var Step = require('step');
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
 var clc = require('cli-color');
+clc.orange = clc.xterm(202);
+var _log = require('console').log;
+var log = function (s) {_log(clc.bold(s));};
+var util = require('util'), error = util.error,
+    debug = util.debug, inspect = util.inspect;
 var optimist = require('optimist');
 var argv = optimist
     .default('db', 'mongodb://localhost:27018/nodejitsu_sanderpick_nodejitsudb9750563292')
     .boolean('pro')
     .boolean('clear')
-    .boolean('verbose')
-    .boolean('really_verbose')
     .argv;
 
 // Errors wrapper.
@@ -31,7 +32,12 @@ function errCheck(err) {
 
 // Format title strings.
 function format(str) {
-  return _.capitalize(str.trim());
+  return _.capitalize(str.trim()).replace(/\\/g, '');
+}
+
+// Format strings for SQL.
+function clean(str) {
+  return str.replace(/'/g, "''");
 }
 
 // Batches an array.
@@ -119,92 +125,77 @@ var rating_map = {
 };
 
 // Add a crag to cartodb.
-function mapCountry(y, cb) {
+function mapCountry(record, cb) {
   var names = ["id", "name", "key", "bccnt", "rccnt",
               "bcnt", "rcnt", "bgrd", "rgrd"];
-  var values = ["'" + y._id.toString() + "'", "'" + y.name + "'",
-                "'" + y.key + "'", y.bccnt, y.rccnt,
-                y.bcnt, y.rcnt, y.bgrd, y.rgrd];
+  var values = ["'" + record._id.toString() + "'",
+                "'" + clean(record.name) + "'",
+                "'" + record.key + "'", record.bccnt, record.rccnt,
+                record.bcnt, record.rcnt, record.bgrd, record.rgrd];
   var q = "INSERT INTO countries (" + _.join(",", names)
           + ") VALUES (" + _.join(",", values) + ")";
-  request.post({
-    uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
-    qs: {
-      q: q,
-      api_key: cartodb.api_key
-    }
-  }, function (err, res, body) {
+  curl.request({
+    url: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
+    method: 'POST',
+    data: {q: q, api_key: cartodb.api_key}
+  }, function (err, data) {
     errCheck(err);
-    if (argv.really_verbose)
-      log(clc.bold('Mapped') + ' country: ' + clc.underline(y.name));
+    log(clc.blackBright('Mapped ') + clc.underline(record.name) + '.');
     if (cb) cb();
   });
 }
 
 // Add a crag to cartodb.
-function mapCrag(c, cb) {
-  var names = ["id", "name", "type", "country", "country_key",
+function mapCrags(records, country, cb) {
+  var names = ["the_geom", "id", "name", "city", "type",
               "bcnt", "rcnt", "bgrd", "rgrd", "country_id"];
-  var values = ["'" + c._id.toString() + "'", "'" + c.name + "'",
-                "'" + c.type + "'", "'" + c.country + "'",
-                "'" + c.country_key + "'", c.bcnt, c.rcnt, c.bgrd, c.rgrd,
-                "'" + c.country_id + "'"];
-  if (c.lat && c.lon) {
-    names.unshift("the_geom");
-    values.unshift("CDB_LatLng(" + c.lat + "," + c.lon + ")");
-  }
-  if (c.city) {
-    names.push("city");
-    values.push("'" + c.city + "'");
-  }
   var q = "INSERT INTO crags (" + _.join(",", names)
-          + ") VALUES (" + _.join(",", values) + ")";
-  request.post({
-    uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
-    qs: {
-      q: q,
-      api_key: cartodb.api_key
-    }
-  }, function (err, res, body) {
+          + ") VALUES ";
+  _.each(records, function (r, i) {
+    q += "(" + _.join(",", [r.lat && r.lon ?
+                      "CDB_LatLng(" + r.lat + "," + r.lon + ")" : "NULL",
+                      "'" + r._id.toString() + "'",
+                      "'" + clean(r.name) + "'", "'" + r.type + "'",
+                      r.city ? "'" + clean(r.city) + "'" : "NULL",
+                      r.bcnt, r.rcnt, r.bgrd, r.rgrd,
+                      "'" + r.country_id + "'"]) + ")";
+    if (i !== records.length - 1) q += ", ";
+  });
+  curl.request({
+    url: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
+    method: 'POST',
+    data: {q: q, api_key: cartodb.api_key}
+  }, function (err, data) {
     errCheck(err);
-    if (argv.really_verbose)
-      log(clc.bold('Mapped') + ' crag: ' + clc.underline(c.name));
+    log(clc.blackBright('Mapped ') + clc.green(records.length)
+        + ' crags in ' + clc.underline(country) + '.');
     if (cb) cb();
   });
 }
 
-// Add an ascent to cartodb.
-function mapAscent(a, cb) {
-  var names = ["id", "name", "grade", "type", "crag",
-              "country", "country_key", "country_id", "crag_id"];
-  var values = ["'" + a._id.toString() + "'", "'" + a.name + "'", a.grade,
-                "'" + a.type + "'", "'" + a.crag + "'", "'" + a.country + "'",
-                "'" + a.country_key + "'", "'" + a.country_id.toString() + "'",
-                "'" + a.crag_id.toString() + "'"];
-  if (a.lat && a.lon) {
-    names.unshift("the_geom");
-    values.unshift("CDB_LatLng(" + a.lat + "," + a.lon + ")");
-  }
-  if (a.sector) {
-    names.push("sector");
-    values.push("'" + a.sector + "'");
-  }
-  if (a.city) {
-    names.push("city");
-    values.push("'" + a.city + "'");
-  }
+// Add an ascents to cartodb.
+function mapAscents(records, country, cb) {
+  var names = ["id", "name", "grade", "type",
+              "country_id", "crag_id", "sector"];
   var q = "INSERT INTO ascents (" + _.join(",", names)
-          + ") VALUES (" + _.join(",", values) + ")";
-  request.post({
-    uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
-    qs: {
-      q: q,
-      api_key: cartodb.api_key
-    }
-  }, function (err, res, body) {
+          + ") VALUES ";
+  _.each(records, function (r, i) {
+    q += "(" + _.join(",", ["'" + r._id.toString() + "'",
+                      "'" + clean(r.name) + "'", r.grade,
+                      "'" + r.type + "'",
+                      "'" + r.country_id.toString() + "'",
+                      "'" + r.crag_id.toString() + "'",
+                      r.sector ? "'" + clean(r.sector) + "'" : "NULL"]) + ")";
+    if (i !== records.length - 1) q += ", ";
+  });
+  curl.request({
+    url: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
+    method: 'POST',
+    data: {q: q, api_key: cartodb.api_key}
+  }, function (err, data) {
     errCheck(err);
-    if (argv.really_verbose)
-      log(clc.bold('Mapped') + ' ascent: ' + clc.underline(a.name));
+    log(clc.blackBright('Mapped ') + clc.green(records.length)
+        + ' ascents in ' + clc.underline(country) + '.');
     if (cb) cb();
   });
 }
@@ -236,7 +227,14 @@ Step(
   // Clear data.
   function () {
     if (!argv.clear) return this();
-    log(clc.blue('Clearing cartodb tables...'));
+    log(clc.red('Clearing cartodb tables...'));
+    request.post({
+      uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
+      qs: {
+        q: 'DELETE FROM countries',
+        api_key: cartodb.api_key
+      }
+    }, this.parallel());
     request.post({
       uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
       qs: {
@@ -251,7 +249,7 @@ Step(
         api_key: cartodb.api_key
       }
     }, this.parallel());
-    log(clc.blue('Clearing mongodb collections...'));
+    log(clc.red('Clearing mongodb collections...'));
     db.collections.country.drop(this.parallel());
     db.collections.crag.drop(this.parallel());
     db.collections.ascent.drop(this.parallel());
@@ -290,7 +288,7 @@ Step(
         });
     if (countries.length === 0)
       errCheck('No countries found.');
-    log(clc.bold('Found ') + clc.green(countries.length)
+    log(clc.cyan('Found ') + clc.green(countries.length)
         + ' countries.');
     // Map:
     map.body = iconv.convert(new Buffer(map.body, 'binary')).toString();
@@ -298,7 +296,7 @@ Step(
     while ((match = geo_rx.exec(map.body)) !== null)
       points[Number(match[1])] = {
             lat: Number(match[2]), lon: Number(match[3])};
-    log(clc.bold('Found ') + clc.green(_.size(points))
+    log(clc.cyan('Found ') + clc.green(_.size(points))
         + ' crag locations.');
     this();
   },
@@ -363,7 +361,7 @@ Step(
       Step(
         // Get crags.
         function () {
-          log(clc.blue('Getting crags from '
+          log(clc.blue('Getting crags in '
               + clc.underline(country.name) + '.'));
           var types = [0, 1];
           var next = _.after(types.length, this);
@@ -397,10 +395,9 @@ Step(
                 cs.push(c);
               }
               country[type + 'ccnt'] = cs.length;
-              if (argv.verbose || argv.really_verbose)
-                log(clc.bold('Found ') + clc.green(cs.length)
-                    + ' ' + clc.italic(t ? 'boulder' : 'route')
-                    + ' crags in ' + clc.underline(country.name) + '.');
+              log(clc.cyan('Found ') + clc.green(cs.length)
+                  + ' ' + clc.italic(t ? 'boulder' : 'route')
+                  + ' crags in ' + clc.underline(country.name) + '.');
               crags.push(cs);
               next();
             });
@@ -432,16 +429,18 @@ Step(
 
           // Do post requests in batches.
           (function post(batch) {
-            log(clc.blue('Getting ascents...'));
+            log(clc.blue('Getting ascents in '
+                + clc.underline(country.name) + '.'));
             cnt += batch.length;
             var _next = _.after(batch.length * types.length, function() {
               if (batches.length !== 0) {
                 var complete = Math.round((cnt / crags.length) * 100);
-                log(clc.bold('Found') + ' ascents from '
-                    + clc.green(complete + '%') + ' of crags.');
+                log(clc.cyan('Found ') + ' ascents in '
+                    + clc.green(complete + '%') + ' of crags in '
+                    + clc.underline(country.name) + '.');
                 log(clc.blue('Waiting...'));
                 _.delay(function() {
-                  post(batches.shift());
+                  post(batches.pop());
                 }, batchDelay);
               } else next();
             });
@@ -494,17 +493,16 @@ Step(
                   c[type + 'grd'] = as.length !== 0 ? g / as.length : 0;
                   country[type + 'cnt'] += as.length;
                   country[type + 'grd'] += g;
-                  if (argv.verbose || argv.really_verbose)
-                    log(clc.bold('Found ') + clc.green(as.length)
-                        + ' ' + clc.italic(t ? 'boulders' : 'routes')
-                        + ' in ' + clc.underline(c.name) + ' (GRADE_AVG='
-                        + clc.magenta(c[type + 'grd']) + ').');
+                  log(clc.cyan('Found ') + clc.green(as.length)
+                      + ' ' + clc.italic(t ? 'boulders' : 'routes')
+                      + ' in ' + clc.underline(c.name) + ' (GRADE_AVG='
+                      + clc.magenta(c[type + 'grd']) + ').');
                   ascents.push(as);
                   _next();
                 });
               });
             });
-          })(batches.shift());
+          })(batches.pop());
         },
 
         // Join ascents.
@@ -518,10 +516,10 @@ Step(
         function () {
           if (ascents.length === 0)
             return this();
-          log(clc.blue('Mapping ascents...'));
-          var next = _.after(ascents.length, this);
-          _.each(ascents, function (a) {
-            mapAscent(a, next);
+          var batches = batcher(ascents, 500);
+          var next = _.after(batches.length, this);
+          _.each(batches, function (b) {
+            mapAscents(b, country.name, next);
           });
         },
 
@@ -529,13 +527,10 @@ Step(
         function () {
           if (ascents.length === 0)
             return this();
-          log(clc.blue('Saving ascents...'));
           var next = _.after(ascents.length, this);
           _.each(ascents, function (a) {
             db.createAscent(a, function (err) {
               errCheck(err);
-              if (argv.really_verbose)
-                log(clc.bold('Saved') + ' ascent: ' + clc.underline(a.name));
               next();
             });
           });
@@ -543,13 +538,15 @@ Step(
 
         // Map crags.
         function (err) {
+          log(clc.orange('Saved ') + clc.green(ascents.length)
+              + ' ascents in ' + clc.underline(country.name) + '.');
           errCheck(err);
           if (crags.length === 0)
             return this();
-          log(clc.blue('Mapping crags...'));
-          var next = _.after(crags.length, this);
-          _.each(crags, function (c) {
-            mapCrag(c, next);
+          var batches = batcher(crags, 500);
+          var next = _.after(batches.length, this);
+          _.each(batches, function (b) {
+            mapCrags(b, country.name, next);
           });
         },
 
@@ -558,13 +555,10 @@ Step(
           errCheck(err);
           if (crags.length === 0)
             return this();
-          log(clc.blue('Saving crags...'));
           var next = _.after(crags.length, this);
           _.each(crags, function (c) {
             db.createCrag(c, function (err) {
               errCheck(err);
-              if (argv.really_verbose)
-                log(clc.bold('Saved') + ' crag: ' + clc.underline(c.name));
               next();
             });
           });
@@ -572,16 +566,17 @@ Step(
 
         // Get country stats and save.
         function (err) {
+          log(clc.orange('Saved ') + clc.green(crags.length)
+              + ' crags in ' + clc.underline(country.name) + '.');
           errCheck(err);
           country.bgrd = country.bcnt !== 0 ? country.bgrd / country.bcnt : 0;
           country.rgrd = country.rcnt !== 0 ? country.rgrd / country.rcnt : 0;
-          log(clc.blue('Saving ' + clc.underline(country.name)));
           db.createCountry(country, function (err) {
             errCheck(err);
+            log(clc.orange('Saved ') + clc.underline(country.name) + '.');
             ++y;
             if (y === countries.length)
               return done();
-            log(clc.blue('Mapping ' + clc.underline(country.name)));
             mapCountry(country, function (err) {
               log(clc.blue((countries.length - y) + ' countries left.'));
               handle(countries[y]);
@@ -594,8 +589,8 @@ Step(
 
   // Done.
   function () {
-    log(clc.blue('\nSuccessfully scraped 8a.nu.'));
-    log(clc.bold('Found ') + clc.green(countries.length) + ' countries, '
+    log(clc.blue('\nSuccessfully scraped 8a.nu:'));
+    log(clc.green(countries.length) + ' countries, '
         + clc.green(crag_cnt) + ' crags, and '
         + clc.green(ascent_cnt) + ' ascents.\n');
     process.exit(0);
