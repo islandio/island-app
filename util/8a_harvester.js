@@ -7,12 +7,12 @@ var ObjectID = require('mongodb').BSONPure.ObjectID;
 var ClimbDb = require('../climb_db.js').ClimbDb;
 var iconv = new require('iconv').Iconv('ISO-8859-1', 'UTF-8');
 var Step = require('step');
+var async = require('async');
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
 var clc = require('cli-color');
 clc.orange = clc.xterm(202);
-var _log = require('console').log;
-var log = function (s) {_log(clc.bold(s));};
+var log = function (s) {console.log(clc.bold(s));};
 var util = require('util'), error = util.error,
     debug = util.debug, inspect = util.inspect;
 var optimist = require('optimist');
@@ -155,8 +155,9 @@ function mapCrags(records, country, cb) {
     q += "(" + _.join(",", [r.lat && r.lon ?
                       "CDB_LatLng(" + r.lat + "," + r.lon + ")" : "NULL",
                       "'" + r._id.toString() + "'",
-                      "'" + clean(r.name) + "'", "'" + r.type + "'",
+                      "'" + clean(r.name) + "'",
                       r.city ? "'" + clean(r.city) + "'" : "NULL",
+                      r.type ? "'" + r.type + "'" : "NULL",
                       r.bcnt, r.rcnt, r.bgrd, r.rgrd,
                       "'" + r.country_id + "'"]) + ")";
     if (i !== records.length - 1) q += ", ";
@@ -383,7 +384,6 @@ Step(
                 var c = {
                   _id: new ObjectID(),
                   name: format(match[2]),
-                  type: t,
                   country: country.name,
                   country_key: country.key,
                   country_id: country._id,
@@ -420,7 +420,7 @@ Step(
         function () {
           if (crags.length === 0)
             return this();
-          // crags = _.first(crags, 2);
+          // crags = _.first(crags, 10);
           var next = this;
           var types = [0, 1];
           var batchDelay = 1000;
@@ -512,17 +512,6 @@ Step(
           this();
         },
 
-        // Map ascents.
-        function () {
-          if (ascents.length === 0)
-            return this();
-          var batches = batcher(ascents, 500);
-          var next = _.after(batches.length, this);
-          _.each(batches, function (b) {
-            mapAscents(b, country.name, next);
-          });
-        },
-
         // Save ascents.
         function () {
           if (ascents.length === 0)
@@ -536,17 +525,20 @@ Step(
           });
         },
 
-        // Map crags.
+        // Map ascents.
         function (err) {
           log(clc.orange('Saved ') + clc.green(ascents.length)
               + ' ascents in ' + clc.underline(country.name) + '.');
           errCheck(err);
-          if (crags.length === 0)
+          if (ascents.length === 0)
             return this();
-          var batches = batcher(crags, 500);
-          var next = _.after(batches.length, this);
-          _.each(batches, function (b) {
-            mapCrags(b, country.name, next);
+          var next = this;
+          var q = async.queue(function (b, cb) {
+              mapAscents(b, country.name, cb);
+          }, 10);
+          q.drain = next;
+          q.push(batcher(ascents, 500), function (err) {
+            errCheck(err);
           });
         },
 
@@ -557,6 +549,12 @@ Step(
             return this();
           var next = _.after(crags.length, this);
           _.each(crags, function (c) {
+            if (c.bcnt > 0 && c.rcnt === 0)
+              c.type = 'b';
+            else if (c.bcnt === 0 && c.rcnt > 0)
+              c.type = 'r';
+            else if (c.bcnt === 0 && c.rcnt === 0)
+              c.type = 'c';
             db.createCrag(c, function (err) {
               errCheck(err);
               next();
@@ -564,10 +562,25 @@ Step(
           });
         },
 
-        // Get country stats and save.
+        // Map crags.
         function (err) {
           log(clc.orange('Saved ') + clc.green(crags.length)
               + ' crags in ' + clc.underline(country.name) + '.');
+          errCheck(err);
+          if (crags.length === 0)
+            return this();
+          var next = this;
+          var q = async.queue(function (b, cb) {
+            mapCrags(b, country.name, cb);
+          }, 10);
+          q.drain = next;
+          q.push(batcher(crags, 500), function (err) {
+            errCheck(err);
+          });
+        },
+
+        // Get country stats and save.
+        function (err) {
           errCheck(err);
           country.bgrd = country.bcnt !== 0 ? country.bgrd / country.bcnt : 0;
           country.rgrd = country.rcnt !== 0 ? country.rgrd / country.rcnt : 0;

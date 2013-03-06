@@ -36,7 +36,8 @@
     "cartodb": "~0.1.0",
     "cli-color": "~0.2.2",
     "iconv": "~2.0.2",
-    "curlrequest": "~0.3.6"
+    "curlrequest": "~0.3.6",
+    "async": "~0.2.6"
   },
   "engines": {
     "node": "~0.8.x"
