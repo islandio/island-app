@@ -140,6 +140,10 @@ function mapCountry(record, cb) {
     data: {q: q, api_key: cartodb.api_key}
   }, function (err, data) {
     errCheck(err);
+    if (data) {
+      data = JSON.parse(data);
+      errCheck(data.error);
+    }
     log(clc.blackBright('Mapped ') + clc.underline(record.name) + '.');
     if (cb) cb();
   });
@@ -168,6 +172,10 @@ function mapCrags(records, country, cb) {
     data: {q: q, api_key: cartodb.api_key}
   }, function (err, data) {
     errCheck(err);
+    if (data) {
+      data = JSON.parse(data);
+      errCheck(data.error);
+    }
     log(clc.blackBright('Mapped ') + clc.green(records.length)
         + ' crags in ' + clc.underline(country) + '.');
     if (cb) cb();
@@ -195,6 +203,10 @@ function mapAscents(records, country, cb) {
     data: {q: q, api_key: cartodb.api_key}
   }, function (err, data) {
     errCheck(err);
+    if (data) {
+      data = JSON.parse(data);
+      errCheck(data.error);
+    }
     log(clc.blackBright('Mapped ') + clc.green(records.length)
         + ' ascents in ' + clc.underline(country) + '.');
     if (cb) cb();
@@ -420,30 +432,14 @@ Step(
         function () {
           if (crags.length === 0)
             return this();
-          // crags = _.first(crags, 10);
+          log(clc.blue('Getting ascents in '
+              + clc.underline(country.name) + '.'));
           var next = this;
           var types = [0, 1];
-          var batchDelay = 1000;
-          var batches = batcher(crags, 100);
-          var cnt = 0;
 
           // Do post requests in batches.
-          (function post(batch) {
-            log(clc.blue('Getting ascents in '
-                + clc.underline(country.name) + '.'));
-            cnt += batch.length;
-            var _next = _.after(batch.length * types.length, function() {
-              if (batches.length !== 0) {
-                var complete = Math.round((cnt / crags.length) * 100);
-                log(clc.cyan('Found ') + ' ascents in '
-                    + clc.green(complete + '%') + ' of crags in '
-                    + clc.underline(country.name) + '.');
-                log(clc.blue('Waiting...'));
-                _.delay(function() {
-                  post(batches.pop());
-                }, batchDelay);
-              } else next();
-            });
+          function post(batch, cb) {
+            var _next = _.after(batch.length * types.length, cb);
             _.each(batch, function (c) {
               _.each(types, function (t) {
                 var type = t ? 'b' : 'r';
@@ -502,7 +498,16 @@ Step(
                 });
               });
             });
-          })(batches.pop());
+          };
+
+          // Start task queue.
+          var q = async.queue(function (b, cb) {
+            post(b, cb);
+          }, 10);
+          q.drain = next;
+          q.push(batcher(crags, 100), function (err) {
+            errCheck(err);
+          });
         },
 
         // Join ascents.
@@ -518,28 +523,26 @@ Step(
             return this();
           var next = _.after(ascents.length, this);
           _.each(ascents, function (a) {
-            db.createAscent(a, function (err) {
-              errCheck(err);
-              next();
-            });
+            db.createAscent(a, next);
           });
         },
 
         // Map ascents.
         function (err) {
+          errCheck(err);
           log(clc.orange('Saved ') + clc.green(ascents.length)
               + ' ascents in ' + clc.underline(country.name) + '.');
-          errCheck(err);
-          if (ascents.length === 0)
-            return this();
-          var next = this;
-          var q = async.queue(function (b, cb) {
-              mapAscents(b, country.name, cb);
-          }, 10);
-          q.drain = next;
-          q.push(batcher(ascents, 500), function (err) {
-            errCheck(err);
-          });
+          this();
+          // Skip mapping for now.
+          // if (ascents.length === 0)
+          //   return this();
+          // var q = async.queue(function (b, cb) {
+          //   mapAscents(b, country.name, cb);
+          // }, 10);
+          // q.drain = this;
+          // q.push(batcher(ascents, 500), function (err) {
+          //   errCheck(err);
+          // });
         },
 
         // Save crags.
@@ -555,25 +558,21 @@ Step(
               c.type = 'r';
             else if (c.bcnt === 0 && c.rcnt === 0)
               c.type = 'c';
-            db.createCrag(c, function (err) {
-              errCheck(err);
-              next();
-            });
+            db.createCrag(c, next);
           });
         },
 
         // Map crags.
         function (err) {
+          errCheck(err);
           log(clc.orange('Saved ') + clc.green(crags.length)
               + ' crags in ' + clc.underline(country.name) + '.');
-          errCheck(err);
           if (crags.length === 0)
             return this();
-          var next = this;
           var q = async.queue(function (b, cb) {
             mapCrags(b, country.name, cb);
           }, 10);
-          q.drain = next;
+          q.drain = this;
           q.push(batcher(crags, 500), function (err) {
             errCheck(err);
           });
