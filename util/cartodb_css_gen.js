@@ -28,7 +28,7 @@ function range(r, t, m) {
    r = r.reverse();
    var css = '';
    _.each(r, function (g) {
-      css += '#crags [ ' + t + '_grade <= ' + g + '] {marker-width: ' + (m * g) + ';}\n';
+      css += '#crags [' + t + 'grd <= ' + g + '] {ba/marker-width: ' + (m * g + 10) + ';}\n';
    });
    return css;
 }

@@ -25,7 +25,7 @@ var argv = optimist
 // Errors wrapper.
 function errCheck(err) {
   if (err) {
-    error(clc.red(err.stack));
+    error(clc.red(err.stack || err));
     process.exit(1);
   };
 }
@@ -144,41 +144,55 @@ function mapCountry(record, cb) {
       data = JSON.parse(data);
       errCheck(data.error);
     }
-    log(clc.blackBright('Mapped ') + clc.underline(record.name) + '.');
-    if (cb) cb();
+    log(clc.blue('Mapped ') + clc.underline(record.name) + '.');
+    cb();
   });
 }
 
 // Add a crag to cartodb.
 function mapCrags(records, country, cb) {
-  var names = ["the_geom", "id", "name", "city", "type",
-              "bcnt", "rcnt", "bgrd", "rgrd", "country_id"];
-  var q = "INSERT INTO crags (" + _.join(",", names)
-          + ") VALUES ";
+  var names = ["the_geom", "id", "name", "city", "country_id", "cnt", "grd"];
+  var sql = {
+    boulder: { q: "INSERT INTO boulders ("
+                + _.join(",", names) + ") VALUES ", n: 0},
+    route: { q: "INSERT INTO routes ("
+                + _.join(",", names) + ") VALUES ", n: 0}
+  };
   _.each(records, function (r, i) {
-    q += "(" + _.join(",", [r.lat && r.lon ?
-                      "CDB_LatLng(" + r.lat + "," + r.lon + ")" : "NULL",
-                      "'" + r._id.toString() + "'",
-                      "'" + clean(r.name) + "'",
-                      r.city ? "'" + clean(r.city) + "'" : "NULL",
-                      r.type ? "'" + r.type + "'" : "NULL",
-                      r.bcnt, r.rcnt, r.bgrd, r.rgrd,
-                      "'" + r.country_id + "'"]) + ")";
-    if (i !== records.length - 1) q += ", ";
-  });
-  curl.request({
-    url: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
-    method: 'POST',
-    data: {q: q, api_key: cartodb.api_key}
-  }, function (err, data) {
-    errCheck(err);
-    if (data) {
-      data = JSON.parse(data);
-      errCheck(data.error);
+    var vals = [r.lat && r.lon ?
+                "CDB_LatLng(" + r.lat + "," + r.lon + ")" : "NULL",
+                "'" + r._id.toString() + "'",
+                "'" + clean(r.name) + "'",
+                r.city ? "'" + clean(r.city) + "'" : "NULL",
+                "'" + r.country_id + "'"];
+    if (r.bcnt > 0) {
+      var row = "(" + _.join(",", vals.concat([r.bcnt, r.bgrd])) + ")";
+      sql.boulder.q += sql.boulder.n ? ',' + row : row;
+      ++sql.boulder.n;
     }
-    log(clc.blackBright('Mapped ') + clc.green(records.length)
-        + ' crags in ' + clc.underline(country) + '.');
-    if (cb) cb();
+    if (r.rcnt > 0) {
+      var row = "(" + _.join(",", vals.concat([r.rcnt, r.rgrd])) + ")";
+      sql.route.q += sql.route.n ? ',' + row : row;
+      ++sql.route.n;
+    }
+  });
+  var _cb = _.after(_.size(sql), cb);
+  _.each(sql, function (v, k) {
+    if (v.n === 0) return _cb();
+    curl.request({
+      url: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
+      method: 'POST',
+      data: {q: v.q, api_key: cartodb.api_key}
+    }, function (err, data) {
+      errCheck(err);
+      if (data) {
+        data = JSON.parse(data);
+        errCheck(data.error);
+      }
+      log(clc.blue('Mapped ') + clc.green(records.length)
+          + ' ' + k + ' crags in ' + clc.underline(country) + '.');
+      _cb();
+    });
   });
 }
 
@@ -209,7 +223,7 @@ function mapAscents(records, country, cb) {
     }
     log(clc.blackBright('Mapped ') + clc.green(records.length)
         + ' ascents in ' + clc.underline(country) + '.');
-    if (cb) cb();
+    cb();
   });
 }
 
@@ -248,17 +262,24 @@ Step(
         api_key: cartodb.api_key
       }
     }, this.parallel());
+    // request.post({
+    //   uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
+    //   qs: {
+    //     q: 'DELETE FROM crags',
+    //     api_key: cartodb.api_key
+    //   }
+    // }, this.parallel());
     request.post({
       uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
       qs: {
-        q: 'DELETE FROM crags',
+        q: 'DELETE FROM boulders',
         api_key: cartodb.api_key
       }
     }, this.parallel());
     request.post({
       uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
       qs: {
-        q: 'DELETE FROM ascents',
+        q: 'DELETE FROM routes',
         api_key: cartodb.api_key
       }
     }, this.parallel());
@@ -270,13 +291,13 @@ Step(
 
   // Get the global 8a.nu crags page.
   function () {
-    log(clc.blue('Getting countries...'));
+    log(clc.blackBright('Getting countries...'));
     request.get({
       uri: 'http://www.8a.nu/crags/List.aspx',
       qs: {CountryCode: 'GLOBAL'},
       encoding: 'binary',
     }, this.parallel());
-    log(clc.blue('Getting crag latlongs...'));
+    log(clc.blackBright('Getting crag latlongs...'));
     request.get({
       uri: 'http://www.8a.nu/crags/MapCrags.aspx',
       qs: {CountryCode: 'GLOBAL'},
@@ -374,7 +395,7 @@ Step(
       Step(
         // Get crags.
         function () {
-          log(clc.blue('Getting crags in '
+          log(clc.blackBright('Getting crags in '
               + clc.underline(country.name) + '.'));
           var types = [0, 1];
           var next = _.after(types.length, this);
@@ -425,6 +446,7 @@ Step(
               _.extend(c, points[c.id]);
             delete c.id;
           });
+          // crags = _.first(crags, 2);
           this();
         },
 
@@ -432,7 +454,7 @@ Step(
         function () {
           if (crags.length === 0)
             return this();
-          log(clc.blue('Getting ascents in '
+          log(clc.blackBright('Getting ascents in '
               + clc.underline(country.name) + '.'));
           var next = this;
           var types = [0, 1];
@@ -591,7 +613,7 @@ Step(
             if (y === countries.length)
               return done();
             mapCountry(country, function (err) {
-              log(clc.blue((countries.length - y) + ' countries left.'));
+              log(clc.blackBright((countries.length - y) + ' countries left.'));
               handle(countries[y]);
             });
           });  
@@ -602,7 +624,7 @@ Step(
 
   // Done.
   function () {
-    log(clc.blue('\nSuccessfully scraped 8a.nu:'));
+    log(clc.blackBright('\nSuccessfully scraped 8a.nu:'));
     log(clc.green(countries.length) + ' countries, '
         + clc.green(crag_cnt) + ' crags, and '
         + clc.green(ascent_cnt) + ' ascents.\n');
