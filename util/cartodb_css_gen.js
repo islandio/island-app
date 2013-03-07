@@ -25,16 +25,16 @@ function errCheck(err, op) {
 
 // Make density range css.
 function range(r, t, m) {
-   r = r.reverse();
-   var css = '';
-   _.each(r, function (g) {
-      css += '#crags [' + t + 'grd <= ' + g + '] {ba/marker-width: ' + (m * g + 10) + ';}\n';
-   });
-   return css;
+  r = r.reverse();
+  var css = '';
+  _.each(r, function (g) {
+    css += '#crags [' + t + 'grd <= ' + g + '] {ba/marker-width: ' + (m * g + 10) + ';}\n';
+  });
+  return css;
 }
 
 // Handle opperation.
 switch (argv.opp) {
-   case 'range':
-   log(range(_.range(0,30), argv.type, argv.gradient))
+  case 'range':
+    log(range(_.range(0,30), argv.type, argv.gradient))
 }

@@ -133,22 +133,22 @@ Island = (function ($) {
    * logo pulse
    */
 
-  var pulseCnt = 0;
+  // var pulseCnt = 0;
 
-  function pulse (a, b) {
-    if (pulseCnt % 2 == 0)
-      $(b).fadeTo(500, 0.75);
-    else 
-      $(b).fadeTo(500, 1);
-    pulseCnt += 1;
-  }
+  // function pulse (a, b) {
+  //   if (pulseCnt % 2 == 0)
+  //     $(b).fadeTo(500, 0.75);
+  //   else 
+  //     $(b).fadeTo(500, 1);
+  //   pulseCnt += 1;
+  // }
 
-  function cancelPulse() {
-    clearInterval(pulseTimer);
-    clearTimeout(pulseCancel);
-    $("#logo-a").show();
-    $("#logo-b").hide();
-  }
+  // function cancelPulse() {
+  //   clearInterval(pulseTimer);
+  //   clearTimeout(pulseCancel);
+  //   $("#logo-a").show();
+  //   $("#logo-b").hide();
+  // }
 
   /**
    * tweets
@@ -671,38 +671,50 @@ Island = (function ($) {
         win.scroll(paginate).resize(paginate);
       }
 
-      var addMap = $('#add_map');
-      if (addMap.length > 0) {
+      // var addMap = $('#add_map');
+      // if (addMap.length > 0) {
 
-        var mapOptions = {
-          zoom: 13,
-          center: new google.maps.LatLng(37.7749295, -122.4194155),
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        var map = new google.maps.Map(document.getElementById('add_map'), mapOptions);
-        var sql = new cartodb.SQL({ user: 'foodficiency' });
+      //   var mapOptions = {
+      //     zoom: 13,
+      //     center: new google.maps.LatLng(37.7749295, -122.4194155),
+      //     mapTypeId: google.maps.MapTypeId.ROADMAP
+      //   };
+      //   var map = new google.maps.Map(document.getElementById('add_map'), mapOptions);
+      //   var sql = new cartodb.SQL({ user: 'foodficiency' });
 
-        cartodb.createLayer(map, 'http://foodficiency.cartodb.com/api/v1/viz/21759/viz.json')
-         .on('done', function (layer) {
+      //   cartodb.createLayer(map, 'http://foodficiency.cartodb.com/api/v1/viz/21759/viz.json')
+      //    .on('done', function (layer) {
           
-          map.overlayMapTypes.setAt(0, layer);
+      //     map.overlayMapTypes.setAt(0, layer);
           
-          layer.on('featureClick', function(e, pos, latlng, data) {
-            // cartodb.log.log(e, pos, latlng, data);
-          });
+      //     layer.on('featureClick', function(e, pos, latlng, data) {
+      //       // cartodb.log.log(e, pos, latlng, data);
+      //     });
 
-          layer.on('featureOver', function(e, pos, latlng, data) {
-            // cartodb.log.log(e, pos, latlng, data);
-          });
+      //     layer.on('featureOver', function(e, pos, latlng, data) {
+      //       // cartodb.log.log(e, pos, latlng, data);
+      //     });
 
-          layer.on('error', function(err) {
-            // cartodb.log.log('error: ' + err);
-          });
+      //     layer.on('error', function(err) {
+      //       // cartodb.log.log('error: ' + err);
+      //     });
 
-        }).on('error', function() {
-          // cartodb.log.log("some error occurred");
-        });
+      //   }).on('error', function() {
+      //     // cartodb.log.log("some error occurred");
+      //   });
         
+      // }
+
+      var explore = $('#explore');
+      if (explore.length > 0) {
+        $('html, body').css({height: '100%'});
+        var sql = new cartodb.SQL({ user: 'island' });
+        cartodb.createVis('explore',
+          'http://island.cartodb.com/api/v1/viz/22644/viz.json', {
+          search: true, 
+          center_lat: 20,
+          center_lon: -20
+        }, function (vis) {});
       }
 
       /////////////////////////// ACTIONS
@@ -915,9 +927,9 @@ Island = (function ($) {
       });
 
       // pulse logo on mouseover
-      var logoA = $('#logo-a');
-      var logoB = $('#logo-b');
-      var logos = [logoA, logoB];
+      // var logoA = $('#logo-a');
+      // var logoB = $('#logo-b');
+      // var logos = [logoA, logoB];
 
       // init autogrow text
       $('textarea').autogrow();
