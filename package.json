@@ -32,8 +32,9 @@
     "emailjs": "~0.3.0",
     "connect-redis": "~1.4.5",
     "redis": "~0.8.2",
-    "pusher": "~0.1.2",
-    "cartodb": "~0.1.0",
+    "pusher": "~0.1.2"
+  },
+  "devDependencies": {
     "cli-color": "~0.2.2",
     "iconv": "~2.0.2",
     "curlrequest": "~0.3.6",
