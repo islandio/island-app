@@ -64,6 +64,8 @@ ClimbDb.prototype.createCountry = function (props, cb) {
     rcnt: 0,
     bgrd: 0,
     rgrd: 0,
+    bgrdt: null,
+    rgrdt: null,
     lat: null,
     lon: null,
   });
@@ -85,6 +87,8 @@ ClimbDb.prototype.createCrag = function (props, cb) {
     rcnt: 0,
     bgrd: 0,
     rgrd: 0,
+    bgrdt: null,
+    rgrdt: null,
     lat: null,
     lon: null,
   });

@@ -671,50 +671,30 @@ Island = (function ($) {
         win.scroll(paginate).resize(paginate);
       }
 
-      // var addMap = $('#add_map');
-      // if (addMap.length > 0) {
-
-      //   var mapOptions = {
-      //     zoom: 13,
-      //     center: new google.maps.LatLng(37.7749295, -122.4194155),
-      //     mapTypeId: google.maps.MapTypeId.ROADMAP
-      //   };
-      //   var map = new google.maps.Map(document.getElementById('add_map'), mapOptions);
-      //   var sql = new cartodb.SQL({ user: 'foodficiency' });
-
-      //   cartodb.createLayer(map, 'http://foodficiency.cartodb.com/api/v1/viz/21759/viz.json')
-      //    .on('done', function (layer) {
-          
-      //     map.overlayMapTypes.setAt(0, layer);
-          
-      //     layer.on('featureClick', function(e, pos, latlng, data) {
-      //       // cartodb.log.log(e, pos, latlng, data);
-      //     });
-
-      //     layer.on('featureOver', function(e, pos, latlng, data) {
-      //       // cartodb.log.log(e, pos, latlng, data);
-      //     });
-
-      //     layer.on('error', function(err) {
-      //       // cartodb.log.log('error: ' + err);
-      //     });
-
-      //   }).on('error', function() {
-      //     // cartodb.log.log("some error occurred");
-      //   });
-        
-      // }
+      /////////////////////////// MAP
 
       var explore = $('#explore');
       if (explore.length > 0) {
         $('html, body').css({height: '100%'});
         var sql = new cartodb.SQL({ user: 'island' });
         cartodb.createVis('explore',
-          'http://island.cartodb.com/api/v1/viz/22644/viz.json', {
+          // 'http://island.cartodb.com/api/v1/viz/22644/viz.json', {
+          'http://island.cartodb.com/api/v1/viz/23419/viz.json', {
           search: true, 
           center_lat: 20,
           center_lon: -20
-        }, function (vis) {});
+        }, function (vis, layers) {
+          var layer = layers[1];
+          layer.infowindow.set('template', $('#infowindow_template').html());
+          // layer.on('featureClick', function(e, pos, latlng, data) {
+          //   console.log(e, pos, latlng, data);
+          // });
+          layer.on('error', function (err) {
+            console.log('error: ' + err);
+          });
+        }).on('error', function (err) {
+          console.log(err);
+        });
       }
 
       /////////////////////////// ACTIONS

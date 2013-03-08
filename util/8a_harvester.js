@@ -118,13 +118,19 @@ var ascent_cnt = 0;
 
 // Maps ratings to a number scale.
 var rating_map = {
-  '3': 1, '4': 2, '5a': 3, '5b': 4, '5c': 5, '6a': 6,  '6a+': 6, '6b': 8,
+  '3': 1, '4': 2, '5a': 3, '5b': 4, '5c': 5, '6a': 6,  '6a+': 7, '6b': 8,
   '6b+': 9, '6c': 10, '6c+': 11, '7a': 12, '7a+': 13, '7b': 14, '7b+': 15,
   '7c': 16, '7c+': 17, '8a': 18, '8a+': 19, '8b': 20, '8b+': 21, '8c': 22,
   '8c+': 23, '9a': 24, '9a+': 25, '9b': 26, '9b+': 27, '9c': 28, '9c+': 29,
 };
+var map_rating = {
+  1: '3', 2: '4', 3: '5a', 4: '5b', 5: '5c', 6: '6a',  7: '6a+', 8: '6b',
+  9: '6b+', 10: '6c', 11: '6c+', 12: '7a', 13: '7a+', 14: '7b', 15: '7b+',
+  16: '7c', 17: '7c+', 18: '8a', 19: '8a+', 20: '8b', 21: '8b+', 22: '8c',
+  23: '8c+', 24: '9a', 25: '9a+', 26: '9b', 27: '9b+', 28: '9c', 29: '9c+',
+};
 
-// Add a crag to cartodb.
+// Add a country to cartodb.
 function mapCountry(record, cb) {
   var names = ["id", "name", "key", "bccnt", "rccnt",
               "bcnt", "rcnt", "bgrd", "rgrd"];
@@ -151,6 +157,43 @@ function mapCountry(record, cb) {
 
 // Add a crag to cartodb.
 function mapCrags(records, country, cb) {
+  var names = ["the_geom", "id", "name", "city", "type",
+              "bcnt", "rcnt", "bgrd", "rgrd", "bgrdt", "rgrdt",
+              "country_id", "key"];
+  var q = "INSERT INTO crags2 (" + _.join(",", names)
+          + ") VALUES ";
+  _.each(records, function (r, i) {
+    q += "(" + _.join(",", [r.lat && r.lon ?
+                      "CDB_LatLng(" + r.lat + "," + r.lon + ")" : "NULL",
+                      "'" + r._id.toString() + "'",
+                      "'" + clean(r.name) + "'",
+                      r.city ? "'" + clean(r.city) + "'" : "NULL",
+                      r.type ? "'" + r.type + "'" : "NULL",
+                      r.bcnt, r.rcnt, r.bgrd, r.rgrd,
+                      r.bgrdt ? "'" + r.bgrdt + "'" : "NULL",
+                      r.rgrdt ? "'" + r.rgrdt + "'" : "NULL",
+                      "'" + r.country_id + "'",
+                      "'" + r.key + "'"]) + ")";
+    if (i !== records.length - 1) q += ", ";
+  });
+  curl.request({
+    url: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
+    method: 'POST',
+    data: {q: q, api_key: cartodb.api_key}
+  }, function (err, data) {
+    errCheck(err);
+    if (data) {
+      data = JSON.parse(data);
+      errCheck(data.error);
+    }
+    log(clc.blue('Mapped ') + clc.green(records.length)
+        + ' crags in ' + clc.underline(country) + '.');
+    cb();
+  });
+}
+
+// Add a crag to cartodb using seperate tables for boulder and routes.
+function mapCragsSeperate(records, country, cb) {
   var names = ["the_geom", "id", "name", "city", "country_id", "cnt", "grd"];
   var sql = {
     boulder: { q: "INSERT INTO boulders ("
@@ -255,34 +298,34 @@ Step(
   function () {
     if (!argv.clear) return this();
     log(clc.red('Clearing cartodb tables...'));
-    request.post({
-      uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
-      qs: {
-        q: 'DELETE FROM countries',
-        api_key: cartodb.api_key
-      }
-    }, this.parallel());
     // request.post({
     //   uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
     //   qs: {
-    //     q: 'DELETE FROM crags',
+    //     q: 'DELETE FROM countries',
     //     api_key: cartodb.api_key
     //   }
     // }, this.parallel());
     request.post({
       uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
       qs: {
-        q: 'DELETE FROM boulders',
+        q: 'DELETE FROM crags2',
         api_key: cartodb.api_key
       }
     }, this.parallel());
-    request.post({
-      uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
-      qs: {
-        q: 'DELETE FROM routes',
-        api_key: cartodb.api_key
-      }
-    }, this.parallel());
+    // request.post({
+    //   uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
+    //   qs: {
+    //     q: 'DELETE FROM boulders',
+    //     api_key: cartodb.api_key
+    //   }
+    // }, this.parallel());
+    // request.post({
+    //   uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
+    //   qs: {
+    //     q: 'DELETE FROM routes',
+    //     api_key: cartodb.api_key
+    //   }
+    // }, this.parallel());
     log(clc.red('Clearing mongodb collections...'));
     db.collections.country.drop(this.parallel());
     db.collections.crag.drop(this.parallel());
@@ -357,9 +400,12 @@ Step(
           rcnt: Number,
           bgrd: Number,
           rgrd: Number,
+          bgrdt: String,
+          rgrdt: String,
           lat: Number,
           lon: Number,
           country_id: String,
+          key: String,
         }
         */
       ];
@@ -446,7 +492,6 @@ Step(
               _.extend(c, points[c.id]);
             delete c.id;
           });
-          // crags = _.first(crags, 2);
           this();
         },
 
@@ -509,6 +554,7 @@ Step(
                   }
                   c[type + 'cnt'] = as.length;
                   c[type + 'grd'] = as.length !== 0 ? g / as.length : 0;
+                  c[type + 'grdt'] = map_rating[Math.round(c[type + 'grd'])];
                   country[type + 'cnt'] += as.length;
                   country[type + 'grd'] += g;
                   log(clc.cyan('Found ') + clc.green(as.length)
@@ -581,13 +627,16 @@ Step(
             else if (c.bcnt > 0 && c.rcnt > 0)
               c.type = 'c';
             else c.type = 'n';
-            db.createCrag(c, next);
+            db.createCrag(c, function (err, doc) {
+              errCheck(err);
+              c.key = doc.key;
+              next();
+            });
           });
         },
 
         // Map crags.
         function (err) {
-          errCheck(err);
           log(clc.orange('Saved ') + clc.green(crags.length)
               + ' crags in ' + clc.underline(country.name) + '.');
           if (crags.length === 0)
@@ -606,16 +655,21 @@ Step(
           errCheck(err);
           country.bgrd = country.bcnt !== 0 ? country.bgrd / country.bcnt : 0;
           country.rgrd = country.rcnt !== 0 ? country.rgrd / country.rcnt : 0;
+          country.bgrdt = map_rating[Math.round(country.bgrd)];
+          country.rgrdt = map_rating[Math.round(country.rgrd)];
           db.createCountry(country, function (err) {
             errCheck(err);
             log(clc.orange('Saved ') + clc.underline(country.name) + '.');
             ++y;
             if (y === countries.length)
               return done();
-            mapCountry(country, function (err) {
-              log(clc.blackBright((countries.length - y) + ' countries left.'));
-              handle(countries[y]);
-            });
+            // Skip mapping for now.
+            // mapCountry(country, function (err) {
+            //   log(clc.blackBright((countries.length - y) + ' countries left.'));
+            //   handle(countries[y]);
+            // });
+            log(clc.blackBright((countries.length - y) + ' countries left.'));
+            handle(countries[y]);
           });  
         }
       );
