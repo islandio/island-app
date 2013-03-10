@@ -6,7 +6,7 @@
     "www.island.io"
   ],
   "subdomain": "island",
-  "version": "0.1.0-102",
+  "version": "0.1.0-103",
   "homepage": "http://island.io",
   "repository": {
     "type": "git",
@@ -16,7 +16,7 @@
     "express": "~3.0.6",
     "jade": "~0.28.1",
     "stylus": "~0.32.0",
-    "mongodb": "~1.0.2",
+    "mongodb": "~1.2.13",
     "node-fb": "~1.0.0",
     "passport": "~0.1.11",
     "passport-facebook": "~0.1.4",
