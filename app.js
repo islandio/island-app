@@ -299,6 +299,20 @@ app.get('/', function (req, res, next) {
   );
 });
 
+// Store
+app.get('/store', function (req, res) {
+  res.render('store', {
+    title: 'Island - Store',
+    twitters: twitterHandles,
+    member: req.user
+  });
+});
+
+// Explore
+app.get('/explore', function (req, res) {
+  res.render('explore', { title: 'Island - Explore'});
+});
+
 // Privacy Policy
 app.get('/privacy', function (req, res) {
   res.render('privacy', { title: 'Privacy Policy'});

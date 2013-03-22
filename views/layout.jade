@@ -38,6 +38,10 @@ html(lang="en")
     //- link(rel='stylesheet', href='https://d271mvlc6gc7bl.cloudfront.net/main/ui/ui6.css')
     link(rel='stylesheet', href='/ui/ui.css')
     link(rel='stylesheet', href='https://d271mvlc6gc7bl.cloudfront.net/main/jplayer/skin/blue.monday/jplayer.blue.monday.css')
+    link(rel="stylesheet", href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.css")
+    <!--[if lte IE 8]>
+    link(rel="stylesheet", href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.ie.css")
+    <![endif]-->
     link(rel='shortcut icon', href='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/favicon.ico', type='image/x-icon')
   body
     - if ('undefined' !== typeof(member))
@@ -68,6 +72,8 @@ html(lang="en")
     script(type='text/javascript', src='https://d271mvlc6gc7bl.cloudfront.net/main/ui/ui-min.js')
     //- script(type='text/javascript', src='https://d271mvlc6gc7bl.cloudfront.net/main/js/island-min7.js')
     script(type='text/javascript', src='/javascripts/island.js')
+    //- script(type='text/javascript', src="https://maps.googleapis.com/maps/api/js?sensor=false")
+    script(type='text/javascript', src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js")
     script
       jQuery(function () { Island.go(); });
     script(type='text/javascript')
