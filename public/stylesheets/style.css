@@ -562,6 +562,12 @@ input.is-button-alert[type=submit] {
   width: 100%;
   height: 100%;
 }
+.cartodb-zoom {
+  top: 100px;
+}
+.cartodb-tiles-loader {
+  top: 100px !important;
+}
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 .signin {
   position: absolute;
