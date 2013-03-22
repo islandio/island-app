@@ -366,7 +366,6 @@ MemberDb.prototype.findOrCreateMemberFromEmail =
   });
 }
 
-
 /*
  * Create methods for posts and comments.
  */
@@ -388,7 +387,6 @@ MemberDb.prototype.createPost = function (props, cb) {
               function (err, doc) {
       if (err) return cb(err);
       self.search.index(doc.title, doc._id);
-      // self.search.index(doc.body.replace(/#island/g, ''), doc._id);
       self.search.index(memberName, doc._id);
       cb(null, doc);
     });

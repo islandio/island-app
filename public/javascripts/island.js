@@ -133,22 +133,22 @@ Island = (function ($) {
    * logo pulse
    */
 
-  var pulseCnt = 0;
+  // var pulseCnt = 0;
 
-  function pulse (a, b) {
-    if (pulseCnt % 2 == 0)
-      $(b).fadeTo(500, 0.75);
-    else 
-      $(b).fadeTo(500, 1);
-    pulseCnt += 1;
-  }
+  // function pulse (a, b) {
+  //   if (pulseCnt % 2 == 0)
+  //     $(b).fadeTo(500, 0.75);
+  //   else 
+  //     $(b).fadeTo(500, 1);
+  //   pulseCnt += 1;
+  // }
 
-  function cancelPulse() {
-    clearInterval(pulseTimer);
-    clearTimeout(pulseCancel);
-    $("#logo-a").show();
-    $("#logo-b").hide();
-  }
+  // function cancelPulse() {
+  //   clearInterval(pulseTimer);
+  //   clearTimeout(pulseCancel);
+  //   $("#logo-a").show();
+  //   $("#logo-b").hide();
+  // }
 
   /**
    * tweets
@@ -671,7 +671,32 @@ Island = (function ($) {
         win.scroll(paginate).resize(paginate);
       }
 
-      
+      /////////////////////////// MAP
+
+      var explore = $('#explore');
+      if (explore.length > 0) {
+        $('html, body').css({height: '100%'});
+        var sql = new cartodb.SQL({ user: 'island' });
+        cartodb.createVis('explore',
+          // 'http://island.cartodb.com/api/v1/viz/22644/viz.json', {
+          'http://island.cartodb.com/api/v1/viz/23419/viz.json', {
+          search: true, 
+          center_lat: 20,
+          center_lon: -20
+        }, function (vis, layers) {
+          var layer = layers[1];
+          layer.infowindow.set('template', $('#infowindow_template').html());
+          // layer.on('featureClick', function(e, pos, latlng, data) {
+          //   console.log(e, pos, latlng, data);
+          // });
+          layer.on('error', function (err) {
+            console.log('error: ' + err);
+          });
+        }).on('error', function (err) {
+          console.log(err);
+        });
+      }
+
       /////////////////////////// ACTIONS
 
       // forms
@@ -882,9 +907,9 @@ Island = (function ($) {
       });
 
       // pulse logo on mouseover
-      var logoA = $('#logo-a');
-      var logoB = $('#logo-b');
-      var logos = [logoA, logoB];
+      // var logoA = $('#logo-a');
+      // var logoB = $('#logo-b');
+      // var logos = [logoA, logoB];
 
       // init autogrow text
       $('textarea').autogrow();

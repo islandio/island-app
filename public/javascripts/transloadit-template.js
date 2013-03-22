@@ -10,7 +10,6 @@
     "image_full": {
         "use": ":original"
       , "robot": "/image/resize"
-      , "strip": true
       , "correct_gamma": true
       , "width": 640
       , "resize_strategy": "fit"

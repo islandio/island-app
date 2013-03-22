@@ -352,14 +352,34 @@ a.resend-conf {
   -moz-border-radius: 0 0 83px 0;
   border-radius: 0 0 83px 0;
 }
+#header-left.explore {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 384px;
+  background: rgba(242,242,242,0.1);
+}
+#zoom {
+  top: 100px;
+}
+#tiles_loader {
+  top: 100px;
+}
 #header-left:hover {
   background: #f2f2f2;
+}
+#header-left.explore:hover {
+  background: rgba(242,242,242,0.5);
 }
 #logo {
   width: 300px;
   height: 52px;
   padding: 15px 0;
   cursor: pointer;
+}
+#header-left.explore #logo {
+  padding: 15px 0 15px 21px;
 }
 #header-right {
   margin: 0 0 0 388px;
@@ -476,7 +496,7 @@ input[type=checkbox],
 input[type=radio] {
   display: inline;
 }
-input[type=text],
+input[type=text]:not(.text),
 input[type=password] {
   background: #fcfcfb;
   width: 142px;
@@ -533,6 +553,14 @@ input.is-button-alert[type=submit] {
   right: 0;
   bottom: 0;
   cursor: pointer;
+}
+#add_map {
+  width: 640px;
+  height: 250px;
+}
+#explore {
+  width: 100%;
+  height: 100%;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 .signin {
@@ -605,7 +633,7 @@ input.is-button-alert[type=submit] {
 a.button,
 button,
 div[role=button],
-input[type=submit] {
+input[type=submit]:not(.submit) {
   font-size: 11px;
   font-family: Title, Verdana, Arial, sans-serif;
   padding: 0 8px;

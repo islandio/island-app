@@ -6,7 +6,7 @@
     "www.island.io"
   ],
   "subdomain": "island",
-  "version": "0.1.0-97",
+  "version": "0.1.0-105",
   "homepage": "http://island.io",
   "repository": {
     "type": "git",
@@ -16,7 +16,7 @@
     "express": "~3.0.6",
     "jade": "~0.28.1",
     "stylus": "~0.32.0",
-    "mongodb": "~1.2.9",
+    "mongodb": "~1.2.13",
     "node-fb": "~1.0.0",
     "passport": "~0.1.11",
     "passport-facebook": "~0.1.4",
@@ -33,6 +33,12 @@
     "connect-redis": "~1.4.5",
     "redis": "~0.8.2",
     "pusher": "~0.1.2"
+  },
+  "devDependencies": {
+    "cli-color": "~0.2.2",
+    "iconv": "~2.0.2",
+    "curlrequest": "~0.3.6",
+    "async": "~0.2.6"
   },
   "engines": {
     "node": "~0.8.x"
