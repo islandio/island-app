@@ -382,6 +382,12 @@ MemberDb.prototype.createPost = function (props, cb) {
       key: key,
       ccnt: 0,
       vcnt: 0,
+      product: {
+        sku: null,
+        price: null, // (dollars)
+        type: null, // digital, tangible
+        subtype: null, // Short, Feature-length
+      },
     });
     db.createDoc(self.collections.post, props,
               function (err, doc) {
@@ -474,28 +480,23 @@ MemberDb.prototype.createRating = function (props, cb) {
         if (err) return cb(err);
         if (!doc)
           return db.createDoc(self.collections.rating, props, function (err, rat) {
-            console.log(err, rat);
             if (err) return cb(err);
             self.collections.media.update({ _id: med._id },
                                           { $inc: { hcnt: props.val }},
                                           { safe: true }, function (err) {
-              console.log('NEW', err, rat);
               cb(err, rat);
             });
           });
-        console.log('OLD', err, doc);
         self.collections.rating.update({ _id: doc._id },
                                       { $set : { val: props.val,
                                         created: new Date } },
                                       { safe: true }, function (err) {
           if (err) return cb(err);
-          console.log('UPDATE', props.val);
           self.collections.media.update({ _id: med._id },
                                         { $inc: { hcnt: props.val - doc.val }},
                                         { safe: true }, function (err) {
             if (doc)
               doc.val = props.val;
-            console.log('TOTAL', props.val);
             cb(err, doc);
           });
         });
@@ -547,7 +548,7 @@ MemberDb.prototype.findPosts = function (query, opts, cb) {
       },
       function (err) {
         if (err) return cb(err);
-        if (!('key' in query))
+        if (!('key' in query) && !('product.sku' in query))
           return this();
         var next = _.after(posts.length, this);
         _.each(posts, function (post) {

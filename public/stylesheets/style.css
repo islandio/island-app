@@ -9,6 +9,52 @@
   src: url("../fonts/impact-webfont.eot");
   src: url("../fonts/impact-webfont.eot?#iefix") format('embedded-opentype'), url("../fonts/impact-webfont.woff") format('woff'), url("../fonts/impact-webfont.ttf") format('truetype'), url("../fonts/impact-webfont.svg#ImpactRegular") format('svg');
 }
+@font-face {
+  font-family: 'icons';
+  src: url("../fonts/icons.eot?52485978");
+  src: url("../fonts/icons.eot?52485978#iefix") format('embedded-opentype'), url("../fonts/icons.woff?52485978") format('woff'), url("../fonts/icons.ttf?52485978") format('truetype'), url("../fonts/icons.svg?52485978#icons") format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'icons';
+    src: url('../font/icons.svg?52485978#icons') format('svg');
+  }
+}
+*/
+[class^="icon-"]:before,
+[class*=" icon-"]:before {
+  font-family: 'icons';
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: 0.2em;
+  text-align: center;
+/* opacity .8 */
+/* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+/* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+/* Animation center compensation - magrins should be symmetric */
+/* remove if not needed */
+  margin-left: 0.2em;
+/* you can be more comfortable with increased icons size */
+/* font-size: 120%; */
+/* Uncomment for 3D effect */
+/* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+.icon-download-cloud:before {
+  content: '\f0ed';
+}
+/* '' */
 /*––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– resets */
 html {
   color: #1a1a1a;
@@ -233,7 +279,7 @@ td {
   font-size: 9px;
   color: #808080;
   line-height: 12px;
-  max-width: 300px;
+  max-width: 250px;
 }
 span.loading {
   color: #808080;
@@ -462,6 +508,19 @@ a.resend-conf {
   color: #d04c38 !important;
   border: 1px solid #d04c38 !important;
 }
+#buy-post {
+  background: #b1dc36;
+  color: #404040;
+  border: 1px solid #404040;
+}
+#buy-post:hover {
+  color: #1a1a1a;
+  border: 1px solid #1a1a1a;
+}
+.action-button {
+  float: right;
+  margin-top: 12px;
+}
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 ::-webkit-input-placeholder {
   color: #808080;
@@ -670,7 +729,7 @@ input[type=submit]:not(.submit) {
   transition-duration: 100ms;
 }
 input[type=submit] {
-  height: 25px;
+  height: 25px !important;
 }
 input[type=submit].from-login {
   color: #1a1a1a;
@@ -993,6 +1052,9 @@ img.heart-img {
   background-color: #f2f2f2;
   width: 640px;
 }
+.obj-desc.wide {
+  width: 984px;
+}
 .obj-desc-txt-wrap {
   margin: 0 0 0 25px;
   padding: 10px 10px 0 4px;
@@ -1011,7 +1073,7 @@ img.heart-img {
 .commentor-input,
 .commentor-input-dummy {
   width: 304px;
-  margin: 23px 0 0 0;
+  margin: 17px 0 0 0;
   padding: 4px;
 }
 .commentor-input {

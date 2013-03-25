@@ -300,12 +300,42 @@ app.get('/', function (req, res, next) {
 });
 
 // Store
-app.get('/store', function (req, res) {
-  res.render('store', {
-    title: 'Island - Store',
-    twitters: twitterHandles,
-    member: req.user
-  });
+app.get('/films', function (req, res) {
+  Step(
+    function () {
+      memberDb.findPosts({'product.sku': {$exists: true}}, this);
+    },
+    function (err, posts) {
+      _.each(posts, function (post) {
+        var img = [];
+        var vid = [];
+        var aud = [];
+        _.each(post.medias, function (med) {
+          var rating = req.user ? _.find(med.ratings, function (rat) {
+            return req.user._id.toString() === rat.member_id.toString();
+          }) : null;
+          med.hearts = rating ? rating.val : 0;
+          delete med.ratings;
+          switch (med.type) {
+            case 'image': img.push(med); break;
+            case 'video': vid.push(med); break;
+            case 'audio':
+              aud.push(med);
+              med.audioIndex = aud.length;
+              break;
+          }
+        });
+        post.medias = [].concat(img, aud, vid);
+      });
+      res.render('films', {
+        title: 'Island - Films',
+        films: posts,
+        member: req.user,
+        twitters: twitterHandles,
+        util: templateUtil
+      });
+    }
+  );
 });
 
 // Explore
@@ -970,8 +1000,7 @@ app.put('/save/settings', authorize, function (req, res) {
 app.get('/:key', function (req, res) {
   Step(
     function () {
-      memberDb.findPosts({ key: req.params.key },
-                        { limit: 1, comments: false }, this);
+      memberDb.findPosts({key: req.params.key}, {limit: 1}, this);
     },
     function (err, post) {
       if (err || !post || post.length === 0)
