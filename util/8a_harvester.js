@@ -277,8 +277,7 @@ Step(
   function () {
     var next = this;
     mongodb.connect(argv.pro
-      ? 'mongodb://nodejitsu_sanderpick:as3nonkk9502pe1ugseg3mj9ev@ds043947'
-      + '.mongolab.com:43947/nodejitsu_sanderpick_nodejitsudb9750563292'
+      ? 'mongodb://nodejitsu:af8c37eb0e1a57c1e56730eb635f6093@linus.mongohq.com:10020/nodejitsudb5582710115'
       : argv.db,
       {
         server: { poolSize: 4 },
