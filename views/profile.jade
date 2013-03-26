@@ -4,7 +4,7 @@ block main
   - var websites = data.website ? data.website.split('\n') : null;
   div.single-left
     - if (member && member._id.toString() === data._id.toString())
-      a.button(href='/settings/' + member.key, style='float:right; margin-top:12px;') 
+      a.button.action-button(href='/settings/' + member.key) 
         | Edit Profile
     div.obj-title
       span.slash

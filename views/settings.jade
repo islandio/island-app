@@ -2,7 +2,7 @@ extends index
 
 block main
   div.single-left
-    a#delete-profile.button(href='javascript:;', style='float:right; margin-top:12px;')
+    a#delete-profile.button.action-button(href='javascript:;')
       | Delete Yourself
     form#settings-form(action='/save/settings', enctype='multipart/form-data', method='POST')
       input(type='hidden', name='params', value=JSON.stringify(transloaditParams))
