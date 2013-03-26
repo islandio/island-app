@@ -1,12 +1,8 @@
 {
   "author": "Sander Pick <sanderpick@gmail.com> (git://github.com/sanderpick)",
-  "name": "island",
-  "domains": [
-    "island.io",
-    "www.island.io"
-  ],
-  "subdomain": "island",
-  "version": "0.1.0-110",
+  "name": "islandtwo",
+  "subdomain": "islandtwo",
+  "version": "0.1.0-1",
   "homepage": "http://island.io",
   "repository": {
     "type": "git",

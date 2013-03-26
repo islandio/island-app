@@ -14,11 +14,14 @@ var argv = optimist
       .default('db', 'mongodb://nodejitsu:af8c37eb0e1a57c1e56730eb635f6093@linus.mongohq.com:10020/nodejitsudb5582710115')
       // .default('db', 'mongodb://nodejitsu_sanderpick:as3nonkk9502pe1ugseg3mj9ev@ds043947.mongolab.com:43947/nodejitsu_sanderpick_nodejitsudb9750563292')
     .describe('redis_port', 'Redis port')
-      .default('redis_port', 9818)
+      .default('redis_port', 6379)
+      // .default('redis_port', 9818)
     .describe('redis_host', 'Redis host')
-      .default('redis_host', 'slimehead.redistogo.com')
+      .default('redis_host', 'nodejitsudb2498459205.redis.irstack.com')
+      // .default('redis_host', 'slimehead.redistogo.com')
     .describe('redis_pass', 'Redis password')
-      .default('redis_pass', 'b1f23cd8645e79bfead95f1a999985cb')
+      .default('redis_pass', 'nodejitsudb2498459205.redis.irstack.com:f327cfe980c971946e80b8e975fbebb4')
+      // .default('redis_pass', 'b1f23cd8645e79bfead95f1a999985cb')
     .argv;
 
 if (argv.dev) {
@@ -1674,7 +1677,7 @@ if (!module.parent) {
 
   Step(
     function () {
-      console.log('Connecting to database:', argv.db);
+      console.log('Connecting to MongoDB:', argv.db);
       mongodb.connect(argv.db, {server: { poolSize: 4 }}, this);
     },
     function (err, db) {

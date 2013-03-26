@@ -31,10 +31,10 @@ var redis_pass = null;
 var redis_port = 6379;
 if (argv.env === 'pro') {
   log('Targeting production server!');
-  db = 'mongodb://nodejitsu_sanderpick:as3nonkk9502pe1ugseg3mj9ev@ds043947.mongolab.com:43947/nodejitsu_sanderpick_nodejitsudb9750563292';
-  redis_host = 'slimehead.redistogo.com';
-  redis_port = 9818;
-  redis_pass = 'b1f23cd8645e79bfead95f1a999985cb';
+  db = 'mongodb://nodejitsu:af8c37eb0e1a57c1e56730eb635f6093@linus.mongohq.com:10020/nodejitsudb5582710115';
+  redis_host = 'nodejitsudb2498459205.redis.irstack.com';
+  redis_port = 6379;
+  redis_pass = 'nodejitsudb2498459205.redis.irstack.com:f327cfe980c971946e80b8e975fbebb4';
 }
 
 var redisClient;
