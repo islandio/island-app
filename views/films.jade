@@ -20,8 +20,8 @@ block main
           =post.member.displayName
     - post.medias.forEach(function (med, i) {
       div.obj-holder
-        img.mask(src="/graphics/is-cornermask-lrg-top.png", width="984", style="top: 0;")
-        img.mask(src="/graphics/is-cornermask-lrg-btm.png", width="984", style="top: " + Math.round(((med.video.meta.height / med.video.meta.width) * 984)-8) + "px;")
+        img.mask(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-lrg-top.png", width="984", style="top: 0;")
+        img.mask(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-lrg-btm.png", width="984", style="top: " + Math.round(((med.video.meta.height / med.video.meta.width) * 984)-8) + "px;")
         video(src=med.video.cf_url, id='video-' + med._id, poster=med.poster.cf_url, controls='controls', preload='none', width='984', height=Math.round((med.video.meta.height / med.video.meta.width) * 984))
         - if (member)
           div.hearts(data-num=med.hearts)

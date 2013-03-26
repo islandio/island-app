@@ -11,7 +11,8 @@ var argv = optimist
     .describe('port', 'Port to listen on')
       .default('port', 3644)
     .describe('db', 'MongoDb URL to connect to')
-      .default('db', 'mongodb://nodejitsu_sanderpick:as3nonkk9502pe1ugseg3mj9ev@ds043947.mongolab.com:43947/nodejitsu_sanderpick_nodejitsudb9750563292')
+      .default('db', 'mongodb://nodejitsu:af8c37eb0e1a57c1e56730eb635f6093@linus.mongohq.com:10020/nodejitsudb5582710115')
+      // .default('db', 'mongodb://nodejitsu_sanderpick:as3nonkk9502pe1ugseg3mj9ev@ds043947.mongolab.com:43947/nodejitsu_sanderpick_nodejitsudb9750563292')
     .describe('redis_port', 'Redis port')
       .default('redis_port', 9818)
     .describe('redis_host', 'Redis host')
@@ -299,7 +300,7 @@ app.get('/', function (req, res, next) {
   );
 });
 
-// Store
+// Films
 app.get('/films', function (req, res) {
   Step(
     function () {
@@ -336,6 +337,9 @@ app.get('/films', function (req, res) {
       });
     }
   );
+});
+app.get('/film', function (req, res) {
+  res.redirect('/films');
 });
 
 // Explore
