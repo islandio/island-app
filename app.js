@@ -11,7 +11,8 @@ var argv = optimist
     .describe('port', 'Port to listen on')
       .default('port', 3644)
     .describe('db', 'MongoDb URL to connect to')
-      .default('db', 'mongodb://nodejitsu_sanderpick:as3nonkk9502pe1ugseg3mj9ev@ds043947.mongolab.com:43947/nodejitsu_sanderpick_nodejitsudb9750563292')
+      .default('db', 'mongodb://nodejitsu:af8c37eb0e1a57c1e56730eb635f6093@linus.mongohq.com:10020/nodejitsudb5582710115')
+      // .default('db', 'mongodb://nodejitsu_sanderpick:as3nonkk9502pe1ugseg3mj9ev@ds043947.mongolab.com:43947/nodejitsu_sanderpick_nodejitsudb9750563292')
     .describe('redis_port', 'Redis port')
       .default('redis_port', 9818)
     .describe('redis_host', 'Redis host')
@@ -299,13 +300,46 @@ app.get('/', function (req, res, next) {
   );
 });
 
-// Store
-app.get('/store', function (req, res) {
-  res.render('store', {
-    title: 'Island - Store',
-    twitters: twitterHandles,
-    member: req.user
-  });
+// Films
+app.get('/films', function (req, res) {
+  Step(
+    function () {
+      memberDb.findPosts({'product.sku': {$exists: true}}, this);
+    },
+    function (err, posts) {
+      _.each(posts, function (post) {
+        var img = [];
+        var vid = [];
+        var aud = [];
+        _.each(post.medias, function (med) {
+          var rating = req.user ? _.find(med.ratings, function (rat) {
+            return req.user._id.toString() === rat.member_id.toString();
+          }) : null;
+          med.hearts = rating ? rating.val : 0;
+          delete med.ratings;
+          switch (med.type) {
+            case 'image': img.push(med); break;
+            case 'video': vid.push(med); break;
+            case 'audio':
+              aud.push(med);
+              med.audioIndex = aud.length;
+              break;
+          }
+        });
+        post.medias = [].concat(img, aud, vid);
+      });
+      res.render('films', {
+        title: 'Island - Films',
+        films: posts,
+        member: req.user,
+        twitters: twitterHandles,
+        util: templateUtil
+      });
+    }
+  );
+});
+app.get('/film', function (req, res) {
+  res.redirect('/films');
 });
 
 // Explore
@@ -970,8 +1004,7 @@ app.put('/save/settings', authorize, function (req, res) {
 app.get('/:key', function (req, res) {
   Step(
     function () {
-      memberDb.findPosts({ key: req.params.key },
-                        { limit: 1, comments: false }, this);
+      memberDb.findPosts({key: req.params.key}, {limit: 1}, this);
     },
     function (err, post) {
       if (err || !post || post.length === 0)

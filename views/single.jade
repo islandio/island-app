@@ -4,10 +4,14 @@ block main
   - if (post.key !== 'zzC6buzI')
     #banner
       a(href="/zzC6buzI")
-        img(src="https://d271mvlc6gc7bl.cloudfront.net/main/img/banner_0.jpg", width="984", height="100")
+        img(src="https://d271mvlc6gc7bl.cloudfront.net/main/img/banner_2.jpg", width="984", height="100")
   div.single-left
+    - if (post.product && post.product.sku)
+      a#buy-post.button.action-button(href='http://transactions.digitaldeliveryapp.com/products/' + post.product.sku + '/purchase', target='_blank', style='margin-left:5px;')
+        i.icon-download-cloud 
+        | #{post.product.subtype} Film ($#{post.product.price})
     - if (member && member._id.toString() === post.member._id.toString())
-      a#delete-post.button(data-key=post.key, href='javascript:;', style='float:right; margin-top:12px;')
+      a#delete-post.button.action-button(data-key=post.key, href='javascript:;')
         | Delete Post
     div.obj-title
       span.slash
@@ -85,15 +89,16 @@ block main
                       a.jp-repeat(href="javascript:;", tabindex="1", title="repeat") repeat
                     li
                       a.jp-repeat-off(href="javascript:;", tabindex="1", title="repeat off") repeat off
-          div.hearts(data-num=med.hearts)
-            div.hearts-wrap
-              img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
-              img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
-              img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
-              img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
-              img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
-            div.hearts-back(id='hrt-' + med._id)
-              img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/hearts.png')
+          - if (member)
+            div.hearts(data-num=med.hearts)
+              div.hearts-wrap
+                img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
+                img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
+                img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
+                img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
+                img.heart-img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/heart.png')
+              div.hearts-back(id='hrt-' + med._id)
+                img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/hearts.png')
     - });
     div.obj-desc.matte
       img.left(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-obj-info.gif', alt='info', align='top')
@@ -103,7 +108,7 @@ block main
         - var location = post.location && post.location.name ? post.location.name : null;
         h3.obj-details(data-date=post.created.toString(), data-type='media', data-location=location)
   div.single-right
-    div(style='padding-top: 4px')
+    div(style='padding-top: 12px')
       img(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-bubble.png', alt='is-bubble', align='top', width=26, height=20)
     - if (member)
       textarea.commentor-input-dummy.matte(name='Write a comment...', placeholder='Write a comment...')

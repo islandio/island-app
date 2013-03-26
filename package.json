@@ -6,11 +6,11 @@
     "www.island.io"
   ],
   "subdomain": "island",
-  "version": "0.1.0-105",
+  "version": "0.1.0-110",
   "homepage": "http://island.io",
   "repository": {
     "type": "git",
-    "url": "git://github.com/sanderpick/island.git"
+    "url": "git://github.com/islandio/island.git"
   },
   "dependencies": {
     "express": "~3.0.6",
