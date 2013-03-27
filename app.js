@@ -307,7 +307,7 @@ app.get('/', function (req, res, next) {
 app.get('/films', function (req, res) {
   Step(
     function () {
-      memberDb.findPosts({'product.sku': {$exists: true}}, this);
+      memberDb.findPosts({'product.sku': {$ne: null}}, this);
     },
     function (err, posts) {
       _.each(posts, function (post) {
