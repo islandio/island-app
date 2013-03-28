@@ -697,13 +697,13 @@ Island = (function ($) {
              })
             // $('.rating-'+minRating).addClass('min-rating');
             // $('.min-rating').css({'background':'green'})
-            $('.rating-'+maxRating).addClass('max-rating');
-            $('.max-rating').css({'background':'red'});
+            $('.rating-'+maxRating).addClass('min-rating');
+            $('.max-rating').css({'background':'green'});
             $('.rated').click(function(){
               $('.rated').css({'background':'white'});
-              $(this).css({'background':'red'});
+              $(this).css({'background':'green'});
               //this should all be run INSIDE the createViz done function to ensure timing
-              layer.setQuery("SELECT * FROM {{table_name}} WHERE rgrdt < '" + $(this).text() + "'")
+              layer.setQuery("SELECT * FROM {{table_name}} WHERE rgrdt > '" + $(this).text() + "'")
             })
            })
         cartodb.createVis('explore',
