@@ -677,6 +677,35 @@ Island = (function ($) {
       if (explore.length > 0) {
         $('html, body').css({height: '100%'});
         var sql = new cartodb.SQL({ user: 'island' });
+        $('body').append(
+          $('<ul></ul>').addClass('rating').css({'position':'absolute','z-index':'10','top':'80px','right':'24px','background':'transparent','width':'40px'})
+        );
+        var minRating = 0;
+        var maxRating = 0;
+        var layer;
+        sql.execute('SELECT distinct(rgrdt) FROM crags2 WHERE rgrdt IS NOT NULL ORDER BY rgrdt')
+           .done(function(data){
+             $.each(data.rows,function(i) {
+              maxRating = i;
+              $('.rating').append(
+                $('<li></li>')
+                  .addClass('rated')
+                  .addClass('rating-'+i)
+                  .css({'position':'relative','background':'white','width':'28px','margin':'1px','padding-left':'5px'})
+                  .text(data.rows[i].rgrdt)
+              );
+             })
+            // $('.rating-'+minRating).addClass('min-rating');
+            // $('.min-rating').css({'background':'green'})
+            $('.rating-'+maxRating).addClass('max-rating');
+            $('.max-rating').css({'background':'red'});
+            $('.rated').click(function(){
+              $('.rated').css({'background':'white'});
+              $(this).css({'background':'red'});
+              //this should all be run INSIDE the createViz done function to ensure timing
+              layer.setQuery("SELECT * FROM {{table_name}} WHERE rgrdt < '" + $(this).text() + "'")
+            })
+           })
         cartodb.createVis('explore',
           // 'http://island.cartodb.com/api/v1/viz/22644/viz.json', {
           'http://island.cartodb.com/api/v1/viz/23419/viz.json', {
@@ -684,7 +713,7 @@ Island = (function ($) {
           center_lat: 20,
           center_lon: -20
         }, function (vis, layers) {
-          var layer = layers[1];
+          layer = layers[1];
           layer.infowindow.set('template', $('#infowindow_template').html());
           // layer.on('featureClick', function(e, pos, latlng, data) {
           //   console.log(e, pos, latlng, data);
