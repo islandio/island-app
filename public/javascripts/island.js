@@ -691,7 +691,7 @@ Island = (function ($) {
                 $('<li></li>')
                   .addClass('rated')
                   .addClass('rating-'+i)
-                  .css({'position':'relative','background':'white','width':'28px','margin':'1px','padding-left':'5px'})
+                  .css({'position':'relative','cursor':'pointer','background':'white','width':'28px','margin':'1px','padding-left':'5px'})
                   .text(data.rows[i].rgrdt)
               );
              })
