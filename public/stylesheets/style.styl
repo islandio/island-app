@@ -581,18 +581,14 @@ input.is-button-alert[type=submit]
   bottom 0
   cursor pointer
 
-#add_map
-  width 640px
-  height 250px
-
 #explore
   width 100%
   height 100%
 
-.cartodb-zoom
+#explore .cartodb-zoom
   top 100px
 
-.cartodb-tiles-loader
+#explore .cartodb-tiles-loader
   top 100px !important
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
@@ -1017,6 +1013,7 @@ img.heart-img
 .obj-desc
   background-color mattegray
   width 640px
+  min-height: 46px;
 
 .obj-desc.wide
   width 984px
@@ -1278,6 +1275,51 @@ div.profile-left
 div.profile-right
   width 492px
   margin 0 0 0 492px
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crags*/
+
+div.map
+  width 640px
+  height 360px
+  border-radius 5px
+
+ul.ascents
+  margin 0
+
+ul.ascents a li
+  list-style none
+  padding 8px 7px 7px
+
+ul.ascents a li:hover
+  background #fdfdfd !important
+
+ul.ascents a li:hover span
+  text-decoration underline
+
+ul.ascents a:first-child li
+  border-radius 5px 5px 0 0
+
+ul.ascents a:last-child li
+  border-radius 0 0 5px 5px
+
+span.ascent-grade
+  display inline-block
+  width 20px
+  padding 0 10px 0 0
+  font-style italic
+
+span.ascent-name
+  display inline-block
+  // width 200px
+  padding 0 10px 0 0
+  font-weight bold
+
+span.ascent-sector
+  float right
+
+.leaflet-container a
+  color #404040 !important
+  background none !important
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––carousel*/
 

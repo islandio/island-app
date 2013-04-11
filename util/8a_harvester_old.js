@@ -17,12 +17,9 @@ var util = require('util'), error = util.error,
     debug = util.debug, inspect = util.inspect;
 var optimist = require('optimist');
 var argv = optimist
-    .demand('table')
-    .describe('table', 'CartoDB table name')
+    .default('db', 'mongodb://localhost:27018/nodejitsu_sanderpick_nodejitsudb9750563292')
     .boolean('pro')
-    .describe('pro', 'Target production MongoDB instance')
     .boolean('clear')
-    .describe('clear', 'Clear MongoDB collections and CartoDB tables')
     .argv;
 
 // Errors wrapper.
@@ -35,11 +32,7 @@ function errCheck(err) {
 
 // Format title strings.
 function format(str) {
-  str = str.replace(/\\/g, '').trim();
-  if (str.length > 3) str = str.toLowerCase();
-  return _.map(str.split(' '), function (w) {
-    return _.capitalize(w);
-  }).join(' ');
+  return _.capitalize(str.trim()).replace(/\\/g, '');
 }
 
 // Format strings for SQL.
@@ -57,18 +50,6 @@ function batcher(a, s) {
     else b.push([i]);
   });
   return b;
-}
-
-// Removes duplicate determined by an attribute.
-function unique(arr, att) {
-  var u = {}, r = [];
-  _.each(arr, function (a) {
-    if (!u[a[att]]) u[a[att]] = a;
-  });
-  _.each(u, function (v) {
-    r.push(v);
-  });
-  return r;
 }
 
 // Default request headers:
@@ -121,10 +102,8 @@ var countries = [
     name: String,
     bcnt: Number,
     rcnt: Number,
-    bgrdu: String,
-    bgrdl: String,
-    rgrdu: String,
-    rgrdl: String,
+    bgrd: Number,
+    rgrd: Number,
     lat: Number,
     lon: Number,
   }
@@ -150,14 +129,38 @@ var map_rating = {
   16: '7c', 17: '7c+', 18: '8a', 19: '8a+', 20: '8b', 21: '8b+', 22: '8c',
   23: '8c+', 24: '9a', 25: '9a+', 26: '9b', 27: '9b+', 28: '9c', 29: '9c+',
 };
-var grades = _.keys(rating_map);
+
+// Add a country to cartodb.
+function mapCountry(record, cb) {
+  var names = ["id", "name", "key", "bccnt", "rccnt",
+              "bcnt", "rcnt", "bgrd", "rgrd"];
+  var values = ["'" + record._id.toString() + "'",
+                "'" + clean(record.name) + "'",
+                "'" + record.key + "'", record.bccnt, record.rccnt,
+                record.bcnt, record.rcnt, record.bgrd, record.rgrd];
+  var q = "INSERT INTO countries (" + _.join(",", names)
+          + ") VALUES (" + _.join(",", values) + ")";
+  curl.request({
+    url: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
+    method: 'POST',
+    data: {q: q, api_key: cartodb.api_key}
+  }, function (err, data) {
+    errCheck(err);
+    if (data) {
+      data = JSON.parse(data);
+      errCheck(data.error);
+    }
+    log(clc.blue('Mapped ') + clc.underline(record.name) + '.');
+    cb();
+  });
+}
 
 // Add a crag to cartodb.
 function mapCrags(records, country, cb) {
-  var names = ["the_geom", "id", "name", "city",
-              "bcnt", "rcnt", "bgrdu", "bgrdl", "rgrdu", "rgrdl",
+  var names = ["the_geom", "id", "name", "city", "type",
+              "bcnt", "rcnt", "bgrd", "rgrd", "bgrdt", "rgrdt",
               "country_id", "key"];
-  var q = "INSERT INTO " + argv.table + " (" + _.join(",", names)
+  var q = "INSERT INTO crags2 (" + _.join(",", names)
           + ") VALUES ";
   _.each(records, function (r, i) {
     q += "(" + _.join(",", [r.lat && r.lon ?
@@ -165,9 +168,10 @@ function mapCrags(records, country, cb) {
                       "'" + r._id.toString() + "'",
                       "'" + clean(r.name) + "'",
                       r.city ? "'" + clean(r.city) + "'" : "NULL",
-                      r.bcnt, r.rcnt,
-                      "'" + r.bgrdu + "'", "'" + r.bgrdl + "'",
-                      "'" + r.rgrdu + "'", "'" + r.rgrdl + "'",
+                      r.type ? "'" + r.type + "'" : "NULL",
+                      r.bcnt, r.rcnt, r.bgrd, r.rgrd,
+                      r.bgrdt ? "'" + r.bgrdt + "'" : "NULL",
+                      r.rgrdt ? "'" + r.rgrdt + "'" : "NULL",
                       "'" + r.country_id + "'",
                       "'" + r.key + "'"]) + ")";
     if (i !== records.length - 1) q += ", ";
@@ -188,6 +192,84 @@ function mapCrags(records, country, cb) {
   });
 }
 
+// Add a crag to cartodb using seperate tables for boulder and routes.
+function mapCragsSeperate(records, country, cb) {
+  var names = ["the_geom", "id", "name", "city", "country_id", "cnt", "grd"];
+  var sql = {
+    boulder: { q: "INSERT INTO boulders ("
+                + _.join(",", names) + ") VALUES ", n: 0},
+    route: { q: "INSERT INTO routes ("
+                + _.join(",", names) + ") VALUES ", n: 0}
+  };
+  _.each(records, function (r, i) {
+    var vals = [r.lat && r.lon ?
+                "CDB_LatLng(" + r.lat + "," + r.lon + ")" : "NULL",
+                "'" + r._id.toString() + "'",
+                "'" + clean(r.name) + "'",
+                r.city ? "'" + clean(r.city) + "'" : "NULL",
+                "'" + r.country_id + "'"];
+    if (r.bcnt > 0) {
+      var row = "(" + _.join(",", vals.concat([r.bcnt, r.bgrd])) + ")";
+      sql.boulder.q += sql.boulder.n ? ',' + row : row;
+      ++sql.boulder.n;
+    }
+    if (r.rcnt > 0) {
+      var row = "(" + _.join(",", vals.concat([r.rcnt, r.rgrd])) + ")";
+      sql.route.q += sql.route.n ? ',' + row : row;
+      ++sql.route.n;
+    }
+  });
+  var _cb = _.after(_.size(sql), cb);
+  _.each(sql, function (v, k) {
+    if (v.n === 0) return _cb();
+    curl.request({
+      url: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
+      method: 'POST',
+      data: {q: v.q, api_key: cartodb.api_key}
+    }, function (err, data) {
+      errCheck(err);
+      if (data) {
+        data = JSON.parse(data);
+        errCheck(data.error);
+      }
+      log(clc.blue('Mapped ') + clc.green(records.length)
+          + ' ' + k + ' crags in ' + clc.underline(country) + '.');
+      _cb();
+    });
+  });
+}
+
+// Add an ascents to cartodb.
+function mapAscents(records, country, cb) {
+  var names = ["id", "name", "grade", "type",
+              "country_id", "crag_id", "sector"];
+  var q = "INSERT INTO ascents (" + _.join(",", names)
+          + ") VALUES ";
+  _.each(records, function (r, i) {
+    q += "(" + _.join(",", ["'" + r._id.toString() + "'",
+                      "'" + clean(r.name) + "'", r.grade,
+                      "'" + r.type + "'",
+                      "'" + r.country_id.toString() + "'",
+                      "'" + r.crag_id.toString() + "'",
+                      r.sector ? "'" + clean(r.sector) + "'" : "NULL"]) + ")";
+    if (i !== records.length - 1) q += ", ";
+  });
+  curl.request({
+    url: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
+    method: 'POST',
+    data: {q: q, api_key: cartodb.api_key}
+  }, function (err, data) {
+    errCheck(err);
+    if (data) {
+      data = JSON.parse(data);
+      errCheck(data.error);
+    }
+    log(clc.blackBright('Mapped ') + clc.green(records.length)
+        + ' ascents in ' + clc.underline(country) + '.');
+    cb();
+  });
+}
+
 // Walk steps.
 Step(
 
@@ -197,7 +279,7 @@ Step(
     mongodb.connect(argv.pro
       ? 'mongodb://nodejitsu_sanderpick:as3nonkk9502pe1ugseg3mj9ev@ds043947'
       + '.mongolab.com:43947/nodejitsu_sanderpick_nodejitsudb9750563292'
-      : 'mongodb://localhost:27018/nodejitsu_sanderpick_nodejitsudb9750563292',
+      : argv.db,
       {
         server: { poolSize: 4 },
         db: { native_parser: false, reaperTimeout: 600000 },
@@ -216,13 +298,34 @@ Step(
   function () {
     if (!argv.clear) return this();
     log(clc.red('Clearing cartodb tables...'));
+    // request.post({
+    //   uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
+    //   qs: {
+    //     q: 'DELETE FROM countries',
+    //     api_key: cartodb.api_key
+    //   }
+    // }, this.parallel());
     request.post({
       uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
       qs: {
-        q: 'DELETE FROM ' + argv.table,
+        q: 'DELETE FROM crags3',
         api_key: cartodb.api_key
       }
     }, this.parallel());
+    // request.post({
+    //   uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
+    //   qs: {
+    //     q: 'DELETE FROM boulders',
+    //     api_key: cartodb.api_key
+    //   }
+    // }, this.parallel());
+    // request.post({
+    //   uri: 'https://' + cartodb.user + '.cartodb.com/api/v2/sql',
+    //   qs: {
+    //     q: 'DELETE FROM routes',
+    //     api_key: cartodb.api_key
+    //   }
+    // }, this.parallel());
     log(clc.red('Clearing mongodb collections...'));
     db.collections.country.drop(this.parallel());
     db.collections.crag.drop(this.parallel());
@@ -295,6 +398,10 @@ Step(
           city: String,
           bcnt: Number,
           rcnt: Number,
+          bgrd: Number,
+          rgrd: Number,
+          bgrdt: String,
+          rgrdt: String,
           bgrdu: String,
           bgrdl: String,
           rgrdu: String,
@@ -313,7 +420,7 @@ Step(
         {
           _id: String,
           name: String,
-          grades: [String],
+          grade: Number,
           type: String,
           sector: String,
           crag: String,
@@ -328,14 +435,11 @@ Step(
         */
       ];
 
-      // Stats.
-
+      // Grade averages.
       country.bcnt = 0; 
       country.rcnt = 0;
-      country.bgrdu = _.min(grades);
-      country.bgrdl = _.max(grades);
-      country.rgrdu = _.min(grades);
-      country.rgrdl = _.max(grades);
+      country.bgrd = 0;
+      country.rgrd = 0;
 
       // Walk steps.
       Step(
@@ -357,7 +461,7 @@ Step(
             }, function (err, res, body) {
               errCheck(err);
               body = iconv.convert(new Buffer(body, 'binary')).toString();
-              var cs = {};
+              var cs = [];
               var match;
               while ((match = crag_rx.exec(body))) {
                 var c = {
@@ -370,27 +474,14 @@ Step(
                 };
                 if (match[4] && match[4].trim() !== '')
                   c.city = format(match[4]);
-                var slug = _.slugify(c.name);
-                if (slug === '') continue;
-                c.key = [c.country_key, slug].join('/');
-                var e = cs[c.id];
-                if (!e)
-                  cs[c.id] = c;
-                else {
-                  e.city = e.city || c.city;
-                  e.lat = e.lat || c.lat;
-                  e.lon = e.lon || c.lon;
-                }
+                ++crag_cnt;
+                cs.push(c);
               }
-              cs = _.values(cs);
               country[type + 'ccnt'] = cs.length;
-              if (cs.length > 0) {
-                crags.push(cs);
-                crag_cnt += cs.length;
-                log(clc.cyan('Found ') + clc.green(cs.length)
-                    + ' ' + clc.italic(t ? 'boulder' : 'route')
-                    + ' crags in ' + clc.underline(country.name) + '.');
-              }
+              log(clc.cyan('Found ') + clc.green(cs.length)
+                  + ' ' + clc.italic(t ? 'boulder' : 'route')
+                  + ' crags in ' + clc.underline(country.name) + '.');
+              crags.push(cs);
               next();
             });
           });
@@ -423,7 +514,6 @@ Step(
             _.each(batch, function (c) {
               _.each(types, function (t) {
                 var type = t ? 'b' : 'r';
-                var fulltype = t ? 'boulders' : 'routes';
                 request.get({
                   uri: 'http://www.8a.nu/scorecard/Search.aspx',
                   qs: {
@@ -436,9 +526,8 @@ Step(
                 }, function (err, res, body) {
                   errCheck(err);
                   body = iconv.convert(new Buffer(body, 'binary')).toString();
-                  var as = {};
-                  var gu = _.min(grades);
-                  var gl = _.max(grades);
+                  var as = [];
+                  var g = 0;
                   var match_row;
                   while (match_row = ascent_row_rx.exec(body)) {
                     var m = match_row[0].match(ascent_rx);
@@ -446,7 +535,7 @@ Step(
                     var a = {
                       _id: new ObjectID(),
                       name: format(m[2]),
-                      grade: m[1].trim().toLowerCase(),
+                      grade: m[1].trim(),
                       type: type,
                       crag: c.name,
                       country: c.country,
@@ -456,47 +545,27 @@ Step(
                     };
                     if (m[5] && m[5].trim() !== '')
                       a.sector = format(m[5]);
-                    var slug1 = _.slugify(a.crag);
-                    var slug2 = _.slugify(a.name);
-                    if (slug1 === '' || slug2 === '') continue;
-                    a.key = [a.country_key, slug1, fulltype, slug2].join('/');
-                    var grade = a.grade;
-                    delete a.grade;
-                    var e = as[a.key];
-                    if (!e) {
-                      a.grades = [grade];
-                      as[a.key] = a;
-                    } else {
-                      e.sector = e.sector || a.sector;
-                      var gnum = rating_map[grade];
-                      if (gnum && !_.contains(e.grades, grade)) {
-                        e.grades.push(grade);
-                        if (gnum > rating_map[gu])
-                          gu = grade;
-                        if (gnum < rating_map[gl])
-                          gl = grade;
-                      }
+                    if (c.city)
+                      a.city = c.city;
+                    if (c.lat && c.lon) {
+                      a.lat = c.lat;
+                      a.lon = c.lon;
                     }
+                    a.grade = a.grade ? rating_map[a.grade.toLowerCase()] || 0 : 0;
+                    g += a.grade;
+                    ++ascent_cnt;
+                    as.push(a);
                   }
-                  as = _.values(as);
                   c[type + 'cnt'] = as.length;
-                  c[type + 'grdu'] = gu;
-                  c[type + 'grdl'] = gl;
+                  c[type + 'grd'] = as.length !== 0 ? g / as.length : 0;
+                  c[type + 'grdt'] = map_rating[Math.round(c[type + 'grd'])];
                   country[type + 'cnt'] += as.length;
-                  if (rating_map[gu] > rating_map[country[type + 'grdu']])
-                    country[type + 'grdu'] = gu;
-                  if (rating_map[gl] < rating_map[country[type + 'grdl']])
-                    country[type + 'grdl'] = gl;
-                  if (as.length > 0) {
-                    ascents.push(as);
-                    ascent_cnt += as.length;
-                    log(clc.cyan('Found ') + clc.green(as.length)
-                        + ' ' + clc.italic(fulltype)
-                        + ' in ' + clc.underline(c.name)
-                        + ' (GRADE_UPPER=' + clc.magenta(c[type + 'grdu'])
-                        + ' GRADE_LOWER=' + clc.magenta(c[type + 'grdl'])
-                        + ').');
-                  }
+                  country[type + 'grd'] += g;
+                  log(clc.cyan('Found ') + clc.green(as.length)
+                      + ' ' + clc.italic(t ? 'boulders' : 'routes')
+                      + ' in ' + clc.underline(c.name) + ' (GRADE_AVG='
+                      + clc.magenta(c[type + 'grd']) + ').');
+                  ascents.push(as);
                   _next();
                 });
               });
@@ -536,6 +605,16 @@ Step(
           log(clc.orange('Saved ') + clc.green(ascents.length)
               + ' ascents in ' + clc.underline(country.name) + '.');
           this();
+          // Skip mapping for now.
+          // if (ascents.length === 0)
+          //   return this();
+          // var q = async.queue(function (b, cb) {
+          //   mapAscents(b, country.name, cb);
+          // }, 10);
+          // q.drain = this;
+          // q.push(batcher(ascents, 500), function (err) {
+          //   errCheck(err);
+          // });
         },
 
         // Save crags.
@@ -545,7 +624,18 @@ Step(
             return this();
           var next = _.after(crags.length, this);
           _.each(crags, function (c) {
-            db.createCrag(c, next);
+            if (c.bcnt > 0 && c.rcnt === 0)
+              c.type = 'b';
+            else if (c.bcnt === 0 && c.rcnt > 0)
+              c.type = 'r';
+            else if (c.bcnt > 0 && c.rcnt > 0)
+              c.type = 'c';
+            else c.type = 'n';
+            db.createCrag(c, function (err, doc) {
+              errCheck(err);
+              c.key = doc.key;
+              next();
+            });
           });
         },
 
@@ -567,12 +657,21 @@ Step(
         // Get country stats and save.
         function (err) {
           errCheck(err);
+          country.bgrd = country.bcnt !== 0 ? country.bgrd / country.bcnt : 0;
+          country.rgrd = country.rcnt !== 0 ? country.rgrd / country.rcnt : 0;
+          country.bgrdt = map_rating[Math.round(country.bgrd)];
+          country.rgrdt = map_rating[Math.round(country.rgrd)];
           db.createCountry(country, function (err) {
             errCheck(err);
             log(clc.orange('Saved ') + clc.underline(country.name) + '.');
             ++y;
             if (y === countries.length)
               return done();
+            // Skip mapping for now.
+            // mapCountry(country, function (err) {
+            //   log(clc.blackBright((countries.length - y) + ' countries left.'));
+            //   handle(countries[y]);
+            // });
             log(clc.blackBright((countries.length - y) + ' countries left.'));
             handle(countries[y]);
           });  

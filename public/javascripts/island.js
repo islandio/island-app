@@ -726,6 +726,21 @@ Island = (function ($) {
         });
       }
 
+      var crag = $('#crag_map');
+      if (crag.length > 0) {
+        var sql = new cartodb.SQL({ user: 'island' });
+        cartodb.createVis('crag_map',
+          // 'http://island.cartodb.com/api/v1/viz/22644/viz.json', {
+          'http://island.cartodb.com/api/v1/viz/23419/viz.json', {
+          center_lat: crag.data('lat'),
+          center_lon: crag.data('lon'),
+          zoom: 10
+        }, function (vis, layers) {});
+
+
+
+      }
+
       /////////////////////////// ACTIONS
 
       // forms

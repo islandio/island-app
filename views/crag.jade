@@ -1,0 +1,42 @@
+extends index
+
+block main
+  #banner
+    a(href="/zzC6buzI")
+      img(src="https://d271mvlc6gc7bl.cloudfront.net/main/img/banner_2.jpg", width="984", height="100")
+  div.single-left
+    div.obj-title
+      span.slash
+        | /
+      h1.title-left
+        =crag.name
+      h1.title-sub 
+        =crag.country
+    div.obj-holder
+      img.mask(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-top.png", width="640", style="top: 0;")
+      img.mask(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-btm.png", width="640", style="top: " + (360-8) + "px;")
+      div#crag_map.map(data-lat=crag.lat, data-lon=crag.lon)
+    div.obj-desc.matte
+      img.left(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-obj-info.gif', alt='info', align='top')
+      div.obj-desc-txt-wrap
+        p.obj-desc-txt
+          | foo bar baz
+    - [{n: 'Boulders', t: 'b'}, {n: 'Routes', t: 'r'}].forEach(function (sec) {
+      - if (crag[sec.t + 'cnt'] === 0) return;
+      h1.title-bottom(style="margin-top:40px;") / #{sec.n}
+      ul.ascents
+        - var i = 0;
+        - ascents.forEach(function (a) {
+          - if (a.type !== sec.t) return;
+          - var back = i % 2 === 0 ? '#f2f2f2': '#f9f9f9';
+            a(href="/crags/" + a.key)
+              li.ascent(style="background:" + back + ";")
+                span.ascent-grade #{util.ratingMap[a.grade]}
+                span.ascent-name #{a.name}
+                span.ascent-sector #{a.sector}
+          - ++i;
+        - });
+    - });
+  div.recent-comments-wrap
+    h1.title-right / Recent Ascents
+  div.clear
