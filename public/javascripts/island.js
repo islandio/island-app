@@ -683,7 +683,7 @@ Island = (function ($) {
         var minRating = 0;
         var maxRating = 0;
         var layer;
-        sql.execute('SELECT distinct(rgrdt) FROM crags2 WHERE rgrdt IS NOT NULL ORDER BY rgrdt')
+        sql.execute('SELECT distinct(rgrdu) FROM crags WHERE rgrdu IS NOT NULL ORDER BY rgrdu')
            .done(function(data){
              $.each(data.rows,function(i) {
               maxRating = i;
@@ -703,13 +703,14 @@ Island = (function ($) {
               $('.rated').css({'background':'white'});
               $(this).css({'background':'green'});
               //this should all be run INSIDE the createViz done function to ensure timing
-              layer.setQuery("SELECT * FROM {{table_name}} WHERE rgrdt > '" + $(this).text() + "'")
+              layer.setQuery("SELECT * FROM {{table_name}} WHERE rgrdu > '" + $(this).text() + "'")
             })
            })
         cartodb.createVis('explore',
           // 'http://island.cartodb.com/api/v1/viz/22644/viz.json', {
-          'http://island.cartodb.com/api/v1/viz/23419/viz.json', {
-          search: true, 
+          // 'http://island.cartodb.com/api/v1/viz/23419/viz.json', {
+          'http://island.cartodb.com/api/v1/viz/crags/viz.json', {
+          search: false, 
           center_lat: 20,
           center_lon: -20
         }, function (vis, layers) {
@@ -731,7 +732,7 @@ Island = (function ($) {
         var sql = new cartodb.SQL({ user: 'island' });
         cartodb.createVis('crag_map',
           // 'http://island.cartodb.com/api/v1/viz/22644/viz.json', {
-          'http://island.cartodb.com/api/v1/viz/23419/viz.json', {
+          'http://island.cartodb.com/api/v1/viz/crags/viz.json', {
           center_lat: crag.data('lat'),
           center_lon: crag.data('lon'),
           zoom: 10

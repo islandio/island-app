@@ -203,7 +203,7 @@ Step(
         db: { native_parser: false, reaperTimeout: 600000 },
       }, function (err, db) {
       errCheck(err);
-      new ClimbDb(db, { ensureIndexes: false }, next);
+      new ClimbDb(db, { ensureIndexes: true }, next);
     });
   },
   function (err, _db) {
@@ -373,9 +373,9 @@ Step(
                 var slug = _.slugify(c.name);
                 if (slug === '') continue;
                 c.key = [c.country_key, slug].join('/');
-                var e = cs[c.id];
+                var e = cs[c.key];
                 if (!e)
-                  cs[c.id] = c;
+                  cs[c.key] = c;
                 else {
                   e.city = e.city || c.city;
                   e.lat = e.lat || c.lat;

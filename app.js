@@ -107,9 +107,13 @@ var eventDb;
 var climbDb;
 var pusher;
 var channels = process.env.NODE_ENV === 'production' ?
-                { all: 'island' } :
-                { all: 'island_test' };
+                {all: 'island'}:
+                {all: 'island_test'};
 var twitterHandles;
+
+var grades = ['9c+', '9c', '9b+', '9b', '9a+', '9a', '8c+', '8c', '8b+', '8b',
+              '8a+', '8a', '7c+', '7c', '7b+', '7b', '7a+', '7a', '6c+', '6c',
+              '6b+', '6b', '6a+', '6a', '5c', '5b', '5a', '4', '3'];
 
 ////////////// Configuration
 
@@ -1073,14 +1077,31 @@ app.get('/crags/:country/:crag', function (req, res) {
       if (err || !c)
         return res.render('404', {title: 'Not Found'});
       crag = c;
-      climbDb.collections.ascent.find({crag_id: crag._id})
-          .sort({name: -1}).toArray(this);
+      climbDb.collections.ascent.find({
+        crag_id: crag._id,
+        type: 'b'
+      }).sort({name: 1}).toArray(this.parallel());
+      climbDb.collections.ascent.find({
+        crag_id: crag._id,
+        type: 'r'
+      }).sort({name: 1}).toArray(this.parallel());
     },
-    function (err, ascents) {
+    function (err, boulders, routes) {
       if (err)
         return res.render(500, {error: err});
-      _.uniq(ascents, true, function (a, b) {
-        return a.name === b.name;
+      var ascents = {
+        boulders: {list: boulders},
+        routes: {list: routes}
+      };
+      _.each(ascents, function (v, type) {
+        var bs = {};
+        _.each(grades, function (g) { bs[g] = []; });
+        _.each(v.list, function (a) {
+          _.each(a.grades, function (g) {
+            bs[g].push(a);
+          });
+        });
+        ascents[type].bucks = bs;
       });
       res.render('crag', {
         title: crag.name,
@@ -1088,7 +1109,8 @@ app.get('/crags/:country/:crag', function (req, res) {
         ascents: ascents,
         member: req.user,
         twitters: twitterHandles,
-        util: templateUtil
+        util: templateUtil,
+        _: _
       });
     }
   );

@@ -21,21 +21,23 @@ block main
       div.obj-desc-txt-wrap
         p.obj-desc-txt
           | foo bar baz
-    - [{n: 'Boulders', t: 'b'}, {n: 'Routes', t: 'r'}].forEach(function (sec) {
-      - if (crag[sec.t + 'cnt'] === 0) return;
-      h1.title-bottom(style="margin-top:40px;") / #{sec.n}
-      ul.ascents
+    - _.each(ascents, function (v, type) {
+      - if (v.list.length === 0) return;
+      h1.title-bottom(style="margin-top:40px;") / #{_.capitalize(type)}
+      - _.each(v.bucks, function (buck, grade) {
+        - if (buck.length === 0) return;
         - var i = 0;
-        - ascents.forEach(function (a) {
-          - if (a.type !== sec.t) return;
-          - var back = i % 2 === 0 ? '#f2f2f2': '#f9f9f9';
-            a(href="/crags/" + a.key)
-              li.ascent(style="background:" + back + ";")
-                span.ascent-grade #{util.ratingMap[a.grade]}
-                span.ascent-name #{a.name}
-                span.ascent-sector #{a.sector}
-          - ++i;
-        - });
+        span.grade #{grade}
+        ul.ascents
+          - _.each(buck, function (a) {
+            - var back = i % 2 === 0 ? '#f2f2f2': '#f9f9f9';
+              a(href="/crags/" + a.key)
+                li.ascent(style="background:" + back + ";")
+                  span.ascent-name #{a.name}
+                  span.ascent-sector #{a.sector}
+            - ++i;
+          - });
+      - });
     - });
   div.recent-comments-wrap
     h1.title-right / Recent Ascents
