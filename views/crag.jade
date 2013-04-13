@@ -24,7 +24,8 @@ block main
     - _.each(ascents, function (v, type) {
       - if (v.list.length === 0) return;
       h1.title-bottom(style="margin-top:40px;") / #{_.capitalize(type)}
-      - _.each(v.bucks, function (buck, grade) {
+      - _.each(v.bucks, function (buck) {
+        - var grade = buck.shift();
         - if (buck.length === 0) return;
         - var i = 0;
         span.grade #{grade}

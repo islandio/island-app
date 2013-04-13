@@ -59,18 +59,6 @@ function batcher(a, s) {
   return b;
 }
 
-// Removes duplicate determined by an attribute.
-function unique(arr, att) {
-  var u = {}, r = [];
-  _.each(arr, function (a) {
-    if (!u[a[att]]) u[a[att]] = a;
-  });
-  _.each(u, function (v) {
-    r.push(v);
-  });
-  return r;
-}
-
 // Default request headers:
 var headers = {
   'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) '
@@ -357,7 +345,7 @@ Step(
             }, function (err, res, body) {
               errCheck(err);
               body = iconv.convert(new Buffer(body, 'binary')).toString();
-              var cs = {};
+              var cs = [];
               var match;
               while ((match = crag_rx.exec(body))) {
                 var c = {
@@ -367,30 +355,16 @@ Step(
                   country_key: country.key,
                   country_id: country._id,
                   id: Number(match[1].trim()),
+                  type: type
                 };
                 if (match[4] && match[4].trim() !== '')
                   c.city = format(match[4]);
                 var slug = _.slugify(c.name);
                 if (slug === '') continue;
                 c.key = [c.country_key, slug].join('/');
-                var e = cs[c.key];
-                if (!e)
-                  cs[c.key] = c;
-                else {
-                  e.city = e.city || c.city;
-                  e.lat = e.lat || c.lat;
-                  e.lon = e.lon || c.lon;
-                }
+                cs.push(c);
               }
-              cs = _.values(cs);
-              country[type + 'ccnt'] = cs.length;
-              if (cs.length > 0) {
-                crags.push(cs);
-                crag_cnt += cs.length;
-                log(clc.cyan('Found ') + clc.green(cs.length)
-                    + ' ' + clc.italic(t ? 'boulder' : 'route')
-                    + ' crags in ' + clc.underline(country.name) + '.');
-              }
+              crags.push(cs);
               next();
             });
           });
@@ -405,6 +379,26 @@ Step(
               _.extend(c, points[c.id]);
             delete c.id;
           });
+          var map = {};
+          _.each(crags, function (c) {
+            var e = map[c.key];
+            if (!e) return map[c.key] = c;
+            e.city = e.city || c.city;
+            e.lat = e.lat || c.lat;
+            e.lon = e.lon || c.lon;
+            // TODO: check id, add to array of ids
+          });
+          var unique = [];
+          _.each(map, function (c) {
+            unique.push(c);
+          });
+          crags = unique;
+          var types = _.groupBy(crags, 'type');
+          country['bccnt'] = types.b.length;
+          country['rccnt'] = types.r.length;
+          crag_cnt += crags.length;
+          log(clc.cyan('Found ') + clc.green(crags.length)
+              + ' crags in ' + clc.underline(country.name) + '.');
           this();
         },
 
@@ -436,7 +430,7 @@ Step(
                 }, function (err, res, body) {
                   errCheck(err);
                   body = iconv.convert(new Buffer(body, 'binary')).toString();
-                  var as = {};
+                  var as = [];
                   var gu = _.min(grades);
                   var gl = _.max(grades);
                   var match_row;
@@ -460,36 +454,21 @@ Step(
                     var slug2 = _.slugify(a.name);
                     if (slug1 === '' || slug2 === '') continue;
                     a.key = [a.country_key, slug1, fulltype, slug2].join('/');
-                    var grade = a.grade;
-                    delete a.grade;
-                    var e = as[a.key];
-                    if (!e) {
-                      a.grades = [grade];
-                      as[a.key] = a;
-                    } else {
-                      e.sector = e.sector || a.sector;
-                      var gnum = rating_map[grade];
-                      if (gnum && !_.contains(e.grades, grade)) {
-                        e.grades.push(grade);
-                        if (gnum > rating_map[gu])
-                          gu = grade;
-                        if (gnum < rating_map[gl])
-                          gl = grade;
-                      }
-                    }
+                    as.push(a);
+                    var gnum = rating_map[a.grade];
+                    if (gnum > rating_map[gu])
+                      gu = a.grade;
+                    if (gnum < rating_map[gl])
+                      gl = a.grade;
                   }
-                  as = _.values(as);
-                  c[type + 'cnt'] = as.length;
                   c[type + 'grdu'] = gu;
                   c[type + 'grdl'] = gl;
-                  country[type + 'cnt'] += as.length;
                   if (rating_map[gu] > rating_map[country[type + 'grdu']])
                     country[type + 'grdu'] = gu;
                   if (rating_map[gl] < rating_map[country[type + 'grdl']])
                     country[type + 'grdl'] = gl;
                   if (as.length > 0) {
                     ascents.push(as);
-                    ascent_cnt += as.length;
                     log(clc.cyan('Found ') + clc.green(as.length)
                         + ' ' + clc.italic(fulltype)
                         + ' in ' + clc.underline(c.name)
@@ -517,6 +496,30 @@ Step(
         function () {
           ascents = _.reduceRight(ascents, function (a, b) {
             return a.concat(b); }, []);
+          var map = {};
+          _.each(ascents, function (a) {
+            var grade = a.grade;
+            delete a.grade;
+            var e = map[a.key];
+            if (!e) {
+              a.grades = [grade];
+              return map[a.key] = a;
+            }
+            e.sector = e.sector || a.sector;
+            if (rating_map[grade] && !_.contains(e.grades, grade))
+              e.grades.push(grade);
+          });
+          var unique = [];
+          _.each(map, function (a) {
+            unique.push(a);
+          });
+          ascents = unique;
+          var types = _.groupBy(ascents, 'type');
+          c['bcnt'] = types.b.length;
+          c['rcnt'] = types.r.length;
+          country['bcnt'] += c['bcnt'];
+          country['rcnt'] += c['rcnt'];
+          ascent_cnt += ascents.length;
           this();
         },
 
@@ -545,6 +548,7 @@ Step(
             return this();
           var next = _.after(crags.length, this);
           _.each(crags, function (c) {
+            delete c.type;
             db.createCrag(c, next);
           });
         },

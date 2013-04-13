@@ -1094,14 +1094,14 @@ app.get('/crags/:country/:crag', function (req, res) {
         routes: {list: routes}
       };
       _.each(ascents, function (v, type) {
-        var bs = {};
-        _.each(grades, function (g) { bs[g] = []; });
+        var bucks = [];
+        _.each(grades, function (g) { bucks.push([g]); });
         _.each(v.list, function (a) {
           _.each(a.grades, function (g) {
-            bs[g].push(a);
+            bucks[grades.indexOf(g)].push(a);
           });
         });
-        ascents[type].bucks = bs;
+        ascents[type].bucks = bucks;
       });
       res.render('crag', {
         title: crag.name,

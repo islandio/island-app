@@ -22,16 +22,16 @@ var ClimbDb = exports.ClimbDb = function (dB, options, cb) {
 
   var collections = {
     country: {
-      index: {key: 1},
-      unique: {key: true}
+      indexes: [{key: 1}],
+      uniques: [true]
     },
     crag: {
-      index: {key: 1, type: 1, country_id: 1},
-      unique: {key: true}
+      indexes: [{key: 1}, {type: 1}, {country_id: 1}],
+      uniques: [true, false, false]
     },
     ascent: {
-      index: {key: 1, type: 1, country_id: 1, crag_id: 1},
-      unique: {key: true}
+      indexes: [{key: 1}, {type: 1}, {country_id: 1}, {crag_id: 1}],
+      uniques: [true, false, false, false]
     },
   };
 
@@ -48,12 +48,16 @@ var ClimbDb = exports.ClimbDb = function (dB, options, cb) {
         self.collections[col.collectionName] = col;
       });
       if (options.ensureIndexes) {
-        var parallel = this.parallel;
+        var next = _.after(cols.length, this);
         _.each(cols, function (col) {
-          var index = collections[col.collectionName].index;
-          var unique = collections[col.collectionName].unique[index] || false;
-          if (index)
-            col.ensureIndex(index, {unique: unique}, parallel());
+          var indexes = collections[col.collectionName].indexes;
+          var uniques = collections[col.collectionName].uniques;
+          var _next = _.after(indexes.length, next);
+          _.each(indexes, function (index, i) {
+            col.dropIndexes(function () {
+              col.ensureIndex(index, {unique: uniques[i]}, _next);
+            });
+          });
         });
       } else this();
     },
