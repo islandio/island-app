@@ -1185,11 +1185,11 @@ Island = (function ($) {
           if ($(this).hasClass('disabled')
               || $(this).hasClass('selected')) return false;
           ct = $(this).data('target');
-          filterBox.keyup()
           $('.ascent-filter-buttons a.button').removeClass('selected');
           $(this).addClass('selected');
           $('.ascents-wrap').hide();
           $('#' + ct).show();
+          filterBox.keyup();
         });
 
         if ($('#boulders').length === 0)

@@ -1,0 +1,35 @@
+extends index
+
+block main
+  #banner
+    a(href="/zzC6buzI")
+      img(src="https://d271mvlc6gc7bl.cloudfront.net/main/img/banner_2.jpg", width="984", height="100")
+  div.single-left
+    div.obj-title
+      span.slash
+        | /
+      h1.title-left
+        =ascent.name
+      h1.title-sub
+        a(href='/crags/' + crag.key) #{crag.name}
+        - if (ascent.sector)
+          | &nbsp;/&nbsp;
+          =ascent.sector
+        | ,&nbsp;
+        =ascent.country
+    div.obj-holder
+      span.no-media
+        | No media yet.
+    div.obj-desc.matte
+      img.left(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-obj-info.gif', alt='info', align='top')
+      div.obj-desc-txt-wrap
+        p.obj-desc-txt
+          span.no-description
+            =ascent.grades.sort().join(', ')
+            br
+            br
+            span.no-description
+              | No description yet.
+  div.recent-comments-wrap
+    h1.title-right / Recent Activity
+  div.clear

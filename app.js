@@ -1105,9 +1105,37 @@ app.get('/crags/:country/:crag', function (req, res) {
         ascents[type].bucks = bucks;
       });
       res.render('crag', {
-        title: crag.name,
+        title: [crag.name, crag.country].join(', '),
         crag: crag,
         ascents: ascents,
+        member: req.user,
+        twitters: twitterHandles,
+        util: templateUtil,
+        _: _
+      });
+    }
+  );
+});
+
+// Ascents
+app.get('/crags/:country/:crag/:type/:ascent', function (req, res) {
+  if (req.params.type !== 'boulders' && req.params.type !== 'routes')
+    return res.render('404', {title: 'Not Found'});
+  var ckey = [req.params.country, req.params.crag].join('/');
+  var akey = [req.params.country, req.params.crag,
+      req.params.type, req.params.ascent].join('/');
+  Step(
+    function () {
+      climbDb.collections.crag.findOne({key: ckey}, this.parallel());
+      climbDb.collections.ascent.findOne({key: akey}, this.parallel());
+    },
+    function (err, crag, ascent) {
+      if (err || !crag || !ascent)
+        return res.render('404', {title: 'Not Found'});
+      res.render('ascent', {
+        title: ascent.name + ' - ' + [ascent.crag, ascent.country].join(', '),
+        crag: crag,
+        ascent: ascent,
         member: req.user,
         twitters: twitterHandles,
         util: templateUtil,
