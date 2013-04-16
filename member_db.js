@@ -43,13 +43,34 @@ var MemberDb = exports.MemberDb = function (dB, options, cb) {
   }
 
   var collections = {
-    member: { index: { primaryEmail: 1, username: 1, key: 1, role: 1 } },
-    post: { index: { key: 1, member_id: 1 } },
-    media: { index: { type: 1, member_id: 1, post_id: 1 } },
-    comment: { index: { member_id: 1, post_id: 1 } },
-    view: { index: { member_id: 1, post_id: 1 } },
-    hit: { index: { member_id: 1, media_id: 1 } },
-    rating: { index: { member_id: 1, media_id: 1 } }
+    member: {
+      indexes: [{primaryEmail: 1}, {username: 1}, {key: 1}, {role: 1}],
+      uniques: [true, true, true, false]
+    },
+    post: {
+      indexes: [{key: 1}, {member_id: 1}],
+      uniques: [true, false]
+    },
+    media: {
+      indexes: [{type: 1}, {member_id: 1}, {post_id: 1}],
+      uniques: [false, false, false]
+    },
+    comment: {
+      indexes: [{member_id: 1}, {post_id: 1}],
+      uniques: [false, false]
+    },
+    view: {
+      indexes: [{member_id: 1}, {post_id: 1}],
+      uniques: [false, false]
+    },
+    hit: {
+      indexes: [{member_id: 1}, {media_id: 1}],
+      uniques: [false, false]
+    },
+    rating: {
+      indexes: [{member_id: 1}, {media_id: 1}],
+      uniques: [false, false]
+    }
   };
 
   Step(
@@ -65,11 +86,16 @@ var MemberDb = exports.MemberDb = function (dB, options, cb) {
         self.collections[col.collectionName] = col;
       });
       if (options.ensureIndexes) {
-        var parallel = this.parallel;
+        var next = _.after(cols.length, this);
         _.each(cols, function (col) {
-          var index = collections[col.collectionName].index;
-          if (index)
-            col.ensureIndex(index, parallel());
+          var indexes = collections[col.collectionName].indexes;
+          var uniques = collections[col.collectionName].uniques;
+          var _next = _.after(indexes.length, next);
+          _.each(indexes, function (index, i) {
+            col.dropIndexes(function () {
+              col.ensureIndex(index, {unique: uniques[i]}, _next);
+            });
+          });
         });
       } else this();
     },

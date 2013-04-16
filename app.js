@@ -20,8 +20,9 @@ var argv = optimist
       .default('redis_host', 'nodejitsudb2498459205.redis.irstack.com')
       // .default('redis_host', 'slimehead.redistogo.com')
     .describe('redis_pass', 'Redis password')
-      .default('redis_pass', 'nodejitsudb2498459205.redis.irstack.com:f327cfe980c971946e80b8e975fbebb4')
-      // .default('redis_pass', 'b1f23cd8645e79bfead95f1a999985cb')
+      .default('redis_pass', 'b1f23cd8645e79bfead95f1a999985cb')
+    .describe('index', 'Ensure indexes on MongoDB collections')
+      .boolean('index')
     .argv;
 
 if (argv.dev) {
@@ -1753,17 +1754,17 @@ if (!module.parent) {
       });
       new MemberDb(db, {
         app: app,
-        ensureIndexes: true,
+        ensureIndexes: argv.index,
         redisClient: redisClient
       }, this.parallel());
       new EventDb(db, {
         app: app,
-        ensureIndexes: true,
+        ensureIndexes: argv.index,
         pusher: pusher,
       }, this.parallel());
       new ClimbDb(db, {
         app: app,
-        ensureIndexes: true,
+        ensureIndexes: argv.index,
         redisClient: redisClient
       }, this.parallel());
     },

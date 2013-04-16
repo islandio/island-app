@@ -72,24 +72,19 @@ ClimbDb.prototype.createCountry = function (props, cb) {
   if (!db.validate(props, ['key', 'name']))
     return cb ? cb(new Error('Invalid country')) : false;
   _.defaults(props, {
-    bccnt: 0,
-    rccnt: 0,
     bcnt: 0,
     rcnt: 0,
     bgrdu: null,
     bgrdl: null,
     rgrdu: null,
-    rgrdl: null,
-    lat: null,
-    lon: null
+    rgrdl: null
   });
   db.createDoc(self.collections.country, props, cb);
 }
 
 ClimbDb.prototype.createCrag = function (props, cb) {
   var self = this;
-  if (!db.validate(props, ['key', 'name', 'country',
-                          'country_key', 'country_id']))
+  if (!db.validate(props, ['key', 'name', 'country', 'country_id']))
     return cb ? cb(new Error('Invalid crag')) : false;
   _.defaults(props, {
     city: null,
@@ -107,8 +102,8 @@ ClimbDb.prototype.createCrag = function (props, cb) {
 
 ClimbDb.prototype.createAscent = function (props, cb) {
   var self = this;
-  if (!db.validate(props, ['key', 'name', 'grades', 'type', 'crag',
-                          'country', 'country_key', 'country_id', 'crag_id']))
+  if (!db.validate(props, ['key', 'name', 'type', 'crag', 'grades',
+                          'country', 'country_id', 'crag_id']))
     return cb ? cb(new Error('Invalid ascent')) : false;
   _.defaults(props, {
     sector: null

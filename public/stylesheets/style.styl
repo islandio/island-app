@@ -422,7 +422,7 @@ a.resend-conf
   margin 0 20px 0 0
 
 #main
-  margin 40px 0 100px
+  margin 40px 0
 
 #footer
   position fixed
@@ -701,30 +701,30 @@ input[type=submit].from-login
   color black
   border 1px solid black
 
-a.button:hover,
-button:hover,
-div[role=button]:hover,
-input[type='submit']:hover
+a.button:hover.not(.disabled),
+button:hover.not(.disabled),
+div[role=button]:hover.not(.disabled),
+input[type='submit']:hover.not(.disabled)
   color #444
   -moz-box-shadow 0 0 2px rgba(0, 0, 0, 0.2)
   -webkit-box-shadow 0 0 2px rgba(0, 0, 0, 0.2)
   box-shadow 0 0 2px rgba(0, 0, 0, 0.2)
   border 1px solid #898989
 
-a.button:active,
-button:active,
-div[role=button]:active,
-input[type='submit']:active
+a.button:active.not(.disabled),
+button:active.not(.disabled),
+div[role=button]:active.not(.disabled),
+input[type='submit']:active.not(.disabled)
   color #444
   -moz-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
   -webkit-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
   box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
   border 1px solid #898989
 
-a.button:focus,
-button:focus,
-div[role=button]:focus,
-input[type=submit]:focus
+a.button:focus.not(.disabled),
+button:focus.not(.disabled),
+div[role=button]:focus.not(.disabled),
+input[type=submit]:focus.not(.disabled)
   border 1px solid #98c1e6
 
 input[type=submit].from-login:hover
@@ -740,6 +740,53 @@ input[type=submit].from-login:active
   box-shadow none
   color black
   border 1px solid black
+
+a.button-left,
+button.button-left,
+div[role=button].button-left,
+input[type=submit].button-left
+  border-right none !important
+  border-radius 5px 0 0 5px
+
+a.button-right,
+button.button-right,
+div[role=button].button-right,
+input[type=submit].button-right
+  border-left none !important
+  border-radius 0 5px 5px 0
+
+a.button-left.selected,
+a.button-right.selected,
+button.button-left.selected,
+button.button-right.selected,
+div[role=button].button-left.selected,
+div[role=button].button-right.selected,
+input[type=submit].button-left.selected,
+input[type=submit].button-right.selected
+  color #404040
+  background blue
+  border-color #404040 !important
+  
+  -webkit-box-shadow inset 0 0 3px #808080
+  -moz-box-shadow inset 0 0 3px #808080
+  box-shadow inset 0 0 3px #808080
+
+a.button-left.selected,
+button.button-left.selected,
+div[role=button].button-left.selected,
+input[type=submit].button-left.selected
+  border-right 1px solid #404040 !important
+
+a.button-right.selected,
+button.button-right.selected,
+div[role=button].button-right.selected,
+input[type=submit].button-right.selected
+  border-left 1px solid #404040 !important
+
+a.button-left.disabled,
+a.button-right.disabled
+  opacity 0.5
+  cursor default
 
 a.signin-strategy-btn,
 a.signin-strategy-btn-disabled
@@ -945,7 +992,8 @@ h1.title-sub
 #search
   width 640px
 
-#search-box
+#search-box,
+#filter-box
   -moz-appearance none
   -moz-font-smoothing antialiased
   -webkit-appearance none
@@ -961,7 +1009,11 @@ h1.title-sub
   margin 0 0 10px
   width 100%
 
-#search-box:focus
+#filter-box
+  width 439px
+
+#search-box:focus,
+#filter-box:focus
   background none
   border 1px solid darkgray
 
@@ -1280,10 +1332,31 @@ div.profile-right
 
 div.map
   width 640px
-  height 360px
   border-radius 5px
 
-span.grade
+span.no-description
+  font-style italic
+
+div.ascent-filter
+  margin-top 40px
+
+div.ascent-filter-buttons
+  float right
+  margin-top 42px
+
+div.ascent-filter-buttons a.button
+  height 39px
+  line-height 40px
+  font-size 14px
+  padding 0 20px
+
+div.ascents-wrap
+  margin 20px 0 0
+
+div.ascents-wrap span.no-results
+  display none
+
+span.grade-heading
   display block
   margin 0 0 10px
   font-family title
@@ -1316,12 +1389,10 @@ span.ascent-grade
 
 span.ascent-name
   display inline-block
-  // width 200px
-  padding 0 10px 0 0
   font-weight bold
 
 span.ascent-sector
-  float right
+  // float right
 
 .leaflet-container a
   color #404040 !important
