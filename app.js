@@ -11,17 +11,16 @@ var argv = optimist
     .describe('port', 'Port to listen on')
       .default('port', 3644)
     .describe('db', 'MongoDb URL to connect to')
-      .default('db', 'mongodb://nodejitsu:af8c37eb0e1a57c1e56730eb635f6093@linus.mongohq.com:10020/nodejitsudb5582710115')
-      // .default('db', 'mongodb://nodejitsu_sanderpick:as3nonkk9502pe1ugseg3mj9ev@ds043947.mongolab.com:43947/nodejitsu_sanderpick_nodejitsudb9750563292')
+      .default('db', 'mongodb://nodejitsu:af8c37eb0e1a57c1e56730eb635f6093'
+          + '@linus.mongohq.com:10020/nodejitsudb5582710115')
     .describe('redis_port', 'Redis port')
       .default('redis_port', 6379)
-      // .default('redis_port', 9818)
     .describe('redis_host', 'Redis host')
       .default('redis_host', 'nodejitsudb2498459205.redis.irstack.com')
-      // .default('redis_host', 'slimehead.redistogo.com')
     .describe('redis_pass', 'Redis password')
-      .default('redis_pass', 'nodejitsudb2498459205.redis.irstack.com:f327cfe980c971946e80b8e975fbebb4')
-      // .default('redis_pass', 'b1f23cd8645e79bfead95f1a999985cb')
+      .default('redis_pass', 'b1f23cd8645e79bfead95f1a999985cb')
+    .describe('index', 'Ensure indexes on MongoDB collections')
+      .boolean('index')
     .argv;
 
 if (argv.dev) {
@@ -61,6 +60,7 @@ var Email = require('./email');
 var RedisStore = require('connect-redis')(express);
 var MemberDb = require('./member_db.js').MemberDb;
 var EventDb = require('./event_db.js').EventDb;
+var ClimbDb = require('./climb_db.js').ClimbDb;
 var Pusher = require('pusher');
 
 var passport = require('passport');
@@ -103,11 +103,16 @@ var app = express();
 var sessionStore;
 var memberDb;
 var eventDb;
+var climbDb;
 var pusher;
 var channels = process.env.NODE_ENV === 'production' ?
-                { all: 'island' } :
-                { all: 'island_test' };
+                {all: 'island'}:
+                {all: 'island_test'};
 var twitterHandles;
+
+var grades = ['9c+', '9c', '9b+', '9b', '9a+', '9a', '8c+', '8c', '8b+', '8b',
+              '8a+', '8a', '7c+', '7c', '7b+', '7b', '7a+', '7a', '6c+', '6c',
+              '6b+', '6b', '6a+', '6a', '5c', '5b', '5a', '4', '3'];
 
 ////////////// Configuration
 
@@ -280,6 +285,13 @@ var templateUtil = {
     if (Object.prototype.toString.call(d) !== '[object Date]')
       return false;
     return !isNaN(d.getTime());
+  },
+
+  ratingMap: {
+    1: '3', 2: '4', 3: '5a', 4: '5b', 5: '5c', 6: '6a',  7: '6a+', 8: '6b',
+    9: '6b+', 10: '6c', 11: '6c+', 12: '7a', 13: '7a+', 14: '7b', 15: '7b+',
+    16: '7c', 17: '7c+', 18: '8a', 19: '8a+', 20: '8b', 21: '8b+', 22: '8c',
+    23: '8c+', 24: '9a', 25: '9a+', 26: '9b', 27: '9b+', 28: '9c', 29: '9c+',
   },
 };
 
@@ -1052,6 +1064,85 @@ app.get('/:key', function (req, res) {
   );
 });
 
+// Crags
+app.get('/crags/:country/:crag', function (req, res) {
+  var key = [req.params.country, req.params.crag].join('/');
+  var crag;
+  Step(
+    function () {
+      climbDb.collections.crag.findOne({key: key}, this);
+    },
+    function (err, c) {
+      if (err || !c)
+        return res.render('404', {title: 'Not Found'});
+      crag = c;
+      climbDb.collections.ascent.find({
+        crag_id: crag._id,
+        type: 'b'
+      }).sort({name: 1}).toArray(this.parallel());
+      climbDb.collections.ascent.find({
+        crag_id: crag._id,
+        type: 'r'
+      }).sort({name: 1}).toArray(this.parallel());
+    },
+    function (err, boulders, routes) {
+      if (err)
+        return res.render(500, {error: err});
+      var ascents = {
+        boulders: {list: boulders},
+        routes: {list: routes}
+      };
+      _.each(ascents, function (v, type) {
+        var bucks = [];
+        _.each(grades, function (g) { bucks.push([g]); });
+        _.each(v.list, function (a) {
+          _.each(a.grades, function (g) {
+            bucks[grades.indexOf(g)].push(a);
+          });
+        });
+        ascents[type].bucks = bucks;
+      });
+      res.render('crag', {
+        title: [crag.name, crag.country].join(', '),
+        crag: crag,
+        ascents: ascents,
+        member: req.user,
+        twitters: twitterHandles,
+        util: templateUtil,
+        _: _
+      });
+    }
+  );
+});
+
+// Ascents
+app.get('/crags/:country/:crag/:type/:ascent', function (req, res) {
+  if (req.params.type !== 'boulders' && req.params.type !== 'routes')
+    return res.render('404', {title: 'Not Found'});
+  var ckey = [req.params.country, req.params.crag].join('/');
+  var akey = [req.params.country, req.params.crag,
+      req.params.type, req.params.ascent].join('/');
+  Step(
+    function () {
+      climbDb.collections.crag.findOne({key: ckey}, this.parallel());
+      climbDb.collections.ascent.findOne({key: akey}, this.parallel());
+    },
+    function (err, crag, ascent) {
+      if (err || !crag || !ascent)
+        return res.render('404', {title: 'Not Found'});
+      res.render('ascent', {
+        title: ascent.name + ' - ' + [ascent.crag, ascent.country].join(', '),
+        crag: crag,
+        ascent: ascent,
+        member: req.user,
+        twitters: twitterHandles,
+        util: templateUtil,
+        _: _
+      });
+    }
+  );
+});
+
 // Add media from Transloadit
 app.put('/insert', authorize, function (req, res) {
   if (!req.body.post || !req.body.assembly
@@ -1689,20 +1780,26 @@ if (!module.parent) {
       });
       new MemberDb(db, {
         app: app,
-        ensureIndexes: true,
+        ensureIndexes: argv.index,
         redisClient: redisClient
       }, this.parallel());
       new EventDb(db, {
         app: app,
-        ensureIndexes: true,
+        ensureIndexes: argv.index,
         pusher: pusher,
       }, this.parallel());
+      new ClimbDb(db, {
+        app: app,
+        ensureIndexes: argv.index,
+        redisClient: redisClient
+      }, this.parallel());
     },
-    function (err, mDb, eDb) {
+    function (err, mDb, eDb, cDb) {
       if (err) return this(err);
       memberDb = mDb;
       eventDb = eDb;
       eventDb.memberDb = memberDb;
+      climbDb = cDb;
       this();
     },
     function (err) {

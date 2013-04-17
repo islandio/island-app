@@ -1,10 +1,6 @@
 extends index
 
 block main
-  - if (post.key !== '7JNoN3ih')
-    #banner
-      a(href="/7JNoN3ih")
-        img(src="https://d271mvlc6gc7bl.cloudfront.net/main/img/banner_2.jpg", width="984", height="100")
   div.single-left
     - if (post.product && post.product.sku)
       a#buy-post.button.action-button(href='http://transactions.digitaldeliveryapp.com/products/' + post.product.sku + '/purchase', target='_blank', style='margin-left:5px;')

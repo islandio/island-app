@@ -23,9 +23,18 @@ var EventDb = exports.EventDb = function (dB, options, cb) {
   self.collections = {};
 
   var collections = {
-    subscription: { index: { member_id: 1, post_id: 1, mute: 1 } },
-    event: { index: { member_id: 1 } },
-    notification: { index: { member_id: 1, read: 1 } },
+    subscription: {
+      indexes: [{member_id: 1}, {post_id: 1}, {mute: 1}],
+      uniques: [false, false, false]
+    },
+    event: {
+      indexes: [{member_id: 1}],
+      uniques: [false, false]
+    },
+    notification: {
+      indexes: [{member_id: 1}, {read: 1}],
+      uniques: [false, false]
+    },
   };
 
   Step(
@@ -41,11 +50,16 @@ var EventDb = exports.EventDb = function (dB, options, cb) {
         self.collections[col.collectionName] = col;
       });
       if (options.ensureIndexes) {
-        var parallel = this.parallel;
+        var next = _.after(cols.length, this);
         _.each(cols, function (col) {
-          var index = collections[col.collectionName].index;
-          if (index)
-            col.ensureIndex(index, parallel());
+          var indexes = collections[col.collectionName].indexes;
+          var uniques = collections[col.collectionName].uniques;
+          var _next = _.after(indexes.length, next);
+          _.each(indexes, function (index, i) {
+            col.dropIndexes(function () {
+              col.ensureIndex(index, {unique: uniques[i]}, _next);
+            });
+          });
         });
       } else this();
     },
