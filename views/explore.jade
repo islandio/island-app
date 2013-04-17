@@ -9,13 +9,13 @@ block content
   script(type="infowindow/html", id="infowindow_template")
     div.cartodb-popup
       a.cartodb-popup-close-button.close(href="#close")x
-       div.cartodb-popup-content-wrapper
-         div.cartodb-popup-content  
-          h4 {{content.data.name}}
-          {{#content.data.bcnt}}
-          h2 {{content.data.bcnt}} Boulder Problems (Average Grade: {{content.data.bgrdt}})
-          {{/content.data.bcnt}}
-          {{#content.data.rcnt}}
-          h2 {{content.data.rcnt}} Routes (Average Grade: {{content.data.rgrdt}})
-          {{/content.data.rcnt}}
-       div.cartodb-popup-tip-container
+        div.cartodb-popup-content-wrapper
+          div.cartodb-popup-content  
+            h4 {{content.data.name}}
+            {{#content.data.bcnt}}
+            h2 {{content.data.bcnt}} Boulders
+            {{/content.data.bcnt}}
+            {{#content.data.rcnt}}
+            h2 {{content.data.rcnt}} Routes
+            {{/content.data.rcnt}}
+        div.cartodb-popup-tip-container

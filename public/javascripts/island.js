@@ -677,14 +677,45 @@ Island = (function ($) {
       if (explore.length > 0) {
         $('html, body').css({height: '100%'});
         var sql = new cartodb.SQL({ user: 'island' });
+        $('body').append(
+          $('<ul></ul>').addClass('rating').css({'position':'absolute','z-index':'10','top':'80px','right':'24px','background':'transparent','width':'40px'})
+        );
+        var minRating = 0;
+        var maxRating = 0;
+        var layer;
+        sql.execute('SELECT distinct(rgrdu) FROM crags WHERE rgrdu IS NOT NULL ORDER BY rgrdu')
+           .done(function(data){
+             $.each(data.rows,function(i) {
+              maxRating = i;
+              $('.rating').append(
+                $('<li></li>')
+                  .addClass('rated')
+                  .addClass('rating-'+i)
+                  .css({'position':'relative','cursor':'pointer','background':'white','width':'28px','margin':'1px','padding-left':'5px'})
+                  .text(data.rows[i].rgrdt)
+              );
+             })
+            // $('.rating-'+minRating).addClass('min-rating');
+            // $('.min-rating').css({'background':'green'})
+            $('.rating-'+maxRating).addClass('min-rating');
+            $('.max-rating').css({'background':'green'});
+            $('.rated').click(function(){
+              $('.rated').css({'background':'white'});
+              $(this).css({'background':'green'});
+              //this should all be run INSIDE the createViz done function to ensure timing
+              layer.setQuery("SELECT * FROM {{table_name}} WHERE rgrdu > '" + $(this).text() + "'")
+            })
+           })
         cartodb.createVis('explore',
           // 'http://island.cartodb.com/api/v1/viz/22644/viz.json', {
-          'http://island.cartodb.com/api/v1/viz/23419/viz.json', {
-          search: true, 
+          // 'http://island.cartodb.com/api/v1/viz/23419/viz.json', {
+          'http://island.cartodb.com/api/v1/viz/crags/viz.json', {
+          search: false, 
           center_lat: 20,
-          center_lon: -20
+          center_lon: -20,
+          zoom: 3
         }, function (vis, layers) {
-          var layer = layers[1];
+          layer = layers[1];
           layer.infowindow.set('template', $('#infowindow_template').html());
           // layer.on('featureClick', function(e, pos, latlng, data) {
           //   console.log(e, pos, latlng, data);
@@ -696,6 +727,20 @@ Island = (function ($) {
           console.log(err);
         });
       }
+
+      var crag = $('#crag_map');
+      if (crag.length > 0 && crag.data('lat') && crag.data('lon')) {
+        crag.height(360);
+        var sql = new cartodb.SQL({ user: 'island' });
+        cartodb.createVis('crag_map',
+          // 'http://island.cartodb.com/api/v1/viz/22644/viz.json', {
+          'http://island.cartodb.com/api/v1/viz/crags/viz.json', {
+          center_lat: crag.data('lat'),
+          center_lon: crag.data('lon'),
+          zoom: 10
+        }, function (vis, layers) {});
+      } else if (crag.length > 0)
+        crag.hide();
 
       /////////////////////////// ACTIONS
 
@@ -943,14 +988,12 @@ Island = (function ($) {
             if ('__clear__' === txt) {
               jrid.removeClass('search-results');
               page = 1;
-            }
-            else
+            } else
               jrid.addClass('search-results');
           } else console.log(res.message);
           searchSpin.stop();
         });
       }).bind('focus', adjustGridHeight);
-
       
       // lazy load the grid
       jrid.addClass('search-results');
@@ -1095,6 +1138,68 @@ Island = (function ($) {
         var _this = $(this);
         _this.text(Util.getAge(_this.text()));
       });
+
+      /////////////////////////////////////////////////////// CRAGS
+
+      var filterBox = $('#filter-box');
+      if (filterBox.length > 0) {
+        var ascents = {b: [], r: []};
+        _.each($('ul.ascents a'), function (a) {
+          a = $(a);
+          ascents[a.data('type')].push(a.data('name'));
+        });
+        ascents.boulders = ascents.b;
+        ascents.routes = ascents.r;
+        delete ascents.b;
+        delete ascents.r;
+        var ct = $('#boulders-filter').hasClass('selected') ?
+            'boulders': 'routes';
+
+        if (navigator.userAgent.indexOf('Firefox') !== -1)
+          searchBox.css({ padding: '5px 10px' });
+
+        filterBox.bind('keyup search', function (e) {
+          var txt = $(this).val().trim().toLowerCase();
+          $('#' + ct + ' span.no-results').hide();
+          if (txt === '') {
+            $('#' + ct + ' ul.ascents a').show();
+            $('#' + ct + ' span.grade-heading').show();
+            return false;
+          }
+          $('#' + ct + ' ul.ascents a').hide();
+          $('#' + ct + ' span.grade-heading').hide();
+          var rx = new RegExp('^(.*?(' + txt + ')[^$]*)$', 'ig');
+          var y = false;
+          _.each(ascents[ct], function (a) {
+            if (rx.test(a)) {
+              y = true;
+              var d = $('#' + ct + ' ul.ascents a[data-name="' + a + '"]');
+              d.show();
+              $('span.grade-heading', d.parent()).show();
+            }
+          });
+          if (!y) $('div.ascents-wrap span.no-results').show();
+          return false;
+        });
+
+        $('#boulders-filter, #routes-filter').click(function (e) {
+          if ($(this).hasClass('disabled')
+              || $(this).hasClass('selected')) return false;
+          ct = $(this).data('target');
+          $('.ascent-filter-buttons a.button').removeClass('selected');
+          $(this).addClass('selected');
+          $('.ascents-wrap').hide();
+          $('#' + ct).show();
+          filterBox.keyup();
+        });
+
+        if ($('#boulders').length === 0)
+          $('#boulders-filter').addClass('disabled');
+        if ($('#routes').length === 0)
+          $('#routes-filter').addClass('disabled');
+
+        filterBox.focus();
+      }
 
       // edit profile
       var settingsForm = $('#settings-form');
