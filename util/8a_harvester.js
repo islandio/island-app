@@ -177,7 +177,7 @@ Step(
     mongodb.connect(argv.pro
       ? 'mongodb://nodejitsu_sanderpick:as3nonkk9502pe1ugseg3mj9ev@ds043947'
       + '.mongolab.com:43947/nodejitsu_sanderpick_nodejitsudb9750563292'
-      : 'mongodb://localhost:27018/nodejitsu_sanderpick_nodejitsudb9750563292',
+      : 'mongodb://localhost:27018/island',
       {
         server: { poolSize: 4 },
         db: { native_parser: false, reaperTimeout: 600000 },

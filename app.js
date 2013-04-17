@@ -24,7 +24,7 @@ var argv = optimist
     .argv;
 
 if (argv.dev) {
-  argv.db = 'mongodb://localhost:27018/nodejitsu_sanderpick_nodejitsudb9750563292';
+  argv.db = 'mongodb://localhost:27018/island';
   argv.redis_host = 'localhost';
   argv.redis_port = 6379;
 }
