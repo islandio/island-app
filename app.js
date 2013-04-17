@@ -18,7 +18,7 @@ var argv = optimist
     .describe('redis_host', 'Redis host')
       .default('redis_host', 'nodejitsudb2498459205.redis.irstack.com')
     .describe('redis_pass', 'Redis password')
-      .default('redis_pass', 'b1f23cd8645e79bfead95f1a999985cb')
+      .default('redis_pass', 'nodejitsudb2498459205.redis.irstack.com:f327cfe980c971946e80b8e975fbebb4')
     .describe('index', 'Ensure indexes on MongoDB collections')
       .boolean('index')
     .argv;
