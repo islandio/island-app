@@ -712,7 +712,8 @@ Island = (function ($) {
           'http://island.cartodb.com/api/v1/viz/crags/viz.json', {
           search: false, 
           center_lat: 20,
-          center_lon: -20
+          center_lon: -20,
+          zoom: 3
         }, function (vis, layers) {
           layer = layers[1];
           layer.infowindow.set('template', $('#infowindow_template').html());
