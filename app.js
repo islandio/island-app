@@ -886,6 +886,7 @@ app.get('/member/:key', function (req, res) {
         data: member,
         twitters: twitterHandles,
         member: req.user,
+        util: templateUtil
       });
     }
   );

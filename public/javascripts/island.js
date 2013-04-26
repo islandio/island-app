@@ -975,6 +975,7 @@ Island = (function ($) {
         search(txt, function (res) {
           if ('success' === res.status) {
             if (res.data.results.length === 0) {
+              jrid.empty();
               $('<span class="no-results">No results.</span>').appendTo(jrid);
             } else {
               for (var i=0; i < res.data.results.length; i++)
@@ -998,7 +999,6 @@ Island = (function ($) {
       // lazy load the grid
       jrid.addClass('search-results');
       searchBox.trigger('keyup');
-
 
       $('.grid-obj, .trending, .object-title-parent').live('click', function (e) {
         $.put('/hit/' + $(this).data().id, function(){});
