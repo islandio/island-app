@@ -1,0 +1,26 @@
+<% var static = 'undefined' !== typeof __hv ? '/' + __hv : ''; %>
+
+<a href="/<%= this.model.get('owner_username')
+    + '/' + this.model.get('code')
+    + '/' + this.model.get('slug') %>">
+  <div class="card-inner">
+    <div class="shell-breadcrum <%= this.model.getShellType() %>-type"></div>
+    <p class="card-about">
+      <span class="card-label">
+        <%= this.model.getShellType() %>:&nbsp;
+      </span>
+      <%= this.model.get('about') %>
+    </p>
+    <ul class="card-admins">
+      <li class="card-admin">
+        <% if (this.model.get('owner_avatar')) { %>
+          <img src="<%= this.model.get('owner_avatar') %>"
+              width="19" height="19" />
+        <% } else { %>
+          <img src="<%= static %>/img/avatar_22.png" width="19" height="19" />
+        <% } %>
+        <%= this.model.get('owner_name') %>    
+      </li>
+    </ul>
+  </div>
+</a>

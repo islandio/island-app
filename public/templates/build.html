@@ -1,0 +1,132 @@
+<% var static = 'undefined' !== typeof __hv ? '/' + __hv : ''; %>
+
+<div class="close-cancel-icon"></div>
+<div class="modal-inner">
+  <div class="menu-overlay"></div>
+  <span class="box-heading green">Build something!
+    <span class="box-heading-subtitle">It starts here.</span>
+    <div id="build-from"></div>
+  </span>
+  <form enctype="multipart/form-data">
+    <div class="build-breadcrum">
+      <span class="shell-privacy">Public</span>
+      <dl class="form crumbed">
+        <dd class="no-pad">
+          <span class="sticky-button empty">
+            <% if (this.app.profile.get('person').avatar_url) { %>
+              <img src="<%= this.app.profile.get('person').avatar_url %>" width="22" height="22" />
+            <% } else { %>
+              <img src="<%= static %>/img/avatar_22.png" width="22" height="22" />
+            <% } %>
+            <span class="sticky-button-text"><%= this.app.profile.get('person').username %></span>
+          </span>
+        </dd>
+      </dl>
+      <span class="slash">/</span>
+      <dl class="form crumbed">
+        <dd class="no-pad">
+          <span id="type_button" class="sticky-button empty">
+            <span class="sticky-shell-avatar idea-type"></span>
+            <span class="sticky-button-text">Idea</span>
+          </span>
+          <div class="sticky-menu">
+            <a href="#" class="sticky-menu-close">
+              <span class="remove-close-icon"></span>
+            </a>
+            <div class="sticky-menu-title">Choose another Hylo type</div>
+            <ul class="sticky-menu-items">
+              <li class="sticky-menu-item selected" data-value="idea">
+                <label>
+                  <input type="radio" name="code" value="i" checked="checked" />
+                  <h4>
+                    <span class="sticky-shell-avatar idea-type"></span>
+                    Idea
+                  </h4>
+                </label>
+              </li>
+              <li class="sticky-menu-item selected" data-value="campaign">
+                <label>
+                  <input type="radio" name="code" value="c" />
+                  <h4>
+                    <span class="sticky-shell-avatar campaign-type"></span>
+                    Campaign
+                  </h4>
+                </label>
+              </li>
+            </ul>
+          </div>
+        </dd>
+      </dl>
+      <span class="slash">/</span>
+      <dl class="form crumbed">
+        <dd class="no-pad">
+          <input type="text" name="slug" class="undered required" data-auto="1" 
+              placeholder="your-thing-a-ma-bobber" style="width: 100px;" />
+        </dd>
+      </dl>
+    </div>
+    <div class="clearfix"></div>
+    <dl class="form">
+      <div class="form-section pad">
+        <dt>
+          <label for="about description" class="big-left" style="left: -52px;">About</label>
+        </dt>
+        <dd class="no-pad">
+          <input type="text" name="about" autocomplete="off"
+              class="undered undered-top required" placeholder="What's your idea?" />
+        </dd>
+        <dd class="no-pad">
+          <textarea name="description" autocomplete="off"
+              class="undered undered-bottom required"
+              placeholder="Explain it a little..."></textarea>
+        </dd>
+      </div>
+      <div class="form-section pad">
+        <dt>
+          <label for="with" class="big-left" style="left: -49px;">Share</label>
+        </dt>
+        <dd style="margin-left:0;">
+          <input type="text" name="share" autocomplete="off" style="width:430px;display:inline-block;"
+              class="undered" placeholder="Enter some @usernames to share with..." />
+          <div class="form-checkbox">
+            <label>
+              <input type="checkbox" name="public" value="false" />
+              Private
+            </label>
+          </div>
+        </dd>
+      </div>
+    </dl>
+    <dl class="form" id="campaign_info">
+      <div class="form-section">
+        <table style="margin-bottom:10px;">
+          <tr>
+            <td>
+              <dt>
+                <label for="goal_dollars">Goal ($):</label>
+              </dt>
+              <dd>
+                <input type="text" name="goal_dollars" autocomplete="off" class="undered required" 
+                    placeholder="100" />
+              </dd>
+            </td>
+            <td>
+              <dt>
+                <label for="video_url">Vimeo video URL (optional):</label>
+              </dt>
+              <dd>
+                <input type="text" name="video_url" autocomplete="off" class="undered"
+                    placeholder="vimeo.com/46914167" />
+              </dd>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </dl>
+    <div class="clearfix"></div>
+    <button type="submit" class="bar-button modal-button build-button">
+      <span>Start</span>
+      <i class="icon-right"></i>
+    </button>
+  </form>
+</div>

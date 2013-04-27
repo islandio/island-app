@@ -1,0 +1,173 @@
+<% 
+  var static = 'undefined' !== typeof __hv ? '/' + __hv : '';
+  var person = this.app.profile.get('person');
+  var portfolio = this.app.profile.get('portfolio');
+  var currency = this.app.profile.get('page').currency;
+  var shell = this.app.profile.get('page').shell;
+%>
+
+<div class="container">
+  <div class="shell-header">
+    <ul class="shell-buttons">
+      <li class="shell-button">
+        <span class="shell-hylos">
+          <% if ((person && person.username
+                === shell.idea.owner_username) || !person) { %>
+            <span id="shell_total" class="shell-hylos-text solo">
+              <%= currency.capital.total_investment_hylos %>
+            </span>
+          <% } else { %>
+            <span id="person_total" class="shell-hylos-text">
+              <%= this.getViewerInvestmentHylos(currency.investment) %>
+            </span>
+            <span id="shell_total" class="shell-hylos-text">
+              <%= currency.capital.total_investment_hylos %>
+            </span>
+          <% } %>
+        </span>
+      </li>
+      <% if (person && person.username
+            !== shell.idea.owner_username) { %>
+        <li class="shell-button">
+          <% if (currency.capital.total_investment_hylos
+                >= this.app.investmentThreshold || portfolio.balance <= 0) { %>
+            <span id="invest" data-amount="1" class="sticky-button short tight disabled">
+          <% } else { %>
+            <span id="invest" data-amount="1" class="sticky-button short tight">
+          <% } %>
+            <i class="icon-up-hand"></i>
+            <span class="sticky-button-text">h</span>
+          </span>
+        </li>
+      <% } %>
+      <% if (person) { %>
+        <div class="menu-overlay"></div>
+        <li id="watch_state" class="shell-button">
+          <span id="watch_button" class="sticky-button short">
+            <i class="icon-eye left-side"></i>
+            <span class="sticky-button-text">Watch</span>
+            <i class="icon-down-dir right-side"></i>
+            <div class="vertical-split"></div>
+          </span>
+          <div class="sticky-menu short">
+            <a href="#" class="sticky-menu-close">
+              <span class="remove-close-icon"></span>
+            </a>
+            <div class="sticky-menu-title">Notification status</div>
+            <ul class="sticky-menu-items">
+              <li class="sticky-menu-item">
+                <label>
+                  <input type="radio" name="shell" value="0" />
+                  <h4>
+                    <i class="icon-ok"></i>
+                    Not watching
+                  </h4>
+                  <p>You will only receive notifications when you participate or are mentioned.</p>
+                </label>
+              </li>
+              <li class="sticky-menu-item">
+                <label>
+                  <input type="radio" name="shell" value="1" />
+                  <h4>
+                    <i class="icon-ok"></i>
+                    Watching
+                  </h4>
+                  <p>You will receive all notifications for this repository.</p>
+                </label>
+              </li>
+              <li class="sticky-menu-item">
+                <label>
+                  <input type="radio" name="shell" value="2" />
+                  <h4>
+                    <i class="icon-ok"></i>
+                    Ignored
+                  </h4>
+                  <p>You will not receive notifications for this repository.</p>
+                </label>
+              </li>
+            </ul>
+          </div>
+        </li>
+      <% } %>
+    </ul>
+    <% if (shell.idea.public) { %>
+      <div class="shell-breadcrum idea-type">
+        <span class="shell-privacy">Public</span>
+    <% } else { %>
+      <div class="shell-breadcrum private">
+        <span class="shell-privacy">Private</span>
+    <% } %>
+      Idea
+    </div>
+    <div class="clearfix"></div>
+  </div>
+  <div class="shell-sidebar">
+    <ul class="shell-contributors top">
+      <span class="shell-metric-label">Contributors:</span>
+      <% if (currency.investment) { %>
+        <% _.each(currency.investment, function (i) { %>
+          <li class="shell-contributor">
+            <a href="/<%= i.person %>">
+              <% if (i.person_avatar) { %>
+                <img src="<%= i.person_avatar %>" width="48" height="48" />
+              <% } else { %>
+                <img src="<%= static %>/img/avatar_48.png" width="48" height="48" />
+              <% } %>
+            </a>
+          </li>
+        <% }); %>
+      <% } else { %>
+        <span class="empty-feed">None, so far.</span>
+      <% } %>
+    </ul>
+  </div>
+  <div class="shell-content">
+    <a href="/<%= shell.idea.owner_username %>">
+      <% if (shell.idea.owner_avatar) { %>
+        <img src="<%= shell.idea.owner_avatar %>" class="shell-title-avatar" width="48" height="48" />
+      <% } else { %>
+        <img src="<%= static %>/img/avatar_48.png" class="shell-title-avatar" width="48" height="48" />
+      <% } %>
+    </a>
+    <h3 class="shell-title">
+      <%= shell.idea.about %>
+      <ul class="shell-info">
+        <li class="person">
+          <a href="/<%= shell.idea.owner_username %>">
+            <%= shell.idea.owner_name %>
+          </a>
+        </li>
+      </ul>
+    </h3>
+    <p class="shell-description">
+      <%= shell.idea.description %>
+    </p
+    <div class="shell-comments">
+      <div id="comment_input">
+        <% if (person) { %>
+          <div class="comment">
+            <a href="/<%= person.username %>" class="comment-avatar">
+              <% if (person.avatar_url) { %>
+                <img src="<%= person.avatar_url %>" width="32" height="32" />
+              <% } else { %>
+                <img src="<%= static %>/img/avatar_32.png" width="32" height="32" />
+              <% } %>
+            </a>
+            <div class="comment-content">
+              <form enctype="multipart/form-data" method="POST" class="comment-input-form">
+                <textarea name="content" class="comment-input" 
+                    placeholder="Write a comment ..."></textarea>
+              </form>
+            </div>
+          </div>
+        <% } else { %>
+          <a href="/login">
+            <span class="loading">Please login to comment.</span>
+          </a>
+        <% } %>
+      </div>
+      <div id="comments"></div>
+    </div>
+  </div>
+  <div class="clearfix"></div>
+</div>

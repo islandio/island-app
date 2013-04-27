@@ -1,0 +1,23 @@
+<% if (this.model.getPerson() && !this.parentView.parentView.model.get('ended')) { %>
+  <a href="/<%= this.model.get('location') %>">
+<% } %>
+  <div class="opportunity-header">
+    <h3>
+      <span class="currency">
+        <%= this.model.get('cost_dollars') %>
+      </span>
+      <%= this.model.get('about') %>
+    </h3>
+    <% _.each(this.model.get('tags'), function (tag) { %>
+      <span class="opportunity-badge <%= tag %>-badge">#<%= tag %></span>
+    <% }); %>
+  </div>
+  <p class="opportunity-description">
+    <%= this.model.description() %>
+  </p>
+  <ul class="opportunity-metrics">
+    <li><%= this.model.get('contributor_count') %> Participants</li>
+  </ul>
+<% if (this.model.getPerson() && !this.parentView.parentView.model.get('ended')) { %>
+  </a>
+<% } %>
