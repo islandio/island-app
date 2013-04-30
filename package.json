@@ -45,6 +45,6 @@
     "node": "~0.8.x"
   },
   "scripts": {
-    "start": "app.js"
+    "start": "main.js"
   }
 }
