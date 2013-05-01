@@ -1,3 +1,7 @@
+/*
+ * jQuery wrapper.
+ */
+
 define([
   'libs/jquery/jquery.min'
 ], function () {
@@ -17,9 +21,10 @@ define([
 
   require(['libs/jquery/jquery.autogrow',
            'libs/jquery/jquery.easing.min',
-           'libs/jquery/jquery.simplemodal.min',
            'libs/jquery/jquery.hotkeys',
-           'libs/jquery/jquery.scrollTo-min'
+           'libs/jquery/jquery.scrollTo-min',
+           'libs/jquery/jquery.jplayer.min',
+           'libs/jquery/jquery.transloadit2'
           ]);
 
   return jQuery;

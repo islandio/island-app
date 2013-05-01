@@ -47,7 +47,7 @@ block main
           ul
             - if (data.description)
               li
-                p(style='margin:0 0 5px; font-size:10px;') !{util.formatCommentText(data.description)}
+                p(style='margin:0 0 5px; font-size:10px;') #{data.description}
             li
               | // #{data.displayName} is a 
               - if (data.birthday)

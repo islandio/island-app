@@ -1,67 +1,21 @@
-<% var static = 'undefined' !== typeof __hv ? '/' + __hv : ''; %>
-
-<div class="container">
-  <a id="logo" href="/"><div class="logo"></div></a>
-  <% if (this.app.profile && this.app.profile.get('person')) { %>
-    <div class="divider-vertical left-only"></div>
-    <a href="javascript:;" class="notification-indicator">
-      <span class="mail-status"></span>
-    </a>
-  <% } %>
-  <% if (!this.app.login) { %>
-    <div class="divider-vertical right-only"></div>
-    <input type="text" class="search" placeholder="Search" />
-    <div class="divider-vertical"></div>
-  <% } else { %>
-    <div class="divider-vertical left-only"></div>
-  <% } %>
-  <ul class="header-links"></ul>
-  <% if (!(this.app.profile && this.app.profile.get('person')) && !this.app.login) { %> 
-    <a id="login_signup" href="/login">
-      <span class="login-link">Log in / Sign up</span>
-    </a>
-  <% } else if (this.app.profile && this.app.profile.get('person')) { %>
-    <div class="personbox">
-      <div class="avatar">
-        <a href="/<%= this.app.profile.get('person').username %>">
-          <% if (this.app.profile.get('person').avatar_url) { %>
-            <img src="<%= this.app.profile.get('person').avatar_url %>" width="18" height="18" />
-          <% } else { %>
-            <img src="<%= static %>/img/avatar_22.png" width="18" height="18" />
-          <% } %>
-        </a>
-      </div>
-      <ul class="person-links">
-        <li>
-          <% if (this.app.profile.get('portfolio')) { %>
-            <a class="username" href="/<%= this.app.profile.get('person').username %>">
-              <%= this.app.profile.get('person').username %> <span class="figure">(<span id="portfolio_balance"><%= this.app.profile.get('portfolio').balance %></span>)</span>
-            </a>
-          <% } else { %>
-            <a class="username" href="/<%= this.app.profile.get('person').username %>">
-              <%= this.app.profile.get('person').username %>
-            </a>
-          <% } %>
-        </li>
-        <% if (!this.app.home) { %>
-          <li>
-            <a href="javascript:;" id="build-icon">
-              <span class="add-icon"></span>
-            </a>
-          </li>
-        <% } %>
-        <li>
-          <a href="/settings/profile">
-            <span class="settings-icon"></span>
-          </a>
-        </li>
-        <li>
-          <a id="logout" href="/logout">
-            <span class="logout-icon"></span>
-          </a>
-        </li>
-      </ul>   
-    </div>
-  <% } %>
-  <div class="clearfix"></div>
+<div id="header-left">
+  <a id="logo" href="/">
+    <img src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-logo.png" alt="is-logo_img" width="300" class="centered" />
+  </a>
 </div>
+<div id="header-right">
+  <div id="menu" class="list">
+    <ul>
+      <li>
+        <a id="nav-login" href="/login" class="button">Log In / Sign Up</a>
+      </li>
+      <li style="margin: 0 5px 0 0">
+        <a href="/films" class="button">Films</a>
+      </li>
+      <li>
+        <span class="welcome-member">Oi !</span>
+      </li>
+    </ul>
+  </div>
+</div>
+<div class="clear"></div>

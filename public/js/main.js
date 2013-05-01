@@ -12,7 +12,6 @@ require.config({
     Underscore: 'libs/underscore/underscore',
     Backbone: 'libs/backbone/backbone',
     mps: 'libs/minpubsub/minpubsub',
-    balanced: 'libs/balanced/balanced',
     Spin: 'libs/spin/spin',
   },
   
@@ -28,9 +27,6 @@ require.config({
     mps: {
       deps: ['jQuery', 'Underscore'],
       exports: 'mps'
-    },
-    balanced: {
-      exports: 'balanced'
     },
     Spin: {
       exports: 'Spin'

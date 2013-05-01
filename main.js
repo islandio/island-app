@@ -23,6 +23,7 @@ if (argv._.length || argv.help) {
 }
 
 // Module Dependencies
+var http = require('http');
 var express = require('express');
 var mongodb = require('mongodb');
 var redis = require('redis');
@@ -41,6 +42,7 @@ var _ = require('underscore');
 _.mixin(require('underscore.string'));
 var Connection = require('./lib/db.js').Connection;
 var resources = require('./lib/resources');
+var service = require('./lib/service');
 var Mailer = require('./lib/mailer');
 
 // Setup Environments
@@ -175,18 +177,20 @@ Step(
     app.use(passport.initialize());
     app.use(passport.session());
     app.use(express.methodOverride());
-    app.use(app.router);
-    app.use(stylus.middleware({src: __dirname + '/public'}));
 
     // Development only
     if ('development' === app.get('env')) {
       app.use(express.static(__dirname + '/public'));
+      app.use(stylus.middleware({src: __dirname + '/public'}));
+      app.use(app.router);
       app.use(express.errorHandler({dumpExceptions: true, showStack: true}));
     }
 
     // Production only
     if ('production' === app.get('env')) {
       app.use(express.static(__dirname + '/public', {maxAge: 31557600000}));
+      app.use(stylus.middleware({src: __dirname + '/public'}));
+      app.use(app.router);
       app.use(express.errorHandler());
     }
 
@@ -225,11 +229,14 @@ Step(
           app.set('db', db);
 
           // Init resources.
-          resources.init(app, function (err) {
-            if (err)
-              return util.error(err);
-            util.log('Web and API server listening on port ' + app.get('PORT'));
-          });
+          resources.init(app);
+
+          // Init service.
+          service.routes(app);
+
+          // Start server.
+          http.createServer(app).listen(app.get('PORT'));
+          util.log('Web and API server listening on port ' + app.get('PORT'));
 
         }
       );

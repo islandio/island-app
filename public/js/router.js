@@ -8,21 +8,13 @@ define([
   'Backbone',
   'rpc',
   'mps',
-  // 'notify',
   'views/header',
   'views/footer',
-  'views/login',
-  'views/home',
-  // 'views/profile',
-  'views/shell',
-  // 'views/fund',
-  'views/lists/notifications',
-  // 'views/lists/flashes'
-// ], function ($, _, Backbone, rpc, app, Notify,
-//             Header, Login, Home, Profile, Shell, Fund,
-//             Notifications, Flashes) {
-], function ($, _, Backbone, rpc, mps,
-      Header, Footer, Login, Home, Shell, Notifications) {
+  'views/member'
+  // 'views/login',
+  // 'views/home'
+], function ($, _, Backbone, rpc, mps, Header, Footer, Member) {
+      //, Footer, Login, Home, Shell, Notifications) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -36,17 +28,17 @@ define([
       if (window.location.hash !== '')
         try {
           window.history.replaceState('', '', window.location.pathname
-                                      + window.location.search);
+              + window.location.search);
         } catch(err) {}
       
       // Page routes:
-      this.route(':username/:kind/:slug', 'shell', _.bind(this.shell, this));
+      this.route(':username', 'profile', _.bind(this.profile, this));
       // this.route(':username', 'person', _.bind(this.person, this, 'person'));
       // this.route(':username/c/:slug', 'campaign', _.bind(this.campaign, this, 'campaign'));
       // this.route(':username/c/:slug/:opp', 'fund', _.bind(this.fund, this, 'fund'));
       // this.route(':username/c/:slug/:opp?*qs', 'fund', _.bind(this.fund, this, 'fund'));
       // this.route(/^settings\/profile$/, 'profile', _.bind(this.profile, this, 'profile'));
-      this.route('login', 'login', _.bind(this.login, this, 'login'));
+      // this.route('login', 'login', _.bind(this.login, this, 'login'));
       this.route('', 'home', _.bind(this.home, this, 'home'));
 
       // Subscriptions
@@ -68,8 +60,8 @@ define([
       if (this.page)
         this.page.destroy();
 
-      // Get the idea profile JSON:
-      rpc.execute('/service/profile.home', {}, {
+      // Get the home profile JSON:
+      rpc.read('/member/profile.home', {}, {
         success: _.bind(function (profile) {
 
           // Set the profile.
@@ -135,16 +127,14 @@ define([
     //   // this.page = new Profile().render();
     // },
 
-    shell: function (username, kind, slug) {
+    profile: function (username) {
 
       // Kill the page view if it exists.
       if (this.page)
         this.page.destroy();
 
       // Check if a profile exists already.
-      if (this.app.profile
-          && this.app.profile.get('page').shell
-          && this.app.profile.get('page').shell.kind === kind) {
+      if (this.app.profile && this.app.profile.get('content').page) {
 
         // Don't re-create the header.
         if (!this.header)
@@ -152,16 +142,16 @@ define([
         else this.header.render();
 
         // Finally, create and render the page.
-        this.page = new Shell(this.app).render();
+        this.page = new Member(this.app).render();
 
         return;
       }
 
       // Construct the page id from the URL match:
-      var id = [username, kind, slug].join('/');
+      // var id = [kind, slug].join('/');
 
       // Get the idea profile JSON:
-      rpc.execute('/service/profile.shell', {id: id, kind: kind}, {
+      rpc.read('/service/member.profile', {username: username}, {
         success: _.bind(function (profile) {
 
           // Set the profile.
@@ -173,15 +163,15 @@ define([
           else this.header.render();
 
           // Finally, create and render the page.
-          this.page = new Shell(this.app).render();
+          this.page = new Member(this.app).render();
 
           // Don't re-render the header.
           if (!this.footer)
             this.footer = new Footer(this.app).render();
 
           // Show notifications.
-          if (!this.notifications && this.app.profile.get('person'))
-            this.notifications = new Notifications(this.app, {reverse: true});
+          // if (!this.notifications && this.app.profile.get('person'))
+          //   this.notifications = new Notifications(this.app, {reverse: true});
 
         }, this),
 
