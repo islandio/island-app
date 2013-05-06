@@ -180,16 +180,16 @@ Step(
 
     // Development only
     if ('development' === app.get('env')) {
-      app.use(express.static(__dirname + '/public'));
       app.use(stylus.middleware({src: __dirname + '/public'}));
+      app.use(express.static(__dirname + '/public'));
       app.use(app.router);
       app.use(express.errorHandler({dumpExceptions: true, showStack: true}));
     }
 
     // Production only
     if ('production' === app.get('env')) {
-      app.use(express.static(__dirname + '/public', {maxAge: 31557600000}));
       app.use(stylus.middleware({src: __dirname + '/public'}));
+      app.use(express.static(__dirname + '/public', {maxAge: 31557600000}));
       app.use(app.router);
       app.use(express.errorHandler());
     }

@@ -1,0 +1,9 @@
+<div class="post-mosaic matte">
+  <% _.each(this.model.get('medias'), _.bind(function(med, i) { %>
+    <% if (med.type === 'image') { %>
+      <img src=<%= med.image.cf_url || med.image.url %> 
+          width=640 height=<%= 640 * med.image.meta.height/med.image.meta.width %> 
+          data-id=<%= med.id %> />
+    <% } %>
+  <% }, this)); %>
+</div>

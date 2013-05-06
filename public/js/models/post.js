@@ -1,5 +1,5 @@
 /*
- * Comment model
+ * Post model
  */
 
 define([
@@ -9,11 +9,7 @@ define([
 ], function (_, Backbone, util) {
   return Backbone.Model.extend({
 
-    _path: 'api/comments/',
-
-    body: function () {
-      return util.formatText(this.get('body'));
-    },
+    _path: 'api/posts/',
 
   });
 });

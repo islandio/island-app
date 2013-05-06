@@ -26,7 +26,7 @@ define([
       //   console.log(res);
       // };
 
-      rpc.execute(this.type + '/list', params, {
+      rpc.exec(this.type + '/list', params, {
         success: _.bind(function (res) {
 
           console.log(res);

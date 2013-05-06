@@ -9,9 +9,10 @@ define([
   'rpc',
   'mps',
   'util',
-  'text!../../templates/member.html',
-  'views/lists/comments'
-], function ($, _, Backbone, rpc, mps, util, template, Comments) {
+  'models/member',
+  'views/lists/comments',
+  'views/lists/posts'
+], function ($, _, Backbone, rpc, mps, util, Member, Comments, Posts) {
 
   return Backbone.View.extend({
 
@@ -36,9 +37,8 @@ define([
     // Draw our template from the profile JSON.
     render: function () {
 
-      // UnderscoreJS templating:
-      var page = this.app.profile.get('content').page;
-      this.$el.html(_.template(template).call(this));
+      // Use a model for the main content.
+      this.model = new Member(this.app.profile.get('content').member);
 
       // Done rendering ... trigger setup.
       this.trigger('rendered');
@@ -61,7 +61,10 @@ define([
 
       // Render comments.
       this.comments = new Comments(this.app, {parentView: this, reverse: true});
-      
+
+      // Render posts.
+      this.posts = new Posts(this.app, {parentView: this, reverse: true});
+
       // // Show the write comment box.
       // this.$('#comment_input .comment').show();
       // this.$('textarea[name="content"]').focus();

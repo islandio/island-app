@@ -10,10 +10,10 @@ define([
   'mps',
   'views/header',
   'views/footer',
-  'views/member'
+  'views/profile'
   // 'views/login',
   // 'views/home'
-], function ($, _, Backbone, rpc, mps, Header, Footer, Member) {
+], function ($, _, Backbone, rpc, mps, Header, Footer, Profile) {
       //, Footer, Login, Home, Shell, Notifications) {
 
   // Our application URL router.
@@ -147,10 +147,7 @@ define([
         return;
       }
 
-      // Construct the page id from the URL match:
-      // var id = [kind, slug].join('/');
-
-      // Get the idea profile JSON:
+      // Get the page profile.
       rpc.read('/service/member.profile', {username: username}, {
         success: _.bind(function (profile) {
 
@@ -163,7 +160,7 @@ define([
           else this.header.render();
 
           // Finally, create and render the page.
-          this.page = new Member(this.app).render();
+          this.page = new Profile(this.app).render();
 
           // Don't re-render the header.
           if (!this.footer)

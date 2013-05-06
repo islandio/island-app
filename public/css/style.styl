@@ -189,6 +189,8 @@ small
   font-size 10px
   line-height 12px
 
+
+
 h3.obj-details
   text-transform uppercase
   color lightgray
@@ -203,6 +205,7 @@ span.slash
   font-size 42px
   color black
   font-family title
+  line-height 0
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
@@ -952,10 +955,10 @@ li.notification:not(.closable):active
 a.trending, a.trending:hover, a.trending:focus
   background none
 
-.recent-comments-wrap
+.comments-wrap
   margin 0 0 0 670px
 
-#recent-comments
+#comments
   position relative
   z-index 1
   margin 21px 0 0 0
@@ -988,7 +991,7 @@ h1.title-bottom
 h1.title-sub
   font-size 9px
   padding 0 0 0 22px
-  line-height 9px
+  line-height 8px
 
 #search
   width 640px
@@ -1038,6 +1041,9 @@ h1.title-sub
 .grid-wrap
   position absolute
   top 2000px
+
+.obj-title
+  font-size 0
 
 .obj-holder
   position relative
@@ -1119,6 +1125,7 @@ img.heart-img
   margin 15px 0 0
 
 .comment
+  display none
   overflow hidden
   background-color mattegray
   width 314px
@@ -1198,8 +1205,7 @@ img.heart-img
 .comment-txt a
   text-decoration underline
 
-.comment-added,
-.object-added
+.created
   color lightgray
   font-size 9px
   display inline-block
@@ -1328,6 +1334,27 @@ div.profile-left
 div.profile-right
   width 492px
   margin 0 0 0 492px
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––posts*/
+
+#posts
+ margin 50px 0 0 0
+
+.post
+  display none
+  margin 0 0 50px
+  width 640px
+
+.post-mosaic
+  position relative
+  overflow hidden
+  width 640px
+  height 360px
+  background mattegray
+
+.post-mosaic img
+  position absolute
+  display none
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crags*/
 

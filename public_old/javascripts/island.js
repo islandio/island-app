@@ -6,30 +6,30 @@
 
 // Polyfills
 
-(function() {
-  var lastTime = 0;
-  var vendors = ['ms', 'moz', 'webkit', 'o'];
-  for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-    window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
-    window.cancelAnimationFrame = 
-      window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
-  }
+// (function() {
+//   var lastTime = 0;
+//   var vendors = ['ms', 'moz', 'webkit', 'o'];
+//   for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+//     window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+//     window.cancelAnimationFrame = 
+//       window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+//   }
 
-  if (!window.requestAnimationFrame)
-    window.requestAnimationFrame = function(callback, element) {
-      var currTime = new Date().getTime();
-      var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-      var id = window.setTimeout(function() { callback(currTime + timeToCall); }, 
-        timeToCall);
-      lastTime = currTime + timeToCall;
-      return id;
-    };
+//   if (!window.requestAnimationFrame)
+//     window.requestAnimationFrame = function(callback, element) {
+//       var currTime = new Date().getTime();
+//       var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+//       var id = window.setTimeout(function() { callback(currTime + timeToCall); }, 
+//         timeToCall);
+//       lastTime = currTime + timeToCall;
+//       return id;
+//     };
 
-  if (!window.cancelAnimationFrame)
-    window.cancelAnimationFrame = function(id) {
-      clearTimeout(id);
-    };
-}());
+//   if (!window.cancelAnimationFrame)
+//     window.cancelAnimationFrame = function(id) {
+//       clearTimeout(id);
+//     };
+// }());
 
 
 Island = (function ($) {
@@ -42,24 +42,24 @@ Island = (function ($) {
    * island color scheme
    */
 
-  var colors = {
-    green: '#b1dc36',
-    orange: '#d04c38',
-    blue: '#4bb8d7',
-    pink: '#d12b83',
+  // var colors = {
+  //   green: '#b1dc36',
+  //   orange: '#d04c38',
+  //   blue: '#4bb8d7',
+  //   pink: '#d12b83',
 
-    lightgreen: '#eff8d7',
-    lightorange: '#f6dbd7',
+  //   lightgreen: '#eff8d7',
+  //   lightorange: '#f6dbd7',
 
-    black: '#1a1a1a',
-    darkgray: '#404040',
-    gray: '#808080',
-    lightgray: '#b3b3b3',
+  //   black: '#1a1a1a',
+  //   darkgray: '#404040',
+  //   gray: '#808080',
+  //   lightgray: '#b3b3b3',
 
-    bordergray: '#cdcdcd',
-    backgray: '#fcfcfb',
-    mattegray: '#f2f2f2',
-  };
+  //   bordergray: '#cdcdcd',
+  //   backgray: '#fcfcfb',
+  //   mattegray: '#f2f2f2',
+  // };
 
   var signinSpinOpts = {
     lines: 17,
@@ -154,40 +154,40 @@ Island = (function ($) {
    * tweets
    */
 
-  var twitters = [];
-  var tweets = [];
-  var twot = 0;
-  var twut = 0;
-  var twap;
+  // var twitters = [];
+  // var tweets = [];
+  // var twot = 0;
+  // var twut = 0;
+  // var twap;
     
-  function twit() {
-    twap.hide().html(tweets[twut]);
-    twap.fadeIn('fast');
-    twut++;
-    if (twut == tweets.length) 
-      twut = 0;
-  }
+  // function twit() {
+  //   twap.hide().html(tweets[twut]);
+  //   twap.fadeIn('fast');
+  //   twut++;
+  //   if (twut == tweets.length) 
+  //     twut = 0;
+  // }
 
-  function twat(t) {
-    tweets = tweets.concat(t);
-    twot++;
-    if (twot == twitters.length) {
-      $.fisherYates(tweets);
-      var tweeter = $.setIntervalObj(this, 5000, twit);
-      twit();
-    }
-  };
+  // function twat(t) {
+  //   tweets = tweets.concat(t);
+  //   twot++;
+  //   if (twot == twitters.length) {
+  //     $.fisherYates(tweets);
+  //     var tweeter = $.setIntervalObj(this, 5000, twit);
+  //     twit();
+  //   }
+  // };
 
-  function updateTimes(ctx) {
-    var elements = ctx ? $('.comment-added, .object-added', ctx)
-        : $('.comment-added, .object-added');
-    elements.each(function (i) {
-      var time = $(this);
-      if (!time.data('ts'))
-        time.data('ts', time.text());
-      time.text(Util.getRelativeTime(time.data('ts')));
-    });
-  }
+  // function updateTimes(ctx) {
+  //   var elements = ctx ? $('.comment-added, .object-added', ctx)
+  //       : $('.comment-added, .object-added');
+  //   elements.each(function (i) {
+  //     var time = $(this);
+  //     if (!time.data('ts'))
+  //       time.data('ts', time.text());
+  //     time.text(Util.getRelativeTime(time.data('ts')));
+  //   });
+  // }
 
 
   /**
@@ -213,114 +213,114 @@ Island = (function ($) {
    * search media
    */
 
-  function search(query, fn) {
-    jrid.empty();
-    $.get('/search/' + encodeURIComponent(query), fn);
-  }
+  // function search(query, fn) {
+  //   jrid.empty();
+  //   $.get('/search/' + encodeURIComponent(query), fn);
+  // }
 
-  /**
-   * simulate gifs for videos in grid
-   */
+  // /**
+  //  * simulate gifs for videos in grid
+  //  */
 
-  function initVideoSlides() {
-    $('.is-video').each(function (v) {
-      if ($(this).data().timer) return;
-      var thumbs = $('.thumb', this);
-      var num = thumbs.length, i = 1;
-      var timer = setInterval(function () {
-        var h = i === 0 ? num - 1 : i - 1;
-        $(thumbs[h]).hide();
-        $(thumbs[i]).show();
-        i += i == num - 1 ? 1 - num : 1;
-      }, 2000);
-      $(this).data({ timer: timer });
-    });
-  }
+  // function initVideoSlides() {
+  //   $('.is-video').each(function (v) {
+  //     if ($(this).data().timer) return;
+  //     var thumbs = $('.thumb', this);
+  //     var num = thumbs.length, i = 1;
+  //     var timer = setInterval(function () {
+  //       var h = i === 0 ? num - 1 : i - 1;
+  //       $(thumbs[h]).hide();
+  //       $(thumbs[i]).show();
+  //       i += i == num - 1 ? 1 - num : 1;
+  //     }, 2000);
+  //     $(this).data({ timer: timer });
+  //   });
+  // }
 
-  /**
-   * trending media
-   */
+  // /**
+  //  * trending media
+  //  */
 
-  var trending;
-  function Trending(el) {
-    var req;
-    var last;
-    var delay = 20;
-    var inc = 1;
-    var holder;
-    var holderOff;
-    var holderHeight;
-    var top = 0;
-    var newKids = [];
-    var offsets = [];
-    var animate = true;
-    var nextIndex = null;
-    return {
-      init: function () {
-        holder = $(el);
-        if (holder.length === 0) return;
-        holderOff = holder.offset().top;
-        this.start();
-      },
-      start: function () {
-        holderHeight = holder.height();
-        $(holder.children()[0]).clone().appendTo(holder);
-        offsets = _.map(holder.children(), function (child) {
-            return $('img', child).offset().top - holderOff; });
-        req = requestAnimationFrame(_.bind(this.scroll, this));
-      },
-      update: function () {
-        cancelAnimationFrame(req);
-        this.start();
-      },
-      scroll: function (time) {
-        var _this = this;
-        if (!last || time - last > delay) {
-          last = window.performance && window.performance.now ?
-              window.performance.now() : Date.now();
-          top -= inc;
-          if (-top >= holderHeight) {
-            top = 0;
-            holder.css({ marginTop: top });
-            if (newKids.length !== 0) {
-              holder.empty();
-              for (var i = 0; i < newKids.length; ++i)
-                newKids[i].appendTo(holder);
-              this.update();
-            }
-          } else holder.css({ marginTop: top });
+  // var trending;
+  // function Trending(el) {
+  //   var req;
+  //   var last;
+  //   var delay = 20;
+  //   var inc = 1;
+  //   var holder;
+  //   var holderOff;
+  //   var holderHeight;
+  //   var top = 0;
+  //   var newKids = [];
+  //   var offsets = [];
+  //   var animate = true;
+  //   var nextIndex = null;
+  //   return {
+  //     init: function () {
+  //       holder = $(el);
+  //       if (holder.length === 0) return;
+  //       holderOff = holder.offset().top;
+  //       this.start();
+  //     },
+  //     start: function () {
+  //       holderHeight = holder.height();
+  //       $(holder.children()[0]).clone().appendTo(holder);
+  //       offsets = _.map(holder.children(), function (child) {
+  //           return $('img', child).offset().top - holderOff; });
+  //       req = requestAnimationFrame(_.bind(this.scroll, this));
+  //     },
+  //     update: function () {
+  //       cancelAnimationFrame(req);
+  //       this.start();
+  //     },
+  //     scroll: function (time) {
+  //       var _this = this;
+  //       if (!last || time - last > delay) {
+  //         last = window.performance && window.performance.now ?
+  //             window.performance.now() : Date.now();
+  //         top -= inc;
+  //         if (-top >= holderHeight) {
+  //           top = 0;
+  //           holder.css({ marginTop: top });
+  //           if (newKids.length !== 0) {
+  //             holder.empty();
+  //             for (var i = 0; i < newKids.length; ++i)
+  //               newKids[i].appendTo(holder);
+  //             this.update();
+  //           }
+  //         } else holder.css({ marginTop: top });
 
-          var tmp = nextIndex;
-          var next = _.find(offsets, function (off, i) {
-            tmp = i;
-            return (-top - off) < 0;
-          });
-          if (tmp !== nextIndex) {
-            nextIndex = tmp;
-            animate = true;
-          }
-          if (animate && nextIndex !== null
-              && nextIndex !== 0 && offsets[nextIndex - 1]
-              + ((next - offsets[nextIndex - 1]) / 2) < -top) {
-            animate = false;
-            cancelAnimationFrame(req);
-            holder.animate({ marginTop: -next + 'px' }, 200,
-                          'easeOutExpo', function () {
-              top = -next;
-              req = requestAnimationFrame(_.bind(_this.scroll, _this));
-            });
-          } else
-            req = requestAnimationFrame(_.bind(_this.scroll, _this));
-        } else
-          req = requestAnimationFrame(_.bind(_this.scroll, _this));
-      },
-      receive: function (trends) {
-        newKids = [];
-        for (var i=0; i < trends.length; i++)
-          newKids.push($(trends[i]));
-      },
-    };
-  }
+  //         var tmp = nextIndex;
+  //         var next = _.find(offsets, function (off, i) {
+  //           tmp = i;
+  //           return (-top - off) < 0;
+  //         });
+  //         if (tmp !== nextIndex) {
+  //           nextIndex = tmp;
+  //           animate = true;
+  //         }
+  //         if (animate && nextIndex !== null
+  //             && nextIndex !== 0 && offsets[nextIndex - 1]
+  //             + ((next - offsets[nextIndex - 1]) / 2) < -top) {
+  //           animate = false;
+  //           cancelAnimationFrame(req);
+  //           holder.animate({ marginTop: -next + 'px' }, 200,
+  //                         'easeOutExpo', function () {
+  //             top = -next;
+  //             req = requestAnimationFrame(_.bind(_this.scroll, _this));
+  //           });
+  //         } else
+  //           req = requestAnimationFrame(_.bind(_this.scroll, _this));
+  //       } else
+  //         req = requestAnimationFrame(_.bind(_this.scroll, _this));
+  //     },
+  //     receive: function (trends) {
+  //       newKids = [];
+  //       for (var i=0; i < trends.length; i++)
+  //         newKids.push($(trends[i]));
+  //     },
+  //   };
+  // }
 
   /**
    * media grid
@@ -449,104 +449,104 @@ Island = (function ($) {
 
     go: function () {
 
-      /////////////////////////// UTILS
+      // /////////////////////////// UTILS
 
-      // extras
-      String.prototype.trim = function() { return this.replace(/^\s+|\s+$/g,""); };
-      String.prototype.ltrim = function() { return this.replace(/^\s+/,""); };
-      String.prototype.rtrim = function() { return this.replace(/\s+$/,""); };
+      // // extras
+      // String.prototype.trim = function() { return this.replace(/^\s+|\s+$/g,""); };
+      // String.prototype.ltrim = function() { return this.replace(/^\s+/,""); };
+      // String.prototype.rtrim = function() { return this.replace(/\s+$/,""); };
 
-      // scope aware timeouts
-      // TODO: replace with native
-      $.setTimeoutObj = function (o, t, f, a) {
-        return setTimeout(function () { f.apply(o, a); }, t);
-      };
-      $.setIntervalObj = function (o, t, f, a) {
-        return setInterval(function () { f.apply(o, a); }, t); 
-      };
+      // // scope aware timeouts
+      // // TODO: replace with native
+      // $.setTimeoutObj = function (o, t, f, a) {
+      //   return setTimeout(function () { f.apply(o, a); }, t);
+      // };
+      // $.setIntervalObj = function (o, t, f, a) {
+      //   return setInterval(function () { f.apply(o, a); }, t); 
+      // };
 
-      // random generation
-      $.fisherYates = function (a) {
-        var i = a.length;
-        if (i==0 ) return false;
-        while (--i) {
-          var j = Math.floor(Math.random() * (i + 1));
-          var tempi = a[i];
-          var tempj = a[j];
-          a[i] = tempj;
-          a[j] = tempi;
-        }
-      };
+      // // random generation
+      // $.fisherYates = function (a) {
+      //   var i = a.length;
+      //   if (i==0 ) return false;
+      //   while (--i) {
+      //     var j = Math.floor(Math.random() * (i + 1));
+      //     var tempi = a[i];
+      //     var tempj = a[j];
+      //     a[i] = tempj;
+      //     a[j] = tempi;
+      //   }
+      // };
 
-      // determine of object is empty (non-enumerable)
-      $.isEmpty = function (o) {
-        for (var p in o)
-          if (o.hasOwnProperty(p))
-            return false;
-        return true;
-      };
+      // // determine of object is empty (non-enumerable)
+      // $.isEmpty = function (o) {
+      //   for (var p in o)
+      //     if (o.hasOwnProperty(p))
+      //       return false;
+      //   return true;
+      // };
 
-      // server PUT
-      $.put = function (url, data, cb) {
-        if ('function' === typeof data) {
-          cb = data;
-          data = {};
-        }
-        data._method = 'PUT';
-        $.post(url, data, cb, 'json');
-      };
+      // // server PUT
+      // $.put = function (url, data, cb) {
+      //   if ('function' === typeof data) {
+      //     cb = data;
+      //     data = {};
+      //   }
+      //   data._method = 'PUT';
+      //   $.post(url, data, cb, 'json');
+      // };
 
-      // server PUT
-      $.delete = function (url, data, cb) {
-        if ('function' === typeof data) {
-          cb = data;
-          data = {};
-        }
-        data._method = 'DELETE';
-        $.post(url, data, cb, 'json');
-      };
+      // // server PUT
+      // $.delete = function (url, data, cb) {
+      //   if ('function' === typeof data) {
+      //     cb = data;
+      //     data = {};
+      //   }
+      //   data._method = 'DELETE';
+      //   $.post(url, data, cb, 'json');
+      // };
 
-      // map form data to JSON
-      $.fn.serializeObject = function () {
-        var o = {};
-        var a = this.serializeArray();
-        $.each(a, function () {
-          if (o[this.name]) {
-            if (!o[this.name].push)
-              o[this.name] = [o[this.name]];
-            o[this.name].push(this.value.trim() || '');
-          } else
-            o[this.name] = this.value.trim() || '';
-        });
-        return o;
-      };
+      // // map form data to JSON
+      // $.fn.serializeObject = function () {
+      //   var o = {};
+      //   var a = this.serializeArray();
+      //   $.each(a, function () {
+      //     if (o[this.name]) {
+      //       if (!o[this.name].push)
+      //         o[this.name] = [o[this.name]];
+      //       o[this.name].push(this.value.trim() || '');
+      //     } else
+      //       o[this.name] = this.value.trim() || '';
+      //   });
+      //   return o;
+      // };
 
-      // get database ID
-      $.fn.itemID = function () {
-        try {
-          var items = $(this).attr('id').split('-');
-          return items[items.length - 1];
-        } catch (exception) {
-          return null;
-        }
-      };
+      // // get database ID
+      // $.fn.itemID = function () {
+      //   try {
+      //     var items = $(this).attr('id').split('-');
+      //     return items[items.length - 1];
+      //   } catch (exception) {
+      //     return null;
+      //   }
+      // };
 
-      // size notifications
-      ui.Notification.prototype.fit = function () {
-        var w = (($(window).width() - 984) / 2) - 26;
-        $('.notification').css({ minWidth: w, maxWidth: w });
-        return this;
-      }
+      // // size notifications
+      // ui.Notification.prototype.fit = function () {
+      //   var w = (($(window).width() - 984) / 2) - 26;
+      //   $('.notification').css({ minWidth: w, maxWidth: w });
+      //   return this;
+      // }
 
 
-      /////////////////////////// SETUP
+      // /////////////////////////// SETUP
 
-      // init trending
-      trending = new Trending('#trend');
-      trending.init();
+      // // init trending
+      // trending = new Trending('#trend');
+      // trending.init();
 
-      // get relative comment times
-      $.setIntervalObj(this, 5000, updateTimes); updateTimes();
+      // // get relative comment times
+      // $.setIntervalObj(this, 5000, updateTimes); updateTimes();
 
       // init media grid
       grid = new Grid('#grid');
@@ -559,18 +559,18 @@ Island = (function ($) {
         grid.collage(true);
       } else grid.collage();
 
-      // TODO: better way to do this?
-      // mobile checks
-      if (navigator.userAgent.match(/Android/i) ||
-       navigator.userAgent.match(/webOS/i) ||
-       navigator.userAgent.match(/iPhone/i) ||
-       navigator.userAgent.match(/iPod/i)
-      ) {
+      // // TODO: better way to do this?
+      // // mobile checks
+      // if (navigator.userAgent.match(/Android/i) ||
+      //  navigator.userAgent.match(/webOS/i) ||
+      //  navigator.userAgent.match(/iPhone/i) ||
+      //  navigator.userAgent.match(/iPod/i)
+      // ) {
 
-        // hide footer
-        $('#footer').hide();
+      //   // hide footer
+      //   $('#footer').hide();
 
-      }
+      // }
 
       // Clear the shit that come back from Facebook
       if (window.location.hash !== '') {

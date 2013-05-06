@@ -5,9 +5,8 @@
 define([
   'jQuery',
   'Underscore',
-  'Backbone',
-  'text!../../templates/footer.html'
-], function ($, _, Backbone, template) {
+  'Backbone'
+], function ($, _, Backbone) {
   return Backbone.View.extend({
     
     el: '#footer',
@@ -22,7 +21,7 @@ define([
     render: function () {
 
       // UnderscoreJS templating:
-      this.$el.html(_.template(template).call(this)).show();
+      // this.$el.html(_.template(template).call(this)).show();
 
       return this;
     },

@@ -1,5 +1,5 @@
 /*
- * Comments List view
+ * Posts List view
  */
 
 define([
@@ -7,13 +7,13 @@ define([
   'Underscore',
   'views/boiler/list',
   'mps',
-  'text!../../../templates/lists/comments.html',
-  'collections/comments',
-  'views/rows/comment'
+  'text!../../../templates/lists/posts.html',
+  'collections/posts',
+  'views/rows/post'
 ], function ($, _, List, mps, template, Collection, Row) {
   return List.extend({
     
-    el: '#comments',
+    el: '#posts',
 
     initialize: function (app, options) {
       this.template = _.template(template);
@@ -29,8 +29,8 @@ define([
       List.prototype.initialize.call(this, app, options);
 
       // Reset the collection with the appropriate list.
-      var items = this.app.profile.get('content').comments ?
-                  this.app.profile.get('content').comments.items : [];
+      var items = this.app.profile.get('content').posts ?
+                  this.app.profile.get('content').posts.items : [];
       this.collection.reset(items);
     },
 

@@ -7,9 +7,8 @@ define([
   'Underscore',
   'Backbone',
   'rpc',
-  'mps',
-  'text!../../templates/header.html'
-], function ($, _, Backbone, rpc, mps, template) {
+  'mps'
+], function ($, _, Backbone, rpc, mps) {
   return Backbone.View.extend({
 
     el: '#header',
@@ -30,8 +29,8 @@ define([
       this.undelegateEvents();
       this.stopListening();
 
-      // UnderscoreJS templating:
-      this.$el.html(_.template(template).call(this));
+      // // UnderscoreJS templating:
+      // this.$el.html(_.template(template).call(this));
 
       // Done rendering ... trigger setup.
       this.setup();
