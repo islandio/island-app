@@ -32,16 +32,6 @@ define([
     // Draw our template from the profile JSON.
     render: function () {
 
-      // Setup the map.
-      this.sql = new cartodb.SQL({user: 'island'});
-      cartodb.createVis('home_map',
-        'http://island.cartodb.com/api/v1/viz/crags/viz.json', {
-        // center_lat: crag.data('lat'),
-        // center_lon: crag.data('lon'),
-        zoom: 10
-      }, function (vis, layers) {});
-      
-
       // Done rendering ... trigger setup.
       this.trigger('rendered');
 
@@ -73,6 +63,7 @@ define([
         mps.unsubscribe(s);
       });
       this.comments.destroy();
+      this.posts.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

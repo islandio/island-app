@@ -85,6 +85,7 @@ define([
         mps.unsubscribe(s);
       });
       this.comments.destroy();
+      this.posts.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

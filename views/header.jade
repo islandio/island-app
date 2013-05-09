@@ -1,8 +1,6 @@
-div#header-left
-  a(href='/')
-    #logo
-      img.centered(src='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-logo.png', alt='is-logo_img', width='300')
-div#header-right
+div#header-inner
+  a#logo(href='/')
+    img(src='/img/dots.png', height='50')
   #menu.list
     ul
       - if (member)
@@ -28,4 +26,4 @@ div#header-right
             | Films
         li
           span.welcome-member Oi !
-div.clear
+  div.clear

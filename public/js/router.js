@@ -10,10 +10,10 @@ define([
   'mps',
   'views/header',
   'views/footer',
+  'views/map',
   'views/profile',
-  // 'views/login',
   'views/home'
-], function ($, _, Backbone, rpc, mps, Header, Footer, Profile, Home) {
+], function ($, _, Backbone, rpc, mps, Header, Footer, Map, Profile, Home) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -95,10 +95,15 @@ define([
           this.header = new Header(this.app).render();
         else this.header.render();
 
+        // Don't re-create the map.
+        if (!this.map)
+          this.map = new Map(this.app).render();
+        else this.map.render();
+
         // Finally, create and render the page.
         this.page = new Home(this.app).render();
 
-        // Don't re-render the header.
+        // Don't re-render the footer.
         if (!this.footer)
           this.footer = new Footer(this.app).render();
 
@@ -115,10 +120,9 @@ define([
       // Check if a profile exists already.
       if (this.app.profile && this.app.profile.get('content').page) {
 
-        // Don't re-create the header.
-        if (!this.header)
-          this.header = new Header(this.app).render();
-        else this.header.render();
+        // Re-render existing views.
+        this.header.render();
+        this.map.render();
 
         // Finally, create and render the page.
         this.page = new Member(this.app).render();
@@ -142,7 +146,7 @@ define([
         // Finally, create and render the page.
         this.page = new Profile(this.app).render();
 
-        // Don't re-render the header.
+        // Don't re-render the footer.
         if (!this.footer)
           this.footer = new Footer(this.app).render();
 
