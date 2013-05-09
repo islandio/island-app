@@ -133,7 +133,7 @@ define([
       input.val('').keyup();
 
       // Now save the comment to server:
-      rpc.execute('/service/comment.create', payload, {
+      rpc.exec('/comments', payload, {
         success: _.bind(function (data) {
 
           // All good, just update the comment id.

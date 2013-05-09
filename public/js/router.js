@@ -10,11 +10,10 @@ define([
   'mps',
   'views/header',
   'views/footer',
-  'views/profile'
+  'views/profile',
   // 'views/login',
-  // 'views/home'
-], function ($, _, Backbone, rpc, mps, Header, Footer, Profile) {
-      //, Footer, Login, Home, Shell, Notifications) {
+  'views/home'
+], function ($, _, Backbone, rpc, mps, Header, Footer, Profile, Home) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -53,79 +52,59 @@ define([
       // Catch all:
       '*actions': 'default'
     },
-    
-    home: function (name) {
+
+    // login: function () {
+
+    //   // Kill the notifications
+    //   if (this.notifications)
+    //     this.notifications.destroy();
+
+    //   // Kill the page view if it exists.
+    //   if (this.page)
+    //     this.page.destroy();
+
+    //   // Don't re-create the header.
+    //   if (!this.header)
+    //     this.header = new Header(this.app).render();
+    //   else this.header.render();
+
+    //   // Finally, create and render the page.
+    //   this.page = new Login(this.app).render();
+
+    //   // Don't re-render the header.
+    //   if (!this.footer)
+    //     this.footer = new Footer(this.app).render();
+
+    // },
+
+    home: function () {
 
       // Kill the page view if it exists.
       if (this.page)
         this.page.destroy();
 
-      // Get the home profile JSON:
-      rpc.read('/member/profile.home', {}, {
-        success: _.bind(function (profile) {
+      // Get the home profile.
+      rpc.exec('/service/home.profile', _.bind(function (err, pro) {
+        if (err) return console.error(err.stack);
 
-          // Set the profile.
-          this.app.update(profile);
+        // Set the profile.
+        this.app.update(pro);
 
-          // Don't re-create the header.
-          if (!this.header)
-            this.header = new Header(this.app).render();
-          else this.header.render();
+        // Don't re-create the header.
+        if (!this.header)
+          this.header = new Header(this.app).render();
+        else this.header.render();
 
-          // Finally, create and render the page.
-          this.page = new Home(this.app).render();
+        // Finally, create and render the page.
+        this.page = new Home(this.app).render();
 
-          // Don't re-render the header.
-          if (!this.footer)
-            this.footer = new Footer(this.app).render();
+        // Don't re-render the header.
+        if (!this.footer)
+          this.footer = new Footer(this.app).render();
 
-          // Show notifications.
-          if (!this.notifications && this.app.profile.get('person'))
-            this.notifications = new Notifications(this.app, {reverse: true});
-
-        }, this),
-
-        error: function (x) {
-
-          // TODO: render 404.
-          console.warn(x);
-        }
-      });
-    },
-
-    login: function () {
-
-      // Kill the notifications
-      if (this.notifications)
-        this.notifications.destroy();
-
-      // Kill the page view if it exists.
-      if (this.page)
-        this.page.destroy();
-
-      // Don't re-create the header.
-      if (!this.header)
-        this.header = new Header(this.app).render();
-      else this.header.render();
-
-      // Finally, create and render the page.
-      this.page = new Login(this.app).render();
-
-      // Don't re-render the header.
-      if (!this.footer)
-        this.footer = new Footer(this.app).render();
+      }, this));
 
     },
-    
-    // person: function (name, username) {
-    //   // this.render(true);
-    //   // this.page = new Shell().render();
-    // },
-
-    // profile: function (name) {
-    //   // this.render(true);
-    //   // this.page = new Profile().render();
-    // },
 
     profile: function (username) {
 
@@ -148,42 +127,28 @@ define([
       }
 
       // Get the page profile.
-      rpc.read('/service/member.profile', {username: username}, {
-        success: _.bind(function (profile) {
+      rpc.exec('/service/member.profile', {username: username},
+          _.bind(function (err, pro) {
+        if (err) return console.error(err.stack);
 
-          // Set the profile.
-          this.app.update(profile);
+        // Set the profile.
+        this.app.update(pro);
 
-          // Don't re-create the header.
-          if (!this.header)
-            this.header = new Header(this.app).render();
-          else this.header.render();
+        // Don't re-create the header.
+        if (!this.header)
+          this.header = new Header(this.app).render();
+        else this.header.render();
 
-          // Finally, create and render the page.
-          this.page = new Profile(this.app).render();
+        // Finally, create and render the page.
+        this.page = new Profile(this.app).render();
 
-          // Don't re-render the header.
-          if (!this.footer)
-            this.footer = new Footer(this.app).render();
+        // Don't re-render the header.
+        if (!this.footer)
+          this.footer = new Footer(this.app).render();
 
-          // Show notifications.
-          // if (!this.notifications && this.app.profile.get('person'))
-          //   this.notifications = new Notifications(this.app, {reverse: true});
+      }, this));
 
-        }, this),
-
-        error: function (x) {
-
-          // TODO: render 404.
-          console.warn(x);
-        }
-      });
     },
-
-    // fund: function (name, username, slug, qs) {
-    //   // this.render(true);
-    //   // this.page = new Fund().render();
-    // },
 
     default: function (actions) {
       console.warn('No route:', actions);

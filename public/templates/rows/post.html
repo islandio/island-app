@@ -1,9 +1,25 @@
+<div class="post-title">
+  <%= this.model.date() %> | 
+  <a href="/<%= this.model.get('member').username %>" target="_blank">
+    <%= this.model.get('member').displayName %></a> / 
+  <a href="/<%= this.model.get('key') %>" target="_blank">
+    <%= this.model.get('title') %></a>
+</div>
 <div class="post-mosaic matte">
-  <% _.each(this.model.get('medias'), _.bind(function(med, i) { %>
-    <% if (med.type === 'image') { %>
-      <img src=<%= med.image.cf_url || med.image.url %> 
-          width=640 height=<%= 640 * med.image.meta.height/med.image.meta.width %> 
-          data-id=<%= med.id %> />
-    <% } %>
-  <% }, this)); %>
+  <img class="mask" width="640" style="top:0;" 
+      src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-top.png" />
+  <img class="mask" width="640" style="top:352px;"
+      src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-btm.png" />
+</div>
+<div class="post-body">
+  <%= this.model.body() %>
+</div>
+<div class="post-details">
+  Posted by <a href="<%= this.model.get('member').username %>" target="_blank">
+    <%= this.model.get('member').displayName %></a>
+  <time class="created" 
+        datetime="<%= this.model.get('created') %>" 
+        title="<%= this.model.get('created') %>">
+    <%= this.model.get('created') %>
+  </time>
 </div>

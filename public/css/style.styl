@@ -13,6 +13,7 @@ black = #1a1a1a
 darkgray = #404040
 gray = #808080
 lightgray = #b3b3b3
+textlight = #666666
 
 bordergray = #cdcdcd
 backgray = #fcfcfb
@@ -83,6 +84,123 @@ border-radius()
 }
 
 .icon-download-cloud:before { content: '\f0ed'; } /* '' */
+
+/*––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– animations */
+
+@-webkit-keyframes fadeIn {
+  0% {
+    opacity:0;
+  }
+  100% {
+    opacity:1;
+  }
+}
+@-moz-keyframes fadeIn {
+  0% {
+    opacity:0;
+  }
+  100% {
+    opacity:1;
+  }
+}
+@-o-keyframes fadeIn {
+  0% {
+    opacity:0;
+  }
+  100% {
+    opacity:1;
+  }
+}
+@keyframes fadeIn {
+  0% {
+    opacity:0;
+  }
+  100% {
+    opacity:1;
+  }
+}
+
+@-webkit-keyframes fadeInUp {
+  0% {
+    opacity:0; 
+    -webkit-transform:translateY(20px)
+  }
+  100% {
+    opacity:1;
+    -webkit-transform:translateY(0)
+  }
+}
+@-moz-keyframes fadeInUp {
+  0% {
+    opacity:0;
+    -moz-transform:translateY(20px)
+  }
+  100% {
+    opacity:1;
+    -moz-transform:translateY(0)
+  }
+}
+@-o-keyframes fadeInUp {
+  0% {
+    opacity:0;
+    -o-transform:translateY(20px)
+  }
+  100% {
+    opacity:1;
+    -o-transform:translateY(0)
+  }
+}
+@keyframes fadeInUp {
+  0% {
+    opacity:0;
+    transform:translateY(20px)
+  }
+  100% {
+    opacity:1;
+    transform:translateY(0)
+  }
+}
+
+@-webkit-keyframes fadeInDown {
+  0% {
+    opacity:0; 
+    -webkit-transform:translateY(-20px)
+  }
+  100% {
+    opacity:1;
+    -webkit-transform:translateY(0)
+  }
+}
+@-moz-keyframes fadeInDown {
+  0% {
+    opacity:0;
+    -moz-transform:translateY(-20px)
+  }
+  100% {
+    opacity:1;
+    -moz-transform:translateY(0)
+  }
+}
+@-o-keyframes fadeInDown {
+  0% {
+    opacity:0;
+    -o-transform:translateY(-20px)
+  }
+  100% {
+    opacity:1;
+    -o-transform:translateY(0)
+  }
+}
+@keyframes fadeInDown {
+  0% {
+    opacity:0;
+    transform:translateY(-20px)
+  }
+  100% {
+    opacity:1;
+    transform:translateY(0)
+  }
+}
 
 /*––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– resets */
 
@@ -992,6 +1110,8 @@ h1.title-sub
   font-size 9px
   padding 0 0 0 22px
   line-height 8px
+  color #666
+  font-weight bold
 
 #search
   width 640px
@@ -1130,6 +1250,19 @@ img.heart-img
   background-color mattegray
   width 314px
   margin 5px 0 0
+
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration .2s
+  -moz-animation-duration .2s
+  -o-animation-duration .2s
+  animation-duration .2s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
 
 .comment-title,
 .object-title
@@ -1335,26 +1468,81 @@ div.profile-right
   width 492px
   margin 0 0 0 492px
 
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––home*/
+
+div#home_map
+  position absolute
+  top 0
+  left 0
+  width 100%
+  height 300px
+  background mattegray
+
+  -webkit-box-shadow 0 0 3px #b3b3b3
+  -moz-box-shadow 0 0 3px #b3b3b3
+  box-shadow 0 0 3px #b3b3b3
+
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––posts*/
 
 #posts
- margin 50px 0 0 0
+  margin 40px 0 0 0
 
-.post
+div.post
   display none
-  margin 0 0 50px
+  margin 0 0 35px
   width 640px
 
-.post-mosaic
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration .2s
+  -moz-animation-duration .2s
+  -o-animation-duration .2s
+  animation-duration .2s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
+
+div.post-title
+  margin 0 0 10px 0
+  font-family title
+  font-size 16px
+  text-transform uppercase
+  color #666
+
+div.post-mosaic
   position relative
   overflow hidden
   width 640px
   height 360px
   background mattegray
 
-.post-mosaic img
+  -webkit-box-shadow 0 0 3px #b3b3b3
+  -moz-box-shadow 0 0 3px #b3b3b3
+  box-shadow 0 0 3px #b3b3b3
+
+div.post-mosaic-wrap
   position absolute
-  display none
+  overflow hidden
+
+div.post-mosaic-wrap img
+  position relative
+
+div.post-body
+  margin 10px 0 0
+  font-size 11px
+  line-height 16px
+  color textlight
+
+div.post-details
+  margin 10px 0 0
+  font-size 10px
+  line-height 13px
+  color lightgray
+  border-bottom 1px solid #eee
+  padding 0 0 30px 0
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crags*/
 

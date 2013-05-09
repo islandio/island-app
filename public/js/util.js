@@ -289,7 +289,7 @@ define([
         return str;
       var blurb = '';
       var words = str.split(' ');
-      var end = '...';
+      var end = ' ...';
       var i = 0;
       max -= end.length;
       do {
@@ -311,7 +311,7 @@ define([
     },
 
     formatText: function (str) {
-      //var iFrameExp = /(<iframe.+?<\/iframe>)/ig;
+      // var iFrameExp = /(<iframe.+?<\/iframe>)/ig;
       var imgExp = /((\b(https?|ftp|file):\/\/|www\.|ftp\.)[-A-Z0-9+&@#\/%=~_|$?!:,.]*[A-Z0-9+&@#\/%=~_|$]+.(jpg|png|gif|jpeg|bmp))(?!([^<]+)?>)/ig;
       var linkExp = /^(?!src=")(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
       str = str.replace(/\n/g, '<br/>');

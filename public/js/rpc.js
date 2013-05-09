@@ -17,26 +17,21 @@ define([
      *   data: Object with RPC parameters.
      *   cb: Object with a success and error function.
      */
-    read: function(url, data, cb) {
-      if (typeof data === 'function') {
+    exec: function(url, data, cb) {
+      if (!data || typeof data === 'function') {
         cb = data;
-        data = null;
+        data = {};
       }
-
-      var jqxhr = null;
+      cb = cb || function(){};
 
       // Execute the RPC for reals:
       return $.ajax({
         url: url,
         type: 'POST',
-        data: data && !_.isEmpty(data) ? JSON.stringify(data): null,
-        success: function(res) {
-          if (cb)
-            cb.success(res);
-        },
-        error: function(status, err) {
-          if (cb)
-            cb.error(status, err);
+        data: JSON.stringify(data),
+        success: _.bind(cb, cb, undefined),
+        error: function (res) {
+          cb(JSON.parse(res.responseText).error);
         },
         contentType: 'application/json', 
         dataType: 'json'

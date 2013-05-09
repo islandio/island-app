@@ -338,77 +338,7 @@ Step(
 //   },
 // };
 
-////////////// Web Routes
 
-// // Home
-// app.get('/', function (req, res, next) {
-//   Step(
-//     function () {
-//       findTrendingMedia(10, this);
-//     },
-//     function (err, trends) {
-//       if (err) return next(err);
-//       res.render('media', {
-//         title: 'You\'re Island',
-//         trends: trends,
-//         member: req.user,
-//         twitters: twitterHandles,
-//       });
-//     }
-//   );
-// });
-
-// // Films
-// app.get('/films', function (req, res) {
-//   Step(
-//     function () {
-//       memberDb.findPosts({'product.sku': {$ne: null}}, this);
-//     },
-//     function (err, posts) {
-//       _.each(posts, function (post) {
-//         var img = [];
-//         var vid = [];
-//         var aud = [];
-//         _.each(post.medias, function (med) {
-//           var rating = req.user ? _.find(med.ratings, function (rat) {
-//             return req.user._id.toString() === rat.member_id.toString();
-//           }) : null;
-//           med.hearts = rating ? rating.val : 0;
-//           delete med.ratings;
-//           switch (med.type) {
-//             case 'image': img.push(med); break;
-//             case 'video': vid.push(med); break;
-//             case 'audio':
-//               aud.push(med);
-//               med.audioIndex = aud.length;
-//               break;
-//           }
-//         });
-//         post.medias = [].concat(img, aud, vid);
-//       });
-//       res.render('films', {
-//         title: 'Island - Films',
-//         films: posts,
-//         member: req.user,
-//         twitters: twitterHandles,
-//         util: templateUtil
-//       });
-//     }
-//   );
-// });
-// app.get('/film', function (req, res) {
-//   res.redirect('/films');
-// });
-
-// // Explore
-// app.get('/explore', function (req, res) {
-//   res.render('explore', { title: 'Island - Explore'});
-// });
-
-// // Privacy Policy
-// app.get('/privacy', function (req, res) {
-//   res.render('privacy', { title: 'Privacy Policy'});
-// });
 
 
 // ////////////// Helpers

@@ -36,14 +36,13 @@ html(lang="en")
     link(rel='stylesheet', href='/css/style.css')
     //- link(rel='stylesheet', href='/ui/ui.css')
     //- link(rel='stylesheet', href='https://d271mvlc6gc7bl.cloudfront.net/main/jplayer/skin/blue.monday/jplayer.blue.monday.css')
-    //- link(rel="stylesheet", href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.css")
-    //- <!--[if lte IE 8]>
-    //- link(rel="stylesheet", href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.ie.css")
-    //- <![endif]-->
-    //- link(rel='shortcut icon', href='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/favicon.ico', type='image/x-icon')
+    link(rel="stylesheet", href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.css")
+    <!--[if lte IE 8]>link(rel="stylesheet", href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.ie.css")<![endif]-->
+    link(rel='shortcut icon', href='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/favicon.ico', type='image/x-icon')
   body
     block content
     script(type="text/javascript", charset="utf-8", src="/js/libs/store/store.min.js")
+    script(type='text/javascript', src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js")
     //- bootstrap all JS here
     script(type="text/javascript", charset="utf-8", data-main="/js/main", src="/js/libs/require/require.js")
     script(type="text/javascript")
