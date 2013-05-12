@@ -14,7 +14,7 @@
 <div class="post-body">
   <%= this.model.body() %>
 </div>
-<div class="post-details">
+<div class="post-info">
   Posted by <a href="<%= this.model.get('member').username %>" target="_blank">
     <%= this.model.get('member').displayName %></a>
   <time class="created" 
@@ -23,3 +23,4 @@
     <%= this.model.get('created') %>
   </time>
 </div>
+<div class="comments"></div>

@@ -9,9 +9,8 @@ define([
   'rpc',
   'mps',
   'util',
-  'views/lists/comments',
   'views/lists/posts'
-], function ($, _, Backbone, rpc, mps, util, Comments, Posts) {
+], function ($, _, Backbone, rpc, mps, util, Posts) {
 
   return Backbone.View.extend({
 
@@ -40,9 +39,6 @@ define([
 
     // Misc. setup.
     setup: function () {
-
-      // Render comments.
-      this.comments = new Comments(this.app, {parentView: this, reverse: true});
 
       // Render posts.
       this.posts = new Posts(this.app, {parentView: this, reverse: true});

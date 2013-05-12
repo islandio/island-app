@@ -6,8 +6,9 @@ define([
   'jQuery',
   'Underscore',
   'views/boiler/row',
-  'text!../../../templates/rows/post.html'
-], function ($, _, Row, template) {
+  'text!../../../templates/rows/post.html',
+  'views/lists/comments'
+], function ($, _, Row, template, Comments) {
   return Row.extend({
 
     attributes: function () {
@@ -15,7 +16,8 @@ define([
           Row.prototype.attributes.call(this));
     },
 
-    initialize: function (options) {
+    initialize: function (options, app) {
+      this.app = app;
       this.template = _.template(template);
       Row.prototype.initialize.call(this, options);
     },
@@ -166,6 +168,21 @@ define([
 
       }, this));
 
+    },
+
+    setup: function () {
+
+      // Render comments.
+      this.comments = new Comments(this.app, {parentView: this, reverse: true});
+    
+    },
+
+    destroy: function () {
+      _.each(this.subscriptions, function (s) {
+        mps.unsubscribe(s);
+      });
+      this.comments.destroy();
+      Row.prototype.destroy.call(this);
     },
 
   });

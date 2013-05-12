@@ -23,7 +23,7 @@ define([
 
       // Default collection:
       if (!this.collection)
-        this.collection = new Backbone.Collection({ model: Backbone.Model });
+        this.collection = new Backbone.Collection({model: Backbone.Model});
       this.collection.options = options;
 
       // List views:
@@ -37,6 +37,8 @@ define([
 
     render: function (options) {
       options = options || {};
+      if (this.parentView.$el.attr('id'))
+        this.el = this.parentView.$el.attr('id') + ' ' + this.el;
       this.$el.html(this.template(options));
       this.trigger('rendered');
       return this;

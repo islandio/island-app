@@ -40,13 +40,13 @@ border-radius()
   src url(../font/impact-webfont.eot)
   src url(../font/impact-webfont.eot?#iefix) format('embedded-opentype'),url(../font/impact-webfont.woff) format('woff'),url(../font/impact-webfont.ttf) format('truetype'),url(../font/impact-webfont.svg#ImpactRegular) format('svg')
 
-@font-face {
-  font-family: 'icons';
-  src: url("../font/icons.eot?52485978");
-  src: url("../font/icons.eot?52485978#iefix") format('embedded-opentype'), url("../font/icons.woff?52485978") format('woff'), url("../font/icons.ttf?52485978") format('truetype'), url("../font/icons.svg?52485978#icons") format('svg');
-  font-weight: normal;
-  font-style: normal;
-}
+@font-face
+  font-family 'icons'
+  src url("../font/icons.eot?52485978")
+  src url("../font/icons.eot?52485978#iefix") format('embedded-opentype'), url("../font/icons.woff?52485978") format('woff'), url("../font/icons.ttf?52485978") format('truetype'), url("../font/icons.svg?52485978#icons") format('svg')
+  font-weight normal
+  font-style normal
+
 /* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
 /* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
 /*
@@ -57,33 +57,26 @@ border-radius()
   }
 }
 */
-[class^="icon-"]:before,
-[class*=" icon-"]:before {
-  font-family: 'icons';
-  font-style: normal;
-  font-weight: normal;
-  speak: none;
-  display: inline-block;
-  text-decoration: inherit;
-  width: 1em;
-  margin-right: 0.2em;
-  text-align: center;
-/* opacity .8 */
-/* For safety - reset parent styles, that can break glyph codes*/
-  font-variant: normal;
-  text-transform: none;
-/* fix buttons height, for twitter bootstrap */
-  line-height: 1em;
-/* Animation center compensation - magrins should be symmetric */
-/* remove if not needed */
-  margin-left: 0.2em;
-/* you can be more comfortable with increased icons size */
-/* font-size: 120%; */
-/* Uncomment for 3D effect */
-/* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
-}
 
-.icon-download-cloud:before { content: '\f0ed'; } /* '' */
+[class^="icon-"]:before,
+[class*=" icon-"]:before
+  font-family: 'icons'
+  font-style: normal
+  font-weight: normal
+  speak: none
+  display: inline-block
+  text-decoration: inherit
+  width: 1em
+  margin-right: 0.2em
+  text-align: center
+  font-variant: normal
+  text-transform: none
+  line-height: 1em
+  margin-left: 0.2em
+  // text-shadow 1px 1px 1px rgba(127, 127, 127, 0.3)
+
+.icon-download-cloud:before
+  content '\f0ed' /* '' */
 
 /*––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– animations */
 
@@ -1074,14 +1067,6 @@ li.notification:not(.closable):active
 a.trending, a.trending:hover, a.trending:focus
   background none
 
-.comments-wrap
-  margin 0 0 0 670px
-
-#comments
-  position relative
-  z-index 1
-  margin 21px 0 0 0
-
 h1.title-left
   display inline-block
   height 30px
@@ -1152,12 +1137,12 @@ h1.title-sub
   width 984px
   margin 15px 0 0 0
 
-.single-left
-  float left
-  margin 0 0 40px
+// .single-left
+//   float left
+//   margin 0 0 40px
 
-.single-right
-  margin 0 0 0 670px
+// .single-right
+//   margin 0 0 0 670px
 
 .grid-wrap
   position absolute
@@ -1209,135 +1194,135 @@ img.heart-img
 .obj-desc-txt a
   text-decoration underline
 
-.commentor
-  display none
-  padding 0 0 5px
+// .commentor
+//   display none
+//   padding 0 0 5px
 
-.commentor-input, .commentor-input-dummy
-  width 304px
-  margin 17px 0 0 0
-  padding 4px
+// .commentor-input, .commentor-input-dummy
+//   width 304px
+//   margin 17px 0 0 0
+//   padding 4px
 
-.commentor-input
-  height 32px
-  overflow hidden
+// .commentor-input
+//   height 32px
+//   overflow hidden
 
-.commentor-input-dummy
-  height 32px
-  color gray
+// .commentor-input-dummy
+//   height 32px
+//   color gray
 
-.commentor-whois
-  margin 0 90px 0 0
-  color bordergray
-  font-size 10px
-  padding 10px 0 0 0
-  display block
+// .commentor-whois
+//   margin 0 90px 0 0
+//   color bordergray
+//   font-size 10px
+//   padding 10px 0 0 0
+//   display block
 
 .commentor-login
   margin 15px 0 0 0
   font-style italic
 
-.add-comment
-  float right
-  width 79px
-  margin 5px 0 0
+// .add-comment
+//   float right
+//   width 79px
+//   margin 5px 0 0
 
-.obj-comments
-  margin 15px 0 0
+// .obj-comments
+//   margin 15px 0 0
 
-.comment
-  display none
-  overflow hidden
-  background-color mattegray
-  width 314px
-  margin 5px 0 0
+// .comment
+//   display none
+//   overflow hidden
+//   background-color mattegray
+//   width 314px
+//   margin 5px 0 0
 
-  -webkit-animation-name fadeIn
-  -moz-animation-name fadeIn
-  -o-animation-name fadeIn
-  animation-name fadeIn
-  -webkit-animation-duration .2s
-  -moz-animation-duration .2s
-  -o-animation-duration .2s
-  animation-duration .2s
-  -webkit-animation-fill-mode both
-  -moz-animation-fill-mode both
-  -o-animation-fill-mode both
-  animation-fill-mode both
+//   -webkit-animation-name fadeIn
+//   -moz-animation-name fadeIn
+//   -o-animation-name fadeIn
+//   animation-name fadeIn
+//   -webkit-animation-duration .2s
+//   -moz-animation-duration .2s
+//   -o-animation-duration .2s
+//   animation-duration .2s
+//   -webkit-animation-fill-mode both
+//   -moz-animation-fill-mode both
+//   -o-animation-fill-mode both
+//   animation-fill-mode both
 
-.comment-title,
-.object-title
-  padding 3px 0 0
-  max-width 314px
+// .comment-title,
+// .object-title
+//   padding 3px 0 0
+//   max-width 314px
 
-.comment-title-name,
-.comment-title-name-inactive,
-.comment-title-parent,
-.comment-title-parent-solo,
-.object-title-name,
-.object-title-name-inactive,
-.object-title-parent
-  font-weight bold
-  font-size 10px
-  padding 3px 20px 3px 10px
-  border-radius 5px 0 20px 0
-  width -moz-fit-content
-  width intrinsic
-  display inline
-  white-space nowrap
-  position relative
+// .comment-title-name,
+// .comment-title-name-inactive,
+// .comment-title-parent,
+// .comment-title-parent-solo,
+// .object-title-name,
+// .object-title-name-inactive,
+// .object-title-parent
+//   font-weight bold
+//   font-size 10px
+//   padding 3px 20px 3px 10px
+//   border-radius 5px 0 20px 0
+//   width -moz-fit-content
+//   width intrinsic
+//   display inline
+//   white-space nowrap
+//   position relative
 
-.comment-title-name,
-.object-title-name
-  color white
-  background-color #DCDCDC
-  z-index 1
+// .comment-title-name,
+// .object-title-name
+//   color white
+//   background-color #DCDCDC
+//   z-index 1
 
-.comment-title-name:hover,
-.object-title-name:hover
-  color black
-  background-color blue
+// .comment-title-name:hover,
+// .object-title-name:hover
+//   color black
+//   background-color blue
 
-.comment-title-name-inactive,
-.object-title-name-inactive
-  color white
-  background-color #DCDCDC
-  z-index 1
-  cursor default
+// .comment-title-name-inactive,
+// .object-title-name-inactive
+//   color white
+//   background-color #DCDCDC
+//   z-index 1
+//   cursor default
 
-.comment-title-parent,
-.object-title-parent
-  color lightgray
-  background-color backgray
-  padding-left 20px
-  z-index 0
-  left -15px
+// .comment-title-parent,
+// .object-title-parent
+//   color lightgray
+//   background-color backgray
+//   padding-left 20px
+//   z-index 0
+//   left -15px
 
-.comment-title-parent:hover,
-.object-title-parent:hover
-  color black
-  background-color backgray
+// .comment-title-parent:hover,
+// .object-title-parent:hover
+//   color black
+//   background-color backgray
 
-.comment-title-parent-solo
-  color lightgray
-  background-color backgray
-  padding-left 20px
-  z-index 0
-  left -15px
+// .comment-title-parent-solo
+//   color lightgray
+//   background-color backgray
+//   padding-left 20px
+//   z-index 0
+//   left -15px
 
-.comment-title-parent-solo:hover
-  color black
-  background-color backgray
+// .comment-title-parent-solo:hover
+//   color black
+//   background-color backgray
 
-.comment-body
-  padding 5px 40px 5px 10px
+// .comment-body
+//   padding 5px 40px 5px 10px
 
-.comment-txt
-  padding 5px 0
-  overflow-y auto
+// .comment-txt
+//   padding 5px 0
+//   overflow-y auto
 
-.comment-txt a
-  text-decoration underline
+// .comment-txt a
+//   text-decoration underline
 
 .created
   color lightgray
@@ -1375,99 +1360,108 @@ a.delete-comment:active
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
-div.each-grid-obj
-  position absolute
-  opacity 1
-  padding 0
-  width 231px
-  overflow hidden
-  background-color #F2F2F2
-  display none
+// div.each-grid-obj
+//   position absolute
+//   opacity 1
+//   padding 0
+//   width 231px
+//   overflow hidden
+//   background-color #F2F2F2
+//   display none
 
-a.grid-obj
-  text-decoration none
-  background none
-  vertical-align text-top
-a.grid-obj:hover
-  background none
+// a.grid-obj
+//   text-decoration none
+//   background none
+//   vertical-align text-top
+// a.grid-obj:hover
+//   background none
 
-a.grid-obj:active
-  background none
+// a.grid-obj:active
+//   background none
   
-div.grid-obj-hover
-  background black
-  opacity 0.8
-  position absolute
-  display none
+// div.grid-obj-hover
+//   background black
+//   opacity 0.8
+//   position absolute
+//   display none
 
-div.grid-obj-hover-inner
-  width 100%
-  height 100%
+// div.grid-obj-hover-inner
+//   width 100%
+//   height 100%
 
-  display -webkit-box
-  -webkit-box-orient horizontal
-  -webkit-box-pack center
-  -webkit-box-align center
+//   display -webkit-box
+//   -webkit-box-orient horizontal
+//   -webkit-box-pack center
+//   -webkit-box-align center
   
-  display -moz-box
-  -moz-box-orient horizontal
-  -moz-box-pack center
-  -moz-box-align center
+//   display -moz-box
+//   -moz-box-orient horizontal
+//   -moz-box-pack center
+//   -moz-box-align center
   
-  display box
-  box-orient horizontal
-  box-pack center
-  box-align center
+//   display box
+//   box-orient horizontal
+//   box-pack center
+//   box-align center
 
-h1.grid-obj-hover-txt
-  font-size 12px
-  background-color white
-  padding 10px
-  width -moz-fit-content
-  width intrinsic
-  font-weight lighter
-  text-transform uppercase
-  border-radius 15px
+// h1.grid-obj-hover-txt
+//   font-size 12px
+//   background-color white
+//   padding 10px
+//   width -moz-fit-content
+//   width intrinsic
+//   font-weight lighter
+//   text-transform uppercase
+//   border-radius 15px
 
 
-div.object-parent-types
-  padding 10px 5px 4px 6px
+// div.object-parent-types
+//   padding 10px 5px 4px 6px
 
-div.object-parent-types ul
-  list-style-type none
+// div.object-parent-types ul
+//   list-style-type none
 
-div.object-parent-types li
-  display inline-block
-  padding 0 5px
+// div.object-parent-types li
+//   display inline-block
+//   padding 0 5px
 
-div.object-meta
-  border-top 1px solid #FCFCFB
+// div.object-meta
+//   border-top 1px solid #FCFCFB
 
-div.object-meta table
-  width 100%
+// div.object-meta table
+//   width 100%
 
-div.object-meta td
-  text-align center
-  padding 5px 5px 3px
+// div.object-meta td
+//   text-align center
+//   padding 5px 5px 3px
 
-span.object-meta-txt
-  font-size 9px
-  color #B3B3B3
-  vertical-align 1px
+// span.object-meta-txt
+//   font-size 9px
+//   color #B3B3B3
+//   vertical-align 1px
 
-h3.object-added
-  padding 4px 10px 5px
+// h3.object-added
+//   padding 4px 10px 5px
 
-div.each-fea-obj
-  cursor pointer
+// div.each-fea-obj
+//   cursor pointer
 
-div.profile-left
-  margin 0 0 0 0
+// div.profile-left
+//   margin 0 0 0 0
+//   float left
+
+// div.profile-right
+//   width 492px
+//   margin 0 0 0 492px
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––structure*/
+
+div.leftside
   float left
+  margin 0 0 40px
 
-div.profile-right
-  width 492px
-  margin 0 0 0 492px
+div.rightside
+  margin 0 0 0 670px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––map*/
 
@@ -1483,7 +1477,7 @@ div#map
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––posts*/
 
 #posts
-  margin 40px 0 0 0
+  margin 12px 0 0 0
 
 div.post
   display none
@@ -1534,13 +1528,143 @@ div.post-body
   line-height 16px
   color textlight
 
-div.post-details
+div.post-info
   margin 10px 0 0
   font-size 10px
   line-height 13px
   color lightgray
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––comments*/
+
+.comments
+  margin 10px 0 0 0
   border-bottom 1px solid #eee
-  padding 0 0 30px 0
+  padding 0 0 30px 20px
+
+.comment
+  width 490px
+  min-height 42px
+  margin 0 0 2px 0
+  position relative
+  background backgray
+  display none
+
+  border-radius 3px
+
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration .2s
+  -moz-animation-duration .2s
+  -o-animation-duration .2s
+  animation-duration .2s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
+
+.comment-body
+  padding 6px 5px 3px 5px
+
+.comment-body p
+  padding 0 40px 0 37px
+  font-size 11px
+  line-height 15px
+  color #666
+  margin 0
+
+a.comment-avatar
+  position relative
+  z-index 1
+  float left
+  display inline-block
+  width 32px
+  height 32px
+  margin 5px 5px 0 5px
+  background none
+
+a.comment-avatar:hover
+  background none
+
+a.comment-avatar img
+  -webkit-border-radius 3px 0 9px 0
+  -moz-border-radius 3px 0 9px 0
+  border-radius 3px 0 9px 0
+
+a.comment-avatar-small
+  display block
+  height 19px
+  white-space nowrap
+  color #b3b3b3
+  font-size 11px
+  padding-bottom 10px
+
+a.comment-avatar-small img
+  -webkit-border-radius 2px 0 5px 0
+  -moz-border-radius 2px 0 5px 0
+  border-radius 2px 0 5px 0
+
+a.comment-avatar-small:hover
+  text-decoration none
+
+a.comment-avatar-small:hover span
+  text-decoration underline
+
+a.comment-author
+  display inline-block
+  overflow hidden
+  white-space nowrap
+  text-overflow ellipsis
+  color #666
+  font-weight bold
+  font-size 11px
+
+  -webkit-text-shadow 1px 1px 0 rgba(255,255,255,0.7)
+  -moz-text-shadow 1px 1px 0 rgba(255,255,255,0.7)
+  text-shadow 1px 1px 0 rgba(255,255,255,0.7)
+
+.comment-info
+  position relative
+  bottom 0
+  padding-left 42px
+
+.comment-created
+  white-space nowrap
+  font-size 11px
+  font-style normal
+  color #b3b3b3
+
+.comment-created a
+  color #b3b3b3
+
+.comment-created a:hover
+  color #4d4d4d
+
+img.comment-image
+  position relative
+  display block
+  max-height 400px
+  max-width 400px
+  margin 5px 0 0 0
+
+textarea.comment-input
+  display block
+  width 430px
+  background #fff
+  resize none
+  overflow hidden
+
+  -webkit-border-radius 3px
+  -moz-border-radius 3px
+  border-radius 3px
+
+  -webkit-transition height 0.2s
+  -webkit-transition-timing-function height 0.2s
+  -moz-transition height 0.2s
+  -moz-transition-timing-function height 0.2s
+  transition height 0.2s
+  transition-timing-function height 0.2s
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crags*/
 

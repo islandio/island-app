@@ -11,7 +11,7 @@ define([
   return Row.extend({
 
     attributes: function () {
-      return _.defaults({class: 'comment matte'},
+      return _.defaults({class: 'comment'},
           Row.prototype.attributes.call(this));
     },
 
@@ -20,9 +20,7 @@ define([
       Row.prototype.initialize.call(this, options);
     },
 
-    events: {
-      // 'click .branch-icon': 'branch'
-    },
+    events: {},
 
   });
 });

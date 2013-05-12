@@ -2,7 +2,7 @@ extends index
 
 block main
   - var websites = data.website ? data.website.split('\n') : null;
-  div.single-left
+  div.leftside
     - if (member && member._id.toString() === data._id.toString())
       a.button.action-button(href='/settings/' + member.key) 
         | Edit Profile
@@ -78,7 +78,7 @@ block main
                   - })
         h3.obj-details(data-date=data.created.toString(), data-type="profile", data-role=data.role)
     #posts
-  div.comments-wrap
+  div.rightside
     h1.title-right / Recent Comments
     #comments
   div.clear

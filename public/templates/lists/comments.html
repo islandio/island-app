@@ -1,3 +1,24 @@
+<div id="comment_input">
+  <% if (true) { %>
+    <div class="comment">
+      <a href="/dude" class="comment-avatar">
+        <img src="/img/avatar_100.png" width="32" height="32" />
+      </a>
+      <div class="comment-body">
+        <form enctype="multipart/form-data" method="POST" class="comment-input-form">
+          <textarea name="body" class="comment-input" 
+              placeholder="Write a comment ..."></textarea>
+        </form>
+      </div>
+    </div>
+  <% } else { %>
+    <a href="/login">
+      <span class="loading">Please login to comment.</span>
+    </a>
+  <% } %>
+</div>
+
+
 <% if (typeof loading !== 'undefined') { %>
   <span class="loading"></span>
 <% } else if (this.collection.models.length === 0) { %>
