@@ -7,10 +7,11 @@ define([
   'Underscore',
   'views/boiler/list',
   'mps',
+  'rpc',
   'text!../../../templates/lists/comments.html',
   'collections/comments',
   'views/rows/comment'
-], function ($, _, List, mps, template, Collection, Row) {
+], function ($, _, List, mps, rpc, template, Collection, Row) {
   return List.extend({
     
     el: '.comments',
@@ -73,29 +74,29 @@ define([
      */
     writeComment: function (e) {
       if (e) e.preventDefault();
-      var input = this.$('textarea.comment-input');
-      if (input.val().trim() === '')
-        return;
+      
       var form = this.$('form.comment-input-form');
-      var payload = form.serializeObject(); // For server.
-      var person = this.app.profile.get('person');
-      var created = new Date().toISOString();
-      var data = { // Our mock comment.
+      var input = this.$('textarea.comment-input');
+      if (input.val().trim() === '') return;
+
+      // For server.
+      var payload = form.serializeObject();
+
+      // Mock comment.
+      var data = {
         id: -1,
-        content: payload.content,
-        owner_name: person.name, 
-        created: created, 
-        owner_username: person.username,
+        body: payload.body,
+        created: new Date().toISOString()
       };
 
-      // Add the parent shell's id.
-      payload.parent_id = this.app.profile.get('page').shell.idea ?
-                          this.app.profile.get('page').shell.idea.id:
-                          this.app.profile.get('page').shell.campaign.id;
+      // Add the parent id.
+      payload.post_id = this.parentView.id;
 
       // Optimistically add comment to page:
-      this.comments.collection.unshift(data);
+      this.collection.unshift(data);
       input.val('').keyup();
+
+      return;
 
       // Now save the comment to server:
       rpc.exec('/comments', payload, {

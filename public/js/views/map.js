@@ -6,9 +6,9 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
-  'rpc',
-  'mps'
-], function ($, _, Backbone, rpc, mps) {
+  'mps',
+  'rpc'
+], function ($, _, Backbone, mps, rpc) {
   return Backbone.View.extend({
 
     el: '#map',
@@ -50,12 +50,12 @@ define([
       if (this.app.profile && this.app.profile.get('member')) {
         
         // Shell events.
-        this.app.profile.on('change:portfolio', _.bind(this.update, this));
+        // this.app.profile.on('change:portfolio', _.bind(this.update, this));
         
         // Shell subscriptions:
-        this.subscriptions = [
+        // this.subscriptions = [
           // mps.subscribe('topic', _.bind(this.fn, this)),
-        ];
+        // ];
 
       }
     },

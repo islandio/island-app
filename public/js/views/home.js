@@ -6,11 +6,11 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
-  'rpc',
   'mps',
+  'rpc',
   'util',
   'views/lists/posts'
-], function ($, _, Backbone, rpc, mps, util, Posts) {
+], function ($, _, Backbone, mps, rpc, util, Posts) {
 
   return Backbone.View.extend({
 
@@ -25,7 +25,6 @@ define([
 
       // Shell events:
       this.on('rendered', this.setup, this);
-
     },
 
     // Draw our template from the profile JSON.

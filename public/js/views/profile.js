@@ -6,13 +6,13 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
-  'rpc',
   'mps',
+  'rpc',
   'util',
   'models/member',
   'views/lists/comments',
   'views/lists/posts'
-], function ($, _, Backbone, rpc, mps, util, Member, Comments, Posts) {
+], function ($, _, Backbone, mps, rpc, util, Member, Comments, Posts) {
 
   return Backbone.View.extend({
 

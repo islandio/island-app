@@ -6,14 +6,15 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
-  'rpc',
   'mps',
+  'rpc',
   'views/header',
   'views/footer',
   'views/map',
-  'views/profile',
-  'views/home'
-], function ($, _, Backbone, rpc, mps, Header, Footer, Map, Profile, Home) {
+  'views/home',
+  'views/login',
+  'views/profile'
+], function ($, _, Backbone, mps, rpc, Header, Footer, Map, Home, Login, Profile) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -37,8 +38,8 @@ define([
       // this.route(':username/c/:slug/:opp', 'fund', _.bind(this.fund, this, 'fund'));
       // this.route(':username/c/:slug/:opp?*qs', 'fund', _.bind(this.fund, this, 'fund'));
       // this.route(/^settings\/profile$/, 'profile', _.bind(this.profile, this, 'profile'));
-      // this.route('login', 'login', _.bind(this.login, this, 'login'));
-      this.route('', 'home', _.bind(this.home, this, 'home'));
+      this.route('login', 'login', this.login);
+      this.route('', 'home', this.home);
 
       // Subscriptions
       mps.subscribe('navigate', _.bind(function (path) {
@@ -53,29 +54,16 @@ define([
       '*actions': 'default'
     },
 
-    // login: function () {
+    login: function () {
 
-    //   // Kill the notifications
-    //   if (this.notifications)
-    //     this.notifications.destroy();
+      // Kill the page view if it exists.
+      if (this.page)
+        this.page.destroy();
 
-    //   // Kill the page view if it exists.
-    //   if (this.page)
-    //     this.page.destroy();
+      // Finally, create and render the page.
+      this.page = new Login(this.app).render();
 
-    //   // Don't re-create the header.
-    //   if (!this.header)
-    //     this.header = new Header(this.app).render();
-    //   else this.header.render();
-
-    //   // Finally, create and render the page.
-    //   this.page = new Login(this.app).render();
-
-    //   // Don't re-render the header.
-    //   if (!this.footer)
-    //     this.footer = new Footer(this.app).render();
-
-    // },
+    },
 
     home: function () {
 

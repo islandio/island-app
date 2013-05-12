@@ -6,9 +6,9 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
-  'rpc',
-  'mps'
-], function ($, _, Backbone, rpc, mps) {
+  'mps',
+  'rpc'
+], function ($, _, Backbone, mps, rpc) {
   return Backbone.View.extend({
 
     el: '#header',
