@@ -20,7 +20,7 @@ define([
     this.socket = new Pusher('37fea545f4a0ce59464c');
 
     // Location of static assets:
-    this.cloudFrontURL = 'https://d2nwkk2kh4qkau.cloudfront.net';
+    this.cloudFrontURL = 'https://d271mvlc6gc7bl.cloudfront.net';
   }
 
   App.prototype.update = function (profile) {

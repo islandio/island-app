@@ -1,8 +1,16 @@
+<%
+  var member = this.app.profile.get('member');
+  var gravatar = member ? 'https://www.gravatar.com/avatar/'
+      + member.gravatar + '?s=32&d='
+      + encodeURIComponent(this.app.cloudFrontURL + '/main/img/avatar_100.png')
+      : null;
+%>
+
 <div id="comment_input">
-  <% if (true) { %>
+  <% if (member) { %>
     <div class="comment">
-      <a href="/dude" class="comment-avatar">
-        <img src="/img/avatar_100.png" width="32" height="32" />
+      <a href="/<%= member.username %>" class="comment-avatar">
+        <img src=<%= gravatar %> width="32" height="32" />
       </a>
       <div class="comment-body">
         <form enctype="multipart/form-data" method="POST" class="comment-input-form">
@@ -13,7 +21,7 @@
     </div>
   <% } else { %>
     <a href="/login">
-      <span class="loading">Please login to comment.</span>
+      <span class="loading">Log in to comment.</span>
     </a>
   <% } %>
 </div>

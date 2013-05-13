@@ -12,23 +12,23 @@ define([
     exec: function(type, url, data, cb) {
       if (!data || typeof data === 'function') {
         cb = data;
-        data = {};
+        data = null;
       }
       cb = cb || function(){};
 
-      // Execute the RPC for reals:
-      return $.ajax({
+      var params = {
         url: url,
         type: type,
-        data: JSON.stringify(data),
         success: _.bind(cb, cb, undefined),
         error: function (res) {
           cb(JSON.parse(res.responseText).error);
         },
         contentType: 'application/json', 
         dataType: 'json'
-      });
+      };
+      if (data) params.data = JSON.stringify(data);
 
+      return $.ajax(params);
     },
 
     get: function (url, data, cb) {
@@ -37,6 +37,14 @@ define([
 
     post: function (url, data, cb) {
       this.exec('POST', url, data, cb);
+    },
+
+    put: function (url, data, cb) {
+      this.exec('PUT', url, data, cb);
+    },
+
+    delete: function (url, data, cb) {
+      this.exec('DELETE', url, data, cb);
     }
 
   }

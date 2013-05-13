@@ -48,7 +48,7 @@ define([
 
     setup: function () {
       if (!this.model.get('created'))
-          this.model.created = Date.now();
+        this.model.created = Date.now();
       this.$('.currency').each(function () {
         var str = util.addCommas($(this).text());
         $(this).text('$' + str.trim());
@@ -70,12 +70,10 @@ define([
     },
 
     when: function () {
-      var self = this;
-      if (!self.model) return;
-      this.$('.created').each(function () {
-        $(this).text(util.getRelativeTime(
-            self.model.get('created') || self.model.created));
-      });
+      if (!this.model) return;
+      if (!this.time)
+        this.time = this.$('time.created:first');
+      this.time.text(util.getRelativeTime(this.model.get('created')));
     },
 
     _remove: function (e, topic, data) {

@@ -368,6 +368,9 @@ td {
   max-width: 250px;
 }
 span.loading {
+  display: inline-block;
+  margin: 0 0 10px 0;
+  font-style: italic;
   color: #808080;
 }
 p.privacy {

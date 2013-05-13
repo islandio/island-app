@@ -15,7 +15,8 @@ define([
           Row.prototype.attributes.call(this));
     },
 
-    initialize: function (options) {
+    initialize: function (options, app) {
+      this.app = app;
       this.template = _.template(template);
       Row.prototype.initialize.call(this, options);
     },

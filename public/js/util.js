@@ -153,7 +153,7 @@ define([
       var delta;
       if ('string' === typeof ts && ts.indexOf('T') === -1)
         delta = (relativeDate.getTime() - (parsedDate.getTime()
-                  + (this.getTimeZone() * 60 * 60 * 1000))) / 1e3;
+            + (this.getTimeZone() * 60 * 60 * 1000))) / 1e3;
       else
         delta = (relativeDate.getTime() - parsedDate.getTime()) / 1e3;
       if (delta < 5) return 'just now';

@@ -108,7 +108,6 @@ define([
         // Update the comment id.
         var comment = this.collection.get(-1);
         comment.set('id', data.id);
-        console.log(this.$('#-1').length,data.id);
         this.$('#-1').attr('id', data.id);
 
       }, this));
@@ -118,27 +117,3 @@ define([
 
   });
 });
-
-// <div id="comment_input">
-//   <% if (person) { %>
-//     <div class="comment">
-//       <a href="/<%= person.username %>" class="comment-avatar">
-//         <% if (person.avatar_url) { %>
-//           <img src="<%= person.avatar_url %>" width="32" height="32" />
-//         <% } else { %>
-//           <img src="<%= static %>/img/avatar_32.png" width="32" height="32" />
-//         <% } %>
-//       </a>
-//       <div class="comment-content">
-//         <form enctype="multipart/form-data" method="POST" class="comment-input-form">
-//           <textarea name="content" class="comment-input" 
-//               placeholder="Write a comment ..."></textarea>
-//         </form>
-//       </div>
-//     </div>
-//   <% } else { %>
-//     <a href="/login">
-//       <span class="loading">Please login to comment.</span>
-//     </a>
-//   <% } %>
-// </div>
