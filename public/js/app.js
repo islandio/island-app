@@ -6,15 +6,19 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
+  'Pusher',
   'router',
   'rpc'
-], function ($, _, Backbone, Router, rpc) {
+], function ($, _, Backbone, Pusher, Router, rpc) {
 
   // For dev:
   window._rpc = rpc;
 
   var App = function () {
     
+    // Open a socket:
+    this.socket = new Pusher('37fea545f4a0ce59464c');
+
     // Location of static assets:
     this.cloudFrontURL = 'https://d2nwkk2kh4qkau.cloudfront.net';
   }

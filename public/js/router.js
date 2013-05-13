@@ -72,7 +72,7 @@ define([
         this.page.destroy();
 
       // Get the home profile.
-      rpc.exec('/service/home.profile', _.bind(function (err, pro) {
+      rpc.get('/service/home.profile', _.bind(function (err, pro) {
         if (err) return console.error(err.stack);
 
         // Set the profile.
@@ -119,7 +119,7 @@ define([
       }
 
       // Get the page profile.
-      rpc.exec('/service/member.profile', {username: username},
+      rpc.get('/service/member.profile', {username: username},
           _.bind(function (err, pro) {
         if (err) return console.error(err.stack);
 

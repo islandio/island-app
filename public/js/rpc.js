@@ -9,15 +9,7 @@ define([
 ], function ($, _, mps) {
   return {  
 
-    /**
-     * Executes an RPC asynchronously.
-     * 
-     * Args:
-     *   url: The URL endpoint for the RPC
-     *   data: Object with RPC parameters.
-     *   cb: Object with a success and error function.
-     */
-    exec: function(url, data, cb) {
+    exec: function(type, url, data, cb) {
       if (!data || typeof data === 'function') {
         cb = data;
         data = {};
@@ -27,7 +19,7 @@ define([
       // Execute the RPC for reals:
       return $.ajax({
         url: url,
-        type: 'POST',
+        type: type,
         data: JSON.stringify(data),
         success: _.bind(cb, cb, undefined),
         error: function (res) {
@@ -37,6 +29,15 @@ define([
         dataType: 'json'
       });
 
+    },
+
+    get: function (url, data, cb) {
+      this.exec('GET', url, data, cb);
+    },
+
+    post: function (url, data, cb) {
+      this.exec('POST', url, data, cb);
     }
+
   }
 });

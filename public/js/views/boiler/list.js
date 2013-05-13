@@ -15,21 +15,21 @@ define([
       // Save app reference.
       this.app = app;
 
-      // Grab options:
+      // Grab options.
       options = options || {};
 
       // Save parent reference.
       this.parentView = options.parentView;
 
-      // Default collection:
+      // Default collection
       if (!this.collection)
         this.collection = new Backbone.Collection({model: Backbone.Model});
       this.collection.options = options;
 
-      // List views:
+      // List views
       this.views = [];
 
-      // List events.
+      // List events
       this.collection.on('reset', this.render, this);
       this.collection.on('add', this.renderLast, this);
       this.on('rendered', this.setup, this);
@@ -37,22 +37,23 @@ define([
 
     render: function (options) {
       options = options || {};
-      if (this.parentView.$el.attr('id'))
-        this.el = this.parentView.$el.attr('id') + ' ' + this.el;
+      if (this.parentView && this.$el.attr('class'))
+        this.setElement(this.parentView.$('.' + this.$el.attr('class')));
       this.$el.html(this.template(options));
       this.trigger('rendered');
       return this;
     },
 
     renderLast: function (pagination) {
-      if (this.collection.models.length === 1)
-        this.$el.empty();
+      // if (this.collection.models.length === 1)
+      //   this.$el.empty();
       if (pagination !== true && this.collection.options &&
           this.collection.options.reverse) {
         this.row(this.collection.models[0]);
         this.views[0].render(true, true);
       } else {
-        this.row(this.collection.models[this.collection.models.length - 1], pagination);
+        this.row(this.collection.models[this.collection.models.length - 1],
+            pagination);
         this.views[this.views.length - 1].render(true);
       }
       return this;
@@ -76,8 +77,7 @@ define([
     },
 
     row: function (model, pagination) {
-      if (_.contains(this.exclude, model.id))
-        return '';
+      if (_.contains(this.exclude, model.id)) return '';
       var view = new this.Row({
         parentView: this,
         model: model

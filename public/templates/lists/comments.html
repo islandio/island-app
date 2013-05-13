@@ -17,12 +17,10 @@
     </a>
   <% } %>
 </div>
-
-
 <% if (typeof loading !== 'undefined') { %>
-  <span class="loading"></span>
+  <!-- <span class="loading"></span> -->
 <% } else if (this.collection.models.length === 0) { %>
-  <span class="loading">No comments.</span>
+  <!-- <span class="loading"></span> -->
 <% } else { %>
   <% _.each(this.collection.models, _.bind(function(row) { %>
     <%= this.row(row) %>

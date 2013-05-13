@@ -35,9 +35,12 @@ define([
         this.$el.show();
       }, this), single ? 0 : d);
       if (single)
-        if (prepend)
-          this.$el.prependTo(this.parentView.$el);
-        else
+        if (prepend) {
+          if (this.parentView.$('#comment_input').length !== 0)
+            this.$el.insertAfter(this.parentView.$('#comment_input'));
+          else
+            this.$el.prependTo(this.parentView.$el);
+        } else
           this.$el.appendTo(this.parentView.$el);
       this.trigger('rendered');
       return this;
@@ -71,7 +74,7 @@ define([
       if (!self.model) return;
       this.$('.created').each(function () {
         $(this).text(util.getRelativeTime(
-                    self.model.get('created') || self.model.created));
+            self.model.get('created') || self.model.created));
       });
     },
 

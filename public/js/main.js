@@ -12,7 +12,9 @@ require.config({
     Underscore: 'libs/underscore/underscore',
     Backbone: 'libs/backbone/backbone',
     mps: 'libs/minpubsub/minpubsub',
+    Pusher: 'libs/pusher/pusher',
     Spin: 'libs/spin/spin',
+    swfobject: 'libs/swfobject/swfobject',
   },
   
   // Dependency mapping:
@@ -28,8 +30,14 @@ require.config({
       deps: ['jQuery', 'Underscore'],
       exports: 'mps'
     },
+    Pusher: {
+      exports: 'Pusher'
+    },
     Spin: {
       exports: 'Spin'
+    },
+    swfobject: {
+      exports: 'swfobject'
     },
   }
 });

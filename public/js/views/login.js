@@ -8,8 +8,9 @@ define([
   'Backbone',
   'mps',
   'rpc',
-  'util'
-], function ($, _, Backbone, mps, rpc, util) {
+  'util',
+  'swfobject'
+], function ($, _, Backbone, mps, rpc, util, swfobject) {
 
   return Backbone.View.extend({
     
@@ -18,6 +19,7 @@ define([
     
     // Module entry point:
     initialize: function (app) {
+      console.log(swfobject)
       
       // Save app reference.
       this.app = app;
@@ -28,6 +30,11 @@ define([
 
     // Draw our template from the profile JSON.
     render: function () {
+
+      // Embed the background video.
+      swfobject.embedSWF(
+          'https://d271mvlc6gc7bl.cloudfront.net/main/swf/roll4.swf',
+          'roll', '100%', '100%', 10, '', {}, {menu: 'false'}, {});
 
       // Done rendering ... trigger setup.
       this.trigger('rendered');

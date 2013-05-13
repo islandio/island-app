@@ -174,7 +174,6 @@ define([
 
       // Render comments.
       this.comments = new Comments(this.app, {parentView: this, reverse: true});
-    
     },
 
     destroy: function () {

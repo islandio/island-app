@@ -81,6 +81,13 @@ Step(
       app.set('REDIS_PORT', 6379);
       app.set('CHANNELS', {all: 'island_test'});
 
+      // Pusher init
+      app.set('pusher', new Pusher({
+        appId: '43905',
+        key: '37fea545f4a0ce59464c',
+        secret: '1015c7f661849f639e49'
+      }));
+
       // Instagram params
       app.set('instagram', {
         clientID: 'b6e0d7d608a14a578cf94763f70f1b49',
@@ -125,6 +132,13 @@ Step(
           + 'f327cfe980c971946e80b8e975fbebb4');
       app.set('REDIS_PORT', 6379);
       app.set('CHANNELS', {all: 'island'});
+
+      // Init Pusher
+      app.set('pusher', new Pusher({
+        appId: '35474',
+        key: 'c260ad31dfbb57bddd94',
+        secret: 'b29cec4949ef7c0d14cd'
+      }));
 
       // Instagram params
       app.set('instagram', {
@@ -194,7 +208,7 @@ Step(
       app.use(express.errorHandler());
     }
 
-    // Init Mailer
+    // Mailer init
     app.set('mailer', new Mailer({
       user: 'robot@island.io',
       password: 'I514nDr06ot',
@@ -202,13 +216,6 @@ Step(
       ssl: true,
       defaults: {from: 'Island <robot@island.io>'},
       BASE_URI: app.get('HOME_URI')
-    }));
-
-    // Init Pusher
-    app.set('pusher', new Pusher({
-      appId: '35474',
-      key: 'c260ad31dfbb57bddd94',
-      secret: 'b29cec4949ef7c0d14cd'
     }));
 
     if (!module.parent) {

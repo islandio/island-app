@@ -21,18 +21,17 @@ define([
       this.collection = new Collection;
       this.Row = Row;
 
-      // Shell subscriptions:
-      // this.subscriptions = [
-      //   mps.subscribe('comment/new', _.bind(this.collect, this)),
-      // ];
-
       // Call super init.
       List.prototype.initialize.call(this, app, options);
 
-      // Reset the collection with the appropriate list.
-      var items = this.app.profile.get('content').comments ?
-                  this.app.profile.get('content').comments.items : [];
-      this.collection.reset(items);
+      // Shell subscriptions:
+      this.subscriptions = [
+        this.app.socket.subscribe('comment').bind('new',
+            _.bind(this.collect, this)),
+      ];
+
+      // Reset the collection.
+      this.collection.reset(this.parentView.model.get('comments'));
     },
 
     setup: function () {
@@ -42,40 +41,36 @@ define([
       this.$('textarea[name="body"]').autogrow();
       this.$('textarea[name="body"]').bind('keyup', _.bind(function (e) {
         if (!e.shiftKey && (e.keyCode === 13 || e.which === 13))
-          this.writeComment();
+          this.write();
       }, this));
 
       // Show the write comment box.
       this.$('#comment_input .comment').show();
 
       return List.prototype.setup.call(this);
-
     },
 
-    // Handle bus events from subscription.
-    collect: function (data) {
-      // var id = this.app.profile.get('content').shell.idea ?
-      //          this.app.profile.get('content').shell.idea.id:
-      //          this.app.profile.get('page').shell.campaign.id;
-      // if (id === data.parent_id)
-      //   this.collection.unshift(data);
+    // Collect new comments from socket events.
+    collect: function (comment) {
+      if (comment.post_id === this.parentView.model.id)
+        this.collection.unshift(comment);
     },
 
-    /**
-     * Optimistically writes a comment.
-     *
-     * This function assumes that a comment will successfully be created on the
-     * server. Based on that assumption we render it in the UI before the 
-     * success callback fires.
-     *
-     * When the success callback fires, we update the comment model id from the
-     * comment created on the server. If the error callback fires, we remove 
-     * the comment from the UI and notify the user (or retry).
-     */
-    writeComment: function (e) {
+    //
+    // Optimistically writes a comment.
+    //
+    // This function assumes that a comment will successfully be created on the
+    // server. Based on that assumption we render it in the UI before the 
+    // success callback fires.
+    //
+    // When the success callback fires, we update the comment model id from the
+    // comment created on the server. If the error callback fires, we remove 
+    // the comment from the UI and notify the user (or retry).
+    //
+    write: function (e) {
       if (e) e.preventDefault();
-      
-      var form = this.$('form.comment-input-form');
+
+      var form = $('form.comment-input-form', this.el);
       var input = this.$('textarea.comment-input');
       if (input.val().trim() === '') return;
 
@@ -83,39 +78,40 @@ define([
       var payload = form.serializeObject();
 
       // Mock comment.
+      var member = this.app.profile.get('member');
       var data = {
         id: -1,
+        member: member,
         body: payload.body,
         created: new Date().toISOString()
       };
 
       // Add the parent id.
-      payload.post_id = this.parentView.id;
+      payload.post_id = this.parentView.model.id;
 
       // Optimistically add comment to page:
       this.collection.unshift(data);
       input.val('').keyup();
 
-      return;
-
       // Now save the comment to server:
-      rpc.exec('/comments', payload, {
-        success: _.bind(function (data) {
+      rpc.post('/api/comments/' + member.username, payload,
+          _.bind(function (err, data) {
 
-          // All good, just update the comment id.
-          var id = data.id;
-          var comment = this.comments.collection.get(-1);
-          comment.set('id', id);
-
-        }, this),
-        error: _.bind(function (error, status) {
+        if (err) {
 
           // Oops, comment wasn't created.
-          console.log("TODO: Retry, notify user, etc.");
-          this.comments.collection.pop();
+          console.log('TODO: Retry, notify user, etc.');
+          this.collection.pop();
+          return;
+        }
 
-        }, this),
-      });
+        // Update the comment id.
+        var comment = this.collection.get(-1);
+        comment.set('id', data.id);
+        console.log(this.$('#-1').length,data.id);
+        this.$('#-1').attr('id', data.id);
+
+      }, this));
 
       return false;
     },
