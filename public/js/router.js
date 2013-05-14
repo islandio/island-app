@@ -119,7 +119,7 @@ define([
       }
 
       // Get the page profile.
-      rpc.get('/service/member.profile', {username: username},
+      rpc.get('/service/member.profile/' + username,
           _.bind(function (err, pro) {
         if (err) return console.error(err.stack);
 

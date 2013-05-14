@@ -367,7 +367,8 @@ td {
   line-height: 12px;
   max-width: 250px;
 }
-span.loading {
+span.loading,
+span.empty-feed {
   display: inline-block;
   margin: 0 0 10px 0;
   font-style: italic;
@@ -1217,6 +1218,7 @@ a.delete-comment:active {
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––structure*/
 div.leftside {
   float: left;
+  width: 640px;
   margin: 0 0 40px;
 }
 div.rightside {
@@ -1232,6 +1234,17 @@ div#map {
   box-shadow: 0 0 3px #b3b3b3;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––posts*/
+.posts-spin {
+  width: 100%;
+}
+.posts-spin .empty-feed {
+  display: none;
+}
+.posts-spin > div {
+  width: 50px;
+  height: 40px;
+  margin: 0 auto;
+}
 #posts {
   margin: 12px 0 0 0;
 }

@@ -24,7 +24,7 @@ define([
 
     events: {},
 
-    render: function () {
+    render: function (single, prepend) {
 
       function insert(item) {
         var div = $('<div class="post-mosaic-wrap">').css(item.div);
@@ -33,7 +33,7 @@ define([
         div.appendTo(this.$('.post-mosaic'));
       }
 
-      Row.prototype.render.call(this);
+      Row.prototype.render.call(this, single, prepend);
 
       // gather images
       var images = [];

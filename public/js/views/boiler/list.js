@@ -77,7 +77,6 @@ define([
     },
 
     row: function (model, pagination) {
-      if (_.contains(this.exclude, model.id)) return '';
       var view = new this.Row({
         parentView: this,
         model: model

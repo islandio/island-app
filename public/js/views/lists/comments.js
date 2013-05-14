@@ -24,10 +24,10 @@ define([
       // Call super init.
       List.prototype.initialize.call(this, app, options);
 
-      // Shell subscriptions:
+      // Shell subscriptions
       this.subscriptions = [
-        this.app.socket.subscribe('comment').bind('new',
-            _.bind(this.collect, this)),
+        this.app.socket.subscribe('post-' + this.parentView.model.get('key'))
+            .bind('new', _.bind(this.collect, this)),
       ];
 
       // Reset the collection.
@@ -35,7 +35,6 @@ define([
     },
 
     setup: function () {
-
 
       // Autogrow the write comment box.
       this.$('textarea[name="body"]').autogrow();
@@ -52,8 +51,7 @@ define([
 
     // Collect new comments from socket events.
     collect: function (comment) {
-      if (comment.post_id === this.parentView.model.id)
-        this.collection.unshift(comment);
+      this.collection.unshift(comment);
     },
 
     //
