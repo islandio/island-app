@@ -1,29 +1,32 @@
 div#header-inner
-  a#logo(href='/')
-    img(src='/img/dots.png', height='50')
-  #menu.list
-    ul
-      - if (member)
-        li
-          a#nav-logout.button(href='/logout') 
-            | Log Out
-        - if (member.role === 0)
-          li(style='margin: 0 5px 0 0')
-            a#nav-add.button(href='/add') 
-              | Add Media
-        li(style='margin: 0 5px 0 0')
-          a.button(href='/films') 
-            | Films
-        li
-          span.welcome-member Hi, 
-            a(href='/member/' + member.key) #{member.displayName}
-      - else
-        li
-          a#nav-login.button(href='/login') 
-            | Log In / Sign Up
-        li(style='margin: 0 5px 0 0')
-          a.button(href='/films') 
-            | Films
-        li
-          span.welcome-member Oi !
+  a#logo(href="/")
+    img(src="/img/dots.png", height="50")
+  span.tagline Climb.
+  div.divider-vertical.pad-left.pad-right
+  input.search(type="search", placeholder="Search")
+  ul.header-links
+    li
+      a(href="/about") About
+    li
+      a(href="/crags") Crags
+    li
+      a(href="/films") Films
+  - if (member)
+    div.member-box
+      div.divider-vertical
+      a.header-avatar(href="/" + member.username)
+        img(src="https://www.gravatar.com/avatar/" + member.gravatar + "?s=67&d=https%3A%2F%2Fd271mvlc6gc7bl.cloudfront.net%2Fmain%2Fimg%2Favatar_100.png", width="67", height="67")
+      a.header-username(href="/" + member.username)= member.username
+      div.divider-vertical
+      a#notifications.header-action(href="javascript:;")
+        span.icon-globe
+      div.divider-vertical
+      a#settings.header-action(href="/settings")
+        span.icon-params
+      div.divider-vertical
+      a#logout.header-action(href="/logout")
+        span.icon-logout-1
+      div.divider-vertical
+  - else
+    a#login.button(href="/login") Sign in
   div.clear

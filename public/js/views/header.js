@@ -29,9 +29,6 @@ define([
       this.undelegateEvents();
       this.stopListening();
 
-      // // UnderscoreJS templating:
-      // this.$el.html(_.template(template).call(this));
-
       // Done rendering ... trigger setup.
       this.setup();
 
@@ -62,9 +59,9 @@ define([
 
     // Bind mouse events.
     events: {
-      'click #logo': 'home',
-      'click #login_signup': 'login',
-      'click #logout': 'logout',
+      // 'click #logo': 'home',
+      // 'click #login': 'login',
+      // 'click #logout': 'logout',
     },
 
     home: function (e) {

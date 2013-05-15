@@ -19,7 +19,6 @@ define([
     
     // Module entry point:
     initialize: function (app) {
-      console.log(swfobject)
       
       // Save app reference.
       this.app = app;
