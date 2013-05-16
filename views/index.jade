@@ -1,11 +1,17 @@
 extends layout
 
 block content
-  header#header
-    include header
-  div#map
-  div#wrap
-    div#main
-      block main
-  footer#footer
-    include footer
+  div#wrap.panel-open
+    header#header
+      include header
+    div#map
+    div#content
+      div#main
+        block main
+    div#panel.open
+      div#panel_content
+      div.list-spin
+        div#notifications-spin
+        span.empty-feed Showing all.
+    footer#footer
+      include footer

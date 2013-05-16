@@ -10,11 +10,13 @@ define([
   'rpc',
   'views/header',
   'views/footer',
+  'views/lists/notifications',
   'views/map',
   'views/home',
   'views/login',
   'views/profile'
-], function ($, _, Backbone, mps, rpc, Header, Footer, Map, Home, Login, Profile) {
+], function ($, _, Backbone, mps, rpc, Header, Footer,
+      Notifications, Map, Home, Login, Profile) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -56,6 +58,10 @@ define([
 
     login: function () {
 
+      // Kill the notifications
+      if (this.notifications)
+        this.notifications.destroy();
+
       // Kill the page view if it exists.
       if (this.page)
         this.page.destroy();
@@ -94,6 +100,10 @@ define([
         // Don't re-render the footer.
         if (!this.footer)
           this.footer = new Footer(this.app).render();
+
+        // Show notifications.
+        if (!this.notifications && this.app.profile.get('member'))
+          this.notifications = new Notifications(this.app, {reverse: true});
 
       }, this));
 
@@ -137,6 +147,10 @@ define([
         // Don't re-render the footer.
         if (!this.footer)
           this.footer = new Footer(this.app).render();
+
+        // Show notifications.
+        if (!this.notifications && this.app.profile.get('member'))
+          this.notifications = new Notifications(this.app, {reverse: true});
 
       }, this));
 

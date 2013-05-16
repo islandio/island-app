@@ -1,0 +1,21 @@
+<%
+  var gravatar = 'https://www.gravatar.com/avatar/'
+      + this.model.get('member').gravatar + '?s=32&d='
+      + encodeURIComponent(this.app.cloudFrontURL + '/main/img/avatar_100.png');
+%>
+
+<div class="notification-inner">
+  <img src=<%= gravatar %> width="32" height="32" />
+  <p>
+    <%= this.model.getNote() %>
+  </p>
+  <time class="created" 
+      datetime="<%= this.model.get('created') %>" 
+      title="<%= this.model.get('created') %>">
+    <%= this.model.get('created') %>
+  </time>
+  <a href="javascript:;" class="notification-delete">
+    <i class="icon-trash"></i>
+  </a>
+  <div class="clearfix"></div>
+</div>

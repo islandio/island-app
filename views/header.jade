@@ -1,9 +1,10 @@
 div#header-inner
+  div.divider-vertical
   a#logo(href="/")
-    img(src="/img/dots.png", height="50")
-  span.tagline Climb.
-  div.divider-vertical.pad-left.pad-right
-  input.search(type="search", placeholder="Search")
+    span.tagline Climb
+    img(src="/img/dots.png", width="140", height="48")
+  div.divider-vertical.pad-right
+  input.header-search(type="search", placeholder="Search")
   ul.header-links
     li
       a(href="/about") About
@@ -15,10 +16,9 @@ div#header-inner
     div.member-box
       div.divider-vertical
       a.header-avatar(href="/" + member.username)
-        img(src="https://www.gravatar.com/avatar/" + member.gravatar + "?s=67&d=https%3A%2F%2Fd271mvlc6gc7bl.cloudfront.net%2Fmain%2Fimg%2Favatar_100.png", width="67", height="67")
-      a.header-username(href="/" + member.username)= member.username
+        img(src="https://www.gravatar.com/avatar/" + member.gravatar + "?s=50&d=https%3A%2F%2Fd271mvlc6gc7bl.cloudfront.net%2Fmain%2Fimg%2Favatar_100.png", width="50", height="50")
       div.divider-vertical
-      a#notifications.header-action(href="javascript:;")
+      a#globe.header-action(href="javascript:;")
         span.icon-globe
       div.divider-vertical
       a#settings.header-action(href="/settings")

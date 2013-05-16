@@ -1,5 +1,5 @@
 /*
- * Posts List view
+ * Notification List view
  */
 
 define([
@@ -8,45 +8,48 @@ define([
   'views/boiler/list',
   'mps',
   'rpc',
-  'text!../../../templates/lists/posts.html',
-  'collections/posts',
-  'views/rows/post',
+  'text!../../../templates/lists/notifications.html',
+  'collections/notifications',
+  'views/rows/notification',
   'Spin'
 ], function ($, _, List, mps, rpc, template, Collection, Row, Spin) {
   return List.extend({
-    
-    el: '#posts',
+
+    el: '#panel_content',
 
     fetching: false,
     nomore: false,
-    limit: 3,
+    limit: 10,
 
+    // misc. init
     initialize: function (app, options) {
       this.template = _.template(template);
       this.collection = new Collection;
       this.Row = Row;
 
+      // Init the load indicator.
+      this.spin = new Spin($('#notifications-spin', this.$el.parent()));
+      this.spin.start();
+  
+      // Shell events.
+      $(window).resize(_.debounce(_.bind(this.resize, this), 50));
+
+      // Shell subscriptions:
+      this.subscriptions = [
+        mps.subscribe('notification/new', _.bind(this.collect, this))
+      ];
+
       // Call super init.
       List.prototype.initialize.call(this, app, options);
 
-      // Init the load indicator.
-      this.spin = new Spin($('#posts-spin', this.parentView.el));
-      this.spin.start();
-
-      // Shell subscriptions
-      this.subscriptions = [
-        this.app.socket.subscribe('post').bind('new',
-            _.bind(this.collect, this)),
-      ];
-
-      // Reset the collection.
-      this.latest_list = this.app.profile.get('content').posts;
+      // Reset the collection with the appropriate list.
+      this.latest_list = this.app.profile.get('content').notes;
       this.collection.reset(this.latest_list.items);
     },
 
-    // collect new posts from socket events.
-    collect: function (post) {
-      this.collection.unshift(post);
+    // receive note from event bus
+    collect: function (data) {
+      this.collection.unshift(data);
     },
 
     // initial bulk render of list
@@ -58,7 +61,7 @@ define([
         }, this), (this.collection.length + 1) * 30);
       else {
         this.nomore = true;
-        $('<span class="loading">No posts.</span>').appendTo(this.$el);
+        $('<span class="loading">No notifications.</span>').appendTo(this.$el);
       }
       this.paginate();
       return this;
@@ -68,8 +71,9 @@ define([
     // (could be newly arived or older ones from pagination)
     renderLast: function (pagination) {
       List.prototype.renderLast.call(this, pagination);
-
+      mps.publish('notification/change', []);
       _.delay(_.bind(function () {
+        this.resize();
         if (pagination !== true)
           this.checkHeight();
       }, this), 60);
@@ -79,13 +83,31 @@ define([
     // misc. setup
     setup: function () {
       this.spin.stop();
+      mps.publish('notification/change', []);
+      this.$el.parent().addClass('animated');
+      $('#wrap').addClass('animated');
+      this.resize();
       List.prototype.setup.call(this);
+    },
+
+    destroy: function () {
+      var panel = $('#panel');
+      var wrap = $('#wrap');
+      wrap.removeClass('panel-open');
+      panel.removeClass('open');
+      store.set('isNotesOpen', false);
+      List.prototype.destroy.call(this);
+    },
+
+    // update the panel's height
+    resize: function () {
+      this.$el.parent().height($(window).height());
     },
 
     // check the panel's empty space and get more
     // notes to fill it up.
     checkHeight: function () {
-      wh = $(window).height();
+      wh = this.$el.parent().height();
       so = this.spin.target.offset().top;
       if (wh - so > this.spin.target.height() / 2)
         this.more();
@@ -93,7 +115,6 @@ define([
 
     // attempt to get more models (older) from server
     more: function () {
-
       // render models and handle edge cases
       function updateUI(list) {
         _.defaults(list, {items:[]});
@@ -101,12 +122,12 @@ define([
         if (list.items.length === 0) {
           this.nomore = true;
           this.spin.target.hide();
-          var showingall = this.parentView.$('.list-spin .empty-feed');
+          var showingall = $('.list-spin .empty-feed', this.$el.parent());
           if (this.collection.length > 0)
             showingall.css('display', 'block');
           else {
             showingall.hide();
-            $('<span class="loading">No posts.</span>')
+            $('<span class="loading">No notifications.</span>')
                 .appendTo(this.$el);
           }
         } else
@@ -130,7 +151,8 @@ define([
       // get more
       this.spin.start();
       this.fetching = true;
-      rpc.post('/api/posts', {
+      rpc.post('/api/notifications/'
+          + this.app.profile.get('member').username, {
         limit: this.limit,
         cursor: this.latest_list.cursor,
       }, _.bind(function (err, data) {
@@ -150,13 +172,12 @@ define([
 
     // init pagination
     paginate: function () {
-      var wrap = $(window);
+      var wrap = this.$el.parent();
       var paginate = _.debounce(_.bind(function (e) {
         var pos = this.$el.height() - wrap.height() - wrap.scrollTop();
         if (!this.nomore && pos < -this.spin.target.height() / 2)
           this.more();
       }, this), 50);
-
       wrap.scroll(paginate).resize(paginate);
     },
 

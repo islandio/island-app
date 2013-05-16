@@ -28,7 +28,6 @@ var express = require('express');
 var mongodb = require('mongodb');
 var redis = require('redis');
 var RedisStore = require('connect-redis')(express);
-var Pusher = require('pusher');
 var request = require('request');
 var jade = require('jade');
 var stylus = require('stylus');
@@ -44,6 +43,7 @@ var Connection = require('./lib/db.js').Connection;
 var resources = require('./lib/resources');
 var service = require('./lib/service');
 var Mailer = require('./lib/mailer');
+var PubSub = require('./lib/pubsub');
 
 // Setup Environments
 var app = express();
@@ -81,8 +81,8 @@ Step(
       app.set('REDIS_PORT', 6379);
       app.set('CHANNELS', {all: 'island_test'});
 
-      // Pusher init
-      app.set('pusher', new Pusher({
+      // PubSub init
+      app.set('pubsub', new PubSub({
         appId: '43905',
         key: '37fea545f4a0ce59464c',
         secret: '1015c7f661849f639e49'
@@ -133,8 +133,8 @@ Step(
       app.set('REDIS_PORT', 6379);
       app.set('CHANNELS', {all: 'island'});
 
-      // Init Pusher
-      app.set('pusher', new Pusher({
+      // PubSub init
+      app.set('pubsub', new PubSub({
         appId: '35474',
         key: 'c260ad31dfbb57bddd94',
         secret: 'b29cec4949ef7c0d14cd'
