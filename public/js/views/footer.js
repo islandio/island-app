@@ -16,13 +16,11 @@ define([
       // Save app reference.
       this.app = app;
 
+      // Client-wide subscriptions
+      this.subscriptions = [];
     },
 
     render: function () {
-
-      // UnderscoreJS templating:
-      // this.$el.html(_.template(template).call(this)).show();
-
       return this;
     },
 

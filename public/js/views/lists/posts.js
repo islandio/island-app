@@ -33,11 +33,12 @@ define([
       this.spin = new Spin($('#posts-spin', this.parentView.el));
       this.spin.start();
 
-      // Shell subscriptions
-      this.subscriptions = [
-        this.app.socket.subscribe('posts').bind('new',
-            _.bind(this.collect, this)),
-      ];
+      // Client-wide subscriptions
+      this.subscriptions = [];
+
+      // Socket subscriptions
+      this.app.socket.subscribe('posts').bind('post.new',
+          _.bind(this.collect, this));
 
       // Reset the collection.
       this.latest_list = this.app.profile.get('content').posts;
@@ -117,6 +118,11 @@ define([
         _.delay(_.bind(function () {
           this.spin.stop();
           this.fetching = false;
+          if (list.items.length < this.limit) {
+            this.spin.target.hide();
+            $('.list-spin .empty-feed', this.$el.parent())
+                .css('display', 'block');
+          }
         }, this), (list.items.length + 1) * 30);
       }
 

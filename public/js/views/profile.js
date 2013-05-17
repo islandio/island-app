@@ -28,10 +28,8 @@ define([
       // Shell events:
       this.on('rendered', this.setup, this);
 
-      // Subscriptions:
-      // this.subscriptions = [
-      //   mps.subscribe('currency/investment', _.bind(this.investment, this))
-      // ];
+      // Client-wide subscriptions
+      this.subscriptions = [];
     },
 
     // Draw our template from the profile JSON.

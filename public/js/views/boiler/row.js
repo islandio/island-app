@@ -76,20 +76,5 @@ define([
       this.time.text(util.getRelativeTime(this.model.get('created')));
     },
 
-    _remove: function (e, topic, data) {
-      if (!this.model) return;
-      if (e || this.model.id === data.id)
-        this.$el.slideUp('fast', _.bind(function () {
-          this.parentView.views.splice(
-              this.model.collection.indexOf(this.model), 1);
-          this.model.collection.remove(this.model);
-          delete this.model;
-          clearInterval(this.timer);
-          this.remove();
-          mps.publish('notification/change', []);
-          this.parentView.checkHeight();
-        }, this));
-    },
-
   });
 });

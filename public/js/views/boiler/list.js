@@ -45,8 +45,8 @@ define([
     },
 
     renderLast: function (pagination) {
-      // if (this.collection.models.length === 1)
-      //   this.$el.empty();
+      if (this.collection.models.length === 1)
+        this.$('.empty-feed').remove();
       if (pagination !== true && this.collection.options &&
           this.collection.options.reverse) {
         this.row(this.collection.models[0]);

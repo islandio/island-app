@@ -758,15 +758,15 @@ a.resend-conf {
   transition: margin 0.3s;
 }
 #wrap.panel-open {
-  margin-right: 200px;
+  margin-right: 220px;
 }
 #panel {
   position: fixed;
   z-index: 1000;
   top: 0;
   bottom: 0;
-  right: -200px;
-  width: 200px;
+  right: -220px;
+  width: 220px;
   height: 100%;
   overflow-y: auto;
   background: #f2f2f2;
@@ -1469,7 +1469,7 @@ div.post-info {
   padding: 6px 5px 3px 5px;
 }
 .comment-body p {
-  padding: 0 40px 0 37px;
+  padding: 0 40px 0 40px;
   font-size: 11px;
   line-height: 15px;
   color: #666;
@@ -1482,7 +1482,7 @@ a.comment-avatar {
   display: inline-block;
   width: 32px;
   height: 32px;
-  margin: 5px 5px 0 5px;
+  margin: 5px 8px 0 5px;
   background: none;
 }
 a.comment-avatar:hover {
@@ -1531,7 +1531,7 @@ a.comment-author {
 .comment-info {
   position: relative;
   bottom: 0;
-  padding-left: 42px;
+  padding-left: 45px;
 }
 .comment-created {
   white-space: nowrap;
@@ -1554,7 +1554,7 @@ img.comment-image {
 }
 textarea.comment-input {
   display: block;
-  width: 430px;
+  width: 427px;
   background: #fff;
   resize: none;
   overflow: hidden;
@@ -1589,6 +1589,9 @@ textarea.comment-input {
   -o-animation-fill-mode: both;
   animation-fill-mode: both;
 }
+.notification.unread {
+  background: #fbfff0;
+}
 .notification:hover {
   background: #f2f2f2;
 }
@@ -1601,37 +1604,6 @@ textarea.comment-input {
   min-height: 32px;
   padding: 5px;
 }
-.notification-inner i.icon-up-hand {
-  float: left;
-  margin: 2px 0 0 5px;
-}
-.notification-inner i.icon-trash {
-  position: absolute;
-  display: none;
-  top: 11px;
-  right: 8px;
-  -webkit-animation-name: fadeIn;
-  -moz-animation-name: fadeIn;
-  -o-animation-name: fadeIn;
-  animation-name: fadeIn;
-  -webkit-animation-duration: 0.2s;
-  -moz-animation-duration: 0.2s;
-  -o-animation-duration: 0.2s;
-  animation-duration: 0.2s;
-  -webkit-animation-fill-mode: both;
-  -moz-animation-fill-mode: both;
-  -o-animation-fill-mode: both;
-  animation-fill-mode: both;
-}
-.notification-inner i.icon-trash:hover {
-  color: #f00;
-}
-.notification-inner i.icon-trash:active {
-  top: 12px;
-}
-.notification-inner:hover i.icon-trash {
-  display: block;
-}
 .notification-inner img {
   float: left;
   -webkit-border-radius: 2px 0 5px 0;
@@ -1641,16 +1613,23 @@ textarea.comment-input {
   border-radius: 2px 0 5px 0;
 }
 .notification-inner p {
-  max-width: 150px;
-  margin: 0 0 0 37px;
+  max-width: 145px;
+  margin: 0 0 0 40px;
   font-size: 10px;
-  line-height: 14px;
-  color: #666;
+  line-height: 13px;
+  color: #4d4d4d;
 }
-.notification-inner time {
+.notification-info {
   display: block;
   font-size: 8px;
-  margin: 3px 0 0 37px;
+  margin: 3px 0 0 40px;
+  color: #b3b3b3;
+}
+.notification-info a {
+  color: #b3b3b3;
+}
+span.info-divider {
+  font-size: 8px;
   color: #b3b3b3;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crags*/

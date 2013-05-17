@@ -19,7 +19,7 @@ define([
 
     fetching: false,
     nomore: false,
-    limit: 10,
+    limit: 5,
 
     // misc. init
     initialize: function (app, options) {
@@ -27,22 +27,27 @@ define([
       this.collection = new Collection;
       this.Row = Row;
 
+      // Call super init.
+      List.prototype.initialize.call(this, app, options);
+
+      // Client-wide subscriptions
+      this.subscriptions = [];
+
+      // Socket Subscriptions
+      this.channel = this.app.socket.subscribe('mem-'
+          + this.app.profile.get('member').key);
+      this.channel.bind('notification.new', _.bind(this.collect, this));
+      this.channel.bind('notification.read', _.bind(this.read, this));
+      this.channel.bind('notification.removed', _.bind(this._remove, this));
+
+      // Shell events
+      $(window).resize(_.debounce(_.bind(this.resize, this), 50));
+
       // Init the load indicator.
       this.spin = new Spin($('#notifications-spin', this.$el.parent()));
       this.spin.start();
   
-      // Shell events.
-      $(window).resize(_.debounce(_.bind(this.resize, this), 50));
-
-      // Shell subscriptions:
-      this.subscriptions = [
-        mps.subscribe('notification/new', _.bind(this.collect, this))
-      ];
-
-      // Call super init.
-      List.prototype.initialize.call(this, app, options);
-
-      // Reset the collection with the appropriate list.
+      // Reset the collection.
       this.latest_list = this.app.profile.get('content').notes;
       this.collection.reset(this.latest_list.items);
     },
@@ -50,6 +55,34 @@ define([
     // receive note from event bus
     collect: function (data) {
       this.collection.unshift(data);
+    },
+
+    // receive update from event bus
+    read: function (data) {
+      var view = _.find(this.views, function (v) {
+        return v.model.id === data.id;
+      });
+
+      if (view) {
+        view.update();
+        // mps.publish('notification/change', []);
+      }
+    },
+
+    // receive update from event bus
+    _remove: function (data) {
+      var view = _.find(this.views, function (v) {
+        return v.model.id === data.id;
+      });
+
+      if (view) {
+        this.views.splice(this.collection.indexOf(view.model), 1);
+        view._remove(_.bind(function () {
+          this.collection.remove(view.model);
+          this.checkHeight();
+        }, this));
+        // mps.publish('notification/change', []);
+      }
     },
 
     // initial bulk render of list
@@ -138,6 +171,11 @@ define([
         _.delay(_.bind(function () {
           this.spin.stop();
           this.fetching = false;
+          if (list.items.length < this.limit) {
+            this.spin.target.hide();
+            $('.list-spin .empty-feed', this.$el.parent())
+                .css('display', 'block');
+          }
         }, this), (list.items.length + 1) * 30);
       }
 
@@ -151,8 +189,8 @@ define([
       // get more
       this.spin.start();
       this.fetching = true;
-      rpc.post('/api/notifications/'
-          + this.app.profile.get('member').username, {
+      rpc.post('/api/notifications', {
+        subscriber_id: this.app.profile.get('member').id,
         limit: this.limit,
         cursor: this.latest_list.cursor,
       }, _.bind(function (err, data) {

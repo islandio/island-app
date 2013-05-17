@@ -24,11 +24,12 @@ define([
       // Call super init.
       List.prototype.initialize.call(this, app, options);
 
-      // Shell subscriptions
-      this.subscriptions = [
-        this.app.socket.subscribe('post-' + this.parentView.model.get('key'))
-            .bind('comment.new', _.bind(this.collect, this)),
-      ];
+      // Client-wide subscriptions
+      this.subscriptions = [];
+
+      // Socket subscriptions
+      this.app.socket.subscribe('post-' + this.parentView.model.get('key'))
+          .bind('comment.new', _.bind(this.collect, this));
 
       // Reset the collection.
       this.collection.reset(this.parentView.model.get('comments'));

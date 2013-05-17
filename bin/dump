@@ -1,0 +1,3 @@
+#!/bin/zsh
+
+mongodump --port 10020 --host linus.mongohq.com --username nodejitsu --password af8c37eb0e1a57c1e56730eb635f6093 --db nodejitsudb5582710115 --out /opt/backup/island

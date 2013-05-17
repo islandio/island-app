@@ -1,4 +1,3 @@
 #!/bin/zsh
 
-# mongodb://nodejitsu_sanderpick:2tibce5mvs61d0s4373kknogu7@ds051947.mongolab.com:51947/nodejitsu_sanderpick_nodejitsudb4770110165
-exec mongo --port 51947 --host ds051947.mongolab.com --username nodejitsu_sanderpick --password 2tibce5mvs61d0s4373kknogu7 nodejitsu_sanderpick_nodejitsudb4770110165
+exec mongo --port 10020 --host linus.mongohq.com --username nodejitsu --password af8c37eb0e1a57c1e56730eb635f6093 nodejitsudb5582710115

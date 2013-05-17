@@ -20,6 +20,9 @@ define([
       this.app = app;
       this.template = _.template(template);
       Row.prototype.initialize.call(this, options);
+
+      // Client-wide subscriptions
+      this.subscriptions = [];
     },
 
     events: {},

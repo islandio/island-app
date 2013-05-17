@@ -25,6 +25,9 @@ define([
 
       // Shell events:
       this.on('rendered', this.setup, this);
+
+      // Client-wide subscriptions
+      this.subscriptions = [];
     },
 
     // Draw our template from the profile JSON.

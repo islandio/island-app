@@ -10,15 +10,17 @@ define([
 
     _path: 'api/notifications/',
 
-    getNote: function () {
+    body: function () {
       var att = this.attributes;
-      if (att.event.data.a === 'commented on')
-        return '<strong>' + att.event.data.m + '</strong> '
-            + att.event.data.a + ' <strong>'
-            + util.blurb(att.event.data.k, 80) + '</strong>'
-            + ': "</strong>' + util.blurb(att.event.data.b.trim(), 80)
+      if (att.event.data.action.t === 'comment') {
+        var verb = 'commented on';
+        return '<strong>' + att.event.data.action.a + '</strong> '
+            + verb + ' <strong>'
+            + att.event.data.target.a + ' \'s</strong> '
+            + att.event.data.target.t
+            + ': "</strong>' + util.blurb(att.event.data.action.b.trim(), 20)
             + '"</strong>.';
-      else return '';
+      } else return '';
     }
 
   });
