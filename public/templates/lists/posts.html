@@ -1,5 +1,7 @@
-<% if (this.collection.models.length > 0) { %>
-  <% _.each(this.collection.models, _.bind(function (row) { %>
+<% if (this.collection.models.length === 0) { %>
+  <span class="empty-list">No Posts.</span>
+<% } else { %>
+  <% _.each(this.collection.models, _.bind(function(row) { %>
     <%= this.row(row) %>
-  <% }, this)); %>  
+  <% }, this)); %>
 <% } %>

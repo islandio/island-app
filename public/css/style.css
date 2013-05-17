@@ -635,7 +635,6 @@ a.signin-strategy-btn.from-login {
   line-height: 12px;
   max-width: 250px;
 }
-span.loading,
 span.empty-feed {
   display: inline-block;
   width: 100%;
@@ -643,6 +642,12 @@ span.empty-feed {
   font-style: italic;
   color: #808080;
   text-align: center;
+}
+span.empty-list {
+  display: inline-block;
+  margin: 0 0 10px 0;
+  font-style: italic;
+  color: #808080;
 }
 p.privacy {
   padding: 30px;
@@ -877,7 +882,7 @@ a.header-avatar:hover {
 }
 a#login {
   float: right;
-  margin-top: 2px;
+  margin-top: 12px;
 }
 a#login:hover {
   color: #1a1a1a;

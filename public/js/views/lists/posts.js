@@ -35,7 +35,7 @@ define([
 
       // Shell subscriptions
       this.subscriptions = [
-        this.app.socket.subscribe('post').bind('new',
+        this.app.socket.subscribe('posts').bind('new',
             _.bind(this.collect, this)),
       ];
 
@@ -58,7 +58,7 @@ define([
         }, this), (this.collection.length + 1) * 30);
       else {
         this.nomore = true;
-        $('<span class="loading">No posts.</span>').appendTo(this.$el);
+        $('<span class="empty-feed">No posts.</span>').appendTo(this.$el);
       }
       this.paginate();
       return this;
@@ -106,7 +106,7 @@ define([
             showingall.css('display', 'block');
           else {
             showingall.hide();
-            $('<span class="loading">No posts.</span>')
+            $('<span class="empty-feed">No posts.</span>')
                 .appendTo(this.$el);
           }
         } else
@@ -152,7 +152,8 @@ define([
     paginate: function () {
       var wrap = $(window);
       var paginate = _.debounce(_.bind(function (e) {
-        var pos = this.$el.height() - wrap.height() - wrap.scrollTop();
+        var pos = this.$el.height() + this.$el.offset().top
+            - wrap.height() - wrap.scrollTop();
         if (!this.nomore && pos < -this.spin.target.height() / 2)
           this.more();
       }, this), 50);

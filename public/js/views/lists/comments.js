@@ -27,7 +27,7 @@ define([
       // Shell subscriptions
       this.subscriptions = [
         this.app.socket.subscribe('post-' + this.parentView.model.get('key'))
-            .bind('new', _.bind(this.collect, this)),
+            .bind('comment.new', _.bind(this.collect, this)),
       ];
 
       // Reset the collection.
@@ -76,23 +76,22 @@ define([
       var payload = form.serializeObject();
 
       // Mock comment.
-      var member = this.app.profile.get('member');
       var data = {
         id: -1,
-        member: member,
+        author: this.app.profile.get('member'),
         body: payload.body,
         created: new Date().toISOString()
       };
 
       // Add the parent id.
-      payload.post_id = this.parentView.model.id;
+      payload.parent_id = this.parentView.model.id;
 
-      // Optimistically add comment to page:
+      // Optimistically add comment to page.
       this.collection.unshift(data);
       input.val('').keyup();
 
-      // Now save the comment to server:
-      rpc.post('/api/comments/' + member.username, payload,
+      // Now save the comment to server.
+      rpc.post('/api/comments/post', payload,
           _.bind(function (err, data) {
 
         if (err) {

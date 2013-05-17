@@ -43,7 +43,7 @@ var Connection = require('./lib/db.js').Connection;
 var resources = require('./lib/resources');
 var service = require('./lib/service');
 var Mailer = require('./lib/mailer');
-var PubSub = require('./lib/pubsub');
+var PubSub = require('./lib/pubsub').PubSub;
 
 // Setup Environments
 var app = express();
@@ -54,13 +54,22 @@ app.set('PORT', process.env.PORT || argv.port);
 // Facebook params
 app.set('facebook', {
   clientID: 203397619757208,
-  clientSecret: 'af79cdc8b5ca447366e87b12c3ddaed2'
+  clientSecret: 'af79cdc8b5ca447366e87b12c3ddaed2',
+  
+  ID: 203397619757208,
+  KEY: 203397619757208,
+  SECRET: 'af79cdc8b5ca447366e87b12c3ddaed2'
 });
 
 // Twitter params
 app.set('twitter', {
   consumerKey: 'ithvzW8h1tEsUBewL3jxQ',
-  consumerSecret: 'HiGnwoc8BBgsURlKshWsb1pGH8IQWE2Ve8Mqzz8'
+  consumerSecret: 'HiGnwoc8BBgsURlKshWsb1pGH8IQWE2Ve8Mqzz8',
+  
+  consumer_key: 'ithvzW8h1tEsUBewL3jxQ',
+  consumer_secret: 'HiGnwoc8BBgsURlKshWsb1pGH8IQWE2Ve8Mqzz8',
+  access_token_key: '213304250-VSHfh85LJA4a1lIX1vhk7Q1TyljF6kHYi0qQzdL6',
+  access_token_secret: 'Yr77Uo7n8uNRYjRwmCmgiPQF25jVQ6vjWyqHVGFNOg'
 });
 
 // Grade map
@@ -225,15 +234,15 @@ Step(
           var ei = 'production' === app.get('env') || argv.index;
           new Connection(app.get('MONGO_URI'), {ensureIndexes: ei}, this);
         },
-        function (err, db) {
+        function (err, connection) {
           if (err) {
             util.error(err);
             process.exit(1);
             return;
           }
 
-          // Attach a db ref to app.
-          app.set('db', db);
+          // Attach a connection ref to app.
+          app.set('connection', connection);
 
           // Init resources.
           resources.init(app);

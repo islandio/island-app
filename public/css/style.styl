@@ -24,7 +24,6 @@ mattegray = #f2f2f2
 standard = Verdana, Arial, sans-serif
 title = Title, Verdana, Arial, sans-serif
 
-
 border-radius()
   -webkit-border-radius arguments
   -moz-border-radius arguments
@@ -54,7 +53,8 @@ border-radius()
   font-weight normal
   font-style normal
  
- [class^="icon-"]:before, [class*=" icon-"]:before
+[class^="icon-"]:before,
+[class*=" icon-"]:before
   font-family "fontello"
   font-style normal
   font-weight normal
@@ -648,7 +648,6 @@ a.signin-strategy-btn.from-login
   line-height 12px
   max-width 250px
 
-span.loading,
 span.empty-feed
   display inline-block
   width 100%
@@ -656,6 +655,12 @@ span.empty-feed
   font-style italic
   color gray
   text-align center
+
+span.empty-list
+  display inline-block
+  margin 0 0 10px 0
+  font-style italic
+  color gray
 
 p.privacy
   padding 30px
@@ -893,7 +898,7 @@ a.header-avatar:hover
 
 a#login
   float right
-  margin-top 2px
+  margin-top 12px
 
 a#login:hover
   color #1a1a1a

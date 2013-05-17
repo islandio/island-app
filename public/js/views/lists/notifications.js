@@ -61,7 +61,7 @@ define([
         }, this), (this.collection.length + 1) * 30);
       else {
         this.nomore = true;
-        $('<span class="loading">No notifications.</span>').appendTo(this.$el);
+        $('<span class="empty-feed">No notifications.</span>').appendTo(this.$el);
       }
       this.paginate();
       return this;
@@ -127,7 +127,7 @@ define([
             showingall.css('display', 'block');
           else {
             showingall.hide();
-            $('<span class="loading">No notifications.</span>')
+            $('<span class="empty-feed">No notifications.</span>')
                 .appendTo(this.$el);
           }
         } else

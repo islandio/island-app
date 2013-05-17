@@ -21,15 +21,11 @@
     </div>
   <% } else { %>
     <a href="/login">
-      <span class="loading">Log in to comment.</span>
+      <span class="empty-list">Log in to comment.</span>
     </a>
   <% } %>
 </div>
-<% if (typeof loading !== 'undefined') { %>
-  <!-- <span class="loading"></span> -->
-<% } else if (this.collection.models.length === 0) { %>
-  <!-- <span class="loading"></span> -->
-<% } else { %>
+<% if (this.collection.models.length > 0) { %>
   <% _.each(this.collection.models, _.bind(function(row) { %>
     <%= this.row(row) %>
   <% }, this)); %>
