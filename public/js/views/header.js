@@ -19,7 +19,9 @@ define([
       this.app = app;
 
       // Client-wide subscriptions
-      this.subscriptions = [];
+      this.subscriptions = [
+
+      ];
     },
 
     render: function () {
@@ -48,9 +50,8 @@ define([
       if (this.app.profile && this.app.profile.get('member')) {
         
         // Shell subscriptions:
-        this.subscriptions = [
-          mps.subscribe('notification/change', _.bind(this.checkBeacon, this)),
-        ];
+        this.subscriptions.push(mps.subscribe('notification/change',
+            _.bind(this.checkBeacon, this)));
       }
     },
 
@@ -119,9 +120,9 @@ define([
     checkBeacon: function () {
       var unread = $('#panel .unread');
       if (unread.length > 0)
-        this.$('.mail-status').addClass('unread');
+        this.$('.count').text(unread.length).show();
       else
-        this.$('.mail-status').removeClass('unread');
+        this.$('.count').text('').hide();
     },
 
   });

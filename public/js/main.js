@@ -11,6 +11,7 @@ require.config({
     jQuery: 'libs/jquery/jquery',
     Underscore: 'libs/underscore/underscore',
     Backbone: 'libs/backbone/backbone',
+    Modernizr: 'libs/modernizr/modernizr',
     mps: 'libs/minpubsub/minpubsub',
     Pusher: 'libs/pusher/pusher',
     Spin: 'libs/spin/spin',
@@ -25,6 +26,9 @@ require.config({
     Backbone: {
       deps: ['jQuery', 'Underscore'],
       exports: 'Backbone'
+    },
+    Modernizr: {
+      exports: 'Modernizr'
     },
     mps: {
       deps: ['jQuery', 'Underscore'],

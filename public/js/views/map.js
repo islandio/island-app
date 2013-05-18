@@ -7,7 +7,8 @@ define([
   'Underscore',
   'Backbone',
   'mps',
-  'rpc'
+  'rpc',
+  'Modernizr'
 ], function ($, _, Backbone, mps, rpc) {
   return Backbone.View.extend({
 
@@ -19,6 +20,8 @@ define([
       // Save app reference.
       this.app = app;
 
+      // Client-wide subscriptions
+      this.subscriptions = [];
     },
 
     render: function () {
@@ -31,9 +34,12 @@ define([
       this.stopListening();
 
       // Do this once.
-      if (!this.mapped) this.map();
+      if (!this.mapped)
+        if (Modernizr.geolocation)
+          navigator.geolocation.getCurrentPosition(_.bind(this.map, this));
+        else this.map();
 
-      // Done rendering ... trigger setup.
+      // Trigger setup.
       this.setup();
 
       return this;
@@ -44,36 +50,26 @@ define([
 
       // Shell event.
       this.delegateEvents();
-
-      // Shell listeners / subscriptions.
-      // Do this here intead of init ... re-renders often.
-      if (this.app.profile && this.app.profile.get('member')) {
-        
-        // Shell events.
-        // this.app.profile.on('change:portfolio', _.bind(this.update, this));
-        
-        // Shell subscriptions:
-        // this.subscriptions = [
-          // mps.subscribe('topic', _.bind(this.fn, this)),
-        // ];
-
-      }
     },
 
     // Bind mouse events.
     events: {},
 
-    map: function () {
+    map: function (pos) {
       this.mapped = true;
+
+      var opts = {zoom: 3};
+      if (pos) {
+        opts.center_lat = pos.coords.latitude;
+        opts.center_lon = pos.coords.longitude;
+        opts.zoom = 8;
+      }
 
       // Setup the map.
       this.sql = new cartodb.SQL({user: 'island'});
       cartodb.createVis('map',
-        'http://island.cartodb.com/api/v1/viz/crags/viz.json', {
-        // center_lat: crag.data('lat'),
-        // center_lon: crag.data('lon'),
-        zoom: 3
-      }, function (vis, layers) {});
+          'http://island.cartodb.com/api/v1/viz/crags/viz.json', opts,
+          function (vis, layers) {});
 
     }
 

@@ -843,16 +843,17 @@ div.divider-vertical.pad-right
   margin-right 10px
 
 a.header-action
+  position relative
+  float left
   width 40px
   height 45px
   padding-top 5px
   text-align center
   line-height 40px
-  float left
   font-size 14px
 
 a.header-action span.unread
-  color blue
+  // color blue
 
 input.header-search
   float left
@@ -916,6 +917,36 @@ a#login:active
 
 a#login:focus
   border 1px solid #98c1e6
+
+span.count
+  display none
+  position absolute
+  left 19px
+  top 12px
+  padding 2px 3px
+  color white
+  background rgba(208,76,56, 0.8)
+  font-size 8px
+  line-height 8px
+  border-radius 5px
+  
+  box-shadow 1px 1px rgba(0,0,0,0.2)
+  -webkit-box-shadow 1px 1px rgba(0,0,0,0.2)
+  -moz-box-shadow 1px 1px rgba(0,0,0,0.2)
+
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration .2s
+  -moz-animation-duration .2s
+  -o-animation-duration .2s
+  animation-duration .2s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
+  
 
 /*-------------------------------------------------------------*/
 

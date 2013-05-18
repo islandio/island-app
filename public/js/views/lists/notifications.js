@@ -65,7 +65,7 @@ define([
 
       if (view) {
         view.update();
-        // mps.publish('notification/change', []);
+        mps.publish('notification/change', []);
       }
     },
 
@@ -81,7 +81,7 @@ define([
           this.collection.remove(view.model);
           this.checkHeight();
         }, this));
-        // mps.publish('notification/change', []);
+        mps.publish('notification/change', []);
       }
     },
 
