@@ -1693,6 +1693,7 @@ div.post
   display none
   margin 0 0 35px
   width 640px
+  min-height 55px
 
   -webkit-animation-name fadeIn
   -moz-animation-name fadeIn
@@ -1745,6 +1746,70 @@ div.post-info
   font-size 10px
   line-height 13px
   color lightgray
+
+div#post_input div.post
+  background #f9f9f9
+  border-radius 3px
+  padding-bottom 5px
+
+a.post-avatar
+  position relative
+  z-index 1
+  float left
+  display inline-block
+  width 50px
+  height 50px
+  margin 5px 8px 0 5px
+  background none
+
+a.post-avatar:hover
+  background none
+
+a.post-avatar img
+  -webkit-border-radius 3px 0 9px 0
+  -moz-border-radius 3px 0 9px 0
+  border-radius 3px 0 9px 0
+
+form.post-input-form
+  padding 5px 0 0 0
+
+textarea.post-input,
+textarea.comment-input
+  display block
+  width 559px
+  min-height 25px
+  background #fff
+  resize none
+  overflow hidden
+  font-size 12px
+
+  -webkit-border-radius 3px
+  -moz-border-radius 3px
+  border-radius 3px
+
+  -webkit-transition height 0.2s
+  -webkit-transition-timing-function height 0.2s
+  -moz-transition height 0.2s
+  -moz-transition-timing-function height 0.2s
+  transition height 0.2s
+  transition-timing-function height 0.2s
+
+  -webkit-transition min-height 0.2s
+  -webkit-transition-timing-function min-height 0.2s
+  -moz-transition min-height 0.2s
+  -moz-transition-timing-function min-height 0.2s
+  transition min-height 0.2s
+  transition-timing-function min-height 0.2s
+
+table.post-params
+  display none
+  margin 5px 0 0 63px
+
+table.post-params td
+  padding 0 20px 0 0
+
+table.post-params label
+  vertical-align -1px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––comments*/
 
@@ -1861,23 +1926,9 @@ img.comment-image
   margin 5px 0 0 0
 
 textarea.comment-input
-  display block
   width 427px
-  background #fff
-  resize none
-  overflow hidden
-
-  -webkit-border-radius 3px
-  -moz-border-radius 3px
-  border-radius 3px
-
-  -webkit-transition height 0.2s
-  -webkit-transition-timing-function height 0.2s
-  -moz-transition height 0.2s
-  -moz-transition-timing-function height 0.2s
-  transition height 0.2s
-  transition-timing-function height 0.2s
-
+  min-height auto
+  font-size 11px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––notifications*/
 

@@ -1,3 +1,43 @@
+<%
+  var member = this.app.profile.get('member');
+  var gravatar = member ? 'https://www.gravatar.com/avatar/'
+      + member.gravatar + '?s=50&d='
+      + encodeURIComponent(this.app.cloudFrontURL + '/main/img/avatar_100.png')
+      : null;
+%>
+
+<div id="post_input" class="list-header">
+  <% if (member) { %>
+    <div class="post">
+      <a href="/<%= member.username %>" class="post-avatar">
+        <img src=<%= gravatar %> width="50" height="50" />
+      </a>
+      <form enctype="multipart/form-data" method="POST" class="post-input-form">
+        <textarea name="body" class="post-input" 
+            placeholder="Post something cool every day."></textarea>
+        <table class="post-params">
+          <tr>
+            <td>
+              <input type="text" name="title" placeholder="Post title (optional)" style="width:200px;" />
+            </td>
+            <td>
+              <input id="toFacebook" name="toFacebook" type="checkbox" />
+              <label for="toFacebook">Post to Facebook</label>
+            </td>
+            <td>
+              <input id="toTwitter" name="toTwitter" type="checkbox" />
+              <label for="toTwitter">Tweet post</label>
+            </td>
+          </tr>
+        </table>
+      </form>
+    </div>
+  <% } else { %>
+    <a href="/login">
+      <span class="empty-list">Sign in to post.</span>
+    </a>
+  <% } %>
+</div>
 <% if (this.collection.models.length === 0) { %>
   <span class="empty-list">No Posts.</span>
 <% } else { %>

@@ -6,7 +6,7 @@
       : null;
 %>
 
-<div id="comment_input">
+<div id="comment_input" class="list-header">
   <% if (member) { %>
     <div class="comment">
       <a href="/<%= member.username %>" class="comment-avatar">
@@ -21,7 +21,7 @@
     </div>
   <% } else { %>
     <a href="/login">
-      <span class="empty-list">Log in to comment.</span>
+      <span class="empty-list">Sign in to comment.</span>
     </a>
   <% } %>
 </div>

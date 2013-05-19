@@ -34,16 +34,27 @@ html(lang="en")
       - });
     title= title
     <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-    link(rel='stylesheet', href='/css/style.css')
-    //- link(rel='stylesheet', href='https://d271mvlc6gc7bl.cloudfront.net/main/jplayer/skin/blue.monday/jplayer.blue.monday.css')
+    link(rel="stylesheet", href="/css/style.css")
+    //- link(rel="stylesheet", href="https://d271mvlc6gc7bl.cloudfront.net/main/jplayer/skin/blue.monday/jplayer.blue.monday.css")
     link(rel="stylesheet", href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.css")
     <!--[if lte IE 8]>link(rel="stylesheet", href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.ie.css")<![endif]-->
-    link(rel='shortcut icon', href='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/favicon.ico', type='image/x-icon')
+    link(rel="shortcut icon", href="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/favicon.ico", type="image/x-icon")
   body
     block content
     script(type="text/javascript", charset="utf-8", src="/js/libs/store/store.min.js")
-    script(type='text/javascript', src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js")
-    //- bootstrap all JS here
+    - if (typeof member !== 'undefined')
+      script
+        if (window.store) {
+          var notesOpen = store.get('notesOpen');
+          if (notesOpen) {
+            var p = document.getElementById('panel');
+            var w = document.getElementById('wrap');
+            p.className = p.className + ' open';
+            w.className = w.className + ' panel-open';
+          }
+        }
+    script(src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js")
+    //- script(charset="utf-8", src="/{{ version }}/js/min.js")
     script(type="text/javascript", charset="utf-8", data-main="/js/main", src="/js/libs/require/require.js")
     script(type="text/javascript")
       var _gaq = _gaq || [];
@@ -56,6 +67,5 @@ html(lang="en")
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
 
-//- script(type='text/javascript', src='https://d271mvlc6gc7bl.cloudfront.net/main/jwplayer/jwplayer.js')
-//- script(type='text/javascript', src='https://d271mvlc6gc7bl.cloudfront.net/main/jplayer/js/jquery.jplayer.min.js')
-//- script(type='text/javascript', src='//assets.transloadit.com/js/jquery.transloadit2.js')
+//- script(type="text/javascript", src="https://d271mvlc6gc7bl.cloudfront.net/main/jwplayer/jwplayer.js")
+//- script(type="text/javascript", src="https://d271mvlc6gc7bl.cloudfront.net/main/jplayer/js/jquery.jplayer.min.js")

@@ -57,50 +57,17 @@ define([
 
     // Bind mouse events.
     events: {
-      // 'click #logo': 'home',
-      // 'click #login': 'login',
-      // 'click #logout': 'logout',
+      'click #logo': 'home',
       'click #globe': 'togglePanel'
     },
 
-    // home: function (e) {
-    //   e.preventDefault();
+    home: function (e) {
+      e.preventDefault();
 
-    //   // Route to home:
-    //   this.app.router.navigate('/', {trigger: true});
+      // Route to home:
+      this.app.router.navigate('/', {trigger: true});
     
-    // },
-
-    // login: function (e) {
-    //   e.preventDefault();
-
-    //   // Route to login:
-    //   this.app.router.navigate('/login', {trigger: true});
-    
-    // },
-
-    // logout: function (e) {
-    //   e.preventDefault();
-
-    //   // Logout (kill db session):
-    //   rpc.execute('/service/person.logout', {}, {
-    //     success: _.bind(function (data) {
-
-    //       // Delete the app profile:
-    //       this.app.update({});
-
-    //       // Route to login:
-    //       this.app.router.navigate('/login', {trigger: true});
-
-    //     }, this),
-
-    //     error: function (x) {
-
-    //       // TODO: render 404.
-    //       console.warn(x);
-    //     }
-    //   });
-    // },
+    },
 
     togglePanel: function (e) {
       var panel = $('#panel');
@@ -114,7 +81,9 @@ define([
         panel.addClass('open');
         store.set('notesOpen', true);
       }
-      mps.publish('panel/click', [{open: store.get('notesOpen')}]);
+      _.delay(function () {
+        $(window).resize();
+      }, 500);
     },
 
     checkBeacon: function () {

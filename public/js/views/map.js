@@ -6,10 +6,10 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
+  'Modernizr',
   'mps',
-  'rpc',
-  'Modernizr'
-], function ($, _, Backbone, mps, rpc) {
+  'rpc'
+], function ($, _, Backbone, Modernizr, mps, rpc) {
   return Backbone.View.extend({
 
     el: '#map',
@@ -70,7 +70,6 @@ define([
       cartodb.createVis('map',
           'http://island.cartodb.com/api/v1/viz/crags/viz.json', opts,
           function (vis, layers) {});
-
     }
 
   });

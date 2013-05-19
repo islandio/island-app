@@ -36,8 +36,8 @@ define([
       }, this), single ? 0 : d);
       if (single)
         if (prepend) {
-          if (this.parentView.$('#comment_input').length !== 0)
-            this.$el.insertAfter(this.parentView.$('#comment_input'));
+          if (this.parentView.$('.list-header').length !== 0)
+            this.$el.insertAfter(this.parentView.$('.list-header'));
           else
             this.$el.prependTo(this.parentView.$el);
         } else

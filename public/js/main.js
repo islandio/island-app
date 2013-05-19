@@ -5,7 +5,7 @@
 // Application configuration used for local dev
 // and our GruntJS build process.
 require.config({
-  
+
   // Library paths:
   paths: {
     jQuery: 'libs/jquery/jquery',
@@ -16,8 +16,9 @@ require.config({
     Pusher: 'libs/pusher/pusher',
     Spin: 'libs/spin/spin',
     swfobject: 'libs/swfobject/swfobject',
+    // cartodb: 'libs/cartodb/cartodb'
   },
-  
+
   // Dependency mapping:
   shim: {
     Underscore: {
@@ -43,6 +44,9 @@ require.config({
     swfobject: {
       exports: 'swfobject'
     },
+    // cartodb: {
+    //   exports: 'cartodb'
+    // },
   }
 });
 

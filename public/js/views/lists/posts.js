@@ -77,10 +77,37 @@ define([
       return this;
     },
 
+    events: {
+      'focus textarea[name="body"]': 'focus',
+      'blur textarea[name="body"]': 'blur'
+    },
+
     // misc. setup
     setup: function () {
-      this.spin.stop();
-      List.prototype.setup.call(this);
+
+      // Autogrow the write comment box.
+      this.$('textarea[name="body"]').autogrow();
+
+      // Show the write comment box.
+      this.$('#post_input .post').show();
+
+      return List.prototype.setup.call(this);
+    },
+
+    focus: function (e) {
+      var input = $(e.target);
+      if (input.val().trim() === '') {
+        input.css({'min-height': '80px'});
+        this.$('.post-params').show();
+      }
+    },
+
+    blur: function (e) {
+      // var input = $(e.target);
+      // if (input.val().trim() === '') {
+      //   input.css({'min-height': '25px'});
+      //   this.$('.post-params').hide();
+      // }
     },
 
     // check the panel's empty space and get more
