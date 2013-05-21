@@ -406,5 +406,12 @@ define([
       return obj;
     },
 
+    sanitize: function(str) {
+      str = str.replace(/\<script\>/ig, '');
+      str = str.replace(/\<\/script\>/ig, '');
+      str = $('<p>').html(str).text().trim();
+      return str;
+    },
+
   }
 });

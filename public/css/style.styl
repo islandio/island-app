@@ -291,6 +291,17 @@ a::-moz-focus-inner, button::-moz-focus-inner
 a.like
   color blue
 
+a.important
+  background rgba(75, 184, 215, 0.25)
+
+a.important:hover,
+a.important.hover
+  background rgba(75, 184, 215, 0.5)
+
+a.important:active,
+a.important.active
+  background rgba(75, 184, 215, 0.7)
+
 span.like-wrap
   float right
 
@@ -373,7 +384,7 @@ input[type=checkbox], input[type=radio]
   display inline
 
 input[type=text]:not(.text),
-input[type=search]
+input[type=search],
 input[type=password]
   -moz-appearance none
   -moz-font-smoothing antialiased
@@ -391,7 +402,8 @@ input[type=password]
   border 1px solid bordergray
   border-radius 3px
 
-input[type=text].from-login, input[type=password].from-login
+input[type=text].from-login,
+input[type=password].from-login
   border 1px solid black
   color #333
   background rgba(252, 252, 251, 0.65)
@@ -420,8 +432,6 @@ input[type=submit]:not(.submit)
   font-size 11px
   padding 0 8px
   font-weight bold
-  -moz-border-radius 2px
-  -webkit-border-radius 2px
   border-radius 2px
 
   min-width 48px
@@ -1059,19 +1069,17 @@ span.count
   border 1px solid orange !important
 
 #buy-post
-  background #b1dc36;
-  color #404040;
-  border 1px solid #404040;
+  background #b1dc36
+  color #404040
+  border 1px solid #404040
 
 #buy-post:hover
-  color #1a1a1a;
-  border 1px solid #1a1a1a;
+  color #1a1a1a
+  border 1px solid #1a1a1a
 
 .action-button
   float right
   margin-top 12px
-
-
 
 .is-input-alert
   border 1px solid orange !important
@@ -1693,7 +1701,6 @@ div.post
   display none
   margin 0 0 35px
   width 640px
-  min-height 55px
 
   -webkit-animation-name fadeIn
   -moz-animation-name fadeIn
@@ -1747,44 +1754,76 @@ div.post-info
   line-height 13px
   color lightgray
 
-div#post_input div.post
-  background #f9f9f9
-  border-radius 3px
-  padding-bottom 5px
-
 a.post-avatar
   position relative
   z-index 1
   float left
   display inline-block
-  width 50px
-  height 50px
-  margin 5px 8px 0 5px
+  width 36px
+  height 36px
+  margin 0 8px 0 -36px
   background none
 
 a.post-avatar:hover
   background none
 
 a.post-avatar img
-  -webkit-border-radius 3px 0 9px 0
-  -moz-border-radius 3px 0 9px 0
-  border-radius 3px 0 9px 0
+  border-radius 3px 0 0 3px
 
-form.post-input-form
-  padding 5px 0 0 0
+div.post-input-wrap
+  background #f9f9f9
+  border-radius 0 3px 3px 3px
+  padding 5px
+
+div#post_dnd
+  display inline-block
+  border 1px solid bordergray
+  border-radius 3px
+
+div#post_dnd.focus
+  border 1px solid #404040
+
+div#post_dnd.dragging
+  border 1px solid pink
+
+  -moz-box-shadow 0 0 4px rgba(209, 43, 131, 0.5)
+  -webkit-box-shadow 0 0 4px rgba(209, 43, 131, 0.5)
+  box-shadow 0 0 4px rgba(209, 43, 131, 0.5)
+
+div#post_select
+  display none
+  position relative
+  padding 5px
+  color #666
+  border-top 1px dashed bordergray
+  background #fcfcfc
+  border-radius 0 0 3px 3px
+
+div#post_files
+  display none
+  margin-top 5px
+
+div#post_files span
+  font-weight bold
+  line-height 16px
+  display block
+
+input#file_chooser
+  position absolute
+  opacity 0.0001
+  cursor pointer
+  width 240px
+  left 192px
 
 textarea.post-input,
 textarea.comment-input
   display block
-  width 559px
-  min-height 25px
+  width 614px
   background #fff
   resize none
   overflow hidden
   font-size 12px
 
-  -webkit-border-radius 3px
-  -moz-border-radius 3px
   border-radius 3px
 
   -webkit-transition height 0.2s
@@ -1801,15 +1840,164 @@ textarea.comment-input
   transition min-height 0.2s
   transition-timing-function min-height 0.2s
 
-table.post-params
-  display none
-  margin 5px 0 0 63px
+textarea.post-input
+  border none
 
-table.post-params td
+table#post_params
+  display none
+  width 624px
+  margin 8px 0 0 3px
+
+table#post_params td
   padding 0 20px 0 0
 
-table.post-params label
+table#post_params td.last
+  width 160px
+  padding 0
+  text-align right
+
+table#post_params label
   vertical-align -1px
+
+#post_button
+  width 80px
+  background blue
+  color #404040
+  border 1px solid #404040
+
+#post_button:hover:not(.disabled)
+  color #1a1a1a
+  border 1px solid #1a1a1a
+
+  -moz-box-shadow 0 0 2px rgba(0, 0, 0, 0.4)
+  -webkit-box-shadow 0 0 2px rgba(0, 0, 0, 0.4)
+  box-shadow 0 0 2px rgba(0, 0, 0, 0.4)
+
+#post_button:active:not(.disabled)
+  -moz-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.5)
+  -webkit-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.5)
+  box-shadow inset 0 0 2px rgba(0, 0, 0, 0.5)
+
+#post_button:focus:not(.disabled)
+  color #1a1a1a
+  border 1px solid #1a1a1a
+
+  -moz-box-shadow 0 0 2px rgba(0, 0, 0, 0.4)
+  -webkit-box-shadow 0 0 2px rgba(0, 0, 0, 0.4)
+  box-shadow 0 0 2px rgba(0, 0, 0, 0.4)
+
+#post_button.disabled
+  background-color #F1F1F1
+  color #4d4d4d
+  border 1px solid #A8A8A8
+
+#post_progress_wrap
+  position relative
+  display none
+  width 622px
+  height 24px
+  color #666
+  border-top 1px dashed bordergray
+  background #fcfcfc
+  border-radius 0 0 3px 3px
+
+#post_progress
+  height 100%
+  width 0%
+
+  background-color rgba(75, 184, 215, 0.6)
+  content ""
+  position absolute
+  top 0
+  left 0
+  bottom 0
+  right 0
+  background-image: 
+     -webkit-gradient(linear, 0 0, 100% 100%, 
+        color-stop(.25, rgba(255, 255, 255, .2)), 
+        color-stop(.25, transparent), color-stop(.5, transparent), 
+        color-stop(.5, rgba(255, 255, 255, .2)), 
+        color-stop(.75, rgba(255, 255, 255, .2)), 
+        color-stop(.75, transparent), to(transparent)
+     );
+  background-image: 
+    -webkit-linear-gradient(
+      -45deg, 
+        rgba(255, 255, 255, .2) 25%, 
+        transparent 25%, 
+        transparent 50%, 
+        rgba(255, 255, 255, .2) 50%, 
+        rgba(255, 255, 255, .2) 75%, 
+        transparent 75%, 
+        transparent
+     );
+  background-image: 
+    -moz-linear-gradient(
+      -45deg, 
+        rgba(255, 255, 255, .2) 25%, 
+        transparent 25%, 
+        transparent 50%, 
+        rgba(255, 255, 255, .2) 50%, 
+        rgba(255, 255, 255, .2) 75%, 
+        transparent 75%, 
+        transparent
+     );
+  background-image: 
+    -ms-linear-gradient(
+      -45deg, 
+        rgba(255, 255, 255, .2) 25%, 
+        transparent 25%, 
+        transparent 50%, 
+        rgba(255, 255, 255, .2) 50%, 
+        rgba(255, 255, 255, .2) 75%, 
+        transparent 75%, 
+        transparent
+     );
+  background-image: 
+    -o-linear-gradient(
+      -45deg, 
+        rgba(255, 255, 255, .2) 25%, 
+        transparent 25%, 
+        transparent 50%, 
+        rgba(255, 255, 255, .2) 50%, 
+        rgba(255, 255, 255, .2) 75%, 
+        transparent 75%, 
+        transparent
+     );
+  z-index 1
+
+  -webkit-background-size 20px 20px
+  -moz-background-size 20px 20px
+  background-size 20px 20px
+
+  -webkit-transition width 0.2s
+  -webkit-transition-timing-function width 0.2s
+  -moz-transition width 0.2s
+  -moz-transition-timing-function width 0.2s
+  transition width 0.2s
+  transition-timing-function width 0.2s
+
+#post_progress_txt
+  position relative
+  color #1a1a1a
+  font-weight bold
+  line-height 24px
+  text-align right
+  margin 0 5px
+  white-space nowrap
+
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration .2s
+  -moz-animation-duration .2s
+  -o-animation-duration .2s
+  animation-duration .2s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––comments*/
 
@@ -1865,9 +2053,7 @@ a.comment-avatar:hover
   background none
 
 a.comment-avatar img
-  -webkit-border-radius 3px 0 9px 0
-  -moz-border-radius 3px 0 9px 0
-  border-radius 3px 0 9px 0
+  border-radius 3px
 
 a.comment-avatar-small
   display block
@@ -1878,8 +2064,6 @@ a.comment-avatar-small
   padding-bottom 10px
 
 a.comment-avatar-small img
-  -webkit-border-radius 2px 0 5px 0
-  -moz-border-radius 2px 0 5px 0
   border-radius 2px 0 5px 0
 
 a.comment-avatar-small:hover
@@ -1927,7 +2111,6 @@ img.comment-image
 
 textarea.comment-input
   width 427px
-  min-height auto
   font-size 11px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––notifications*/

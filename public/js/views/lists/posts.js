@@ -8,11 +8,12 @@ define([
   'views/boiler/list',
   'mps',
   'rpc',
+  'util',
   'text!../../../templates/lists/posts.html',
   'collections/posts',
   'views/rows/post',
   'Spin'
-], function ($, _, List, mps, rpc, template, Collection, Row, Spin) {
+], function ($, _, List, mps, rpc, util, template, Collection, Row, Spin) {
   return List.extend({
     
     el: '#posts',
@@ -20,6 +21,8 @@ define([
     fetching: false,
     nomore: false,
     limit: 3,
+    attachments: false,
+    uploading: false,
 
     initialize: function (app, options) {
       this.template = _.template(template);
@@ -78,36 +81,227 @@ define([
     },
 
     events: {
-      'focus textarea[name="body"]': 'focus',
-      'blur textarea[name="body"]': 'blur'
+      'focus textarea[name="body"].post-input': 'focus',
+      'blur textarea[name="body"].post-input': 'blur'
     },
 
     // misc. setup
     setup: function () {
 
+      // Save refs
+      this.postForm = this.$('#post_input_form');
+      this.postBody = $('textarea[name="body"]', this.postForm);
+      this.postTitle = this.$('input[name="title"]', this.postForm);
+      this.postButton = this.$('#post_button', this.postForm);
+      this.dropZone = this.$('#post_dnd');
+      this.postParams = this.$('#post_params');
+      this.postSelect = this.$('#post_select');
+      this.postFiles = this.$('#post_files');
+      this.postProgressWrap = this.$('#post_progress_wrap');
+      this.postProgress = this.$('#post_progress');
+      this.postProgressTxt = this.$('#post_progress_txt');
+
       // Autogrow the write comment box.
-      this.$('textarea[name="body"]').autogrow();
+      this.postBody.autogrow().on('keyup', _.bind(this.validate, this));
 
       // Show the write comment box.
       this.$('#post_input .post').show();
 
+      // Add mouse events for dummy file selector.
+      var dummy = this.$('#file_chooser_dummy');
+      this.$('#file_chooser').on('mouseover', function (e) {
+        dummy.addClass('hover');
+      })
+      .on('mouseout', function (e) {
+        dummy.removeClass('hover');
+      })
+      .on('mousedown', function (e) {
+        dummy.addClass('active');
+      })
+      .change(_.bind(this.drop, this));
+      $(document).on('mouseup', function (e) {
+        dummy.removeClass('active');
+      });
+
+      // Drag & drop events.
+      this.dropZone.on('dragover', _.bind(this.dragover, this))
+          .on('dragleave', _.bind(this.dragout, this))
+          .on('drop', _.bind(this.drop, this));
+
+      // Submit post.
+      this.postButton.click(_.bind(this.submit, this, null))
+      this.postButton.click(_.bind(this.begin, this));
+
       return List.prototype.setup.call(this);
     },
 
+    validate: function (e) {
+      if (!this.attachments) {
+        if (this.postBody.val().trim() === '') {
+          if (!this.postButton.hasClass('disabled'))
+            this.postButton.addClass('disabled').attr('disabled', 'disabled');
+        } else {
+          if (this.postButton.hasClass('disabled'))
+            this.postButton.removeClass('disabled').attr('disabled', false);
+        }
+      } else {
+        if (this.postButton.hasClass('disabled'))
+          this.postButton.removeClass('disabled').attr('disabled', false);
+      }
+    },
+
+    dragover: function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+      e.originalEvent.dataTransfer.dropEffect = 'copy';
+      this.dropZone.addClass('dragging');
+    },
+
+    dragout: function (e) {
+      this.dropZone.removeClass('dragging');
+    },
+
+    drop: function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+
+      // Stop drag styles.
+      this.dropZone.removeClass('dragging');
+      this.focus();
+      this.postBody.focus();
+
+      // Get the files, if any.
+      var files = e.target.files || e.originalEvent.dataTransfer.files;
+      if (files.length === 0) {
+        this.attachments = false;
+        this.postForm.unbind('submit.transloadit');
+        return;
+      }
+      this.attachments = true;
+      this.validate();
+      var data = e.target.files ? null:
+          new FormData(this.postForm.get(0));
+
+      // Loop over each file, adding it the the display
+      // and from data object, if present.
+      var list = [];
+      _.each(files, function (file) {
+        list.push('<span>- ', file.name + ' ('
+            + util.addCommas(file.size) + ' bytes)', '</span>');
+        if (data && typeof file === 'object') data.append('file', file);
+      });
+      this.postFiles.html(list.join('')).show();
+
+      // Transloadit options
+      var opts = {
+        wait: true,
+        autoSubmit: false,
+        modal: false,
+        onProgress: _.bind(this.progress, this),
+        onError: function(assembly) {
+          console.log(assembly.error + ': ' + assembly.message);
+        },
+        onSuccess: _.bind(this.submit, this)
+      };
+
+      // Use formData object if exists (dnd only)
+      if (data) opts.formData = data;
+
+      // Bind the submit button to transloadit.
+      this.postButton.unbind('click');
+      this.postButton.click(_.bind(this.begin, this));
+      this.postForm.transloadit(opts);
+    },
+
+    begin: function (e) {
+      this.uploading = true;
+      this.postButton.addClass('disabled').attr('disabled', 'disabled');
+      if (this.attachments) {
+        this.postSelect.hide();
+        this.postProgressWrap.show();
+        this.postForm.submit();
+      }
+
+      return true;
+    },
+
+    progress: function(br, be) {
+      if (be === 0) return;
+      var per = Math.ceil(br / be * 100);
+      this.postProgressTxt.text(per === 100 ? 'Processing...':
+          'Uploading ' + per + '%');
+      if (this.postProgress.width() > 100
+          && !this.postProgressTxt.is(':visible')) this.postProgressTxt.show();
+      this.postProgress.width((br / be * 100) + '%');
+    },
+
+    submit: function (assembly, e) {
+      if (e) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
+
+      // Error checks
+      if (assembly) {
+        if (assembly.ok !== 'ASSEMBLY_COMPLETED')
+          return this.postProgressTxt.text('Upload failed. Please try again.');
+        if (_.isEmpty(assembly.results))
+          return this.postProgressTxt.text('You must choose a file.');
+        this.postProgressTxt.text('Complete');
+      }
+
+      // Sanitize html fields.
+      this.postTitle.val(util.sanitize(this.postTitle.val()));
+      this.postBody.val(util.sanitize(this.postBody.val()));
+
+      // Gather form data.
+      var payload = this.postForm.serializeObject();
+
+      delete payload.params;
+      payload.assembly = assembly;
+
+      console.log(payload);
+      return;
+
+      // Now save the comment to server.
+      rpc.post('/api/posts', payload,
+          _.bind(function (err, data) {
+
+        // Clear fields.
+        this.postTitle.val('');
+        this.postBody.val('');
+        this.uploading = false;
+        this.postProgressWrap.hide();
+        this.postProgress.width(0);
+        this.postProgressTxt.text('Waiting...');
+        this.postBody.focus();
+
+        if (err) {
+
+          // Oops, comment wasn't created.
+          console.log('TODO: Retry, notify user, etc.');
+          return;
+        }
+
+        // Add new post to collection.
+        //
+
+      }, this));
+
+      return false;
+    },
+
     focus: function (e) {
-      var input = $(e.target);
-      if (input.val().trim() === '') {
-        input.css({'min-height': '80px'});
-        this.$('.post-params').show();
+      this.postBody.css({'min-height': '60px'});
+      this.dropZone.addClass('focus');
+      if (!this.uploading) {
+        this.postParams.show();
+        this.postSelect.show();
       }
     },
 
     blur: function (e) {
-      // var input = $(e.target);
-      // if (input.val().trim() === '') {
-      //   input.css({'min-height': '25px'});
-      //   this.$('.post-params').hide();
-      // }
+      this.dropZone.removeClass('focus');
     },
 
     // check the panel's empty space and get more
@@ -163,7 +357,7 @@ define([
       // get more
       this.spin.start();
       this.fetching = true;
-      rpc.post('/api/posts', {
+      rpc.post('/api/posts/list', {
         limit: this.limit,
         cursor: this.latest_list.cursor,
       }, _.bind(function (err, data) {

@@ -189,7 +189,7 @@ define([
       // get more
       this.spin.start();
       this.fetching = true;
-      rpc.post('/api/notifications', {
+      rpc.post('/api/notifications/list', {
         subscriber_id: this.app.profile.get('member').id,
         limit: this.limit,
         cursor: this.latest_list.cursor,
