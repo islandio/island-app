@@ -3,9 +3,6 @@ extends index
 block main
   - var websites = data.website ? data.website.split('\n') : null;
   div.leftside
-    - if (member && member._id.toString() === data._id.toString())
-      a.button.action-button(href='/settings/' + member.key) 
-        | Edit Profile
     div.obj-title
       span.slash
         | /
@@ -16,7 +13,7 @@ block main
           =data.hometown.name
         - else
           | Earth
-    div.obj-holder.member-picture
+    div.obj-holder.member-picture.matte
       - if (!data.image) {
         - data.image = { meta: { width: 640, height: 288 }};
         - if (!data.gender || 'male' === data.gender)
@@ -42,43 +39,33 @@ block main
       img.masked(src=data.image.cf_url, width=w, height=h, style=(t + l))
     div.obj-desc.matte
       img.left(src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-obj-info.gif", alt="info", align="top")
-      div.obj-desc-txt-wrap.profile-info
-        div.member-info
-          ul
-            - if (data.description)
-              li
-                p(style='margin:0 0 5px; font-size:10px;') #{data.description}
-            li
-              | // #{data.displayName} is a 
-              - if (data.birthday)
-                span.member-info-content.birthday #{data.birthday} 
-                span &nbsp;year old 
-              - if (data.gender)
-                span.member-info-content #{data.gender.toLowerCase()} 
-              - else
-                span.member-info-content human 
-              | living in 
-              - if (data.location && data.location.name !== '')
-                span.member-info-content #{data.location.name}
-              - else
-                span.member-info-content Milky Way Galaxy
-              | .
-            - if (websites)
-              li
-                | // 
-                span More from #{data.displayName} at 
-                span.member-info-content
-                  - websites.forEach(function (site, i) {
-                    - if (site !== '') {
-                      - if (!site.match(/^http:\/\/|https:\/\//)) site = 'http://' + site;
-                      a(href=site, target="_blank") #{site}
-                      - if (i !== websites.length - 1)
-                        | , 
-                    - }
-                  - })
-        h3.obj-details(data-date=data.created.toString(), data-type="profile", data-role=data.role)
-    #posts
+      div#profile_info.obj-desc-txt-wrap.profile-info
+        - if ((data.description && data.description !== "") || websites)
+          div.member-info
+            ul
+              - if (data.description && data.description !== "")
+                li
+                  p#profile_bio #{data.description}
+              - if (websites)
+                li
+                  | // 
+                  span More from #{data.displayName} at 
+                  span.member-info-content
+                    - websites.forEach(function (site, i) {
+                      - if (site !== '') {
+                        - if (!site.match(/^http:\/\/|https:\/\//)) site = 'http://' + site;
+                        a(href=site, target="_blank") #{site}
+                        - if (i !== websites.length - 1)
+                          | , 
+                      - }
+                    - })
+        h3.obj-details Member since #{data.created.getMonth() + 1}/#{data.created.getFullYear()}
+    div#posts
+    div.list-spin
+      div#posts-spin
+      span.empty-feed Showing all.
   div.rightside
-    h1.title-right / Recent Comments
-    #comments
+    h1.title-right / Activity
+    br
+    span.empty-list ...will go here :)
   div.clear

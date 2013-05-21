@@ -5,6 +5,11 @@ block content
     header#header
       include header
     div#map
+      div#map_control
+        div
+          a.button.split-left#hide_show(href="javascript:;") Hide map
+          a.button.split-right#less_more(href="javascript:;") More map
+      div#map_inner
     div#content
       div#main
         block main

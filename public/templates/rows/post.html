@@ -1,9 +1,10 @@
 <div class="post-title">
   <%= this.model.date() %> | 
-  <a href="/<%= this.model.get('author').username %>" target="_blank">
-    <%= this.model.get('author').displayName %></a> / 
-  <a href="/<%= this.model.get('key') %>" target="_blank">
-    <%= this.model.get('title') %></a>
+  <a href="/<%= this.model.get('author').username %>">
+    <%= this.model.get('author').displayName %></a> 
+  <% if (this.model.get('title')) { %>
+    / <%= this.model.get('title') %>
+  <% } %>
 </div>
 <div class="post-mosaic matte">
   <img class="mask" width="640" style="top:0;" 

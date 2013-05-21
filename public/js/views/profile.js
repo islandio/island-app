@@ -38,6 +38,11 @@ define([
       // Use a model for the main content.
       this.model = new Member(this.app.profile.get('content').member);
 
+      // Format the bio paragraph.
+      var bio = this.$('#profile_bio');
+      bio.html(util.formatText(bio.text()));
+      this.$('#profile_info').show();
+
       // Done rendering ... trigger setup.
       this.trigger('rendered');
 

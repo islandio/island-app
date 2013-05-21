@@ -88,49 +88,52 @@ define([
     // misc. setup
     setup: function () {
 
-      // Save refs
-      this.postForm = this.$('#post_input_form');
-      this.postBody = $('textarea[name="body"]', this.postForm);
-      this.postTitle = this.$('input[name="title"]', this.postForm);
-      this.postButton = this.$('#post_button', this.postForm);
-      this.dropZone = this.$('#post_dnd');
-      this.postParams = this.$('#post_params');
-      this.postSelect = this.$('#post_select');
-      this.postFiles = this.$('#post_files');
-      this.postProgressWrap = this.$('#post_progress_wrap');
-      this.postProgress = this.$('#post_progress');
-      this.postProgressTxt = this.$('#post_progress_txt');
+      if (this.app.profile.get('transloadit')) {
 
-      // Autogrow the write comment box.
-      this.postBody.autogrow().on('keyup', _.bind(this.validate, this));
+        // Save refs
+        this.postForm = this.$('#post_input_form');
+        this.postBody = $('textarea[name="body"]', this.postForm);
+        this.postTitle = this.$('input[name="title"]', this.postForm);
+        this.postButton = this.$('#post_button', this.postForm);
+        this.dropZone = this.$('#post_dnd');
+        this.postParams = this.$('#post_params');
+        this.postSelect = this.$('#post_select');
+        this.postFiles = this.$('#post_files');
+        this.postProgressWrap = this.$('#post_progress_wrap');
+        this.postProgress = this.$('#post_progress');
+        this.postProgressTxt = this.$('#post_progress_txt');
 
-      // Show the write comment box.
-      this.$('#post_input .post').show();
+        // Autogrow the write comment box.
+        this.postBody.autogrow().on('keyup', _.bind(this.validate, this));
 
-      // Add mouse events for dummy file selector.
-      var dummy = this.$('#file_chooser_dummy');
-      this.$('#file_chooser').on('mouseover', function (e) {
-        dummy.addClass('hover');
-      })
-      .on('mouseout', function (e) {
-        dummy.removeClass('hover');
-      })
-      .on('mousedown', function (e) {
-        dummy.addClass('active');
-      })
-      .change(_.bind(this.drop, this));
-      $(document).on('mouseup', function (e) {
-        dummy.removeClass('active');
-      });
+        // Show the write comment box.
+        this.$('#post_input .post').show();
 
-      // Drag & drop events.
-      this.dropZone.on('dragover', _.bind(this.dragover, this))
-          .on('dragleave', _.bind(this.dragout, this))
-          .on('drop', _.bind(this.drop, this));
+        // Add mouse events for dummy file selector.
+        var dummy = this.$('#file_chooser_dummy');
+        this.$('#file_chooser').on('mouseover', function (e) {
+          dummy.addClass('hover');
+        })
+        .on('mouseout', function (e) {
+          dummy.removeClass('hover');
+        })
+        .on('mousedown', function (e) {
+          dummy.addClass('active');
+        })
+        .change(_.bind(this.drop, this));
+        $(document).on('mouseup', function (e) {
+          dummy.removeClass('active');
+        });
 
-      // Submit post.
-      this.postButton.click(_.bind(this.submit, this, null))
-      this.postButton.click(_.bind(this.begin, this));
+        // Drag & drop events.
+        this.dropZone.on('dragover', _.bind(this.dragover, this))
+            .on('dragleave', _.bind(this.dragout, this))
+            .on('drop', _.bind(this.drop, this));
+
+        // Submit post.
+        this.postButton.click(_.bind(this.submit, this, null))
+        this.postButton.click(_.bind(this.begin, this));
+      }
 
       return List.prototype.setup.call(this);
     },
@@ -217,8 +220,10 @@ define([
       this.uploading = true;
       this.postButton.addClass('disabled').attr('disabled', 'disabled');
       if (this.attachments) {
-        this.postSelect.hide();
-        this.postProgressWrap.show();
+        _.delay(_.bind(function () {
+          this.postSelect.slideUp('fast');
+          this.postProgressWrap.show();
+        }, this), 500);
         this.postForm.submit();
       }
 
@@ -260,9 +265,6 @@ define([
       delete payload.params;
       payload.assembly = assembly;
 
-      console.log(payload);
-      return;
-
       // Now save the comment to server.
       rpc.post('/api/posts', payload,
           _.bind(function (err, data) {
@@ -271,10 +273,13 @@ define([
         this.postTitle.val('');
         this.postBody.val('');
         this.uploading = false;
+        this.attachments = false;
+        this.postFiles.empty().hide();
         this.postProgressWrap.hide();
+        this.postSelect.show();
         this.postProgress.width(0);
         this.postProgressTxt.text('Waiting...');
-        this.postBody.focus();
+        this.postBody.focus().keyup();
 
         if (err) {
 
@@ -283,8 +288,8 @@ define([
           return;
         }
 
-        // Add new post to collection.
-        //
+        // TODO: make this optimistic.
+        console.log(data);
 
       }, this));
 
@@ -360,6 +365,7 @@ define([
       rpc.post('/api/posts/list', {
         limit: this.limit,
         cursor: this.latest_list.cursor,
+        query: this.latest_list.query
       }, _.bind(function (err, data) {
 
         if (err) {

@@ -123,7 +123,7 @@ define([
         this.map.render();
 
         // Finally, create and render the page.
-        this.page = new Member(this.app).render();
+        this.page = new Profile(this.app).render();
 
         return;
       }
@@ -140,6 +140,11 @@ define([
         if (!this.header)
           this.header = new Header(this.app).render();
         else this.header.render();
+
+        // Don't re-create the map.
+        if (!this.map)
+          this.map = new Map(this.app).render();
+        else this.map.render();
 
         // Finally, create and render the page.
         this.page = new Profile(this.app).render();

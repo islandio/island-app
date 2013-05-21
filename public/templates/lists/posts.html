@@ -6,8 +6,8 @@
       : null;
 %>
 
-<div id="post_input" class="list-header">
-  <% if (member) { %>
+<% if (member && member.role === 0 && this.app.profile.get('transloadit')) { %>
+  <div id="post_input" class="list-header">
     <div class="post">
       <a href="/<%= member.username %>" class="post-avatar">
         <img src=<%= gravatar %> width="36" height="36" />
@@ -61,12 +61,8 @@
         </form>
       </div>
     </div>
-  <% } else { %>
-    <a href="/login">
-      <span class="empty-list">Sign in to post.</span>
-    </a>
-  <% } %>
-</div>
+  </div>
+<% } %>
 <% if (this.collection.models.length === 0) { %>
   <span class="empty-list">No Posts.</span>
 <% } else { %>
