@@ -345,7 +345,7 @@ app.get('/films', function (req, res) {
       });
       res.render('films', {
         title: 'Island - Films',
-        films: posts,
+        films: posts.reverse(),
         member: req.user,
         twitters: twitterHandles,
         util: templateUtil
