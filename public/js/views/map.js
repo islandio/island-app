@@ -52,7 +52,11 @@ define([
     // Misc. setup.    
     setup: function () {
 
+      // Changes to map display are animated.
+      this.$el.addClass('animated');
+
       // Save DOM refs.
+      this.mapInner = this.$('#map_inner');
       this.hider = this.$('#hide_show');
       this.lesser = this.$('#less_more');
 
@@ -69,18 +73,28 @@ define([
     map: function (pos) {
       this.mapped = true;
 
-      var opts = {zoom: 3};
-      if (pos) {
-        opts.center_lat = pos.coords.latitude;
-        opts.center_lon = pos.coords.longitude;
-        opts.zoom = 8;
-      }
+      var opts = {
+        zoom: 3,
+        minZoom: 5,
+        maxZoom: 8
+      };
+      if (pos)
+        _.extend(opts, {
+          center_lat: pos.coords.latitude,
+          center_lon: pos.coords.longitude,
+          zoom: 8
+        });
 
       // Setup the map.
       this.sql = new cartodb.SQL({user: 'island'});
       cartodb.createVis('map_inner',
           'http://island.cartodb.com/api/v1/viz/crags/viz.json', opts,
-          function (vis, layers) {});
+          _.bind(function (vis, layers) {
+            this.vis = vis;
+            this.layers = layers;
+            if (!store.get('mapClosed'))
+              this.$('.cartodb-zoom').show();
+      }, this));
     },
 
     hideShow: function (e) {
@@ -89,13 +103,17 @@ define([
         this.hider.text('Hide map');
         this.hider.addClass('split-left');
         this.lesser.show();
+        this.$('.cartodb-zoom').fadeIn(300);
+        this.resize(250);
+        store.set('mapClosed', false);
       } else {
         this.$el.addClass('closed');
         this.hider.text('Show map');
         this.hider.removeClass('split-left');
+        this.$('.cartodb-zoom').fadeOut(300);
         this.lesser.hide();
+        store.set('mapClosed', true);
       }
-      $(window).resize();
     },
 
     lessMore: function (e) {
@@ -104,13 +122,23 @@ define([
         this.lesser.text('More map');
         this.lesser.addClass('split-right');
         this.hider.show();
+        this.resize(250);
       } else {
         this.$el.addClass('opened');
         this.lesser.text('Less map');
         this.lesser.removeClass('split-right');
         this.hider.hide();
+        this.resize(600);
       }
-      $(window).resize();
+    },
+
+    resize: function (height) {
+      if (!this.vis) return;
+      var sizer = setInterval(_.bind(function () {
+        this.vis.mapView.map_leaflet.invalidateSize();
+        if (this.$el.height() === height)
+          clearInterval(sizer);
+      }, this), 20);
     }
 
   });

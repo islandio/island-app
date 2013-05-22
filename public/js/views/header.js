@@ -57,7 +57,7 @@ define([
 
     // Bind mouse events.
     events: {
-      'click #logo': 'home',
+      // 'click #logo': 'home',
       'click #globe': 'togglePanel'
     },
 
@@ -66,7 +66,6 @@ define([
 
       // Route to home:
       this.app.router.navigate('/', {trigger: true});
-    
     },
 
     togglePanel: function (e) {

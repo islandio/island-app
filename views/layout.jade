@@ -34,10 +34,10 @@ html(lang="en")
       - });
     title= title
     <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-    link(rel="stylesheet", href="/css/style.css")
     //- link(rel="stylesheet", href="https://d271mvlc6gc7bl.cloudfront.net/main/jplayer/skin/blue.monday/jplayer.blue.monday.css")
     link(rel="stylesheet", href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.css")
     <!--[if lte IE 8]>link(rel="stylesheet", href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.ie.css")<![endif]-->
+    link(rel="stylesheet", href="/css/style.css")
     link(rel="shortcut icon", href="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/favicon.ico", type="image/x-icon")
   body
     block content
@@ -53,6 +53,19 @@ html(lang="en")
             w.className = w.className + ' panel-open';
           }
         }
+    script
+      if (window.store) {
+        var mapClosed = store.get('mapClosed');
+        var m = document.getElementById('map');
+        var hs = document.getElementById('hide_show');
+        var lm = document.getElementById('less_more');
+        if (mapClosed) {
+          m.className = m.className + ' closed';
+          hs.className = 'button';
+          hs.innerHTML = 'Show map';
+          lm.style.display = 'none';
+        }
+      }
     script(src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js")
     //- script(charset="utf-8", src="/{{ version }}/js/min.js")
     script(type="text/javascript", charset="utf-8", data-main="/js/main", src="/js/libs/require/require.js")

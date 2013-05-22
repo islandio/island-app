@@ -113,6 +113,39 @@ border-radius()
   }
 }
 
+@-webkit-keyframes fadeOut {
+  0% {
+    opacity:1;
+  }
+  100% {
+    opacity:0;
+  }
+}
+@-moz-keyframes fadeOut {
+  0% {
+    opacity:1;
+  }
+  100% {
+    opacity:0;
+  }
+}
+@-o-keyframes fadeOut {
+  0% {
+    opacity:1;
+  }
+  100% {
+    opacity:0;
+  }
+}
+@keyframes fadeOut {
+  0% {
+    opacity:1;
+  }
+  100% {
+    opacity:0;
+  }
+}
+
 @-webkit-keyframes fadeInUp {
   0% {
     opacity:0; 
@@ -194,6 +227,18 @@ border-radius()
     transform:translateY(0)
   }
 }
+
+.fade-in
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+
+.fade-out
+  -webkit-animation-name fadeOut
+  -moz-animation-name fadeOut
+  -o-animation-name fadeOut
+  animation-name fadeOut
 
 /*––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– resets */
 
@@ -1102,15 +1147,15 @@ span.count
   bottom 0
   cursor pointer
 
-#explore
-  width 100%
-  height 100%
+// #explore
+//   width 100%
+//   height 100%
 
-#explore .cartodb-zoom
-  top 100px
+// #explore .cartodb-zoom
+//   top 100px
 
-#explore .cartodb-tiles-loader
-  top 100px !important
+// #explore .cartodb-tiles-loader
+//   top 100px !important
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
@@ -1713,6 +1758,7 @@ div#map
   -moz-box-shadow 0 0 3px #b3b3b3
   box-shadow 0 0 3px #b3b3b3
 
+div#map.animated
   -webkit-transition height 0.3s
   -webkit-transition-timing-function height 0.3s
   -moz-transition height 0.3s
@@ -1730,6 +1776,15 @@ div#map_inner
   width 100%
   height 100%
 
+  -webkit-animation-duration .3s
+  -moz-animation-duration .3s
+  -o-animation-duration .3s
+  animation-duration .3s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
+
 div#map_control
   position absolute
   bottom -21px
@@ -1738,6 +1793,7 @@ div#map_control
 div#map_control div
   position relative
   left 50%
+  width 145px
 
 div#map_control a.button
   position relative
@@ -1762,6 +1818,9 @@ div#map_control a.split-left:hover
 div#map_control a.split-right
   left -72px
   border-radius 0 0 3px 0
+
+div.cartodb-zoom
+  display none
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––posts*/
 

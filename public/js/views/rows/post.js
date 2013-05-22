@@ -84,12 +84,18 @@ define([
         });
 
       // add the main image
+      var img = ar < 1 ? {
+        width: H,
+        height: H / ar,
+        top: - (H / ar - H) / 2
+      }: {
+        width: H * ar,
+        height: H,
+        left: - (H * ar - H) / 2
+      };
+
       insert.call(this, {
-        img: {
-          width: H * ar,
-          height: H,
-          left: - (H * ar - H) / 2
-        },
+        img: img,
         div: {
           width: H,
           height: H,

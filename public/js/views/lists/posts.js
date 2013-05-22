@@ -289,7 +289,6 @@ define([
         }
 
         // TODO: make this optimistic.
-        console.log(data);
 
       }, this));
 
