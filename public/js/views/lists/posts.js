@@ -173,6 +173,9 @@ define([
       this.focus();
       this.postBody.focus();
 
+      // Don't do anything if already doing it.
+      if (this.uploading) return false;
+
       // Get the files, if any.
       var files = e.target.files || e.originalEvent.dataTransfer.files;
       if (files.length === 0) {
@@ -204,7 +207,10 @@ define([
         onError: function(assembly) {
           console.log(assembly.error + ': ' + assembly.message);
         },
-        onSuccess: _.bind(this.submit, this)
+        onSuccess: _.bind(function () {
+          this.uploading = false;
+          this.submit.apply(this, arguments);
+        }, this)
       };
 
       // Use formData object if exists (dnd only)
@@ -214,11 +220,15 @@ define([
       this.postButton.unbind('click');
       this.postButton.click(_.bind(this.begin, this));
       this.postForm.transloadit(opts);
+
+      return false;
     },
 
     begin: function (e) {
+      if (this.uploading) return false;
       this.uploading = true;
       this.postButton.addClass('disabled').attr('disabled', 'disabled');
+      this.postTitle.addClass('disabled').attr('disabled', 'disabled');
       if (this.attachments) {
         _.delay(_.bind(function () {
           this.postSelect.slideUp('fast');
@@ -245,6 +255,7 @@ define([
         e.stopPropagation();
         e.preventDefault();
       }
+      if (this.uploading) return false;
 
       // Error checks
       if (assembly) {
@@ -256,6 +267,7 @@ define([
       }
 
       // Sanitize html fields.
+      this.postTitle.removeClass('disabled').attr('disabled', false);
       this.postTitle.val(util.sanitize(this.postTitle.val()));
       this.postBody.val(util.sanitize(this.postBody.val()));
 
@@ -270,16 +282,7 @@ define([
           _.bind(function (err, data) {
 
         // Clear fields.
-        this.postTitle.val('');
-        this.postBody.val('');
-        this.uploading = false;
-        this.attachments = false;
-        this.postFiles.empty().hide();
-        this.postProgressWrap.hide();
-        this.postSelect.show();
-        this.postProgress.width(0);
-        this.postProgressTxt.text('Waiting...');
-        this.postBody.focus().keyup();
+        this.cancel();
 
         if (err) {
 
@@ -289,10 +292,24 @@ define([
         }
 
         // TODO: make this optimistic.
+        this.collect(data.post);
 
       }, this));
 
       return false;
+    },
+
+    cancel: function () {
+      this.uploading = false;
+      this.attachments = false;
+      this.postFiles.empty().hide();
+      this.postProgressWrap.hide();
+      this.postSelect.show();
+      this.postProgress.width(0);
+      this.postProgressTxt.text('Waiting...');
+      this.postButton.removeClass('disabled').attr('disabled', false);
+      this.postTitle.val('');
+      this.postBody.val('').focus().keyup();
     },
 
     focus: function (e) {

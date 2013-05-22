@@ -30,9 +30,13 @@ define([
     render: function (single, prepend) {
 
       function insert(item) {
+        var src = item.data.cf_url || item.data.url;
         var div = $('<div class="post-mosaic-wrap">').css(item.div);
-        var img = $('<img src=' + (item.data.cf_url || item.data.url)
-            + ' />').css(item.img).appendTo(div);
+        var anc = $('<a class="fancybox" rel="g-' + this.model.id + '" href="'
+            + src + '">').appendTo(div);
+        var img = $('<img src=' + src + ' />').css(item.img).wrap(
+            $('<a class="fancybox" rel="g-'
+            + this.model.id + '">')).appendTo(anc);
         div.appendTo(this.$('.post-mosaic'));
       }
 
@@ -67,8 +71,8 @@ define([
       // handle the first item (the main img for this post)
       var data = images.shift();
       var ar = data.meta.width / data.meta.height;
-      if (images.length === 0)
-        return insert.call(this, {
+      if (images.length === 0) {
+        insert.call(this, {
           img: {
             width: W,
             height: W / ar,
@@ -82,6 +86,8 @@ define([
           },
           data: data
         });
+        return this.fancybox();
+      }
 
       // add the main image
       var img = ar < 1 ? {
@@ -177,6 +183,9 @@ define([
 
       }, this));
 
+      // Handle fancybox.
+      this.fancybox();
+
     },
 
     setup: function () {
@@ -193,6 +202,13 @@ define([
       this.comments.destroy();
       Row.prototype.destroy.call(this);
     },
+
+    fancybox: function () {
+      this.$('.fancybox').fancybox({
+        openEffect: 'none',
+        closeEffect: 'none'
+      });
+    }
 
   });
 });

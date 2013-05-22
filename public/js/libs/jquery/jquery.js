@@ -24,7 +24,8 @@ define([
            'libs/jquery/jquery.hotkeys',
            'libs/jquery/jquery.scrollTo-min',
            'libs/jquery/jquery.jplayer.min',
-           'libs/jquery/jquery.transloadit2'
+           'libs/jquery/jquery.transloadit2',
+           'libs/jquery/jquery.fancybox'
           ]);
 
   return jQuery;
