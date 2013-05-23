@@ -28,7 +28,7 @@ define([
       this.subscriptions = [];
 
       // Socket subscriptions
-      this.app.socket.subscribe('post-' + this.parentView.model.get('key'))
+      this.app.socket.subscribe('post-' + this.parentView.model.id)
           .bind('comment.new', _.bind(this.collect, this));
 
       // Reset the collection.
