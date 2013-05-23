@@ -39,7 +39,8 @@ define([
         var loc = page ? page.location: null;
         if (loc && loc.latitude && loc.longitude) this.map({coords: loc});
         else if (Modernizr.geolocation)
-          navigator.geolocation.getCurrentPosition(_.bind(this.map, this));
+          navigator.geolocation.getCurrentPosition(_.bind(this.map, this),
+              _.bind(this.map, this));
         else this.map();
       }
 
@@ -78,12 +79,14 @@ define([
         minZoom: 5,
         maxZoom: 8
       };
-      if (pos)
+
+      if (pos && !pos.code) {
         _.extend(opts, {
           center_lat: pos.coords.latitude,
           center_lon: pos.coords.longitude,
           zoom: 8
         });
+      }
 
       // Setup the map.
       this.sql = new cartodb.SQL({user: 'island'});

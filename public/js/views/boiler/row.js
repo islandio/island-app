@@ -15,33 +15,44 @@ define([
 
     attributes: function () {
       return {
-        id: this.model.id
+        id: this.model ? this.model.id: '',
       };
     },
 
     initialize: function (options) {
       this.parentView = options.parentView;
       this.on('rendered', this.setup, this);
-      this.parentView.on('rendered', _.bind(function () {
-        this.setElement(this.parentView.$('#' + this.model.id));
-        this.render();
-      }, this));
+      if (this.parentView)
+        this.parentView.on('rendered', _.bind(function () {
+          this.setElement(this.parentView.$('#' + this.model.id));
+          this.render();
+        }, this));
+      else
+        this.wrap = $(this.options.wrap);
+
+      return this;
     },
 
     render: function (single, prepend) {
       this.$el.html(this.template.call(this));
-      var d = this.model.collection.indexOf(this.model) * 30;
-      _.delay(_.bind(function () {
-        this.$el.show();
-      }, this), single ? 0 : d);
+      if (this.model.collection) {
+        var d = this.model.collection.indexOf(this.model) * 30;
+        _.delay(_.bind(function () {
+          this.$el.show();
+        }, this), single ? 0 : d);
+      } else this.$el.show();
       if (single)
         if (prepend) {
           if (this.parentView.$('.list-header').length !== 0)
             this.$el.insertAfter(this.parentView.$('.list-header'));
           else
             this.$el.prependTo(this.parentView.$el);
-        } else
-          this.$el.appendTo(this.parentView.$el);
+        } else {
+          if (this.parentView)
+            this.$el.appendTo(this.parentView.$el);
+          else
+            this.$el.appendTo(this.wrap);
+        }
       this.trigger('rendered');
       return this;
     },

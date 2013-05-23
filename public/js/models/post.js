@@ -16,8 +16,9 @@ define([
       return date.format('mmm d');
     },
 
-    body: function () {
-      return util.blurb(util.formatText(this.get('body')), 500);
+    body: function (full) {
+      var txt = util.formatText(this.get('body'));
+      return full ? txt: util.blurb(txt, 500);
     },
 
   });

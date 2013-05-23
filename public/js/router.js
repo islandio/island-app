@@ -14,9 +14,10 @@ define([
   'views/map',
   'views/home',
   'views/login',
-  'views/profile'
+  'views/profile',
+  'views/rows/post'
 ], function ($, _, Backbone, mps, rpc, Header, Footer,
-      Notifications, Map, Home, Login, Profile) {
+      Notifications, Map, Home, Login, Profile, Post) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -34,9 +35,9 @@ define([
         } catch(err) {}
       
       // Page routes:
-      this.route(':username', 'profile', _.bind(this.profile, this));
+      this.route(':username', 'profile', this.profile);
       // this.route(':username', 'person', _.bind(this.person, this, 'person'));
-      this.route(':username/:key', 'post', _.bind(this.post, this, 'post'));
+      this.route(':username/:key', 'post', this.post);
       // this.route(':username/c/:slug/:opp', 'fund', _.bind(this.fund, this, 'fund'));
       // this.route(':username/c/:slug/:opp?*qs', 'fund', _.bind(this.fund, this, 'fund'));
       // this.route(/^settings\/profile$/, 'profile', _.bind(this.profile, this, 'profile'));
@@ -162,26 +163,18 @@ define([
     },
 
     post: function (username, key) {
+      var key = [username, key].join('/');
 
       // Kill the page view if it exists.
       if (this.page)
         this.page.destroy();
 
       // Check if a profile exists already.
-      if (this.app.profile && this.app.profile.get('content').page) {
-
-        // Re-render existing views.
-        this.header.render();
-        this.map.render();
-
-        // Finally, create and render the page.
-        this.page = new Profile(this.app).render();
-
-        return;
-      }
+      var query = this.app.profile
+          && this.app.profile.get('notifications') ? {n: 0}: {};
 
       // Get the page profile.
-      rpc.get('/service/post.profile/' + key,
+      rpc.get('/service/post.profile/' + key, query,
           _.bind(function (err, pro) {
         if (err) return console.error(err.stack);
 
@@ -199,7 +192,7 @@ define([
         else this.map.render();
 
         // Finally, create and render the page.
-        this.page = new Profile(this.app).render();
+        this.page = new Post({wrap: '#main'}, this.app).render(true);
 
         // Don't re-render the footer.
         if (!this.footer)

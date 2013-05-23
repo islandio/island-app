@@ -1389,13 +1389,6 @@ h1.title-sub
   width 984px
   margin 15px 0 0 0
 
-// .single-left
-//   float left
-//   margin 0 0 40px
-
-// .single-right
-//   margin 0 0 0 670px
-
 .grid-wrap
   position absolute
   top 2000px
@@ -1835,9 +1828,6 @@ div.cartodb-zoom
   height 40px
   margin 0 auto
 
-#posts
-  margin 12px 0 0 0
-
 div.post
   position relative
   display none
@@ -1857,6 +1847,10 @@ div.post
   -o-animation-fill-mode both
   animation-fill-mode both
 
+div.post.single
+  margin-top 62px
+  width 984px
+
 div.post-title
   margin 0 0 10px 0
   font-family title
@@ -1870,7 +1864,7 @@ div.post-title span.post-title-photos
 div.post-title span.post-title-video
   color orange
 
-div.post-mosaic
+div.post div.post-mosaic
   position relative
   overflow hidden
   width 640px
@@ -1880,6 +1874,10 @@ div.post-mosaic
   -webkit-box-shadow 0 0 3px #b3b3b3
   -moz-box-shadow 0 0 3px #b3b3b3
   box-shadow 0 0 3px #b3b3b3
+
+div.post.single div.post-mosaic
+  width 984px
+  height 554px
 
 div.post-mosaic-wrap
   position absolute
@@ -1908,18 +1906,28 @@ div.post-mosaic-wrap:hover img
 div.post-mosaic-wrap:active img
   opacity 0.5
 
-img.post-mosaic-play
+div.post img.post-mosaic-play
   position absolute !important
   left 100px
   top 100px
   opacity 0.9
 
-div.post-body
+div.post.single img.post-mosaic-play
+  left 197px
+  top 197px
+
+div.post div.post-body
   margin 10px 0 0
   padding 0 30px 0 2px
   font-size 11px
   line-height 16px
-  color textlight
+  color #4d4d4d
+
+div.post.single div.post-body
+  width 750px
+  margin 20px 0 0
+  font-size 12px
+  line-height 18px
 
 div.post-info
   margin 10px 0 0

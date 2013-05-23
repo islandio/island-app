@@ -34,7 +34,6 @@ define([
       this.subscriptions = [];
 
       // Socket Subscriptions
-      console.log('mem-' + this.app.profile.get('member').id);
       this.channel = this.app.socket.subscribe('mem-'
           + this.app.profile.get('member').id);
       this.channel.bind('notification.new', _.bind(this.collect, this));

@@ -26,7 +26,7 @@ define([
 
     events: {
       'hover': 'read',
-      // 'click': 'navigate',
+      'click': 'navigate',
       'click .notification-delete': 'delete',
     },
 
@@ -39,6 +39,7 @@ define([
 
     update: function () {
       this.$el.removeClass('unread');
+      this.model.set('read', true);
     },
 
     delete: function (e) {

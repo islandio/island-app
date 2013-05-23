@@ -6,10 +6,11 @@ define([
   'jQuery',
   'Underscore',
   'views/boiler/row',
+  'models/post',
   'text!../../../templates/rows/post.html',
   'text!../../../templates/video.html',
   'views/lists/comments'
-], function ($, _, Row, template, video, Comments) {
+], function ($, _, Row, Model, template, video, Comments) {
   return Row.extend({
 
     attributes: function () {
@@ -20,10 +21,18 @@ define([
     initialize: function (options, app) {
       this.app = app;
       this.template = _.template(template);
+
+      // Allow single rendering (no parent view)
+      if (!options.parentView)
+        this.model = new Model(this.app.profile.get('content').page);
+
+      // Boiler init.
       Row.prototype.initialize.call(this, options);
 
       // Client-wide subscriptions
       this.subscriptions = [];
+
+      return this;
     },
 
     events: {},
@@ -48,6 +57,11 @@ define([
 
       Row.prototype.render.call(this, single, prepend);
 
+      if (!this.parentView) {
+        this.$el.addClass('single')
+        this.app.title(this.model.get('title') || this.model.get('key'));
+      }
+
       // gather images
       var images = [];
       if (this.model.get('medias'))
@@ -69,11 +83,11 @@ define([
       if (images.length === 0) {
         this.$('.post-mosaic').hide();
         this.$('.post-avatar').hide();
-        return;
+        return this;
       }
 
-      var W = 640;
-      var H = 360;
+      var W = this.parentView ? 640: 984;
+      var H = this.parentView ? 360: 554;
       var P = 2;
 
       // handle the first item (the main img for this post)
@@ -94,7 +108,8 @@ define([
           },
           data: data
         });
-        return this.fancybox();
+        this.fancybox();
+        return this;
       }
 
       // add the main image
@@ -195,13 +210,15 @@ define([
       // Handle fancybox.
       this.fancybox();
 
+      return this;
     },
 
     setup: function () {
       Row.prototype.setup.call(this);
 
       // Render comments.
-      this.comments = new Comments(this.app, {parentView: this, reverse: true});
+      this.comments = new Comments(this.app,
+          {parentView: this, reverse: true});
     },
 
     destroy: function () {
@@ -229,16 +246,39 @@ define([
           e.stopPropagation();
           e.preventDefault();
 
-          $.fancybox(_.template(video)({data: this.video}), opts);
-          jwplayer('video-' + this.video.id).setup({
+          // Video params
+          var params = {
             file: this.video.video.cf_url,
             image: this.video.poster.cf_url,
             width: '1024',
-            height: 1024 * this.video.video.meta.height / this.video.video.meta.width,
+            height: Math.ceil(1024 *
+                this.video.video.meta.height / this.video.video.meta.width),
             autostart: true,
             primary: 'flash',
             ga: {}
-          });
+          };
+
+          if (this.parentView) {
+
+            // Place the video in the fancybox.
+            $.fancybox(_.template(video)({
+                data: this.video, width: 1024}), opts);
+
+          } else {
+
+            // Lay the video over the mosaic.
+            $(_.template(video)({data: this.video, width: 984}))
+                .appendTo(this.$('.post-mosaic'));
+            _.extend(params, {
+              width: '984',
+              height: Math.ceil(984 *
+                  this.video.video.meta.height / this.video.video.meta.width),
+            });
+
+          }
+          
+          // Finally, play the video.
+          jwplayer('video-' + this.video.id).setup(params);
 
           return false;
         }, this));
