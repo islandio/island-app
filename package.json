@@ -32,7 +32,8 @@
     "emailjs": "~0.3.0",
     "connect-redis": "~1.4.5",
     "redis": "~0.8.2",
-    "pusher": "~0.1.2"
+    "pusher": "~0.1.2",
+    "cron": "~1.0.1"
   },
   "devDependencies": {
     "cli-color": "~0.2.2",
@@ -44,6 +45,6 @@
     "node": "~0.8.x"
   },
   "scripts": {
-    "start": "app.js"
+    "start": "main.js"
   }
 }

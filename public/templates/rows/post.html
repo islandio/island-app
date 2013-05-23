@@ -1,0 +1,48 @@
+<%
+  var video = _.find(this.model.get('medias'), function (m) {
+    return m.type === 'video';
+  });
+  var typeClass = video ? 'post-title-video': 'post-title-photos';
+
+  var gravatar = 'https://www.gravatar.com/avatar/'
+      + this.model.get('author').gravatar + '?s=80&d='
+      + encodeURIComponent(this.app.cloudFrontURL + '/main/img/avatar_100.png');
+%>
+
+<div class="post-title">
+  <%= this.model.date() %> | 
+  <a href="/<%= this.model.get('author').username %>">
+    <%= this.model.get('author').displayName %></a> 
+  <% if (this.model.get('title')) { %>
+    / <span class="<%= typeClass %>"><%= this.model.get('title') %></span>
+  <% } %>
+</div>
+<a href="/<%= this.model.get('author').username %>" class="post-avatar">
+  <img src=<%= gravatar %> width="48" height="48" />
+</a>
+<div class="post-mosaic matte">
+  <% if (this.parentView) { %>
+    <img class="mask" width="640" style="top:0;" 
+        src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-top.png" />
+    <img class="mask" width="640" style="top:352px;"
+        src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-btm.png" />
+  <% } else { %>
+    <img class="mask" width="984" style="top:0;" 
+        src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-lrg-top.png" />
+    <img class="mask" width="984" style="top:546px;"
+        src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-lrg-btm.png" />
+  <% } %>
+</div>
+<div class="post-body">
+  <%= this.model.body(!this.parentView) %>
+</div>
+<div class="post-info">
+  Posted by <a href="<%= this.model.get('author').username %>" target="_blank">
+    <%= this.model.get('author').displayName %></a>
+  <a href="/<%= this.model.get('key') %>"><time class="created" 
+        datetime="<%= this.model.get('created') %>" 
+        title="<%= this.model.get('created') %>">
+    <%= this.model.get('created') %>
+  </time></a>
+</div>
+<div class="comments"></div>

@@ -1,0 +1,3 @@
+#!/bin/zsh
+
+exec mongo --port 10020 --host linus.mongohq.com --username nodejitsu --password af8c37eb0e1a57c1e56730eb635f6093 nodejitsudb5582710115

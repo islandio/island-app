@@ -1,0 +1,33 @@
+div#header-inner
+  div.divider-vertical
+  a#logo(href="/")
+    span.tagline Climb
+    img(src="/img/dots.png", width="140", height="48")
+  div.divider-vertical.pad-right
+  input.header-search(type="search", placeholder="Search")
+  ul.header-links
+    li
+      a(href="/about") About
+    li
+      a(href="/crags") Crags
+    li
+      a(href="/films") Films
+  - if (member)
+    div.member-box
+      div.divider-vertical
+      a.header-avatar(href="/" + member.username)
+        img(src="https://www.gravatar.com/avatar/" + member.gravatar + "?s=50&d=https%3A%2F%2Fd271mvlc6gc7bl.cloudfront.net%2Fmain%2Fimg%2Favatar_100.png", width="50", height="50")
+      div.divider-vertical
+      a#globe.header-action(href="javascript:;")
+        span.icon-globe
+        span.count
+      div.divider-vertical
+      a#settings.header-action(href="/settings")
+        span.icon-params
+      div.divider-vertical
+      a#logout.header-action(href="/logout")
+        span.icon-logout-1
+      div.divider-vertical
+  - else
+    a#login.button(href="/login") Sign in
+  div.clear

@@ -1,7 +1,7 @@
 extends index
 
 block main
-  div.single-left
+  div.leftside
     a#delete-profile.button.action-button(href='javascript:;')
       | Delete Yourself
     form#settings-form(action='/save/settings', enctype='multipart/form-data', method='POST')
@@ -126,7 +126,7 @@ block main
               input#save-settings.is-button(type='submit', value='Save')
               div.button-mask-wrap
                 div#save-settings-mask
-  div.recent-comments-wrap
+  div.rightside
     h1.title-right / Services
     p.settings-instructions(style="margin-top:32px;") Link Island to your preferred social network account.
     br

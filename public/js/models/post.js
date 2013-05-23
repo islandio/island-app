@@ -1,0 +1,25 @@
+/*
+ * Post model
+ */
+
+define([
+  'Underscore',
+  'Backbone',
+  'util'
+], function (_, Backbone, util) {
+  return Backbone.Model.extend({
+
+    _path: 'api/posts/',
+
+    date: function () {
+      var date = new Date(this.get('created'));
+      return date.format('mmm d');
+    },
+
+    body: function (full) {
+      var txt = util.formatText(this.get('body'));
+      return full ? txt: util.blurb(txt, 500);
+    },
+
+  });
+});

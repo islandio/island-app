@@ -1,0 +1,72 @@
+<%
+  var member = this.app.profile.get('member');
+  var gravatar = member ? 'https://www.gravatar.com/avatar/'
+      + member.gravatar + '?s=36&d='
+      + encodeURIComponent(this.app.cloudFrontURL + '/main/img/avatar_100.png')
+      : null;
+%>
+
+<% if (member && member.role === 0 && this.app.profile.get('transloadit')) { %>
+  <div id="post_input" class="list-header">
+    <div class="post">
+      <a href="/<%= member.username %>" class="post-input-avatar">
+        <img src=<%= gravatar %> width="36" height="36" />
+      </a>
+      <div class="post-input-wrap">
+        <form action="/api/posts" enctype="multipart/form-data" method="POST"
+            id="post_input_form">
+          <div id="post_dnd">
+            <textarea name="body" class="post-input" tabindex="1" 
+                placeholder="Got something worth sharing?"></textarea>
+            <div id="post_select">
+              Attach a video or photos by
+              <% if (Modernizr.draganddrop) { %>
+                dragging &amp; dropping or 
+                <a id="file_chooser_dummy" class="important" href="javascript:;">selecting them</a>.
+                <input id="file_chooser" type="file" name="my_file" multiple="multiple" />
+              <% } else { %>
+                <a id="file_chooser_dummy" class="important" href="javascript:;">selecting them</a>.
+                <input id="file_chooser" type="file" name="my_file" multiple="multiple" style="left:78px;" />
+              <% } %>
+              <div id="post_files"></div>
+            </div>
+            <div id="post_progress_wrap">
+              <div id="post_progress">
+                <div id="post_progress_txt">Waiting...</div>
+              </div>
+            </div>
+          </div>
+          <table id="post_params">
+            <tr>
+              <td>
+                <input type="text" name="title" placeholder="Post title (optional)"
+                    tabindex="2" style="width:200px;" />
+              </td>
+              <td>
+                <input id="toFacebook" name="toFacebook" type="checkbox" tabindex="3" />
+                <label for="toFacebook">Post to Facebook</label>
+              </td>
+              <td>
+                <input id="toTwitter" name="toTwitter" type="checkbox" tabindex="4" />
+                <label for="toTwitter">Tweet post</label>
+              </td>
+              <td class="last">
+                <input type="submit" id="post_button" value="Post"
+                    tabindex="5" disabled="disabled" class="disabled" />
+              </td>
+            </tr>
+          </table>
+          <input type="hidden" name="params"
+              value='<%= JSON.stringify(this.app.profile.get('transloadit').media) %>' />
+        </form>
+      </div>
+    </div>
+  </div>
+<% } %>
+<% if (this.collection.models.length === 0) { %>
+  <span class="empty-list">No Posts.</span>
+<% } else { %>
+  <% _.each(this.collection.models, _.bind(function(row) { %>
+    <%= this.row(row) %>
+  <% }, this)); %>
+<% } %>
