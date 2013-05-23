@@ -36,7 +36,7 @@ define([
       // Page routes:
       this.route(':username', 'profile', _.bind(this.profile, this));
       // this.route(':username', 'person', _.bind(this.person, this, 'person'));
-      // this.route(':username/c/:slug', 'campaign', _.bind(this.campaign, this, 'campaign'));
+      this.route(':username/:key', 'post', _.bind(this.post, this, 'post'));
       // this.route(':username/c/:slug/:opp', 'fund', _.bind(this.fund, this, 'fund'));
       // this.route(':username/c/:slug/:opp?*qs', 'fund', _.bind(this.fund, this, 'fund'));
       // this.route(/^settings\/profile$/, 'profile', _.bind(this.profile, this, 'profile'));
@@ -130,6 +130,58 @@ define([
 
       // Get the page profile.
       rpc.get('/service/member.profile/' + username,
+          _.bind(function (err, pro) {
+        if (err) return console.error(err.stack);
+
+        // Set the profile.
+        this.app.update(pro);
+
+        // Don't re-create the header.
+        if (!this.header)
+          this.header = new Header(this.app).render();
+        else this.header.render();
+
+        // Don't re-create the map.
+        if (!this.map)
+          this.map = new Map(this.app).render();
+        else this.map.render();
+
+        // Finally, create and render the page.
+        this.page = new Profile(this.app).render();
+
+        // Don't re-render the footer.
+        if (!this.footer)
+          this.footer = new Footer(this.app).render();
+
+        // Show notifications.
+        if (!this.notifications && this.app.profile.get('member'))
+          this.notifications = new Notifications(this.app, {reverse: true});
+
+      }, this));
+
+    },
+
+    post: function (username, key) {
+
+      // Kill the page view if it exists.
+      if (this.page)
+        this.page.destroy();
+
+      // Check if a profile exists already.
+      if (this.app.profile && this.app.profile.get('content').page) {
+
+        // Re-render existing views.
+        this.header.render();
+        this.map.render();
+
+        // Finally, create and render the page.
+        this.page = new Profile(this.app).render();
+
+        return;
+      }
+
+      // Get the page profile.
+      rpc.get('/service/post.profile/' + key,
           _.bind(function (err, pro) {
         if (err) return console.error(err.stack);
 

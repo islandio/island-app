@@ -322,10 +322,10 @@ a
   text-decoration none
 
 a:hover
-  background rgba(75, 184, 215, 0.25)
+  background-color rgba(75, 184, 215, 0.25)
 
 a:active
-  background rgba(75, 184, 215, 0.5)
+  background-color rgba(75, 184, 215, 0.5)
 
 a:focus
   outline none
@@ -633,11 +633,11 @@ a.signin-strategy-btn-disabled
   text-align center
 
 a.signin-strategy-btn:hover
-  color white
-  border 1px solid black
-  -webkit-text-shadow 0px 1px black
-  -moz-text-shadow 0px 1px black
-  text-shadow 0px 1px black
+  color white !important
+  border 1px solid black !important
+  -webkit-text-shadow 0px 1px black !important
+  -moz-text-shadow 0px 1px black !important
+  text-shadow 0px 1px black !important
 
 a.facebook-btn:hover
   background rgba(59, 89, 152, 0.75)
@@ -1839,6 +1839,7 @@ div.cartodb-zoom
   margin 12px 0 0 0
 
 div.post
+  position relative
   display none
   margin 0 0 35px
   width 640px
@@ -1863,6 +1864,12 @@ div.post-title
   text-transform uppercase
   color #666
 
+div.post-title span.post-title-photos
+  color blue
+
+div.post-title span.post-title-video
+  color orange
+
 div.post-mosaic
   position relative
   overflow hidden
@@ -1877,9 +1884,35 @@ div.post-mosaic
 div.post-mosaic-wrap
   position absolute
   overflow hidden
+  background #4d4d4d
+
+a.post-avatar
+  background none
+
+a.post-avatar img
+  position absolute
+  top 23px
+  left 0
+  z-index 1
+  width 48px
+  height 48px
+  border-right 2px solid white
+  border-bottom 2px solid white
 
 div.post-mosaic-wrap img
   position relative
+
+div.post-mosaic-wrap:hover img
+  opacity 0.7
+
+div.post-mosaic-wrap:active img
+  opacity 0.5
+
+img.post-mosaic-play
+  position absolute !important
+  left 100px
+  top 100px
+  opacity 0.9
 
 div.post-body
   margin 10px 0 0
@@ -1895,7 +1928,7 @@ div.post-info
   line-height 13px
   color lightgray
 
-a.post-avatar
+a.post-input-avatar
   position relative
   z-index 1
   float left
@@ -1905,10 +1938,10 @@ a.post-avatar
   margin 0 8px 0 -36px
   background none
 
-a.post-avatar:hover
+a.post-input-avatar:hover
   background none
 
-a.post-avatar img
+a.post-input-avatar img
   border-radius 3px 0 0 3px
 
 div.post-input-wrap
@@ -2152,7 +2185,7 @@ table#post_params label
   min-height 42px
   margin 0 0 2px 0
   position relative
-  background backgray
+  background #f9f9f9
   display none
 
   border-radius 3px
@@ -2215,7 +2248,7 @@ a.comment-avatar-small:hover span
 
 a.comment-author
   display inline-block
-  overflow hidden
+  // overflow hidden
   white-space nowrap
   text-overflow ellipsis
   color #666

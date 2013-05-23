@@ -34,7 +34,6 @@ html(lang="en")
       - });
     title= title
     <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-    //- link(rel="stylesheet", href="https://d271mvlc6gc7bl.cloudfront.net/main/jplayer/skin/blue.monday/jplayer.blue.monday.css")
     link(rel="stylesheet", href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.css")
     link(rel="stylesheet", href="/css/jquery.fancybox.css")
     <!--[if lte IE 8]>link(rel="stylesheet", href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.ie.css")<![endif]-->
@@ -60,7 +59,7 @@ html(lang="en")
         var m = document.getElementById('map');
         var hs = document.getElementById('hide_show');
         var lm = document.getElementById('less_more');
-        if (mapClosed) {
+        if (mapClosed && m && hs && lm) {
           m.className = m.className + ' closed';
           hs.className = 'button';
           hs.innerHTML = 'Show map';
@@ -68,6 +67,7 @@ html(lang="en")
         }
       }
     script(src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js")
+    script(src="https://ssl.jwpsrv.com/library/1lrC0MMbEeKOnyIACqoQEQ.js")
     //- script(charset="utf-8", src="/{{ version }}/js/min.js")
     script(type="text/javascript", charset="utf-8", data-main="/js/main", src="/js/libs/require/require.js")
     script(type="text/javascript")
@@ -80,6 +80,3 @@ html(lang="en")
         ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
-
-//- script(type="text/javascript", src="https://d271mvlc6gc7bl.cloudfront.net/main/jwplayer/jwplayer.js")
-//- script(type="text/javascript", src="https://d271mvlc6gc7bl.cloudfront.net/main/jplayer/js/jquery.jplayer.min.js")

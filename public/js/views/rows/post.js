@@ -7,8 +7,9 @@ define([
   'Underscore',
   'views/boiler/row',
   'text!../../../templates/rows/post.html',
+  'text!../../../templates/video.html',
   'views/lists/comments'
-], function ($, _, Row, template, Comments) {
+], function ($, _, Row, template, video, Comments) {
   return Row.extend({
 
     attributes: function () {
@@ -31,13 +32,18 @@ define([
 
       function insert(item) {
         var src = item.data.cf_url || item.data.url;
-        var div = $('<div class="post-mosaic-wrap">').css(item.div);
         var anc = $('<a class="fancybox" rel="g-' + this.model.id + '" href="'
-            + src + '">').appendTo(div);
-        var img = $('<img src=' + src + ' />').css(item.img).wrap(
+            + src + '">');
+        var div = $('<div class="post-mosaic-wrap">').css(item.div).appendTo(anc);
+        var img = $('<img src="' + src + '" />').css(item.img).wrap(
             $('<a class="fancybox" rel="g-'
-            + this.model.id + '">')).appendTo(anc);
-        div.appendTo(this.$('.post-mosaic'));
+            + this.model.id + '">')).appendTo(div);
+        if (item.video) {
+          var play = $('<img src="/img/play.png" class="post-mosaic-play"'
+              + ' width="160" height="160" />');
+          play.appendTo(div);
+        }
+        anc.appendTo(this.$('.post-mosaic'));
       }
 
       Row.prototype.render.call(this, single, prepend);
@@ -45,22 +51,24 @@ define([
       // gather images
       var images = [];
       if (this.model.get('medias'))
-        _.each(this.model.get('medias'), function (m) {
+        _.each(this.model.get('medias'), _.bind(function (m) {
           switch (m.type) {
             case 'image':
               images.push(m.image);
               break;
             case 'video':
+              this.video = m;
               images.push(m.poster);
               _.each(m.thumbs, function (t, i) {
                 if (i !== 1) images.push(t);
               });
               break;
           }
-        });
+        }, this));
 
       if (images.length === 0) {
         this.$('.post-mosaic').hide();
+        this.$('.post-avatar').hide();
         return;
       }
 
@@ -108,7 +116,8 @@ define([
           left: 0,
           top: 0
         },
-        data: data
+        data: data,
+        video: this.video
       });
 
       var num = images.length;
@@ -204,10 +213,37 @@ define([
     },
 
     fancybox: function () {
-      this.$('.fancybox').fancybox({
-        openEffect: 'none',
-        closeEffect: 'none'
-      });
+
+      // View options.
+      var opts = {
+        openEffect: 'fade',
+        closeEffect: 'fade',
+        closeBtn: false,
+        nextClick: true,
+        padding: 0
+      };
+
+      // Bind anchor clicks.
+      if (this.video)
+        this.$('.fancybox').click(_.bind(function (e) {
+          e.stopPropagation();
+          e.preventDefault();
+
+          $.fancybox(_.template(video)({data: this.video}), opts);
+          jwplayer('video-' + this.video.id).setup({
+            file: this.video.video.cf_url,
+            image: this.video.poster.cf_url,
+            width: '1024',
+            height: 1024 * this.video.video.meta.height / this.video.video.meta.width,
+            autostart: true,
+            primary: 'flash',
+            ga: {}
+          });
+
+          return false;
+        }, this));
+      else
+        this.$('.fancybox').fancybox(opts);
     }
 
   });
