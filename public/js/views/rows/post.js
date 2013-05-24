@@ -35,7 +35,9 @@ define([
       return this;
     },
 
-    events: {},
+    events: {
+      'click a.navigate': 'navigate',
+    },
 
     render: function (single, prepend) {
 
@@ -219,6 +221,15 @@ define([
       // Render comments.
       this.comments = new Comments(this.app,
           {parentView: this, reverse: true});
+    },
+
+    navigate: function (e) {
+      e.preventDefault();
+
+      // Route to wherever.
+      var path = $(e.target).attr('href') || $(e.target).parent().attr('href');
+      if (path)
+        this.app.router.navigate(path, {trigger: true});
     },
 
     destroy: function () {

@@ -57,7 +57,7 @@ define([
 
     // Bind mouse events.
     events: {
-      // 'click #logo': 'home',
+      'click #logo': 'home',
       'click #globe': 'togglePanel'
     },
 

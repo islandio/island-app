@@ -49,6 +49,8 @@ define([
     },
 
     navigate: function (e) {
+      e.preventDefault();
+      if ($(e.target).hasClass('notification-delete')) return;
       var path = this.model.get('event').data.target.s;
       if (path) mps.publish('navigate', [path]);
       return false;
@@ -57,7 +59,7 @@ define([
     _remove: function (cb) {
       this.$el.slideUp('fast', _.bind(function () {
         clearInterval(this.timer);
-        this.remove();
+        this.destroy();
         cb();
       }, this));
     },

@@ -2023,6 +2023,18 @@ textarea.comment-input {
 .notification-info a {
   color: #b3b3b3;
 }
+.notification-delete {
+  color: #404040;
+  background: #f2f2f2;
+  cursor: pointer;
+  color: #666;
+}
+.notification-delete:hover {
+  background-color: rgba(75,184,215,0.25);
+}
+.notification-delete:active {
+  background-color: rgba(75,184,215,0.5);
+}
 span.info-divider {
   font-size: 8px;
   color: #b3b3b3;

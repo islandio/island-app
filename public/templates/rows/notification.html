@@ -4,19 +4,21 @@
       + encodeURIComponent(this.app.cloudFrontURL + '/main/img/avatar_100.png');
 %>
 
-<div class="notification-inner">
-  <img src=<%= gravatar %> width="32" height="32" />
-  <p>
-    <%= this.model.body() %>
-  </p>
-  <div class="notification-info">
-    <time class="created" 
-        datetime="<%= this.model.get('created') %>" 
-        title="<%= this.model.get('created') %>">
-      <%= this.model.get('created') %>
-    </time>
-    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-    <a href="javascript:;" class="notification-delete">hide</a>
+<a href="<%= this.model.get('event').data.target.s %>">
+  <div class="notification-inner">
+    <img src=<%= gravatar %> width="32" height="32" />
+    <p>
+      <%= this.model.body() %>
+    </p>
+    <div class="notification-info">
+      <time class="created" 
+          datetime="<%= this.model.get('created') %>" 
+          title="<%= this.model.get('created') %>">
+        <%= this.model.get('created') %>
+      </time>
+      <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+      <span class="notification-delete">hide</span>
+    </div>
+    <div class="clear"></div>
   </div>
-  <div class="clear"></div>
-</div>
+</a>

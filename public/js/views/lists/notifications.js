@@ -71,12 +71,14 @@ define([
 
     // receive update from event bus
     _remove: function (data) {
+      var index = -1;
       var view = _.find(this.views, function (v) {
+        ++index
         return v.model.id === data.id;
       });
 
       if (view) {
-        this.views.splice(this.collection.indexOf(view.model), 1);
+        this.views.splice(index, 1);
         view._remove(_.bind(function () {
           this.collection.remove(view.model);
           this.checkHeight();
@@ -159,7 +161,7 @@ define([
           if (this.collection.length > 0)
             showingall.css('display', 'block');
           else {
-            showingall.hide();
+            showingall.remove();
             $('<span class="empty-feed">No notifications.</span>')
                 .appendTo(this.$el);
           }
@@ -173,8 +175,9 @@ define([
           this.fetching = false;
           if (list.items.length < this.limit) {
             this.spin.target.hide();
-            $('.list-spin .empty-feed', this.$el.parent())
-                .css('display', 'block');
+            if (!$('.empty-feed', this.$el.parent()).is(':visible'))
+              $('.list-spin .empty-feed', this.$el.parent())
+                  .css('display', 'block');
           }
         }, this), (list.items.length + 1) * 30);
       }

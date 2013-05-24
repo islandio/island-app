@@ -11,13 +11,13 @@
 
 <div class="post-title">
   <%= this.model.date() %> | 
-  <a href="/<%= this.model.get('author').username %>">
+  <a href="/<%= this.model.get('author').username %>" class="navigate">
     <%= this.model.get('author').displayName %></a> 
   <% if (this.model.get('title')) { %>
     / <span class="<%= typeClass %>"><%= this.model.get('title') %></span>
   <% } %>
 </div>
-<a href="/<%= this.model.get('author').username %>" class="post-avatar">
+<a href="/<%= this.model.get('author').username %>" class="post-avatar navigate">
   <img src=<%= gravatar %> width="48" height="48" />
 </a>
 <div class="post-mosaic matte">
@@ -37,9 +37,9 @@
   <%= this.model.body(!this.parentView) %>
 </div>
 <div class="post-info">
-  Posted by <a href="<%= this.model.get('author').username %>" target="_blank">
+  Posted by <a href="/<%= this.model.get('author').username %>" class="navigate">
     <%= this.model.get('author').displayName %></a>
-  <a href="/<%= this.model.get('key') %>"><time class="created" 
+  <a href="/<%= this.model.get('key') %>" class="navigate"><time class="created" 
         datetime="<%= this.model.get('created') %>" 
         title="<%= this.model.get('created') %>">
     <%= this.model.get('created') %>

@@ -9,8 +9,9 @@ define([
   'mps',
   'rpc',
   'util',
+  'text!../../../templates/home.html',
   'views/lists/posts'
-], function ($, _, Backbone, mps, rpc, util, Posts) {
+], function ($, _, Backbone, mps, rpc, util, template, Posts) {
 
   return Backbone.View.extend({
 
@@ -32,6 +33,10 @@ define([
 
     // Draw our template from the profile JSON.
     render: function () {
+
+      // UnderscoreJS rendering.
+      this.template = _.template(template);
+      this.$el.html(this.template.call(this));
 
       // Done rendering ... trigger setup.
       this.trigger('rendered');
