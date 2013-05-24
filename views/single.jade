@@ -24,7 +24,7 @@ block main
       - if (med.type === 'image')
         - var height = med.instagram ? 640 : med.image.meta.height
         div.obj-holder(style='height: ' + height + 'px')
-          img.matte(id='image-' + med._id, src=(med.image.cf_url || med.image.url), width=640, height=height)
+          img.matte(id='image-' + med._id, src=(med.image.cf_url || med.image.url), width=640, height=(640 * height / med.image.meta.width))
           - if (member)
             div.hearts(data-num=med.hearts)
               div.hearts-wrap
