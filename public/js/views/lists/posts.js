@@ -44,7 +44,7 @@ define([
           _.bind(this.collect, this));
 
       // Reset the collection.
-      this.latest_list = this.app.profile.get('content').posts;
+      this.latest_list = this.app.profile.content.posts;
       this.collection.reset(this.latest_list.items);
     },
 
@@ -88,7 +88,7 @@ define([
     // misc. setup
     setup: function () {
 
-      if (this.app.profile.get('transloadit')) {
+      if (this.app.profile.transloadit) {
 
         // Save refs
         this.postForm = this.$('#post_input_form');

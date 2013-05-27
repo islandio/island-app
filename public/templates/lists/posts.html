@@ -1,12 +1,12 @@
 <%
-  var member = this.app.profile.get('member');
+  var member = this.app.profile.member;
   var gravatar = member ? 'https://www.gravatar.com/avatar/'
       + member.gravatar + '?s=36&d='
       + encodeURIComponent(this.app.cloudFrontURL + '/main/img/avatar_100.png')
       : null;
 %>
 
-<% if (member && member.role === 0 && this.app.profile.get('transloadit')) { %>
+<% if (member && member.role === 0 && this.app.profile.transloadit) { %>
   <div id="post_input" class="list-header">
     <div class="post">
       <a href="/<%= member.username %>" class="post-input-avatar">
@@ -57,7 +57,7 @@
             </tr>
           </table>
           <input type="hidden" name="params"
-              value='<%= JSON.stringify(this.app.profile.get('transloadit').media) %>' />
+              value='<%= JSON.stringify(this.app.profile.transloadit.media) %>' />
         </form>
       </div>
     </div>

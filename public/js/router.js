@@ -57,113 +57,7 @@ define([
       '*actions': 'default'
     },
 
-    login: function () {
-
-      // Kill the notifications
-      if (this.notifications)
-        this.notifications.destroy();
-
-      // Kill the page view if it exists.
-      if (this.page)
-        this.page.destroy();
-
-      // Finally, create and render the page.
-      this.page = new Login(this.app).render();
-
-    },
-
-    home: function () {
-
-      // Kill the page view if it exists.
-      if (this.page)
-        this.page.destroy();
-
-      // Get the home profile.
-      rpc.get('/service/home.profile', _.bind(function (err, pro) {
-        if (err) return console.error(err.stack);
-
-        // Set the profile.
-        this.app.update(pro);
-
-        // Don't re-create the header.
-        if (!this.header)
-          this.header = new Header(this.app).render();
-        else this.header.render();
-
-        // Don't re-create the map.
-        if (!this.map)
-          this.map = new Map(this.app).render();
-        else this.map.render();
-
-        // Finally, create and render the page.
-        this.page = new Home(this.app).render();
-
-        // Don't re-render the footer.
-        if (!this.footer)
-          this.footer = new Footer(this.app).render();
-
-        // Show notifications.
-        if (!this.notifications && this.app.profile.get('member'))
-          this.notifications = new Notifications(this.app, {reverse: true});
-
-      }, this));
-
-    },
-
-    profile: function (username) {
-
-      // Kill the page view if it exists.
-      if (this.page)
-        this.page.destroy();
-
-      // Check if a profile exists already.
-      if (this.app.profile && this.app.profile.get('content').page) {
-
-        // Re-render existing views.
-        this.header.render();
-        this.map.render();
-
-        // Finally, create and render the page.
-        this.page = new Profile(this.app).render();
-
-        return;
-      }
-
-      // Get the page profile.
-      rpc.get('/service/member.profile/' + username,
-          _.bind(function (err, pro) {
-        if (err) return console.error(err.stack);
-
-        // Set the profile.
-        this.app.update(pro);
-
-        // Don't re-create the header.
-        if (!this.header)
-          this.header = new Header(this.app).render();
-        else this.header.render();
-
-        // Don't re-create the map.
-        if (!this.map)
-          this.map = new Map(this.app).render();
-        else this.map.render();
-
-        // Finally, create and render the page.
-        this.page = new Profile(this.app).render();
-
-        // Don't re-render the footer.
-        if (!this.footer)
-          this.footer = new Footer(this.app).render();
-
-        // Show notifications.
-        if (!this.notifications && this.app.profile.get('member'))
-          this.notifications = new Notifications(this.app, {reverse: true});
-
-      }, this));
-
-    },
-
-    post: function (username, key) {
-      var key = [username, key].join('/');
+    render: function (service, cb) {
 
       // Kill the page view if it exists.
       if (this.page)
@@ -171,39 +65,54 @@ define([
 
       // Check if a profile exists already.
       var query = this.app.profile
-          && this.app.profile.get('notifications') ? {n: 0}: {};
+          && this.app.profile.notes ? {n: 0}: {};
 
-      // Get the page profile.
-      rpc.get('/service/post.profile/' + key, query,
+      // Get a profile.
+      rpc.get(service, query,
           _.bind(function (err, pro) {
         if (err) return console.error(err.stack);
 
         // Set the profile.
         this.app.update(pro);
 
-        // Don't re-create the header.
         if (!this.header)
           this.header = new Header(this.app).render();
         else this.header.render();
-
-        // Don't re-create the map.
+        if (!this.footer)
+          this.footer = new Footer(this.app).render();
         if (!this.map)
           this.map = new Map(this.app).render();
         else this.map.render();
-
-        // Finally, create and render the page.
-        this.page = new Post({wrap: '#main'}, this.app).render(true);
-
-        // Don't re-render the footer.
-        if (!this.footer)
-          this.footer = new Footer(this.app).render();
-
-        // Show notifications.
-        if (!this.notifications && this.app.profile.get('member'))
+        if (!this.notifications && this.app.profile.member)
           this.notifications = new Notifications(this.app, {reverse: true});
 
-      }, this));
+        cb();
 
+      }, this));
+    },
+
+    login: function () {
+      this.page = new Login(this.app).render();
+    },
+
+    home: function () {
+      this.render('/service/home.profile', _.bind(function () {
+        this.page = new Home(this.app).render();
+      }, this));
+    },
+
+    profile: function (username) {
+      this.render('/service/member.profile/' + username,
+          _.bind(function () {
+        this.page = new Profile(this.app).render();
+      }, this));
+    },
+
+    post: function (username, key) {
+      var key = [username, key].join('/');
+      this.render('/service/post.profile/' + key, _.bind(function () {
+        this.page = new Post({wrap: '#main'}, this.app).render(true);
+      }, this));
     },
 
     default: function (actions) {

@@ -35,7 +35,7 @@ define([
 
       // Socket Subscriptions
       this.channel = this.app.socket.subscribe('mem-'
-          + this.app.profile.get('member').id);
+          + this.app.profile.member.id);
       this.channel.bind('notification.new', _.bind(this.collect, this));
       this.channel.bind('notification.read', _.bind(this.read, this));
       this.channel.bind('notification.removed', _.bind(this._remove, this));
@@ -48,7 +48,7 @@ define([
       this.spin.start();
   
       // Reset the collection.
-      this.latest_list = this.app.profile.get('content').notes;
+      this.latest_list = this.app.profile.notes;
       this.collection.reset(this.latest_list.items);
     },
 
@@ -193,7 +193,7 @@ define([
       this.spin.start();
       this.fetching = true;
       rpc.post('/api/notifications/list', {
-        subscriber_id: this.app.profile.get('member').id,
+        subscriber_id: this.app.profile.member.id,
         limit: this.limit,
         cursor: this.latest_list.cursor,
       }, _.bind(function (err, data) {

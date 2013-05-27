@@ -26,7 +26,10 @@ define([
         contentType: 'application/json', 
         dataType: 'json'
       };
-      if (data) params.data = JSON.stringify(data);
+      if (data)
+        if (type === 'POST')
+          params.data = JSON.stringify(data);
+        else params.url += '?' + $.param(data);
 
       return $.ajax(params);
     },

@@ -79,7 +79,7 @@ define([
       // Mock comment.
       var data = {
         id: -1,
-        author: this.app.profile.get('member'),
+        author: this.app.profile.member,
         body: payload.body,
         created: new Date().toISOString()
       };

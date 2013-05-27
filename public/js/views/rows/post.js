@@ -24,7 +24,7 @@ define([
 
       // Allow single rendering (no parent view)
       if (!options.parentView)
-        this.model = new Model(this.app.profile.get('content').page);
+        this.model = new Model(this.app.profile.content.page);
 
       // Boiler init.
       Row.prototype.initialize.call(this, options);

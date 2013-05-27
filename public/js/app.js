@@ -25,8 +25,11 @@ define([
 
   App.prototype.update = function (profile) {
 
-    // Set the app profile model.
-    this.profile = new Backbone.Model(profile);
+    // Set the app profile.
+    if (this.profile)
+      this.profile.content = profile.content;
+    else
+      this.profile = profile;
   }
 
   App.prototype.title = function (str) {

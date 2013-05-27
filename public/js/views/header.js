@@ -47,7 +47,7 @@ define([
 
       // Shell listeners / subscriptions.
       // Do this here intead of init ... re-renders often.
-      if (this.app.profile && this.app.profile.get('member')) {
+      if (this.app.profile && this.app.profile.member) {
         
         // Shell subscriptions:
         this.subscriptions.push(mps.subscribe('notification/change',
