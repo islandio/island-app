@@ -1,17 +1,19 @@
 <%
+
   var member = this.app.profile.member;
   var gravatar = member ? 'https://www.gravatar.com/avatar/'
       + member.gravatar + '?s=36&d='
       + encodeURIComponent(this.app.cloudFrontURL + '/main/img/avatar_100.png')
       : null;
+
 %>
 
-<% if (member && member.role === 0 && this.app.profile.transloadit) { %>
+<% if (member && options.input && member.role === 0) { %>
   <div id="post_input" class="list-header">
     <div class="post">
-      <a href="/<%= member.username %>" class="post-input-avatar">
+      <span class="post-input-avatar">
         <img src=<%= gravatar %> width="36" height="36" />
-      </a>
+      </span>
       <div class="post-input-wrap">
         <form action="/api/posts" enctype="multipart/form-data" method="POST"
             id="post_input_form">
@@ -63,9 +65,7 @@
     </div>
   </div>
 <% } %>
-<% if (this.collection.models.length === 0) { %>
-  <span class="empty-list">No Posts.</span>
-<% } else { %>
+<% if (this.collection.models.length > 0) { %>
   <% _.each(this.collection.models, _.bind(function(row) { %>
     <%= this.row(row) %>
   <% }, this)); %>

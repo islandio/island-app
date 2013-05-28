@@ -1372,7 +1372,6 @@ img.heart-img {
   opacity: 0.8;
 }
 .obj-desc-txt-wrap {
-  display: none;
   margin: 0 0 0 25px;
   padding: 10px 10px 0 10px;
   -webkit-animation-name: fadeIn;
@@ -1653,6 +1652,7 @@ div.post-info {
   line-height: 13px;
   color: #b3b3b3;
 }
+span.post-input-avatar,
 a.post-input-avatar {
   position: relative;
   z-index: 1;
@@ -1666,6 +1666,7 @@ a.post-input-avatar {
 a.post-input-avatar:hover {
   background: none;
 }
+span.post-input-avatar img,
 a.post-input-avatar img {
   -webkit-border-radius: 3px 0 0 3px;
   -moz-border-radius: 3px 0 0 3px;
@@ -1892,6 +1893,7 @@ table#post_params label {
   color: #666;
   margin: 0;
 }
+span.comment-avatar,
 a.comment-avatar {
   position: relative;
   z-index: 1;
@@ -1905,6 +1907,7 @@ a.comment-avatar {
 a.comment-avatar:hover {
   background: none;
 }
+span.comment-avatar img,
 a.comment-avatar img {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;

@@ -1,0 +1,105 @@
+<%
+
+  // Save ref
+  var data = this.model.attributes;
+
+  // From
+  var from = data.hometown && data.hometown.name !== '' ? data.hometown.name: 'Earth';
+
+  // Check image
+  if (!data.image) {
+    data.image = {meta: {width: 640, height: 288}};
+    if (!data.gender || 'male' === data.gender)
+      data.image.cf_url = 'https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-blnk-pic-m.jpg';
+    else
+      data.image.cf_url = 'https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-blnk-pic-f.jpg';
+  }
+
+  // Image meta
+  var _w = 640;
+  var _h = 288;
+  var w, h;
+  var l = 'left:0;';
+  var t = 'top:0;';
+  w = _w
+  h = (data.image.meta.height / data.image.meta.width) * _w;
+  if (h - _h >= 0) {
+    t = 'top:' + (data.image.meta.top !== undefined 
+        ? data.image.meta.top: (-(h - _h) / 2)) + 'px;';
+  } else {
+    w = (data.image.meta.width / data.image.meta.height) * _h;
+    h = _h;
+    l = 'left:' + (data.image.meta.left !== undefined
+        ? data.image.meta.left: (-(w - _w) / 2)) + 'px;';
+  }
+
+  // Description
+  var desc = data.description && data.description !== '' ? data.description: null;
+
+  // Websites
+  var links = data.website ? '': null;
+  if (data.website) {
+    var websites = data.website.split('\n');
+    _.each(websites, function(site, i) {
+      if (site === '') return;
+      if (!site.match(/^http:\/\/|https:\/\//)) site = 'http://' + site;
+      links += '<a href="' + site + '" target="_blank">' + site + '</a>';
+      if (i !== websites.length - 1) links += ',';
+    });
+  }
+
+  // Member since
+  var created = new Date(data.created);
+  var since = [created.getMonth() + 1, created.getFullYear()].join('/');
+
+%>
+
+<div class="leftside">
+  <div class="obj-title">
+    <span class="slash">/</span>
+    <h1 class="title-left"><%= data.displayName %></h1>
+    <h1 class="title-sub">from <%= from %></h1>
+  </div>
+  <div class="obj-holder member-picture matte">
+    <img class="mask" width="640" style="top:0;"
+        src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-top.png" />
+    <img class="mask" width="640" style="top:280px;"
+        src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-btm.png" />
+    <img class="masked" src=<%= data.image.cf_url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
+  </div>
+  <div class="obj-desc matte">
+    <img class="left" align="top"
+        src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-obj-info.gif" />
+    <div class="obj-desc-txt-wrap profile-info">
+      <% if (desc || links) { %>
+        <div class="member-info">
+          <ul>
+            <% if (desc) { %>
+              <li>
+                <p><%= this.model.desc() %></p>
+              </li>
+            <% } %>
+            <% if (links) { %>
+              <li>
+                // <span>More from <%= data.displayName %> at </span>
+                <span class="member-info-content"><%= links %></span>
+              </li>
+            <% } %>
+          </ul>
+        </div>
+      <% } %>
+      <h3 class="obj-details">Member since <%= since %></h3>
+    </div>
+  </div>
+  <div id="posts"></div>
+  <div class="list-spin">
+    <div id="posts-spin"></div>
+    <span class="empty-feed">Showing all.</span>
+  </div>
+</div>
+<div class="rightside">
+  <h1 class="title-right">/ Activity</h1>
+  <br />
+  <span class="empty-list">...will go here :)</span>
+</div>
+<div class="clear"></div>

@@ -4,12 +4,12 @@
       + encodeURIComponent(this.app.cloudFrontURL + '/main/img/avatar_100.png');
 %>
 
-<a href="/<%= this.model.get('author').username %>" class="comment-avatar">
+<a href="/<%= this.model.get('author').username %>" class="comment-avatar navigate">
   <img src=<%= gravatar %> width="32" height="32" />
 </a>
 <div class="comment-body">
   <p>
-    <a href="/<%= this.model.get('author').username %>" class="comment-author">
+    <a href="/<%= this.model.get('author').username %>" class="comment-author navigate">
       <%= this.model.get('author').displayName %>
     </a>
     <%= this.model.body() %>

@@ -35,7 +35,7 @@ define([
       return this;
     },
 
-    events: {
+    click: {
       'click a.navigate': 'navigate',
     },
 
@@ -223,6 +223,14 @@ define([
           {parentView: this, reverse: true});
     },
 
+    destroy: function () {
+      _.each(this.subscriptions, function (s) {
+        mps.unsubscribe(s);
+      });
+      this.comments.destroy();
+      Row.prototype.destroy.call(this);
+    },
+
     navigate: function (e) {
       e.preventDefault();
 
@@ -230,14 +238,6 @@ define([
       var path = $(e.target).attr('href') || $(e.target).parent().attr('href');
       if (path)
         this.app.router.navigate(path, {trigger: true});
-    },
-
-    destroy: function () {
-      _.each(this.subscriptions, function (s) {
-        mps.unsubscribe(s);
-      });
-      this.comments.destroy();
-      Row.prototype.destroy.call(this);
     },
 
     fancybox: function () {

@@ -43,11 +43,23 @@ define([
     },
 
     put: function (url, data, cb) {
-      this.exec('PUT', url, data, cb);
+      if (!data || typeof data === 'function') {
+        cb = data;
+        data = null;
+      }
+
+      data._method = 'PUT';
+      this.exec('POST', url, data, cb);
     },
 
     delete: function (url, data, cb) {
-      this.exec('DELETE', url, data, cb);
+      if (!data || typeof data === 'function') {
+        cb = data;
+        data = null;
+      }
+
+      data._method = 'DELETE';
+      this.exec('POST', url, data, cb);
     }
 
   }

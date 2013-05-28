@@ -9,9 +9,9 @@
 <div id="comment_input" class="list-header">
   <% if (member) { %>
     <div class="comment">
-      <a href="/<%= member.username %>" class="comment-avatar">
+      <span class="comment-avatar navigate">
         <img src=<%= gravatar %> width="32" height="32" />
-      </a>
+      </span>
       <div class="comment-body">
         <form enctype="multipart/form-data" method="POST" class="comment-input-form">
           <textarea name="body" class="comment-input" 

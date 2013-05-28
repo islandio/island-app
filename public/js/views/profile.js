@@ -10,9 +10,9 @@ define([
   'rpc',
   'util',
   'models/member',
-  'views/lists/comments',
+  'text!../../../templates/profile.html',
   'views/lists/posts'
-], function ($, _, Backbone, mps, rpc, util, Member, Comments, Posts) {
+], function ($, _, Backbone, mps, rpc, util, Member, template, Posts) {
 
   return Backbone.View.extend({
 
@@ -36,12 +36,11 @@ define([
     render: function () {
 
       // Use a model for the main content.
-      this.model = new Member(this.app.profile.get('content').member);
+      this.model = new Member(this.app.profile.content.page);
 
-      // Format the bio paragraph.
-      var bio = this.$('#profile_bio');
-      bio.html(util.formatText(bio.text()));
-      this.$('#profile_info').show();
+      // UnderscoreJS rendering.
+      this.template = _.template(template);
+      this.$el.html(this.template.call(this));
 
       // Done rendering ... trigger setup.
       this.trigger('rendered');
@@ -51,9 +50,6 @@ define([
 
     // Misc. setup.
     setup: function () {
-
-      // Render comments.
-      this.comments = new Comments(this.app, {parentView: this, reverse: true});
 
       // Render posts.
       this.posts = new Posts(this.app, {parentView: this, reverse: true});
@@ -73,7 +69,6 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      this.comments.destroy();
       this.posts.destroy();
       this.undelegateEvents();
       this.stopListening();

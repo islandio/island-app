@@ -63,6 +63,7 @@ define([
       else {
         this.nomore = true;
         $('<span class="empty-feed">No posts.</span>').appendTo(this.$el);
+        this.spin.stop();
       }
       this.paginate();
       return this;
@@ -72,7 +73,6 @@ define([
     // (could be newly arived or older ones from pagination)
     renderLast: function (pagination) {
       List.prototype.renderLast.call(this, pagination);
-
       _.delay(_.bind(function () {
         if (pagination !== true)
           this.checkHeight();

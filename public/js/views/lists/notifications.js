@@ -97,6 +97,7 @@ define([
       else {
         this.nomore = true;
         $('<span class="empty-feed">No notifications.</span>').appendTo(this.$el);
+        this.spin.stop();
       }
       this.paginate();
       return this;
