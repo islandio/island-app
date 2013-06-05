@@ -387,9 +387,9 @@ img[alt=image]
   border-radius 5px
 
 label
-  color gray
+  color #666
   font-size 11px
-  font-weight normal
+  font-weight bold
 
 td
   white-space nowrap
@@ -410,9 +410,10 @@ textarea
   font-size 11px
   resize none
   font-weight normal
-  background backgray
-  padding 4px
+  -webkit-font-smoothing: antialiased;
+  padding 5px
   border 1px solid bordergray
+  color #404040
   vertical-align top
 
 textarea:focus
@@ -435,7 +436,7 @@ input[type=password]
   -webkit-font-smoothing antialiased
   appearance none
   font-smoothing antialiased
-  background backgray
+  // background backgray
   width 142px
   margin 0
   padding 5px
@@ -1135,17 +1136,17 @@ span.count
   margin 10px 0 0 0 !important
   width 198px !important
 
-#add-media,
-#save-settings
-  width 100%
-  margin 15px 0 0
+// #add-media,
+// #save-settings
+//   width 100%
+//   margin 15px 0 0
 
-#add-media-mask,
-#save-settings-mask
-  position absolute
-  right 0
-  bottom 0
-  cursor pointer
+// #add-media-mask,
+// #save-settings-mask
+//   position absolute
+//   right 0
+//   bottom 0
+//   cursor pointer
 
 // #explore
 //   width 100%
@@ -1233,54 +1234,54 @@ span.count
   left 0
   display none
 
-#media-form table,
-#settings-form table
-  width 640px
-  margin 20px 0 0 0
+// #media-form table,
+// #settings-form table
+//   width 640px
+//   margin 20px 0 0 0
 
-#media-form input[name='post[title]'],
-#settings-form input[name='edit[displayName]']
-  width 632px
+// #media-form input[name='post[title]'],
+// #settings-form input[name='edit[displayName]']
+//   width 632px
 
-#media-form textarea
-  width 630px
-  height 150px
-  color darkgray
-  overflow hidden
+// #media-form textarea
+//   width 630px
+//   height 150px
+//   color darkgray
+//   overflow hidden
 
-#settings-form textarea
-  width 630px
-  height 32px
-  color darkgray
-  overflow hidden
+// #settings-form textarea
+//   width 630px
+//   height 32px
+//   color darkgray
+//   overflow hidden
 
-#media-form td,
-#settings-form td
-  padding 0 0 5px
+// #media-form td,
+// #settings-form td
+//   padding 0 0 5px
 
-.media-instructions,
-.settings-instructions
-  font-size 11px
-  line-height 15px
-  font-style italic
+// .media-instructions,
+// .settings-instructions
+//   font-size 11px
+//   line-height 15px
+//   font-style italic
 
-.settings-banner-wrap
-  position relative
-  width 232px
-  height 104px
-  overflow hidden
-  cursor move
+// .settings-banner-wrap
+//   position relative
+//   width 232px
+//   height 104px
+//   overflow hidden
+//   cursor move
 
-.settings-banner
-  left 0
-  top 0
+// .settings-banner
+//   left 0
+//   top 0
 
-.notification-section
-  vertical-align -10px
+// .notification-section
+//   vertical-align -10px
 
-.settings-heading
-  font-family title
-  font-size 16px
+// .settings-heading
+//   font-family title
+//   font-size 16px
 
 // li.notification:not(.closable)
 //   cursor pointer
@@ -1336,13 +1337,13 @@ h1.title-right
   font-family title
   text-transform uppercase
   
-h1.title-bottom
-  padding 0 0 20px
-  font-size 18px
+h1.title-static
+  font-size 16px
   font-weight normal
   line-height normal
-  color black
+  color #404040
   font-family title
+  text-transform uppercase
 
 h1.title-sub
   font-size 9px
@@ -1738,6 +1739,17 @@ div.leftside
 div.rightside
   margin 0 0 0 670px
 
+div.middle
+  width 480px
+  margin 60px auto 0
+  padding 0 30px 20px
+
+  border-radius 3px
+
+  -webkit-box-shadow 0 0 3px #b3b3b3
+  -moz-box-shadow 0 0 3px #b3b3b3
+  box-shadow 0 0 3px #b3b3b3
+
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––map*/
 
 div#map
@@ -2004,7 +2016,7 @@ input#file_chooser
 textarea.post-input,
 textarea.comment-input
   display block
-  width 614px
+  width 612px
   background #fff
   resize none
   overflow hidden
@@ -2027,6 +2039,7 @@ textarea.comment-input
   transition-timing-function min-height 0.2s
 
 textarea.post-input
+  line-height 18px
   border none
 
 table#post_params
@@ -2375,6 +2388,73 @@ textarea.comment-input
 span.info-divider
   font-size 8px
   color #b3b3b3
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––settings*/
+
+#settings_form table
+  margin 0 0 0 -10px
+
+#settings_form h1.title-static
+  margin 20px 0 10px 0
+
+#settings_form textarea
+  width 450px
+  padding 8px
+  margin-bottom 15px
+  font-size 12px
+  line-height 18px
+  padding-right 20px
+  overflow hidden
+  background #fcfcfc
+
+  border-radius 3px
+
+#settings_form td
+  padding 0 0 5px 10px
+
+#settings_form td input[type=text]
+  width 462px
+  padding 8px
+  margin-bottom 10px
+  font-size 12px
+  background #fcfcfc
+
+.settings-instructions
+  font-size 11px
+  line-height 15px
+  font-style italic
+
+.settings-banner-wrap
+  position relative
+  width 232px
+  height 104px
+  margin-bottom 15px
+  overflow hidden
+  cursor move
+
+.settings-banner
+  left 0
+  top 0
+
+.settings-notifications-txt
+  display block
+  margin-bottom 15px
+  font-size 12px
+  color #666
+
+.settings-heading
+  font-weight bold
+  color #404040
+  font-size 14px
+
+#save_settings
+  width 480px
+  margin 15px 0 0
+
+#settings_form a.button,
+#settings_form a.signin-strategy-btn-disabled
+  margin 0 auto
+  width 480px
 
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crags*/

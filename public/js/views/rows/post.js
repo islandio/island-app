@@ -35,7 +35,7 @@ define([
       return this;
     },
 
-    click: {
+    events: {
       'click a.navigate': 'navigate',
     },
 

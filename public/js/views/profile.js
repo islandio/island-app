@@ -48,6 +48,9 @@ define([
       return this;
     },
 
+    // Bind mouse events.
+    events: {},
+
     // Misc. setup.
     setup: function () {
 
@@ -74,9 +77,6 @@ define([
       this.stopListening();
       this.empty();
     },
-
-    // Bind mouse events.
-    events: {},
 
   });
 });

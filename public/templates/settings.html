@@ -1,0 +1,243 @@
+<%
+
+  // Save model attributes
+  var data = this.model.attributes;
+
+  // Banner sizing
+  var banner = data.thumbs ? data.thumbs[0]: null;
+  if (!banner) {
+    banner = {meta: {width: 232, height: 104}};
+    if (!data.gender || 'male' === data.gender)
+      banner.cf_url = 'https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-blnk-pic-m.jpg';
+    else
+      banner.cf_url = 'https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-blnk-pic-f.jpg';
+  }
+  var _w = 232;
+  var _h = 104;
+  var w, h
+  var l = 'left:0;';
+  var t = 'top:0;';
+  w = _w;
+  h = (banner.meta.height / banner.meta.width) * _w;
+  if (h - _h >= 0) {
+    t = 'top:' + (banner.meta.top !== undefined
+        ? banner.meta.top : (-(h - _h) / 2)) + 'px;';
+  } else {
+    w = (banner.meta.width / banner.meta.height) * _h;
+    h = _h;
+    l = 'left:' + (banner.meta.left !== undefined
+        ? banner.meta.left : (-(w - _w) / 2)) + 'px;';
+  }
+
+  // Notifications config
+  var notes = data.config.notifications;
+
+%>
+<div class="middle">
+  <form id="settings_form">
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <h1 class="title-static">/ Public Profile</h1>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <label for="displayName">Display Name</label>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <input name="displayName" type="text" value=<%= data.displayName %>>
+          </td>
+        </tr>
+
+        <tr>
+          <td colspan="3">
+            <label for="primaryEmail">Email (private) note: change your avatar at 
+                <a href="http://gravatar.com" target="_blank">gravatar.com</a></label>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <input name="primaryEmail" type="text" value=<%= data.primaryEmail %>>
+          </td>
+        </tr>
+
+        <tr>
+          <td colspan="2">
+            <label for="username">Username</label>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <input name="username" type="text" value=<%= data.username %>>
+          </td>
+        </tr>
+
+        <tr>
+          <td colspan="3">
+            <label for="banner_img">Banner Image</label>
+          </td>
+        </tr>
+        <tr>
+          <td width="232" height="104" style="vertical-align:top;">
+            <div class="settings-banner-wrap">
+              <img class="mask" width="232" style="top:0;"
+                  src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-sml-top.png" />
+              <img class="mask" width="232" style="top:96px;"
+                  src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-sml-btm.png" />
+              <img class="masked settings-banner" src=<%= banner.cf_url %>
+                  width=<%= w %> height=<%= h %> style=<%= t + l %> />
+              <div class="upload-spinner" style="height:100%;"></div>
+            </div>
+          </td>
+          <td colspan="2" style="vertical-align:top;">
+            <input type="file" name="banner_img" multiple="true" style="font-size:11px;"
+                accept="image/gif, image/jpeg, image/png" />
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <label for="description">Athlete / Sponsor Bio</label>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <textarea name="description"
+                placeholder="Say something..."><%= data.description %></textarea>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <label for="location">Current City</label>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <input name="location" type="text"
+                placeholder="e.g. San Francisco, California"
+                value=<%= data.location ? data.location.name: '' %>>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <label for="hometown">Hometown</label>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <input name="hometown" type="text"
+                placeholder="e.g. Bozeman, Montana"
+                value=<%= data.hometown ? data.hometown.name: '' %>>
+          </td>
+        </tr>
+
+        <tr>
+          <td colspan="3">
+            <label for="birthday">Birthday</label>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <input name="birthday" type="text"
+                placeholder="e.g. 01/06/1983" value=<%= data.birthday %>>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <label for="gender">Gender</label>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <input name="gender" type="text"
+                placeholder="e.g. male, female, or get creative!" value=<%= data.gender %>>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <label for="website">Websites</label>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <textarea name="website"
+                placeholder="One URL per line..."><%= data.website %></textarea>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <h1 class="title-static">/ Notification Settings</h1>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span class="settings-notifications-txt">Receive comment thread notifications?</span>
+          </td>
+          <td align="right">
+            <% if (notes.comment.email === true || notes.comment.email === 'true') { %>
+              <input type="checkbox" name="config[notifications][comment][email]"
+                  checked="checked" />
+            <% } else { %>
+              <input type="checkbox" name="config[notifications][comment][email]" />
+            <% } %>
+            <label for="config[notifications][comment][email]"
+                style="vertical-align:-1px;">Email</label>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <h1 class="title-static">/ Services</h1>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <div class="signin-spinner"></div>
+            <% if (!data.facebookId) { %>
+              <a class="button signin-strategy-btn facebook-btn from-settings"
+                  href="/connect/facebook">
+                Connect with Facebook
+              </a>
+            <% } else { %>
+              <a class="signin-strategy-btn-disabled facebook-btn-disabled"
+                  href="javascript:;">
+                Connected with Facebook
+              </a>
+            <% } %>
+            <br />
+            <% if (!data.twitterId) { %>
+              <a class="button signin-strategy-btn twitter-btn from-settings"
+                  href="/connect/twitter">
+                Connect with Twitter
+              </a>
+            <% } else { %>
+              <a class="signin-strategy-btn-disabled twitter-btn-disabled"
+                  href="javascript:;">
+                Connected with Twitter
+              </a>
+            <% } %>
+            <br />
+            <% if (data.role === 0) { %>
+              <% if (!data.instagramId) { %>
+                <a class="button signin-strategy-btn instagram-btn from-settings"
+                    href="/connect/instagram">
+                  Connect with Instagram
+                </a>
+              <% } else { %>
+                <a class="signin-strategy-btn-disabled instagram-btn-disabled"
+                    href="javascript:;">
+                  Connected with Instagram
+                </a>
+                <p class="settings-instructions">
+                  Add #island to your Instagram photos.
+                </p>
+              <% } %>
+            <% } %>      
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+</div>

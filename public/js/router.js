@@ -15,9 +15,10 @@ define([
   'views/home',
   'views/login',
   'views/profile',
+  'views/settings',
   'views/rows/post'
 ], function ($, _, Backbone, mps, rpc, Header, Footer,
-      Notifications, Map, Home, Login, Profile, Post) {
+      Notifications, Map, Home, Login, Profile, Settings, Post) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -36,11 +37,8 @@ define([
       
       // Page routes:
       this.route(':username', 'profile', this.profile);
-      // this.route(':username', 'person', _.bind(this.person, this, 'person'));
       this.route(':username/:key', 'post', this.post);
-      // this.route(':username/c/:slug/:opp', 'fund', _.bind(this.fund, this, 'fund'));
-      // this.route(':username/c/:slug/:opp?*qs', 'fund', _.bind(this.fund, this, 'fund'));
-      // this.route(/^settings\/profile$/, 'profile', _.bind(this.profile, this, 'profile'));
+      this.route('settings', 'profile', this.settings);
       this.route('login', 'login', this.login);
       this.route('', 'home', this.home);
 
@@ -59,22 +57,9 @@ define([
 
     render: function (service, cb) {
 
-      // Kill the page view if it exists.
-      if (this.page)
-        this.page.destroy();
+      function _render() {
 
-      // Check if a profile exists already.
-      var query = this.app.profile
-          && this.app.profile.notes ? {n: 0}: {};
-
-      // Get a profile.
-      rpc.get(service, query,
-          _.bind(function (err, pro) {
-        if (err) return console.error(err.stack);
-
-        // Set the profile.
-        this.app.update(pro);
-
+        // Render page elements.
         if (!this.header)
           this.header = new Header(this.app).render();
         else this.header.render();
@@ -86,7 +71,31 @@ define([
         if (!this.notifications && this.app.profile.member)
           this.notifications = new Notifications(this.app, {reverse: true});
 
+        // Callback to route.
         cb();
+      }
+
+      // Kill the page view if it exists.
+      if (this.page)
+        this.page.destroy();
+
+      if (typeof service === 'function') {
+        cb = service;
+        return _render.call(this);
+      }
+
+      // Check if a profile exists already.
+      var query = this.app.profile
+          && this.app.profile.notes ? {n: 0}: {};
+
+      // Get a profile, if needed.
+      rpc.get(service, query,
+          _.bind(function (err, pro) {
+        if (err) return console.error(err.stack);
+
+        // Set the profile.
+        this.app.update(pro);
+        _render.call(this);
 
       }, this));
     },
@@ -105,6 +114,12 @@ define([
       this.render('/service/member.profile/' + username,
           _.bind(function () {
         this.page = new Profile(this.app).render();
+      }, this));
+    },
+
+    settings: function () {
+      this.render('/service/settings.profile', _.bind(function () {
+        this.page = new Settings(this.app).render();
       }, this));
     },
 
