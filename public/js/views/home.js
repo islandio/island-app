@@ -34,6 +34,9 @@ define([
     // Draw our template from the profile JSON.
     render: function () {
 
+      // Set page title
+      this.app.title('Climb');
+
       // UnderscoreJS rendering.
       this.template = _.template(template);
       this.$el.html(this.template.call(this));

@@ -32,7 +32,10 @@ html(lang="en")
           meta(property="og:audio:secure_url", content=med.audio.cf_url)
           meta(property="og:audio:type", content="application/mp3")
       - });
-    title= title
+    - if (typeof title !== 'undefined')
+      title= title
+    - else
+      title Island
     <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
     link(rel="stylesheet", href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.css")
     link(rel="stylesheet", href="/css/fancybox.css")

@@ -49,7 +49,7 @@
         </tr>
         <tr>
           <td colspan="3">
-            <input name="displayName" type="text" value=<%= data.displayName %>>
+            <input tabindex="1" name="displayName" type="text" value=<%= data.displayName %>>
           </td>
         </tr>
 
@@ -61,7 +61,7 @@
         </tr>
         <tr>
           <td colspan="3">
-            <input name="primaryEmail" type="text" value=<%= data.primaryEmail %>>
+            <input tabindex="2" name="primaryEmail" type="text" value=<%= data.primaryEmail %>>
           </td>
         </tr>
 
@@ -72,7 +72,7 @@
         </tr>
         <tr>
           <td colspan="2">
-            <input name="username" type="text" value=<%= data.username %>>
+            <input tabindex="3" name="username" type="text" value=<%= data.username %>>
           </td>
         </tr>
 
@@ -105,7 +105,7 @@
         </tr>
         <tr>
           <td colspan="3">
-            <textarea name="description"
+            <textarea tabindex="4" name="description"
                 placeholder="Say something..."><%= data.description %></textarea>
           </td>
         </tr>
@@ -116,7 +116,7 @@
         </tr>
         <tr>
           <td colspan="3">
-            <input name="location" type="text"
+            <input tabindex="5" name="location" type="text"
                 placeholder="e.g. San Francisco, California"
                 value=<%= data.location ? data.location.name: '' %>>
           </td>
@@ -128,7 +128,7 @@
         </tr>
         <tr>
           <td colspan="3">
-            <input name="hometown" type="text"
+            <input tabindex="6" name="hometown" type="text"
                 placeholder="e.g. Bozeman, Montana"
                 value=<%= data.hometown ? data.hometown.name: '' %>>
           </td>
@@ -141,7 +141,7 @@
         </tr>
         <tr>
           <td colspan="3">
-            <input name="birthday" type="text"
+            <input tabindex="7" name="birthday" type="text"
                 placeholder="e.g. 01/06/1983" value=<%= data.birthday %>>
           </td>
         </tr>
@@ -152,7 +152,7 @@
         </tr>
         <tr>
           <td colspan="3">
-            <input name="gender" type="text"
+            <input tabindex="8" name="gender" type="text"
                 placeholder="e.g. male, female, or get creative!" value=<%= data.gender %>>
           </td>
         </tr>
@@ -163,7 +163,7 @@
         </tr>
         <tr>
           <td colspan="3">
-            <textarea name="website"
+            <textarea tabindex="9" name="website"
                 placeholder="One URL per line..."><%= data.website %></textarea>
           </td>
         </tr>
@@ -179,12 +179,12 @@
           <td align="right">
             <% if (notes.comment.email === true || notes.comment.email === 'true') { %>
               <input type="checkbox" name="config[notifications][comment][email]"
-                  checked="checked" />
+                  tabindex="10" checked="checked" />
             <% } else { %>
               <input type="checkbox" name="config[notifications][comment][email]" />
             <% } %>
             <label for="config[notifications][comment][email]"
-                style="vertical-align:-1px;">Email</label>
+                tabindex="10" style="vertical-align:-1px;">Email</label>
           </td>
         </tr>
         <tr>
@@ -196,7 +196,7 @@
           <td colspan="3">
             <div class="signin-spinner"></div>
             <% if (!data.facebookId) { %>
-              <a class="button signin-strategy-btn facebook-btn from-settings"
+              <a tabindex="11" class="button signin-strategy-btn facebook-btn from-settings"
                   href="/connect/facebook">
                 Connect with Facebook
               </a>
@@ -208,7 +208,7 @@
             <% } %>
             <br />
             <% if (!data.twitterId) { %>
-              <a class="button signin-strategy-btn twitter-btn from-settings"
+              <a tabindex="12" class="button signin-strategy-btn twitter-btn from-settings"
                   href="/connect/twitter">
                 Connect with Twitter
               </a>
@@ -221,7 +221,7 @@
             <br />
             <% if (data.role === 0) { %>
               <% if (!data.instagramId) { %>
-                <a class="button signin-strategy-btn instagram-btn from-settings"
+                <a tabindex="13" class="button signin-strategy-btn instagram-btn from-settings"
                     href="/connect/instagram">
                   Connect with Instagram
                 </a>

@@ -416,14 +416,6 @@ textarea
   color #404040
   vertical-align top
 
-textarea:focus
-  background white
-  border 1px solid darkgray
-  outline none
-
-textarea::-moz-focus-inner
-  border none
-
 input[type=checkbox], input[type=radio]
   display inline
 
@@ -436,7 +428,6 @@ input[type=password]
   -webkit-font-smoothing antialiased
   appearance none
   font-smoothing antialiased
-  // background backgray
   width 142px
   margin 0
   padding 5px
@@ -452,17 +443,51 @@ input[type=password].from-login
   color #333
   background rgba(252, 252, 251, 0.65)
 
-input[type=text]:focus,
-input[type=password]:focus,
-input[type=search]:focus
-  background white
-  border 1px solid darkgray
-  background white
+input[type=text],
+input[type=number],
+input[type=email],
+input[type=password],
+input[type=tel],
+input[type=search],
+textarea
+  background-color #fcfcfc
+  -webkit-box-shadow inset 0 1px 2px rgba(0,0,0,0.075)
+  -moz-box-shadow inset 0 1px 2px rgba(0,0,0,0.075)
+  box-shadow inset 0 1px 2px rgba(0,0,0,0.075)
 
-input:focus
+  -webkit-transition background-color 0.15s ease-in 0
+  -moz-transition background-color 0.15s ease-in
+  transition background-color 0.15s ease-in
+
+  -webkit-transition border-color 0.15s ease-in 0
+  -moz-transition border-color 0.15s ease-in
+  transition border-color 0.15s ease-in
+
+  -webkit-transition -webkit-box-shadow 0.15s ease-in 0
+  -moz-transition -moz-box-shadow 0.15s ease-in
+  transition box-shadow 0.15s ease-in
+
+input[type=text]:focus,
+input[type=number]:focus,
+input[type=email]:focus,
+input[type=password]:focus,
+input[type=tel]:focus,
+input[type=search]:focus,
+textarea:focus
+  background white
+  border 1px solid blue
   outline none
 
-input::-moz-focus-inner
+  -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,0.075),0 0 5px rgba(75, 184, 215, 0.5);
+  -moz-box-shadow: inset 0 1px 2px rgba(0,0,0,0.075),0 0 5px rgba(75, 184, 215, 0.5);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.075),0 0 5px rgba(75, 184, 215, 0.5);
+
+input[type=file]:focus
+  border none
+  outline none
+
+input::-moz-focus-inner,
+textarea::-moz-focus-inner
   border none
 
 input.is-button-alert[type=submit]
@@ -1948,7 +1973,7 @@ div.post-info
   padding 0 0 0 2px
   font-size 10px
   line-height 13px
-  color lightgray
+  color #808080
 
 span.post-input-avatar,
 a.post-input-avatar
@@ -2405,7 +2430,7 @@ span.info-divider
   line-height 18px
   padding-right 20px
   overflow hidden
-  background #fcfcfc
+  // background #fcfcfc
 
   border-radius 3px
 
@@ -2417,7 +2442,7 @@ span.info-divider
   padding 8px
   margin-bottom 10px
   font-size 12px
-  background #fcfcfc
+  // background #fcfcfc
 
 .settings-instructions
   font-size 11px

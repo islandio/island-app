@@ -58,6 +58,8 @@ define([
     // Bind mouse events.
     events: {
       'click #logo': 'home',
+      'click #header_avatar': 'avatar',
+      'click #settings': 'settings',
       'click #globe': 'togglePanel'
     },
 
@@ -66,6 +68,21 @@ define([
 
       // Route to home:
       this.app.router.navigate('/', {trigger: true});
+    },
+
+    avatar: function (e) {
+      e.preventDefault();
+
+      // Route to profile:
+      this.app.router.navigate('/' + this.app.profile.member.username,
+          {trigger: true});
+    },
+
+    settings: function (e) {
+      e.preventDefault();
+
+      // Route to settings:
+      this.app.router.navigate('/settings', {trigger: true});
     },
 
     togglePanel: function (e) {

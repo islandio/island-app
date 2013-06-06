@@ -38,6 +38,9 @@ define([
       // Use a model for the main content.
       this.model = new Member(this.app.profile.content.page);
 
+      // Set page title
+      this.app.title(this.model.get('displayName'));
+
       // UnderscoreJS rendering.
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
