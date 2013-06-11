@@ -110,8 +110,8 @@ define([
         this.$('#post_input .post').show();
 
         // Add mouse events for dummy file selector.
-        var dummy = this.$('#file_chooser_dummy');
-        this.$('#file_chooser').on('mouseover', function (e) {
+        var dummy = this.$('#post_file_chooser_dummy');
+        this.$('#post_file_chooser').on('mouseover', function (e) {
           dummy.addClass('hover');
         })
         .on('mouseout', function (e) {
@@ -136,6 +136,11 @@ define([
       }
 
       return List.prototype.setup.call(this);
+    },
+
+    destroy: function () {
+      this.unpaginate();
+      return List.prototype.destroy.call(this);
     },
 
     validate: function (e) {
@@ -409,6 +414,10 @@ define([
 
       wrap.scroll(paginate).resize(paginate);
     },
+
+    unpaginate: function () {
+      $(window).unbind('scroll');
+    }
 
   });
 });

@@ -9,7 +9,7 @@ var optimist = require('optimist');
 var argv = optimist
     .describe('help', 'Get help')
     .describe('port', 'Port to listen on')
-      .default('port', 3644)
+      .default('port', 8000)
     .describe('dburi', 'Mongo database name')
       .default('dburi', 'island')
     .describe('index', 'Ensure indexes on MongoDB collections'
@@ -51,16 +51,6 @@ var app = express();
 // App port is env var in production
 app.set('PORT', process.env.PORT || argv.port);
 
-// Facebook params
-app.set('facebook', {
-  clientID: 203397619757208,
-  clientSecret: 'af79cdc8b5ca447366e87b12c3ddaed2',
-  
-  ID: 203397619757208,
-  KEY: 203397619757208,
-  SECRET: 'af79cdc8b5ca447366e87b12c3ddaed2'
-});
-
 // Twitter params
 app.set('twitter', {
   consumerKey: 'ithvzW8h1tEsUBewL3jxQ',
@@ -70,6 +60,12 @@ app.set('twitter', {
   consumer_secret: 'HiGnwoc8BBgsURlKshWsb1pGH8IQWE2Ve8Mqzz8',
   access_token_key: '213304250-VSHfh85LJA4a1lIX1vhk7Q1TyljF6kHYi0qQzdL6',
   access_token_secret: 'Yr77Uo7n8uNRYjRwmCmgiPQF25jVQ6vjWyqHVGFNOg'
+});
+
+// CartoDB params
+app.set('cartodb', {
+  user: 'island',
+  api_key: '883965c96f62fd219721f59f2e7c20f08db0123b'
 });
 
 // Grade map
@@ -84,7 +80,7 @@ Step(
     if ('development' === app.get('env')) {
 
       // App params
-      app.set('HOME_URI', 'http://local.island.io:' + app.get('PORT'));
+      app.set('HOME_URI', 'http://localhost:' + app.get('PORT'));
       app.set('MONGO_URI', 'mongodb://localhost:27018/' + argv.dburi);
       app.set('REDIS_HOST', 'localhost');
       app.set('REDIS_PORT', 6379);
@@ -97,12 +93,23 @@ Step(
         secret: '1015c7f661849f639e49'
       }));
 
+      // Facebook params
+      app.set('facebook', {
+        clientID: 153015724883386,
+        clientSecret: '8cba32f72580806cca22306a879052bd',
+        
+        ID: 153015724883386,
+        KEY: 153015724883386,
+        SECRET: '8cba32f72580806cca22306a879052bd'
+      });
+
       // Instagram params
       app.set('instagram', {
         clientID: 'b6e0d7d608a14a578cf94763f70f1b49',
         clientSecret: 'a3937ee32072457d92eaa2165bd7dd37',
         callbackURL: app.get('HOME_URI') + '/members/connect/instagram/callback',
-        verify: 'doesthisworkyet'
+        verifyToken: 'doesthisworkyet',
+        postCallbackURL: 'https://island.fwd.wf/api/instagram'
       });
 
       // Transloadit params
@@ -126,7 +133,7 @@ Step(
 
       // Redis connect
       this(null, redis.createClient(app.get('REDIS_PORT'),
-            app.get('REDIS_HOST')));
+          app.get('REDIS_HOST')));
     }
 
     // Production only
@@ -149,12 +156,23 @@ Step(
         secret: 'b29cec4949ef7c0d14cd'
       }));
 
+      // Facebook params
+      app.set('facebook', {
+        clientID: 203397619757208,
+        clientSecret: 'af79cdc8b5ca447366e87b12c3ddaed2',
+        
+        ID: 203397619757208,
+        KEY: 203397619757208,
+        SECRET: 'af79cdc8b5ca447366e87b12c3ddaed2'
+      });
+
       // Instagram params
       app.set('instagram', {
         clientID: 'a3003554a308427d8131cef13ef2619f',
         clientSecret: '369ae2fbc8924c158316530ca8688647',
         callbackURL: app.get('HOME_URI') + '/members/connect/instagram/callback',
-        verify: 'doesthisworkyet'
+        verifyToken: 'doesthisworkyet',
+        postCallbackURL: 'http://island.io/api/instagram'
       });
 
       // Transloadit params
@@ -194,7 +212,7 @@ Step(
     app.use(express.bodyParser());
     app.use(express.cookieParser());
     app.use(express.session({
-      store: new RedisStore({ client: rc, maxAge: 2592000000}),
+      store: new RedisStore({client: rc, maxAge: 2592000000}),
       secret: '69topsecretislandshit69'
     }));
     app.use(passport.initialize());

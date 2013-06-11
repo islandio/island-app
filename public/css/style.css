@@ -1687,12 +1687,17 @@ div#post_files span {
   line-height: 16px;
   display: block;
 }
-input#file_chooser {
+input.file-chooser {
   position: absolute;
   opacity: 0.0001;
   cursor: pointer;
   width: 240px;
+}
+input#post_file_chooser {
   left: 192px;
+}
+input#banner_file_chooser {
+  right: 0;
 }
 textarea.post-input,
 textarea.comment-input {
@@ -2053,9 +2058,8 @@ span.info-divider {
 }
 .settings-banner-wrap {
   position: relative;
-  width: 232px;
-  height: 104px;
-  margin-bottom: 15px;
+  width: 480px;
+  height: 215px;
   overflow: hidden;
   cursor: move;
 }

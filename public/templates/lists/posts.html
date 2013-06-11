@@ -24,11 +24,11 @@
               Attach a video or photos by
               <% if (Modernizr.draganddrop) { %>
                 dragging &amp; dropping or 
-                <a id="file_chooser_dummy" class="important" href="javascript:;">selecting them</a>.
-                <input id="file_chooser" type="file" name="my_file" multiple="multiple" />
+                <a id="post_file_chooser_dummy" class="file-chooser-dummy important" href="javascript:;">selecting them</a>.
+                <input id="post_file_chooser" class="file-chooser" type="file" name="my_file" multiple="multiple" />
               <% } else { %>
-                <a id="file_chooser_dummy" class="important" href="javascript:;">selecting them</a>.
-                <input id="file_chooser" type="file" name="my_file" multiple="multiple" style="left:78px;" />
+                <a id="post_file_chooser_dummy" class="file-chooser-dummy important" href="javascript:;">selecting them</a>.
+                <input id="post_file_chooser" class="file-chooser" type="file" name="my_file" multiple="multiple" style="left:78px;" />
               <% } %>
               <div id="post_files"></div>
             </div>

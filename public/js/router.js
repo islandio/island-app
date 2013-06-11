@@ -91,7 +91,6 @@ define([
       // Get a profile, if needed.
       rpc.get(service, query,
           _.bind(function (err, pro) {
-            console.log(pro)
         if (err) return console.error(err.stack);
 
         // Set the profile.

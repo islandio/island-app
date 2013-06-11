@@ -62,6 +62,22 @@ define([
       // Init form handling:
       util.initForm(this.$('form'));
 
+      // Add mouse events for dummy file selector.
+      // var dummy = this.$('#banner_file_chooser_dummy');
+      // this.$('#banner_file_chooser').on('mouseover', function (e) {
+      //   dummy.addClass('hover');
+      // })
+      // .on('mouseout', function (e) {
+      //   dummy.removeClass('hover');
+      // })
+      // .on('mousedown', function (e) {
+      //   dummy.addClass('active');
+      // })
+      // .change(_.bind(this.drop, this));
+      // $(document).on('mouseup', function (e) {
+      //   dummy.removeClass('active');
+      // });
+
       return this;
     },
 
