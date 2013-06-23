@@ -57,26 +57,38 @@ define([
       this.form = this.$('#settings_form');
       this.button = this.$('#save_settings');
 
+      // Autogrow all text areas.
       this.$('textarea').autogrow();
 
-      // Init form handling:
-      util.initForm(this.$('form'));
+      // Save field contents on blur.
+      this.$('textarea, input[type="text"]')
+          .change(_.bind(this.save, this))
+          .keyup(function (e) {
+        var field = $(e.target);
+        var label = $('label[for="' + field.attr('name') + '"]');
+        var saved = $('div.setting-saved', label.parent().parent());
+
+        if (field.val().trim() !== field.data('saved'))
+          saved.hide();
+
+        return false;
+      });
 
       // Add mouse events for dummy file selector.
-      // var dummy = this.$('#banner_file_chooser_dummy');
-      // this.$('#banner_file_chooser').on('mouseover', function (e) {
-      //   dummy.addClass('hover');
-      // })
-      // .on('mouseout', function (e) {
-      //   dummy.removeClass('hover');
-      // })
-      // .on('mousedown', function (e) {
-      //   dummy.addClass('active');
-      // })
+      var dummy = this.$('#banner_file_chooser_dummy');
+      this.$('#banner_file_chooser').on('mouseover', function (e) {
+        dummy.addClass('hover');
+      })
+      .on('mouseout', function (e) {
+        dummy.removeClass('hover');
+      })
+      .on('mousedown', function (e) {
+        dummy.addClass('active');
+      })
       // .change(_.bind(this.drop, this));
-      // $(document).on('mouseup', function (e) {
-      //   dummy.removeClass('active');
-      // });
+      $(document).on('mouseup', function (e) {
+        dummy.removeClass('active');
+      });
 
       return this;
     },
@@ -97,6 +109,38 @@ define([
       this.stopListening();
       this.empty();
     },
+
+    // Save the field.
+    save: function (e) {
+      var field = $(e.target);
+      var name = field.attr('name');
+      var label = $('label[for="' + name + '"]');
+      var saved = $('div.setting-saved', label.parent().parent());
+      var val = util.sanitize(field.val());
+
+      // Create the paylaod.
+      if (val === field.data('saved')) return false;
+      var payload = {};
+      if (name.indexOf('.') !== -1) {
+        var tmp = {};
+        tmp[name.substr(name.indexOf('.') + 1)] = val;
+        payload[name.substr(0, name.indexOf('.'))] = tmp;
+      } else payload[name] = val;
+
+      // Now do the save.
+      rpc.put('/api/members/' + this.app.profile.member.username, payload,
+          _.bind(function (err, data) {
+        if (err) return console.error(err);
+
+        console.log(data);
+        field.data('saved', val);
+        console.log(saved[0])
+        saved.show();
+
+      }, this));
+
+      return false;
+    }
 
   });
 });

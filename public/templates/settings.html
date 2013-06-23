@@ -29,6 +29,11 @@
         ? banner.meta.left: (-(w - _w) / 2)) + 'px;';
   }
 
+  // Gravatar
+  var gravatar = 'https://www.gravatar.com/avatar/'
+      + data.gravatar + '?s=24&d='
+      + encodeURIComponent(this.app.cloudFrontURL + '/main/img/avatar_100.png');
+
   // Notifications config
   var notes = data.config.notifications;
 
@@ -43,12 +48,12 @@
           </td>
         </tr>
         <tr>
-          <td colspan="3">
+          <td colspan="2">
             <label for="banner_img">Banner Image</label>
           </td>
         </tr>
         <tr>
-          <td colspan="3" width="480" height="215" style="vertical-align:top;">
+          <td colspan="2" width="480" height="215" style="vertical-align:top;">
             <div class="settings-banner-wrap">
               <img class="mask" width="480" style="top:0;"
                   src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-top.png" />
@@ -57,117 +62,140 @@
               <img class="masked settings-banner" src=<%= banner.cf_url %>
                   width=<%= w %> height=<%= h %> style=<%= t + l %> />
               <div class="upload-spinner" style="height:100%;"></div>
+              <a id="banner_file_chooser_dummy" class="file-chooser-dummy important"
+                  href="javascript:;">Update</a>
+              <input id="banner_file_chooser" class="file-chooser" type="file"
+                  name="banner_img" accept="image/gif, image/jpeg, image/png" />
             </div>
           </td>
         </tr>
         <tr>
-          <td colspan="3" style="position:relative;text-align:right;">
-            <a id="banner_file_chooser_dummy" class="file-chooser-dummy important" href="javascript:;">Change image</a>
-            <input id="banner_file_chooser" class="file-chooser" type="file" name="banner_img" accept="image/gif, image/jpeg, image/png" />
-          </td>
-        </tr>
-        <tr>
-          <td colspan="3">
+          <td colspan="1">
             <label for="displayName">Display Name</label>
           </td>
-        </tr>
-        <tr>
-          <td colspan="3">
-            <input tabindex="1" name="displayName" type="text" value=<%= data.displayName %>>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="3">
-            <label for="primaryEmail">Email (private) note: change your avatar at 
-                <a href="http://gravatar.com" target="_blank">gravatar.com</a></label>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="3">
-            <input tabindex="2" name="primaryEmail" type="text" value=<%= data.primaryEmail %>>
+          <td colspan="1" class="text-right">
+            <div class="setting-saved">
+              <span class="icon-ok"></span>
+              <span>Saved</span>
+            </div>
           </td>
         </tr>
         <tr>
           <td colspan="2">
+            <input tabindex="1" name="displayName" type="text" value="<%= data.displayName %>">
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1">
+            <label for="primaryEmail">Email (private)</label>
+          </td>
+          <td colspan="1" class="text-right">
+            <div class="setting-saved">
+              <span class="icon-ok"></span>
+              <span>Saved</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <input tabindex="2" name="primaryEmail" type="text" value="<%= data.primaryEmail %>">
+          </td>
+        </tr>
+        <!-- <tr>
+          <td colspan="1">
             <label for="username">Username</label>
           </td>
+          <td colspan="1" class="text-right">
+            <div class="setting-saved">
+              <span class="icon-ok"></span>
+              <span>Saved</span>
+            </div>
+          </td>
         </tr>
         <tr>
           <td colspan="2">
-            <input tabindex="3" name="username" type="text" value=<%= data.username %>>
+            <input tabindex="3" name="username" type="text" value="<= data.username >">
           </td>
-        </tr>        
+        </tr> -->
         <tr>
-          <td colspan="3">
+          <td colspan="1">
             <label for="description">Athlete / Sponsor Bio</label>
+          </td>
+          <td colspan="1" class="text-right">
+            <div class="setting-saved">
+              <span class="icon-ok"></span>
+              <span>Saved</span>
+            </div>
           </td>
         </tr>
         <tr>
-          <td colspan="3">
+          <td colspan="2">
             <textarea tabindex="4" name="description"
                 placeholder="Say something..."><%= data.description %></textarea>
           </td>
         </tr>
         <tr>
-          <td colspan="3">
-            <label for="location">Current City</label>
+          <td colspan="1">
+            <label for="location.name">Current City</label>
+          </td>
+          <td colspan="1" class="text-right">
+            <div class="setting-saved">
+              <span class="icon-ok"></span>
+              <span>Saved</span>
+            </div>
           </td>
         </tr>
         <tr>
-          <td colspan="3">
-            <input tabindex="5" name="location" type="text"
+          <td colspan="2">
+            <input tabindex="5" name="location.name" type="text"
                 placeholder="e.g. San Francisco, California"
-                value=<%= data.location ? data.location.name: '' %>>
+                value="<%= data.location ? data.location.name: '' %>">
           </td>
         </tr>
         <tr>
-          <td colspan="3">
-            <label for="hometown">Hometown</label>
+          <td colspan="1">
+            <label for="hometown.name">Hometown</label>
+          </td>
+          <td colspan="1" class="text-right">
+            <div class="setting-saved">
+              <span class="icon-ok"></span>
+              <span>Saved</span>
+            </div>
           </td>
         </tr>
         <tr>
-          <td colspan="3">
-            <input tabindex="6" name="hometown" type="text"
+          <td colspan="2">
+            <input tabindex="6" name="hometown.name" type="text"
                 placeholder="e.g. Bozeman, Montana"
-                value=<%= data.hometown ? data.hometown.name: '' %>>
-          </td>
-        </tr>
-
-        <tr>
-          <td colspan="3">
-            <label for="birthday">Birthday</label>
+                value="<%= data.hometown ? data.hometown.name: '' %>">
           </td>
         </tr>
         <tr>
-          <td colspan="3">
-            <input tabindex="7" name="birthday" type="text"
-                placeholder="e.g. 01/06/1983" value=<%= data.birthday %>>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="3">
-            <label for="gender">Gender</label>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="3">
-            <input tabindex="8" name="gender" type="text"
-                placeholder="e.g. male, female, or get creative!" value=<%= data.gender %>>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="3">
+          <td colspan="1">
             <label for="website">Websites</label>
           </td>
+          <td colspan="1" class="text-right">
+            <div class="setting-saved">
+              <span class="icon-ok"></span>
+              <span>Saved</span>
+            </div>
+          </td>
         </tr>
         <tr>
-          <td colspan="3">
+          <td colspan="2">
             <textarea tabindex="9" name="website"
                 placeholder="One URL per line..."><%= data.website %></textarea>
           </td>
         </tr>
         <tr>
-          <td colspan="3">
+          <td colspan="2" class="settings-gravatar">
+            <img src=<%= gravatar %> width="24" height="24" />
+            <a href="http://gravatar.com" class="important" target="_blank">Change your avatar at Gravatar.com</a>.
+          </td>
+        </tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
+        <tr>
+          <td colspan="2">
             <h1 class="title-static">/ Notification Settings</h1>
           </td>
         </tr>
@@ -175,7 +203,7 @@
           <td>
             <span class="settings-notifications-txt">Receive comment thread notifications?</span>
           </td>
-          <td align="right">
+          <td class="text-right">
             <% if (notes.comment.email === true || notes.comment.email === 'true') { %>
               <input type="checkbox" name="config[notifications][comment][email]"
                   tabindex="10" checked="checked" />
@@ -186,13 +214,14 @@
                 tabindex="10" style="vertical-align:-1px;">Email</label>
           </td>
         </tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
         <tr>
-          <td colspan="3">
+          <td colspan="2">
             <h1 class="title-static">/ Services</h1>
           </td>
         </tr>
         <tr>
-          <td colspan="3">
+          <td colspan="2">
             <div class="signin-spinner"></div>
             <% if (!data.facebookId) { %>
               <a tabindex="11" class="button signin-strategy-btn facebook-btn from-settings"

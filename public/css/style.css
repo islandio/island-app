@@ -32,6 +32,10 @@
   line-height: 1em;
   margin-left: 0.2em;
 }
+.icon-ok:before {
+  content: '\e800';
+/* '' */
+}
 .icon-params:before {
   content: '\e01f';
 /* '' */
@@ -675,6 +679,9 @@ a.signin-strategy-btn.from-login {
 }
 .right {
   float: right;
+}
+.text-right {
+  text-align: right;
 }
 .clear {
   clear: both;
@@ -1697,7 +1704,18 @@ input#post_file_chooser {
   left: 192px;
 }
 input#banner_file_chooser {
+  z-index: 2;
   right: 0;
+  bottom: 0;
+}
+a#banner_file_chooser_dummy {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  bottom: 0;
+  color: #fcfcfc;
+  padding: 5px;
+  font-size: 11px;
 }
 textarea.post-input,
 textarea.comment-input {
@@ -2033,7 +2051,7 @@ span.info-divider {
 #settings_form textarea {
   width: 450px;
   padding: 8px;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   font-size: 12px;
   line-height: 18px;
   padding-right: 20px;
@@ -2052,14 +2070,18 @@ span.info-divider {
   font-size: 12px;
 }
 .settings-instructions {
-  font-size: 11px;
+  font-size: 10px;
   line-height: 15px;
   font-style: italic;
+  text-align: right;
+  padding: 5px;
+  color: #808080;
 }
 .settings-banner-wrap {
   position: relative;
   width: 480px;
   height: 215px;
+  margin-bottom: 10px;
   overflow: hidden;
   cursor: move;
 }
@@ -2069,7 +2091,6 @@ span.info-divider {
 }
 .settings-notifications-txt {
   display: block;
-  margin-bottom: 15px;
   font-size: 12px;
   color: #666;
 }
@@ -2086,6 +2107,35 @@ span.info-divider {
 #settings_form a.signin-strategy-btn-disabled {
   margin: 0 auto;
   width: 480px;
+}
+div.setting-saved {
+  display: none;
+  color: #390;
+  font-size: 11px;
+  font-weight: bold;
+  -webkit-animation-name: fadeIn;
+  -moz-animation-name: fadeIn;
+  -o-animation-name: fadeIn;
+  animation-name: fadeIn;
+  -webkit-animation-duration: 0.2s;
+  -moz-animation-duration: 0.2s;
+  -o-animation-duration: 0.2s;
+  animation-duration: 0.2s;
+  -webkit-animation-fill-mode: both;
+  -moz-animation-fill-mode: both;
+  -o-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+.settings-gravatar img {
+  display: inline;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  vertical-align: -7px;
+}
+.settings-gravatar a {
+  font-weight: bold;
+  margin-left: 2px;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crags*/
 div.map {

@@ -8,10 +8,11 @@ define([
   'views/boiler/list',
   'mps',
   'rpc',
+  'util',
   'text!../../../templates/lists/comments.html',
   'collections/comments',
   'views/rows/comment'
-], function ($, _, List, mps, rpc, template, Collection, Row) {
+], function ($, _, List, mps, rpc, util, template, Collection, Row) {
   return List.extend({
     
     el: '.comments',
@@ -75,6 +76,7 @@ define([
 
       // For server.
       var payload = form.serializeObject();
+      payload.body = util.sanitize(payload.body);
 
       // Mock comment.
       var data = {
