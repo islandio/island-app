@@ -33,7 +33,7 @@ define([
       List.prototype.initialize.call(this, app, options);
 
       // Init the load indicator.
-      this.spin = new Spin($('#posts-spin', this.parentView.el));
+      this.spin = new Spin($('#posts_spin', this.parentView.el));
       this.spin.start();
 
       // Client-wide subscriptions
@@ -88,52 +88,49 @@ define([
     // misc. setup
     setup: function () {
 
-      if (this.app.profile.transloadit) {
+      // Save refs
+      this.postForm = this.$('#post_input_form');
+      this.postBody = $('textarea[name="body"]', this.postForm);
+      this.postTitle = this.$('input[name="title"]', this.postForm);
+      this.postButton = this.$('#post_button', this.postForm);
+      this.dropZone = this.$('#post_dnd');
+      this.postParams = this.$('#post_params');
+      this.postSelect = this.$('#post_select');
+      this.postFiles = this.$('#post_files');
+      this.postProgressWrap = this.$('#post_progress_wrap');
+      this.postProgress = this.$('#post_progress');
+      this.postProgressTxt = this.$('#post_progress_txt');
 
-        // Save refs
-        this.postForm = this.$('#post_input_form');
-        this.postBody = $('textarea[name="body"]', this.postForm);
-        this.postTitle = this.$('input[name="title"]', this.postForm);
-        this.postButton = this.$('#post_button', this.postForm);
-        this.dropZone = this.$('#post_dnd');
-        this.postParams = this.$('#post_params');
-        this.postSelect = this.$('#post_select');
-        this.postFiles = this.$('#post_files');
-        this.postProgressWrap = this.$('#post_progress_wrap');
-        this.postProgress = this.$('#post_progress');
-        this.postProgressTxt = this.$('#post_progress_txt');
+      // Autogrow the write comment box.
+      this.postBody.autogrow().on('keyup', _.bind(this.validate, this));
 
-        // Autogrow the write comment box.
-        this.postBody.autogrow().on('keyup', _.bind(this.validate, this));
+      // Show the write comment box.
+      this.$('#post_input .post').show();
 
-        // Show the write comment box.
-        this.$('#post_input .post').show();
+      // Add mouse events for dummy file selector.
+      var dummy = this.$('#post_file_chooser_dummy');
+      this.$('#post_file_chooser').on('mouseover', function (e) {
+        dummy.addClass('hover');
+      })
+      .on('mouseout', function (e) {
+        dummy.removeClass('hover');
+      })
+      .on('mousedown', function (e) {
+        dummy.addClass('active');
+      })
+      .change(_.bind(this.drop, this));
+      $(document).on('mouseup', function (e) {
+        dummy.removeClass('active');
+      });
 
-        // Add mouse events for dummy file selector.
-        var dummy = this.$('#post_file_chooser_dummy');
-        this.$('#post_file_chooser').on('mouseover', function (e) {
-          dummy.addClass('hover');
-        })
-        .on('mouseout', function (e) {
-          dummy.removeClass('hover');
-        })
-        .on('mousedown', function (e) {
-          dummy.addClass('active');
-        })
-        .change(_.bind(this.drop, this));
-        $(document).on('mouseup', function (e) {
-          dummy.removeClass('active');
-        });
+      // Drag & drop events.
+      this.dropZone.on('dragover', _.bind(this.dragover, this))
+          .on('dragleave', _.bind(this.dragout, this))
+          .on('drop', _.bind(this.drop, this));
 
-        // Drag & drop events.
-        this.dropZone.on('dragover', _.bind(this.dragover, this))
-            .on('dragleave', _.bind(this.dragout, this))
-            .on('drop', _.bind(this.drop, this));
-
-        // Submit post.
-        this.postButton.click(_.bind(this.submit, this, null))
-        this.postButton.click(_.bind(this.begin, this));
-      }
+      // Submit post.
+      this.postButton.click(_.bind(this.submit, this, null))
+      this.postButton.click(_.bind(this.begin, this));
 
       return List.prototype.setup.call(this);
     },
@@ -210,7 +207,7 @@ define([
         modal: false,
         onProgress: _.bind(this.progress, this),
         onError: function(assembly) {
-          console.log(assembly.error + ': ' + assembly.message);
+          console.error(assembly.error + ': ' + assembly.message);
         },
         onSuccess: _.bind(function () {
           this.uploading = false;
@@ -282,7 +279,7 @@ define([
       delete payload.params;
       payload.assembly = assembly;
 
-      // Now save the comment to server.
+      // Now save the post to server.
       rpc.post('/api/posts', payload,
           _.bind(function (err, data) {
 
@@ -291,7 +288,7 @@ define([
 
         if (err) {
 
-          // Oops, comment wasn't created.
+          // Oops, post wasn't created.
           console.log('TODO: Retry, notify user, etc.');
           return;
         }

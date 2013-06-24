@@ -21,12 +21,12 @@
   h = (banner.meta.height / banner.meta.width) * _w;
   if (h - _h >= 0) {
     t = 'top:' + (banner.meta.top !== undefined
-        ? banner.meta.top: (-(h - _h) / 2)) + 'px;';
+        ? banner.meta.top * 480 / 640: (-(h - _h) / 2)) + 'px;';
   } else {
     w = (banner.meta.width / banner.meta.height) * _h;
     h = _h;
     l = 'left:' + (banner.meta.left !== undefined
-        ? banner.meta.left: (-(w - _w) / 2)) + 'px;';
+        ? banner.meta.left * 480 / 640: (-(w - _w) / 2)) + 'px;';
   }
 
   // Gravatar
@@ -39,7 +39,7 @@
 
 %>
 <div class="middle">
-  <form id="settings_form">
+  <div id="settings_form">
     <table>
       <tbody>
         <tr>
@@ -54,19 +54,23 @@
         </tr>
         <tr>
           <td colspan="2" width="480" height="215" style="vertical-align:top;">
-            <div class="settings-banner-wrap">
-              <img class="mask" width="480" style="top:0;"
-                  src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-top.png" />
-              <img class="mask" width="480" style="top:209px;"
-                  src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-btm.png" />
-              <img class="masked settings-banner" src=<%= banner.cf_url %>
-                  width=<%= w %> height=<%= h %> style=<%= t + l %> />
-              <div class="upload-spinner" style="height:100%;"></div>
-              <a id="banner_file_chooser_dummy" class="file-chooser-dummy important"
-                  href="javascript:;">Update</a>
-              <input id="banner_file_chooser" class="file-chooser" type="file"
-                  name="banner_img" accept="image/gif, image/jpeg, image/png" />
-            </div>
+            <form id="settings_banner_form" enctype="multipart/form-data" method="POST">
+              <input type="hidden" name="params"
+                  value='<%= JSON.stringify(this.app.profile.transloadit.profile) %>' />
+              <div id="settings_banner_dnd" class="settings-banner-wrap">
+                <img class="mask" width="480" style="top:0;"
+                    src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-top.png" />
+                <img class="mask" width="480" style="top:209px;"
+                    src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-btm.png" />
+                <img class="masked settings-banner" src=<%= banner.cf_url %>
+                    width=<%= w %> height=<%= h %> style=<%= t + l %> />
+                <div id="settings_banner_spin" style="height:100%;"></div>
+                <a id="banner_file_chooser_dummy" class="file-chooser-dummy important"
+                    href="javascript:;">Update by dragging & dropping or selecting an image.</a>
+                <input id="banner_file_chooser" class="file-chooser" type="file"
+                    name="banner_img" accept="image/gif, image/jpeg, image/png" />
+              </div>
+            </form>
           </td>
         </tr>
         <tr>
@@ -267,5 +271,5 @@
         </tr>
       </tbody>
     </table>
-  </form>
+  </div>
 </div>

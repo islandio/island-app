@@ -44,7 +44,7 @@ define([
       $(window).resize(_.debounce(_.bind(this.resize, this), 50));
 
       // Init the load indicator.
-      this.spin = new Spin($('#notifications-spin', this.$el.parent()));
+      this.spin = new Spin($('#notifications_spin', this.$el.parent()));
       this.spin.start();
   
       // Reset the collection.

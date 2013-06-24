@@ -10,13 +10,15 @@ define([
   'rpc',
   'util',
   'models/member',
-  'text!../../../templates/settings.html'
-], function ($, _, Backbone, mps, rpc, util, Member, template) {
+  'text!../../../templates/settings.html',
+  'Spin'
+], function ($, _, Backbone, mps, rpc, util, Member, template, Spin) {
 
   return Backbone.View.extend({
     
     // The DOM target element for this page:
     el: '#main',
+    uploading: false,
 
     // Module entry point:
     initialize: function (app) {
@@ -54,8 +56,12 @@ define([
     setup: function () {
 
       // Save refs
-      this.form = this.$('#settings_form');
-      this.button = this.$('#save_settings');
+      this.bannerForm = this.$('#settings_banner_form');
+      this.dropZone = this.$('#settings_banner_dnd');
+      this.banner = this.$('img.settings-banner');
+
+      // Init the banner uploading indicator.
+      this.bannerSpin = new Spin(this.$('#settings_banner_spin'));
 
       // Autogrow all text areas.
       this.$('textarea').autogrow();
@@ -74,6 +80,8 @@ define([
         return false;
       });
 
+      this.banner.bind('mousedown', _.bind(this.position, this));
+
       // Add mouse events for dummy file selector.
       var dummy = this.$('#banner_file_chooser_dummy');
       this.$('#banner_file_chooser').on('mouseover', function (e) {
@@ -85,9 +93,21 @@ define([
       .on('mousedown', function (e) {
         dummy.addClass('active');
       })
-      // .change(_.bind(this.drop, this));
+      .change(_.bind(this.drop, this));
       $(document).on('mouseup', function (e) {
         dummy.removeClass('active');
+      });
+
+      // Drag & drop events.
+      this.dropZone.on('dragover', _.bind(this.dragover, this))
+          .on('dragleave', _.bind(this.dragout, this))
+          .on('drop', _.bind(this.drop, this));
+
+      // Prevent default behavior on form submit.
+      this.bannerForm.submit(function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        return true;
       });
 
       return this;
@@ -132,211 +152,173 @@ define([
           _.bind(function (err, data) {
         if (err) return console.error(err);
 
-        console.log(data);
+        // Save the saved state and show indicator.
         field.data('saved', val);
-        console.log(saved[0])
         saved.show();
 
       }, this));
 
       return false;
-    }
+    },
 
-  });
-});
+    position: function (e) {
+      e.stopPropagation();
+      e.preventDefault();
 
-/*
+      if (this.uploading) return false;
+      this.uploading = true;
+      var w = {x: this.banner.width(), y: this.banner.height()};
+      var m = {x: e.pageX, y: e.pageY};
+      var p = {
+        x: parseInt(this.banner.css('left')),
+        y: parseInt(this.banner.css('top'))
+      };
 
-// edit profile
-var settingsForm = $('#settings-form');
-var settingsButton = $('#save-settings');
-var settingsButtonMask = $('#save-settings-mask');
+      // Called when moving banner.
+      var move = _.bind(function (e) {
+        var d = {x: e.pageX - m.x, y: e.pageY - m.y};
+        var top = d.y + p.y;
+        var left = d.x + p.x;
+        if (top <= 0 && w.y + top >= 215) {
+          this.bannerTop = top;
+          this.banner.css({top: top + 'px'});
+        }
+        if (left <= 0 && w.x + left >= 480) {
+          this.bannerLeft = left;
+          this.banner.css({left: left + 'px'});
+        }
+      }, this);
+      this.banner.bind('mousemove', move);
+      var self = this;
+      $(document).bind('mouseup', function (e) {
+        self.banner.unbind('mousemove', move);
+        $(document).unbind('mouseup', arguments.callee);
 
-var settingsName = $('input[name="member[displayName]"]');
-var settingsUsername = $('input[name="member[username]"]');
-var settingsEmail = $('input[name="member[primaryEmail]"]');
-var settingsBanner = $('img.settings-banner');
-var settingsBannerFile = $('input[name="my_banner"]');
-var settingsBannerData = $('input[name="member[assembly]"]');
-var settingsBannerLeft = $('input[name="member[bannerLeft]"]');
-var settingsBannerTop = $('input[name="member[bannerTop]"]');
-var settingsDescription = $('input[name="member[description]"]');
-var settingsLocation = $('input[name="member[location]"]');
-var settingsHometown = $('input[name="member[hometown]"]');
-var settingsBirthday = $('input[name="member[birthday]"]');
-var settingsGender = $('input[name="member[gender]"]');
-var settingsWebsite = $('input[name="member[website]"]');
-var settingsTwitter = $('input[name="member[twitter]"]');
+        // Save.
+        if (!self.uploading) return false;
+        rpc.put('/api/members/' + self.app.profile.member.username, {
+          bannerLeft: self.bannerLeft,
+          bannerTop: self.bannerTop
+        }, function (err, data) {
+          if (err) return console.error(err);
+          self.uploading = false;
+        });
 
-var settingsNameLabel = $('label[for="member[displayName]"]');
-var settingsUsernameLabel = $('label[for="member[username]"]');
-var settingsEmailLabel = $('label[for="member[primaryEmail]"]');
-var settingsBannerLabel = $('label[for="my_banner"]');
-var settingsDescriptionLabel = $('label[for="member[description]"]');
-var settingsLocationLabel = $('label[for="member[location]"]');
-var settingsHometownLabel = $('label[for="member[hometown]"]');
-var settingsBirthdayLabel = $('label[for="member[birthday]"]');
-var settingsGenderLabel = $('label[for="member[gender]"]');
-var settingsWebsiteLabel = $('label[for="member[website]"]');
-var settingsTwitterLabel = $('label[for="member[twitter]"]');
+        return false;
 
-var settingsUploading = false;
-
-function exitSettingsButton() {
-  settingsButtonMask.show();
-  settingsButton.removeClass('is-button-alert');
-  resetSettingsStyles();
-}
-function resetSettingsStyles() {
-  settingsNameLabel.css('color', 'gray');
-  settingsUsernameLabel.css('color', 'gray');
-  settingsEmailLabel.css('color', 'gray');
-  settingsBirthdayLabel.css('color', 'gray');
-}
-
-settingsButtonMask.each(function (i) {
-  var w = settingsButton.outerWidth();
-  var h = settingsButton.outerHeight();
-  settingsButtonMask.css({ width: w, height: h });
-});
-
-settingsButtonMask.bind('mouseenter', function () {
-  var name = settingsName.val().trim();
-  var username = settingsUsername.val().trim();
-  var email = settingsEmail.val().trim();
-  if (name !== '' && username !== ''
-      && email !== '' && !settingsUploading) {
-    settingsButtonMask.css('bottom', 10000).hide();
-    resetSettingsStyles();
-  } else {
-    settingsButton.addClass('is-button-alert');
-    if (name === '') 
-      settingsNameLabel.css('color', colors.orange);
-    if (username === '')
-      settingsUsernameLabel.css('color', colors.orange);
-    if (email === '') 
-      settingsEmailLabel.css('color', colors.orange);
-  }
-}).bind('mouseleave', exitSettingsButton);
-
-settingsButton.bind('mouseleave', function () {
-  settingsButtonMask.css('bottom', 0);
-  exitSettingsButton();
-});
-
-settingsButton.bind('click', function (e) {
-  e.preventDefault();
-  if (settingsUploading) return;
-  var data = settingsForm.serializeObject();
-  delete data.params;
-  data['member[config][notifications][comment][email]'] =
-    data['member[config][notifications][comment][email]'] ? true : false;
-  $.put('/save/settings', data, function (res) {
-    if ('success' === res.status)
-      return ui.notify('Edits saved.')
-               .closable().hide(8000).effect('fade').fit();
-    if ('error' === res.status && res.data.inUse) {
-      switch (res.data.inUse) {
-        case 'primaryEmail':
-          ui.error('Email address is already in use.')
-            .closable().hide(8000).effect('fade').fit();
-          settingsEmail.focus();
-          settingsEmailLabel.css('color', colors.orange);
-          break;
-        case 'username':
-          ui.error('Username is already in use.')
-            .closable().hide(8000).effect('fade').fit();
-          settingsUsername.focus();
-          settingsUsernameLabel.css('color', colors.orange);
-          break;
-      }
-    } else if ('error' === res.status && res.data.invalid) {
-      switch (res.data.invalid) {
-        case 'birthday':
-          ui.error('Birthday not a valid date.')
-            .closable().hide(8000).effect('fade').fit();
-          settingsBirthday.val('').focus();
-          settingsBirthdayLabel.css('color', colors.orange);
-          break;
-      }
-    }
-  });
-  return false;
-});
-
-settingsForm.transloadit({
-  wait: true,
-  autoSubmit: false,
-  modal: false,
-  processZeroFiles: false,
-  onSuccess: function (assembly) {
-    uploadSpin.stop();
-    settingsBanner.show();
-    if (assembly.ok !== 'ASSEMBLY_COMPLETED')
-      return ui.error('Upload failed. Please try again.')
-        .closable().hide(8000).effect('fade').fit();
-    if ($.isEmpty(assembly.results) && settingsUploading)
-      return ui.error('You must choose a file.')
-        .closable().hide(8000).effect('fade').fit();
-    if (settingsUploading) {
-      var banner = assembly.results.image_thumb[0];
-      var _w = 232, _h = 104;
-      var w, h, o;
-      w = _w;
-      h = (banner.meta.height / banner.meta.width) * _w;
-      if (h - _h >= 0) {
-        o = 'top:' + (-(h - _h) / 2) + 'px;';
-      } else {
-        w = (banner.meta.width / banner.meta.height) * _h;
-        h = _h;
-        o = 'left:' + (-(w - _w) / 2) + 'px;';
-      }
-      settingsBanner.attr({
-        src: banner.url,
-        width: w,
-        height: h,
-        style: o,
       });
-      settingsBannerData.val(JSON.stringify(assembly));
-      settingsUploading = false;
-      return;
-    }
-  },
-});
 
-settingsBannerFile.bind('change', function () {
-  settingsUploading = true;
-  settingsBanner.hide();
-  uploadSpin.start();
-  settingsForm.submit();
-});
+      return false;
+    },
 
-settingsBanner.bind('mousedown', function (e) {
-  e.preventDefault();
-  var w = { x: settingsBanner.width(),
-            y: settingsBanner.height() };
-  var m = { x: e.pageX, y: e.pageY };
-  var p = { x: parseInt(settingsBanner.css('left')),
-            y: parseInt(settingsBanner.css('top'))};
-  var move = function (e) {
-    var d = { x: e.pageX - m.x,
-              y: e.pageY - m.y };
-    var top = d.y + p.y;
-    var left = d.x + p.x;
-    if (top <= 0 && w.y + top >= 104) {
-      settingsBannerTop.val(top);
-      settingsBanner.css({ top: top + 'px' });
-    }
-    if (left <= 0 && w.x + left >= 232) {
-      settingsBannerLeft.val(left);
-      settingsBanner.css({ left: left + 'px' });
-    }
-  };
-  settingsBanner.bind('mousemove', move);
-  settingsBanner.bind('mouseup', function (e) {
-    settingsBanner.unbind('mousemove', move);
-    settingsBanner.unbind('mouseup', arguments.callee);
+    dragover: function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+      e.originalEvent.dataTransfer.dropEffect = 'copy';
+      this.dropZone.addClass('dragging');
+    },
+
+    dragout: function (e) {
+      this.dropZone.removeClass('dragging');
+    },
+
+    drop: function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+
+      // Stop drag styles.
+      this.dropZone.removeClass('dragging');
+
+      // Don't do anything if already doing it.
+      if (this.uploading) return false;
+      this.uploading = true;
+      this.bannerSpin.start();
+      this.dropZone.addClass('uploading');
+
+      // Get the files, if any.
+      var files = e.target.files || e.originalEvent.dataTransfer.files;
+      if (files.length === 0) return;
+
+      var data = e.target.files ? null:
+          new FormData(this.bannerForm.get(0));
+
+      // Loop over each file, adding it the the display
+      // and from data object, if present.
+      var list = [];
+      _.each(files, function (file) {
+        if (data && typeof file === 'object')
+          data.append('file', file);
+      });
+
+      // Transloadit options.
+      var opts = {
+        wait: true,
+        autoSubmit: true,
+        modal: false,
+        onError: function(assembly) {
+          console.error(assembly.error + ': ' + assembly.message);
+        },
+        onSuccess: _.bind(function (assembly) {
+          this.uploading = false;
+
+          // Error checks
+          if (assembly) {
+            if (assembly.ok !== 'ASSEMBLY_COMPLETED')
+              return alert('Upload failed. Please try again.');
+            if (_.isEmpty(assembly.results))
+              return alert('You must choose a file.');
+          }
+
+          // Now save the banner to server.
+          rpc.put('/api/members/' + this.app.profile.member.username,
+              {assembly: assembly}, _.bind(function (err, data) {
+
+            // Resets.
+            this.bannerSpin.stop();
+            this.dropZone.removeClass('uploading');
+
+            if (err) {
+
+              // Oops, banner wasn't saved.
+              console.log('TODO: Retry, notify user, etc.');
+              return;
+            }
+
+            var banner = assembly.results.image_full[0];
+            var _w = 480, _h = 215;
+            var w, h, o;
+            w = _w;
+            h = (banner.meta.height / banner.meta.width) * _w;
+            if (h - _h >= 0) {
+              o = 'top:' + (-(h - _h) / 2) + 'px;';
+            } else {
+              w = (banner.meta.width / banner.meta.height) * _h;
+              h = _h;
+              o = 'left:' + (-(w - _w) / 2) + 'px;';
+            }
+            this.banner.hide();
+            _.delay(_.bind(function () {
+              this.banner.attr({
+                src: banner.url, width: w,
+                height: h, style: o
+              });
+              this.banner.fadeIn('slow');
+            }, this), 0);
+
+          }, this));
+
+        }, this)
+      };
+
+      // Use formData object if exists (dnd only)
+      if (data) opts.formData = data;
+
+      // Init Transloadit.
+      this.bannerForm.transloadit(opts);
+      this.bannerForm.submit();
+
+      return false;
+    },
+
   });
 });
-
-*/
