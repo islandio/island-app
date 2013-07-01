@@ -408,6 +408,9 @@ td
 :-ms-input-placeholder
     color gray
 
+.placeholder
+  color #aaa
+
 textarea
   font-size 11px
   resize none
@@ -789,7 +792,7 @@ a.resend-conf
 .signin-almost-there
   text-align center
   margin 0 auto 41px
-  color #f9f9f9
+  color #1a1a1a
 
 .signin-message
   font-weight bold
@@ -802,12 +805,12 @@ a.resend-conf
 
 .signin-controls > p
   text-align center
-  color #f9f9f9
+  color #1a1a1a
 
 .signin-controls a
   background none
   text-decoration underline
-  color #f9f9f9
+  color #1a1a1a
 
 .signin-controls a:hover
   text-decoration underline
@@ -982,26 +985,29 @@ a.header-avatar:hover
   opacity 0.8
   background none
 
-a#login
+a#signin
   float right
   margin-top 12px
 
-a#login:hover
+a#signin:hover
   color #1a1a1a
   -moz-box-shadow 0 0 2px rgba(0, 0, 0, 0.2)
   -webkit-box-shadow 0 0 2px rgba(0, 0, 0, 0.2)
   box-shadow 0 0 2px rgba(0, 0, 0, 0.2)
   border 1px solid #898989
 
-a#login:active
+a#signin:active
   color #1a1a1a
   -moz-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
   -webkit-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
   box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
   border 1px solid #898989
 
-a#login:focus
+a#signin:focus
   border 1px solid #98c1e6
+
+div#signin_content
+  display none
 
 span.count
   display none
@@ -1166,69 +1172,39 @@ span.count
   margin 10px 0 0 0 !important
   width 198px !important
 
-// #add-media,
-// #save-settings
-//   width 100%
-//   margin 15px 0 0
-
-// #add-media-mask,
-// #save-settings-mask
-//   position absolute
-//   right 0
-//   bottom 0
-//   cursor pointer
-
-// #explore
-//   width 100%
-//   height 100%
-
-// #explore .cartodb-zoom
-//   top 100px
-
-// #explore .cartodb-tiles-loader
-//   top 100px !important
-
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
 .signin
-  position absolute;
-  top 10%;
-  width 100%
+  width 680px
+  height 382px
+  position relative
   overflow hidden
 
-.signin-bg
+.signin-logo
   position absolute
-  top 0
-  left 0
+  z-index 10
+  top 20px
+  left 240px
+
+#roll
+  position absolute
   z-index -1
   overflow hidden
   width 100%
   height 100%
 
-.signin-logo
-  margin 90px 0 0
-  width 100%
-
-.signin-logo > div
-  position relative
-  width 604px
-  height 148px
-  margin 0 auto
-
-.signin-logo > div > img
-  position absolute
-
 .signin-action
-  margin 20px 0 0 0
-  width 100%
-  height 105px
+  padding 90px 0 0 0
+  width 680px
+  height 292px
+  background rgba(255,255,255,0)
 
 .signin-action-inner
-  width 602px
+  width 480px
   height 103px
   margin 0 auto
-  background rgba(242,242,242,0.1)
-  padding 30px 0
+  background rgba(242,242,242,0.5)
+  padding 50px
   border-radius 5px
 
 .signin-strategies
@@ -1241,19 +1217,20 @@ span.count
 .signin-or
   margin 7px 20px 0
   font-style italic
-  color #f9f9f9
+  color #1a1a1a
 
 .signin-quote
-  margin 120px 0 0
-  width 100%
+  position absolute
+  left 0
+  bottom 36px
+  width 680px
 
 .signin-quote > p
   margin 0 auto
-  font-size 27px
+  font-size 16px
   font-family title
-  line-height 27px
   text-align center
-  color black
+  color #333
 
 #login-form
   position relative
@@ -1762,11 +1739,13 @@ a.delete-comment:active
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––structure*/
 
 div.leftside
-  float left
+  // float left
   width 640px
-  margin 0 0 40px
+  // margin 0 0 40px
+  margin 0 auto
 
 div.rightside
+  display none
   margin 0 0 0 670px
 
 div.middle

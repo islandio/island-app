@@ -255,18 +255,26 @@ define([
         wait: true,
         autoSubmit: true,
         modal: false,
-        onError: function(assembly) {
-          console.error(assembly.error + ': ' + assembly.message);
-        },
+        onError: _.bind(function (assembly) {
+          this.uploading = false;
+          this.bannerSpin.stop();
+          this.dropZone.removeClass('uploading');
+          alert(assembly.error + ': ' + assembly.message);
+        }, this),
         onSuccess: _.bind(function (assembly) {
           this.uploading = false;
 
           // Error checks
           if (assembly) {
-            if (assembly.ok !== 'ASSEMBLY_COMPLETED')
+            if (assembly.ok !== 'ASSEMBLY_COMPLETED') {
+              this.bannerSpin.stop();
+              this.dropZone.removeClass('uploading');
               return alert('Upload failed. Please try again.');
-            if (_.isEmpty(assembly.results))
+            } if (_.isEmpty(assembly.results)) {
+              this.bannerSpin.stop();
+              this.dropZone.removeClass('uploading');
               return alert('You must choose a file.');
+            }
           }
 
           // Now save the banner to server.

@@ -13,12 +13,11 @@ define([
   'views/lists/notifications',
   'views/map',
   'views/home',
-  'views/login',
   'views/profile',
   'views/settings',
   'views/rows/post'
 ], function ($, _, Backbone, mps, rpc, Header, Footer,
-      Notifications, Map, Home, Login, Profile, Settings, Post) {
+      Notifications, Map, Home, Profile, Settings, Post) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -39,7 +38,6 @@ define([
       this.route(':username', 'profile', this.profile);
       this.route(':username/:key', 'post', this.post);
       this.route('settings', 'profile', this.settings);
-      this.route('login', 'login', this.login);
       this.route('', 'home', this.home);
 
       // Subscriptions
@@ -98,10 +96,6 @@ define([
         _render.call(this);
 
       }, this));
-    },
-
-    login: function () {
-      this.page = new Login(this.app).render();
     },
 
     home: function () {

@@ -1,5 +1,5 @@
 /*! fancyBox v2.1.4 fancyapps.com | fancyapps.com/fancybox/#license */
-.fancybox-overlay a {
+.fancybox-overlay a:not('.button') {
 	background-color: transparent !important;
 }
 

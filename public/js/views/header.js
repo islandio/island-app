@@ -7,8 +7,9 @@ define([
   'Underscore',
   'Backbone',
   'mps',
-  'rpc'
-], function ($, _, Backbone, mps, rpc) {
+  'rpc',
+  'views/signin'
+], function ($, _, Backbone, mps, rpc, Signin) {
   return Backbone.View.extend({
 
     el: '#header',
@@ -19,9 +20,7 @@ define([
       this.app = app;
 
       // Client-wide subscriptions
-      this.subscriptions = [
-
-      ];
+      this.subscriptions = [];
     },
 
     render: function () {
@@ -58,6 +57,7 @@ define([
     // Bind mouse events.
     events: {
       'click #logo': 'home',
+      'click #signin': 'signin',
       'click #header_avatar': 'avatar',
       'click #settings': 'settings',
       'click #globe': 'togglePanel'
@@ -66,14 +66,21 @@ define([
     home: function (e) {
       e.preventDefault();
 
-      // Route to home:
+      // Route to home.
       this.app.router.navigate('/', {trigger: true});
+    },
+
+    signin: function (e) {
+      e.preventDefault();
+
+      // Render the signin view.
+      var signin = new Signin(this.app).render();
     },
 
     avatar: function (e) {
       e.preventDefault();
 
-      // Route to profile:
+      // Route to profile.
       this.app.router.navigate('/' + this.app.profile.member.username,
           {trigger: true});
     },
@@ -81,7 +88,7 @@ define([
     settings: function (e) {
       e.preventDefault();
 
-      // Route to settings:
+      // Route to settings.
       this.app.router.navigate('/settings', {trigger: true});
     },
 

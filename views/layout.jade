@@ -38,13 +38,13 @@ html(lang="en")
       title Island
     <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
     link(rel="stylesheet", href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.css")
-    link(rel="stylesheet", href="/css/fancybox.css")
     <!--[if lte IE 8]>link(rel="stylesheet", href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.ie.css")<![endif]-->
+    link(rel="stylesheet", href="/css/fancybox.css")
     link(rel="stylesheet", href="/css/style.css")
     link(rel="shortcut icon", href="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/favicon.ico", type="image/x-icon")
   body
     block content
-    script(type="text/javascript", charset="utf-8", src="/js/libs/store/store.min.js")
+    script(type="text/javascript", charset="utf-8", src="/js/lib/store/store.min.js")
     - if (typeof member !== 'undefined')
       script
         if (window.store) {
@@ -72,7 +72,7 @@ html(lang="en")
     script(src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js")
     script(src="http://jwpsrv.com/library/1lrC0MMbEeKOnyIACqoQEQ.js")
     //- script(charset="utf-8", src="/{{ version }}/js/min.js")
-    script(type="text/javascript", charset="utf-8", data-main="/js/main", src="/js/libs/require/require.js")
+    script(type="text/javascript", charset="utf-8", data-main="/js/main", src="/js/lib/require/require.js")
     script(type="text/javascript")
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-23247079-1']);

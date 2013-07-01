@@ -8,21 +8,26 @@ require.config({
 
   // Library paths:
   paths: {
-    jQuery: 'libs/jquery/jquery',
-    Underscore: 'libs/underscore/underscore',
-    Backbone: 'libs/backbone/backbone',
-    Modernizr: 'libs/modernizr/modernizr',
-    mps: 'libs/minpubsub/minpubsub',
-    Pusher: 'libs/pusher/pusher',
-    Spin: 'libs/spin/spin',
-    swfobject: 'libs/swfobject/swfobject',
-    // cartodb: 'libs/cartodb/cartodb'
+    jQuery: 'lib/jquery/jquery',
+    Underscore: 'lib/underscore/underscore.src',
+    UnderscoreString: 'lib/underscore/underscore.string.src',
+    Backbone: 'lib/backbone/backbone',
+    Modernizr: 'lib/modernizr/modernizr.src',
+    mps: 'lib/minpubsub/minpubsub',
+    Pusher: 'lib/pusher/pusher',
+    Spin: 'lib/spin/spin',
+    swfobject: 'lib/swfobject/swfobject',
+    plugins: 'lib/jquery/plugins',
+    // cartodb: 'lib/cartodb/cartodb'
   },
 
   // Dependency mapping:
   shim: {
     Underscore: {
       exports: '_'
+    },
+    UnderscoreString: {
+      deps: ['Underscore']
     },
     Backbone: {
       deps: ['jQuery', 'Underscore'],
@@ -44,6 +49,9 @@ require.config({
     swfobject: {
       exports: 'swfobject'
     },
+    plugins: {
+      deps: ['jQuery']
+    },
     // cartodb: {
     //   exports: 'cartodb'
     // },
@@ -51,6 +59,8 @@ require.config({
 });
 
 // Application entry point:
-require(['app'], function (app) {
-  app.init();
-});
+require([
+  'app',
+  'UnderscoreString',
+  'plugins'
+], function (app) { app.init(); });
