@@ -6,13 +6,16 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
+  'Modernizr',
   'mps',
   'rpc',
   'util',
   'models/member',
   'text!../../../templates/settings.html',
+  'text!../../../templates/confirm.html',
   'Spin'
-], function ($, _, Backbone, mps, rpc, util, Member, template, Spin) {
+], function ($, _, Backbone, Modernizr, mps, rpc, util, Member,
+      template, confirm, Spin) {
 
   return Backbone.View.extend({
     
@@ -50,7 +53,9 @@ define([
     },
 
     // Bind mouse events.
-    events: {},
+    events: {
+      'click #deleet': 'deleet',
+    },
 
     // Misc. setup.
     setup: function () {
@@ -327,6 +332,59 @@ define([
 
       return false;
     },
+
+    deleet: function (e) {
+      e.preventDefault();
+
+      // Render the confirm modal.
+      $.fancybox(_.template(confirm)(), {
+        openEffect: 'fade',
+        closeEffect: 'fade',
+        closeBtn: false,
+        padding: 0
+      });
+      var overlay = $('.confirm-overlay');
+
+      // Add placeholder shim if need to.
+      if (Modernizr.input.placeholder)
+        this.$('input').placeholder();
+
+      // Setup actions.
+      $('#confirm_cancel').click(function (e) {
+        $.fancybox.close();
+      });
+      $('#confirm_delete').click(_.bind(function (e) {
+        
+        // Show the in-modal overlay.
+        overlay.show();
+
+        // Delete the member.
+        var password = $('input.password-for-delete').val().trim();
+        rpc.delete('/api/members/' + this.app.profile.member.username,
+            {password: password}, _.bind(function (err, data) {
+          if (err) {
+
+            // Oops.
+            console.log('TODO: Retry, notify user, etc.');
+            return;
+          }
+
+          // Change overlay message.
+          $('p', overlay).text('Hasta la pasta! - Love, Island');
+
+          // Route to home.
+          this.app.router.navigate('/', {trigger: true});
+
+          // Wait a little then close the modal.
+          _.delay(_.bind(function () {
+            $.fancybox.close();
+          }, this), 2000);
+
+        }, this));        
+      }, this));
+
+      return false;
+    }
 
   });
 });

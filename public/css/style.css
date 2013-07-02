@@ -610,17 +610,13 @@ a.signin-strategy-btn-disabled {
   width: 200px;
   font-size: 11px;
   font-weight: bold;
-  font-family: Verdana, Arial, sans-serif;
   padding: 0 0;
   display: block;
-  color: #fff;
-  border: 1px solid #808080;
+  color: #fcfcfc;
+  border: 1px solid #1a1a1a !important;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
-  -webkit-text-shadow: 0px 1px #1a1a1a;
-  -moz-text-shadow: 0px 1px #1a1a1a;
-  text-shadow: 0px 1px #1a1a1a;
 }
 a.facebook-btn,
 a.facebook-btn-disabled {
@@ -634,6 +630,9 @@ a.instagram-btn,
 a.instagram-btn-disabled {
   background: rgba(69,63,56,0.65);
 }
+a.delete-btn {
+  background: rgba(208,76,56,0.9);
+}
 a.signin-strategy-btn-disabled {
   cursor: default;
   opacity: 0.65;
@@ -644,10 +643,6 @@ a.signin-strategy-btn-disabled {
 }
 a.signin-strategy-btn:hover {
   color: #fff !important;
-  border: 1px solid #1a1a1a !important;
-  -webkit-text-shadow: 0px 1px #1a1a1a !important;
-  -moz-text-shadow: 0px 1px #1a1a1a !important;
-  text-shadow: 0px 1px #1a1a1a !important;
 }
 a.facebook-btn:hover {
   background: rgba(59,89,152,0.75);
@@ -664,14 +659,20 @@ a.twitter-btn.from-login:hover {
 a.instagram-btn:hover {
   background: rgba(69,63,56,0.75);
 }
+a.delete-btn:hover {
+  background: #d04c38;
+}
 a.facebook-btn:active {
   background: rgba(59,89,152,0.55);
 }
 a.twitter-btn:active {
   background: rgba(60,143,201,0.55);
 }
-a.instagram-btn:hover {
+a.instagram-btn:active {
   background: rgba(69,63,56,0.55);
+}
+a.delete-btn:active {
+  background: rgba(208,76,56,0.8);
 }
 a.signin-strategy-btn.from-login {
   border: 1px solid #1a1a1a;
@@ -1108,7 +1109,14 @@ span.count {
 }
 .action-button {
   float: right;
-  margin-top: 12px;
+  height: auto;
+}
+.action-button.main {
+  padding: 0 15px;
+}
+.action-button.danger {
+  border-color: #d04c38 !important;
+  color: #d04c38 !important;
 }
 .is-input-alert {
   border: 1px solid #d04c38 !important;
@@ -2149,6 +2157,47 @@ div.setting-saved {
 .settings-gravatar a {
   font-weight: bold;
   margin-left: 2px;
+}
+.confirm {
+  position: relative;
+  background: #fff;
+  width: 250px;
+}
+.confirm-body {
+  padding: 15px 20px;
+}
+.confirm-body > p {
+  margin-bottom: 10px;
+}
+.confirm-title {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+.confirm-actions {
+  border-top: 1px solid #eee;
+  padding: 5px 18px;
+  text-align: right;
+  background: #fafafa;
+  -webkit-box-shadow: inset 0 1px 0 #fff;
+  -moz-box-shadow: inset 0 1px 0 #fff;
+  box-shadow: inset 0 1px 0 #fff;
+}
+.confirm-overlay {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  background: #fff;
+  width: 100%;
+  height: 100%;
+}
+.confirm-overlay > p {
+  text-align: center;
+  padding: 15px 20px;
+  margin-top: 20%;
+  font-weight: bold;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crags*/
 div.map {

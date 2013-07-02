@@ -106,7 +106,7 @@ define([
       }
       _.delay(function () {
         $(window).resize();
-      }, 500);
+      }, 1000);
     },
 
     checkBeacon: function () {

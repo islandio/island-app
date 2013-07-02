@@ -40,7 +40,8 @@ define([
         if (loc && loc.latitude && loc.longitude) this.map({coords: loc});
         else if (Modernizr.geolocation)
           navigator.geolocation.getCurrentPosition(_.bind(this.map, this),
-              _.bind(this.map, this));
+              _.bind(this.map, this), {maximumAge:60000, timeout:5000, 
+                enableHighAccuracy:true});
         else this.map();
       }
 
