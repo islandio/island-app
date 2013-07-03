@@ -23,6 +23,10 @@ define([
 
       // Client-wide subscriptions
       this.subscriptions = [];
+
+      // Socket subscriptions
+      this.app.socket.subscribe('map').bind('instagram.new',
+          _.bind(this.getMarkers, this, false));
     },
 
     render: function () {
