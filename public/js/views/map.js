@@ -14,6 +14,7 @@ define([
 
     el: '#map',
     mapped: false,
+    markers: {},
 
     initialize: function (app) {
 
@@ -69,7 +70,7 @@ define([
     // Bind mouse events.
     events: {
       'click #hide_show': 'hideShow',
-      'click #less_more': 'lessMore',
+      'click #less_more': 'lessMore'
     },
 
     map: function (pos) {
@@ -94,10 +95,101 @@ define([
       cartodb.createVis('map_inner',
           'http://island.cartodb.com/api/v1/viz/crags/viz.json', opts,
           _.bind(function (vis, layers) {
-            this.vis = vis;
-            this.layers = layers;
-            if (!store.get('mapClosed'))
-              this.$('.cartodb-zoom').show();
+        this.vis = vis;
+        this.layers = layers;
+
+        // Init events for markers.
+        this.vis.mapView.map_leaflet.on('zoomend', 
+            _.bind(this.getMarkers, this, true));
+        this.vis.mapView.map_leaflet.on('moveend', 
+            _.bind(this.getMarkers, this, false));
+
+        // Hide the zoomer if the map is hidden.
+        if (!store.get('mapClosed'))
+          this.$('.cartodb-zoom').show();
+
+        // Get the markers.
+        this.getMarkers(true);
+      }, this));
+    },
+
+    getMarkers: function (remove) {
+      var map = this.vis.mapView.map_leaflet;
+      var limit = remove ? 50: 25;
+      var zoom = map.getZoom();
+      var bounds = map.getBounds();
+      var buffer = (bounds.getNorthEast().lat - bounds.getSouthWest().lat)/5;
+      var frame = "ST_Envelope(ST_MakeLine(CDB_LatLng("
+          + (bounds.getNorthWest().lat + buffer) + ","
+          + (bounds.getNorthWest().lng - buffer) + "),CDB_LatLng("
+          + (bounds.getSouthEast().lat - buffer) + ","
+          + (bounds.getSouthEast().lng + buffer) + ")))";
+
+      // Do SQL query.
+      var self = this;
+      this.sql.execute("WITH rg AS (SELECT cartodb_id, floor(st_x(the_geom_webmercator)/({{geobucket}}"
+          + " * CDB_XYZ_Resolution({{z}}))) mx, floor(st_y(the_geom_webmercator)/({{geobucket}}"
+          + " * CDB_XYZ_Resolution({{z}}))) my, st_x(the_geom) x, st_y(the_geom) y, turi, uri, name, username, handle, caption "
+          + "FROM {{table_name}} WHERE {{frame}} && the_geom ORDER BY created_at DESC LIMIT {{limit}}) "
+          + "SELECT DISTINCT ON (mx,my) cartodb_id, x, y, turi, uri, name, username, handle, caption FROM rg", {
+        table_name: 'instagrams',
+        frame: frame,
+        z: zoom,
+        geobucket: 120,
+        limit: limit
+      }).done(_.bind(function (data) {
+        if (remove) this.removeMarkers();
+        _.each(data.rows, _.bind(function (r) {
+          if (!this.markers[r.cartodb_id]) {
+            var img = '<img src="'+ r.turi + '" width="36" height="36" />';
+            var marker = L.marker([r.y, r.x], _.extend({
+              icon: L.divIcon({
+                html: img,
+                iconSize: [36, 36],
+                iconAnchor: [18, 46],
+              })
+            }, r)).addTo(map).on('click', function (e) {
+
+              // Convert marker to fancybox object.
+              function box(m) {
+                return {
+                  href: m.options.uri,
+                  title: '"' + m.options.caption + '" - '
+                      + '<a href="/' + m.options.username + '" class="navigate">'
+                      + m.options.name + '</a>'
+                      + ' (@' + m.options.handle + ')'
+                };
+              }
+
+              // Build current list of images.
+              var imgs = [box(this)];
+              _.each(self.markers, function (m) {
+                if (m.options.uri !== imgs[0].href)
+                  imgs.push(box(m));
+              });
+
+              // Show list in modal.
+              $.fancybox(imgs, {
+                openEffect: 'fade',
+                closeEffect: 'fade',
+                closeBtn: false,
+                nextClick: true,
+                padding: 0,
+                afterShow: function () {
+                  $('.fancybox-title a.navigate').click(_.bind(self.navigate, self));
+                }
+              });
+            });
+            this.markers[r.cartodb_id] = marker;
+          }
+        }, this));
+      }, this));
+    },
+
+    removeMarkers: function () {
+      _.each(this.markers, _.bind(function (v, k) {
+        this.vis.mapView.map_leaflet.removeLayer(v);
+        delete this.markers[k]
       }, this));
     },
 
@@ -143,6 +235,17 @@ define([
         if (this.$el.height() === height)
           clearInterval(sizer);
       }, this), 20);
+    },
+
+    navigate: function (e) {
+      e.preventDefault();
+
+      // Route to href.
+      this.app.router.navigate($(e.target).attr('href'),
+          {trigger: true});
+
+      // Close the modal.
+      $.fancybox.close();
     }
 
   });

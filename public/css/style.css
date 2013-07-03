@@ -1517,6 +1517,26 @@ div#map_control a.split-right {
 div.cartodb-zoom {
   display: none;
 }
+.leaflet-div-icon {
+  border: 2px solid #f2f2f2;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  -webkit-box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+  -moz-box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+  box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+}
+.leaflet-div-icon:after {
+  content: ' ';
+  height: 0;
+  position: absolute;
+  width: 0;
+  top: 100%;
+  left: 50%;
+  margin-left: -8px;
+  border: 8px solid transparent;
+  border-top-color: #f2f2f2;
+}
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––posts*/
 .list-spin {
   width: 100%;
