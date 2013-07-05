@@ -1614,6 +1614,7 @@ div.post-mosaic-wrap {
 }
 a.post-avatar {
   background: none;
+  display: block;
 }
 a.post-avatar img,
 img.profile-avatar {
@@ -1623,8 +1624,12 @@ img.profile-avatar {
   z-index: 1;
   width: 48px;
   height: 48px;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
+  -webkit-border-radius: 5px 0;
+  -moz-border-radius: 5px 0;
+  border-radius: 5px 0;
+  -webkit-box-shadow: 2px 2px 2px rgba(0,0,0,0.1);
+  -moz-box-shadow: 2px 2px 2px rgba(0,0,0,0.1);
+  box-shadow: 2px 2px 2px rgba(0,0,0,0.1);
 }
 img.profile-avatar {
   top: 0;
@@ -2042,11 +2047,9 @@ textarea.comment-input {
 }
 .notification-inner img {
   float: left;
-  -webkit-border-radius: 2px 0 5px 0;
-  -moz-border-radius: 2px 0 5px 0;
-  -webkit-border-radius: 2px 0 5px 0;
-  -moz-border-radius: 2px 0 5px 0;
-  border-radius: 2px 0 5px 0;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
 }
 .notification-inner p {
   max-width: 145px;
