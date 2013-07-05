@@ -54,7 +54,7 @@ define([
 
     // Bind mouse events.
     events: {
-      'click #deleet': 'deleet',
+      'click #demolish': 'demolish',
     },
 
     // Misc. setup.
@@ -115,6 +115,13 @@ define([
         return true;
       });
 
+      // Handle error display.
+      this.$('input[type="text"], input[type="password"]').blur(function (e) {
+        var el = $(e.target);
+        if (el.hasClass('input-error'))
+          el.removeClass('input-error');
+      });
+
       return this;
     },
 
@@ -141,6 +148,7 @@ define([
       var name = field.attr('name');
       var label = $('label[for="' + name + '"]');
       var saved = $('div.setting-saved', label.parent().parent());
+      var errorMsg = $('span.setting-error', label.parent().parent()).hide();
       var val = util.sanitize(field.val());
 
       // Create the paylaod.
@@ -155,7 +163,20 @@ define([
       // Now do the save.
       rpc.put('/api/members/' + this.app.profile.member.username, payload,
           _.bind(function (err, data) {
-        if (err) return console.error(err);
+        if (err) {
+
+          // Set the error display.
+          errorMsg.text(err).show();
+
+          // Clear fields.
+          if (err === 'Username exists')
+            field.addClass('input-error').focus();
+
+          return;
+        }
+
+        // Update profile.
+        _.extend(this.app.profile.member, payload);
 
         // Save the saved state and show indicator.
         field.data('saved', val);
@@ -333,7 +354,7 @@ define([
       return false;
     },
 
-    deleet: function (e) {
+    demolish: function (e) {
       e.preventDefault();
 
       // Render the confirm modal.
@@ -343,25 +364,28 @@ define([
         closeBtn: false,
         padding: 0
       });
-      var overlay = $('.confirm-overlay');
 
       // Add placeholder shim if need to.
       if (Modernizr.input.placeholder)
         this.$('input').placeholder();
+      
+      // Refs.
+      var overlay = $('.confirm-overlay');
+      var username = $('.confirm input.username-for-delete');
+      username.focus();
 
       // Setup actions.
       $('#confirm_cancel').click(function (e) {
         $.fancybox.close();
       });
       $('#confirm_delete').click(_.bind(function (e) {
-        
+
         // Show the in-modal overlay.
         overlay.show();
 
         // Delete the member.
-        var password = $('input.password-for-delete').val().trim();
         rpc.delete('/api/members/' + this.app.profile.member.username,
-            {password: password}, _.bind(function (err, data) {
+            {}, _.bind(function (err, data) {
           if (err) {
 
             // Oops.
@@ -371,6 +395,9 @@ define([
 
           // Change overlay message.
           $('p', overlay).text('Hasta la pasta! - Love, Island');
+
+          // Logout client-side.
+          mps.publish('member/delete');
 
           // Route to home.
           this.app.router.navigate('/', {trigger: true});

@@ -8,15 +8,17 @@ define([
   'Backbone',
   'mps',
   'rpc',
+  'util',
   'views/header',
   'views/footer',
+  'views/signin',
   'views/lists/notifications',
   'views/map',
   'views/home',
   'views/profile',
   'views/settings',
   'views/rows/post'
-], function ($, _, Backbone, mps, rpc, Header, Footer,
+], function ($, _, Backbone, mps, rpc, util, Header, Footer, Signin,
       Notifications, Map, Home, Profile, Settings, Post) {
 
   // Our application URL router.
@@ -40,12 +42,20 @@ define([
       this.route('settings', 'profile', this.settings);
       this.route('', 'home', this.home);
 
-      // Subscriptions
+      // Fullfill navigation request from mps.
       mps.subscribe('navigate', _.bind(function (path) {
-
-        // Fullfill navigation request from mps.
         this.navigate(path, {trigger: true});
-      }, this))
+      }, this));
+
+      // Kill the notifications view.
+      mps.subscribe('member/delete', _.bind(function () {
+        this.notifications.destroy();
+      }, this));
+
+      // Show the signin modal.
+      mps.subscribe('member/signin/open', _.bind(function () {
+        this.signin = new Signin(this.app).render();
+      }, this));
     },
 
     routes: {
@@ -65,7 +75,6 @@ define([
           this.footer = new Footer(this.app).render();
         if (!this.map)
           this.map = new Map(this.app).render();
-        else this.map.render();
         if (!this.notifications && this.app.profile.member)
           this.notifications = new Notifications(this.app, {reverse: true});
 

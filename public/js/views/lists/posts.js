@@ -43,6 +43,10 @@ define([
       this.app.socket.subscribe('posts').bind('post.new',
           _.bind(this.collect, this));
 
+      // Misc.
+      this.empty_label = this.app.profile.content.page
+          && this.app.profile.content.page.role === 0 ? 'No posts.': '';
+
       // Reset the collection.
       this.latest_list = this.app.profile.content.posts;
       this.collection.reset(this.latest_list.items);
@@ -62,7 +66,7 @@ define([
         }, this), (this.collection.length + 1) * 30);
       else {
         this.nomore = true;
-        $('<span class="empty-feed">No posts.</span>').appendTo(this.$el);
+        $('<span class="empty-feed">' + this.empty_label + '</span>').appendTo(this.$el);
         this.spin.stop();
       }
       this.paginate();
@@ -351,7 +355,7 @@ define([
             showingall.css('display', 'block');
           else {
             showingall.hide();
-            $('<span class="empty-feed">No posts.</span>')
+            $('<span class="empty-feed">' + this.empty_label + '</span>')
                 .appendTo(this.$el);
           }
         } else

@@ -57,6 +57,9 @@ define([
     // Misc. setup.
     setup: function () {
 
+      // Set map view.
+      mps.publish('map/fly', [this.app.profile.content.page.location]);
+
       // Render posts.
       this.posts = new Posts(this.app, {parentView: this, reverse: true});
 

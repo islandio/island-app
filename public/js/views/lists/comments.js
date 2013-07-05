@@ -51,6 +51,11 @@ define([
       return List.prototype.setup.call(this);
     },
 
+    // Bind mouse events.
+    events: {
+      'click .comments-signin': 'signin'
+    },
+
     // Collect new comments from socket events.
     collect: function (comment) {
       this.collection.unshift(comment);
@@ -114,6 +119,13 @@ define([
 
       return false;
     },
+
+    signin: function (e) {
+      e.preventDefault();
+
+      // Render the signin view.
+      mps.publish('member/signin/open');
+    }
 
   });
 });

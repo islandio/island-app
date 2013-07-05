@@ -800,7 +800,7 @@ a.resend-conf
 .signin-almost-there
   text-align center
   margin 0 auto 41px
-  color #1a1a1a
+  font-weight bold
 
 .signin-message
   font-weight bold
@@ -813,12 +813,13 @@ a.resend-conf
 
 .signin-controls > p
   text-align center
-  color #1a1a1a
+  font-size 11px
+  color #222
 
 .signin-controls a
   background none
   text-decoration underline
-  color #1a1a1a
+  color #222
 
 .signin-controls a:hover
   text-decoration underline
@@ -841,6 +842,12 @@ a.resend-conf
 .signin-forms td
   padding-top 0
 
+.signin-error
+  display block
+  color red
+  font-size 11px
+  margin 10px 0 0 -10px
+
 .signin-spinner
   margin 52px auto 0
   width 86px
@@ -858,7 +865,6 @@ a.resend-conf
 
 #remember_me
   margin 0 5px 0 0
-
 
 /*-------------------------------------------------------------*/
 
@@ -1014,9 +1020,6 @@ a#signin:active
 a#signin:focus
   border 1px solid #98c1e6
 
-div#signin_content
-  display none
-
 span.count
   display none
   position absolute
@@ -1095,7 +1098,7 @@ span.count
   margin 0 20px 0 0
 
 #main
-  margin 40px 0
+  margin 50px 0
 
 #footer
   display none
@@ -1177,15 +1180,11 @@ span.count
   border-color orange !important
   color orange !important
 
-.is-input-alert
+.input-error
   border 1px solid orange !important
 
 .button-mask-wrap
   position relative
-
-.password-for-delete
-  margin 10px 0 0 0 !important
-  width 198px !important
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
@@ -1209,6 +1208,7 @@ span.count
   height 100%
 
 .signin-action
+  position relative
   padding 90px 0 0 0
   width 680px
   height 292px
@@ -1218,7 +1218,7 @@ span.count
   width 480px
   height 103px
   margin 0 auto
-  background rgba(242,242,242,0.5)
+  background rgba(242,242,242,0.7)
   padding 50px
   border-radius 5px
 
@@ -1247,14 +1247,19 @@ span.count
   text-align center
   color #333
 
-#login-form
+#signin_form
   position relative
   left 0
 
-#register-form
+#signup_form
   position relative
   left 0
   display none
+
+#signin_spin
+  position absolute
+  top 50%
+  left 50%
 
 // #media-form table,
 // #settings-form table
@@ -1946,7 +1951,8 @@ div.post-mosaic-wrap
 a.post-avatar
   background none
 
-a.post-avatar img
+a.post-avatar img,
+img.profile-avatar
   position absolute
   top 23px
   left 0
@@ -1955,6 +1961,9 @@ a.post-avatar img
   height 48px
   border-right 2px solid white
   border-bottom 2px solid white
+
+img.profile-avatar
+  top 0
 
 div.post-mosaic-wrap img
   position relative
@@ -2529,7 +2538,8 @@ span.info-divider
   margin 0 auto
   width 480px
 
-div.setting-saved
+div.setting-saved,
+span.setting-error
   display none
   color #339900
   font-size 11px
@@ -2547,6 +2557,9 @@ div.setting-saved
   -moz-animation-fill-mode both
   -o-animation-fill-mode both
   animation-fill-mode both
+
+span.setting-error
+  color red
 
 .settings-gravatar img
   display inline
@@ -2566,7 +2579,11 @@ div.setting-saved
   padding 15px 20px
 
 .confirm-body > p
-  margin-bottom 10px
+  margin-top 5px
+  font-size 11px
+  line-height 14px
+  color #4d4d4d
+  font-style italic
 
 .confirm-title
   margin 0 0 5px 0
@@ -2596,7 +2613,7 @@ div.setting-saved
 .confirm-overlay > p
   text-align center
   padding 15px 20px
-  margin-top 20%
+  margin-top 15%
   font-weight bold
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crags*/

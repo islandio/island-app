@@ -19,7 +19,7 @@
             id="post_input_form">
           <div id="post_dnd">
             <textarea name="body" class="post-input" tabindex="1" 
-                placeholder="Got something worth sharing?"></textarea>
+                placeholder="Post something here."></textarea>
             <div id="post_select">
               Attach a video or photos by
               <% if (Modernizr.draganddrop) { %>
@@ -64,6 +64,8 @@
       </div>
     </div>
   </div>
+<% } else { %>
+  <br />
 <% } %>
 <% if (this.collection.models.length > 0) { %>
   <% _.each(this.collection.models, _.bind(function(row) { %>

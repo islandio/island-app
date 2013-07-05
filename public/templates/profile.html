@@ -44,13 +44,18 @@
       if (site === '') return;
       if (!site.match(/^http:\/\/|https:\/\//)) site = 'http://' + site;
       links += '<a href="' + site + '" target="_blank">' + site + '</a>';
-      if (i !== websites.length - 1) links += ',';
+      if (i !== websites.length - 1) links += ', ';
     });
   }
 
   // Member since
   var created = new Date(data.created);
   var since = [created.getMonth() + 1, created.getFullYear()].join('/');
+
+  // Gravatar
+  var gravatar = 'https://www.gravatar.com/avatar/'
+      + data.gravatar + '?s=48&d='
+      + encodeURIComponent(this.app.cloudFrontURL + '/main/img/avatar_100.png');
 
 %>
 
@@ -61,6 +66,7 @@
     <h1 class="title-sub">from <%= from %></h1>
   </div>
   <div class="obj-holder member-picture matte">
+    <img src=<%= gravatar %> class="profile-avatar" width="48" height="48" />
     <img class="mask" width="640" style="top:0;"
         src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-top.png" />
     <img class="mask" width="640" style="top:280px;"
@@ -82,7 +88,7 @@
             <% if (links) { %>
               <li>
                 // <span>More from <%= data.displayName %> at </span>
-                <span class="member-info-content"><%= links %></span>
+                <span class="member-info-content"><%= links %>.</span>
               </li>
             <% } %>
           </ul>

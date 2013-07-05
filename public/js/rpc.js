@@ -21,7 +21,8 @@ define([
         type: type,
         success: _.bind(cb, cb, undefined),
         error: function (res) {
-          cb(JSON.parse(res.responseText).error);
+          var err = JSON.parse(res.responseText);
+          cb(err.error || res.statusText);
         },
         contentType: 'application/json', 
         dataType: 'json'

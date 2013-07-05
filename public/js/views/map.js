@@ -21,10 +21,10 @@ define([
       // Save app reference.
       this.app = app;
 
-      // Client-wide subscriptions
+      // Client-wide subscriptions.
       this.subscriptions = [];
 
-      // Socket subscriptions
+      // Socket subscriptions.
       this.app.socket.subscribe('map').bind('instagram.new',
           _.bind(this.getMarkers, this, false));
     },
@@ -37,6 +37,10 @@ define([
       });
       this.undelegateEvents();
       this.stopListening();
+
+      // Listen for fly to requests.
+      this.subscriptions.push(mps.subscribe('map/fly',
+          _.bind(this.fly, this)));
 
       // Do this once.
       if (!this.mapped) {
@@ -82,15 +86,15 @@ define([
 
       var opts = {
         zoom: 3,
-        minZoom: 5,
-        maxZoom: 8
+        scrollwheel: false,
+        https: true
       };
 
       if (pos && !pos.code) {
         _.extend(opts, {
           center_lat: pos.coords.latitude,
           center_lon: pos.coords.longitude,
-          zoom: 8
+          zoom: 7
         });
       }
 
@@ -100,6 +104,8 @@ define([
           'http://island.cartodb.com/api/v1/viz/crags/viz.json', opts,
           _.bind(function (vis, layers) {
         this.vis = vis;
+        this.vis.mapView.map_leaflet.options.maxZoom = 17;
+        this.vis.mapView.map_leaflet.options.minZoom = 3;
         this.layers = layers;
 
         // Init events for markers.
@@ -115,6 +121,16 @@ define([
         // Get the markers.
         this.getMarkers(true);
       }, this));
+    },
+
+    fly: function (location) {
+      if (!this.vis) return;
+
+      // Set the map view.
+      if (location && location.latitude && location.longitude)
+        this.vis.mapView.map_leaflet.setView(
+            new L.LatLng(location.latitude, location.longitude), 7,
+            {animate: true});
     },
 
     getMarkers: function (remove) {

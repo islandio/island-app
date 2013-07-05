@@ -6,10 +6,8 @@ define([
     unsubscribe: window.unsubscribe,
     publish: window.publish
   };
-  // mps.hook = mps; // OMG hack
   delete window.subscribe;
   delete window.unsubscribe;
   delete window.publish;
   return mps;
-
 });

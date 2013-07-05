@@ -235,6 +235,21 @@
   box-sizing: border-box;
 }
 
+.fancybox-title-float-wrap .child a {
+  background: none;
+  text-decoration: underline;
+  color: #222;
+}
+
+.fancybox-title-float-wrap .child a:hover {
+  text-decoration: underline;
+  background: rgba(75, 184, 215, 0.25);
+}
+
+.fancybox-title-float-wrap .child a:active {
+  background: rgba(75, 184, 215, 0.1);
+}
+
 .fancybox-title-outside-wrap {
   position: relative;
   margin-top: 10px;

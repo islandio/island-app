@@ -86,7 +86,25 @@
         </tr>
         <tr>
           <td colspan="2">
-            <input tabindex="1" name="displayName" type="text" value="<%= data.displayName %>">
+            <input tabindex="1" name="displayName" type="text" placeholder="How your name appears..."
+                value="<%= data.displayName %>">
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1">
+            <label for="username">Username</label>
+          </td>
+          <td colspan="1" class="text-right">
+            <div class="setting-saved">
+              <span class="icon-ok"></span>
+              <span>Saved</span>
+            </div>
+            <span class="setting-error"></span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <input tabindex="2" name="username" type="text" placeholder="(required)" value="<%= data.username %>">
           </td>
         </tr>
         <tr>
@@ -102,25 +120,10 @@
         </tr>
         <tr>
           <td colspan="2">
-            <input tabindex="2" name="primaryEmail" type="text" value="<%= data.primaryEmail %>">
+            <input tabindex="3" name="primaryEmail" type="text" placeholder="Used for notifications..."
+                value="<%= data.primaryEmail %>">
           </td>
         </tr>
-        <!-- <tr>
-          <td colspan="1">
-            <label for="username">Username</label>
-          </td>
-          <td colspan="1" class="text-right">
-            <div class="setting-saved">
-              <span class="icon-ok"></span>
-              <span>Saved</span>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="2">
-            <input tabindex="3" name="username" type="text" value="<= data.username >">
-          </td>
-        </tr> -->
         <tr>
           <td colspan="1">
             <label for="description">Athlete / Sponsor Bio</label>
@@ -277,7 +280,7 @@
         </tr>
         <tr>
           <td colspan="2">
-            <a tabindex="14" id="deleet" href="javascript:;"
+            <a tabindex="14" id="demolish" href="javascript:;"
                 class="button signin-strategy-btn delete-btn from-settings">
               Delete profile
             </a>

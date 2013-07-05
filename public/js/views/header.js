@@ -7,9 +7,8 @@ define([
   'Underscore',
   'Backbone',
   'mps',
-  'rpc',
-  'views/signin'
-], function ($, _, Backbone, mps, rpc, Signin) {
+  'rpc'
+], function ($, _, Backbone, mps, rpc) {
   return Backbone.View.extend({
 
     el: '#header',
@@ -41,6 +40,10 @@ define([
     // Misc. setup.    
     setup: function () {
 
+      // Save refs.
+      this.panel = $('#panel');
+      this.wrap = $('#wrap');
+
       // Shell event.
       this.delegateEvents();
 
@@ -51,6 +54,8 @@ define([
         // Shell subscriptions:
         this.subscriptions.push(mps.subscribe('notification/change',
             _.bind(this.checkBeacon, this)));
+        this.subscriptions.push(mps.subscribe('member/delete',
+            _.bind(this.logout, this)));
       }
     },
 
@@ -74,7 +79,7 @@ define([
       e.preventDefault();
 
       // Render the signin view.
-      var signin = new Signin(this.app).render();
+      mps.publish('member/signin/open');
     },
 
     avatar: function (e) {
@@ -93,15 +98,13 @@ define([
     },
 
     togglePanel: function (e) {
-      var panel = $('#panel');
-      var wrap = $('#wrap');
-      if (panel.hasClass('open')) {
-        wrap.removeClass('panel-open');
-        panel.removeClass('open');
+      if (this.panel.hasClass('open')) {
+        this.wrap.removeClass('panel-open');
+        this.panel.removeClass('open');
         store.set('notesOpen', false);
       } else {
-        wrap.addClass('panel-open');
-        panel.addClass('open');
+        this.wrap.addClass('panel-open');
+        this.panel.addClass('open');
         store.set('notesOpen', true);
       }
       _.delay(function () {
@@ -116,6 +119,21 @@ define([
       else
         this.$('.count').text('').hide();
     },
+
+    logout: function () {
+
+      // Swap member header content.
+      this.$('div.member-box').remove();
+      $('<a id="signin" class="button">Sign in</a>')
+          .appendTo(this.$('#header-inner'));
+      
+      // Close the panel.
+      this.wrap.removeClass('panel-open');
+      this.panel.removeClass('open');
+      _.delay(function () {
+        $(window).resize();
+      }, 1000);
+    }
 
   });
 });

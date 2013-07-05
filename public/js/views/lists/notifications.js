@@ -126,15 +126,6 @@ define([
       List.prototype.setup.call(this);
     },
 
-    destroy: function () {
-      var panel = $('#panel');
-      var wrap = $('#wrap');
-      wrap.removeClass('panel-open');
-      panel.removeClass('open');
-      store.set('isNotesOpen', false);
-      List.prototype.destroy.call(this);
-    },
-
     // update the panel's height
     resize: function () {
       this.$el.parent().height($(window).height());

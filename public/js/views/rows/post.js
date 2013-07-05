@@ -219,8 +219,7 @@ define([
       Row.prototype.setup.call(this);
 
       // Render comments.
-      this.comments = new Comments(this.app,
-          {parentView: this, reverse: true});
+      this.comments = new Comments(this.app, {parentView: this, reverse: true});
     },
 
     destroy: function () {

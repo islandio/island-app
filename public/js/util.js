@@ -413,5 +413,29 @@ define([
       return str;
     },
 
+    getParameterByName: function (name) {
+      name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+      var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
+      var results = regex.exec(location.search);
+      return results == null ? "":
+          decodeURIComponent(results[1].replace(/\+/g, " "));
+    },
+
+    ensure: function (obj, keys) {
+      var result = {valid: true, missing: []};
+      _.each(keys, function (k) {
+        if (!obj[k] || obj[k].trim() === '') {
+          result.valid = false;
+          result.missing.push(k);
+        }
+      });
+      return result;
+    },
+
+    isEmail: function (str) {
+      var str = str.toLowerCase();
+      return (/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/).test(str);
+    },
+
   }
 });
