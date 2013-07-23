@@ -82,22 +82,6 @@
       "watermark_url": "http://s3.amazonaws.com/core.islandio/water/is-water-solid-dots-lg.png",
       "watermark_position": "bottom-right"
     },
-    "audio_filter": {
-      "use": ":original",
-      "robot": "/file/filter",
-      "accepts": [
-        [
-          "${file.mime}",
-          "regex",
-          "audio"
-        ]
-      ]
-    },
-    "audio_encode": {
-      "use": "audio_filter",
-      "robot": "/audio/encode",
-      "preset": "mp3"
-    },
     "image_export": {
       "use": [
         "image_thumb",
@@ -121,16 +105,6 @@
       "key": "AKIAJE7B76FRJNGSKWCA",
       "secret": "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",
       "bucket": "debug.video.islandio",
-      "path": "${unique_prefix}.${file.ext}"
-    },
-    "audio_export": {
-      "use": [
-        "audio_encode"
-      ],
-      "robot": "/s3/store",
-      "key": "AKIAJE7B76FRJNGSKWCA",
-      "secret": "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",
-      "bucket": "debug.audio.islandio",
       "path": "${unique_prefix}.${file.ext}"
     }
   }

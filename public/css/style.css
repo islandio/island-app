@@ -1897,11 +1897,25 @@ table#post_params label {
 .upload-label {
   margin: 0 0 0 5px;
   float: left;
+  font-style: italic;
 }
 .upload-progress-txt {
   position: relative;
   margin: 0 5px;
   color: #1a1a1a;
+}
+.upload-remove {
+  float: right;
+  cursor: pointer;
+  padding: 0 5px;
+  line-height: 30px;
+  color: #666;
+}
+.upload-remove:hover {
+  background: rgba(0,0,0,0.25);
+}
+.upload-remove:active {
+  background: rgba(0,0,0,0.35);
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––comments*/
 .comments {
