@@ -81,7 +81,7 @@ define([
     },
 
     when: function () {
-      if (!this.model) return;
+      if (!this.model || !this.model.get('created')) return;
       if (!this.time)
         this.time = this.$('time.created:first');
       this.time.text(util.getRelativeTime(this.model.get('created')));

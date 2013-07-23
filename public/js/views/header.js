@@ -7,8 +7,9 @@ define([
   'Underscore',
   'Backbone',
   'mps',
-  'rpc'
-], function ($, _, Backbone, mps, rpc) {
+  'rpc',
+  'views/lists/flashes'
+], function ($, _, Backbone, mps, rpc, Flashes) {
   return Backbone.View.extend({
 
     el: '#header',
@@ -57,6 +58,11 @@ define([
         this.subscriptions.push(mps.subscribe('member/delete',
             _.bind(this.logout, this)));
       }
+
+      // Start block messages:
+      if(!this.flashes)
+        this.flashes = new Flashes();
+      else this.flashes.destroy();
     },
 
     // Bind mouse events.

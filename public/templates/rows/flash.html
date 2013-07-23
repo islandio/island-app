@@ -1,0 +1,11 @@
+<div class="block-remove">
+  <i class="icon-cancel"></i>
+</div>
+<span class="block-<%= this.model.get('level') %>-txt">
+  <% if (this.model.get('level') === 'alert') { %>
+    <i class="icon-attention"></i>  
+  <% } else { %>
+    <i class="icon-error"></i>
+  <% } %>
+  <%= this.model.get('message') %>
+</span>

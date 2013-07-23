@@ -4,26 +4,36 @@
       "use": ":original",
       "robot": "/image/resize",
       "correct_gamma": true,
-      "strip": true,
       "width": 232,
       "resize_strategy": "fit"
     },
     "gif_decliner": {
       "use": ":original",
       "robot": "/file/filter",
-      "declines": [["${file.mime}", "=", "image/gif"]]
+      "declines": [
+        [
+          "${file.mime}",
+          "=",
+          "image/gif"
+        ]
+      ]
     },
     "gif_accepter": {
       "use": ":original",
       "robot": "/file/filter",
-      "accepts": [["${file.mime}", "=", "image/gif"]]
+      "accepts": [
+        [
+          "${file.mime}",
+          "=",
+          "image/gif"
+        ]
+      ]
     },
     "image_full": {
       "use": "gif_decliner",
       "robot": "/image/resize",
       "correct_gamma": true,
-      "strip": true,
-      "width": 640,
+      "width": 1024,
       "resize_strategy": "fit",
       "watermark_url": "http://s3.amazonaws.com/core.islandio/water/is-water-solid-dots-sm.png",
       "watermark_position": "bottom-right"
@@ -32,8 +42,7 @@
       "use": "gif_accepter",
       "robot": "/image/resize",
       "correct_gamma": true,
-      "strip": true,
-      "width": 640,
+      "width": 1024,
       "resize_strategy": "fit"
     },
     "video_thumbs": {
@@ -46,7 +55,7 @@
       "use": ":original",
       "robot": "/video/thumbs",
       "count": 1,
-      "width": 640,
+      "width": 1024,
       "resize_strategy": "fit",
       "watermark_url": "http://s3.amazonaws.com/core.islandio/water/is-water-solid-dots-sm.png",
       "watermark_position": "bottom-right"
@@ -67,14 +76,22 @@
       "realtime": "true",
       "width": 1280,
       "resize_strategy": "fit",
-      "ffmpeg": { "b": "5000k" },
+      "ffmpeg": {
+        "b": "5000k"
+      },
       "watermark_url": "http://s3.amazonaws.com/core.islandio/water/is-water-solid-dots-lg.png",
       "watermark_position": "bottom-right"
     },
     "audio_filter": {
       "use": ":original",
       "robot": "/file/filter",
-      "accepts": [["${file.mime}", "regex", "audio"]]
+      "accepts": [
+        [
+          "${file.mime}",
+          "regex",
+          "audio"
+        ]
+      ]
     },
     "audio_encode": {
       "use": "audio_filter",
@@ -82,27 +99,38 @@
       "preset": "mp3"
     },
     "image_export": {
-      "use": ["image_thumb", "image_full", "image_full_gif"],
+      "use": [
+        "image_thumb",
+        "image_full",
+        "image_full_gif"
+      ],
       "robot": "/s3/store",
       "key": "AKIAJE7B76FRJNGSKWCA",
       "secret": "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",
-      "bucket": "image.islandio",
+      "bucket": "debug.image.islandio",
       "path": "${unique_prefix}.${file.ext}"
     },
     "video_export": {
-      "use": ["video_thumbs", "video_placeholder", "video_poster", "video_encode"],
+      "use": [
+        "video_thumbs",
+        "video_placeholder",
+        "video_poster",
+        "video_encode"
+      ],
       "robot": "/s3/store",
       "key": "AKIAJE7B76FRJNGSKWCA",
       "secret": "kdL8k9yEoQXCt39z1TU/Z+TOlctcZ2Coxs0BRAjm",
-      "bucket": "video.islandio",
+      "bucket": "debug.video.islandio",
       "path": "${unique_prefix}.${file.ext}"
     },
     "audio_export": {
-      "use": ["audio_encode"],
+      "use": [
+        "audio_encode"
+      ],
       "robot": "/s3/store",
       "key": "AKIAJE7B76FRJNGSKWCA",
       "secret": "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",
-      "bucket": "audio.islandio",
+      "bucket": "debug.audio.islandio",
       "path": "${unique_prefix}.${file.ext}"
     }
   }

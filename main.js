@@ -54,12 +54,7 @@ app.set('PORT', process.env.PORT || argv.port);
 // Twitter params
 app.set('twitter', {
   consumerKey: 'ithvzW8h1tEsUBewL3jxQ',
-  consumerSecret: 'HiGnwoc8BBgsURlKshWsb1pGH8IQWE2Ve8Mqzz8',
-  
-  consumer_key: 'ithvzW8h1tEsUBewL3jxQ',
-  consumer_secret: 'HiGnwoc8BBgsURlKshWsb1pGH8IQWE2Ve8Mqzz8',
-  access_token_key: '213304250-VSHfh85LJA4a1lIX1vhk7Q1TyljF6kHYi0qQzdL6',
-  access_token_secret: 'Yr77Uo7n8uNRYjRwmCmgiPQF25jVQ6vjWyqHVGFNOg'
+  consumerSecret: 'HiGnwoc8BBgsURlKshWsb1pGH8IQWE2Ve8Mqzz8'
 });
 
 // CartoDB params
@@ -84,7 +79,6 @@ Step(
       app.set('MONGO_URI', 'mongodb://localhost:27018/' + argv.dburi);
       app.set('REDIS_HOST', 'localhost');
       app.set('REDIS_PORT', 6379);
-      app.set('CHANNELS', {all: 'island_test'});
 
       // PubSub init
       app.set('pubsub', new PubSub({
@@ -139,11 +133,9 @@ Step(
       app.set('HOME_URI', 'http://island.io');
       app.set('MONGO_URI', 'mongodb://nodejitsu:af8c37eb0e1a57c1e56730eb635f6093'
           + '@linus.mongohq.com:10020/nodejitsudb5582710115');
-      app.set('REDIS_HOST', 'nodejitsudb2498459205.redis.irstack.com');
-      app.set('REDIS_PASS', 'nodejitsudb2498459205.redis.irstack.com:'
-          + 'f327cfe980c971946e80b8e975fbebb4');
-      app.set('REDIS_PORT', 6379);
-      app.set('CHANNELS', {all: 'island'});
+      app.set('REDIS_HOST', 'beardfish.redistogo.com');
+      app.set('REDIS_PASS', '8e79e951bd58df62a99fef22e32f6ede');
+      app.set('REDIS_PORT', 9806);
 
       // PubSub init
       app.set('pubsub', new PubSub({

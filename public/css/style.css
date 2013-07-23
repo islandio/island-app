@@ -9,49 +9,6 @@
   src: url("../font/impact-webfont.eot");
   src: url("../font/impact-webfont.eot?#iefix") format('embedded-opentype'), url("../font/impact-webfont.woff") format('woff'), url("../font/impact-webfont.ttf") format('truetype'), url("../font/impact-webfont.svg#ImpactRegular") format('svg');
 }
-@font-face {
-  font-family: 'fontello';
-  src: url("../font/fontello.eot?64228200");
-  src: url("../font/fontello.eot?64228200#iefix") format('embedded-opentype'), url("../font/fontello.woff?64228200") format('woff'), url("../font/fontello.ttf?64228200") format('truetype'), url("../font/fontello.svg?64228200#fontello") format('svg');
-  font-weight: normal;
-  font-style: normal;
-}
-[class^="icon-"]:before,
-[class*=" icon-"]:before {
-  font-family: "fontello";
-  font-style: normal;
-  font-weight: normal;
-  speak: none;
-  display: inline-block;
-  text-decoration: inherit;
-  width: 1em;
-  margin-right: 0.2em;
-  text-align: center;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1em;
-  margin-left: 0.2em;
-}
-.icon-ok:before {
-  content: '\e800';
-/* '' */
-}
-.icon-params:before {
-  content: '\e01f';
-/* '' */
-}
-.icon-logout-1:before {
-  content: '\e741';
-/* '' */
-}
-.icon-download-cloud:before {
-  content: '\f015';
-/* '' */
-}
-.icon-globe:before {
-  content: '🌎';
-/* '\1f30e' */
-}
 /*––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– animations */
 @-webkit-keyframes fadeIn {
   0% {
@@ -1017,6 +974,60 @@ span.count {
   -o-animation-fill-mode: both;
   animation-fill-mode: both;
 }
+#block_messages {
+  position: relative;
+  margin: 0 auto;
+  width: 984px;
+  white-space: nowrap;
+}
+.block-remove {
+  float: right;
+  cursor: pointer;
+  padding: 0 5px;
+  line-height: 30px;
+  color: #666;
+}
+.block-remove:hover {
+  background: rgba(0,0,0,0.25);
+}
+.block-remove:active {
+  background: rgba(0,0,0,0.35);
+}
+#block_messages li {
+  position: relative;
+  list-style-type: none;
+  border: 1px solid #e5e5e5;
+  border-top: none;
+  -webkit-animation-name: fadeIn;
+  -moz-animation-name: fadeIn;
+  -o-animation-name: fadeIn;
+  animation-name: fadeIn;
+  -webkit-animation-duration: 0.2s;
+  -moz-animation-duration: 0.2s;
+  -o-animation-duration: 0.2s;
+  animation-duration: 0.2s;
+  -webkit-animation-fill-mode: both;
+  -moz-animation-fill-mode: both;
+  -o-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+.block-error {
+  background: #e6e6e6;
+}
+.block-alert {
+  background: #eff8d7;
+}
+.block-error-txt,
+.block-alert-txt {
+  font-size: 10px;
+  padding: 0 10px;
+  color: #4d4d4d;
+  font-weight: bold;
+  line-height: 30px;
+}
+.block-error-txt {
+  color: #d04c38;
+}
 /*-------------------------------------------------------------*/
 #zoom {
   top: 100px;
@@ -1727,15 +1738,6 @@ div#post_select {
   -moz-border-radius: 0 0 3px 3px;
   border-radius: 0 0 3px 3px;
 }
-div#post_files {
-  display: none;
-  margin-top: 5px;
-}
-div#post_files span {
-  font-weight: bold;
-  line-height: 16px;
-  display: block;
-}
 input.file-chooser {
   position: absolute;
   opacity: 0.0001;
@@ -1772,12 +1774,10 @@ textarea.comment-input {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
-  -webkit-transition: height 0.2s;
-  -webkit-transition-timing-function: height 0.2s;
-  -moz-transition: height 0.2s;
-  -moz-transition-timing-function: height 0.2s;
-  transition: height 0.2s;
-  transition-timing-function: height 0.2s;
+}
+textarea.post-input {
+  line-height: 18px;
+  border: none;
   -webkit-transition: min-height 0.2s;
   -webkit-transition-timing-function: min-height 0.2s;
   -moz-transition: min-height 0.2s;
@@ -1785,9 +1785,13 @@ textarea.comment-input {
   transition: min-height 0.2s;
   transition-timing-function: min-height 0.2s;
 }
-textarea.post-input {
-  line-height: 18px;
-  border: none;
+textarea.comment-input {
+  -webkit-transition: height 0.2s;
+  -webkit-transition-timing-function: height 0.2s;
+  -moz-transition: height 0.2s;
+  -moz-transition-timing-function: height 0.2s;
+  transition: height 0.2s;
+  transition-timing-function: height 0.2s;
 }
 table#post_params {
   display: none;
@@ -1835,19 +1839,32 @@ table#post_params label {
   color: #4d4d4d;
   border: 1px solid #a8a8a8;
 }
-#post_progress_wrap {
+.upload-progress-wrap {
   position: relative;
-  display: none;
   width: 622px;
   height: 24px;
   color: #666;
-  border-top: 1px dashed #cdcdcd;
+  border-top: 1px solid #f2f2f2;
   background: #fcfcfc;
   -webkit-border-radius: 0 0 3px 3px;
   -moz-border-radius: 0 0 3px 3px;
   border-radius: 0 0 3px 3px;
+  text-align: right;
+  white-space: nowrap;
+  -webkit-animation-name: fadeIn;
+  -moz-animation-name: fadeIn;
+  -o-animation-name: fadeIn;
+  animation-name: fadeIn;
+  -webkit-animation-duration: 0.2s;
+  -moz-animation-duration: 0.2s;
+  -o-animation-duration: 0.2s;
+  animation-duration: 0.2s;
+  -webkit-animation-fill-mode: both;
+  -moz-animation-fill-mode: both;
+  -o-animation-fill-mode: both;
+  animation-fill-mode: both;
 }
-#post_progress {
+.upload-progress {
   height: 100%;
   width: 0%;
   background-color: rgba(75,184,215,0.6);
@@ -1873,26 +1890,18 @@ table#post_params label {
   transition: width 0.2s;
   transition-timing-function: width 0.2s;
 }
-#post_progress_txt {
-  position: relative;
-  color: #1a1a1a;
-  font-weight: bold;
+.upload-progress span {
   line-height: 24px;
-  text-align: right;
+  font-weight: bold;
+}
+.upload-label {
+  margin: 0 0 0 5px;
+  float: left;
+}
+.upload-progress-txt {
+  position: relative;
   margin: 0 5px;
-  white-space: nowrap;
-  -webkit-animation-name: fadeIn;
-  -moz-animation-name: fadeIn;
-  -o-animation-name: fadeIn;
-  animation-name: fadeIn;
-  -webkit-animation-duration: 0.2s;
-  -moz-animation-duration: 0.2s;
-  -o-animation-duration: 0.2s;
-  animation-duration: 0.2s;
-  -webkit-animation-fill-mode: both;
-  -moz-animation-fill-mode: both;
-  -o-animation-fill-mode: both;
-  animation-fill-mode: both;
+  color: #1a1a1a;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––comments*/
 .comments {
@@ -1924,7 +1933,7 @@ table#post_params label {
   animation-fill-mode: both;
 }
 .comment-body {
-  padding: 6px 5px 3px 5px;
+  padding: 5px;
 }
 .comment-body p {
   padding: 0 40px 0 40px;
@@ -2318,36 +2327,6 @@ span.ascent-name {
 .leaflet-container a {
   color: #404040 !important;
   background: none !important;
-}
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––carousel*/
-#fea-carousel,
-#mem-carousel {
-  padding: 20px 0 0 0;
-}
-#fea-carousel-wrap {
-  width: 640px;
-  height: 320px;
-  position: relative;
-  overflow: hidden;
-}
-#fea-carousel-holder {
-  position: absolute;
-  height: 2000em;
-  opacity: 0;
-}
-#mem-carousel-wrap {
-  width: 984px;
-  height: 320px;
-  position: relative;
-  overflow: hidden;
-}
-#mem-carousel-holder {
-  position: absolute;
-  width: 2000em;
-  opacity: 0;
-}
-#mem-carousel-holder > div {
-  float: left;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 @-moz-keyframes fadeIn {

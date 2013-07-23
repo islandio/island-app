@@ -1,0 +1,9 @@
+
+.icon-attention:before { content: '\e806'; } /* '' */
+.icon-ok:before { content: '\e803'; } /* '' */
+.icon-cancel:before { content: '\e805'; } /* '' */
+.icon-params:before { content: '\e801'; } /* '' */
+.icon-error:before { content: '\e807'; } /* '' */
+.icon-logout:before { content: '\e802'; } /* '' */
+.icon-download-cloud:before { content: '\e804'; } /* '' */
+.icon-globe:before { content: '\e800'; } /* '' */

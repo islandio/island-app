@@ -69,7 +69,7 @@ define([
       }
     },
 
-    // receive update from event bus
+    // remove a model
     _remove: function (data) {
       var index = -1;
       var view = _.find(this.views, function (v) {
