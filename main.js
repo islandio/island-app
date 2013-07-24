@@ -89,6 +89,7 @@ Step(
 
       // Facebook params
       app.set('facebook', {
+        name: 'Island (dev)',
         clientID: 153015724883386,
         clientSecret: '8cba32f72580806cca22306a879052bd'
       });
@@ -146,6 +147,7 @@ Step(
 
       // Facebook params
       app.set('facebook', {
+        name: 'Island',
         clientID: 203397619757208,
         clientSecret: 'af79cdc8b5ca447366e87b12c3ddaed2'
       });

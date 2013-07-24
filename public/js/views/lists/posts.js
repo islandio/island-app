@@ -178,10 +178,10 @@ define([
       var set = $('<div class="upload-set">');
       var parts = [];
       _.each(files, function (file) {
-        parts.push('<div class="upload-progress-wrap"><div '
+        parts.push('<div class="upload-progress-wrap"><div class="upload-remove"><i class="icon-cancel"></i></div><div '
             + 'class="upload-progress">' + '<span class="upload-label">',
             file.name, '</span><span class="upload-progress-txt">'
-            + 'Waiting...</span>', '</div><div class="upload-remove"><i class="icon-cancel"></i></div></div>');
+            + 'Waiting...</span>', '</div></div>');
         if (data && typeof file === 'object') data.append('file', file);
       });
       this.postFiles.append(set.html(parts.join('')));
@@ -202,7 +202,7 @@ define([
               'Uploading ' + per + '%');
           bar.width((br / be * 100) + '%');
         },
-        onError: function(assembly) {
+        onError: function (assembly) {
           mps.publish('flash/new', [{
             message: assembly.error + ': ' + assembly.message,
             level: 'error'
@@ -219,7 +219,7 @@ define([
             bar.parent().remove();
           } else {
             attachment.assembly = assembly;
-            txt.text('Ready');
+            txt.text('');
           }
           attachment.uploading = false;
         }, this)
@@ -228,8 +228,23 @@ define([
       // Use formData object if exists (dnd only)
       if (data) opts.formData = data;
 
+      // Setup the uploader.
+      var uploader = this.postForm.transloadit(opts);
+
+      // For canceling.
+      $('.upload-remove', set).click(function (e) {
+        uploader.cancelled = true;
+        if (uploader.instance) {
+          clearTimeout(uploader.timer);
+          uploader._poll('?method=delete');
+        }
+        bar.parent().remove();
+        attachment.uploading = false;
+        delete attachment.assembly;
+      });
+
       // Send files to Transloadit.
-      this.postForm.transloadit(opts).submit();
+      this.postForm.submit();
 
       // Clear form events.
       this.postForm.unbind('submit.transloadit');
@@ -245,15 +260,16 @@ define([
 
       // Error checks.
       var uploading = false;
+      var valid = true;
       _.each(this.attachments, function (a) {
         if (a.uploading) uploading = true;
         if (a.assembly) {
-          if (a.assembly.ok === 'ASSEMBLY_COMPLETED') {
+          if (a.assembly.ok !== 'ASSEMBLY_COMPLETED') {
             mps.publish('flash/new', [{
               message: 'Upload failed. Please try again.',
               level: 'error'
             }, true]);
-            return false;
+            valid = false;
           }
         }
       });
@@ -264,6 +280,7 @@ define([
         }, true]);
         return false;
       }
+      if (!valid) return false;
 
       // Sanitize html fields.
       this.postTitle.val(util.sanitize(this.postTitle.val()));
@@ -285,7 +302,7 @@ define([
       payload.assembly = {results: results};
 
       // Check for empty post.
-      if (payload.body === '' && payload.assemblies.length === 0)
+      if (payload.body === '' && _.isEmpty(payload.assembly.results))
         return false;
 
       // Now save the post to server.

@@ -986,12 +986,15 @@ span.count {
   padding: 0 5px;
   line-height: 30px;
   color: #666;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .block-remove:hover {
-  background: rgba(0,0,0,0.25);
+  background: rgba(0,0,0,0.1);
 }
 .block-remove:active {
-  background: rgba(0,0,0,0.35);
+  background: rgba(0,0,0,0.15);
 }
 #block_messages li {
   position: relative;
@@ -1901,21 +1904,27 @@ table#post_params label {
 }
 .upload-progress-txt {
   position: relative;
-  margin: 0 5px;
+  margin: 0 25px 0 5px;
   color: #1a1a1a;
 }
 .upload-remove {
-  float: right;
+  position: absolute;
+  z-index: 2;
+  right: 0;
+  width: 14px;
   cursor: pointer;
   padding: 0 5px;
-  line-height: 30px;
+  line-height: 24px;
   color: #666;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .upload-remove:hover {
-  background: rgba(0,0,0,0.25);
+  background: rgba(0,0,0,0.1);
 }
 .upload-remove:active {
-  background: rgba(0,0,0,0.35);
+  background: rgba(0,0,0,0.15);
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––comments*/
 .comments {

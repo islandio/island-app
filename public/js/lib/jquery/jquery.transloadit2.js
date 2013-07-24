@@ -1267,9 +1267,10 @@ replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
     }
 
     r = uploader[method].apply(uploader, args);
-    return (r === undefined)
-      ? this
-      : r;
+    // return (r === undefined)
+    //   ? this
+    //   : r;
+    return uploader;
   };
 
   function Uploader() {
@@ -1338,7 +1339,8 @@ replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
         }
 
         self.instance = instance.api2_host;
-        self.start();
+        if (!self.cancelled)
+          self.start();
       },
       error: function(xhr, status) {
         self.ended = true;
