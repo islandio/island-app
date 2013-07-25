@@ -5,12 +5,15 @@
 define([
   'jQuery',
   'Underscore',
+  'mps',
+  'rpc',
   'views/boiler/row',
   'models/post',
   'text!../../../templates/rows/post.html',
   'text!../../../templates/video.html',
-  'views/lists/comments'
-], function ($, _, Row, Model, template, video, Comments) {
+  'views/lists/comments',
+  'text!../../../templates/confirm.html',
+], function ($, _, mps, rpc, Row, Model, template, video, Comments, confirm) {
   return Row.extend({
 
     attributes: function () {
@@ -29,7 +32,7 @@ define([
       // Boiler init.
       Row.prototype.initialize.call(this, options);
 
-      // Client-wide subscriptions
+      // Client-wide subscriptions.
       this.subscriptions = [];
 
       return this;
@@ -37,6 +40,7 @@ define([
 
     events: {
       'click a.navigate': 'navigate',
+      'click .info-delete': 'delete'
     },
 
     render: function (single, prepend) {
@@ -294,7 +298,61 @@ define([
         }, this));
       else
         this.$('.fancybox').fancybox(opts);
-    }
+    },
+
+    delete: function (e) {
+      e.preventDefault();
+
+      // Render the confirm modal.
+      $.fancybox(_.template(confirm)({
+        message: 'Are you sure you want to delete this post?',
+        working: '...working...'
+      }), {
+        openEffect: 'fade',
+        closeEffect: 'fade',
+        closeBtn: false,
+        padding: 0
+      });
+      
+      // Refs.
+      var overlay = $('.confirm-overlay');
+
+      // Setup actions.
+      $('#confirm_cancel').click(function (e) {
+        $.fancybox.close();
+      });
+      $('#confirm_delete').click(_.bind(function (e) {
+
+        // Delete the member.
+        rpc.delete('/api/posts/' + this.model.get('key'),
+            {}, _.bind(function (err, data) {
+          if (err) {
+
+            // Oops.
+            console.log('TODO: Retry, notify user, etc.');
+            return;
+          }
+
+          // close the modal.
+          $.fancybox.close();
+
+        }, this));
+
+        // Remove from UI.
+        this.parentView._remove({id: this.model.id});
+
+      }, this));
+
+      return false;
+    },
+
+    _remove: function (cb) {
+      this.$el.slideUp('fast', _.bind(function () {
+        clearInterval(this.timer);
+        this.destroy();
+        cb();
+      }, this));
+    },
 
   });
 });

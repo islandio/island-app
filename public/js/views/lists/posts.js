@@ -14,9 +14,10 @@ define([
   'collections/posts',
   'views/rows/post',
   'Spin'
-], function ($, _, Modernizr,List, mps, rpc, util, template, Collection, Row, Spin) {
+], function ($, _, Modernizr, List, mps, rpc, util, template,
+      Collection, Row, Spin) {
   return List.extend({
-    
+
     el: '#posts',
 
     fetching: false,
@@ -40,8 +41,9 @@ define([
       this.subscriptions = [];
 
       // Socket subscriptions
-      this.app.socket.subscribe('posts').bind('post.new',
-          _.bind(this.collect, this));
+      this.app.socket.subscribe('posts')
+          .bind('post.new', _.bind(this.collect, this))
+          .bind('post.removed', _.bind(this._remove, this));
 
       // Misc.
       this.empty_label = this.app.profile.content.page
@@ -143,6 +145,23 @@ define([
     destroy: function () {
       this.unpaginate();
       return List.prototype.destroy.call(this);
+    },
+
+    // remove a model
+    _remove: function (data) {
+      var index = -1;
+      var view = _.find(this.views, function (v) {
+        ++index
+        return v.model.id === data.id;
+      });
+
+      if (view) {
+        this.views.splice(index, 1);
+        view._remove(_.bind(function () {
+          this.collection.remove(view.model);
+          this.checkHeight();
+        }, this));
+      }
     },
 
     dragover: function (e) {

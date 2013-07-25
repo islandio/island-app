@@ -44,7 +44,7 @@ define([
 
       // Do this once.
       if (!this.mapped) {
-        var page = this.app.profile.content.page;
+        var page = this.app.profile ? this.app.profile.content.page: null;
         var loc = page ? page.location: null;
         if (loc && loc.latitude && loc.longitude) this.map({coords: loc});
         else if (Modernizr.geolocation)

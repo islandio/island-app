@@ -82,8 +82,8 @@ define([
         view._remove(_.bind(function () {
           this.collection.remove(view.model);
           this.checkHeight();
+          mps.publish('notification/change', []);
         }, this));
-        mps.publish('notification/change', []);
       }
     },
 

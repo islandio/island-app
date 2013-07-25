@@ -166,7 +166,7 @@ define([
         if (err) {
 
           // Set the error display.
-          errorMsg.text(err).show();
+          errorMsg.text(err.message).show();
 
           // Clear fields.
           if (err === 'Username exists')
@@ -358,21 +358,18 @@ define([
       e.preventDefault();
 
       // Render the confirm modal.
-      $.fancybox(_.template(confirm)(), {
+      $.fancybox(_.template(confirm)({
+        message: 'Your account will be removed, forever. This cannot be undone.',
+        working: '...working...'
+      }), {
         openEffect: 'fade',
         closeEffect: 'fade',
         closeBtn: false,
         padding: 0
       });
-
-      // Add placeholder shim if need to.
-      if (Modernizr.input.placeholder)
-        this.$('input').placeholder();
       
       // Refs.
       var overlay = $('.confirm-overlay');
-      var username = $('.confirm input.username-for-delete');
-      username.focus();
 
       // Setup actions.
       $('#confirm_cancel').click(function (e) {

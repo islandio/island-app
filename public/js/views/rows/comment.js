@@ -5,9 +5,11 @@
 define([
   'jQuery',
   'Underscore',
+  'mps',
+  'rpc',
   'views/boiler/row',
   'text!../../../templates/rows/comment.html'
-], function ($, _, Row, template) {
+], function ($, _, mps, rpc, Row, template) {
   return Row.extend({
 
     attributes: function () {
@@ -23,6 +25,13 @@ define([
 
     events: {
       'click a.navigate': 'navigate',
+      'click .info-delete': 'delete',
+    },
+
+    delete: function (e) {
+      e.preventDefault();
+      rpc.delete('/api/comments/' + this.model.id, {});
+      this.parentView._remove({id: this.model.id});
     },
 
     navigate: function (e) {
@@ -32,6 +41,14 @@ define([
       var path = $(e.target).attr('href') || $(e.target).parent().attr('href');
       if (path)
         this.app.router.navigate(path, {trigger: true});
+    },
+
+    _remove: function (cb) {
+      this.$el.slideUp('fast', _.bind(function () {
+        clearInterval(this.timer);
+        this.destroy();
+        cb();
+      }, this));
     },
 
   });

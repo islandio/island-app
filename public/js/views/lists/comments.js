@@ -30,7 +30,8 @@ define([
 
       // Socket subscriptions
       this.app.socket.subscribe('post-' + this.parentView.model.id)
-          .bind('comment.new', _.bind(this.collect, this));
+          .bind('comment.new', _.bind(this.collect, this))
+          .bind('comment.removed', _.bind(this._remove, this));
 
       // Reset the collection.
       this.collection.reset(this.parentView.model.get('comments'));
@@ -40,9 +41,14 @@ define([
 
       // Autogrow the write comment box.
       this.$('textarea[name="body"]').autogrow();
-      this.$('textarea[name="body"]').bind('keyup', _.bind(function (e) {
+      this.$('textarea[name="body"]')
+          .bind('keyup', _.bind(function (e) {
         if (!e.shiftKey && (e.keyCode === 13 || e.which === 13))
           this.write();
+      }, this))
+          .bind('keydown', _.bind(function (e) {
+        if (!e.shiftKey && (e.keyCode === 13 || e.which === 13))
+          return false;
       }, this));
 
       // Show the write comment box.
@@ -59,6 +65,22 @@ define([
     // Collect new comments from socket events.
     collect: function (comment) {
       this.collection.unshift(comment);
+    },
+
+    // remove a model
+    _remove: function (data) {
+      var index = -1;
+      var view = _.find(this.views, function (v) {
+        ++index
+        return v.model.id === data.id;
+      });
+
+      if (view) {
+        this.views.splice(index, 1);
+        view._remove(_.bind(function () {
+          this.collection.remove(view.model);
+        }, this));
+      }
     },
 
     //

@@ -44,5 +44,10 @@
         title="<%= this.model.get('created') %>">
     <%= this.model.get('created') %>
   </time></a>
+  <% if (this.app.profile.member &&
+      this.model.get('author').id === this.app.profile.member.id) { %>
+    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+    <span class="info-delete">delete</span>
+  <% } %>
 </div>
 <div class="comments"></div>

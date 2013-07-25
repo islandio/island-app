@@ -9,6 +9,7 @@ define([
   'mps',
   'rpc',
   'util',
+  'views/error',
   'views/header',
   'views/footer',
   'views/signin',
@@ -18,7 +19,7 @@ define([
   'views/profile',
   'views/settings',
   'views/rows/post'
-], function ($, _, Backbone, mps, rpc, util, Header, Footer, Signin,
+], function ($, _, Backbone, mps, rpc, util, Error, Header, Footer, Signin,
       Notifications, Map, Home, Profile, Settings, Post) {
 
   // Our application URL router.
@@ -65,7 +66,7 @@ define([
 
     render: function (service, cb) {
 
-      function _render() {
+      function _render(err) {
 
         // Render page elements.
         if (!this.header)
@@ -75,11 +76,11 @@ define([
           this.footer = new Footer(this.app).render();
         if (!this.map)
           this.map = new Map(this.app).render();
-        if (!this.notifications && this.app.profile.member)
+        if (!this.notifications && this.app.profile && this.app.profile.member)
           this.notifications = new Notifications(this.app, {reverse: true});
 
         // Callback to route.
-        cb();
+        cb(err);
       }
 
       // Kill the page view if it exists.
@@ -98,7 +99,10 @@ define([
       // Get a profile, if needed.
       rpc.get(service, query,
           _.bind(function (err, pro) {
-        if (err) return console.error(err.stack);
+        if (err) {
+          _render.call(this, err);
+          return this.page = new Error(this.app).render(err);
+        }
 
         // Set the profile.
         this.app.update(pro);
@@ -108,27 +112,31 @@ define([
     },
 
     home: function () {
-      this.render('/service/home.profile', _.bind(function () {
+      this.render('/service/home.profile', _.bind(function (err) {
+        if (err) return;
         this.page = new Home(this.app).render();
       }, this));
     },
 
     profile: function (username) {
       this.render('/service/member.profile/' + username,
-          _.bind(function () {
+          _.bind(function (err) {
+        if (err) return;
         this.page = new Profile(this.app).render();
       }, this));
     },
 
     settings: function () {
-      this.render('/service/settings.profile', _.bind(function () {
+      this.render('/service/settings.profile', _.bind(function (err) {
+        if (err) return;
         this.page = new Settings(this.app).render();
       }, this));
     },
 
     post: function (username, key) {
       var key = [username, key].join('/');
-      this.render('/service/post.profile/' + key, _.bind(function () {
+      this.render('/service/post.profile/' + key, _.bind(function (err) {
+        if (err) return;
         this.page = new Post({wrap: '#main'}, this.app).render(true);
       }, this));
     },

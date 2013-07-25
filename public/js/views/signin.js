@@ -209,7 +209,7 @@ define([
           this.$('.signin-action-inner > div').show();
 
           // Set the error display.
-          errorMsg.text(err);
+          errorMsg.text(err.message);
 
           // Clear fields.
           $('input[type="text"], input[type="password"]',
@@ -278,7 +278,7 @@ define([
           this.$('.signin-action-inner > div').show();
 
           // Set the error display.
-          errorMsg.text(err);
+          errorMsg.text(err.message);
 
           // Clear fields.
           if (err === 'Username exists')

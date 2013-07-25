@@ -27,7 +27,7 @@ define([
     events: {
       'hover': 'read',
       'click': 'navigate',
-      'click .notification-delete': 'delete',
+      'click .info-delete': 'delete',
     },
 
     read: function (e) {
@@ -50,7 +50,7 @@ define([
 
     navigate: function (e) {
       e.preventDefault();
-      if ($(e.target).hasClass('notification-delete')) return;
+      if ($(e.target).hasClass('info-delete')) return;
       var path = this.model.get('event').data.target.s;
       if (path) mps.publish('navigate', [path]);
       return false;

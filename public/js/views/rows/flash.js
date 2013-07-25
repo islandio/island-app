@@ -26,8 +26,7 @@ define([
     },
 
     events: {
-      'click .icon-cancel': 'delete',
-      'click #to_campaign': 'build'
+      'click .block-remove': 'delete',
     },
 
     render: function (single) {

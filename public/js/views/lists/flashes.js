@@ -23,8 +23,8 @@ define([
 
       // Socket subscriptions
       if (this.app.profile && this.app.profile.member) {
-        this.app.socket.subscribe('flashes-' + this.app.profile.member.id).bind('flash.new',
-            _.bind(this.collect, this));
+        this.app.socket.subscribe('mem-' + this.app.profile.member.id)
+            .bind('flash.new', _.bind(this.collect, this));
       }
 
       // Shell subscriptions:

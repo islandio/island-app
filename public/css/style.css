@@ -308,6 +308,11 @@ span.slash {
   font-family: Title, Verdana, Arial, sans-serif;
   line-height: 0;
 }
+.http-error {
+  font-weight: bold;
+  font-size: 14px;
+  color: #d04c38;
+}
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 img.social-icons {
   position: absolute;
@@ -2109,16 +2114,17 @@ textarea.comment-input {
 .notification-info a {
   color: #b3b3b3;
 }
-.notification-delete {
+.info-delete {
   color: #404040;
   background: #f2f2f2;
   cursor: pointer;
   color: #666;
+  font-size: 9px;
 }
-.notification-delete:hover {
+.info-delete:hover {
   background-color: rgba(75,184,215,0.25);
 }
-.notification-delete:active {
+.info-delete:active {
   background-color: rgba(75,184,215,0.5);
 }
 span.info-divider {
