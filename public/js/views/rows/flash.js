@@ -14,8 +14,9 @@ define([
     tagName: 'li',
 
     attributes: function () {
-      return this.model ? _.defaults({ class: 'block-' + this.model.get('level') },
-                                    Row.prototype.attributes.call(this)) : {};
+      return this.model ?
+          _.defaults({class: 'block-' + this.model.get('level')},
+          Row.prototype.attributes.call(this)): {};
     },
 
     initialize: function (options, app) {
@@ -31,7 +32,8 @@ define([
 
     render: function (single) {
       Row.prototype.render.call(this, single);
-      _.delay(_.bind(this.delete, this), 8000);
+      if (!this.model.get('sticky'))
+        _.delay(_.bind(this.delete, this), 8000);
     },
 
     delete: function (e) {

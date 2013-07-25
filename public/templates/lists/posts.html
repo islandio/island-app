@@ -35,18 +35,22 @@
           </div>
           <table id="post_params">
             <tr>
-              <td>
+              <td style="width:213px;">
                 <input type="text" name="title" placeholder="Post title (optional)"
                     tabindex="2" style="width:200px;" />
               </td>
-              <td>
-                <input id="facebook" name="facebook" type="checkbox" tabindex="3" />
-                <label for="facebook">Post to Facebook</label>
-              </td>
-              <td>
-                <input id="twitter" name="twitter" type="checkbox" tabindex="4" />
-                <label for="twitter">Tweet post</label>
-              </td>
+              <% if (member.facebookId) { %>
+                <td>
+                  <input id="facebook" name="facebook" type="checkbox" tabindex="3" />
+                  <label for="facebook">Post to Facebook</label>
+                </td>
+              <% } %>
+              <% if (member.twitterId) { %>
+                <td>
+                  <input id="twitter" name="twitter" type="checkbox" tabindex="4" />
+                  <label for="twitter">Tweet post</label>
+                </td>
+              <% } %>
               <td class="last">
                 <input type="submit" id="post_button" value="Post" tabindex="5" />
               </td>

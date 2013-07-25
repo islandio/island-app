@@ -61,7 +61,7 @@ define([
 
       // Start block messages:
       if(!this.flashes)
-        this.flashes = new Flashes();
+        this.flashes = new Flashes(this.app);
       else this.flashes.destroy();
     },
 

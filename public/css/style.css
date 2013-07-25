@@ -1031,6 +1031,16 @@ span.count {
 .block-error-txt {
   color: #d04c38;
 }
+.block-error-txt a {
+  color: #fff;
+  background: rgba(208,76,56,0.8);
+}
+.block-error-txt a:hover {
+  background: rgba(208,76,56,0.6);
+}
+.block-error-txt a:active {
+  background: #d04c38;
+}
 /*-------------------------------------------------------------*/
 #zoom {
   top: 100px;
