@@ -6,7 +6,17 @@
       : null;
 %>
 
-<div id="comment_input" class="list-header">
+<% if (this.collection.older > 0) { %>
+  <a href="javascript:;" class="show-older comment list-header">
+    Show <%= this.collection.older %> older comments
+  </a>
+<% } %>
+<% if (this.collection.models.length > 0) { %>
+  <% _.each(this.collection.models, _.bind(function(row) { %>
+    <%= this.row(row) %>
+  <% }, this)); %>
+<% } %>
+<div id="comment_input" class="list-footer">
   <% if (member) { %>
     <div class="comment">
       <span class="comment-avatar navigate">
@@ -25,8 +35,3 @@
     </a>
   <% } %>
 </div>
-<% if (this.collection.models.length > 0) { %>
-  <% _.each(this.collection.models, _.bind(function(row) { %>
-    <%= this.row(row) %>
-  <% }, this)); %>
-<% } %>

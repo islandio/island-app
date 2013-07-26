@@ -72,7 +72,7 @@ define([
       this.$('textarea').autogrow();
 
       // Save field contents on blur.
-      this.$('textarea, input[type="text"]')
+      this.$('textarea, input[type="text"], input[type="checkbox"]')
           .change(_.bind(this.save, this))
           .keyup(function (e) {
         var field = $(e.target);
@@ -151,14 +151,13 @@ define([
       var errorMsg = $('span.setting-error', label.parent().parent()).hide();
       var val = util.sanitize(field.val());
 
+      if (field.attr('type') === 'checkbox')
+        val = field.is(':checked');
+
       // Create the paylaod.
       if (val === field.data('saved')) return false;
       var payload = {};
-      if (name.indexOf('.') !== -1) {
-        var tmp = {};
-        tmp[name.substr(name.indexOf('.') + 1)] = val;
-        payload[name.substr(0, name.indexOf('.'))] = tmp;
-      } else payload[name] = val;
+      payload[name] = val;
 
       // Now do the save.
       rpc.put('/api/members/' + this.app.profile.member.username, payload,

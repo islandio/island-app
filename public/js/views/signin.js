@@ -172,6 +172,11 @@ define([
     signin: function (e) {
       e.preventDefault();
 
+      // Sanitize.
+      this.$('input[type!="submit"]:visible').each(function (i) {
+        $(this).val(util.sanitize($(this).val()));
+      });
+
       // Grab the form data.
       var payload = this.signinForm.serializeObject();
 
@@ -229,6 +234,11 @@ define([
 
     signup: function (e) {
       e.preventDefault();
+
+      // Sanitize.
+      this.$('input[type!="submit"]:visible').each(function (i) {
+        $(this).val(util.sanitize($(this).val()));
+      });
 
       // Grab the form data.
       var payload = this.signupForm.serializeObject();

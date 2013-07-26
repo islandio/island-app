@@ -34,10 +34,16 @@ define([
           .bind('comment.removed', _.bind(this._remove, this));
 
       // Reset the collection.
+      this.collection.older =
+          this.parentView.model.get('comments_cnt')
+          - this.parentView.model.get('comments').length
       this.collection.reset(this.parentView.model.get('comments'));
     },
 
     setup: function () {
+
+      // Save refs.
+      this.footer = this.$('.list-footer');
 
       // Autogrow the write comment box.
       this.$('textarea[name="body"]').autogrow();
@@ -51,7 +57,8 @@ define([
           return false;
       }, this));
 
-      // Show the write comment box.
+      // Show other elements.
+      this.$('.show-older.comment').show();
       this.$('#comment_input .comment').show();
 
       return List.prototype.setup.call(this);
@@ -59,12 +66,13 @@ define([
 
     // Bind mouse events.
     events: {
-      'click .comments-signin': 'signin'
+      'click .comments-signin': 'signin',
+      'click .show-older': 'older',
     },
 
     // Collect new comments from socket events.
     collect: function (comment) {
-      this.collection.unshift(comment);
+      this.collection.push(comment);
     },
 
     // remove a model
@@ -99,6 +107,7 @@ define([
 
       var form = $('form.comment-input-form', this.el);
       var input = this.$('textarea.comment-input');
+      input.val(util.sanitize(input.val()));
       if (input.val().trim() === '') return;
 
       // For server.
@@ -117,7 +126,7 @@ define([
       payload.parent_id = this.parentView.model.id;
 
       // Optimistically add comment to page.
-      this.collection.unshift(data);
+      this.collection.push(data);
       input.val('').keyup();
 
       // Now save the comment to server.
@@ -140,6 +149,45 @@ define([
       }, this));
 
       return false;
+    },
+
+    older: function (e) {
+
+      var limit = this.collection.older;
+      this.collection.older = 0;
+
+      // Get the older comments.
+      rpc.post('/api/comments/list', {
+        cursor: 0, 
+        limit: limit,
+        parent_id: this.parentView.model.id,
+      }, _.bind(function (err, data) {
+
+        if (err) {
+
+          // Oops.
+          console.log('TODO: Retry, notify user, etc.');
+          return;
+        }
+
+        // Update the collection.
+        var ids = _.pluck(this.collection.models, 'id');
+        this.collection.options.reverse = true;
+        var i = 0;
+        _.each(data.comments.items, _.bind(function (c) {
+          if (!_.contains(ids, c.id)) {
+            this.collection.unshift(c);
+            ++i;
+          }
+        }, this));
+        this.collection.options.reverse = false;
+        console.log(i)
+
+        // Hide the button.
+        this.$('.show-older.comment').hide();
+
+      }, this));
+
     },
 
     signin: function (e) {

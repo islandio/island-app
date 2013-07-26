@@ -261,7 +261,7 @@ a:hover {
   background-color: rgba(75,184,215,0.25);
 }
 a:active {
-  background-color: rgba(75,184,215,0.5);
+  background-color: rgba(75,184,215,0.35);
 }
 a:focus {
   outline: none;
@@ -282,7 +282,7 @@ a.important.hover {
 }
 a.important:active,
 a.important.active {
-  background: rgba(75,184,215,0.7);
+  background: rgba(75,184,215,0.6);
 }
 span.like-wrap {
   float: right;
@@ -692,6 +692,9 @@ span.empty-list {
   font-style: italic;
   color: #808080;
   line-height: 18px;
+}
+.comments span.empty-list {
+  margin: 10px 0 0 0;
 }
 p.privacy {
   padding: 30px;
@@ -1452,7 +1455,6 @@ a.delete-comment:active {
 .member-info-content {
   font-weight: bold;
 }
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––structure*/
 div.leftside {
   width: 640px;
@@ -1943,9 +1945,9 @@ table#post_params label {
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––comments*/
 .comments {
-  margin: 10px 0 0 0;
+  margin: 1px 0 0 0;
   border-bottom: 1px solid #eee;
-  padding: 0 0 30px 20px;
+  padding: 0 0 30px 2px;
 }
 .comment {
   width: 490px;
@@ -2057,6 +2059,15 @@ img.comment-image {
 textarea.comment-input {
   width: 427px;
   font-size: 11px;
+}
+.show-older {
+  padding: 5px 5px;
+  display: block;
+  min-height: 0;
+  width: 480px;
+  text-align: center;
+  color: #808080;
+  font-style: italic;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––notifications*/
 .notification {

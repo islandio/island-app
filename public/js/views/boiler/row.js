@@ -48,7 +48,9 @@ define([
           else
             this.$el.prependTo(this.parentView.$el);
         } else {
-          if (this.parentView)
+          if (this.parentView.footer)
+            this.$el.insertBefore(this.parentView.footer);
+          else if (this.parentView)
             this.$el.appendTo(this.parentView.$el);
           else
             this.$el.appendTo(this.wrap);

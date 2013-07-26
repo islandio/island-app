@@ -212,12 +212,12 @@
           </td>
           <td class="text-right">
             <% if (notes.comment.email === true || notes.comment.email === 'true') { %>
-              <input type="checkbox" name="config[notifications][comment][email]"
+              <input type="checkbox" name="config.notifications.comment.email"
                   tabindex="10" checked="checked" />
             <% } else { %>
-              <input type="checkbox" name="config[notifications][comment][email]" />
+              <input type="checkbox" name="config.notifications.comment.email" />
             <% } %>
-            <label for="config[notifications][comment][email]"
+            <label for="config.notifications.comment.email"
                 tabindex="10" style="vertical-align:-1px;">Email</label>
           </td>
         </tr>
