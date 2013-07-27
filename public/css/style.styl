@@ -328,6 +328,9 @@ h3.obj-details
   padding 0 0 5px
   font-weight normal
 
+h3.obj-details.darker
+  color #808080
+
 span.slash
   padding 0 5px 0 0
   font-weight bold
@@ -552,14 +555,14 @@ button.button-left,
 div[role=button].button-left,
 input[type=submit].button-left
   border-right none !important
-  border-radius 5px 0 0 5px
+  border-radius 3px 0 0 3px
 
 a.button-right,
 button.button-right,
 div[role=button].button-right,
 input[type=submit].button-right
   border-left none !important
-  border-radius 0 5px 5px 0
+  border-radius 0 3px 3px 0
 
 a.button-left.selected,
 a.button-right.selected,
@@ -686,9 +689,6 @@ a.signin-strategy-btn.from-login
 
 .clear
   clear both
-
-.matte
-  border-radius 5px
 
 .mask
   position absolute
@@ -1328,60 +1328,32 @@ h1.title-static
   text-transform uppercase
 
 h1.title-sub
+  display inline-block
   font-size 9px
-  padding 0 0 0 22px
+  padding 0 0 0 10px
   line-height 6px
   color #666
   font-weight bold
 
-#search
-  width 640px
-
-#search-box,
-#filter-box
-  -moz-appearance none
-  -moz-font-smoothing antialiased
-  -webkit-appearance none
-  -webkit-font-smoothing antialiased
-  appearance none
-  font-smoothing antialiased
-  border 1px solid bordergray
-  background backgray
+#filter_box
   font-size 24px
-  font-weight lighter
-  letter-spacing -2px
-  padding 5px 0
-  margin 0 0 10px
-  width 100%
+  padding-left 0
 
-#filter-box
-  width 439px
-
-#search-box:focus,
-#filter-box:focus
-  background none
-  border 1px solid darkgray
+#filter_box
+  width 419px
 
 .search-spinner
   position absolute
   left -25px
   top 63px
 
-#grid
-  position relative
-  width 984px
-  margin 15px 0 0 0
-
-.grid-wrap
-  position absolute
-  top 2000px
-
 .obj-title
   font-size 0
 
 .obj-holder
   position relative
-  margin 10px 0
+  margin 4px 0 3px 0
+  border-radius 3px
 
 .hearts
   position absolute
@@ -1396,18 +1368,12 @@ h1.title-sub
   left 5px
   width 130px
 
-.hearts-back
-  position absolute
-
-img.heart-img
-  display none
-  padding 0 5px 0 0
-
 .obj-desc
   background #f9f9f9
   width 640px
-  min-height 60px
-  margin-bottom 40px
+  margin-bottom 30px
+
+  border-radius 3px
 
 .obj-desc.wide
   width 984px
@@ -1417,7 +1383,6 @@ img.heart-img
   opacity 0.8
 
 .obj-desc-txt-wrap
-  margin 0 0 0 25px 
   padding 10px 10px 0 10px
 
   -webkit-animation-name fadeIn
@@ -1668,6 +1633,8 @@ div.post div.post-mosaic
   height 360px
   background mattegray
 
+  border-radius 3px
+
   -webkit-box-shadow 0 0 3px #b3b3b3
   -moz-box-shadow 0 0 3px #b3b3b3
   box-shadow 0 0 3px #b3b3b3
@@ -1693,7 +1660,7 @@ img.profile-avatar
   z-index 1
   width 48px
   height 48px
-  border-radius 5px 0
+  border-radius 2px 0
 
   -webkit-box-shadow 2px 2px 2px rgba(0,0,0,0.1)
   -moz-box-shadow 2px 2px 2px rgba(0,0,0,0.1)
@@ -2395,13 +2362,13 @@ span.no-media
   font-style italic
 
 div.ascent-filter
-  margin-top 40px
+  margin-top 3px
 
 div.ascent-filter-buttons
-  width 191px
+  width 211px
   float right
-  margin-top 42px
   white-space nowrap
+  font-size 0
 
 div.ascent-filter-buttons a.button
   height 39px
@@ -2411,6 +2378,7 @@ div.ascent-filter-buttons a.button
 
 div.ascents-wrap
   margin 20px 0 0
+  display none
 
 div.ascents-wrap span.no-results
   display none
@@ -2420,6 +2388,7 @@ span.grade-heading
   margin 0 0 10px
   font-family title
   font-size 12px
+  color #404040
 
 ul.ascents
   margin 0 0 20px
@@ -2453,9 +2422,22 @@ span.ascent-name
 span.ascent-sector
   // float right
 
-.leaflet-container a
-  color #404040 !important
-  background none !important
+a.popup-link
+  font-size 16px
+  color #4d4d4d !important
+  width 100%
+  display inline-block
+  font-family Title
+  text-transform uppercase
+  line-height 36px
+  padding 2px 0 0 10px
+
+a.popup-link i
+  float right
+  margin-right 10px
+
+div.cartodb-popup div.cartodb-popup-content-wrapper
+  height 38px !important
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 

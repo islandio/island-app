@@ -20,17 +20,17 @@
 <a href="/<%= this.model.get('author').username %>" class="post-avatar navigate">
   <img src=<%= gravatar %> width="48" height="48" />
 </a>
-<div class="post-mosaic matte">
+<div class="post-mosaic">
   <% if (this.parentView) { %>
     <img class="mask" width="640" style="top:0;" 
-        src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-top.png" />
+        src="/img/cornermask-top.png" />
     <img class="mask" width="640" style="top:352px;"
-        src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-btm.png" />
+        src="/img/cornermask-btm.png" />
   <% } else { %>
     <img class="mask" width="984" style="top:0;" 
-        src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-lrg-top.png" />
+        src="/img/cornermask-lrg-top.png" />
     <img class="mask" width="984" style="top:546px;"
-        src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-lrg-btm.png" />
+        src="/img/cornermask-lrg-btm.png" />
   <% } %>
 </div>
 <div class="post-body">

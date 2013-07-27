@@ -1,4 +1,5 @@
 
+.icon-right-dir:before { content: '\e808'; } /* '' */
 .icon-attention:before { content: '\e806'; } /* '' */
 .icon-ok:before { content: '\e803'; } /* '' */
 .icon-cancel:before { content: '\e805'; } /* '' */

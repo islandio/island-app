@@ -8,8 +8,9 @@ define([
   'Backbone',
   'Modernizr',
   'mps',
-  'rpc'
-], function ($, _, Backbone, Modernizr, mps, rpc) {
+  'rpc',
+  'text!../../../templates/popup.html'
+], function ($, _, Backbone, Modernizr, mps, rpc, popup) {
   return Backbone.View.extend({
 
     el: '#map',
@@ -42,12 +43,13 @@ define([
       this.subscriptions.push(mps.subscribe('map/fly',
           _.bind(this.fly, this)));
 
-      // Do this once.
+      // Get a geocoder.
+      if (!this.geocoder)
+        this.geocoder = new google.maps.Geocoder();
+
+      // Create the map.
       if (!this.mapped) {
-        var page = this.app.profile ? this.app.profile.content.page: null;
-        var loc = page ? page.location: null;
-        if (loc && loc.latitude && loc.longitude) this.map({coords: loc});
-        else if (Modernizr.geolocation)
+        if (Modernizr.geolocation)
           navigator.geolocation.getCurrentPosition(_.bind(this.map, this),
               _.bind(this.map, this), {maximumAge:60000, timeout:5000, 
                 enableHighAccuracy:true});
@@ -108,6 +110,20 @@ define([
         this.vis.mapView.map_leaflet.options.minZoom = 3;
         this.layers = layers;
 
+        // Handle infowindows.
+        layers[1].infowindow.set('template', _.template(popup).call(this));
+
+        layers[1].on('featureClick', _.bind(function (e, pos, latlng, data) {
+          _.delay(_.bind(function () {
+            $('a.popup-link').click(_.bind(function (e) {
+              e.preventDefault();
+
+              // Route to crag.
+              this.app.router.navigate($(e.target).closest('a').attr('href'), {trigger: true});
+            }, this));
+          }, this), 500);
+        }, this));
+
         // Init events for markers.
         this.vis.mapView.map_leaflet.on('zoomend', 
             _.bind(this.getMarkers, this, true));
@@ -120,17 +136,43 @@ define([
 
         // Get the markers.
         this.getMarkers(true);
+
+        // Fly to a location if there is one pending.
+        if (this.pendingLocation) this.fly(this.pendingLocation);
+
       }, this));
     },
 
     fly: function (location) {
-      if (!this.vis) return;
+      if (!location || (this.location && location.latitude
+          && this.location.latitude === location.latitude
+          && location.longitude
+          && this.location.longitude === location.longitude)) return;
+      if (!this.vis) {
+        this.pendingLocation = location;
+        return;
+      }
 
-      // Set the map view.
-      if (location && location.latitude && location.longitude)
+      function _fly() {
         this.vis.mapView.map_leaflet.setView(
             new L.LatLng(location.latitude, location.longitude), 7,
             {animate: true});
+        this.location = location;
+      }
+
+      // Use hard coords if available.
+      if (location.latitude && location.longitude) return _fly.call(this);
+
+      // Attempt to geocode an address string, if available.
+      if (location.name)
+        this.geocoder.geocode({address: location.name},
+            _.bind(function (res, stat) {
+          if (stat === google.maps.GeocoderStatus.OK) {
+            location.latitude = res[0].geometry.location.lat();
+            location.longitude = res[0].geometry.location.lng();
+            _fly.call(this);
+          }
+        }, this));
     },
 
     getMarkers: function (remove) {

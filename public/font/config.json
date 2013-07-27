@@ -2,6 +2,7 @@
   "name": "",
   "css_prefix_text": "icon-",
   "css_use_suffix": false,
+  "hinting": true,
   "glyphs": [
     {
       "uid": "12f4ece88e46abd864e40b35e05b11cd",
@@ -31,6 +32,12 @@
       "uid": "0d20938846444af8deb1920dc85a29fb",
       "css": "logout",
       "code": 59394,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "fb1c799ffe5bf8fb7f8bcb647c8fe9e6",
+      "css": "right-dir",
+      "code": 59400,
       "src": "fontawesome"
     },
     {

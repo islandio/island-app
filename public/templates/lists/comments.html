@@ -8,7 +8,7 @@
 
 <% if (this.collection.older > 0) { %>
   <a href="javascript:;" class="show-older comment list-header">
-    Show <%= this.collection.older %> older comments
+    Show <%= this.collection.older %> older <%= this.collection.older > 1 ? 'comments': 'comment' %>
   </a>
 <% } %>
 <% if (this.collection.models.length > 0) { %>

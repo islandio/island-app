@@ -4,15 +4,17 @@
   var data = this.model.attributes;
 
   // Handle from
-  var from = data.hometown && data.hometown.name !== '' ? data.hometown.name: 'Earth';
+  var location = data.hometown && data.hometown.name !== '' ? 'from ' + data.hometown.name: '';
+  if (data.location && data.location.name)
+    location += (location !== '' ? ' | ': '') + 'lives in ' + data.location.name;
 
   // Check image
   if (!data.image) {
     data.image = {meta: {width: 640, height: 288}};
     if (!data.gender || 'male' === data.gender)
-      data.image.cf_url = 'https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-blnk-pic-m.jpg';
+      data.image.cf_url = '/img/blnk-pic-m.jpg';
     else
-      data.image.cf_url = 'https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-blnk-pic-f.jpg';
+      data.image.cf_url = '/img/blnk-pic-f.jpg';
   }
 
   // Image meta
@@ -42,8 +44,9 @@
     var websites = data.website.split('\n');
     _.each(websites, function(site, i) {
       if (site === '') return;
+      var _site = site;
       if (!site.match(/^http:\/\/|https:\/\//)) site = 'http://' + site;
-      links += '<a href="' + site + '" target="_blank">' + site + '</a>';
+      links += '<a href="' + site + '" target="_blank">' + _site + '</a>';
       if (i !== websites.length - 1) links += ', ';
     });
   }
@@ -61,21 +64,18 @@
 
 <div class="leftside">
   <div class="obj-title">
-    <span class="slash">/</span>
     <h1 class="title-left"><%= data.displayName %></h1>
-    <h1 class="title-sub">from <%= from %></h1>
+    <h1 class="title-sub"><%= location %></h1>
   </div>
-  <div class="obj-holder member-picture matte">
+  <div class="obj-holder member-picture">
     <img src=<%= gravatar %> class="profile-avatar" width="48" height="48" />
     <img class="mask" width="640" style="top:0;"
-        src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-top.png" />
+        src="/img/cornermask-top.png" />
     <img class="mask" width="640" style="top:280px;"
-        src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-cornermask-btm.png" />
+        src="/img/cornermask-btm.png" />
     <img class="masked" src=<%= data.image.cf_url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
   </div>
-  <div class="obj-desc matte">
-    <img class="left" align="top"
-        src="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-obj-info.gif" />
+  <div class="obj-desc">
     <div class="obj-desc-txt-wrap profile-info">
       <% if (desc || links) { %>
         <div class="member-info">
@@ -87,7 +87,7 @@
             <% } %>
             <% if (links) { %>
               <li>
-                // <span>More from <%= data.displayName %> at </span>
+                <span>More from <%= data.displayName %> at </span>
                 <span class="member-info-content"><%= links %>.</span>
               </li>
             <% } %>

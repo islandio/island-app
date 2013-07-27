@@ -1,0 +1,35 @@
+<%
+
+  // Save model attributes
+  var data = this.model.attributes;
+
+%>
+
+<div class="leftside">
+  <div class="obj-title">
+    <h1 class="title-left"><%= data.name %></h1>
+    <h1 class="title-sub">
+      <a href="/crags/<%= this.model.parentKey() %>" class="navigate">
+        <%= data.crag %>
+        <% if (data.sector) { %>
+          &nbsp;/&nbsp;<%= data.sector %>
+        <% } %>
+        ,&nbsp;<%= data.country %>
+      </a>
+    </h1>
+  </div>
+  <div class="obj-desc">
+    <div class="obj-desc-txt-wrap">
+      <h3 class="obj-details darker">
+        Grade: <%= data.grades.sort().join(', ') %>
+      </h3>
+    </div>
+  </div>
+  <span class="empty-feed">No media yet.</span>
+</div>
+<div class="rightside">
+  <h1 class="title-right">Activity</h1>
+  <br />
+  <span class="empty-list">...will go here :)</span>
+</div>
+<div class="clear"></div>

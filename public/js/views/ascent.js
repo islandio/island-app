@@ -1,5 +1,5 @@
 /*
- * Page view for a member profile.
+ * Page view for a ascent profile.
  */
 
 define([
@@ -9,10 +9,9 @@ define([
   'mps',
   'rpc',
   'util',
-  'models/member',
-  'text!../../../templates/profile.html',
-  'views/lists/posts'
-], function ($, _, Backbone, mps, rpc, util, Member, template, Posts) {
+  'models/ascent',
+  'text!../../../templates/ascent.html'
+], function ($, _, Backbone, mps, rpc, util, Ascent, template) {
 
   return Backbone.View.extend({
 
@@ -36,10 +35,11 @@ define([
     render: function () {
 
       // Use a model for the main content.
-      this.model = new Member(this.app.profile.content.page);
+      this.model = new Ascent(this.app.profile.content.page);
 
       // Set page title
-      this.app.title(this.model.get('displayName'));
+      this.app.title(this.model.get('name') + ' - ' + [this.model.get('crag'),
+          this.model.get('country')].join(', '));
 
       // UnderscoreJS rendering.
       this.template = _.template(template);
@@ -52,16 +52,18 @@ define([
     },
 
     // Bind mouse events.
-    events: {},
+    events: {
+      'click a.navigate': 'navigate',
+    },
 
     // Misc. setup.
     setup: function () {
 
       // Set map view.
-      mps.publish('map/fly', [this.model.get('location')]);
-
-      // Render posts.
-      this.posts = new Posts(this.app, {parentView: this, reverse: true});
+      mps.publish('map/fly', [{
+        latitude: this.model.get('lat'),
+        longitude: this.model.get('lon')
+      }]);
 
       return this;
     },
@@ -78,10 +80,18 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      this.posts.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();
+    },
+
+    navigate: function (e) {
+      e.preventDefault();
+
+      // Route to wherever.
+      var path = $(e.target).attr('href') || $(e.target).parent().attr('href');
+      if (path)
+        this.app.router.navigate(path, {trigger: true});
     },
 
   });

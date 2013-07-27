@@ -18,9 +18,11 @@ define([
   'views/home',
   'views/profile',
   'views/settings',
-  'views/rows/post'
+  'views/rows/post',
+  'views/crag',
+  'views/ascent'
 ], function ($, _, Backbone, mps, rpc, util, Error, Header, Footer, Signin,
-      Notifications, Map, Home, Profile, Settings, Post) {
+      Notifications, Map, Home, Profile, Settings, Post, Crag, Ascent) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -38,8 +40,10 @@ define([
         } catch(err) {}
       
       // Page routes:
-      this.route(':username', 'profile', this.profile);
-      this.route(':username/:key', 'post', this.post);
+      this.route(':un', 'profile', this.profile);
+      this.route(':un/:k', 'post', this.post);
+      this.route('crags/:y/:g', 'crag', this.crag);
+      this.route('crags/:y/:g/:t/:a', 'ascent', this.ascent);
       this.route('settings', 'profile', this.settings);
       this.route('', 'home', this.home);
 
@@ -138,6 +142,22 @@ define([
       this.render('/service/post.profile/' + key, _.bind(function (err) {
         if (err) return;
         this.page = new Post({wrap: '#main'}, this.app).render(true);
+      }, this));
+    },
+
+    crag: function (country, crag) {
+      var key = [country, crag].join('/');
+      this.render('/service/crag.profile/' + key, _.bind(function (err) {
+        if (err) return;
+        this.page = new Crag(this.app).render();
+      }, this));
+    },
+
+    ascent: function (country, crag, type, ascent) {
+      var key = [country, crag, type, ascent].join('/');
+      this.render('/service/ascent.profile/' + key, _.bind(function (err) {
+        if (err) return;
+        this.page = new Ascent(this.app).render();
       }, this));
     },
 
