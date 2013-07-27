@@ -12,6 +12,8 @@ define([
   'views/error',
   'views/header',
   'views/footer',
+  'views/films',
+  'views/privacy',
   'views/signin',
   'views/lists/notifications',
   'views/map',
@@ -21,8 +23,9 @@ define([
   'views/rows/post',
   'views/crag',
   'views/ascent'
-], function ($, _, Backbone, mps, rpc, util, Error, Header, Footer, Signin,
-      Notifications, Map, Home, Profile, Settings, Post, Crag, Ascent) {
+], function ($, _, Backbone, mps, rpc, util, Error, Header, Footer, Films,
+    Privacy, Signin, Notifications, Map, Home, Profile, Settings, Post,
+    Crag, Ascent) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -44,7 +47,9 @@ define([
       this.route(':un/:k', 'post', this.post);
       this.route('crags/:y/:g', 'crag', this.crag);
       this.route('crags/:y/:g/:t/:a', 'ascent', this.ascent);
-      this.route('settings', 'profile', this.settings);
+      this.route('settings', 'settings', this.settings);
+      this.route('privacy', 'privacy', this.privacy);
+      this.route('films', 'films', this.films);
       this.route('', 'home', this.home);
 
       // Fullfill navigation request from mps.
@@ -122,11 +127,17 @@ define([
       }, this));
     },
 
-    profile: function (username) {
-      this.render('/service/member.profile/' + username,
-          _.bind(function (err) {
+    films: function () {
+      this.render('/service/films.profile', _.bind(function (err) {
         if (err) return;
-        this.page = new Profile(this.app).render();
+        this.page = new Films(this.app).render();
+      }, this));
+    },
+
+    privacy: function () {
+      this.render(_.bind(function (err) {
+        if (err) return;
+        this.page = new Privacy(this.app).render();
       }, this));
     },
 
@@ -134,6 +145,14 @@ define([
       this.render('/service/settings.profile', _.bind(function (err) {
         if (err) return;
         this.page = new Settings(this.app).render();
+      }, this));
+    },
+
+    profile: function (username) {
+      this.render('/service/member.profile/' + username,
+          _.bind(function (err) {
+        if (err) return;
+        this.page = new Profile(this.app).render();
       }, this));
     },
 
