@@ -10,8 +10,6 @@ var argv = optimist
     .describe('help', 'Get help')
     .describe('port', 'Port to listen on')
       .default('port', 8000)
-    .describe('dburi', 'Mongo database name')
-      .default('dburi', 'island')
     .describe('index', 'Ensure indexes on MongoDB collections'
         + '(always `true` in production)')
       .boolean('index')
@@ -51,6 +49,11 @@ var app = express();
 // App port is env var in production
 app.set('PORT', process.env.PORT || argv.port);
 
+// Add connection config to app.
+_.each(require('./config').get(app.get('env')), function (v, k) {
+  app.set(k, v);
+});
+
 // Twitter params
 app.set('twitter', {
   consumerKey: 'ithvzW8h1tEsUBewL3jxQ',
@@ -76,9 +79,6 @@ Step(
 
       // App params
       app.set('HOME_URI', 'http://localhost:' + app.get('PORT'));
-      app.set('MONGO_URI', 'mongodb://localhost:27018/' + argv.dburi);
-      app.set('REDIS_HOST', 'localhost');
-      app.set('REDIS_PORT', 6379);
 
       // PubSub init
       app.set('pubsub', new PubSub({
@@ -132,11 +132,6 @@ Step(
 
       // App params
       app.set('HOME_URI', 'http://island.io');
-      app.set('MONGO_URI', 'mongodb://nodejitsu:af8c37eb0e1a57c1e56730eb635f6093'
-          + '@linus.mongohq.com:10020/nodejitsudb5582710115');
-      app.set('REDIS_HOST', 'beardfish.redistogo.com');
-      app.set('REDIS_PASS', '8e79e951bd58df62a99fef22e32f6ede');
-      app.set('REDIS_PORT', 9806);
 
       // PubSub init
       app.set('pubsub', new PubSub({
@@ -247,6 +242,9 @@ Step(
 
           // Attach a connection ref to app.
           app.set('connection', connection);
+
+          // Attach a redis client ref to app.
+          app.set('client', rc);
 
           // Init resources.
           resources.init(app, this);

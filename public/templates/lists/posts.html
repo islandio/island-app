@@ -18,8 +18,8 @@
         <form action="/api/posts" enctype="multipart/form-data" method="POST"
             id="post_input_form">
           <div id="post_dnd">
-            <textarea name="body" class="post-input" tabindex="1" 
-                placeholder="What's on your mind?"></textarea>
+            <textarea name="body" class="post-input" tabindex="2" 
+                placeholder="Post something here..."></textarea>
             <div id="post_select">
               Attach a video or photos by
               <% if (Modernizr.draganddrop) { %>
@@ -36,23 +36,23 @@
           <table id="post_params">
             <tr>
               <td style="width:213px;">
-                <input type="text" name="title" placeholder="Post title (optional)"
-                    tabindex="2" style="width:200px;" />
+                <input type="text" name="title" placeholder="Title (optional)"
+                    tabindex="3" style="width:200px;" />
               </td>
               <% if (member.facebookId) { %>
                 <td>
-                  <input id="facebook" name="facebook" type="checkbox" tabindex="3" />
+                  <input id="facebook" name="facebook" type="checkbox" tabindex="4" />
                   <label for="facebook">Post to Facebook</label>
                 </td>
               <% } %>
               <% if (member.twitterId) { %>
                 <td>
-                  <input id="twitter" name="twitter" type="checkbox" tabindex="4" />
+                  <input id="twitter" name="twitter" type="checkbox" tabindex="5" />
                   <label for="twitter">Tweet post</label>
                 </td>
               <% } %>
               <td class="last">
-                <input type="submit" id="post_button" value="Post" tabindex="5" />
+                <input type="submit" id="post_button" value="Post" tabindex="6" />
               </td>
             </tr>
           </table>

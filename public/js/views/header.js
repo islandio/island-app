@@ -6,10 +6,13 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
+  'Modernizr',
   'mps',
   'rpc',
-  'views/lists/flashes'
-], function ($, _, Backbone, mps, rpc, Flashes) {
+  'util',
+  'views/lists/flashes',
+  'views/lists/choices',
+], function ($, _, Backbone, Modernizr, mps, rpc, util, Flashes, Choices) {
   return Backbone.View.extend({
 
     el: '#header',
@@ -44,6 +47,7 @@ define([
       // Save refs.
       this.panel = $('#panel');
       this.wrap = $('#wrap');
+      this.searchInput = this.$('input.header-search');
 
       // Shell event.
       this.delegateEvents();
@@ -52,55 +56,52 @@ define([
       // Do this here intead of init ... re-renders often.
       if (this.app.profile && this.app.profile.member) {
         
-        // Shell subscriptions:
+        // Shell subscriptions.
         this.subscriptions.push(mps.subscribe('notification/change',
             _.bind(this.checkBeacon, this)));
         this.subscriptions.push(mps.subscribe('member/delete',
             _.bind(this.logout, this)));
       }
 
-      // Start block messages:
+      // Start block messages.
       if(!this.flashes)
         this.flashes = new Flashes(this.app);
-      else this.flashes.destroy();
+
+      // Add placeholder shim if need to.
+      if (Modernizr.input.placeholder)
+        this.$('input').placeholder();
+
+      // Start search choices.
+      if(!this.choices)
+        this.choices = new Choices(this.app);
+
+      // Handle searching.
+      this.searchInput.bind('keyup', _.bind(this.search, this));
+
+      // Firefox fix.
+      if (navigator.userAgent.indexOf('Firefox') !== -1)
+        this.searchInput.css({'padding-left': '5px'});
     },
 
     // Bind mouse events.
     events: {
       'click #logo': 'home',
+      'click #about': 'about',
+      'click #films': 'films',
       'click #signin': 'signin',
       'click #header_avatar': 'avatar',
       'click #settings': 'settings',
-      'click #globe': 'togglePanel'
+      'click #globe': 'togglePanel',
+      'focus input.header-search': 'searchFocus',
+      'blur input.header-search': 'searchBlur',
     },
 
-    home: function (e) {
-      e.preventDefault();
-
-      // Route to home.
-      this.app.router.navigate('/', {trigger: true});
+    searchFocus: function (e) {
+      this.searchInput.width(300);
     },
 
-    signin: function (e) {
-      e.preventDefault();
-
-      // Render the signin view.
-      mps.publish('member/signin/open');
-    },
-
-    avatar: function (e) {
-      e.preventDefault();
-
-      // Route to profile.
-      this.app.router.navigate('/' + this.app.profile.member.username,
-          {trigger: true});
-    },
-
-    settings: function (e) {
-      e.preventDefault();
-
-      // Route to settings.
-      this.app.router.navigate('/settings', {trigger: true});
+    searchBlur: function (e) {
+      this.searchInput.width(150);
     },
 
     togglePanel: function (e) {
@@ -116,6 +117,49 @@ define([
       _.delay(function () {
         $(window).resize();
       }, 1000);
+    },
+
+    search: function (e) {
+
+      // Clean search string.
+      var str = util.sanitize(this.searchInput.val());
+      if (str === '' || str.length < 3) return;
+      
+      // Search posts.
+      rpc.post('/api/posts/search/' + str, {},
+          _.bind(function (err, data) {
+
+        if (err) {
+
+          // Oops.
+          console.log('TODO: Retry, notify user, etc.');
+          return;
+        }
+
+        // Render results.
+        this.choices.collection.reset([]);
+        _.each(data.items, _.bind(function (i) {
+          this.choices.collection.push(i);
+        }, this));
+
+      }, this));
+
+      // Search members
+      rpc.post('/api/members/search/' + str, {},
+          _.bind(function (err, data) {
+
+        if (err) {
+
+          // Oops.
+          console.log('TODO: Retry, notify user, etc.');
+          return;
+        }
+
+        //
+        // console.log(data.items);
+
+      }, this));
+
     },
 
     checkBeacon: function () {
@@ -139,7 +183,50 @@ define([
       _.delay(function () {
         $(window).resize();
       }, 1000);
-    }
+    },
+
+    home: function (e) {
+      e.preventDefault();
+
+      // Route to home.
+      this.app.router.navigate('/', {trigger: true});
+    },
+
+    about: function (e) {
+      e.preventDefault();
+
+      // Route to about.
+      this.app.router.navigate('/about', {trigger: true});
+    },
+
+    films: function (e) {
+      e.preventDefault();
+
+      // Route to films.
+      this.app.router.navigate('/films', {trigger: true});
+    },
+
+    signin: function (e) {
+      e.preventDefault();
+
+      // Render the signin view.
+      mps.publish('member/signin/open');
+    },
+
+    avatar: function (e) {
+      e.preventDefault();
+
+      // Route to profile.
+      this.app.router.navigate('/' + this.app.profile.member.username,
+          {trigger: true});
+    },
+
+    settings: function (e) {
+      e.preventDefault();
+
+      // Route to settings.
+      this.app.router.navigate('/settings', {trigger: true});
+    },
 
   });
 });

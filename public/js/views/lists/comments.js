@@ -181,7 +181,6 @@ define([
           }
         }, this));
         this.collection.options.reverse = false;
-        console.log(i)
 
         // Hide the button.
         this.$('.show-older.comment').hide();

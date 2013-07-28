@@ -318,7 +318,7 @@ span.like-wrap
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
 small
-  font-size 10px
+  font-size 9px
   line-height 12px
   color #808080
 
@@ -606,17 +606,12 @@ a.signin-strategy-btn-disabled
   width 200px
   font-size 11px
   font-weight bold
-  // font-family standard
   padding 0 0
   display block
   
   color #fcfcfc
   border 1px solid black !important
   border-radius 2px
-  
-  // -webkit-text-shadow 0px 1px black
-  // -moz-text-shadow 0px 1px black
-  // text-shadow 0px 1px black
 
 a.facebook-btn,
 a.facebook-btn-disabled
@@ -643,9 +638,6 @@ a.signin-strategy-btn-disabled
 
 a.signin-strategy-btn:hover
   color white !important
-  // -webkit-text-shadow 0px 1px black !important
-  // -moz-text-shadow 0px 1px black !important
-  // text-shadow 0px 1px black !important
 
 a.facebook-btn:hover
   background rgba(59, 89, 152, 0.75)
@@ -679,6 +671,20 @@ a.delete-btn:active
 
 a.signin-strategy-btn.from-login
   border 1px solid black
+
+a.buy-button
+  float right
+  background #b1dc36
+  color #404040
+  border 1px solid #404040
+  font-size 12px
+  height 30px
+  line-height 31px
+  margin-top -19px
+
+a.buy-button:hover
+  color #1a1a1a
+  border 1px solid #1a1a1a
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
@@ -733,9 +739,11 @@ span.empty-list
 .comments span.empty-list
   margin 10px 0 0 0
 
-p.privacy
+p.page
   margin-top 10px
   color #4d4d4d
+  font-size 12px
+  line-height 18px
 
 span.privacy-indent
   margin-left 10px
@@ -879,6 +887,11 @@ a.resend-conf
   margin 0 auto
   width 984px
 
+#page_spin
+  margin 0 auto
+  height 50px
+  width 100%
+
 #header
   width 100%
   background backgray
@@ -932,12 +945,56 @@ a.header-action
 a.header-action span.unread
   // color blue
 
-input.header-search
+div.header-search-wrap
   float left
-  width 150px
+  position relative
   margin 12px 15px 0 0
+
+input.header-search
+  width 150px
   padding-left 0
   padding-right 4px
+
+  -webkit-transition all 0.1s ease-in-out 0
+  -moz-transition all 0.1s ease-in-out 0
+  transition all 0.1s ease-in-out
+
+#search_display
+  // display none
+  position absolute
+  top 100%
+  left 0
+  right 0
+  z-index 10
+  max-height 300px
+  overflow-y auto
+  font-size 12px
+  background white
+  
+  border 1px solid rgba(0,0,0,0.2)
+  border-radius 3px;
+
+  -webkit-box-shadow 0 1px 5px rgba(0,0,0,0.25)
+  -moz-box-shadow 0 1px 5px rgba(0,0,0,0.25)
+  box-shadow 0 1px 5px rgba(0,0,0,0.25)
+
+  -webkit-transition opacity .2s linear, visibility 0s linear .21s
+  -moz-transition opacity .2s linear, visibility 0s linear .21s
+  transition opacity .2s linear, visibility 0s linear .21s
+  opacity 1
+  visibility visible
+
+a.choice
+  position relative
+  padding 8px
+  margin-bottom -1px
+  overflow hidden
+  color #999
+  text-shadow 0 1px 0 rgba(255,255,255,0.5)
+  white-space nowrap
+  border solid rgba(0,0,0,0.05)
+  border-width 1px 0
+  display block
 
 ul.header-links
   float left
@@ -1112,10 +1169,11 @@ span.count
   margin 0 20px 0 0
 
 #main
-  margin 50px 0
+  margin 50px 0 20px
 
 #footer
   width 100%
+  margin-top 30px
 
 #footer > div
   margin 0 auto
@@ -1158,31 +1216,9 @@ span.count
   color orange !important
   border 1px solid orange !important
 
-#buy-post
-  background #b1dc36
-  color #404040
-  border 1px solid #404040
-
-#buy-post:hover
-  color #1a1a1a
-  border 1px solid #1a1a1a
-
-.action-button
-  float right
-  height auto
-
-.action-button.main
-  padding 0 15px
-
-.action-button.danger
-  border-color orange !important
-  color orange !important
-
 .input-error
   border 1px solid orange !important
 
-.button-mask-wrap
-  position relative
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
@@ -1191,6 +1227,14 @@ span.count
   height 382px
   position relative
   overflow hidden
+
+.signin-link
+  position absolute
+  bottom 0
+  right 0
+  background rgba(255, 255, 255, 0.5)
+  color #4d4d4d
+  font-weight bold
 
 .signin-logo
   position absolute
@@ -1491,6 +1535,11 @@ div#map.closed
 div#map.opened
   height 600px
 
+div#map_spin
+  position absolute
+  top 50%
+  left 50%
+
 div#map_inner
   width 100%
   height 100%
@@ -1569,6 +1618,7 @@ div.cartodb-zoom
 
 .list-spin .empty-feed
   display none
+  line-height 40px
 
 .list-spin > div
   width 50px
@@ -1672,9 +1722,33 @@ div.post img.post-mosaic-play
   top 100px
   opacity 0.9
 
+div.post img.post-mosaic-play.trailer
+  top 75px
+
 div.post.single img.post-mosaic-play
   left 197px
   top 197px
+
+div.post.single img.post-mosaic-play.trailer
+  top 172px
+
+div.post span.post-mosaic-play-text
+  position absolute
+  z-index 2
+  color white
+  opacity 0.8
+  font-size 30px
+  top 221px
+  left 113px
+  font-weight bold
+
+  -moz-user-select none
+  -webkit-user-select none
+  user-select none
+
+div.post.single span.post-mosaic-play-text
+  top 318px
+  left 210px
 
 div.post div.post-body
   margin 10px 0 0

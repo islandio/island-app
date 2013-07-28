@@ -9,8 +9,9 @@ define([
   'Modernizr',
   'mps',
   'rpc',
-  'text!../../../templates/popup.html'
-], function ($, _, Backbone, Modernizr, mps, rpc, popup) {
+  'text!../../../templates/popup.html',
+  'Spin'
+], function ($, _, Backbone, Modernizr, mps, rpc, popup, Spin) {
   return Backbone.View.extend({
 
     el: '#map',
@@ -47,8 +48,20 @@ define([
       if (!this.geocoder)
         this.geocoder = new google.maps.Geocoder();
 
+      // Init the load indicator.
+      if (!this.spin)
+        this.spin = new Spin(this.$('#map_spin'), {
+          color: '#b3b3b3',
+          lines: 17,
+          length: 12,
+          width: 4,
+          radius: 18
+        });
+
       // Create the map.
       if (!this.mapped) {
+        if (!this.$el.hasClass('closed'))
+          this.spin.start();
         if (Modernizr.geolocation)
           navigator.geolocation.getCurrentPosition(_.bind(this.map, this),
               _.bind(this.map, this), {maximumAge:60000, timeout:5000, 
@@ -109,6 +122,7 @@ define([
         this.vis.mapView.map_leaflet.options.maxZoom = 17;
         this.vis.mapView.map_leaflet.options.minZoom = 3;
         this.layers = layers;
+        this.spin.stop();
 
         // Handle infowindows.
         layers[1].infowindow.set('template', _.template(popup).call(this));

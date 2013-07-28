@@ -9,6 +9,13 @@
       + encodeURIComponent(this.app.cloudFrontURL + '/main/img/avatar_100.png');
 %>
 
+<% if (this.model.get('product') && this.model.get('product').sku) { %>
+  <a class="button buy-button" target="_blank" 
+      href="http://transactions.digitaldeliveryapp.com/products/<%= this.model.get('product').sku %>/purchase">
+    <i class="icon-download-cloud"></i>
+    <%= this.model.get('product').subtype %> Film ($<%= this.model.get('product').price %>)
+  </a>
+<% } %>
 <div class="post-title">
   <%= this.model.date() %> | 
   <a href="/<%= this.model.get('author').username %>" class="navigate">

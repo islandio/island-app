@@ -7,9 +7,8 @@ define([
   'Underscore',
   'Backbone',
   'util',
-  'models/ascent',
   'text!../../../templates/privacy.html'
-], function ($, _, Backbone, util, Ascent, template) {
+], function ($, _, Backbone, util, template) {
 
   return Backbone.View.extend({
 

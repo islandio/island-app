@@ -6,14 +6,15 @@ div#header-inner
     span.tagline Climb
     img(src="/img/dots.png", width="140", height="48")
   div.divider-vertical.pad-right
-  input.header-search(type="search", placeholder="Search")
+  div.header-search-wrap
+    input.header-search(type="search", tabindex="1", placeholder="Search")
+    div#search_display
+      ul
   ul.header-links
     li
-      a(href="/about") About
-    //- li
-    //-   a(href="/crags") Crags
+      a(id="about", href="/about") About
     li
-      a(href="/films") Films
+      a(id="films", href="/films") Films
   - if (member)
     div.member-box
       div.divider-vertical

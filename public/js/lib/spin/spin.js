@@ -6,14 +6,15 @@ define([
   ], function (_, spin) {
 
   var defaults = {
-    lines: 5, // The number of lines to draw
+    lines: 17, // The number of lines to draw
     length: 3, // The length of each line
     width: 2, // The line thickness
-    radius: 5, // The radius of the inner circle
+    radius: 7, // The radius of the inner circle
     corners: 1, // Corner roundness (0..1)
     rotate: 0, // The rotation offset
-    color: '#000', // #rgb or #rrggbb
-    speed: 1, // Rounds per second
+    direction: 1, // 1: clockwise, -1: counterclockwise
+    color: '#b3b3b3', // #rgb or #rrggbb
+    speed: 1.5, // Rounds per second
     trail: 60, // Afterglow percentage
     shadow: false, // Whether to render a shadow
     hwaccel: false, // Whether to use hardware acceleration

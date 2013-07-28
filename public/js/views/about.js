@@ -1,17 +1,14 @@
 /*
- * Page view for films.
+ * Page view for the about page.
  */
 
 define([
   'jQuery',
   'Underscore',
   'Backbone',
-  'mps',
-  'rpc',
   'util',
-  'text!../../../templates/films.html',
-  'views/lists/posts'
-], function ($, _, Backbone, mps, rpc, util, template, Posts) {
+  'text!../../../templates/about.html'
+], function ($, _, Backbone, util, template) {
 
   return Backbone.View.extend({
 
@@ -35,7 +32,7 @@ define([
     render: function () {
 
       // Set page title
-      this.app.title('Films');
+      this.app.title('About');
 
       // UnderscoreJS rendering.
       this.template = _.template(template);
@@ -48,14 +45,12 @@ define([
     },
 
     // Bind mouse events.
-    events: {},
+    events: {
+      'click a.navigate': 'navigate',
+    },
 
     // Misc. setup.
     setup: function () {
-
-      // Render posts.
-      this.posts = new Posts(this.app, {parentView: this, reverse: true});
-
       return this;
     },
 
@@ -71,10 +66,18 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      this.posts.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();
+    },
+
+    navigate: function (e) {
+      e.preventDefault();
+
+      // Route to wherever.
+      var path = $(e.target).closest('a').attr('href');
+      if (path)
+        this.app.router.navigate(path, {trigger: true});
     },
 
   });

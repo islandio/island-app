@@ -55,8 +55,14 @@ define([
             + this.model.id + '">')).appendTo(div);
         if (item.video) {
           var play = $('<img src="/img/play.png" class="post-mosaic-play"'
-              + ' width="160" height="160" />');
+              + ' width="160" height="160" />');  
           play.appendTo(div);
+          if (this.model.get('product') && this.model.get('product').sku) {
+            var subtext =
+                $('<span class="post-mosaic-play-text">(trailer)</span>');
+            subtext.appendTo(div);
+            play.addClass('trailer');
+          }
         }
         anc.appendTo(this.$('.post-mosaic'));
       }

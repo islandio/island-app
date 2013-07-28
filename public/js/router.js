@@ -6,6 +6,7 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
+  'Spin',
   'mps',
   'rpc',
   'util',
@@ -14,6 +15,7 @@ define([
   'views/footer',
   'views/films',
   'views/privacy',
+  'views/about',
   'views/signin',
   'views/lists/notifications',
   'views/map',
@@ -23,8 +25,8 @@ define([
   'views/rows/post',
   'views/crag',
   'views/ascent'
-], function ($, _, Backbone, mps, rpc, util, Error, Header, Footer, Films,
-    Privacy, Signin, Notifications, Map, Home, Profile, Settings, Post,
+], function ($, _, Backbone, Spin, mps, rpc, util, Error, Header, Footer, Films,
+    Privacy, About, Signin, Notifications, Map, Home, Profile, Settings, Post,
     Crag, Ascent) {
 
   // Our application URL router.
@@ -48,6 +50,7 @@ define([
       this.route('crags/:y/:g', 'crag', this.crag);
       this.route('crags/:y/:g/:t/:a', 'ascent', this.ascent);
       this.route('settings', 'settings', this.settings);
+      this.route('about', 'about', this.about);
       this.route('privacy', 'privacy', this.privacy);
       this.route('films', 'films', this.films);
       this.route('', 'home', this.home);
@@ -66,6 +69,15 @@ define([
       mps.subscribe('member/signin/open', _.bind(function () {
         this.signin = new Signin(this.app).render();
       }, this));
+
+      // Init page spinner.
+      this.spin = new Spin($('#page_spin'), {
+        color: '#b3b3b3',
+        lines: 17,
+        length: 7,
+        width: 3,
+        radius: 12
+      });
     },
 
     routes: {
@@ -121,62 +133,87 @@ define([
     },
 
     home: function () {
+      this.spin.start();
       this.render('/service/home.profile', _.bind(function (err) {
         if (err) return;
         this.page = new Home(this.app).render();
+        this.spin.stop();
       }, this));
     },
 
     films: function () {
+      this.spin.start();
       this.render('/service/films.profile', _.bind(function (err) {
         if (err) return;
         this.page = new Films(this.app).render();
+        this.spin.stop();
       }, this));
     },
 
     privacy: function () {
-      this.render(_.bind(function (err) {
+      this.spin.start();
+      this.render('/service/static.profile', _.bind(function (err) {
         if (err) return;
         this.page = new Privacy(this.app).render();
+        this.spin.stop();
+      }, this));
+    },
+
+    about: function () {
+      this.spin.start();
+      this.render('/service/static.profile', _.bind(function (err) {
+        if (err) return;
+        this.page = new About(this.app).render();
+        this.spin.stop();
       }, this));
     },
 
     settings: function () {
+      this.spin.start();
       this.render('/service/settings.profile', _.bind(function (err) {
         if (err) return;
         this.page = new Settings(this.app).render();
+        this.spin.stop();
       }, this));
     },
 
     profile: function (username) {
+      this.spin.start();
       this.render('/service/member.profile/' + username,
           _.bind(function (err) {
         if (err) return;
         this.page = new Profile(this.app).render();
+        this.spin.stop();
       }, this));
     },
 
     post: function (username, key) {
+      this.spin.start();
       var key = [username, key].join('/');
       this.render('/service/post.profile/' + key, _.bind(function (err) {
         if (err) return;
         this.page = new Post({wrap: '#main'}, this.app).render(true);
+        this.spin.stop();
       }, this));
     },
 
     crag: function (country, crag) {
+      this.spin.start();
       var key = [country, crag].join('/');
       this.render('/service/crag.profile/' + key, _.bind(function (err) {
         if (err) return;
         this.page = new Crag(this.app).render();
+        this.spin.stop();
       }, this));
     },
 
     ascent: function (country, crag, type, ascent) {
+      this.spin.start();
       var key = [country, crag, type, ascent].join('/');
       this.render('/service/ascent.profile/' + key, _.bind(function (err) {
         if (err) return;
         this.page = new Ascent(this.app).render();
+        this.spin.stop();
       }, this));
     },
 

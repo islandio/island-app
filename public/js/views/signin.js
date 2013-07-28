@@ -52,22 +52,10 @@ define([
 
       // Init the load indicator.
       this.spin = new Spin(this.$('#signin_spin'), {
-        lines: 5, // The number of lines to draw
+        lines: 17, // The number of lines to draw
         length: 12, // The length of each line
-        width: 8, // The line thickness
-        radius: 24, // The radius of the inner circle
-        corners: 1, // Corner roundness (0..1)
-        rotate: 0, // The rotation offset
-        direction: 1, // 1: clockwise, -1: counterclockwise
-        color: '#000', // #rgb or #rrggbb
-        speed: 1, // Rounds per second
-        trail: 60, // Afterglow percentage
-        shadow: false, // Whether to render a shadow
-        hwaccel: false, // Whether to use hardware acceleration
-        className: 'spinner', // The CSS class to assign to the spinner
-        zIndex: 2e9, // The z-index (defaults to 2000000000)
-        top: 'auto', // Top position relative to parent in px
-        left: 'auto' // Left position relative to parent in px
+        width: 4, // The line thickness
+        radius: 18, // The radius of the inner circle
       });
 
       // Embed the background video.
@@ -90,7 +78,8 @@ define([
     // Bind mouse events.
     events: {
       'click #signin': 'signin',
-      'click #signup': 'signup'
+      'click #signup': 'signup',
+      'click a.navigate': 'navigate',
     },
 
     // Misc. setup.
@@ -214,7 +203,7 @@ define([
           this.$('.signin-action-inner > div').show();
 
           // Set the error display.
-          errorMsg.text(err.message);
+          errorMsg.text(err.message + '.');
 
           // Clear fields.
           $('input[type="text"], input[type="password"]',
@@ -274,6 +263,26 @@ define([
 
         return;
       }
+      if (payload.newusername.length < 4) {
+
+        // Set the error display.
+        $('input[name="newusername"]', this.signupForm)
+            .val('').addClass('input-error').focus();
+        var msg = 'Username must be at least 4 characters.';
+        errorMsg.text(msg);
+
+        return;
+      }
+      if (payload.newpassword.length < 7) {
+
+        // Set the error display.
+        $('input[name="newpassword"]', this.signupForm)
+            .val('').addClass('input-error').focus();
+        var msg = 'Password must be at least 7 characters.';
+        errorMsg.text(msg);
+
+        return;
+      }
 
       // All good, show spinner.
       this.$('.signin-action-inner > div').hide();
@@ -288,7 +297,7 @@ define([
           this.$('.signin-action-inner > div').show();
 
           // Set the error display.
-          errorMsg.text(err.message);
+          errorMsg.text(err.message + '.');
 
           // Clear fields.
           if (err === 'Username exists')
@@ -309,6 +318,17 @@ define([
       }, this));
 
       return false;
+    },
+
+    navigate: function (e) {
+      e.preventDefault();
+
+      // Route to wherever.
+      var path = $(e.target).closest('a').attr('href');
+      if (path) {
+        $.fancybox.close();
+        this.app.router.navigate(path, {trigger: true});
+      }
     },
 
   });
