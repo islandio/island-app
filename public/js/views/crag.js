@@ -5,13 +5,14 @@
 define([
   'jQuery',
   'Underscore',
+  'Modernizr',
   'Backbone',
   'mps',
   'rpc',
   'util',
   'models/crag',
   'text!../../../templates/crag.html'
-], function ($, _, Backbone, mps, rpc, util, Crag, template) {
+], function ($, _, Modernizr, Backbone, mps, rpc, util, Crag, template) {
 
   return Backbone.View.extend({
 
@@ -97,6 +98,10 @@ define([
       // Firefox fix.
       if (navigator.userAgent.indexOf('Firefox') !== -1)
         this.filterBox.css({'padding-left': '5px'});
+
+      // Add placeholder shim if need to.
+      if (!Modernizr.input.placeholder)
+        this.filterBox.placeholder();
 
       // Set map view.
       mps.publish('map/fly', [{

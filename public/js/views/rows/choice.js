@@ -24,6 +24,14 @@ define([
       Row.prototype.initialize.call(this, options);
     },
 
+    render: function (single, prepend) {
+
+      // Add href.
+      this.$el.attr({href: this.model.href()});
+
+      return Row.prototype.render.call(this, single, prepend);
+    },
+
     events: {
       'click': 'choose',
     },
@@ -31,10 +39,9 @@ define([
     choose: function (e) {
       e.preventDefault();
 
-      console.log(this.model.attributes);
-      // this.app.router.navigate(path, {trigger: true});
-
-    }
+      // Go to.
+      this.app.router.navigate(this.$el.attr('href'), {trigger: true});
+    },
 
   });
 });

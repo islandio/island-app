@@ -47,7 +47,7 @@ define([
       });
 
       // Add placeholder shim if need to.
-      if (Modernizr.input.placeholder)
+      if (!Modernizr.input.placeholder)
         this.$('input').placeholder();
 
       // Init the load indicator.

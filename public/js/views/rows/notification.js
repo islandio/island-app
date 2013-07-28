@@ -58,7 +58,6 @@ define([
 
     _remove: function (cb) {
       this.$el.slideUp('fast', _.bind(function () {
-        clearInterval(this.timer);
         this.destroy();
         cb();
       }, this));

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- * index_posts.js: Index all Island posts by title.
+ * index_crags.js: Index all Island crags by name.
  *
  */
 
@@ -26,10 +26,10 @@ var db = require('../lib/db.js');
 
 boots.start(function (client) {
 
-  var search = reds.createSearch('posts');
+  var search = reds.createSearch('crags');
   search.client = client;
 
-  db.Posts.list({}, function (err, docs) {
+  db.Crags.list({}, function (err, docs) {
     boots.error(err);
 
     Step(
@@ -37,9 +37,9 @@ boots.start(function (client) {
         if (docs.length === 0) return this();
         var _this = _.after(docs.length, this);
         _.each(docs, function (d) {
-          if (d.title && d.title !== '')
-            if (d.title.match(/\w+/g))
-              search.index(d.title, d._id.toString());
+          if (d.name && d.name !== '')
+            if (d.name.match(/\w+/g))
+              search.index(d.name, d._id.toString());
           _this();
         });
       },

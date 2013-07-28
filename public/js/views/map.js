@@ -133,7 +133,8 @@ define([
               e.preventDefault();
 
               // Route to crag.
-              this.app.router.navigate($(e.target).closest('a').attr('href'), {trigger: true});
+              this.app.router.navigate($(e.target).closest('a').attr('href'),
+                  {trigger: true});
             }, this));
           }, this), 500);
         }, this));

@@ -40,7 +40,8 @@ boots.start(function (client) {
         _.each(docs, function (d) {
           if (d.displayName && d.displayName !== ''
               && d.displayName.match(/\w+/g))
-            search.index(d.displayName, d._id.toString());
+            if (d.displayName.match(/\w+/g))
+              search.index(d.displayName, d._id.toString());
           if (d.username && d.username !== '') {
             if (d.username.match(/\w+/g))
               search.index(d.username, d._id.toString());

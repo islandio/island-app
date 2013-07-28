@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- * index_posts.js: Index all Island posts by title.
+ * index_ascents.js: Index all Island ascents by name.
  *
  */
 
@@ -26,24 +26,28 @@ var db = require('../lib/db.js');
 
 boots.start(function (client) {
 
-  var search = reds.createSearch('posts');
+  var search = reds.createSearch('ascents');
   search.client = client;
 
-  db.Posts.list({}, function (err, docs) {
+  db.Ascents.list({}, function (err, docs) {
     boots.error(err);
 
     Step(
       function () {
         if (docs.length === 0) return this();
         var _this = _.after(docs.length, this);
+        var num = docs.length;
         _.each(docs, function (d) {
-          if (d.title && d.title !== '')
-            if (d.title.match(/\w+/g))
-              search.index(d.title, d._id.toString());
+          if (d.name && d.name !== '')
+            if (d.name.match(/\w+/g))
+              search.index(d.name, d._id.toString());
+          num -= 1;
+          console.log(num);
           _this();
         });
       },
       function (err) {
+        console.log(err, 'done');
         boots.error(err);
         process.exit(0);
       }

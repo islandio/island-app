@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- * index_posts.js: Index all Island posts by title.
+ * .js:
  *
  */
 
@@ -37,10 +37,15 @@ boots.start(function (client) {
         if (docs.length === 0) return this();
         var _this = _.after(docs.length, this);
         _.each(docs, function (d) {
-          if (d.title && d.title !== '')
-            if (d.title.match(/\w+/g))
-              search.index(d.title, d._id.toString());
-          _this();
+          db.Medias.list({parent_id: d._id}, function (err, meds) {
+            boots.error(err);
+            var type = 'image';
+            _.each(meds, function (m) {
+              if (m.type === 'video')
+                type = 'video';
+            });
+            db.Posts._update({_id: d._id}, {$set: {type: type}}, {safe: true}, _this);
+          });
         });
       },
       function (err) {

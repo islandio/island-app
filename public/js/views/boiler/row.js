@@ -75,6 +75,8 @@ define([
     destroy: function () {
       this.undelegateEvents();
       this.stopListening();
+      if (this.timer)
+        clearInterval(this.timer);
       this.remove();
     },
 

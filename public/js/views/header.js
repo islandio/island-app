@@ -47,7 +47,6 @@ define([
       // Save refs.
       this.panel = $('#panel');
       this.wrap = $('#wrap');
-      this.searchInput = this.$('input.header-search');
 
       // Shell event.
       this.delegateEvents();
@@ -67,20 +66,9 @@ define([
       if(!this.flashes)
         this.flashes = new Flashes(this.app);
 
-      // Add placeholder shim if need to.
-      if (Modernizr.input.placeholder)
-        this.$('input').placeholder();
-
       // Start search choices.
       if(!this.choices)
-        this.choices = new Choices(this.app);
-
-      // Handle searching.
-      this.searchInput.bind('keyup', _.bind(this.search, this));
-
-      // Firefox fix.
-      if (navigator.userAgent.indexOf('Firefox') !== -1)
-        this.searchInput.css({'padding-left': '5px'});
+        this.choices = new Choices(this.app, {reverse: true});
     },
 
     // Bind mouse events.
@@ -91,17 +79,7 @@ define([
       'click #signin': 'signin',
       'click #header_avatar': 'avatar',
       'click #settings': 'settings',
-      'click #globe': 'togglePanel',
-      'focus input.header-search': 'searchFocus',
-      'blur input.header-search': 'searchBlur',
-    },
-
-    searchFocus: function (e) {
-      this.searchInput.width(300);
-    },
-
-    searchBlur: function (e) {
-      this.searchInput.width(150);
+      'click #globe': 'togglePanel'
     },
 
     togglePanel: function (e) {
@@ -117,49 +95,6 @@ define([
       _.delay(function () {
         $(window).resize();
       }, 1000);
-    },
-
-    search: function (e) {
-
-      // Clean search string.
-      var str = util.sanitize(this.searchInput.val());
-      if (str === '' || str.length < 3) return;
-      
-      // Search posts.
-      rpc.post('/api/posts/search/' + str, {},
-          _.bind(function (err, data) {
-
-        if (err) {
-
-          // Oops.
-          console.log('TODO: Retry, notify user, etc.');
-          return;
-        }
-
-        // Render results.
-        this.choices.collection.reset([]);
-        _.each(data.items, _.bind(function (i) {
-          this.choices.collection.push(i);
-        }, this));
-
-      }, this));
-
-      // Search members
-      rpc.post('/api/members/search/' + str, {},
-          _.bind(function (err, data) {
-
-        if (err) {
-
-          // Oops.
-          console.log('TODO: Retry, notify user, etc.');
-          return;
-        }
-
-        //
-        // console.log(data.items);
-
-      }, this));
-
     },
 
     checkBeacon: function () {

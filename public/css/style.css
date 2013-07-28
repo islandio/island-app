@@ -913,7 +913,7 @@ a.header-action {
   line-height: 40px;
   font-size: 14px;
 }
-div.header-search-wrap {
+div#header_search {
   float: left;
   position: relative;
   margin: 12px 15px 0 0;
@@ -926,7 +926,8 @@ input.header-search {
   -moz-transition: all 0.1s ease-in-out 0;
   transition: all 0.1s ease-in-out;
 }
-#search_display {
+div.search-display {
+  display: none;
   position: absolute;
   top: 100%;
   left: 0;
@@ -934,32 +935,71 @@ input.header-search {
   z-index: 10;
   max-height: 300px;
   overflow-y: auto;
-  font-size: 12px;
-  background: #fff;
-  border: 1px solid rgba(0,0,0,0.2);
+  border: 1px solid rgba(0,0,0,0.3);
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
   -webkit-box-shadow: 0 1px 5px rgba(0,0,0,0.25);
   -moz-box-shadow: 0 1px 5px rgba(0,0,0,0.25);
   box-shadow: 0 1px 5px rgba(0,0,0,0.25);
-  -webkit-transition: opacity 0.2s linear, visibility 0s linear 0.21s;
-  -moz-transition: opacity 0.2s linear, visibility 0s linear 0.21s;
-  transition: opacity 0.2s linear, visibility 0s linear 0.21s;
-  opacity: 1;
-  visibility: visible;
+  -webkit-animation-name: fadeIn;
+  -moz-animation-name: fadeIn;
+  -o-animation-name: fadeIn;
+  animation-name: fadeIn;
+  -webkit-animation-duration: 0.2s;
+  -moz-animation-duration: 0.2s;
+  -o-animation-duration: 0.2s;
+  animation-duration: 0.2s;
+  -webkit-animation-fill-mode: both;
+  -moz-animation-fill-mode: both;
+  -o-animation-fill-mode: both;
+  animation-fill-mode: both;
 }
 a.choice {
   position: relative;
   padding: 8px;
   margin-bottom: -1px;
   overflow: hidden;
-  color: #999;
-  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+  color: #4d4d4d;
   white-space: nowrap;
-  border: solid rgba(0,0,0,0.05);
+  border: solid rgba(0,0,0,0.08);
   border-width: 1px 0;
   display: block;
+  background: #fff;
+  font-size: 11px;
+  height: 16px;
+}
+a.choice:first-of-type {
+  -webkit-border-radius: 3px 3px 0 0;
+  -moz-border-radius: 3px 3px 0 0;
+  border-radius: 3px 3px 0 0;
+}
+a.choice:last-child {
+  -webkit-border-radius: 0 0 3px 3px;
+  -moz-border-radius: 0 0 3px 3px;
+  border-radius: 0 0 3px 3px;
+}
+a.choice:hover {
+  background-color: #d0ecf2;
+}
+a.choice:active {
+  background-color: #adc9d0;
+}
+span.choice-prefix {
+  float: left;
+  margin-right: 7px;
+  margin-top: -1px;
+}
+span.choice-prefix img {
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+}
+span.choice-name i {
+  margin-right: 5px;
+  margin-left: -3px;
+  font-size: 14px;
+  vertical-align: -1px;
 }
 ul.header-links {
   float: left;
