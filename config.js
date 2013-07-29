@@ -4,7 +4,6 @@
  */
 
 exports.get = function (env) {
-  console.log(env)
   return env === 'production' ?
       {
         MONGO_URI: 'mongodb://islander:isL4nDm0n6o@zoe.mongohq.com:10016/island',

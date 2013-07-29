@@ -50,7 +50,6 @@ var app = express();
 app.set('PORT', process.env.PORT || argv.port);
 
 // Add connection config to app.
-console.log(require('./config').get(process.env.NODE_ENV))
 _.each(require('./config').get(process.env.NODE_ENV), function (v, k) {
   app.set(k, v);
 });
@@ -130,7 +129,6 @@ Step(
 
     // Production only
     else {
-      console.log('****************************************************************************************');
 
       // App params
       app.set('HOME_URI', 'http://island.io');
@@ -178,6 +176,7 @@ Step(
       });
 
       // Redis connect
+      console.log(app)
       var rc = redis.createClient(app.get('REDIS_PORT'), app.get('REDIS_HOST'));
       rc.auth(app.get('REDIS_PASS'), _.bind(function (err) {
         this(err, rc);
