@@ -25,6 +25,7 @@ var http = require('http');
 var express = require('express');
 var mongodb = require('mongodb');
 var redis = require('redis');
+var reds = require('reds');
 var RedisStore = require('connect-redis')(express);
 var request = require('request');
 var jade = require('jade');
@@ -176,7 +177,6 @@ Step(
       });
 
       // Redis connect
-      console.log(app)
       var rc = redis.createClient(app.get('REDIS_PORT'), app.get('REDIS_HOST'));
       rc.auth(app.get('REDIS_PASS'), _.bind(function (err) {
         this(err, rc);
@@ -244,8 +244,9 @@ Step(
           // Attach a connection ref to app.
           app.set('connection', connection);
 
-          // Attach a redis client ref to app.
-          app.set('client', rc);
+          // Attach a reds ref to app.
+          reds.client = rc;
+          app.set('reds', reds);
 
           // Init resources.
           resources.init(app, this);
