@@ -1,0 +1,37 @@
+<%
+  var member = this.app.profile.member;
+  var gravatar = member ? 'https://www.gravatar.com/avatar/'
+      + member.gravatar + '?s=32&d='
+      + encodeURIComponent(this.app.cloudFrontURL + '/main/img/avatar_100.png')
+      : null;
+%>
+
+<% if (this.collection.older > 0) { %>
+  <a href="javascript:;" class="show-older comment list-header">
+    Show <%= this.collection.older %> older <%= this.collection.older > 1 ? 'comments': 'comment' %>
+  </a>
+<% } %>
+<% if (this.collection.models.length > 0) { %>
+  <% _.each(this.collection.models, _.bind(function(row) { %>
+    <%= this.row(row) %>
+  <% }, this)); %>
+<% } %>
+<div id="comment_input" class="list-footer">
+  <% if (member) { %>
+    <div class="comment">
+      <span class="comment-avatar navigate">
+        <img src=<%= gravatar %> width="32" height="32" />
+      </span>
+      <div class="comment-body">
+        <form enctype="multipart/form-data" method="POST" class="comment-input-form">
+          <textarea name="body" class="comment-input" 
+              placeholder="Write a comment ..."></textarea>
+        </form>
+      </div>
+    </div>
+  <% } else { %>
+    <a href="javascript:;" class="comments-signin">
+      <span class="empty-list">Sign in to comment.</span>
+    </a>
+  <% } %>
+</div>

@@ -1,0 +1,33 @@
+div#block_messages
+  ul
+div#header-inner
+  div.divider-vertical
+  a#logo(href="/")
+    span.tagline Climb
+    img(src="/img/dots.png", width="140", height="48")
+  div.divider-vertical.pad-right
+  div#header_search
+    input.header-search(type="search", tabindex="1", placeholder="Search...")
+  ul.header-links
+    li
+      a(id="about", href="/about") About
+    li
+      a(id="films", href="/films") Films
+  - if (member)
+    div.member-box
+      div.divider-vertical
+      a#header_avatar.header-avatar(href="/" + member.username)
+        img(src="https://www.gravatar.com/avatar/" + member.gravatar + "?s=50&d=https%3A%2F%2Fd271mvlc6gc7bl.cloudfront.net%2Fmain%2Fimg%2Favatar_100.png", width="50", height="50")
+      div.divider-vertical
+      a#settings.header-action(href="/settings")
+        i.icon-params
+      div.divider-vertical
+      a#globe.header-action(href="javascript:;")
+        i.icon-globe
+        span.count
+      div.divider-vertical
+      a#logout.header-action(href="/logout")
+        i.icon-logout
+      div.divider-vertical
+  - else
+    a#signin.button(href="javascript:;") Sign in

@@ -32,51 +32,54 @@ html(lang="en")
           meta(property="og:audio:secure_url", content=med.audio.cf_url)
           meta(property="og:audio:type", content="application/mp3")
       - });
-    title= title
-    //- link(rel='stylesheet', href='https://d271mvlc6gc7bl.cloudfront.net/main/css/style2.css')
-    link(rel='stylesheet', href='/stylesheets/style.css')
-    //- link(rel='stylesheet', href='https://d271mvlc6gc7bl.cloudfront.net/main/ui/ui6.css')
-    link(rel='stylesheet', href='/ui/ui.css')
-    link(rel='stylesheet', href='https://d271mvlc6gc7bl.cloudfront.net/main/jplayer/skin/blue.monday/jplayer.blue.monday.css')
+    - if (typeof title !== 'undefined')
+      title= title
+    - else
+      title Island
+    <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
     link(rel="stylesheet", href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.css")
-    <!--[if lte IE 8]>
-    link(rel="stylesheet", href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.ie.css")
-    <![endif]-->
-    link(rel='shortcut icon', href='https://d271mvlc6gc7bl.cloudfront.net/main/gfx/favicon.ico', type='image/x-icon')
+    <!--[if lte IE 8]><link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.ie.css"><![endif]-->
+    link(rel="stylesheet", href="/css/fancybox.css")
+    link(rel="stylesheet", href="/css/fontello.css")
+    link(rel="stylesheet", href="/css/animation.css")
+    <!--[if IE 7]><link rel="stylesheet" href="css/fontello-ie7.css"><![endif]-->
+    link(rel="stylesheet", href="/css/style.css")
+    link(rel="shortcut icon", href="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/favicon.ico", type="image/x-icon")
   body
-    - if ('undefined' !== typeof(member))
-      div(id='_d', data-env=(process.env.NODE_ENV || 'dev'), data-mid=member._id.toString(), data-mk=member.key)
-    - else if ('undefined' === typeof(login))
-      div(id='_d', data-env=(process.env.NODE_ENV || 'dev'))
     block content
-    - if ('undefined' !== typeof(login))
-      script(type="text/javascript", src="https://d271mvlc6gc7bl.cloudfront.net/main/js/swfobject.js")
+    script(type="text/javascript", charset="utf-8", src="/js/lib/store/store.min.js")
+    - if (typeof member !== 'undefined')
       script
-        swfobject.embedSWF('https://d271mvlc6gc7bl.cloudfront.net/main/swf/roll4.swf', 'roll', '100%', '100%', 10, '', {}, { menu: 'false' }, {});
-    script(type='text/javascript', src='https://d3dy5gmtp8yhk7.cloudfront.net/1.12/pusher.min.js')
-    script(type='text/javascript', src='https://d271mvlc6gc7bl.cloudfront.net/main/js/json2-min.js')
-    script(type='text/javascript', src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js')
-    script(type='text/javascript', src='https://d271mvlc6gc7bl.cloudfront.net/main/jwplayer/jwplayer.js')
-    script(type='text/javascript', src='https://d271mvlc6gc7bl.cloudfront.net/main/jplayer/js/jquery.jplayer.min.js')
-    script(type='text/javascript', src='https://d271mvlc6gc7bl.cloudfront.net/main/js/jquery.autogrow-min.js')
-    script(type='text/javascript', src='https://d271mvlc6gc7bl.cloudfront.net/main/js/jquery.tweet-min.js')
-    script(type='text/javascript', src='https://d271mvlc6gc7bl.cloudfront.net/main/js/jquery.jsonp-min.js')
-    script(type='text/javascript', src='https://d271mvlc6gc7bl.cloudfront.net/main/js/jquery.easing-min.js')
-    script(type='text/javascript', src='https://d271mvlc6gc7bl.cloudfront.net/main/js/date-min.js')
-    script(type='text/javascript', src='https://d271mvlc6gc7bl.cloudfront.net/main/js/util-min2.js')
-    //- script(type='text/javascript', src='/javascripts/util.js')
-    script(type='text/javascript', src='https://d271mvlc6gc7bl.cloudfront.net/main/js/spin.min.js')
-    script(type='text/javascript', src='//assets.transloadit.com/js/jquery.transloadit2.js')
-    script(type='text/javascript', src='https://d271mvlc6gc7bl.cloudfront.net/main/js/underscore-min.js')
-    script(type='text/javascript', src='https://d271mvlc6gc7bl.cloudfront.net/main/js/modernizr-1.7.min.js')
-    script(type='text/javascript', src='https://d271mvlc6gc7bl.cloudfront.net/main/ui/ui-min.js')
-    //- script(type='text/javascript', src='https://d271mvlc6gc7bl.cloudfront.net/main/js/island-min7.js')
-    script(type='text/javascript', src='/javascripts/island.js')
-    //- script(type='text/javascript', src="https://maps.googleapis.com/maps/api/js?sensor=false")
-    script(type='text/javascript', src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js")
+        if (window.store) {
+          var notesOpen = store.get('notesOpen');
+          if (notesOpen) {
+            var p = document.getElementById('panel');
+            var w = document.getElementById('wrap');
+            p.className = p.className + ' open';
+            w.className = w.className + ' panel-open';
+          }
+        }
     script
-      jQuery(function () { Island.go(); });
-    script(type='text/javascript')
+      if (window.store) {
+        var mapClosed = store.get('mapClosed');
+        var m = document.getElementById('map');
+        var hs = document.getElementById('hide_show');
+        var lm = document.getElementById('less_more');
+        if (mapClosed && m && hs && lm) {
+          m.className = m.className + ' closed';
+          hs.className = 'button';
+          hs.innerHTML = 'Show map';
+          lm.style.display = 'none';
+        }
+      }
+    script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false")
+    script(src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js")
+    script(src="http://jwpsrv.com/library/1lrC0MMbEeKOnyIACqoQEQ.js")
+    - if (process.env.NODE_ENV === 'production')
+      script(charset="utf-8", src="/build/js/main.js")
+    - else
+      script(type="text/javascript", charset="utf-8", data-main="/js/main", src="/js/lib/require/require.js")
+    script(type="text/javascript")
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-23247079-1']);
       _gaq.push(['_setDomainName', 'island.io']);

@@ -1,0 +1,2546 @@
+/* Island.IO */
+
+// colors
+green = #b1dc36
+orange = #d04c38
+blue = #4bb8d7
+pink = #d12b83
+
+lightgreen = #eff8d7
+lightorange = #f6dbd7
+lightblue = #59dbff
+
+black = #1a1a1a
+darkgray = #404040
+gray = #808080
+lightgray = #b3b3b3
+textlight = #666666
+
+bordergray = #cdcdcd
+backgray = #fcfcfb
+mattegray = #f2f2f2
+
+// fonts
+standard = Verdana, Arial, sans-serif
+title = Title, Verdana, Arial, sans-serif
+
+border-radius()
+  -webkit-border-radius arguments
+  -moz-border-radius arguments
+  border-radius arguments
+
+/*––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– fonts */  
+
+@font-face
+  font-family Title
+  font-style normal
+  -moz-font-smoothing antialiased
+  -webkit-font-smoothing antialiased
+  font-smoothing antialiased
+  src url(../font/impact-webfont.eot)
+  src url(../font/impact-webfont.eot?#iefix) format('embedded-opentype'),
+    url(../font/impact-webfont.woff) format('woff'),
+    url(../font/impact-webfont.ttf) format('truetype'),
+    url(../font/impact-webfont.svg#ImpactRegular) format('svg')
+
+/*––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– animations */
+
+@-webkit-keyframes fadeIn {
+  0% {
+    opacity:0;
+  }
+  100% {
+    opacity:1;
+  }
+}
+@-moz-keyframes fadeIn {
+  0% {
+    opacity:0;
+  }
+  100% {
+    opacity:1;
+  }
+}
+@-o-keyframes fadeIn {
+  0% {
+    opacity:0;
+  }
+  100% {
+    opacity:1;
+  }
+}
+@keyframes fadeIn {
+  0% {
+    opacity:0;
+  }
+  100% {
+    opacity:1;
+  }
+}
+
+@-webkit-keyframes fadeOut {
+  0% {
+    opacity:1;
+  }
+  100% {
+    opacity:0;
+  }
+}
+@-moz-keyframes fadeOut {
+  0% {
+    opacity:1;
+  }
+  100% {
+    opacity:0;
+  }
+}
+@-o-keyframes fadeOut {
+  0% {
+    opacity:1;
+  }
+  100% {
+    opacity:0;
+  }
+}
+@keyframes fadeOut {
+  0% {
+    opacity:1;
+  }
+  100% {
+    opacity:0;
+  }
+}
+
+@-webkit-keyframes fadeInUp {
+  0% {
+    opacity:0; 
+    -webkit-transform:translateY(20px)
+  }
+  100% {
+    opacity:1;
+    -webkit-transform:translateY(0)
+  }
+}
+@-moz-keyframes fadeInUp {
+  0% {
+    opacity:0;
+    -moz-transform:translateY(20px)
+  }
+  100% {
+    opacity:1;
+    -moz-transform:translateY(0)
+  }
+}
+@-o-keyframes fadeInUp {
+  0% {
+    opacity:0;
+    -o-transform:translateY(20px)
+  }
+  100% {
+    opacity:1;
+    -o-transform:translateY(0)
+  }
+}
+@keyframes fadeInUp {
+  0% {
+    opacity:0;
+    transform:translateY(20px)
+  }
+  100% {
+    opacity:1;
+    transform:translateY(0)
+  }
+}
+
+@-webkit-keyframes fadeInDown {
+  0% {
+    opacity:0; 
+    -webkit-transform:translateY(-20px)
+  }
+  100% {
+    opacity:1;
+    -webkit-transform:translateY(0)
+  }
+}
+@-moz-keyframes fadeInDown {
+  0% {
+    opacity:0;
+    -moz-transform:translateY(-20px)
+  }
+  100% {
+    opacity:1;
+    -moz-transform:translateY(0)
+  }
+}
+@-o-keyframes fadeInDown {
+  0% {
+    opacity:0;
+    -o-transform:translateY(-20px)
+  }
+  100% {
+    opacity:1;
+    -o-transform:translateY(0)
+  }
+}
+@keyframes fadeInDown {
+  0% {
+    opacity:0;
+    transform:translateY(-20px)
+  }
+  100% {
+    opacity:1;
+    transform:translateY(0)
+  }
+}
+
+.fade-in
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+
+.fade-out
+  -webkit-animation-name fadeOut
+  -moz-animation-name fadeOut
+  -o-animation-name fadeOut
+  animation-name fadeOut
+
+/*––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– resets */
+
+html
+  color black
+  background white
+
+html, body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td
+  margin 0
+  padding 0
+
+table
+  border-collapse collapse
+  border-spacing 0
+
+fieldset, img
+  outline none
+  border 0
+
+img:focus
+  outline none
+  
+img::-moz-focus-inner
+  border none
+
+// address, caption, cite, code, dfn, em, strong, th, var
+//   font-style normal
+//   font-weight normal
+
+li
+  list-style none
+
+caption, th
+  text-align left
+
+h1, h2, h3, h4, h5, h6
+  font-size 100%
+  font-weight normal
+
+q:before, q:after
+  content ''
+
+abbr, acronym
+  border 0
+  font-variant normal
+
+sup
+  vertical-align text-top
+
+sub
+  vertical-align text-bottom
+
+input, textarea, select
+  font-family inherit
+  font-size inherit
+  font-weight inherit
+
+legend
+  color black
+
+header, footer, section, aside, nav, article
+  display block
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+body
+  background none
+  color black
+  font-family standard
+  font-size 10px
+  line-height 13px
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+a
+  color darkgray
+  background mattegray
+  padding 0
+  border none
+  cursor pointer
+  text-decoration none
+
+a:hover
+  background-color rgba(75, 184, 215, 0.25)
+
+a:active
+  background-color rgba(75, 184, 215, 0.35)
+
+a:focus
+  outline none
+
+a::-moz-focus-inner, button::-moz-focus-inner
+  border none
+
+a.like
+  color blue
+
+a.important
+  background rgba(75, 184, 215, 0.25)
+
+a.important:hover,
+a.important.hover
+  background rgba(75, 184, 215, 0.5)
+
+a.important:active,
+a.important.active
+  background rgba(75, 184, 215, 0.6)
+
+span.like-wrap
+  float right
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+small
+  font-size 9px
+  line-height 12px
+  color #808080
+
+small a
+  color #808080
+
+h3.obj-details
+  text-transform uppercase
+  color lightgray
+  font-size 8px
+  padding 0 0 5px
+  font-weight normal
+
+h3.obj-details.darker
+  color #808080
+
+span.slash
+  padding 0 5px 0 0
+  font-weight bold
+  vertical-align middle
+  font-size 42px
+  color #404040
+  font-family title
+  line-height 0
+
+.http-error
+  font-weight bold
+  font-size 14px
+  color orange
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+img.social-icons
+  position absolute
+  cursor pointer
+
+img.centered
+  display block
+  margin 0 auto
+  vertical-align middle
+  
+img[alt=image]
+  border-radius 5px
+
+label
+  color #666
+  font-size 11px
+  font-weight bold
+
+td
+  white-space nowrap
+  padding 2px 0 0 10px
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+::-webkit-input-placeholder
+    color gray
+:-moz-placeholder
+    color gray
+::-moz-placeholder
+    color gray
+:-ms-input-placeholder
+    color gray
+
+.placeholder
+  color #aaa
+
+textarea
+  font-size 11px
+  resize none
+  font-weight normal
+  -webkit-font-smoothing: antialiased;
+  padding 5px
+  border 1px solid bordergray
+  color #404040
+  vertical-align top
+
+input[type=checkbox], input[type=radio]
+  display inline
+
+input[type=text]:not(.text),
+input[type=search],
+input[type=password]
+  -moz-appearance none
+  -moz-font-smoothing antialiased
+  -webkit-appearance none
+  -webkit-font-smoothing antialiased
+  appearance none
+  font-smoothing antialiased
+  width 142px
+  margin 0
+  padding 5px
+  font-size 11px
+  display inline
+  color darkgray
+  border 1px solid bordergray
+  border-radius 3px
+
+input[type=text].from-login,
+input[type=password].from-login
+  border 1px solid black
+  color #333
+  background rgba(252, 252, 251, 0.65)
+
+input[type=text],
+input[type=number],
+input[type=email],
+input[type=password],
+input[type=tel],
+input[type=search],
+textarea
+  background-color #fcfcfc
+  -webkit-box-shadow inset 0 1px 2px rgba(0,0,0,0.075)
+  -moz-box-shadow inset 0 1px 2px rgba(0,0,0,0.075)
+  box-shadow inset 0 1px 2px rgba(0,0,0,0.075)
+
+  -webkit-transition background-color 0.15s ease-in 0
+  -moz-transition background-color 0.15s ease-in
+  transition background-color 0.15s ease-in
+
+  -webkit-transition border-color 0.15s ease-in 0
+  -moz-transition border-color 0.15s ease-in
+  transition border-color 0.15s ease-in
+
+  -webkit-transition -webkit-box-shadow 0.15s ease-in 0
+  -moz-transition -moz-box-shadow 0.15s ease-in
+  transition box-shadow 0.15s ease-in
+
+input[type=text]:focus,
+input[type=number]:focus,
+input[type=email]:focus,
+input[type=password]:focus,
+input[type=tel]:focus,
+input[type=search]:focus,
+textarea:focus
+  background white
+  border 1px solid blue
+  outline none
+
+  -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,0.075),0 0 5px rgba(75, 184, 215, 0.5);
+  -moz-box-shadow: inset 0 1px 2px rgba(0,0,0,0.075),0 0 5px rgba(75, 184, 215, 0.5);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.075),0 0 5px rgba(75, 184, 215, 0.5);
+
+input[type=file]:focus
+  border none
+  outline none
+
+input::-moz-focus-inner,
+textarea::-moz-focus-inner
+  border none
+
+input.is-button-alert[type=submit]
+  color orange !important
+  border 1px solid orange !important
+
+a.button,
+button,
+div[role=button],
+input[type=submit]:not(.submit)
+  font-size 11px
+  padding 0 8px
+  font-weight bold
+  border-radius 2px
+
+  min-width 48px
+  height 23px
+  line-height 24px
+  outline 0
+  text-align center
+  display inline-block
+
+  background-color #F1F1F1
+  color #4d4d4d
+  border 1px solid #A8A8A8
+
+  -moz-user-select none
+  -webkit-user-select none
+  user-select none
+
+  cursor pointer
+
+  -moz-transition-timing-function ease-out
+  -moz-transition-duration 100ms
+  -webkit-transition-timing-function ease-out
+  -webkit-transition-duration 100ms
+  transition-timing-function ease-out
+  transition-duration 100ms
+
+input[type=submit]
+  height 25px !important
+
+input[type=submit].from-login
+  color black
+  border 1px solid black
+
+a.button:hover:not(.disabled),
+button:hover:not(.disabled),
+div[role=button]:hover:not(.disabled),
+input[type='submit']:hover:not(.disabled)
+  color #1a1a1a
+  -moz-box-shadow 0 0 2px rgba(0, 0, 0, 0.2)
+  -webkit-box-shadow 0 0 2px rgba(0, 0, 0, 0.2)
+  box-shadow 0 0 2px rgba(0, 0, 0, 0.2)
+  border 1px solid #898989
+
+a.button:active:not(.disabled),
+button:active:not(.disabled),
+div[role=button]:active:not(.disabled),
+input[type='submit']:active:not(.disabled)
+  color #1a1a1a
+  -moz-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
+  -webkit-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
+  box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
+  border 1px solid #898989
+
+a.button:focus:not(.disabled),
+button:focus:not(.disabled),
+div[role=button]:focus:not(.disabled),
+input[type=submit]:focus:not(.disabled)
+  border 1px solid #98c1e6
+
+input[type=submit].from-login:hover
+  -moz-box-shadow 0 0 2px #1a1a1a
+  -webkit-box-shadow 0 0 2px #1a1a1a
+  box-shadow 0 0 2px #1a1a1a
+  color black
+  border 1px solid black
+
+input[type=submit].from-login:active
+  -moz-box-shadow none
+  -webkit-box-shadow none
+  box-shadow none
+  color black
+  border 1px solid black
+
+a.button-left,
+button.button-left,
+div[role=button].button-left,
+input[type=submit].button-left
+  border-right none !important
+  border-radius 3px 0 0 3px
+
+a.button-right,
+button.button-right,
+div[role=button].button-right,
+input[type=submit].button-right
+  border-left none !important
+  border-radius 0 3px 3px 0
+
+a.button-left.selected,
+a.button-right.selected,
+button.button-left.selected,
+button.button-right.selected,
+div[role=button].button-left.selected,
+div[role=button].button-right.selected,
+input[type=submit].button-left.selected,
+input[type=submit].button-right.selected
+  color #404040
+  background blue
+  border-color #404040 !important
+  
+  -webkit-box-shadow inset 0 0 3px #808080
+  -moz-box-shadow inset 0 0 3px #808080
+  box-shadow inset 0 0 3px #808080
+
+a.button-left.selected,
+button.button-left.selected,
+div[role=button].button-left.selected,
+input[type=submit].button-left.selected
+  border-right 1px solid #404040 !important
+
+a.button-right.selected,
+button.button-right.selected,
+div[role=button].button-right.selected,
+input[type=submit].button-right.selected
+  border-left 1px solid #404040 !important
+
+a.button-left.disabled,
+a.button-right.disabled
+  opacity 0.5
+  cursor default
+
+a.signin-strategy-btn,
+a.signin-strategy-btn-disabled
+  width 200px
+  font-size 11px
+  font-weight bold
+  padding 0 0
+  display block
+  
+  color #fcfcfc
+  border 1px solid black !important
+  border-radius 2px
+
+a.facebook-btn,
+a.facebook-btn-disabled
+  background rgba(59, 89, 152, 0.65)
+
+a.twitter-btn,
+a.twitter-btn-disabled
+  background rgba(60, 143, 201, 0.65)
+
+a.instagram-btn,
+a.instagram-btn-disabled
+  background rgba(69, 63, 56, 0.65)
+
+a.delete-btn
+  background rgba(208, 76, 56, 0.9)
+
+a.signin-strategy-btn-disabled
+  cursor default
+  opacity 0.65
+  height 23px
+  line-height 24px
+  outline 0
+  text-align center
+
+a.signin-strategy-btn:hover
+  color white !important
+
+a.facebook-btn:hover
+  background rgba(59, 89, 152, 0.75)
+
+a.facebook-btn.from-login:hover
+  background rgba(59, 89, 152, 1)
+
+a.twitter-btn:hover
+  background rgba(60, 143, 201, 0.75)
+
+a.twitter-btn.from-login:hover
+  background rgba(60, 143, 201, 1)
+
+a.instagram-btn:hover
+  background rgba(69, 63, 56, 0.75)
+
+a.delete-btn:hover
+  background rgba(208, 76, 56, 1)
+
+a.facebook-btn:active
+  background rgba(59, 89, 152, 0.55)
+
+a.twitter-btn:active
+  background rgba(60, 143, 201, 0.55)
+
+a.instagram-btn:active
+  background rgba(69, 63, 56, 0.55)
+
+a.delete-btn:active
+  background rgba(208, 76, 56, 0.8)
+
+a.signin-strategy-btn.from-login
+  border 1px solid black
+
+a.buy-button
+  float right
+  background #b1dc36
+  color #404040
+  border 1px solid #404040
+  font-size 12px
+  height 30px
+  line-height 31px
+  margin-top -19px
+
+a.buy-button:hover
+  color #1a1a1a
+  border 1px solid #1a1a1a
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+.left
+  float left
+
+.right
+  float right
+
+.text-right
+  text-align right
+
+.clear
+  clear both
+
+.mask
+  position absolute
+  z-index 1
+
+.masked
+  position absolute
+  z-index 0
+
+.list
+  list-style-type none
+
+.list li
+  display inline
+  float left
+
+.tweet p
+  font-size 9px
+  color gray
+  line-height 12px
+  max-width 250px
+
+span.empty-feed
+  display inline-block
+  width 100%
+  margin 10px 0
+  font-style italic
+  color gray
+  text-align center
+
+span.empty-list
+  display inline-block
+  margin 0 0 10px 0
+  font-style italic
+  color gray
+  line-height 18px
+
+.comments span.empty-list
+  margin 10px 0 0 0
+
+p.page
+  margin-top 10px
+  color #4d4d4d
+  font-size 12px
+  line-height 18px
+
+span.privacy-indent
+  margin-left 10px
+  display block
+
+a.privacy-link
+  background none
+
+a.privacy-link:hover
+  text-decoration underline
+
+span.welcome-member
+  display block
+  font-weight bold
+  color #444
+  margin 7px 20px 0 0
+
+span.welcome-member a
+  text-decoration underline
+  background none
+
+span.welcome-member a:hover
+  text-decoration underline
+  background rgba(75, 184, 215, 0.25)
+
+span.welcome-member a:active
+  background rgba(75, 184, 215, 0.1)
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+#twitter-names
+  display none
+  
+a.resend-conf
+  font-weight bold
+
+.signin-almost-there
+  text-align center
+  margin 0 auto 41px
+  font-weight bold
+
+.signin-message
+  font-weight bold
+  font-size 14px
+  line-height 24px
+
+.signin-controls
+  margin 20px auto 0
+  width 400px
+
+.signin-controls > p
+  text-align center
+  font-size 11px
+  color #222
+
+.signin-controls a
+  background none
+  text-decoration underline
+  color #222
+
+.signin-controls a:hover
+  text-decoration underline
+  background rgba(75, 184, 215, 0.25)
+
+.signin-controls a:active
+  background rgba(75, 184, 215, 0.1)
+
+.signin-forms
+  margin 20px 0 0
+  width 100%
+  position relative
+
+.signin-forms form
+  width 100%
+
+.signin-forms table
+  margin 0 auto
+
+.signin-forms td
+  padding-top 0
+
+.signin-error
+  display block
+  color red
+  font-size 11px
+  margin 10px 0 0 -10px
+
+.signin-spinner
+  margin 52px auto 0
+  width 86px
+  display none
+
+.signin-spinner > div
+  left 50% !important
+
+.signin-copy
+  padding 5px
+  display block
+  color black
+  font-size 9px
+  text-align left
+
+#remember_me
+  margin 0 5px 0 0
+
+/*-------------------------------------------------------------*/
+
+#wrap.animated
+  -webkit-transition margin 0.3s
+  -moz-transition margin 0.3s
+  -ms-transition margin 0.3s
+  -o-transition margin 0.3s
+  transition margin 0.3s
+
+#wrap.panel-open
+  margin-right 220px
+
+#panel
+  position fixed
+  z-index 1000
+  top: 0
+  bottom: 0
+  right -220px
+  width 220px
+  height 100%
+  overflow-y auto
+  background #f2f2f2
+  border-left 1px solid #b3b3b3
+
+#panel.animated
+  -webkit-transition right 0.3s
+  -moz-transition right 0.3s
+  -ms-transition right 0.3s
+  -o-transition right 0.3s
+  transition right 0.3s
+
+#panel.open
+  right 0
+
+#content
+  margin 0 auto
+  width 984px
+
+#page_spin
+  margin 0 auto
+  height 50px
+  width 100%
+
+#header
+  width 100%
+  background backgray
+  border-bottom 1px solid bordergray
+
+#header-inner
+  position relative
+  font-size 0
+  margin 0 auto
+  width 984px
+  height 50px
+  white-space nowrap
+
+a#logo
+  float left
+  height 50px
+  padding 0 10px
+
+a#logo img
+  margin-top 2px
+
+span.tagline
+  float right
+  margin 19px 10px 0 5px
+  font-size 8px
+  color #666
+  font-weight bold
+
+div.divider-vertical
+  float left
+  width 1px
+  height 50px
+  background-color #e5e5e5
+
+div.divider-vertical.pad-left
+  margin-left 10px
+
+div.divider-vertical.pad-right
+  margin-right 10px
+
+a.header-action
+  position relative
+  float left
+  width 40px
+  height 45px
+  padding-top 5px
+  text-align center
+  line-height 40px
+  font-size 14px
+
+a.header-action span.unread
+  // color blue
+
+div#header_search
+  float left
+  position relative
+  margin 12px 15px 0 0
+
+input.header-search
+  width 150px
+  padding-left 0
+  padding-right 4px
+
+  -webkit-transition all 0.1s ease-in-out 0
+  -moz-transition all 0.1s ease-in-out 0
+  transition all 0.1s ease-in-out
+
+div.search-display
+  display none
+  position absolute
+  top 100%
+  left 0
+  right 0
+  z-index 10
+  max-height 285px
+  overflow-y auto
+  
+  border 1px solid rgba(0,0,0,0.3)
+  border-radius 3px;
+
+  -webkit-box-shadow 0 1px 5px rgba(0,0,0,0.25)
+  -moz-box-shadow 0 1px 5px rgba(0,0,0,0.25)
+  box-shadow 0 1px 5px rgba(0,0,0,0.25)
+
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration .2s
+  -moz-animation-duration .2s
+  -o-animation-duration .2s
+  animation-duration .2s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
+
+a.choice
+  position relative
+  padding 8px
+  margin-bottom -1px
+  overflow hidden
+  color #4d4d4d
+  white-space nowrap
+  border solid rgba(0,0,0,0.08)
+  border-width 1px 0
+  display block
+  background white
+  font-size 11px
+  height 16px
+  line-height 15px
+
+a.choice:first-of-type
+  border-radius 3px 3px 0 0
+
+a.choice:last-child
+  border-radius 0 0 3px 3px
+
+a.choice.hover
+  background-color lightgreen
+
+a.choice:hover
+  background-color #d0ecf2
+
+
+a.choice:active
+  background-color #adc9d0
+
+a.choice.active
+  background-color green
+
+span.choice-prefix
+  float left
+  margin-right 7px
+
+span.choice-prefix img
+  border-radius 2px
+
+span.choice-name i
+  margin-right 5px
+  margin-left -3px
+  font-size 14px
+  vertical-align -1px
+
+ul.header-links
+  float left
+  margin 18px 10px 0 0
+
+ul.header-links li
+  display inline-block
+  list-style-type none
+  margin 0 15px 0 0
+
+ul.header-links li a
+  font-size 10px
+  font-weight bold
+
+ul.header-links li a:hover
+  text-decoration none
+
+div.member-box
+  width 175px
+  float right
+  white-space nowrap
+
+a.header-avatar
+  float left
+  width 50px
+  height 50px
+  display inline-block
+  background none
+
+a.header-avatar img
+  display block
+
+a.header-avatar:hover
+  opacity 0.8
+  background none
+
+a#signin
+  float right
+  margin-top 12px
+
+a#signin:hover
+  color #1a1a1a
+  -moz-box-shadow 0 0 2px rgba(0, 0, 0, 0.2)
+  -webkit-box-shadow 0 0 2px rgba(0, 0, 0, 0.2)
+  box-shadow 0 0 2px rgba(0, 0, 0, 0.2)
+  border 1px solid #898989
+
+a#signin:active
+  color #1a1a1a
+  -moz-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
+  -webkit-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
+  box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
+  border 1px solid #898989
+
+a#signin:focus
+  border 1px solid #98c1e6
+
+span.count
+  display none
+  position absolute
+  left 19px
+  top 12px
+  padding 2px 3px
+  color white
+  background rgba(208,76,56, 0.8)
+  font-size 8px
+  line-height 8px
+  border-radius 5px
+  
+  box-shadow 1px 1px rgba(0,0,0,0.2)
+  -webkit-box-shadow 1px 1px rgba(0,0,0,0.2)
+  -moz-box-shadow 1px 1px rgba(0,0,0,0.2)
+
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration .2s
+  -moz-animation-duration .2s
+  -o-animation-duration .2s
+  animation-duration .2s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
+  
+#block_messages
+  position relative
+  margin 0 auto
+  width 984px
+  white-space nowrap
+
+.block-remove
+  float right
+  cursor pointer
+  padding 0 5px
+  line-height 30px
+  color #666
+
+  -moz-user-select none
+  -webkit-user-select none
+  user-select none
+
+.block-remove:hover
+  background rgba(0,0,0,0.1)
+
+.block-remove:active
+  background rgba(0,0,0,0.15)
+
+#block_messages li
+  position relative
+  list-style-type none
+  border 1px solid #e5e5e5
+  border-top none
+
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration .2s
+  -moz-animation-duration .2s
+  -o-animation-duration .2s
+  animation-duration .2s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
+
+.block-error
+  background #e6e6e6
+
+.block-alert
+  background lightgreen
+
+.block-error-txt,
+.block-alert-txt
+  font-size 10px
+  padding 0 10px
+  color #4d4d4d
+  font-weight bold
+  line-height 30px
+
+.block-error-txt
+  color orange
+
+.block-error-txt a
+  color white
+  background rgba(208, 76, 56, 0.8)
+
+.block-error-txt a:hover
+  background rgba(208, 76, 56, 0.6)
+
+.block-error-txt a:active
+  background orange
+
+/*-------------------------------------------------------------*/
+
+#zoom
+  top 100px
+
+#tiles_loader
+  top 100px
+
+#menu
+  padding 12px 0 0 0
+  position relative
+  
+#menu.list li
+  float right
+
+#menu.list li::last-child
+  margin 0 20px 0 0
+
+#main
+  margin 50px 0 20px
+
+#footer
+  width 100%
+  margin-top 30px
+
+#footer > div
+  margin 0 auto
+  width 640px
+  padding 5px 0
+
+.is-highlight, .is-error
+  position fixed
+  left 20px
+  bottom 20px
+  padding 10px
+  border-radius 5px
+  color gray
+  font-weight bold
+
+.is-highlight
+  background-color mattegray
+  
+.is-error
+  background-color lightorange
+  
+.hidden
+  display none
+
+.quote
+  font-size 28px
+  font-family Title
+
+.login-prompt
+  margin-top 23px
+  font-style italic
+  color gray
+
+.no-results
+  font-style italic
+  color gray
+
+#delete-post:hover,
+#delete-profile:hover
+  color orange !important
+  border 1px solid orange !important
+
+.input-error
+  border 1px solid orange !important
+
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+.signin
+  width 680px
+  height 382px
+  position relative
+  overflow hidden
+
+.signin-link
+  position absolute
+  bottom 0
+  right 0
+  background rgba(255, 255, 255, 0.5)
+  color #4d4d4d
+  font-weight bold
+
+.signin-logo
+  position absolute
+  z-index 10
+  top 20px
+  left 240px
+
+#roll
+  position absolute
+  z-index -1
+  overflow hidden
+  width 100%
+  height 100%
+
+.signin-action
+  position relative
+  padding 90px 0 0 0
+  width 680px
+  height 292px
+  background rgba(255,255,255,0)
+
+.signin-action-inner
+  width 480px
+  height 103px
+  margin 0 auto
+  background rgba(242,242,242,0.7)
+  padding 50px
+  border-radius 5px
+
+.signin-strategies
+  margin 0 auto
+  width 471px
+
+.signin-strategies td
+  padding 0
+
+.signin-or
+  margin 7px 20px 0
+  font-style italic
+  color #1a1a1a
+
+.signin-quote
+  position absolute
+  left 0
+  bottom 36px
+  width 680px
+
+.signin-quote > p
+  margin 0 auto
+  font-size 16px
+  font-family title
+  text-align center
+  color #333
+
+#signin_form
+  position relative
+  left 0
+
+#signup_form
+  position relative
+  left 0
+  display none
+
+#signin_spin
+  position absolute
+  top 50%
+  left 50%
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+#banner
+  display none
+  margin 0 0 40px 0
+
+#banner a
+  background none
+
+#banner img
+  border-radius 5px  
+
+.trending-media-wrap
+  width 640px
+
+.trending-media
+  height 360px
+  margin 10px 0 0
+  overflow hidden
+
+.trending-media-images
+  margin 0
+
+.trending-img
+  margin 0 0 2px
+
+a.trending, a.trending:hover, a.trending:focus
+  background none
+
+h1.title-left
+  display inline-block
+  height 30px
+  font-size 24px
+  font-weight normal
+  line-height normal
+  color #404040
+  font-family title
+  text-transform uppercase
+
+h1.title-right
+  font-size 14px
+  font-weight normal
+  line-height normal
+  color #404040
+  padding 10px 0 0 0
+  font-family title
+  text-transform uppercase
+  
+h1.title-static
+  font-size 16px
+  font-weight normal
+  line-height normal
+  color #404040
+  font-family title
+  text-transform uppercase
+
+h1.title-sub
+  display inline-block
+  font-size 9px
+  padding 0 0 0 10px
+  line-height 6px
+  color #666
+  font-weight bold
+
+#filter_box
+  font-size 24px
+  padding-left 0
+
+#filter_box
+  width 419px
+
+.search-spinner
+  position absolute
+  left -25px
+  top 63px
+
+.obj-title
+  font-size 0
+
+.obj-holder
+  position relative
+  margin 4px 0 3px 0
+  border-radius 3px
+
+.hearts
+  position absolute
+  z-index 1001
+  top 10px
+  left 10px
+  cursor pointer
+
+.hearts-wrap
+  position absolute
+  top 5px
+  left 5px
+  width 130px
+
+.obj-desc
+  background #f9f9f9
+  width 640px
+  margin-bottom 30px
+
+  border-radius 3px
+
+.obj-desc.wide
+  width 984px
+
+.obj-desc.wide img,
+.obj-desc img
+  opacity 0.8
+
+.obj-desc-txt-wrap
+  padding 10px 10px 0 10px
+
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration .2s
+  -moz-animation-duration .2s
+  -o-animation-duration .2s
+  animation-duration .2s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
+  
+.obj-desc-txt
+  padding 0 40px 5px 0
+  min-height 13px
+
+.obj-desc-txt a
+  text-decoration underline
+
+.commentor-login
+  margin 15px 0 0 0
+  font-style italic
+
+.created
+  color lightgray
+  font-size 9px
+  display inline-block
+
+a.delete-comment
+  background none
+  font-size 8px
+  color lightgray
+  float right
+  margin 0 -30px 0 0
+
+a.delete-comment:hover
+  color orange
+
+a.delete-comment:active
+  color red
+
+.member-picture
+  position relative
+  width 640px
+  height 288px
+  overflow hidden
+
+  -webkit-box-shadow 0 0 3px #b3b3b3
+  -moz-box-shadow 0 0 3px #b3b3b3
+  box-shadow 0 0 3px #b3b3b3
+
+.member-info
+  margin 0 0 5px
+  font-size 9px
+  color #666
+  padding-right 30px
+
+.member-info p
+  font-size 11px
+  line-height 18px
+  margin-bottom 20px
+
+.member-info a
+  font-weight bold
+
+.member-info-content
+  font-weight bold
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––structure*/
+
+div.leftside
+  // float left
+  width 640px
+  // margin 0 0 40px
+  margin 0 auto
+
+div.rightside
+  display none
+  margin 0 0 0 670px
+
+div.middle
+  width 480px
+  margin 60px auto 0
+  padding 0 30px 20px
+
+  border-radius 3px
+
+  -webkit-box-shadow 0 0 3px #b3b3b3
+  -moz-box-shadow 0 0 3px #b3b3b3
+  box-shadow 0 0 3px #b3b3b3
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––map*/
+
+div#map
+  position relative
+  width 100%
+  height 250px
+  background mattegray
+
+  -webkit-box-shadow 0 0 3px #b3b3b3
+  -moz-box-shadow 0 0 3px #b3b3b3
+  box-shadow 0 0 3px #b3b3b3
+
+div#map.animated
+  -webkit-transition height 0.3s
+  -webkit-transition-timing-function height 0.3s
+  -moz-transition height 0.3s
+  -moz-transition-timing-function height 0.3s
+  transition height 0.3s
+  transition-timing-function height 0.3s
+
+div#map.closed
+  height 0px
+
+div#map.opened
+  height 600px
+
+div#map_spin
+  position absolute
+  top 50%
+  left 50%
+
+div#map_inner
+  width 100%
+  height 100%
+
+  -webkit-animation-duration .3s
+  -moz-animation-duration .3s
+  -o-animation-duration .3s
+  animation-duration .3s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
+
+div#map_control
+  position absolute
+  bottom -21px
+  width 100%
+
+div#map_control div
+  position relative
+  left 50%
+  width 145px
+
+div#map_control a.button
+  position relative
+  left -36px
+  font-size 9px
+  background none
+  color #666
+  width 55px
+  height 20px
+  line-height 21px
+  border-radius 0 0 3px 3px
+  border-top none
+
+div#map_control a.split-left
+  left -72px
+  border-radius 0 0 0 3px
+  border-right none
+
+div#map_control a.split-left:hover
+  border-right none
+
+div#map_control a.split-right
+  left -72px
+  border-radius 0 0 3px 0
+
+div.cartodb-zoom
+  display none
+
+.leaflet-div-icon
+  border 2px solid #f2f2f2
+  border-radius 2px
+
+  -webkit-box-shadow 0 5px 20px rgba(0,0,0,0.5)
+  -moz-box-shadow 0 5px 20px rgba(0,0,0,0.5)
+  box-shadow 0 5px 20px rgba(0,0,0,0.5)
+
+.leaflet-div-icon:after
+  content ' '
+  height 0
+  position absolute
+  width 0
+  top 100%
+  left 50%
+  margin-left -8px
+
+  border 8px solid transparent
+  border-top-color #f2f2f2
+  
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––posts*/
+
+.list-spin
+  width 100%
+
+.list-spin .empty-feed
+  display none
+  line-height 40px
+
+.list-spin > div
+  width 50px
+  height 40px
+  margin 0 auto
+
+#posts
+  margin 12px 0 0 0
+
+div.post
+  position relative
+  display none
+  margin 0 0 35px
+  width 640px
+
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration .2s
+  -moz-animation-duration .2s
+  -o-animation-duration .2s
+  animation-duration .2s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
+
+div.post.single
+  margin-top 62px
+  width 984px
+
+div.post-title
+  margin 0 0 10px 0
+  font-family title
+  font-size 16px
+  text-transform uppercase
+  color #666
+
+div.post-title span.post-title-photos
+  color blue
+
+div.post-title span.post-title-video
+  color orange
+
+div.post div.post-mosaic
+  position relative
+  overflow hidden
+  width 640px
+  height 360px
+  background mattegray
+
+  border-radius 3px
+
+  -webkit-box-shadow 0 0 3px #b3b3b3
+  -moz-box-shadow 0 0 3px #b3b3b3
+  box-shadow 0 0 3px #b3b3b3
+
+div.post.single div.post-mosaic
+  width 984px
+  height 554px
+
+div.post-mosaic-wrap
+  position absolute
+  overflow hidden
+  background #4d4d4d
+
+a.post-avatar
+  background none
+  display block
+
+a.post-avatar img,
+img.profile-avatar
+  position absolute
+  top 23px
+  left 0
+  z-index 1
+  width 48px
+  height 48px
+  border-radius 2px 0
+
+  -webkit-box-shadow 2px 2px 2px rgba(0,0,0,0.1)
+  -moz-box-shadow 2px 2px 2px rgba(0,0,0,0.1)
+  box-shadow 2px 2px 2px rgba(0,0,0,0.1)
+
+img.profile-avatar
+  top 0
+
+div.post-mosaic-wrap img
+  position relative
+
+div.post-mosaic-wrap:hover img
+  opacity 0.7
+
+div.post-mosaic-wrap:active img
+  opacity 0.5
+
+div.post img.post-mosaic-play
+  position absolute !important
+  left 100px
+  top 100px
+  opacity 0.9
+
+div.post img.post-mosaic-play.trailer
+  top 75px
+
+div.post.single img.post-mosaic-play
+  left 197px
+  top 197px
+
+div.post.single img.post-mosaic-play.trailer
+  top 172px
+
+div.post span.post-mosaic-play-text
+  position absolute
+  z-index 2
+  color white
+  opacity 0.8
+  font-size 30px
+  top 221px
+  left 113px
+  font-weight bold
+
+  -moz-user-select none
+  -webkit-user-select none
+  user-select none
+
+div.post.single span.post-mosaic-play-text
+  top 318px
+  left 210px
+
+div.post div.post-body
+  margin 10px 0 0
+  padding 0 30px 0 2px
+  font-size 11px
+  line-height 16px
+  color #4d4d4d
+
+div.post.single div.post-body
+  width 750px
+  margin 20px 0 0
+  font-size 12px
+  line-height 18px
+
+div.post-info
+  margin 10px 0 0
+  padding 0 0 0 2px
+  font-size 10px
+  line-height 13px
+  color #808080
+
+span.post-input-avatar,
+a.post-input-avatar
+  position relative
+  z-index 1
+  float left
+  display inline-block
+  width 36px
+  height 36px
+  margin 0 8px 0 -36px
+  background none
+
+a.post-input-avatar:hover
+  background none
+
+span.post-input-avatar img,
+a.post-input-avatar img
+  border-radius 3px 0 0 3px
+
+div.post-input-wrap
+  background #f9f9f9
+  border-radius 0 3px 3px 3px
+  padding 5px
+
+div#post_dnd
+  display inline-block
+  border 1px solid bordergray
+  border-radius 3px
+
+div#post_dnd.focus
+  border 1px solid #404040
+
+div#post_dnd.dragging
+  border 1px solid pink
+
+  -moz-box-shadow 0 0 4px rgba(209, 43, 131, 0.5)
+  -webkit-box-shadow 0 0 4px rgba(209, 43, 131, 0.5)
+  box-shadow 0 0 4px rgba(209, 43, 131, 0.5)
+
+div#post_select
+  display none
+  position relative
+  padding 5px
+  color #666
+  border-top 1px dashed bordergray
+  background #fcfcfc
+  border-radius 0 0 3px 3px
+
+input.file-chooser
+  position absolute
+  opacity 0.0001
+  cursor pointer
+  width 240px
+
+input#post_file_chooser
+  left 192px
+
+input#banner_file_chooser
+  z-index 2
+  right 0
+  bottom 0
+  width 319px
+  height 23px
+
+a#banner_file_chooser_dummy
+  position absolute
+  z-index 1
+  right 0
+  bottom 0
+  color #fcfcfc
+  padding 5px
+  font-size 11px
+
+textarea.post-input,
+textarea.comment-input
+  display block
+  width 612px
+  background #fff
+  resize none
+  overflow hidden
+  font-size 12px
+
+  border-radius 3px
+
+textarea.post-input
+  line-height 18px
+  border none
+
+  -webkit-transition min-height 0.2s
+  -webkit-transition-timing-function min-height 0.2s
+  -moz-transition min-height 0.2s
+  -moz-transition-timing-function min-height 0.2s
+  transition min-height 0.2s
+  transition-timing-function min-height 0.2s
+
+textarea.comment-input
+  -webkit-transition height 0.2s
+  -webkit-transition-timing-function height 0.2s
+  -moz-transition height 0.2s
+  -moz-transition-timing-function height 0.2s
+  transition height 0.2s
+  transition-timing-function height 0.2s
+
+table#post_params
+  display none
+  width 624px
+  margin 8px 0 0 3px
+
+table#post_params td
+  padding 0 20px 0 0
+
+table#post_params td.last
+  width 160px
+  padding 0
+  text-align right
+
+table#post_params label
+  vertical-align -1px
+
+#post_button
+  width 80px
+  background blue
+  color #404040
+  border 1px solid #404040
+
+#post_button:hover:not(.disabled)
+  color #1a1a1a
+  border 1px solid #1a1a1a
+
+  -moz-box-shadow 0 0 2px rgba(0, 0, 0, 0.4)
+  -webkit-box-shadow 0 0 2px rgba(0, 0, 0, 0.4)
+  box-shadow 0 0 2px rgba(0, 0, 0, 0.4)
+
+#post_button:active:not(.disabled)
+  -moz-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.5)
+  -webkit-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.5)
+  box-shadow inset 0 0 2px rgba(0, 0, 0, 0.5)
+
+#post_button:focus:not(.disabled)
+  color #1a1a1a
+  border 1px solid #1a1a1a
+
+  -moz-box-shadow 0 0 2px rgba(0, 0, 0, 0.4)
+  -webkit-box-shadow 0 0 2px rgba(0, 0, 0, 0.4)
+  box-shadow 0 0 2px rgba(0, 0, 0, 0.4)
+
+#post_button.disabled
+  background-color #F1F1F1
+  color #4d4d4d
+  border 1px solid #A8A8A8
+
+.upload-progress-wrap
+  position relative
+  width 622px
+  height 24px
+  color #666
+  border-top 1px solid #f2f2f2
+  background #fcfcfc
+  border-radius 0 0 3px 3px
+  text-align right
+  white-space nowrap
+
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration .2s
+  -moz-animation-duration .2s
+  -o-animation-duration .2s
+  animation-duration .2s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
+
+.upload-progress
+  height 100%
+  width 0%
+
+  background-color rgba(75, 184, 215, 0.6)
+  content ""
+  position absolute
+  top 0
+  left 0
+  bottom 0
+  right 0
+  background-image: 
+     -webkit-gradient(linear, 0 0, 100% 100%, 
+        color-stop(.25, rgba(255, 255, 255, .2)), 
+        color-stop(.25, transparent), color-stop(.5, transparent), 
+        color-stop(.5, rgba(255, 255, 255, .2)), 
+        color-stop(.75, rgba(255, 255, 255, .2)), 
+        color-stop(.75, transparent), to(transparent)
+     );
+  background-image: 
+    -webkit-linear-gradient(
+      -45deg, 
+        rgba(255, 255, 255, .2) 25%, 
+        transparent 25%, 
+        transparent 50%, 
+        rgba(255, 255, 255, .2) 50%, 
+        rgba(255, 255, 255, .2) 75%, 
+        transparent 75%, 
+        transparent
+     );
+  background-image: 
+    -moz-linear-gradient(
+      -45deg, 
+        rgba(255, 255, 255, .2) 25%, 
+        transparent 25%, 
+        transparent 50%, 
+        rgba(255, 255, 255, .2) 50%, 
+        rgba(255, 255, 255, .2) 75%, 
+        transparent 75%, 
+        transparent
+     );
+  background-image: 
+    -ms-linear-gradient(
+      -45deg, 
+        rgba(255, 255, 255, .2) 25%, 
+        transparent 25%, 
+        transparent 50%, 
+        rgba(255, 255, 255, .2) 50%, 
+        rgba(255, 255, 255, .2) 75%, 
+        transparent 75%, 
+        transparent
+     );
+  background-image: 
+    -o-linear-gradient(
+      -45deg, 
+        rgba(255, 255, 255, .2) 25%, 
+        transparent 25%, 
+        transparent 50%, 
+        rgba(255, 255, 255, .2) 50%, 
+        rgba(255, 255, 255, .2) 75%, 
+        transparent 75%, 
+        transparent
+     );
+  z-index 1
+
+  -webkit-background-size 20px 20px
+  -moz-background-size 20px 20px
+  background-size 20px 20px
+
+  -webkit-transition width 0.2s
+  -webkit-transition-timing-function width 0.2s
+  -moz-transition width 0.2s
+  -moz-transition-timing-function width 0.2s
+  transition width 0.2s
+  transition-timing-function width 0.2s
+
+.upload-progress span
+  line-height 24px
+  font-weight bold
+
+.upload-label
+  margin 0 0 0 5px
+  float left
+  font-style italic
+
+.upload-progress-txt
+  position relative
+  margin 0 25px 0 5px
+  color #1a1a1a
+
+.upload-remove
+  position absolute
+  z-index 2
+  right 0
+  width 14px
+  cursor pointer
+  padding 0 5px
+  line-height 24px
+  color #666
+
+  -moz-user-select none
+  -webkit-user-select none
+  user-select none
+
+.upload-remove:hover
+  background rgba(0,0,0,0.1)
+
+.upload-remove:active
+  background rgba(0,0,0,0.15)
+  
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––comments*/
+
+.comments
+  margin 1px 0 0 0
+  border-bottom 1px solid #eee
+  padding 0 0 30px 2px
+
+.comment
+  width 490px
+  min-height 42px
+  margin 0 0 2px 0
+  position relative
+  background #f9f9f9
+  display none
+
+  border-radius 3px
+
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration .2s
+  -moz-animation-duration .2s
+  -o-animation-duration .2s
+  animation-duration .2s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
+
+.comment-body
+  padding 5px
+
+.comment-body p
+  padding 0 40px 0 40px
+  font-size 11px
+  line-height 15px
+  color #666
+  margin 0
+
+span.comment-avatar,
+a.comment-avatar
+  position relative
+  z-index 1
+  float left
+  display inline-block
+  width 32px
+  height 32px
+  margin 5px 8px 0 5px
+  background none
+
+a.comment-avatar:hover
+  background none
+
+span.comment-avatar img,
+a.comment-avatar img
+  border-radius 3px
+
+a.comment-avatar-small
+  display block
+  height 19px
+  white-space nowrap
+  color #b3b3b3
+  font-size 11px
+  padding-bottom 10px
+
+a.comment-avatar-small img
+  border-radius 2px 0 5px 0
+
+a.comment-avatar-small:hover
+  text-decoration none
+
+a.comment-avatar-small:hover span
+  text-decoration underline
+
+a.comment-author
+  display inline-block
+  // overflow hidden
+  white-space nowrap
+  text-overflow ellipsis
+  color #666
+  font-weight bold
+  font-size 11px
+
+  -webkit-text-shadow 1px 1px 0 rgba(255,255,255,0.7)
+  -moz-text-shadow 1px 1px 0 rgba(255,255,255,0.7)
+  text-shadow 1px 1px 0 rgba(255,255,255,0.7)
+
+.comment-info
+  position relative
+  bottom 0
+  padding-left 45px
+
+.comment-created
+  white-space nowrap
+  font-size 11px
+  font-style normal
+  color #b3b3b3
+
+.comment-created a
+  color #b3b3b3
+
+.comment-created a:hover
+  color #4d4d4d
+
+img.comment-image
+  position relative
+  display block
+  max-height 400px
+  max-width 400px
+  margin 5px 0 0 0
+
+textarea.comment-input
+  width 427px
+  font-size 11px
+
+.show-older
+  padding 5px 5px
+  display block
+  min-height 0
+  width 480px
+  text-align center
+  color #808080
+  font-style italic
+
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––notifications*/
+
+.notification
+  display none
+  background #fff
+  border-bottom 1px solid #e6e6e6
+  cursor pointer
+
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration .2s
+  -moz-animation-duration .2s
+  -o-animation-duration .2s
+  animation-duration .2s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
+
+.notification.unread
+  background #fbfff0
+
+.notification:hover
+  background #f2f2f2
+
+.notification a
+  text-decoration none
+  color #666
+
+.notification-inner
+  position relative
+  min-height 32px
+  padding 5px
+
+.notification-inner img
+  float left
+  border-radius 3px
+
+.notification-inner p
+  max-width 145px
+  margin 0 0 0 40px
+  font-size 10px
+  line-height 13px
+  color #4d4d4d
+
+.notification-info
+  display block
+  font-size 8px
+  margin 3px 0 0 40px
+  color #b3b3b3
+
+.notification-info a
+  color #b3b3b3
+
+.info-delete
+  color darkgray
+  background mattegray
+  cursor pointer
+  color #666
+  font-size 9px
+
+.info-delete:hover
+  background-color rgba(75, 184, 215, 0.25)
+
+.info-delete:active
+  background-color rgba(75, 184, 215, 0.5)
+
+span.info-divider
+  font-size 8px
+  color #b3b3b3
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––settings*/
+
+#settings_form table
+  margin 0 0 0 -10px
+
+#settings_form h1.title-static
+  margin 20px 0 10px 0
+
+#settings_form textarea
+  width 450px
+  padding 8px
+  margin-bottom 10px
+  font-size 12px
+  line-height 18px
+  padding-right 20px
+  overflow hidden
+
+  border-radius 3px
+
+#settings_form td
+  padding 0 0 5px 10px
+
+#settings_form td input[type=text]
+  width 462px
+  padding 8px
+  margin-bottom 10px
+  font-size 12px
+
+.settings-instructions
+  font-size 10px
+  line-height 15px
+  font-style italic
+  text-align right
+  padding 5px
+  color #808080
+
+.settings-banner-wrap
+  position relative
+  width 480px
+  height 215px
+  margin-bottom 10px
+  overflow hidden
+  cursor move
+  border-radius 5px
+
+.settings-banner-wrap.dragging
+  background blue
+
+.settings-banner-wrap.dragging img.settings-banner
+  opacity 0.5
+
+.settings-banner-wrap.uploading img.settings-banner
+  opacity 0.25
+
+.settings-banner
+  left 0
+  top 0
+
+.settings-notifications-txt
+  display block
+  font-size 12px
+  color #666
+
+.settings-heading
+  font-weight bold
+  color #404040
+  font-size 14px
+
+#save_settings
+  width 480px
+  margin 15px 0 0
+
+#settings_form a.button,
+#settings_form a.signin-strategy-btn-disabled
+  margin 0 auto
+  width 480px
+
+div.setting-saved,
+span.setting-error
+  display none
+  color #339900
+  font-size 11px
+  font-weight bold
+
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration .2s
+  -moz-animation-duration .2s
+  -o-animation-duration .2s
+  animation-duration .2s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
+
+span.setting-error
+  color red
+
+.settings-gravatar img
+  display inline
+  border-radius 2px
+  vertical-align -7px
+
+.settings-gravatar a
+  font-weight bold
+  margin-left 2px
+
+.confirm
+  position relative
+  background white
+  width 250px
+
+.confirm-body
+  padding 15px 20px
+
+.confirm-body > p
+  margin-top 5px
+  font-size 11px
+  line-height 14px
+  color #4d4d4d
+  font-style italic
+
+.confirm-title
+  margin 0 0 5px 0
+  font-size 16px
+  font-weight bold
+
+.confirm-actions
+  border-top 1px solid rgb(238, 238, 238)
+  padding 5px 18px
+  text-align right
+  background #fafafa
+  
+  -webkit-box-shadow inset 0 1px 0 white
+  -moz-box-shadow inset 0 1px 0 white
+  box-shadow inset 0 1px 0 white
+
+.confirm-overlay
+  display none
+  position absolute
+  top 0
+  left 0
+  z-index 1
+  background white
+  width 100%
+  height 100%
+
+.confirm-overlay > p
+  text-align center
+  padding 15px 20px
+  margin-top 15%
+  font-weight bold
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crags*/
+
+div.map
+  width 640px
+  border-radius 5px
+
+span.no-description
+  font-style italic
+
+span.no-media
+  display block
+  margin 20px 0
+  font-style italic
+
+div.ascent-filter
+  margin-top 3px
+
+div.ascent-filter-buttons
+  width 211px
+  float right
+  white-space nowrap
+  font-size 0
+
+div.ascent-filter-buttons a.button
+  height 39px
+  line-height 40px
+  font-size 14px
+  padding 0 20px
+
+div.ascents-wrap
+  margin 20px 0 0
+  display none
+
+div.ascents-wrap span.no-results
+  display none
+
+span.grade-heading
+  display block
+  margin 0 0 10px
+  font-family title
+  font-size 12px
+  color #404040
+
+ul.ascents
+  margin 0 0 20px
+
+ul.ascents a li
+  list-style none
+  padding 8px 7px 7px
+
+ul.ascents a li:hover
+  background #fdfdfd !important
+
+ul.ascents a li:hover span
+  text-decoration underline
+
+ul.ascents a:first-child li
+  border-radius 5px 5px 0 0
+
+ul.ascents a:last-child li
+  border-radius 0 0 5px 5px
+
+span.ascent-grade
+  display inline-block
+  width 20px
+  padding 0 10px 0 0
+  font-style italic
+
+span.ascent-name
+  display inline-block
+  font-weight bold
+
+span.ascent-sector
+  // float right
+
+a.popup-link
+  font-size 16px
+  color #4d4d4d !important
+  width 100%
+  display inline-block
+  font-family Title
+  text-transform uppercase
+  line-height 36px
+  padding 2px 0 0 10px
+
+a.popup-link i
+  float right
+  margin-right 10px
+
+div.cartodb-popup div.cartodb-popup-content-wrapper
+  height 38px !important
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+

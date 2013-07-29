@@ -1,0 +1,292 @@
+<%
+
+  // Save model attributes
+  var data = this.model.attributes;
+
+  // Banner sizing
+  var banner = data.image || null;
+  if (!banner) {
+    banner = {meta: {width: 480, height: 215}};
+    if (!data.gender || 'male' === data.gender)
+      banner.cf_url = 'https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-blnk-pic-m.jpg';
+    else
+      banner.cf_url = 'https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-blnk-pic-f.jpg';
+  }
+  var _w = 480;
+  var _h = 215;
+  var w, h
+  var l = 'left:0;';
+  var t = 'top:0;';
+  w = _w;
+  h = (banner.meta.height / banner.meta.width) * _w;
+  if (h - _h >= 0) {
+    t = 'top:' + (banner.meta.top !== undefined
+        ? banner.meta.top * 480 / 640: (-(h - _h) / 2)) + 'px;';
+  } else {
+    w = (banner.meta.width / banner.meta.height) * _h;
+    h = _h;
+    l = 'left:' + (banner.meta.left !== undefined
+        ? banner.meta.left * 480 / 640: (-(w - _w) / 2)) + 'px;';
+  }
+
+  // Gravatar
+  var gravatar = 'https://www.gravatar.com/avatar/'
+      + data.gravatar + '?s=24&d='
+      + encodeURIComponent(this.app.cloudFrontURL + '/main/img/avatar_100.png');
+
+  // Notifications config
+  var notes = data.config.notifications;
+
+%>
+<div class="middle">
+  <div id="settings_form">
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <h1 class="title-static">/ Public Profile</h1>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <label for="banner_img">Banner Image</label>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" width="480" height="215" style="vertical-align:top;">
+            <form id="settings_banner_form" enctype="multipart/form-data" method="POST">
+              <input type="hidden" name="params"
+                  value='<%= JSON.stringify(this.app.profile.transloadit.profile) %>' />
+              <div id="settings_banner_dnd" class="settings-banner-wrap">
+                <img class="mask" width="480" style="top:0;"
+                    src="/img/cornermask-top.png" />
+                <img class="mask" width="480" style="top:209px;"
+                    src="/img/cornermask-btm.png" />
+                <img class="masked settings-banner" src=<%= banner.cf_url %>
+                    width=<%= w %> height=<%= h %> style=<%= t + l %> />
+                <div id="settings_banner_spin" style="height:100%;"></div>
+                <a id="banner_file_chooser_dummy" class="file-chooser-dummy important"
+                    href="javascript:;">Update by dragging & dropping or selecting an image.</a>
+                <input id="banner_file_chooser" class="file-chooser" type="file"
+                    name="banner_img" accept="image/gif, image/jpeg, image/png" />
+              </div>
+            </form>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1">
+            <label for="displayName">Display Name</label>
+          </td>
+          <td colspan="1" class="text-right">
+            <div class="setting-saved">
+              <span class="icon-ok"></span>
+              <span>Saved</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <input tabindex="1" name="displayName" type="text" placeholder="How your name appears..."
+                value="<%= data.displayName %>">
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1">
+            <label for="username">Username</label>
+          </td>
+          <td colspan="1" class="text-right">
+            <div class="setting-saved">
+              <span class="icon-ok"></span>
+              <span>Saved</span>
+            </div>
+            <span class="setting-error"></span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <input tabindex="2" name="username" type="text" placeholder="(required)" value="<%= data.username %>">
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1">
+            <label for="primaryEmail">Email (private)</label>
+          </td>
+          <td colspan="1" class="text-right">
+            <div class="setting-saved">
+              <span class="icon-ok"></span>
+              <span>Saved</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <input tabindex="3" name="primaryEmail" type="text" placeholder="Used for notifications..."
+                value="<%= data.primaryEmail %>">
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1">
+            <label for="description">Athlete / Sponsor Bio</label>
+          </td>
+          <td colspan="1" class="text-right">
+            <div class="setting-saved">
+              <span class="icon-ok"></span>
+              <span>Saved</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <textarea tabindex="4" name="description"
+                placeholder="Say something..."><%= data.description %></textarea>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1">
+            <label for="location.name">Current City</label>
+          </td>
+          <td colspan="1" class="text-right">
+            <div class="setting-saved">
+              <span class="icon-ok"></span>
+              <span>Saved</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <input tabindex="5" name="location.name" type="text"
+                placeholder="e.g. San Francisco, California"
+                value="<%= data.location ? data.location.name: '' %>">
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1">
+            <label for="hometown.name">Hometown</label>
+          </td>
+          <td colspan="1" class="text-right">
+            <div class="setting-saved">
+              <span class="icon-ok"></span>
+              <span>Saved</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <input tabindex="6" name="hometown.name" type="text"
+                placeholder="e.g. Bozeman, Montana"
+                value="<%= data.hometown ? data.hometown.name: '' %>">
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1">
+            <label for="website">Websites</label>
+          </td>
+          <td colspan="1" class="text-right">
+            <div class="setting-saved">
+              <span class="icon-ok"></span>
+              <span>Saved</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <textarea tabindex="9" name="website"
+                placeholder="One URL per line..."><%= data.website %></textarea>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" class="settings-gravatar">
+            <img src=<%= gravatar %> width="24" height="24" />
+            <a href="http://gravatar.com" class="important" target="_blank">Change your avatar at Gravatar.com</a>.
+          </td>
+        </tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
+        <tr>
+          <td colspan="2">
+            <h1 class="title-static">/ Notification Settings</h1>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span class="settings-notifications-txt">Receive comment thread notifications?</span>
+          </td>
+          <td class="text-right">
+            <% if (notes.comment.email === true || notes.comment.email === 'true') { %>
+              <input type="checkbox" name="config.notifications.comment.email"
+                  tabindex="10" checked="checked" />
+            <% } else { %>
+              <input type="checkbox" name="config.notifications.comment.email" />
+            <% } %>
+            <label for="config.notifications.comment.email"
+                tabindex="10" style="vertical-align:-1px;">Email</label>
+          </td>
+        </tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
+        <tr>
+          <td colspan="2">
+            <h1 class="title-static">/ Services</h1>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <div class="settings_services_spin"></div>
+            <% if (!data.facebookId) { %>
+              <a tabindex="11" class="button signin-strategy-btn facebook-btn from-settings"
+                  href="/connect/facebook">
+                Connect with Facebook
+              </a>
+            <% } else { %>
+              <a class="signin-strategy-btn-disabled facebook-btn-disabled"
+                  href="javascript:;">
+                Connected with Facebook
+              </a>
+            <% } %>
+            <br />
+            <% if (!data.twitterId) { %>
+              <a tabindex="12" class="button signin-strategy-btn twitter-btn from-settings"
+                  href="/connect/twitter">
+                Connect with Twitter
+              </a>
+            <% } else { %>
+              <a class="signin-strategy-btn-disabled twitter-btn-disabled"
+                  href="javascript:;">
+                Connected with Twitter
+              </a>
+            <% } %>
+            <br />
+            <% if (data.role === 0) { %>
+              <% if (!data.instagramId) { %>
+                <a tabindex="13" class="button signin-strategy-btn instagram-btn from-settings"
+                    href="/connect/instagram">
+                  Connect with Instagram
+                </a>
+              <% } else { %>
+                <a class="signin-strategy-btn-disabled instagram-btn-disabled"
+                    href="javascript:;">
+                  Connected with Instagram
+                </a>
+                <p class="settings-instructions">
+                  Add #island to your Instagram photos.
+                </p>
+              <% } %>
+            <% } %>      
+          </td>
+        </tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
+        <tr>
+          <td colspan="2">
+            <h1 class="title-static">/ Danger Zone</h1>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <a tabindex="14" id="demolish" href="javascript:;"
+                class="button signin-strategy-btn delete-btn from-settings">
+              Delete profile
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

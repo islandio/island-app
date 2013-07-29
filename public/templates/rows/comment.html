@@ -1,0 +1,29 @@
+<%
+  var gravatar = 'https://www.gravatar.com/avatar/'
+      + this.model.get('author').gravatar + '?s=32&d='
+      + encodeURIComponent(this.app.cloudFrontURL + '/main/img/avatar_100.png');
+%>
+
+<a href="/<%= this.model.get('author').username %>" class="comment-avatar navigate">
+  <img src=<%= gravatar %> width="32" height="32" />
+</a>
+<div class="comment-body">
+  <p>
+    <a href="/<%= this.model.get('author').username %>" class="comment-author navigate">
+      <%= this.model.get('author').displayName %>
+    </a>
+    <%= this.model.body() %>
+  </p>
+</div>
+<div class="comment-info">
+  <time class="created" 
+      datetime="<%= this.model.get('created') %>" 
+      title="<%= this.model.get('created') %>">
+    <%= this.model.get('created') %>
+  </time>
+  <% if (this.app.profile.member &&
+        this.model.get('author').id === this.app.profile.member.id) { %>
+    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+    <span class="info-delete">delete</span>
+  <% } %>
+</div>

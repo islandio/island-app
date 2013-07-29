@@ -1,0 +1,58 @@
+<%
+
+  // Save model attributes
+  var data = this.model.attributes;
+
+%>
+
+<div class="leftside">
+  <div class="obj-title">
+    <h1 class="title-left"><%= data.name %></h1>
+    <h1 class="title-sub"><%= data.country %></h1>
+  </div>
+  <div class="ascent-filter">
+    <div class="ascent-filter-buttons">
+      <a id="b_filter" class="button button-left" href="javascript:;"
+          style="width:70px;">
+        Boulders</a>
+      <a id="r_filter" class="button button-right" href="javascript:;"
+          style="width:57px;">
+        Routes</a>
+    </div>
+    <input id="filter_box" type="search" tabindex="2" placeholder="filter ascents..." />
+  </div>
+  <% _.each(data.ascents, _.bind(function (ascents, t) {
+    if (data[t + 'cnt'] === 0) return; %>
+    <div class="ascents-wrap" id="<%= t %>_ascents">
+      <span class="no-results">No results.</span>
+      <% _.each(this.model.grades, _.bind(function (grade) {
+        var buck = ascents[grade];
+        if (!buck) return;
+        var i = 0; %>
+        <ul class="ascents">
+          <span class="grade-heading"><%= grade %></span>
+          <% _.each(buck, _.bind(function (a) {
+            var back = i % 2 === 0 ? '#f2f2f2': '#f9f9f9'; %>
+              <a href="/crags/<%= a.key %>" id="<%= a.id %>" class="navigate">
+                <li class="ascent" style="background:<%= back %>;">
+                  <% if (a.sector) { %>
+                    <span class="ascent-name"><%= a.name %>, </span>
+                  <% } else { %>
+                    <span class="ascent-name"><%= a.name %></span>
+                  <% } %>
+                  <span class="ascent-sector"><%= a.sector %></span>
+                </li>
+              </a>
+            <% ++i; %>
+          <% }, this)); %>
+        </ul>
+      <% }, this)); %>
+    </div>
+  <% }, this)); %>
+</div>
+<div class="rightside">
+  <h1 class="title-right">Activity</h1>
+  <br />
+  <span class="empty-list">...will go here :)</span>
+</div>
+<div class="clear"></div>

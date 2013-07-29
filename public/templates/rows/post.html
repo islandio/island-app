@@ -1,0 +1,60 @@
+<%
+  var video = _.find(this.model.get('medias'), function (m) {
+    return m.type === 'video';
+  });
+  var typeClass = video ? 'post-title-video': 'post-title-photos';
+
+  var gravatar = 'https://www.gravatar.com/avatar/'
+      + this.model.get('author').gravatar + '?s=48&d='
+      + encodeURIComponent(this.app.cloudFrontURL + '/main/img/avatar_100.png');
+%>
+
+<% if (this.model.get('product') && this.model.get('product').sku) { %>
+  <a class="button buy-button" target="_blank" 
+      href="http://transactions.digitaldeliveryapp.com/products/<%= this.model.get('product').sku %>/purchase">
+    <i class="icon-download-cloud"></i>
+    <%= this.model.get('product').subtype %> Film ($<%= this.model.get('product').price %>)
+  </a>
+<% } %>
+<div class="post-title">
+  <%= this.model.date() %> | 
+  <a href="/<%= this.model.get('author').username %>" class="navigate">
+    <%= this.model.get('author').displayName %></a> 
+  <% if (this.model.get('title')) { %>
+    / <span class="<%= typeClass %>"><%= this.model.get('title') %></span>
+  <% } %>
+</div>
+<a href="/<%= this.model.get('author').username %>" class="post-avatar navigate">
+  <img src=<%= gravatar %> width="48" height="48" />
+</a>
+<div class="post-mosaic">
+  <% if (this.parentView) { %>
+    <img class="mask" width="640" style="top:0;" 
+        src="/img/cornermask-top.png" />
+    <img class="mask" width="640" style="top:352px;"
+        src="/img/cornermask-btm.png" />
+  <% } else { %>
+    <img class="mask" width="984" style="top:0;" 
+        src="/img/cornermask-lrg-top.png" />
+    <img class="mask" width="984" style="top:546px;"
+        src="/img/cornermask-lrg-btm.png" />
+  <% } %>
+</div>
+<div class="post-body">
+  <%= this.model.body(!this.parentView) %>
+</div>
+<div class="post-info">
+  Posted by <a href="/<%= this.model.get('author').username %>" class="navigate">
+    <%= this.model.get('author').displayName %></a>
+  <a href="/<%= this.model.get('key') %>" class="navigate"><time class="created" 
+        datetime="<%= this.model.get('created') %>" 
+        title="<%= this.model.get('created') %>">
+    <%= this.model.get('created') %>
+  </time></a>
+  <% if (this.app.profile.member &&
+      this.model.get('author').id === this.app.profile.member.id) { %>
+    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+    <span class="post-delete info-delete">delete</span>
+  <% } %>
+</div>
+<div class="comments"></div>
