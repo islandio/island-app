@@ -10,7 +10,7 @@ define([
   'rpc',
   'util',
   'models/member',
-  'text!../../../templates/profile.html',
+  'text!../../templates/profile.html',
   'views/lists/posts'
 ], function ($, _, Backbone, mps, rpc, util, Member, template, Posts) {
 

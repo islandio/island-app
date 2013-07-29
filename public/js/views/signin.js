@@ -10,7 +10,7 @@ define([
   'mps',
   'rpc',
   'util',
-  'text!../../../templates/signin.html',
+  'text!../../templates/signin.html',
   'swfobject',
   'Spin'
 ], function ($, _, Backbone, Modernizr, mps, rpc, util, template,

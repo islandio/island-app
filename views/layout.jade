@@ -75,8 +75,10 @@ html(lang="en")
     script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false")
     script(src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js")
     script(src="http://jwpsrv.com/library/1lrC0MMbEeKOnyIACqoQEQ.js")
-    //- script(charset="utf-8", src="/{{ version }}/js/min.js")
-    script(type="text/javascript", charset="utf-8", data-main="/js/main", src="/js/lib/require/require.js")
+    - if (process.env.NODE_ENV === 'production')
+      script(charset="utf-8", src="/build/js/main.js")
+    - else
+      script(type="text/javascript", charset="utf-8", data-main="/js/main", src="/js/lib/require/require.js")
     script(type="text/javascript")
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-23247079-1']);

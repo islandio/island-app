@@ -11,7 +11,7 @@ define([
   'rpc',
   'util',
   'models/crag',
-  'text!../../../templates/crag.html'
+  'text!../../templates/crag.html'
 ], function ($, _, Modernizr, Backbone, mps, rpc, util, Crag, template) {
 
   return Backbone.View.extend({
@@ -108,10 +108,7 @@ define([
         this.filterBox.focus();
 
       // Set map view.
-      mps.publish('map/fly', [{
-        latitude: this.model.get('lat'),
-        longitude: this.model.get('lon')
-      }]);
+      mps.publish('map/fly', [this.model.get('location')]);
 
       return this;
     },

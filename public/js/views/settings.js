@@ -11,8 +11,8 @@ define([
   'rpc',
   'util',
   'models/member',
-  'text!../../../templates/settings.html',
-  'text!../../../templates/confirm.html',
+  'text!../../templates/settings.html',
+  'text!../../templates/confirm.html',
   'Spin'
 ], function ($, _, Backbone, Modernizr, mps, rpc, util, Member,
       template, confirm, Spin) {

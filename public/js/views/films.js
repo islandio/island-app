@@ -9,7 +9,7 @@ define([
   'mps',
   'rpc',
   'util',
-  'text!../../../templates/films.html',
+  'text!../../templates/films.html',
   'views/lists/posts'
 ], function ($, _, Backbone, mps, rpc, util, template, Posts) {
 

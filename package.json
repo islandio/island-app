@@ -1,12 +1,7 @@
 {
   "author": "Sander Pick <sanderpick@gmail.com> (git://github.com/sanderpick)",
-  "name": "islandtwo",
-  "domains": [
-    "island.io",
-    "www.island.io"
-  ],
-  "subdomain": "islandtwo",
-  "version": "0.1.0-7",
+  "name": "island",
+  "version": "2.0.0",
   "homepage": "http://island.io",
   "repository": {
     "type": "git",
@@ -16,7 +11,7 @@
     "express": "~3.0.6",
     "jade": "~0.28.1",
     "stylus": "~0.32.0",
-    "mongodb": "~1.2.13",
+    "mongodb": "~1.3.12",
     "passport": "~0.1.11",
     "passport-facebook": "~0.1.4",
     "reds": "~0.2.3",
@@ -37,15 +32,20 @@
     "red": "0.0.0"
   },
   "devDependencies": {
+    "grunt": "0.4.x",
+    "requirejs": "2.1.x",
+    "grunt-requirejs": "~0.3.1",
+    "wrench": "~1.4.4",
     "cli-color": "~0.2.2",
     "iconv": "~2.0.2",
     "curlrequest": "~0.3.6",
-    "async": "~0.2.6"
+    "async": "~0.2.6",
+    "aws-sdk": "~1.4.1"
   },
   "engines": {
     "node": "~0.8.x"
   },
   "scripts": {
-    "start": "main.js"
+    "start": "./main.js"
   }
 }

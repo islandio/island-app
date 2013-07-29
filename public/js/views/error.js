@@ -8,7 +8,7 @@ define([
   'Backbone',
   'mps',
   'util',
-  'text!../../../templates/error.html',
+  'text!../../templates/error.html',
 ], function ($, _, Backbone, mps, util, template) {
 
   return Backbone.View.extend({

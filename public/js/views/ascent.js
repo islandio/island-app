@@ -10,7 +10,7 @@ define([
   'rpc',
   'util',
   'models/ascent',
-  'text!../../../templates/ascent.html'
+  'text!../../templates/ascent.html'
 ], function ($, _, Backbone, mps, rpc, util, Ascent, template) {
 
   return Backbone.View.extend({
@@ -60,10 +60,7 @@ define([
     setup: function () {
 
       // Set map view.
-      mps.publish('map/fly', [{
-        latitude: this.model.get('lat'),
-        longitude: this.model.get('lon')
-      }]);
+      mps.publish('map/fly', [this.model.get('location')]);
 
       return this;
     },

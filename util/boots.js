@@ -21,7 +21,7 @@ var error = exports.error = function(err) {
   process.exit(1);
 }
 
-exports.start = function (cb) {
+exports.start = function (opts, cb) {
 
   Step(
     function () {
@@ -41,7 +41,7 @@ exports.start = function (cb) {
 
       Step(
         function () {
-          new Connection(c.MONGO_URI, {}, this);
+          new Connection(c.MONGO_URI, {ensureIndexes: opts.index}, this);
         },
         function (err, connection) {
           error(err);

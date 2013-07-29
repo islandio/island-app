@@ -9,7 +9,7 @@ define([
   'Modernizr',
   'mps',
   'rpc',
-  'text!../../../templates/popup.html',
+  'text!../../templates/popup.html',
   'Spin'
 ], function ($, _, Backbone, Modernizr, mps, rpc, popup, Spin) {
   return Backbone.View.extend({

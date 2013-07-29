@@ -7,7 +7,7 @@ define([
   'Underscore',
   'Backbone',
   'util',
-  'text!../../../templates/privacy.html'
+  'text!../../templates/privacy.html'
 ], function ($, _, Backbone, util, template) {
 
   return Backbone.View.extend({
