@@ -19,6 +19,7 @@ define([
     el: '#header_search',
     active: false,
     str: null,
+    selecting: {el: null, i: -1},
 
     initialize: function (app, options) {
       this.app = app;
@@ -64,45 +65,107 @@ define([
       return List.prototype.setup.call(this);
     },
 
+    highlight: function () {
+      this.selecting.el = this.$('a.choice').eq(this.selecting.i);
+      this.$('a.choice').removeClass('hover');
+      this.selecting.el.addClass('hover');
+      var h = this.selecting.el.outerHeight() - 1;
+      var be = h + this.selecting.el.offset().top - this.results.offset().top - 1;
+      var H = this.results.height();
+      var s = this.results.scrollTop();
+      if (be > H)
+        this.results.scrollTop(this.results.scrollTop() + h);
+      else if (be < h)
+        this.results.scrollTop(this.results.scrollTop() - h);
+    },
+
+    resetHighlight: function () {
+      this.selecting = {el: null, i: -1};
+      this.results.scrollTop(0);
+    },
+
     searchFocus: function (e) {
-      this.input.width(300).attr({placeholder: 'Search posts, members, & crags.'});
+      this.input.width(400).attr({placeholder: 'Search posts, members, & crags.'});
       this.active = true;
-      var str = this.searchVal();
-      if (str !== '' && str.length >= 3 && this.collection.length > 0)
+      if (this.searchVal() && this.collection.length > 0)
       this.results.show();
     },
 
     searchBlur: function (e) {
-      if (!this.active || ($(e.target).hasClass('header-search')
-        && e.keyCode !== 9 && e.which !== 9)) return;
+      if (!this.active) return;
+
+      // Ensure we are inside input.
+      if ($(e.target).hasClass('header-search')) {
+
+        // Enter
+        if (e.keyCode === 13 && e.which === 13) {
+          if (this.selecting.el) {
+            this.app.router.navigate(this.selecting.el.attr('href'),
+                {trigger: true});
+            this.input.val(this.selecting.el.data('term')).select();
+            return false;
+          }
+        }
+
+        // If tab, then proceed with blur.
+        else if (e.keyCode !== 9 && e.which !== 9) {
+
+          // Up
+          if (e.keyCode === 38 && e.which === 38) {
+            if (this.selecting.i > 0) {
+              this.selecting.i--;
+              this.highlight();
+            }
+            return false;
+          }
+
+          // Down
+          else if (e.keyCode === 40 && e.which === 40) {
+            if (this.selecting.i < this.collection.length - 1) {
+              this.selecting.i++;
+              this.highlight();
+            }
+            return false;
+          }
+
+          return;
+        }
+      }
+
+      // Blur.
       this.input.width(150).attr({placeholder: 'Search...'});;
       this.results.hide();
+      this.resetHighlight();
       this.active = false;
     },
 
     searchVal: function () {
-      return util.sanitize(this.input.val());
+      var str = util.sanitize(this.input.val());
+      return str === '' || str.length < 3 ? null: str;
     },
 
     search: function (e) {
 
       // Clean search string.
       var str = this.searchVal();
-      if (str === '' || str.length < 3) {
 
-        // Hide results display.
-        this.results.hide();
-        return;
-      }
-      if (str === this.str) return;
+      // Handle interaction.
+      if (str && str === this.str) return;
       this.str = str;
+      if (!str) {
+        this._clear();
+        this.resetHighlight();
+        return this.results.hide();
+      }
 
+      // Setup search types.
       var items = {};
       var types = ['crags', 'members', 'posts'];
       var done = _.after(types.length, _.bind(function () {
 
         // Render results.
         this._clear();
+        this.resetHighlight();
         if (_.isEmpty(items)) {
           this.results.hide();
           return;
@@ -115,8 +178,6 @@ define([
               this.collection.unshift(i);
             }, this));
         }, this));
-
-        
 
         // Show results display.
         this.results.show();

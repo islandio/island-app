@@ -26,8 +26,9 @@ define([
 
     render: function (single, prepend) {
 
-      // Add href.
+      // Add extra data.
       this.$el.attr({href: this.model.href()});
+      this.$el.attr({'data-term': this.model.term()});
 
       return Row.prototype.render.call(this, single, prepend);
     },

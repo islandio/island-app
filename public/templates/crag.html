@@ -19,7 +19,7 @@
           style="width:57px;">
         Routes</a>
     </div>
-    <input id="filter_box" type="search" placeholder="Search ascents" />
+    <input id="filter_box" type="search" tabindex="2" placeholder="filter ascents..." />
   </div>
   <% _.each(data.ascents, _.bind(function (ascents, t) {
     if (data[t + 'cnt'] === 0) return; %>

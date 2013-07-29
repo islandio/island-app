@@ -43,5 +43,21 @@ define([
       return title;
     },
 
+    term: function () {
+      var term = '';
+      if (this.get('username')) {
+        term += this.get('username');
+        if (this.get('displayName') && this.get('displayName') !== '')
+          term += ' (' + this.get('displayName') + ')';
+      } else if (this.get('crag')) {
+        term += this.get('name');
+      } else if (this.get('type')) {
+        term += this.get('title');
+      } else {
+        term += this.get('name');
+      }
+      return term;
+    },
+
   });
 });

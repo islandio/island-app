@@ -67,7 +67,7 @@ define([
     setup: function () {
 
       // Save refs.
-      this.filterBox = this.$('#filter_box').focus();
+      this.filterBox = this.$('#filter_box');
       this.bouldersFilter = this.$('#b_filter');
       this.routesFilter = this.$('#r_filter');
       this.boulders = this.$('#b_ascents');
@@ -102,6 +102,10 @@ define([
       // Add placeholder shim if need to.
       if (!Modernizr.input.placeholder)
         this.filterBox.placeholder();
+
+      // Focus.
+      if (!$('#header_search .search-display').is(':visible'))
+        this.filterBox.focus();
 
       // Set map view.
       mps.publish('map/fly', [{
