@@ -201,7 +201,7 @@ Step(
     app.use(express.methodOverride());
 
     // Development only
-    if ('development' === app.get('env')) {
+    if (process.env.NODE_ENV !== 'production') {
       app.use(stylus.middleware({src: __dirname + '/public'}));
       app.use(express.static(__dirname + '/public'));
       app.use(app.router);
@@ -209,7 +209,7 @@ Step(
     }
 
     // Production only
-    if ('production' === app.get('env')) {
+    else {
       app.use(stylus.middleware({src: __dirname + '/public'}));
       app.use(express.static(__dirname + '/public', {maxAge: 31557600000}));
       app.use(app.router);
@@ -230,7 +230,7 @@ Step(
 
       Step(
         function () {
-          var ei = 'production' === app.get('env') || argv.index;
+          var ei = process.env.NODE_ENV === 'production' || argv.index;
           new Connection(app.get('MONGO_URI'), {ensureIndexes: ei}, this);
         },
         function (err, connection) {
