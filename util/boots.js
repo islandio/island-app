@@ -22,6 +22,10 @@ var error = exports.error = function(err) {
 }
 
 exports.start = function (opts, cb) {
+  if (typeof opts === 'function') {
+    cb = opts;
+    opts = {};
+  }
 
   Step(
     function () {

@@ -8,8 +8,7 @@
 var optimist = require('optimist');
 var argv = optimist
     .describe('help', 'Get help')
-    .describe('index', 'Ensure indexes on MongoDB collections'
-        + '(always `true` in production)')
+    .describe('index', 'Ensure indexes on MongoDB collections')
       .boolean('index')
     .argv;
 
