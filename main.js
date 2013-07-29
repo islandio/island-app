@@ -3,7 +3,7 @@
  * main.js: Entry point for the Island app.
  *
  */
-
+console.log(process.env);
 // Arguments
 var optimist = require('optimist');
 var argv = optimist
