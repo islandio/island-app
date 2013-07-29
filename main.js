@@ -50,7 +50,7 @@ var app = express();
 app.set('PORT', process.env.PORT || argv.port);
 
 // Add connection config to app.
-_.each(require('./config').get(app.get('env')), function (v, k) {
+_.each(require('./config').get(process.env.NODE_ENV), function (v, k) {
   app.set(k, v);
 });
 
@@ -75,7 +75,7 @@ Step(
   function () {
 
     // Development only
-    if ('development' === app.get('env')) {
+    if (process.env.NODE_ENV !== 'production') {
 
       // App params
       app.set('HOME_URI', 'http://localhost:' + app.get('PORT'));
@@ -128,7 +128,7 @@ Step(
     }
 
     // Production only
-    if ('production' === app.get('env')) {
+    else {
 
       // App params
       app.set('HOME_URI', 'http://island.io');
