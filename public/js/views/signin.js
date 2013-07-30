@@ -61,7 +61,7 @@ define([
 
       // Embed the background video.
       swfobject.embedSWF(
-          '/swf/roll.swf', 'roll', '100%', '100%', 10,
+          __s + '/swf/roll.swf', 'roll', '100%', '100%', 10,
           '', {}, {menu: 'false'}, {});
 
       // Show the spinner when connecting.
