@@ -48,7 +48,9 @@ define([
     },
 
     // Bind mouse events.
-    events: {},
+    events: {
+      'click a.navigate': 'navigate',
+    },
 
     // Misc. setup.
     setup: function () {
@@ -75,6 +77,15 @@ define([
       this.undelegateEvents();
       this.stopListening();
       this.empty();
+    },
+
+    navigate: function (e) {
+      e.preventDefault();
+
+      // Route to wherever.
+      var path = $(e.target).closest('a').attr('href');
+      if (path)
+        this.app.router.navigate(path, {trigger: true});
     },
 
   });
