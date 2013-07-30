@@ -46,8 +46,8 @@ var com = require(rel + 'lib/common.js');
 var dir = 'build';
 var cf = 'https://d10fiv677oa856.cloudfront.net';
 var pack = JSON.parse(fs.readFileSync(rel + 'package.json', 'utf8'));
-var bv = _.strLeft(pack.version, '.');
-var lv = parseInt(_.strRight(pack.version, '.')) + 1;
+var bv = _.strLeftBack(pack.version, '.');
+var lv = parseInt(_.strRightBack(pack.version, '.')) + 1;
 var nv = bv + '.' + String(lv);
 
 // AWS credentials.
