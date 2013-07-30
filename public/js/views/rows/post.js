@@ -54,7 +54,7 @@ define([
             $('<a class="fancybox" rel="g-'
             + this.model.id + '">')).appendTo(div);
         if (item.video) {
-          var play = $('<img src="/img/play.png" class="post-mosaic-play"'
+          var play = $('<img src="' + __s + '/img/play.png" class="post-mosaic-play"'
               + ' width="160" height="160" />');  
           play.appendTo(div);
           if (this.model.get('product') && this.model.get('product').sku) {

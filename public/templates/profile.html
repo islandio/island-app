@@ -12,9 +12,9 @@
   if (!data.image) {
     data.image = {meta: {width: 640, height: 288}};
     if (!data.gender || 'male' === data.gender)
-      data.image.cf_url = '/img/blnk-pic-m.jpg';
+      data.image.cf_url = __s + '/img/blnk-pic-m.jpg';
     else
-      data.image.cf_url = '/img/blnk-pic-f.jpg';
+      data.image.cf_url = __s + '/img/blnk-pic-f.jpg';
   }
 
   // Image meta
@@ -58,7 +58,7 @@
   // Gravatar
   var gravatar = 'https://www.gravatar.com/avatar/'
       + data.gravatar + '?s=48&d='
-      + encodeURIComponent(this.app.cloudFrontURL + '/main/img/avatar_100.png');
+      + encodeURIComponent(__s + '/img/avatar_100.png');
 
 %>
 
@@ -70,9 +70,9 @@
   <div class="obj-holder member-picture">
     <img src=<%= gravatar %> class="profile-avatar" width="48" height="48" />
     <img class="mask" width="640" style="top:0;"
-        src="/img/cornermask-top.png" />
+        src="<%= __s %>/img/cornermask-top.png" />
     <img class="mask" width="640" style="top:280px;"
-        src="/img/cornermask-btm.png" />
+        src="<%= __s %>/img/cornermask-btm.png" />
     <img class="masked" src=<%= data.image.cf_url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
   </div>
   <div class="obj-desc">

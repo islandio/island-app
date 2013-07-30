@@ -24,17 +24,34 @@ var util = require('util');
 var Step = require('step');
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
-var boots = require('./boots');
+var boots = require('../boots');
 var db = require('../lib/db.js');
 var com = require('../lib/common.js');
 var resources = require('../lib/resources');
+var PubSub = require('../lib/pubsub').PubSub;
 
 boots.start({index: argv.index}, function (client) {
+
+  var pubsub = new PubSub();
 
   Step(
 
     function () {
-      console.log('crags / ascents update...');
+      console.log('crags update...');
+      db.Crags.list({}, this);
+    },
+    function (err, docs) {
+      if (docs.length === 0) return this();
+      var _this = _.after(docs.length, this);
+      _.each(docs, function (d) {
+        if (!d.lat || !d.lon) return _this();
+        db.Crags.update({_id: d._id}, {$set: {location: {latitude: d.lat, longitude: d.lon}},
+            $unset: {lat: 1, lon: 1}}, _this);
+      });
+    },
+
+    function () {
+      console.log('ascents update...');
       db.Crags.list({}, this);
     },
     function (err, docs) {
@@ -42,19 +59,17 @@ boots.start({index: argv.index}, function (client) {
 
       if (docs.length === 0) return this();
       var _this = _.after(docs.length, this);
-      _.each(docs, _.bind(function (d) {
-        if (!d.lat || !d.lon) return _this();
-        var u = {$set: {location: {latitude: d.lat, longitude: d.lon}}};
-        db.Ascents.update({crag_id: d._id}, u, function (err, stat) {
+      _.each(docs, function (d) {
+        db.Ascents.list({crag_id: d._id}, function (err, ds) {
           boots.error(err);
-          u.$unset = {lat: 1, lon: 1};
-          db.Crags.update({_id: d._id}, u, {safe: true}, function (err, stat) {
-            boots.error(err);
-            _this();
+          if (ds.length === 0) return _this();
+          var __this = _.after(ds.length, _this);
+          _.each(ds, function (a) {
+            db.Ascents.update({_id: a._id}, {$set: {location: d.location}}, __this);
           });
         });
 
-      }, this));
+      });
     },
 
     function () {
@@ -190,6 +205,23 @@ boots.start({index: argv.index}, function (client) {
 
       });
 
+    },
+
+    
+    function (err) {
+      boots.error(err);
+      console.log('subscribing to posts...');
+      db.Posts.list({}, {inflate: {author: resources.profiles.member}}, this);      
+    },
+
+    function (err, docs) {
+      boots.error(err);
+
+      if (docs.length === 0) return this();
+      var _this = _.after(docs.length, this);
+      _.each(docs, function (d) {
+        pubsub.subscribe(d.author, d, {style: 'watch', type: 'post'}, _this);
+      });
     },
 
 

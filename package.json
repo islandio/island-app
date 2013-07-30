@@ -1,7 +1,8 @@
 {
   "author": "Sander Pick <sanderpick@gmail.com> (git://github.com/sanderpick)",
   "name": "island",
-  "version": "2.0.0",
+  "version": "2.6",
+  "cloudfront": "https://d10fiv677oa856.cloudfront.net",
   "homepage": "http://island.io",
   "repository": {
     "type": "git",
@@ -40,7 +41,8 @@
     "iconv": "~2.0.2",
     "curlrequest": "~0.3.6",
     "async": "~0.2.6",
-    "aws-sdk": "~1.4.1"
+    "walk": "~2.2.1",
+    "knox": "~0.8.5"
   },
   "engines": {
     "node": "~0.8.x"

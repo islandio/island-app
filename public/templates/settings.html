@@ -32,7 +32,7 @@
   // Gravatar
   var gravatar = 'https://www.gravatar.com/avatar/'
       + data.gravatar + '?s=24&d='
-      + encodeURIComponent(this.app.cloudFrontURL + '/main/img/avatar_100.png');
+      + encodeURIComponent(__s + '/img/avatar_100.png');
 
   // Notifications config
   var notes = data.config.notifications;
@@ -59,9 +59,9 @@
                   value='<%= JSON.stringify(this.app.profile.transloadit.profile) %>' />
               <div id="settings_banner_dnd" class="settings-banner-wrap">
                 <img class="mask" width="480" style="top:0;"
-                    src="/img/cornermask-top.png" />
+                    src="<%= __s %>/img/cornermask-top.png" />
                 <img class="mask" width="480" style="top:209px;"
-                    src="/img/cornermask-btm.png" />
+                    src="<%= __s %>/img/cornermask-btm.png" />
                 <img class="masked settings-banner" src=<%= banner.cf_url %>
                     width=<%= w %> height=<%= h %> style=<%= t + l %> />
                 <div id="settings_banner_spin" style="height:100%;"></div>

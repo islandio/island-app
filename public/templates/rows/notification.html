@@ -1,7 +1,7 @@
 <%
   var gravatar = 'https://www.gravatar.com/avatar/'
       + this.model.get('event').data.action.g + '?s=32&d='
-      + encodeURIComponent(this.app.cloudFrontURL + '/main/img/avatar_100.png');
+      + encodeURIComponent(__s + '/img/avatar_100.png');
 %>
 
 <a href="<%= this.model.get('event').data.target.s %>">

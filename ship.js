@@ -6,28 +6,124 @@
 
 // Arguments
 var optimist = require('optimist');
+var util = require('util');
+var clc = require('cli-color');
+var _ = require('underscore');
+_.mixin(require('underscore.string'));
 var argv = optimist
+    .usage('Build and deploy app.\nUsage: $0')
     .describe('help', 'Get help')
     .argv;
 
-if (argv._.length || argv.help) {
+if (argv._.length === 0) {
+  util.log(clc.red('Error: Expected a <app_directory> argument.'));
   optimist.showHelp();
   process.exit(1);
 }
 
+if (argv.help) {
+  optimist.showHelp();
+  process.exit(1);
+}
+
+var rel = argv._[0];
+if (!_.endsWith(rel, '/')) rel += '/';
+
 // Module Dependencies
-var util = require('util');
+var sys = require('sys');
+var fs = require('fs');
+var walk = require('walk');
+var knox = require('knox');
+var exec = require('child_process').exec;
+var wrench = require('wrench');
+var request = require('request');
 var Step = require('step');
-var _ = require('underscore');
-_.mixin(require('underscore.string'));
-var boots = require('./boots');
-var db = require('../lib/db.js');
+var boots = require(rel + 'boots');
+var db = require(rel + 'lib/db.js');
+var com = require(rel + 'lib/common.js');
 
-boots.start(function (client) {
+// Build vars.
+var dir = 'build';
+var cf = 'https://d10fiv677oa856.cloudfront.net';
+var pack = JSON.parse(fs.readFileSync(rel + 'package.json', 'utf8'));
+var bv = _.strLeft(pack.version, '.');
+var lv = parseInt(_.strRight(pack.version, '.')) + 1;
+var nv = bv + '.' + String(lv);
 
-  var search = reds.createSearch('ascents');
-  search.client = client;
-
-  
-  
+// AWS credentials.
+var aws = JSON.parse(fs.readFileSync(rel + 'aws.config.json', 'utf8'));
+var client = knox.createClient({
+  key: aws.accessKeyId,
+  secret: aws.secretAccessKey,
+  bucket: 'build.islandio'
 });
+
+Step(
+  function () {
+
+    // Run grunt tasks from Gruntfile.js
+    util.log(clc.blackBright('Starting statics build for new version ')
+        + clc.underline(clc.green(nv)) + clc.blackBright(' ...'));
+    exec('grunt build --dir=' + dir, this);
+  },
+  function (err) {
+    boots.error(err);
+    fs.renameSync(rel + dir + '/js/main.js', rel + dir + '/min.js');
+    fs.renameSync(rel + dir + '/js/lib/store/store.min.js', rel + dir + '/store.min.js');
+    wrench.rmdirSyncRecursive(rel + dir + '/js');
+    fs.mkdirSync(rel + dir + '/js');
+    fs.renameSync(rel + dir + '/min.js', rel + dir + '/js/min.js');
+    fs.renameSync(rel + dir + '/store.min.js', rel + dir + '/js/store.min.js');
+    wrench.rmdirSyncRecursive(rel + dir + '/templates');
+    
+    var min = fs.readFileSync(rel + dir + '/js/min.js', 'utf8');
+    var banner = '/*\n * island.io v' + nv + '\n */\n';
+    var vvar = 'var __s = "' + cf + '/' + nv + '";';
+    fs.writeFileSync(rel + dir + '/js/min.js', banner + vvar + min);
+
+    this();
+  },
+  function (err) {
+
+    // Walk the build dir.
+    var walker = walk.walk(rel + dir, {
+      followLinks: false,
+      filters: []
+    });
+
+    walker.on('file', function (root, file, next) {
+      if (file.name === '.DS_Store') return next();
+
+      // Build the path for S3.
+      var path = _.strRight(root, rel + dir + '/');
+      path = path === root ? nv: nv + '/' + path;
+      var key = path + '/' + file.name;
+
+      // Upload to S3.
+      client.putFile(root + '/' + file.name, key, {'x-amz-acl': 'public-read'},
+          function (err, res) {
+        boots.error(err);
+        res.resume();
+        next();
+      });
+      util.log(clc.blackBright('sending ') + clc.cyan(key) + clc.blackBright(' to S3.'));
+
+    });
+    walker.on('end', this);
+
+  },
+  function (err) {
+    boots.error(err);
+
+    // Update package.
+    pack.version = nv;
+    fs.writeFileSync(rel + 'package.json', JSON.stringify(pack, null, 2));
+
+    // Remove build dir.
+    wrench.rmdirSyncRecursive(rel + dir);
+
+    // Done.
+    util.log(clc.green('Build complete!'));
+    process.exit(0);
+  }
+);

@@ -1,37 +1,6 @@
 doctype 5
 html(lang="en")
   head
-    meta(property="og:site_name", content="Island")
-    meta(property="fb:app_id", content="203397619757208")
-    - if ('undefined' !== typeof(post))
-      meta(property="og:url", content="http://island.io/" + post.key)
-      meta(property="og:title", content=post.title)
-      meta(property="og:description", content=post.body)
-      - post.medias.forEach(function (med, i) {
-        - if (med.type === 'image')
-          meta(property="og:type", content="image")
-          meta(property="og:image", content=med.image.cf_url)
-          meta(property="og:image:secure_url", content=med.image.cf_url)
-        - if (med.type === 'video')
-          meta(property="og:type", content="movie")
-          meta(property="og:image", content=med.poster.cf_url)
-          meta(property="og:image:secure_url", content=med.poster.cf_url)
-          meta(property="og:video", content="http://d271mvlc6gc7bl.cloudfront.net/main/jwplayer/player.swf?file=" + encodeURIComponent(med.video.cf_url) + "&autostart=true")
-          meta(property="og:video:secure_url", content="https://d271mvlc6gc7bl.cloudfront.net/main/jwplayer/player.swf?file=" + encodeURIComponent(med.video.cf_url) + "&autostart=true")
-          meta(property="og:video:type", content="application/x-shockwave-flash")
-          meta(property="og:video:height", content=med.video.meta.height)
-          meta(property="og:video:width", content=med.video.meta.width)
-          meta(property="og:video", content=med.video.cf_url)
-          meta(property="og:video:secure_url", content=med.video.cf_url)
-          meta(property="og:video:type", content="video/mp4")
-          meta(property="og:video:height", content=med.video.meta.height)
-          meta(property="og:video:width", content=med.video.meta.width)
-        - if (med.type === 'audio')
-          meta(property="og:type", content="song")
-          meta(property="og:audio", content=med.audio.cf_url)
-          meta(property="og:audio:secure_url", content=med.audio.cf_url)
-          meta(property="og:audio:type", content="application/mp3")
-      - });
     - if (typeof title !== 'undefined')
       title= title
     - else
@@ -39,15 +8,18 @@ html(lang="en")
     <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
     link(rel="stylesheet", href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.css")
     <!--[if lte IE 8]><link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.ie.css"><![endif]-->
-    link(rel="stylesheet", href="/css/fancybox.css")
-    link(rel="stylesheet", href="/css/fontello.css")
-    link(rel="stylesheet", href="/css/animation.css")
-    <!--[if IE 7]><link rel="stylesheet" href="css/fontello-ie7.css"><![endif]-->
-    link(rel="stylesheet", href="/css/style.css")
+    link(rel="stylesheet", href="#{root}/css/fancybox.css")
+    link(rel="stylesheet", href="#{root}/css/fontello.css")
+    link(rel="stylesheet", href="#{root}/css/animation.css")
+    <!--[if IE 7]><link rel="stylesheet" href="#{root}/css/fontello-ie7.css"><![endif]-->
+    link(rel="stylesheet", href="#{root}/css/style.css")
     link(rel="shortcut icon", href="https://d271mvlc6gc7bl.cloudfront.net/main/gfx/favicon.ico", type="image/x-icon")
   body
     block content
-    script(type="text/javascript", charset="utf-8", src="/js/lib/store/store.min.js")
+    - if (process.env.NODE_ENV === 'production')
+      script(type="text/javascript", charset="utf-8", src="#{root}/js/store.min.js")
+    - else
+      script(type="text/javascript", charset="utf-8", src="/js/lib/store/store.min.js")
     - if (typeof member !== 'undefined')
       script
         if (window.store) {
@@ -75,8 +47,8 @@ html(lang="en")
     script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false")
     script(src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js")
     script(src="http://jwpsrv.com/library/1lrC0MMbEeKOnyIACqoQEQ.js")
-    - if (process.env.NODE_ENV === 'production' && 0)
-      script(charset="utf-8", src="/build/js/main.js")
+    - if (process.env.NODE_ENV === 'production')
+      script(charset="utf-8", src="#{root}/js/min.js")
     - else
       script(type="text/javascript", charset="utf-8", data-main="/js/main", src="/js/lib/require/require.js")
     script(type="text/javascript")

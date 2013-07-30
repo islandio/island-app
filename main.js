@@ -21,6 +21,7 @@ if (argv._.length || argv.help) {
 }
 
 // Module Dependencies
+var fs = require('fs');
 var http = require('http');
 var express = require('express');
 var mongodb = require('mongodb');
@@ -46,6 +47,9 @@ var PubSub = require('./lib/pubsub').PubSub;
 
 // Setup Environments
 var app = express();
+
+// Package info.
+app.set('package', JSON.parse(fs.readFileSync('package.json', 'utf8')));
 
 // App port is env var in production
 app.set('PORT', process.env.PORT || argv.port);
@@ -79,6 +83,7 @@ Step(
     if (process.env.NODE_ENV !== 'production') {
 
       // App params
+      app.set('ROOT_URI', '');
       app.set('HOME_URI', 'http://localhost:' + app.get('PORT'));
 
       // PubSub init
@@ -132,6 +137,8 @@ Step(
     else {
 
       // App params
+      app.set('ROOT_URI', [app.get('package').cloudfront,
+        app.get('package').version].join('/'));
       app.set('HOME_URI', 'http://island.io');
 
       // PubSub init
@@ -189,7 +196,6 @@ Step(
 
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');
-    app.use(express.favicon(__dirname + '/public/img/favicon.ico'));
     app.use(express.logger('dev'));
     app.use(express.bodyParser());
     app.use(express.cookieParser());
@@ -203,6 +209,7 @@ Step(
 
     // Development only
     if (process.env.NODE_ENV !== 'production') {
+      app.use(express.favicon(__dirname + '/public/img/favicon.ico'));
       app.use(stylus.middleware({src: __dirname + '/public'}));
       app.use(express.static(__dirname + '/public'));
       app.use(app.router);
@@ -211,7 +218,7 @@ Step(
 
     // Production only
     else {
-      app.use(stylus.middleware({src: __dirname + '/public'}));
+      app.use(express.favicon(app.get('ROOT_URI') + '/img/favicon.ico'));
       app.use(express.static(__dirname + '/public', {maxAge: 31557600000}));
       app.use(app.router);
       app.use(express.errorHandler());
@@ -232,7 +239,7 @@ Step(
       Step(
         function () {
           var ei = process.env.NODE_ENV === 'production' || argv.index;
-          new Connection(app.get('MONGO_URI'), {ensureIndexes: ei}, this);
+          new Connection(app.get('MONGO_URI'), {ensureIndexes: false}, this);
         },
         function (err, connection) {
           if (err) {

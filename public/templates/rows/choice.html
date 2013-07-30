@@ -4,12 +4,11 @@
   if (this.model.get('gravatar'))
     image = 'https://www.gravatar.com/avatar/'
         + this.model.get('gravatar') + '?s=16&d='
-        + encodeURIComponent(this.app.cloudFrontURL
-        + '/main/img/avatar_100.png');
+        + encodeURIComponent(__s + '/img/avatar_100.png');
   else if (this.model.get('crag'))
-    image = this.model.get('type') === 'b' ? '/img/boulder_16.png': '/img/route_16.png';
+    image = this.model.get('type') === 'b' ? __s + '/img/boulder_16.png': __s + '/img/route_16.png';
   else if (this.model.get('name'))
-    image = '/img/crag_16.png';  
+    image = __s + '/img/crag_16.png';  
 
 %>
 

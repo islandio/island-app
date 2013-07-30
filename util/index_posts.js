@@ -21,7 +21,7 @@ var util = require('util');
 var Step = require('step');
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
-var boots = require('./boots');
+var boots = require('../boots');
 var db = require('../lib/db.js');
 
 boots.start(function (client) {
