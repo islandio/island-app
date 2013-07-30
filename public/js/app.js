@@ -22,7 +22,7 @@ define([
     this.socket = new Pusher('37fea545f4a0ce59464c');
 
     // Location of static assets
-    this.cloudFrontURL = 'https://d10fiv677oa856.cloudfront.net';
+    this.cfuri = 'https://d10fiv677oa856.cloudfront.net';
 
     // App model subscriptions.
     mps.subscribe('member/delete', _.bind(this.logout, this))

@@ -56,6 +56,7 @@ define([
         length: 12, // The length of each line
         width: 4, // The line thickness
         radius: 18, // The radius of the inner circle
+        color: '#808080'
       });
 
       // Embed the background video.

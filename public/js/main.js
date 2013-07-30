@@ -64,6 +64,6 @@ require([
   'UnderscoreString',
   'plugins'
 ], function (app) {
-  __s = __s || '';
+  window.__s = window.__s || '';
   app.init();
 });

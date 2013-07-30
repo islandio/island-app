@@ -3,7 +3,7 @@
   var member = this.app.profile.member;
   var gravatar = member ? 'https://www.gravatar.com/avatar/'
       + member.gravatar + '?s=36&d='
-      + encodeURIComponent(__s + '/img/avatar_100.png');
+      + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png')
       : null;
 
 %>

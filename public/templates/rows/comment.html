@@ -1,7 +1,7 @@
 <%
   var gravatar = 'https://www.gravatar.com/avatar/'
       + this.model.get('author').gravatar + '?s=32&d='
-      + encodeURIComponent(__s + '/img/avatar_100.png');
+      + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
 %>
 
 <a href="/<%= this.model.get('author').username %>" class="comment-avatar navigate">

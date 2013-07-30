@@ -6,7 +6,7 @@
 
   var gravatar = 'https://www.gravatar.com/avatar/'
       + this.model.get('author').gravatar + '?s=48&d='
-      + encodeURIComponent(__s + '/img/avatar_100.png');
+      + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
 %>
 
 <% if (this.model.get('product') && this.model.get('product').sku) { %>

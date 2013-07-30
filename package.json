@@ -1,7 +1,7 @@
 {
   "author": "Sander Pick <sanderpick@gmail.com> (git://github.com/sanderpick)",
   "name": "island",
-  "version": "2.6",
+  "version": "2.8",
   "cloudfront": "https://d10fiv677oa856.cloudfront.net",
   "homepage": "http://island.io",
   "repository": {
