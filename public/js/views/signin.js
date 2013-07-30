@@ -11,10 +11,9 @@ define([
   'rpc',
   'util',
   'text!../../templates/signin.html',
-  'swfobject',
-  'Spin'
-], function ($, _, Backbone, Modernizr, mps, rpc, util, template,
-    swfobject, Spin) {
+  'Spin',
+  'swfobject'
+], function ($, _, Backbone, Modernizr, mps, rpc, util, template, Spin) {
 
   return Backbone.View.extend({
     

@@ -16,7 +16,7 @@ require.config({
     mps: 'lib/minpubsub/minpubsub',
     Pusher: 'lib/pusher/pusher',
     Spin: 'lib/spin/spin',
-    swfobject: 'lib/swfobject/swfobject',
+    swfobject: 'lib/swfobject/swfobject.min',
     plugins: 'lib/jquery/plugins',
     // cartodb: 'lib/cartodb/cartodb'
   },
