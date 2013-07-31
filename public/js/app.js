@@ -9,8 +9,9 @@ define([
   'Pusher',
   'router',
   'mps',
-  'rpc'
-], function ($, _, Backbone, Pusher, Router, mps, rpc) {
+  'rpc',
+  'text!../../../templates/head.html'
+], function ($, _, Backbone, Pusher, Router, mps, rpc, head) {
 
   // For dev:
   window._rpc = rpc;
@@ -41,6 +42,16 @@ define([
 
     // Set the document title.
     document.title = 'Island | ' + str;
+  }
+
+  App.prototype.head = function (data) {
+    if (data && data.title) data.title = 'Island | ' + data.title;
+
+    // Clean.
+    $('title').prevAll().remove();
+
+    // Insert new data.
+    $(_.template(head)({data: data})).prependTo('head');
   }
 
   App.prototype.logout = function () {

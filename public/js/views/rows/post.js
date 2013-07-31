@@ -12,7 +12,7 @@ define([
   'text!../../../templates/rows/post.html',
   'text!../../../templates/video.html',
   'views/lists/comments',
-  'text!../../../templates/confirm.html',
+  'text!../../../templates/confirm.html'
 ], function ($, _, mps, rpc, Row, Model, template, video, Comments, confirm) {
   return Row.extend({
 
@@ -26,8 +26,10 @@ define([
       this.template = _.template(template);
 
       // Allow single rendering (no parent view)
-      if (!options.parentView)
+      if (!options.parentView) {
         this.model = new Model(this.app.profile.content.page);
+        this.app.head(this.app.profile.content.page);
+      }
 
       // Boiler init.
       Row.prototype.initialize.call(this, options);

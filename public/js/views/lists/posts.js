@@ -240,6 +240,7 @@ define([
             attachment.assembly = assembly;
             txt.text('');
           }
+          this.app.title('Climb');
           attachment.uploading = false;
         }, this)
       };

@@ -122,7 +122,9 @@ define([
           _.bind(function (err, pro) {
         if (err) {
           _render.call(this, err);
-          return this.page = new Error(this.app).render(err);
+          this.page = new Error(this.app).render(err);
+          this.spin.stop();
+          return;
         }
 
         // Set the profile.

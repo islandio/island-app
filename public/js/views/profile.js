@@ -39,11 +39,23 @@ define([
       this.model = new Member(this.app.profile.content.page);
 
       // Set page title
-      this.app.title(this.model.get('displayName'));
+      var title = this.model.get('username');
+      if (this.model.get('displayName') !== '')
+        title += ' (' + this.model.get('displayName') + ')';
+      this.app.title(title);
 
       // UnderscoreJS rendering.
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
+
+      // Set the head meta.
+      this.app.head({
+        key: this.model.get('username'),
+        title: title,
+        body: util.rawify(this.model.get('description')),
+        medias: this.model.get('image') ?
+            [{image: this.model.get('image'), type: 'image'}]: null
+      });
 
       // Done rendering ... trigger setup.
       this.trigger('rendered');

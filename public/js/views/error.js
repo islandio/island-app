@@ -31,12 +31,18 @@ define([
 
     // Draw our template from the profile JSON.
     render: function (error) {
-
-      // UnderscoreJS rendering.
       this.error = error;
       this.error.message = _.str.titleize(this.error.message);
+
+      // Set page title
+      this.app.title(this.error.message);
+
+      // UnderscoreJS rendering.
       this.template = _.template(template);
       this.$el.html(this.template.call(this)).appendTo('#main');
+
+      // Set the head meta.
+      this.app.head();
 
       // Done rendering ... trigger setup.
       this.trigger('rendered');

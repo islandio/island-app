@@ -437,5 +437,11 @@ define([
       return (/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/).test(str);
     },
 
+    rawify: function (html) {
+      if (!html) return '';
+      html = html.replace(/"/ig, '');
+      return $('<p>').html(html).text().trim();
+    }
+
   }
 });

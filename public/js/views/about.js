@@ -31,12 +31,19 @@ define([
     // Draw our template from the profile JSON.
     render: function () {
 
-      // Set page title
+      // Set page title.
       this.app.title('About');
-
+      
       // UnderscoreJS rendering.
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
+
+      // Set the head meta.
+      this.app.head({
+        key: 'about',
+        title: 'About',
+        body: util.rawify(this.$('.page').html())
+      });
 
       // Done rendering ... trigger setup.
       this.trigger('rendered');
