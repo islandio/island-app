@@ -1,7 +1,8 @@
 <meta property="og:site_name" content="Island">
 <meta property="fb:app_id" content="203397619757208">
 <% if (data) { %>
-  <meta property="og:url" content="http://www.island.io/<%= data.key %>">
+  <meta property="og:url" 
+      content="http://www.island.io<%= data.key && data.key !== '' ? '/' + data.key: '' %>">
   <meta property="og:title" content="<%= data.title %>">
   <meta property="og:description" content="<%= data.body %>">
   <% if (data.medias) { %>

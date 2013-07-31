@@ -10,7 +10,7 @@ define([
   'router',
   'mps',
   'rpc',
-  'text!../../../templates/head.html'
+  'text!../templates/head.html'
 ], function ($, _, Backbone, Pusher, Router, mps, rpc, head) {
 
   // For dev:
