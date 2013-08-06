@@ -122,6 +122,12 @@ Step(
     // Remove build dir.
     wrench.rmdirSyncRecursive(rel + dir);
 
+    // Commit the package.json changes.
+    exec('git commit -a -m "' + 'bump v' + nv + '"', this);
+  },
+  function (err) {
+    boots.error(err);
+
     // Done.
     util.log(clc.green('Build complete!'));
     process.exit(0);
