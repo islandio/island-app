@@ -123,6 +123,7 @@ Step(
     wrench.rmdirSyncRecursive(rel + dir);
 
     // Commit the package.json changes.
+    util.log(clc.blackBright('Committing package version bump ...'));
     exec('git commit -a -m "' + 'bump v' + nv + '"', this);
   },
   function (err) {
