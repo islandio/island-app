@@ -21,7 +21,8 @@
   <a href="/<%= this.model.get('author').username %>" class="navigate">
     <%= this.model.get('author').displayName %></a> 
   <% if (this.model.get('title')) { %>
-    / <span class="<%= typeClass %>"><%= this.model.get('title') %></span>
+    / <a href="/<%= this.model.get('key') %>" class="navigate">
+    <span class="<%= typeClass %>"><%= this.model.get('title') %></span></a>
   <% } %>
 </div>
 <a href="/<%= this.model.get('author').username %>" class="post-avatar navigate">
@@ -51,6 +52,9 @@
         title="<%= this.model.get('created') %>">
     <%= this.model.get('created') %>
   </time></a>
+  <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+  <span class="post-info-item"><%= this.model.views() %> 
+      <%= (this.model.get('vcnt') || 0) !== 1 ? 'views': 'view' %></span>
   <% if (this.app.profile.member &&
       this.model.get('author').id === this.app.profile.member.id) { %>
     <span class="info-divider">&nbsp;&middot;&nbsp;</span>

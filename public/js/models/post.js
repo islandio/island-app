@@ -21,5 +21,9 @@ define([
       return full ? txt: util.blurb(txt, 500);
     },
 
+    views: function () {
+      return util.addCommas(this.get('vcnt') || 0);
+    },
+
   });
 });
