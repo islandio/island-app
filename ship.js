@@ -13,6 +13,8 @@ _.mixin(require('underscore.string'));
 var argv = optimist
     .usage('Build and deploy app.\nUsage: $0')
     .describe('help', 'Get help')
+    .describe('push', 'Push to Elastic Beanstalk')
+      .boolean('push')
     .argv;
 
 if (argv._.length === 0) {
@@ -125,6 +127,15 @@ Step(
     // Commit the package.json changes.
     util.log(clc.blackBright('Committing package version bump ...'));
     exec('git commit -a -m "' + 'bump v' + nv + '"', this);
+  },
+  function (err) {
+    boots.error(err);
+
+    // Push to eb.
+    if (argv.push) {
+      util.log(clc.blackBright('Pushing to AWS Elastic Beanstalk ...'));
+      exec('eb push', this);
+    } else this();
   },
   function (err) {
     boots.error(err);

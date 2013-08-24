@@ -192,10 +192,10 @@ define([
 
     getMarkers: function (remove) {
       var map = this.vis.mapView.map_leaflet;
-      var limit = remove ? 50: 25;
+      var limit = remove ? 200: 100;
       var zoom = map.getZoom();
       var bounds = map.getBounds();
-      var buffer = (bounds.getNorthEast().lat - bounds.getSouthWest().lat)/5;
+      var buffer = (bounds.getNorthEast().lat - bounds.getSouthWest().lat) / 5;
       var frame = "ST_Envelope(ST_MakeLine(CDB_LatLng("
           + (bounds.getNorthWest().lat + buffer) + ","
           + (bounds.getNorthWest().lng - buffer) + "),CDB_LatLng("
@@ -212,7 +212,7 @@ define([
         table_name: 'instagrams',
         frame: frame,
         z: zoom,
-        geobucket: 120,
+        geobucket: 1,
         limit: limit
       }).done(_.bind(function (data) {
         if (remove) this.removeMarkers();
@@ -226,6 +226,9 @@ define([
                 iconAnchor: [18, 46],
               })
             }, r)).addTo(map).on('click', function (e) {
+
+              // Blur map.
+              map.fire('blur');
 
               // Convert marker to fancybox object.
               function box(m) {
@@ -253,7 +256,14 @@ define([
                 nextClick: true,
                 padding: 0,
                 afterShow: function () {
+
+                  // Init links in title.
                   $('.fancybox-title a.navigate').click(_.bind(self.navigate, self));
+                },
+                afterClose: function () {
+                  
+                  // Blur map.
+                  map.fire('focus');
                 }
               });
             });

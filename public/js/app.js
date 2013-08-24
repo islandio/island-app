@@ -18,9 +18,11 @@ define([
   window._mps = mps;
 
   var App = function () {
-    
-    // Open a socket:
-    this.socket = new Pusher('37fea545f4a0ce59464c');
+
+    // Open a socket.
+    this.socket = window.__s === '' ?
+        new Pusher('37fea545f4a0ce59464c'):
+        new Pusher('c260ad31dfbb57bddd94');
 
     // Location of static assets
     this.cfuri = 'https://d10fiv677oa856.cloudfront.net';
