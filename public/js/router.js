@@ -223,7 +223,8 @@ define([
       this.render(_.bind(function (err) {
         if (err) return;
         this.page = new Error(this.app).render({
-          notice: 'Sorry, this page isn\'t available'
+          code: 404,
+          message: 'Sorry, this page isn\'t available'
         });
       }, this));
     }
