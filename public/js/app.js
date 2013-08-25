@@ -9,9 +9,8 @@ define([
   'Pusher',
   'router',
   'mps',
-  'rpc',
-  'text!../templates/head.html'
-], function ($, _, Backbone, Pusher, Router, mps, rpc, head) {
+  'rpc'
+], function ($, _, Backbone, Pusher, Router, mps, rpc) {
 
   // For dev:
   window._rpc = rpc;
