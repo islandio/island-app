@@ -493,7 +493,7 @@ input[type=submit]:not(.submit)
   border-radius 2px
 
   min-width 48px
-  height 23px
+  height 24px
   line-height 24px
   outline 0
   text-align center
@@ -562,6 +562,17 @@ input[type=submit].from-login:active
   box-shadow none
   color black
   border 1px solid black
+
+button.action-button
+  font-size 14px
+  height auto
+  padding 0 20px
+  font-weight normal
+  line-height 30px
+
+button.action-button.danger
+  border 1px solid #1a1a1a
+  color white
 
 a.button-left,
 button.button-left,
@@ -634,13 +645,14 @@ a.instagram-btn,
 a.instagram-btn-disabled
   background rgba(69, 63, 56, 0.65)
 
-a.delete-btn
+a.delete-btn,
+button.danger
   background rgba(208, 76, 56, 0.9)
 
 a.signin-strategy-btn-disabled
   cursor default
   opacity 0.65
-  height 23px
+  height 24px
   line-height 24px
   outline 0
   text-align center
@@ -663,7 +675,8 @@ a.twitter-btn.from-login:hover
 a.instagram-btn:hover
   background rgba(69, 63, 56, 0.75)
 
-a.delete-btn:hover
+a.delete-btn:hover,
+button.danger:hover
   background rgba(208, 76, 56, 1)
 
 a.facebook-btn:active
@@ -675,7 +688,8 @@ a.twitter-btn:active
 a.instagram-btn:active
   background rgba(69, 63, 56, 0.55)
 
-a.delete-btn:active
+a.delete-btn:active,
+button.danger:active
   background rgba(208, 76, 56, 0.8)
 
 a.signin-strategy-btn.from-login
@@ -1062,7 +1076,7 @@ ul.header-links li a:hover
   text-decoration none
 
 div.member-box
-  width 175px
+  width 174px
   float right
   white-space nowrap
 
@@ -2343,7 +2357,6 @@ span.post-info-item
   font-size 10px
   line-height 15px
   font-style italic
-  text-align right
   padding 5px
   color #808080
 
@@ -2423,34 +2436,73 @@ span.setting-error
 .confirm
   position relative
   background white
-  width 250px
+  width 500px
+  border-radius 3px
 
-.confirm-body
-  padding 15px 20px
+.tip
+  position relative
+  background white
+  width 500px
+  border-radius 3px
 
-.confirm-body > p
-  margin-top 5px
-  font-size 11px
-  line-height 14px
+.confirm-body,
+.tip-body
+  padding 30px
+
+.confirm-body > p,
+.tip-body > p
+  font-size 12px
+  line-height 18px
   color #4d4d4d
-  font-style italic
 
-.confirm-title
-  margin 0 0 5px 0
-  font-size 16px
+.confirm-title,
+.tip-title
+  display block
+  background #f2f2f2
+  padding 20px 0
+  font-size 18px
   font-weight bold
+  text-align center
+  border-bottom 1px solid #ccc
+  border-radius 3px 3px 0 0
 
-.confirm-actions
-  border-top 1px solid rgb(238, 238, 238)
-  padding 5px 18px
+  -webkit-box-shadow inset 0 1px 0 white
+  -moz-box-shadow inset 0 1px 0 white
+  box-shadow inset 0 1px 0 white
+
+  background-image linear-gradient(bottom, #F2F2F2 100%, #E6E6E6 0%)
+  background-image -o-linear-gradient(bottom, #F2F2F2 100%, #E6E6E6 0%)
+  background-image -moz-linear-gradient(bottom, #F2F2F2 100%, #E6E6E6 0%)
+  background-image -webkit-linear-gradient(bottom, #F2F2F2 100%, #E6E6E6 0%)
+  background-image -ms-linear-gradient(bottom, #F2F2F2 100%, #E6E6E6 0%)
+  background-image -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(1, #F2F2F2),
+    color-stop(0, #E6E6E6)
+  )
+
+.tip-title > img
+  vertical-align -5px
+
+.confirm-actions,
+.tip-actions
+  border-top 1px solid #ddd
+  padding 15px 18px
   text-align right
   background #fafafa
+  border-radius 0 0 3px 3px
   
   -webkit-box-shadow inset 0 1px 0 white
   -moz-box-shadow inset 0 1px 0 white
   box-shadow inset 0 1px 0 white
 
-.confirm-overlay
+.tip-actions button.action-button
+  width 100%
+
+.confirm-overlay,
+.tip-overlay
   display none
   position absolute
   top 0
@@ -2459,12 +2511,15 @@ span.setting-error
   background white
   width 100%
   height 100%
+  border-radius 3px
 
-.confirm-overlay > p
+.confirm-overlay > p,
+.tip-overlay > p
   text-align center
   padding 15px 20px
   margin-top 15%
   font-weight bold
+  font-size 16px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crags*/
 

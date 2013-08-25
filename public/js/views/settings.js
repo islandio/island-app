@@ -13,9 +13,10 @@ define([
   'models/member',
   'text!../../templates/settings.html',
   'text!../../templates/confirm.html',
+  'text!../../templates/tip.html',
   'Spin'
 ], function ($, _, Backbone, Modernizr, mps, rpc, util, Member,
-      template, confirm, Spin) {
+      template, confirm, tip, Spin) {
 
   return Backbone.View.extend({
     
@@ -54,7 +55,7 @@ define([
 
     // Bind mouse events.
     events: {
-      'click #demolish': 'demolish',
+      'click #demolish': 'demolish'
     },
 
     // Misc. setup.
@@ -121,6 +122,14 @@ define([
         if (el.hasClass('input-error'))
           el.removeClass('input-error');
       });
+
+      // Show the tip modal.
+      if (util.getParameterByName('tip') === 'insta') {
+        try {
+          window.history.replaceState('', '', window.location.pathname);
+        } catch (err) {}
+        this.instagram();
+      }
 
       return this;
     },
@@ -359,7 +368,7 @@ define([
       // Render the confirm modal.
       $.fancybox(_.template(confirm)({
         message: 'Your account will be removed, forever. This cannot be undone.',
-        working: '...working...'
+        working: 'Working...'
       }), {
         openEffect: 'fade',
         closeEffect: 'fade',
@@ -407,6 +416,37 @@ define([
       }, this));
 
       return false;
+    },
+
+    // Help the user understand how to use Instagram w/ Island.
+    instagram: function () {
+
+      // Render the confirm modal.
+      $.fancybox(_.template(tip)({
+        message: '<strong>Help us map the world of climbing.</strong>'
+                + ' When you add the #island hashtag to your initial photo'
+                + ' caption, we\'ll add it to the Island Map.'
+                + '<br /><br />'
+                + 'Note: For this to work, location services (GPS) must be enabled'
+                + ' for Instagram on your phone.<br /><br />'
+                + '&bull; <em>Directions for all iOS devices:</em> Select the '
+                + 'Settings icon on the device. Go to Settings > Privacy > Location'
+                + ' Services and toggle the setting for Instagram to “on”.<br /><br />'
+                + '&bull; <em>Directions for Android phones:</em> Open the camera app.'
+                + ' Select the Settings icon on the device. Scroll through the options'
+                +' and find GPS tag. Toggle the setting to “on”.',
+        title: 'Island &hearts;\'s <img src="' + window.__s + '/img/instagram.png">'
+      }), {
+        openEffect: 'fade',
+        closeEffect: 'fade',
+        closeBtn: false,
+        padding: 0
+      });
+
+      // Setup actions.
+      $('#tip_close').click(function (e) {
+        $.fancybox.close();
+      });
     }
 
   });

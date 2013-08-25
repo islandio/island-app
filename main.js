@@ -13,6 +13,9 @@ var argv = optimist
     .describe('index', 'Ensure indexes on MongoDB collections'
         + '(always `true` in production)')
       .boolean('index')
+    .describe('jobs', 'Schedule jobs'
+        + '(always `true` in production)')
+      .boolean('jobs')
     .argv;
 
 if (argv._.length || argv.help) {
@@ -129,6 +132,9 @@ Step(
         aud: 'https://d2oapa8usgizyg.cloudfront.net/'
       });
 
+      // Job scheduling.
+      app.set('SCHEDULE_JOBS', argv.jobs);
+
       // Redis connect
       this(null, redis.createClient(app.get('REDIS_PORT'),
           app.get('REDIS_HOST')));
@@ -183,6 +189,9 @@ Step(
         vid: 'https://d1ehvayr9dfk4s.cloudfront.net/',
         aud: 'https://dp3piv67f7p06.cloudfront.net/'
       });
+
+      // Job scheduling.
+      app.set('SCHEDULE_JOBS', true);
 
       // Redis connect
       var rc = redis.createClient(app.get('REDIS_PORT'), app.get('REDIS_HOST'));

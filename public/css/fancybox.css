@@ -24,6 +24,9 @@
   left: 0;
   z-index: 8020;
   background: rgba(26, 26, 26, 0.8);
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
 }
 
 .fancybox-skin {
@@ -31,7 +34,7 @@
   /*background: #4d4d4d;*/
   color: #444;
   text-shadow: none;
-  border: 2px solid #b3b3b3;
+  /*border: 2px solid #b3b3b3;*/
   /*-webkit-border-radius: 5px;
      -moz-border-radius: 5px;
           border-radius: 5px;*/
