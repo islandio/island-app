@@ -19,23 +19,18 @@ html(lang="en")
       each p in posts
         each m in p.medias
           - if (m.type === 'image')
-            meta(property="og:type", content="image")
             meta(property="og:image", content="#{m.image.cf_url || m.image.url}")
             meta(property="og:image:secure_url", content="#{m.image.cf_url || m.image.url}")
           - else if (m.type === 'video')
-            meta(property="og:type", content="image")
             meta(property="og:image", content="#{m.poster.cf_url}")
             meta(property="og:image:secure_url", content="#{m.poster.cf_url}")
           - else if (m.type === 'audio')
-            meta(property="og:type", content="song")
             meta(property="og:audio", content="#{m.audio.cf_url}")
             meta(property="og:audio:secure_url", content="#{m.audio.cf_url}")
             meta(property="og:audio:type", content="application/mp3")
     - else if (typeof image !== 'undefined')
-      meta(property="og:type", content="image")
       meta(property="og:image", content="#{image.cf_url}")
       meta(property="og:image:secure_url", content="#{image.cf_url}")
-    meta(property="og:type", content="image")
     meta(property="og:image", 
       content="https://d1da6a4is4i5z6.cloudfront.net/0a/a6aef906ed73d28ba07ac3388c6348.jpg")
     meta(property="og:image:secure_url", 
