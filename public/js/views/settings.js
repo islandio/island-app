@@ -423,7 +423,7 @@ define([
 
       // Render the confirm modal.
       $.fancybox(_.template(tip)({
-        message: '<strong>Help us map the world of climbing.</strong>'
+        message: '<strong>You are connected to Instagram.</strong> Now help us map the world of climbing!'
             + ' When you add the #island hashtag to your initial photo'
             + ' caption, we\'ll add it to the Island Map.'
             + '<br /><br />'

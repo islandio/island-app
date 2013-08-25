@@ -35,7 +35,7 @@ define([
       this.error.message = _.str.titleize(this.error.message);
 
       // Set page title
-      this.app.title(this.error.message);
+      this.app.title('Oops');
 
       // UnderscoreJS rendering.
       this.template = _.template(template);

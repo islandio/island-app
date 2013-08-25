@@ -223,8 +223,7 @@ define([
       this.render(_.bind(function (err) {
         if (err) return;
         this.page = new Error(this.app).render({
-          notice: 'Sorry, this page isn\'t available',
-          subNotice: 'The link you followed may be broken, or the page may have been removed.'
+          notice: 'Sorry, this page isn\'t available'
         });
       }, this));
     }
