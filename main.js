@@ -221,7 +221,6 @@ Step(
     // Production only
     else {
       app.use(express.favicon(app.get('ROOT_URI') + '/img/favicon.ico'));
-      app.use(stylus.middleware({src: __dirname + '/public'}));
       app.use(express.static(__dirname + '/public', {maxAge: 31557600000}));
       app.use(slashes(false));
       app.use(app.router);
