@@ -424,18 +424,19 @@ define([
       // Render the confirm modal.
       $.fancybox(_.template(tip)({
         message: '<strong>Help us map the world of climbing.</strong>'
-                + ' When you add the #island hashtag to your initial photo'
-                + ' caption, we\'ll add it to the Island Map.'
-                + '<br /><br />'
-                + 'Note: For this to work, location services (GPS) must be enabled'
-                + ' for Instagram on your phone.<br /><br />'
-                + '&bull; <em>Directions for all iOS devices:</em> Select the '
-                + 'Settings icon on the device. Go to Settings > Privacy > Location'
-                + ' Services and toggle the setting for Instagram to “on”.<br /><br />'
-                + '&bull; <em>Directions for Android phones:</em> Open the camera app.'
-                + ' Select the Settings icon on the device. Scroll through the options'
-                +' and find GPS tag. Toggle the setting to “on”.',
-        title: 'Island &hearts;\'s <img src="' + window.__s + '/img/instagram.png">'
+            + ' When you add the #island hashtag to your initial photo'
+            + ' caption, we\'ll add it to the Island Map.'
+            + '<br /><br />'
+            + 'Note: For this to work, location services (GPS) must be enabled'
+            + ' for Instagram on your phone.<br /><br />'
+            + '&bull; <em>Directions for all iOS devices:</em> Select the '
+            + 'Settings icon on the device. Go to Settings > Privacy > Location'
+            + ' Services and toggle the setting for Instagram to “on”.<br /><br />'
+            + '&bull; <em>Directions for Android phones:</em> Open the camera app.'
+            + ' Select the Settings icon on the device. Scroll through the options'
+            +' and find GPS tag. Toggle the setting to “on”.',
+        title: 'Island &hearts;\'s <img src="' + window.__s + '/img/instagram.png"'
+            + ' width="24" height="24" />'
       }), {
         openEffect: 'fade',
         closeEffect: 'fade',
