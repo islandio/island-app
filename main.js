@@ -24,6 +24,7 @@ if (argv._.length || argv.help) {
 var fs = require('fs');
 var http = require('http');
 var express = require('express');
+var slashes = require('connect-slashes');
 var mongodb = require('mongodb');
 var redis = require('redis');
 var reds = require('reds');
@@ -212,6 +213,7 @@ Step(
       app.use(express.favicon(__dirname + '/public/img/favicon.ico'));
       app.use(stylus.middleware({src: __dirname + '/public'}));
       app.use(express.static(__dirname + '/public'));
+      app.use(slashes(false));
       app.use(app.router);
       app.use(express.errorHandler({dumpExceptions: true, showStack: true}));
     }
@@ -221,6 +223,7 @@ Step(
       app.use(express.favicon(app.get('ROOT_URI') + '/img/favicon.ico'));
       app.use(stylus.middleware({src: __dirname + '/public'}));
       app.use(express.static(__dirname + '/public', {maxAge: 31557600000}));
+      app.use(slashes(false));
       app.use(app.router);
       app.use(express.errorHandler());
     }
@@ -264,6 +267,11 @@ Step(
 
           // Init service.
           service.routes(app);
+
+          // Catch all.
+          app.use(function (req, res) {
+            res.render('base', {member: req.user, root: app.get('ROOT_URI')});
+          });
 
           // Start server.
           http.createServer(app).listen(app.get('PORT'));

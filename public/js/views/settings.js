@@ -46,9 +46,6 @@ define([
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
 
-      // Set the head meta.
-      this.app.head();
-
       // Done rendering ... trigger setup.
       this.trigger('rendered');
 

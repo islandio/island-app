@@ -41,13 +41,6 @@ define([
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
 
-      // Set the head meta.
-      this.app.head({
-        key: '',
-        title: 'Climb',
-        body: 'We are Island.'
-      });
-
       // Done rendering ... trigger setup.
       this.trigger('rendered');
 

@@ -42,8 +42,8 @@ define([
         try {
           window.history.replaceState('', '', window.location.pathname
               + window.location.search);
-        } catch(err) {}
-      
+        } catch (err) {}
+
       // Page routes:
       this.route(':un', 'profile', this.profile);
       this.route(':un/:k', 'post', this.post);
@@ -220,7 +220,13 @@ define([
     },
 
     default: function (actions) {
-      console.warn('No route:', actions);
+      this.render(_.bind(function (err) {
+        if (err) return;
+        this.page = new Error(this.app).render({
+          notice: 'Sorry, this page isn\'t available',
+          subNotice: 'The link you followed may be broken, or the page may have been removed.'
+        });
+      }, this));
     }
   
   });

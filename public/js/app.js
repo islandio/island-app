@@ -46,16 +46,6 @@ define([
     document.title = 'Island | ' + str;
   }
 
-  App.prototype.head = function (data) {
-    if (data && data.title) data.title = 'Island | ' + data.title;
-
-    // Clean.
-    $('title').prevAll().remove();
-
-    // Insert new data.
-    $(_.template(head)({data: data})).prependTo('head');
-  }
-
   App.prototype.logout = function () {
 
     // Update app profile.

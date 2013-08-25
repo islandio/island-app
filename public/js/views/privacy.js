@@ -38,13 +38,6 @@ define([
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
 
-      // Set the head meta.
-      this.app.head({
-        key: 'privacy',
-        title: 'Privacy',
-        body: _.str.prune(util.rawify(this.$('.page').html()), 280)
-      });
-
       // Done rendering ... trigger setup.
       this.trigger('rendered');
 

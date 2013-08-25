@@ -28,7 +28,6 @@ define([
       // Allow single rendering (no parent view)
       if (!options.parentView) {
         this.model = new Model(this.app.profile.content.page);
-        this.app.head(this.app.profile.content.page);
       }
 
       // Boiler init.

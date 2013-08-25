@@ -53,20 +53,6 @@ define([
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
 
-      // Set the head meta.
-      var body = '';
-      if (this.model.get('bcnt') > 0)
-        body += '~' + util.addCommas(this.model.get('bcnt')) + ' boulders';
-      if (this.model.get('rcnt') > 0) {
-        if (body !== '') body += ', ';
-        body += '~' + util.addCommas(this.model.get('rcnt')) + ' routes';
-      }
-      this.app.head({
-        key: 'crags/' + this.model.get('key'),
-        title: title,
-        body: body
-      });
-
       // Done rendering ... trigger setup.
       this.trigger('rendered');
 

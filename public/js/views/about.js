@@ -38,13 +38,6 @@ define([
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
 
-      // Set the head meta.
-      this.app.head({
-        key: 'about',
-        title: 'About',
-        body: util.rawify(this.$('.page').html())
-      });
-
       // Done rendering ... trigger setup.
       this.trigger('rendered');
 

@@ -46,13 +46,6 @@ define([
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
 
-      // Set the head meta.
-      this.app.head({
-        key: 'crags/' + this.model.get('key'),
-        title: title,
-        body: this.model.get('grades').sort().join(', ')
-      });
-
       // Done rendering ... trigger setup.
       this.trigger('rendered');
 

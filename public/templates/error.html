@@ -1,2 +1,7 @@
-<span class="http-error">Error: <%= this.error.code ? '(' + this.error.code + ')': '' %> 
-    <%= this.error.message || 'Server Error' %></span>
+<% if (this.error.notice) { %>
+  <span class="http-error"><%= this.error.notice %></span>
+  <p class="http-notice"><%= this.error.subNotice %></p>
+<% } else { %>
+  <span class="http-error"><%= this.error.code ? '(' + this.error.code + ')': '' %> 
+      <%= this.error.message || 'Server Error' %></span>
+<% } %>

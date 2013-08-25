@@ -41,13 +41,6 @@ define([
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
 
-      // Set the head meta.
-      this.app.head({
-        key: 'films',
-        title: 'Films',
-        body: util.rawify(this.$('.page').html())
-      });
-
       // Done rendering ... trigger setup.
       this.trigger('rendered');
 

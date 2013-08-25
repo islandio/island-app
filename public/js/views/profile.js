@@ -48,15 +48,6 @@ define([
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
 
-      // Set the head meta.
-      this.app.head({
-        key: this.model.get('username'),
-        title: title,
-        body: util.rawify(this.model.get('description')),
-        medias: this.model.get('image') ?
-            [{image: this.model.get('image'), type: 'image'}]: null
-      });
-
       // Done rendering ... trigger setup.
       this.trigger('rendered');
 
