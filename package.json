@@ -24,14 +24,14 @@
     "passport-local": "~0.1.3",
     "passport-instagram": "~0.1.1",
     "request": "~2.9.203",
-    "emailjs": "~0.3.5",
     "connect-redis": "~1.4.5",
     "redis": "~0.8.2",
     "pusher": "~0.1.2",
     "cron": "~1.0.1",
     "time": "~0.9.2",
     "red": "0.0.0",
-    "connect-slashes": "0.0.10"
+    "connect-slashes": "0.0.10",
+    "emailjstmp": "~0.3.4"
   },
   "devDependencies": {
     "grunt": "0.4.x",
