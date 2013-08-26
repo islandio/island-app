@@ -16,10 +16,10 @@ define([
 ], function ($, _, Backbone, Modernizr, mps, rpc, util, template, Spin) {
 
   return Backbone.View.extend({
-    
+
     // The DOM target element for this page:
     className: 'signin',
-    
+
     // Module entry point:
     initialize: function (app) {
       
