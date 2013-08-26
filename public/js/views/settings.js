@@ -423,12 +423,14 @@ define([
 
       // Render the confirm modal.
       $.fancybox(_.template(tip)({
-        message: '<strong>You are connected to Instagram.</strong> Now help us map the world of climbing!'
+        message: '<strong>You are connected to Instagram.</strong> Now help us'
+            + ' map the world of climbing!'
             + ' When you add the #island hashtag to your initial photo'
             + ' caption, we\'ll add it to the Island Map.'
             + '<br /><br />'
             + 'Note: For this to work, location services (GPS) must be enabled'
-            + ' for Instagram on your phone.<br /><br />'
+            + ' for Instagram on your phone and "Add to Photo Map" must be set'
+            + ' to "on" when posting.<br /><br />'
             + '&bull; <em>Directions for all iOS devices:</em> Select the '
             + 'Settings icon on the device. Go to Settings > Privacy > Location'
             + ' Services and toggle the setting for Instagram to “on”.<br /><br />'
