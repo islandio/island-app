@@ -51,17 +51,17 @@ define([
 
       // Init the load indicator.
       this.spin = new Spin(this.$('#signin_spin'), {
-        lines: 17, // The number of lines to draw
-        length: 12, // The length of each line
-        width: 4, // The line thickness
-        radius: 18, // The radius of the inner circle
+        lines: 17,
+        length: 12,
+        width: 4,
+        radius: 18,
         color: '#808080'
       });
 
       // Embed the background video.
       swfobject.embedSWF(
           __s + '/swf/roll.swf', 'roll', '100%', '100%', 10,
-          '', {}, {menu: 'false'}, {});
+          '', {}, {menu: 'false', wmode: 'opaque'}, {});
 
       // Show the spinner when connecting.
       this.$('.signin-strategy-btn').click(_.bind(function (e) {
