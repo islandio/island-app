@@ -97,7 +97,8 @@ define([
       this.filterBox.bind('keyup search', _.bind(this.filter, this));
 
       // Firefox fix.
-      if (navigator.userAgent.indexOf('Firefox') !== -1)
+      if (navigator.userAgent.indexOf('Firefox') !== -1
+        || navigator.userAgent.indexOf('MSIE') !== -1)
         this.filterBox.css({'padding-left': '5px'});
 
       // Add placeholder shim if need to.

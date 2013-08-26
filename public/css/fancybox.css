@@ -31,13 +31,9 @@
 
 .fancybox-skin {
   position: relative;
-  /*background: #4d4d4d;*/
   color: #444;
   text-shadow: none;
-  /*border: 2px solid #b3b3b3;*/
-  /*-webkit-border-radius: 5px;
-     -moz-border-radius: 5px;
-          border-radius: 5px;*/
+  overflow: hidden;
 }
 
 .fancybox-opened {
@@ -52,10 +48,6 @@
 
 .fancybox-outer, .fancybox-inner {
   position: relative;
-  /*background: #4d4d4d !important;*/
-}
-
-.fancybox-inner {
   overflow: hidden;
 }
 

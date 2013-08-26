@@ -54,7 +54,8 @@ define([
         this.input.placeholder();
 
       // Firefox fix.
-      if (navigator.userAgent.indexOf('Firefox') !== -1)
+      if (navigator.userAgent.indexOf('Firefox') !== -1
+        || navigator.userAgent.indexOf('MSIE') !== -1)
         this.input.css({'padding-left': '5px'});
 
       // Handle searching.
