@@ -90,13 +90,6 @@ Step(
       app.set('ROOT_URI', '');
       app.set('HOME_URI', 'http://localhost:' + app.get('PORT'));
 
-      // PubSub init
-      app.set('pubsub', new PubSub({
-        appId: '43905',
-        key: '37fea545f4a0ce59464c',
-        secret: '1015c7f661849f639e49'
-      }));
-
       // Facebook params
       app.set('facebook', {
         name: 'Island (dev)',
@@ -148,13 +141,6 @@ Step(
         app.get('package').version].join('/'));
       app.set('HOME_URI', 'http://island.io');
 
-      // PubSub init
-      app.set('pubsub', new PubSub({
-        appId: '35474',
-        key: 'c260ad31dfbb57bddd94',
-        secret: 'b29cec4949ef7c0d14cd'
-      }));
-
       // Facebook params
       app.set('facebook', {
         name: 'Island',
@@ -204,6 +190,14 @@ Step(
   function (err, rc) {
     if (err) return util.error(err);
 
+    // Mailer init
+    app.set('mailer', new Mailer({
+      user: 'robot@island.io',
+      password: 'I514nDr06ot',
+      host: 'smtp.gmail.com',
+      ssl: true
+    }, app.get('HOME_URI')));
+
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');
     app.use(express.logger('dev'));
@@ -225,6 +219,13 @@ Step(
       app.use(slashes(false));
       app.use(app.router);
       app.use(express.errorHandler({dumpExceptions: true, showStack: true}));
+
+      // PubSub init
+      app.set('pubsub', new PubSub({
+        appId: '43905',
+        key: '37fea545f4a0ce59464c',
+        secret: '1015c7f661849f639e49'
+      }, app.get('mailer')));
     }
 
     // Production only
@@ -234,17 +235,14 @@ Step(
       app.use(slashes(false));
       app.use(app.router);
       app.use(express.errorHandler());
-    }
 
-    // Mailer init
-    app.set('mailer', new Mailer({
-      user: 'robot@island.io',
-      password: 'I514nDr06ot',
-      host: 'smtp.gmail.com',
-      ssl: true,
-      defaults: {from: 'Island <robot@island.io>'},
-      BASE_URI: app.get('HOME_URI')
-    }));
+      // PubSub init
+      app.set('pubsub', new PubSub({
+        appId: '35474',
+        key: 'c260ad31dfbb57bddd94',
+        secret: 'b29cec4949ef7c0d14cd'
+      }, app.get('mailer')));
+    }
 
     if (!module.parent) {
 
