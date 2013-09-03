@@ -2286,6 +2286,7 @@ span.post-info-item {
   font-style: italic;
   padding: 5px;
   color: #808080;
+  width: 480px;
 }
 .settings-banner-wrap {
   position: relative;
