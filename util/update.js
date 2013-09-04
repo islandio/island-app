@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- * ship.js: Ship app to production.
+ * update.js: Run some update on the db.
  *
  */
 
@@ -36,267 +36,66 @@ boots.start({index: argv.index}, function (client) {
 
   Step(
 
-    function () {
-      console.log('crags update...');
-      db.Crags.list({}, this);
-    },
-    function (err, docs) {
-      if (docs.length === 0) return this();
-      var _this = _.after(docs.length, this);
-      _.each(docs, function (d) {
-        if (!d.lat || !d.lon) return _this();
-        db.Crags.update({_id: d._id}, {$set: {location: {latitude: d.lat, longitude: d.lon}},
-            $unset: {lat: 1, lon: 1}}, _this);
-      });
-    },
+    // function () {
+    //   console.log('members update...');
+    //   db.Members.list({}, this);
+    // },
+    // function (err, docs) {
+    //   boots.error(err);
 
-    function () {
-      console.log('ascents update...');
-      db.Crags.list({}, this);
-    },
-    function (err, docs) {
-      boots.error(err);
+    //   if (docs.length === 0) return this();
+    //   var _this = _.after(docs.length, this);
+    //   _.each(docs, function (d) {
 
-      if (docs.length === 0) return this();
-      var _this = _.after(docs.length, this);
-      _.each(docs, function (d) {
-        db.Ascents.list({crag_id: d._id}, function (err, ds) {
-          boots.error(err);
-          if (ds.length === 0) return _this();
-          var __this = _.after(ds.length, _this);
-          _.each(ds, function (a) {
-            db.Ascents.update({_id: a._id}, {$set: {location: d.location}}, __this);
-          });
-        });
+    //     db.Posts.count({author_id: d._id}, function (err, cnt) {
+    //       boots.error(err);
+    //       db.Members.update({_id: d._id}, {$set: {pcnt: cnt}}, _this);  
+    //     });
 
-      });
-    },
-
-    function () {
-      console.log('posts update...');
-      db.Posts.list({}, this);
-    },
-    function (err, docs) {
-      boots.error(err);
-
-      if (docs.length === 0) return this();
-      var _this = _.after(docs.length, this);
-      _.each(docs, function (d) {
-
-        if (!d.member_id) return _this();
-        db.Posts.update({_id: d._id}, {$set: {author_id: d.member_id},
-            $unset: {member_id: 1}}, _this);
-
-      });
+    //   });
     
-    },
-    
+    // },
 
     function (err) {
       boots.error(err);
-      console.log('comments update...');
-      db.Comments.list({}, this);
-    },
-    function (err, docs) {
-      boots.error(err);
-
-      if (docs.length === 0) return this();
-      var _this = _.after(docs.length, this);
-      _.each(docs, function (d) {
-
-        if (!d.member_id || !d.post_id) return _this();
-        db.Comments.update({_id: d._id}, {$set: {author_id: d.member_id,
-            parent_id: d.post_id}, $unset: {member_id: 1, post_id: 1}}, _this);
-
-      });
-    
-    },
-    
-    
-    function (err) {
-      boots.error(err);
-      console.log('medias update...');
-      db.Medias.list({}, this);
-    },
-    function (err, docs) {
-      boots.error(err);
-
-      if (docs.length === 0) return this();
-      var _this = _.after(docs.length, this);
-      _.each(docs, function (d) {
-
-        if (!d.member_id || !d.post_id) return _this();
-        db.Medias.update({_id: d._id}, {$set: {author_id: d.member_id,
-            parent_id: d.post_id}, $unset: {member_id: 1, post_id: 1}}, _this);
-
-      });
-    
-    },
-
-    
-    function (err) {
-      boots.error(err);
-      console.log('posts add type update...');
-      db.Posts.list({}, this);
-    },
-    function (err, docs) {
-      boots.error(err);
-
-      if (docs.length === 0) return this();
-      var _this = _.after(docs.length, this);
-      _.each(docs, function (d) {
-        
-        db.Medias.list({parent_id: d._id}, function (err, meds) {
-          boots.error(err);
-          var type = 'image';
-          _.each(meds, function (m) {
-            if (m.type === 'video')
-              type = 'video';
-          });
-          db.Posts.update({_id: d._id}, {$set: {type: type}}, _this);
-        });
-      
-      });
-    },
-
-
-    function (err) {
-      boots.error(err);
-      console.log('members update...');
+      console.log('members photos update...');
       db.Members.list({}, this);
     },
     function (err, docs) {
       boots.error(err);
 
+      function swap(str) {
+        str = 'https://fbcdn-sphotos-h-a.akamaihd.net/hphotos-ak-frc3/'
+            + _.strRightBack(str, '/s720x720');
+        return str;
+      }
+
       if (docs.length === 0) return this();
       var _this = _.after(docs.length, this);
       _.each(docs, function (d) {
+        var update = {$set: {}};
 
-        db.Members.update({_id: d._id},
-            {$set: {username: d.username && d.username !== '' ? _.slugify(d.username): com.key()}}, _this);
+        if (d.image && d.image.cf_url && d.image.cf_url.indexOf('s720x720') !== -1) {
+          d.image.cf_url = swap(d.image.cf_url);
+          update.$set.image = d.image;
+        }
+
+        if (d.thumbs) {
+          var diff = false;
+          _.each(d.thumbs, function (t) {
+            if (t.cf_url && t.cf_url.indexOf('fbcdn.net') !== -1) {
+              t.cf_url = swap(t.cf_url);
+              diff = true;
+            }
+          });
+          if (diff)
+            update.$set.thumbs = d.thumbs;
+        }
+
+        if (_.isEmpty(update.$set)) return _this();
+        db.Members.update({_id: d._id}, update, _this);
       });
     
-    },
-
-
-    function (err) {
-      boots.error(err);
-      console.log('posts key update...');
-      db.Posts.list({}, {inflate: {
-        author: _.extend(resources.profiles.member, {instagram: 1})
-      }}, this);
-    },
-    function (err, docs) {
-      boots.error(err);
-
-      var _this = _.after(docs.length, this);
-      _.each(docs, function (d) {
-
-        if (d.okey || d.key.indexOf('/') !== -1) return _this();
-
-        var okey = d.key;
-        var key = d.title && d.title !== '' ? _.slugify(d.title): null;
-        if (!key || key.length < 8 || key === d.author.username
-            || key === d.author.instagram) key = d.key;
-        key = [d.author.username.toLowerCase(), key].join('/');
-
-        db.Posts.update({_id: d._id}, {$set: {key: key, okey: d.key}},
-            {force: {key: 1}}, _this);
-
-      });
-
-    },
-
-    
-    function (err) {
-      boots.error(err);
-      console.log('subscribing to posts...');
-      db.Posts.list({}, {inflate: {author: resources.profiles.member}}, this);      
-    },
-
-    function (err, docs) {
-      boots.error(err);
-
-      if (docs.length === 0) return this();
-      var _this = _.after(docs.length, this);
-      _.each(docs, function (d) {
-        pubsub.subscribe(d.author, d, {style: 'watch', type: 'post'}, _this);
-      });
-    },
-
-
-    function (err) {
-      boots.error(err);
-      console.log('flushing redis...');
-      client.flushall(this);
-    },
-
-
-    function (err) {
-      boots.error(err);
-      console.log('posts reds index...');
-      db.Posts.list({}, this);
-    },
-    function (err, docs) {
-      boots.error(err);
-
-      var search = reds.createSearch('posts');
-      search.client = client;
-
-      if (docs.length === 0) return this();
-      var _this = _.after(docs.length, this);
-      _.each(docs, function (d) {
-        if (d.title && d.title !== '' && d.title.match(/\w+/g))
-          search.index(d.title, d._id.toString());
-        _this();
-      });
-
-    },
-
-
-    function (err) {
-      boots.error(err);
-      console.log('members reds index...');
-      db.Members.list({}, this);
-    },
-    function (err, docs) {
-      boots.error(err);
-
-      var search = reds.createSearch('members');
-      search.client = client;
-
-      if (docs.length === 0) return this();
-      var _this = _.after(docs.length, this);
-      _.each(docs, function (d) {
-        if (d.displayName && d.displayName !== ''
-            && d.displayName.match(/\w+/g))
-          search.index(d.displayName, d._id.toString());
-        if (d.username && d.username !== '' && d.username.match(/\w+/g))
-            search.index(d.username, d._id.toString());
-        _this();
-      });
-
-    },
-
-    function (err) {
-      boots.error(err);
-      console.log('crags reds index...');
-      db.Crags.list({}, this);
-    },
-    function (err, docs) {
-      boots.error(err);
-
-      var search = reds.createSearch('crags');
-      search.client = client;
-
-      if (docs.length === 0) return this();
-      var _this = _.after(docs.length, this);
-      _.each(docs, function (d) {
-        if (d.name && d.name !== '' && d.name.match(/\w+/g))
-          search.index(d.name, d._id.toString());
-        _this();
-      });
-
     },
 
     function (err) {

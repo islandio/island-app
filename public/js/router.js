@@ -139,6 +139,7 @@ define([
     },
 
     start: function () {
+      $(window).scrollTop(0);
       this.spin.target.show();
       this.spin.start();
     },
@@ -146,6 +147,7 @@ define([
     stop: function () {
       this.spin.target.hide();
       this.spin.stop();
+      $(window).scrollTop(0);
     },
 
     profile: function (username) {

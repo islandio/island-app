@@ -55,6 +55,9 @@
   // Member since
   var created = new Date(data.created);
   var since = [created.getMonth() + 1, created.getFullYear()].join('/');
+  var details = data.role === 0 ? 'Contributor since ' + since + ' | ' + data.pcnt + ' posts':
+      'Member since ' + since;
+
 
   // Gravatar
   var gravatar = 'https://www.gravatar.com/avatar/'
@@ -86,7 +89,8 @@
       <% } %>
     </div>
   <% } %>
-  <span class="profile-details">Member since <%= since %></span>
+  <span class="profile-details"><%= details %></span>
+  <div class="clear"></div>
 </div>
 <% if (!this.parentView) { %>
   <div id="posts"></div>
