@@ -62,50 +62,30 @@
 
 %>
 
-<div class="leftside">
-  <div class="obj-title">
-    <h1 class="title-left"><%= data.displayName %></h1>
-    <h1 class="title-sub"><%= location %></h1>
-  </div>
-  <div class="obj-holder member-picture">
-    <img src=<%= gravatar %> class="profile-avatar" width="48" height="48" />
-    <img class="mask" width="640" style="top:0;"
-        src="<%= __s %>/img/cornermask-top.png" />
-    <img class="mask" width="640" style="top:280px;"
-        src="<%= __s %>/img/cornermask-btm.png" />
-    <img class="masked" src=<%= data.image.cf_url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
-  </div>
-  <div class="obj-desc">
-    <div class="obj-desc-txt-wrap profile-info">
-      <% if (desc || links) { %>
-        <div class="member-info">
-          <ul>
-            <% if (desc) { %>
-              <li>
-                <p><%= this.model.description() %></p>
-              </li>
-            <% } %>
-            <% if (links) { %>
-              <li>
-                <span>More from <%= data.displayName %> at </span>
-                <span class="member-info-content"><%= links %>.</span>
-              </li>
-            <% } %>
-          </ul>
-        </div>
+<div class="profile-title">
+  <a href="<%= data.username %>" class="profile-name"><%= data.displayName %></a>
+  <span class="profile-subname"><%= location %></span>
+</div>
+<div class="profile-picture">
+  <img src=<%= gravatar %> class="profile-avatar" width="48" height="48" />
+  <img class="mask" width="640" style="top:0;"
+      src="<%= __s %>/img/cornermask-top.png" />
+  <img class="mask" width="640" style="top:280px;"
+      src="<%= __s %>/img/cornermask-btm.png" />
+  <img class="masked" src=<%= data.image.cf_url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
+</div>
+<div class="profile-info">
+  <% if (desc || links) { %>
+    <div class="profile-description">
+      <% if (desc) { %>
+        <p><%= this.model.description() %></p>
       <% } %>
-      <h3 class="obj-details">Member since <%= since %></h3>
+      <% if (links) { %>
+        <span>More from <%= data.displayName %> at </span>
+        <span class="profile-links"><%= links %>.</span>
+      <% } %>
     </div>
-  </div>
-  <div id="posts"></div>
-  <div class="list-spin">
-    <div id="posts_spin"></div>
-    <span class="empty-feed">Showing all.</span>
-  </div>
+  <% } %>
+  <span class="profile-details">Member since <%= since %></span>
 </div>
-<div class="rightside">
-  <h1 class="title-right">/ Activity</h1>
-  <br />
-  <span class="empty-list">...will go here :)</span>
-</div>
-<div class="clear"></div>
+

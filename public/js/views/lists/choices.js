@@ -86,7 +86,7 @@ define([
     },
 
     searchFocus: function (e) {
-      this.input.width(400).attr({placeholder: 'Search posts, members, & crags.'});
+      this.input.width(354).attr({placeholder: 'Search posts, members, & crags.'});
       this.active = true;
       if (this.searchVal() && this.collection.length > 0)
       this.results.show();

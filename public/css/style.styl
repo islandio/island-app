@@ -229,10 +229,6 @@ img:focus
 img::-moz-focus-inner
   border none
 
-// address, caption, cite, code, dfn, em, strong, th, var
-//   font-style normal
-//   font-weight normal
-
 li
   list-style none
 
@@ -267,7 +263,7 @@ legend
 header, footer, section, aside, nav, article
   display block
 
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––general*/
 
 body
   background none
@@ -275,8 +271,6 @@ body
   font-family standard
   font-size 10px
   line-height 13px
-
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
 a
   color darkgray
@@ -298,9 +292,6 @@ a:focus
 a::-moz-focus-inner, button::-moz-focus-inner
   border none
 
-a.like
-  color blue
-
 a.important
   background rgba(75, 184, 215, 0.25)
 
@@ -312,11 +303,6 @@ a.important:active,
 a.important.active
   background rgba(75, 184, 215, 0.6)
 
-span.like-wrap
-  float right
-
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
-
 small
   font-size 9px
   line-height 12px
@@ -325,24 +311,60 @@ small
 small a
   color #808080
 
-h3.obj-details
-  text-transform uppercase
-  color lightgray
-  font-size 8px
-  padding 0 0 5px
+h1.title-left
+  display inline-block
+  height 30px
+  font-size 24px
   font-weight normal
-
-h3.obj-details.darker
-  color #808080
-
-span.slash
-  padding 0 5px 0 0
-  font-weight bold
-  vertical-align middle
-  font-size 42px
+  line-height normal
   color #404040
   font-family title
-  line-height 0
+  text-transform uppercase
+
+h1.title-right
+  font-size 14px
+  font-weight normal
+  line-height normal
+  color #404040
+  padding 10px 0 0 0
+  font-family title
+  text-transform uppercase
+  
+h1.title-static
+  font-size 16px
+  font-weight normal
+  line-height normal
+  color #404040
+  font-family title
+  text-transform uppercase
+
+h1.title-sub
+  display inline-block
+  font-size 9px
+  padding 0 0 0 7px
+  line-height 6px
+  color #666
+  font-weight bold
+
+span.contact-links,
+span.contact-links a
+  font-weight bold
+  font-size 16px
+
+span.contact-links a
+  color blue
+
+#filter_box
+  font-size 24px
+  padding-left 0
+
+#filter_box
+  width 419px
+
+.created
+  color lightgray
+  font-size 9px
+  display inline-block
 
 .http-error
   display block
@@ -358,19 +380,65 @@ span.slash
   color #4d4d4d
   text-align center
 
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+.clear
+  clear both
 
-img.social-icons
+.mask
   position absolute
-  cursor pointer
+  z-index 1
 
-img.centered
-  display block
+.masked
+  position absolute
+  z-index 0
+
+div.leftside
+  // float left
+  width 640px
+  // margin 0 0 40px
   margin 0 auto
-  vertical-align middle
-  
-img[alt=image]
-  border-radius 5px
+
+div.rightside
+  display none
+  margin 0 0 0 670px
+
+div.middle
+  width 480px
+  margin 60px auto 0
+  padding 0 30px 20px
+
+  border-radius 3px
+
+  -webkit-box-shadow 0 0 3px #b3b3b3
+  -moz-box-shadow 0 0 3px #b3b3b3
+  box-shadow 0 0 3px #b3b3b3
+
+span.empty-feed
+  display inline-block
+  width 100%
+  margin 10px 0
+  font-style italic
+  color gray
+  text-align center
+
+span.empty-list
+  display inline-block
+  margin 0 0 10px 0
+  font-style italic
+  color gray
+  line-height 18px
+
+.no-results
+  font-style italic
+  color gray
+
+.input-error
+  border 1px solid orange !important
+
+p.page
+  margin-top 10px
+  color #4d4d4d
+  font-size 12px
+  line-height 18px
 
 label
   color #666
@@ -380,8 +448,6 @@ label
 td
   white-space nowrap
   padding 2px 0 0 10px
-
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
 
 ::-webkit-input-placeholder
   color gray
@@ -709,170 +775,25 @@ a.buy-button:hover
   color #1a1a1a
   border 1px solid #1a1a1a
 
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––structure*/
 
-.left
-  float left
+#main
+  margin 50px 0 20px
 
-.right
-  float right
-
-.text-right
-  text-align right
-
-.clear
-  clear both
-
-.mask
-  position absolute
-  z-index 1
-
-.masked
-  position absolute
-  z-index 0
-
-.list
-  list-style-type none
-
-.list li
-  display inline
-  float left
-
-.tweet p
-  font-size 9px
-  color gray
-  line-height 12px
-  max-width 250px
-
-span.empty-feed
-  display inline-block
+#footer
   width 100%
-  margin 10px 0
-  font-style italic
-  color gray
-  text-align center
+  margin-top 30px
 
-span.empty-list
-  display inline-block
-  margin 0 0 10px 0
-  font-style italic
-  color gray
-  line-height 18px
-
-.comments span.empty-list
-  margin 10px 0 0 0
-
-p.page
-  margin-top 10px
-  color #4d4d4d
-  font-size 12px
-  line-height 18px
-
-span.privacy-indent
-  margin-left 10px
-  display block
-
-a.privacy-link
-  background none
-
-a.privacy-link:hover
-  text-decoration underline
-
-span.welcome-member
-  display block
-  font-weight bold
-  color #444
-  margin 7px 20px 0 0
-
-span.welcome-member a
-  text-decoration underline
-  background none
-
-span.welcome-member a:hover
-  text-decoration underline
-  background rgba(75, 184, 215, 0.25)
-
-span.welcome-member a:active
-  background rgba(75, 184, 215, 0.1)
-
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
-
-#twitter-names
-  display none
-  
-a.resend-conf
-  font-weight bold
-
-.signin-almost-there
-  text-align center
-  margin 0 auto 41px
-  font-weight bold
-
-.signin-message
-  font-weight bold
-  font-size 14px
-  line-height 24px
-
-.signin-controls
-  margin 20px auto 0
-  width 400px
-
-.signin-controls > p
-  text-align center
-  font-size 11px
-  color #222
-
-.signin-controls a
-  background none
-  text-decoration underline
-  color #222
-
-.signin-controls a:hover
-  text-decoration underline
-  background rgba(75, 184, 215, 0.25)
-
-.signin-controls a:active
-  background rgba(75, 184, 215, 0.1)
-
-.signin-forms
-  margin 20px 0 0
-  width 100%
-  position relative
-
-.signin-forms form
-  width 100%
-
-.signin-forms table
+#footer > div
   margin 0 auto
+  width 640px
+  padding 5px 0
 
-.signin-forms td
-  padding-top 0
+#zoom
+  top 100px
 
-.signin-error
-  display block
-  color red
-  font-size 11px
-  margin 10px 0 0 -10px
-
-.signin-spinner
-  margin 52px auto 0
-  width 86px
-  display none
-
-.signin-spinner > div
-  left 50% !important
-
-.signin-copy
-  padding 5px
-  display block
-  color black
-  font-size 9px
-  text-align left
-
-#remember_me
-  margin 0 5px 0 0
-
-/*-------------------------------------------------------------*/
+#tiles_loader
+  top 100px
 
 #wrap.animated
   -webkit-transition margin 0.3s
@@ -914,6 +835,11 @@ a.resend-conf
   margin 0 auto
   height 50px
   width 100%
+
+#uvTab
+  top 75% !important
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––header*/
 
 #header
   width 100%
@@ -1213,83 +1139,84 @@ span.count
 .block-error-txt a:active
   background orange
 
-/*-------------------------------------------------------------*/
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––privacy*/
 
-#zoom
-  top 100px
+span.privacy-indent
+  margin-left 10px
+  display block
 
-#tiles_loader
-  top 100px
+a.privacy-link
+  background none
 
-#menu
-  padding 12px 0 0 0
-  position relative
-  
-#menu.list li
-  float right
+a.privacy-link:hover
+  text-decoration underline
 
-#menu.list li::last-child
-  margin 0 20px 0 0
-
-#main
-  margin 50px 0 20px
-
-#footer
-  width 100%
-  margin-top 30px
-
-#footer > div
-  margin 0 auto
-  width 640px
-  padding 5px 0
-
-.is-highlight, .is-error
-  position fixed
-  left 20px
-  bottom 20px
-  padding 10px
-  border-radius 5px
-  color gray
-  font-weight bold
-
-.is-highlight
-  background-color mattegray
-  
-.is-error
-  background-color lightorange
-  
-.hidden
-  display none
-
-.quote
-  font-size 28px
-  font-family Title
-
-.login-prompt
-  margin-top 23px
-  font-style italic
-  color gray
-
-.no-results
-  font-style italic
-  color gray
-
-#delete-post:hover,
-#delete-profile:hover
-  color orange !important
-  border 1px solid orange !important
-
-.input-error
-  border 1px solid orange !important
-
-
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––signin*/
 
 .signin
   width 680px
   height 382px
   position relative
   overflow hidden
+
+.signin-controls
+  margin 20px auto 0
+  width 400px
+
+.signin-controls > p
+  text-align center
+  font-size 11px
+  color #222
+
+.signin-controls a
+  background none
+  text-decoration underline
+  color #222
+
+.signin-controls a:hover
+  text-decoration underline
+  background rgba(75, 184, 215, 0.25)
+
+.signin-controls a:active
+  background rgba(75, 184, 215, 0.1)
+
+.signin-forms
+  margin 20px 0 0
+  width 100%
+  position relative
+
+.signin-forms form
+  width 100%
+
+.signin-forms table
+  margin 0 auto
+
+.signin-forms td
+  padding-top 0
+
+.signin-error
+  display block
+  color red
+  font-size 11px
+  margin 10px 0 0 -10px
+
+.signin-spinner
+  margin 52px auto 0
+  width 86px
+  display none
+
+.signin-spinner > div
+  left 50% !important
+
+.signin-copy
+  padding 5px
+  display block
+  color black
+  font-size 9px
+  text-align left
+
+#remember_me
+  margin 0 5px 0 0
 
 .signin-link
   position absolute
@@ -1367,212 +1294,6 @@ span.count
   position absolute
   top 50%
   left 50%
-
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
-
-#banner
-  display none
-  margin 0 0 40px 0
-
-#banner a
-  background none
-
-#banner img
-  border-radius 5px  
-
-.trending-media-wrap
-  width 640px
-
-.trending-media
-  height 360px
-  margin 10px 0 0
-  overflow hidden
-
-.trending-media-images
-  margin 0
-
-.trending-img
-  margin 0 0 2px
-
-a.trending, a.trending:hover, a.trending:focus
-  background none
-
-h1.title-left
-  display inline-block
-  height 30px
-  font-size 24px
-  font-weight normal
-  line-height normal
-  color #404040
-  font-family title
-  text-transform uppercase
-
-h1.title-right
-  font-size 14px
-  font-weight normal
-  line-height normal
-  color #404040
-  padding 10px 0 0 0
-  font-family title
-  text-transform uppercase
-  
-h1.title-static
-  font-size 16px
-  font-weight normal
-  line-height normal
-  color #404040
-  font-family title
-  text-transform uppercase
-
-h1.title-sub
-  display inline-block
-  font-size 9px
-  padding 0 0 0 10px
-  line-height 6px
-  color #666
-  font-weight bold
-
-#filter_box
-  font-size 24px
-  padding-left 0
-
-#filter_box
-  width 419px
-
-.search-spinner
-  position absolute
-  left -25px
-  top 63px
-
-.obj-title
-  font-size 0
-
-.obj-holder
-  position relative
-  margin 4px 0 3px 0
-  border-radius 3px
-
-.hearts
-  position absolute
-  z-index 1001
-  top 10px
-  left 10px
-  cursor pointer
-
-.hearts-wrap
-  position absolute
-  top 5px
-  left 5px
-  width 130px
-
-.obj-desc
-  background #f9f9f9
-  width 640px
-  margin-bottom 30px
-
-  border-radius 3px
-
-.obj-desc.wide
-  width 984px
-
-.obj-desc.wide img,
-.obj-desc img
-  opacity 0.8
-
-.obj-desc-txt-wrap
-  padding 10px 10px 0 10px
-
-  -webkit-animation-name fadeIn
-  -moz-animation-name fadeIn
-  -o-animation-name fadeIn
-  animation-name fadeIn
-  -webkit-animation-duration .2s
-  -moz-animation-duration .2s
-  -o-animation-duration .2s
-  animation-duration .2s
-  -webkit-animation-fill-mode both
-  -moz-animation-fill-mode both
-  -o-animation-fill-mode both
-  animation-fill-mode both
-  
-.obj-desc-txt
-  padding 0 40px 5px 0
-  min-height 13px
-
-.obj-desc-txt a
-  text-decoration underline
-
-.commentor-login
-  margin 15px 0 0 0
-  font-style italic
-
-.created
-  color lightgray
-  font-size 9px
-  display inline-block
-
-a.delete-comment
-  background none
-  font-size 8px
-  color lightgray
-  float right
-  margin 0 -30px 0 0
-
-a.delete-comment:hover
-  color orange
-
-a.delete-comment:active
-  color red
-
-.member-picture
-  position relative
-  width 640px
-  height 288px
-  overflow hidden
-
-  -webkit-box-shadow 0 0 3px #b3b3b3
-  -moz-box-shadow 0 0 3px #b3b3b3
-  box-shadow 0 0 3px #b3b3b3
-
-.member-info
-  margin 0 0 5px
-  font-size 9px
-  color #666
-  padding-right 30px
-
-.member-info p
-  font-size 11px
-  line-height 18px
-  margin-bottom 20px
-
-.member-info a
-  font-weight bold
-
-.member-info-content
-  font-weight bold
-
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––structure*/
-
-div.leftside
-  // float left
-  width 640px
-  // margin 0 0 40px
-  margin 0 auto
-
-div.rightside
-  display none
-  margin 0 0 0 670px
-
-div.middle
-  width 480px
-  margin 60px auto 0
-  padding 0 30px 20px
-
-  border-radius 3px
-
-  -webkit-box-shadow 0 0 3px #b3b3b3
-  -moz-box-shadow 0 0 3px #b3b3b3
-  box-shadow 0 0 3px #b3b3b3
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––map*/
 
@@ -1677,6 +1398,92 @@ div.cartodb-zoom
 
 .cartodb-logo
   z-index auto !important
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––profiles*/
+
+#profiles
+  margin 12px 0 0 0
+
+div.profile
+  position relative
+  display none
+  margin 0 0 35px
+  width 640px
+
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration .2s
+  -moz-animation-duration .2s
+  -o-animation-duration .2s
+  animation-duration .2s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
+
+div.profile.single
+  margin 62px auto 35px
+
+.profile-title
+  margin 0 0 4px 0
+  font-size 0
+
+a.profile-name
+  font-family title
+  font-size 18px
+  text-transform uppercase
+  color #404040
+
+.profile-subname
+  font-weight bold
+  font-size 10px
+  color #4d4d4d
+  padding-left 7px
+
+.profile-info
+  width 620px
+  padding 10px 10px 5px 10px
+  background #f9f9f9
+
+  border-radius 3px
+
+.profile-picture
+  position relative
+  width 640px
+  height 288px
+  overflow hidden
+  margin 0 0 3px 0
+  border-radius 3px
+
+  -webkit-box-shadow 0 0 3px #b3b3b3
+  -moz-box-shadow 0 0 3px #b3b3b3
+  box-shadow 0 0 3px #b3b3b3
+
+.profile-description
+  margin 0 0 5px
+  font-size 10px
+  color #666
+  padding-right 20px
+
+.profile-description p
+  padding 0 0 5px 0
+  font-size 12px
+  line-height 20px
+  margin-bottom 20px
+
+.profile-description a
+  text-decoration underline
+
+.profile-links
+  font-weight bold
+
+.profile-details
+  text-transform uppercase
+  color lightgray
+  font-size 9px
+  font-weight normal
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––posts*/
 
@@ -2129,6 +1936,9 @@ table#post_params label
   border-bottom 1px solid #eee
   padding 0 0 30px 2px
 
+.comments span.empty-list
+  margin 10px 0 0 0
+
 .comment
   width 490px
   min-height 42px
@@ -2199,7 +2009,6 @@ a.comment-avatar-small:hover span
 
 a.comment-author
   display inline-block
-  // overflow hidden
   white-space nowrap
   text-overflow ellipsis
   color #666

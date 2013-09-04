@@ -10,12 +10,12 @@ define([
   'mps',
   'rpc',
   'util',
-  'models/member',
+  'models/profile',
   'text!../../templates/settings.html',
   'text!../../templates/confirm.html',
   'text!../../templates/tip.html',
   'Spin'
-], function ($, _, Backbone, Modernizr, mps, rpc, util, Member,
+], function ($, _, Backbone, Modernizr, mps, rpc, util, Profile,
       template, confirm, tip, Spin) {
 
   return Backbone.View.extend({
@@ -38,7 +38,7 @@ define([
     render: function () {
 
       // Use a model for the main content.
-      this.model = new Member(this.app.profile.content.page);
+      this.model = new Profile(this.app.profile.content.page);
 
       // Set page title
       this.app.title('Settings');

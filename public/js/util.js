@@ -311,17 +311,10 @@ define([
     },
 
     formatText: function (str) {
-      // var iFrameExp = /(<iframe.+?<\/iframe>)/ig;
-      var imgExp = /((\b(https?|ftp|file):\/\/|www\.|ftp\.)[-A-Z0-9+&@#\/%=~_|$?!:,.]*[A-Z0-9+&@#\/%=~_|$]+.(jpg|png|gif|jpeg|bmp))(?!([^<]+)?>)/ig;
-      var linkExp = /^(?!src=")(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+      var link = /(?!src=")(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
       str = str.replace(/\n/g, '<br/>');
-
-      str = str.replace(linkExp, function(txt) {
-        if (txt.match(imgExp)) {
-          return ('<img class="comment-image" src="' + txt + '" />');
-        } else {
-          return ('<a href="' + txt + '" target="_blank">' + txt + '</a>');
-        }
+      str = str.replace(link, function (txt) {
+        return ('<a href="' + txt + '" target="_blank">' + txt + '</a>');
       }); 
       return str;
     },

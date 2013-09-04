@@ -1,5 +1,5 @@
 /*
- * Member model
+ * Profile model
  */
 
 define([
@@ -8,9 +8,7 @@ define([
 ], function (Backbone, util) {
   return Backbone.Model.extend({
 
-    _path: 'api/members/',
-
-    desc: function () {
+    description: function () {
       return util.formatText(this.get('description'));
     }
 

@@ -1,0 +1,5 @@
+<% if (this.collection.models.length > 0) { %>
+  <% _.each(this.collection.models, _.bind(function(row) { %>
+    <%= this.row(row) %>
+  <% }, this)); %>
+<% } %>

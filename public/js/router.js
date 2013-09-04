@@ -13,21 +13,23 @@ define([
   'views/error',
   'views/header',
   'views/footer',
-  'views/films',
-  'views/privacy',
-  'views/about',
   'views/signin',
   'views/lists/notifications',
   'views/map',
-  'views/home',
-  'views/profile',
-  'views/settings',
+  'views/rows/profile',
   'views/rows/post',
   'views/crag',
-  'views/ascent'
-], function ($, _, Backbone, Spin, mps, rpc, util, Error, Header, Footer, Films,
-    Privacy, About, Signin, Notifications, Map, Home, Profile, Settings, Post,
-    Crag, Ascent) {
+  'views/ascent',
+  'views/settings',
+  'views/team',
+  'views/films',
+  'views/about',
+  'views/contact',
+  'views/privacy',
+  'views/home'
+], function ($, _, Backbone, Spin, mps, rpc, util, Error, Header, Footer, 
+    Signin, Notifications, Map, Profile, Post, Crag, Ascent, Settings,
+    Team, Films, About, Contact, Privacy, Home) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -50,9 +52,11 @@ define([
       this.route('crags/:y/:g', 'crag', this.crag);
       this.route('crags/:y/:g/:t/:a', 'ascent', this.ascent);
       this.route('settings', 'settings', this.settings);
-      this.route('about', 'about', this.about);
-      this.route('privacy', 'privacy', this.privacy);
+      this.route('team', 'team', this.team);
       this.route('films', 'films', this.films);
+      this.route('about', 'about', this.about);
+      this.route('contact', 'contact', this.contact);
+      this.route('privacy', 'privacy', this.privacy);
       this.route('', 'home', this.home);
 
       // Fullfill navigation request from mps.
@@ -134,57 +138,12 @@ define([
       }, this));
     },
 
-    home: function () {
-      this.spin.start();
-      this.render('/service/home.profile', _.bind(function (err) {
-        if (err) return;
-        this.page = new Home(this.app).render();
-        this.spin.stop();
-      }, this));
-    },
-
-    films: function () {
-      this.spin.start();
-      this.render('/service/films.profile', _.bind(function (err) {
-        if (err) return;
-        this.page = new Films(this.app).render();
-        this.spin.stop();
-      }, this));
-    },
-
-    privacy: function () {
-      this.spin.start();
-      this.render('/service/static.profile', _.bind(function (err) {
-        if (err) return;
-        this.page = new Privacy(this.app).render();
-        this.spin.stop();
-      }, this));
-    },
-
-    about: function () {
-      this.spin.start();
-      this.render('/service/static.profile', _.bind(function (err) {
-        if (err) return;
-        this.page = new About(this.app).render();
-        this.spin.stop();
-      }, this));
-    },
-
-    settings: function () {
-      this.spin.start();
-      this.render('/service/settings.profile', _.bind(function (err) {
-        if (err) return;
-        this.page = new Settings(this.app).render();
-        this.spin.stop();
-      }, this));
-    },
-
     profile: function (username) {
       this.spin.start();
-      this.render('/service/member.profile/' + username,
+      this.render('/service/profile.profile/' + username,
           _.bind(function (err) {
         if (err) return;
-        this.page = new Profile(this.app).render();
+        this.page = new Profile({wrap: '#main'}, this.app).render(true);
         this.spin.stop();
       }, this));
     },
@@ -215,6 +174,69 @@ define([
       this.render('/service/ascent.profile/' + key, _.bind(function (err) {
         if (err) return;
         this.page = new Ascent(this.app).render();
+        this.spin.stop();
+      }, this));
+    },
+
+    home: function () {
+      this.spin.start();
+      this.render('/service/home.profile', _.bind(function (err) {
+        if (err) return;
+        this.page = new Home(this.app).render();
+        this.spin.stop();
+      }, this));
+    },
+
+    settings: function () {
+      this.spin.start();
+      this.render('/service/settings.profile', _.bind(function (err) {
+        if (err) return;
+        this.page = new Settings(this.app).render();
+        this.spin.stop();
+      }, this));
+    },
+
+    team: function () {
+      this.spin.start();
+      this.render('/service/team.profile', _.bind(function (err) {
+        if (err) return;
+        this.page = new Team(this.app).render();
+        this.spin.stop();
+      }, this));
+    },
+
+    films: function () {
+      this.spin.start();
+      this.render('/service/films.profile', _.bind(function (err) {
+        if (err) return;
+        this.page = new Films(this.app).render();
+        this.spin.stop();
+      }, this));
+    },
+
+    about: function () {
+      this.spin.start();
+      this.render('/service/static.profile', _.bind(function (err) {
+        if (err) return;
+        this.page = new About(this.app).render();
+        this.spin.stop();
+      }, this));
+    },
+
+    contact: function () {
+      this.spin.start();
+      this.render('/service/static.profile', _.bind(function (err) {
+        if (err) return;
+        this.page = new Contact(this.app).render();
+        this.spin.stop();
+      }, this));
+    },
+
+    privacy: function () {
+      this.spin.start();
+      this.render('/service/static.profile', _.bind(function (err) {
+        if (err) return;
+        this.page = new Privacy(this.app).render();
         this.spin.stop();
       }, this));
     },

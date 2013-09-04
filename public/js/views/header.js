@@ -74,8 +74,10 @@ define([
     // Bind mouse events.
     events: {
       'click #logo': 'home',
-      'click #about': 'about',
+      'click #team': 'team',
       'click #films': 'films',
+      'click #about': 'about',
+      'click #contact': 'contact',
       'click #signin': 'signin',
       'click #header_avatar': 'avatar',
       'click #settings': 'settings',
@@ -127,11 +129,11 @@ define([
       this.app.router.navigate('/', {trigger: true});
     },
 
-    about: function (e) {
+    team: function (e) {
       e.preventDefault();
 
       // Route to about.
-      this.app.router.navigate('/about', {trigger: true});
+      this.app.router.navigate('/team', {trigger: true});
     },
 
     films: function (e) {
@@ -139,6 +141,20 @@ define([
 
       // Route to films.
       this.app.router.navigate('/films', {trigger: true});
+    },
+
+    about: function (e) {
+      e.preventDefault();
+
+      // Route to about.
+      this.app.router.navigate('/about', {trigger: true});
+    },
+
+    contact: function (e) {
+      e.preventDefault();
+
+      // Route to about.
+      this.app.router.navigate('/contact', {trigger: true});
     },
 
     signin: function (e) {
