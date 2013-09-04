@@ -9,8 +9,9 @@ define([
   'rpc',
   'views/boiler/row',
   'models/profile',
-  'text!../../../templates/rows/profile.html'
-], function ($, _, mps, rpc, Row, Model, template) {
+  'text!../../../templates/rows/profile.html',
+  'views/lists/posts'
+], function ($, _, mps, rpc, Row, Model, template, Posts) {
   return Row.extend({
 
     attributes: function () {
@@ -43,6 +44,7 @@ define([
     render: function (single, prepend) {
       Row.prototype.render.call(this, single, prepend);
 
+      // Set page title
       if (!this.parentView) {
         this.$el.addClass('single')
         var title = this.model.get('username');
@@ -56,12 +58,23 @@ define([
 
     setup: function () {
       Row.prototype.setup.call(this);
+
+      if (!this.parentView) {
+
+        // Set map view.
+        mps.publish('map/fly', [this.model.get('location') 
+            || this.model.get('hometown')]);
+
+        // Render posts.
+        this.posts = new Posts(this.app, {parentView: this, reverse: true});
+      }
     },
 
     destroy: function () {
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
+      if (this.posts) this.posts.destroy();
       Row.prototype.destroy.call(this);
     },
 

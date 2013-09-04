@@ -138,106 +138,116 @@ define([
       }, this));
     },
 
-    profile: function (username) {
+    start: function () {
+      this.spin.target.show();
       this.spin.start();
+    },
+
+    stop: function () {
+      this.spin.target.hide();
+      this.spin.stop();
+    },
+
+    profile: function (username) {
+      this.start();
       this.render('/service/profile.profile/' + username,
           _.bind(function (err) {
         if (err) return;
         this.page = new Profile({wrap: '#main'}, this.app).render(true);
-        this.spin.stop();
+        this.stop();
       }, this));
     },
 
     post: function (username, key) {
-      this.spin.start();
+      this.start();
       var key = [username, key].join('/');
       this.render('/service/post.profile/' + key, _.bind(function (err) {
         if (err) return;
         this.page = new Post({wrap: '#main'}, this.app).render(true);
-        this.spin.stop();
+        this.stop();
       }, this));
     },
 
     crag: function (country, crag) {
-      this.spin.start();
+      this.start();
       var key = [country, crag].join('/');
       this.render('/service/crag.profile/' + key, _.bind(function (err) {
         if (err) return;
         this.page = new Crag(this.app).render();
-        this.spin.stop();
+        this.stop();
       }, this));
     },
 
     ascent: function (country, crag, type, ascent) {
-      this.spin.start();
+      this.start();
       var key = [country, crag, type, ascent].join('/');
       this.render('/service/ascent.profile/' + key, _.bind(function (err) {
         if (err) return;
         this.page = new Ascent(this.app).render();
-        this.spin.stop();
+        this.stop();
       }, this));
     },
 
     home: function () {
-      this.spin.start();
+      this.start();
       this.render('/service/home.profile', _.bind(function (err) {
         if (err) return;
         this.page = new Home(this.app).render();
-        this.spin.stop();
+        this.stop();
       }, this));
     },
 
     settings: function () {
-      this.spin.start();
+      this.start();
       this.render('/service/settings.profile', _.bind(function (err) {
         if (err) return;
         this.page = new Settings(this.app).render();
-        this.spin.stop();
+        this.stop();
       }, this));
     },
 
     team: function () {
-      this.spin.start();
+      this.start();
       this.render('/service/team.profile', _.bind(function (err) {
         if (err) return;
         this.page = new Team(this.app).render();
-        this.spin.stop();
+        this.stop();
       }, this));
     },
 
     films: function () {
-      this.spin.start();
+      this.start();
       this.render('/service/films.profile', _.bind(function (err) {
         if (err) return;
         this.page = new Films(this.app).render();
-        this.spin.stop();
+        this.stop();
       }, this));
     },
 
     about: function () {
-      this.spin.start();
+      this.start();
       this.render('/service/static.profile', _.bind(function (err) {
         if (err) return;
         this.page = new About(this.app).render();
-        this.spin.stop();
+        this.stop();
       }, this));
     },
 
     contact: function () {
-      this.spin.start();
+      this.start();
       this.render('/service/static.profile', _.bind(function (err) {
         if (err) return;
         this.page = new Contact(this.app).render();
-        this.spin.stop();
+        this.stop();
       }, this));
     },
 
     privacy: function () {
-      this.spin.start();
+      this.start();
       this.render('/service/static.profile', _.bind(function (err) {
         if (err) return;
         this.page = new Privacy(this.app).render();
-        this.spin.stop();
+        this.stop();
       }, this));
     },
 

@@ -303,6 +303,15 @@ a.important:active,
 a.important.active
   background rgba(75, 184, 215, 0.6)
 
+a.contact-download
+  color pink
+  font-size 16px
+  font-weight bold
+
+a.contact-link
+  color blue
+  font-weight bold
+
 small
   font-size 9px
   line-height 12px
@@ -345,21 +354,6 @@ h1.title-sub
   line-height 6px
   color #666
   font-weight bold
-
-span.contact-links,
-span.contact-links a
-  font-weight bold
-  font-size 16px
-
-span.contact-links a
-  color blue
-
-#filter_box
-  font-size 24px
-  padding-left 0
-
-#filter_box
-  width 419px
 
 .created
   color lightgray
@@ -838,6 +832,13 @@ a.buy-button:hover
 
 #uvTab
   top 75% !important
+
+#filter_box
+  font-size 24px
+  padding-left 0
+
+#filter_box
+  width 419px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––header*/
 
@@ -1399,6 +1400,20 @@ div.cartodb-zoom
 .cartodb-logo
   z-index auto !important
 
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––spins*/
+
+.list-spin
+  width 100%
+
+.list-spin .empty-feed
+  display none
+  line-height 40px
+
+.list-spin > div
+  width 50px
+  height 40px
+  margin 0 auto
+
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––profiles*/
 
 #profiles
@@ -1407,7 +1422,6 @@ div.cartodb-zoom
 div.profile
   position relative
   display none
-  margin 0 0 35px
   width 640px
 
   -webkit-animation-name fadeIn
@@ -1426,24 +1440,23 @@ div.profile
 div.profile.single
   margin 62px auto 35px
 
-.profile-title
-  margin 0 0 4px 0
-  font-size 0
-
-a.profile-name
+div.profile div.profile-title
+  margin 0 0 10px 0
   font-family title
-  font-size 18px
+  font-size 16px
   text-transform uppercase
-  color #404040
+  color #666
 
-.profile-subname
-  font-weight bold
-  font-size 10px
-  color #4d4d4d
-  padding-left 7px
+div.profile.single div.profile-title
+  font-size 24px
+  margin 0 0 14px 0
+
+div.profile-title a
+  color pink
 
 .profile-info
   width 620px
+  margin 0 0 35px
   padding 10px 10px 5px 10px
   background #f9f9f9
 
@@ -1463,7 +1476,7 @@ a.profile-name
 
 .profile-description
   margin 0 0 5px
-  font-size 10px
+  font-size 9px
   color #666
   padding-right 20px
 
@@ -1486,18 +1499,6 @@ a.profile-name
   font-weight normal
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––posts*/
-
-.list-spin
-  width 100%
-
-.list-spin .empty-feed
-  display none
-  line-height 40px
-
-.list-spin > div
-  width 50px
-  height 40px
-  margin 0 auto
 
 #posts
   margin 12px 0 0 0
