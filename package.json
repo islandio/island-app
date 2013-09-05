@@ -33,18 +33,6 @@
     "connect-slashes": "0.0.10",
     "emailjstmp": "~0.3.4"
   },
-  "devDependencies": {
-    "grunt": "0.4.x",
-    "requirejs": "2.1.x",
-    "grunt-requirejs": "~0.3.1",
-    "wrench": "~1.4.4",
-    "cli-color": "~0.2.2",
-    "iconv": "~2.0.2",
-    "curlrequest": "~0.3.6",
-    "async": "~0.2.6",
-    "walk": "~2.2.1",
-    "knox": "~0.8.5"
-  },
   "engines": {
     "node": "~0.8.x"
   },
