@@ -2,7 +2,7 @@
 
   var member = this.app.profile.member;
   var gravatar = member ? 'https://www.gravatar.com/avatar/'
-      + member.gravatar + '?s=36&d='
+      + member.gravatar + '?s=44&d='
       + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png')
       : null;
 
@@ -12,7 +12,7 @@
   <div id="post_input" class="list-header">
     <div class="post">
       <span class="post-input-avatar">
-        <img src=<%= gravatar %> width="36" height="36" />
+        <img src=<%= gravatar %> width="44" height="44" />
       </span>
       <div class="post-input-wrap">
         <form action="/api/posts" enctype="multipart/form-data" method="POST"

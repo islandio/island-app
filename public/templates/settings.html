@@ -66,7 +66,7 @@
                     width=<%= w %> height=<%= h %> style=<%= t + l %> />
                 <div id="settings_banner_spin" style="height:100%;"></div>
                 <a id="banner_file_chooser_dummy" class="file-chooser-dummy important"
-                    href="javascript:;">Update by dragging & dropping or selecting an image.</a>
+                    href="javascript:;">Update by dragging &amp; dropping or selecting an image.</a>
                 <input id="banner_file_chooser" class="file-chooser" type="file"
                     name="banner_img" accept="image/gif, image/jpeg, image/png" />
               </div>
@@ -88,7 +88,7 @@
         <tr>
           <td colspan="2">
             <input tabindex="1" name="displayName" type="text" placeholder="How your name appears..."
-                value="<%= data.displayName %>">
+                value="<%= data.displayName %>" />
           </td>
         </tr>
         <tr>
@@ -105,7 +105,7 @@
         </tr>
         <tr>
           <td colspan="2">
-            <input tabindex="2" name="username" type="text" placeholder="(required)" value="<%= data.username %>">
+            <input tabindex="2" name="username" type="text" placeholder="(required)" value="<%= data.username %>" />
           </td>
         </tr>
         <tr>
@@ -123,7 +123,7 @@
         <tr>
           <td colspan="2">
             <input tabindex="3" name="primaryEmail" type="text" placeholder="Used for notifications..."
-                value="<%= data.primaryEmail %>">
+                value="<%= data.primaryEmail %>" />
           </td>
         </tr>
         <tr>
@@ -160,7 +160,7 @@
           <td colspan="2">
             <input tabindex="5" name="location.name" type="text"
                 placeholder="e.g. San Francisco, California"
-                value="<%= data.location ? data.location.name: '' %>">
+                value="<%= data.location ? data.location.name: '' %>" />
           </td>
         </tr>
         <tr>
@@ -179,7 +179,7 @@
           <td colspan="2">
             <input tabindex="6" name="hometown.name" type="text"
                 placeholder="e.g. Bozeman, Montana"
-                value="<%= data.hometown ? data.hometown.name: '' %>">
+                value="<%= data.hometown ? data.hometown.name: '' %>" />
           </td>
         </tr>
         <tr>
@@ -237,7 +237,7 @@
           <td colspan="2">
             <div class="settings_services_spin"></div>
             <% if (!data.facebookId) { %>
-              <a tabindex="11" class="button signin-strategy-btn facebook-btn from-settings"
+              <a tabindex="11" class="button signin-strategy-btn facebook-btn"
                   href="/connect/facebook">
                 Connect with Facebook
               </a>
@@ -249,7 +249,7 @@
             <% } %>
             <br />
             <% if (!data.twitterId) { %>
-              <a tabindex="12" class="button signin-strategy-btn twitter-btn from-settings"
+              <a tabindex="12" class="button signin-strategy-btn twitter-btn"
                   href="/connect/twitter">
                 Connect with Twitter
               </a>
@@ -261,12 +261,12 @@
             <% } %>
             <br />
             <% if (!data.instagramId) { %>
-              <a tabindex="13" class="button signin-strategy-btn instagram-btn from-settings"
+              <a tabindex="13" class="button signin-strategy-btn instagram-btn"
                   href="/connect/instagram">
                 Connect with Instagram
               </a>
             <% } else { %>
-              <a tabindex="13" class="button signin-strategy-btn instagram-btn from-settings"
+              <a tabindex="13" class="button signin-strategy-btn instagram-btn"
                   href="/connect/instagram">
                 Re-connect with Instagram
               </a>
@@ -289,7 +289,7 @@
         <tr>
           <td colspan="2">
             <a tabindex="14" id="demolish" href="javascript:;"
-                class="button signin-strategy-btn delete-btn from-settings">
+                class="button signin-strategy-btn delete-btn">
               Delete profile
             </a>
           </td>

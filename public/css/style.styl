@@ -385,6 +385,9 @@ h1.title-sub
   position absolute
   z-index 0
 
+.text-right
+  text-align right
+
 div.leftside
   // float left
   width 640px
@@ -460,7 +463,7 @@ textarea
   resize none
   font-weight normal
   -webkit-font-smoothing: antialiased;
-  padding 5px
+  padding 8px
   border 1px solid bordergray
   color #404040
   vertical-align top
@@ -479,18 +482,12 @@ input[type=password]
   font-smoothing antialiased
   width 142px
   margin 0
-  padding 5px
-  font-size 11px
+  padding 8px
+  font-size 12px
   display inline
   color darkgray
   border 1px solid bordergray
   border-radius 3px
-
-input[type=text].from-login,
-input[type=password].from-login
-  border 1px solid black
-  color #333
-  background rgba(252, 252, 251, 0.65)
 
 input[type=text],
 input[type=number],
@@ -539,22 +536,17 @@ input::-moz-focus-inner,
 textarea::-moz-focus-inner
   border none
 
-input.is-button-alert[type=submit]
-  color orange !important
-  border 1px solid orange !important
-
 a.button,
 button,
 div[role=button],
 input[type=submit]:not(.submit)
-  font-size 11px
+  font-size 12px
   padding 0 8px
   font-weight bold
   border-radius 2px
 
   min-width 48px
-  height 24px
-  line-height 24px
+  line-height 30px
   outline 0
   text-align center
   display inline-block
@@ -575,9 +567,6 @@ input[type=submit]:not(.submit)
   -webkit-transition-duration 100ms
   transition-timing-function ease-out
   transition-duration 100ms
-
-input[type=submit]
-  height 25px !important
 
 input[type=submit].from-login
   color black
@@ -712,8 +701,7 @@ button.danger
 a.signin-strategy-btn-disabled
   cursor default
   opacity 0.65
-  height 24px
-  line-height 24px
+  line-height 30px
   outline 0
   text-align center
 
@@ -753,7 +741,7 @@ button.danger:active
   background rgba(208, 76, 56, 0.8)
 
 a.signin-strategy-btn.from-login
-  border 1px solid black
+  width 266px
 
 a.buy-button
   float right
@@ -904,6 +892,9 @@ input.header-search
   width 150px
   padding-left 0
   padding-right 4px
+  padding-top 5px
+  padding-bottom 5px
+  font-size 11px
 
   -webkit-transition all 0.1s ease-in-out 0
   -moz-transition all 0.1s ease-in-out 0
@@ -996,7 +987,7 @@ ul.header-links li
   margin 0 15px 0 0
 
 ul.header-links li a
-  font-size 10px
+  font-size 11px
   font-weight bold
 
 ul.header-links li a:hover
@@ -1023,7 +1014,8 @@ a.header-avatar:hover
 
 a#signin
   float right
-  margin-top 12px
+  width 90px
+  margin-top 9px
 
 a#signin:hover
   color #1a1a1a
@@ -1070,7 +1062,9 @@ span.count
   -moz-animation-fill-mode both
   -o-animation-fill-mode both
   animation-fill-mode both
-  
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––messages*/
+
 #block_messages
   position relative
   margin 0 auto
@@ -1154,147 +1148,135 @@ a.privacy-link:hover
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––signin*/
 
+#roll
+  position absolute
+  z-index -1
+  overflow hidden
+  width 856px
+  height 481px
+  left -78px
+  top 0
+
 .signin
-  width 680px
-  height 382px
+  width 700px
+  height 481px
   position relative
   overflow hidden
 
-.signin-controls
-  margin 20px auto 0
-  width 400px
-
-.signin-controls > p
-  text-align center
-  font-size 11px
-  color #222
-
-.signin-controls a
-  background none
-  text-decoration underline
-  color #222
-
-.signin-controls a:hover
-  text-decoration underline
-  background rgba(75, 184, 215, 0.25)
-
-.signin-controls a:active
-  background rgba(75, 184, 215, 0.1)
-
-.signin-forms
-  margin 20px 0 0
-  width 100%
+.signin-outer
   position relative
-
-.signin-forms form
   width 100%
+  height 481px
+  z-index 100001
 
-.signin-forms table
+.signin-inner
+  width 640px
+  height 411px
+  margin 0 auto
+  background rgba(242,242,242,0.4)
+  padding 20px 30px 50px
+
+.signin-logo
+  width 100%
+  margin-bottom 20px
+
+.signin-logo img
+  margin 0 auto
+  display block
+
+.signin-strategies
+  margin 0 auto
+  width 568px
+
+.signin-strategies table
   margin 0 auto
 
+.signin-strategies td
+  padding 0
+  text-align center
+
+.signin-forms
+  margin 0 auto
+  width 568px
+
+.signin-forms h1.title-static
+  font-size 14px
+  margin-bottom 5px
+
+.signin-forms form
+  background rgba(255,255,255,0.6)
+  border-radius 3px
+  padding 10px
+
+  -webkit-transition background 0.2s
+  -webkit-transition-timing-function background 0.2s
+  -moz-transition background 0.2s
+  -moz-transition-timing-function background 0.2s
+  transition background 0.2s
+  transition-timing-function background 0.2s
+
+.signin-forms form.highlight
+  background #fff
+
 .signin-forms td
-  padding-top 0
+  padding 0 0 5px 0
 
-.signin-error
-  display block
+.signin-forms td input[type=text],
+.signin-forms td input[type=password]
+  width 230px
+  padding 8px
+  margin-bottom 2px
+  font-size 12px
+
+.signin-forms td input[type=submit]
+  width 248px
+  margin-top 8px
+
+span.signin-error
   color red
-  font-size 11px
-  margin 10px 0 0 -10px
+  font-size 10px
 
-.signin-spinner
-  margin 52px auto 0
-  width 86px
-  display none
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration .2s
+  -moz-animation-duration .2s
+  -o-animation-duration .2s
+  animation-duration .2s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
 
-.signin-spinner > div
-  left 50% !important
-
-.signin-copy
-  padding 5px
-  display block
-  color black
-  font-size 9px
-  text-align left
-
-#remember_me
-  margin 0 5px 0 0
+.signin-or
+  font-style italic
+  line-height 40px
+  font-weight bold
+  font-size 12px
 
 .signin-link
   position absolute
   bottom 0
   right 0
-  background rgba(255, 255, 255, 0.5)
+  background rgba(255, 255, 255, 0.6)
   color #4d4d4d
   font-weight bold
-
-.signin-logo
-  position absolute
-  z-index 10
-  top 20px
-  left 240px
-
-#roll
-  position absolute
-  z-index -1
-  overflow hidden
-  width 100%
-  height 100%
-
-.signin-action
-  position relative
-  padding 90px 0 0 0
-  width 680px
-  height 292px
-  background rgba(255,255,255,0)
-  z-index 100001
-
-.signin-action-inner
-  width 480px
-  height 103px
-  margin 0 auto
-  background rgba(242,242,242,0.7)
-  padding 50px
-  border-radius 5px
-
-.signin-strategies
-  margin 0 auto
-  width 471px
-
-.signin-strategies td
-  padding 0
-
-.signin-or
-  margin 7px 20px 0
-  font-style italic
-  color #1a1a1a
-
-.signin-quote
-  position absolute
-  left 0
-  bottom 36px
-  width 680px
-  z-index 10
-
-.signin-quote > p
-  margin 0 auto
-  font-size 16px
-  font-family title
-  text-align center
-  color #333
+  font-size 9px
 
 #signin_form
-  position relative
-  left 0
+  margin 0 0 0 300px
 
 #signup_form
-  position relative
-  left 0
-  display none
+  float left
 
 #signin_spin
   position absolute
   top 50%
   left 50%
+
+#remember_me
+  margin 0 5px 0 0
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––map*/
 
@@ -1652,9 +1634,9 @@ a.post-input-avatar
   z-index 1
   float left
   display inline-block
-  width 36px
-  height 36px
-  margin 0 8px 0 -36px
+  width 44px
+  height 44px
+  margin 0 8px 0 -44px
   background none
 
 a.post-input-avatar:hover
@@ -1721,7 +1703,7 @@ a#banner_file_chooser_dummy
 textarea.post-input,
 textarea.comment-input
   display block
-  width 612px
+  width 606px
   background #fff
   resize none
   overflow hidden
@@ -1765,7 +1747,7 @@ table#post_params label
   vertical-align -1px
 
 #post_button
-  width 80px
+  width 100px
   background blue
   color #404040
   border 1px solid #404040
@@ -1980,8 +1962,8 @@ a.comment-avatar
   z-index 1
   float left
   display inline-block
-  width 32px
-  height 32px
+  width 34px
+  height 34px
   margin 5px 8px 0 5px
   background none
 
@@ -2046,7 +2028,7 @@ img.comment-image
   margin 5px 0 0 0
 
 textarea.comment-input
-  width 427px
+  width 417px
   font-size 11px
 
 .show-older

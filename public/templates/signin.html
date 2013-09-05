@@ -1,102 +1,126 @@
 <div id="roll"></div>
-<div class="signin-logo">
-  <img src="<%= __s %>/img/signin-logo.png" />
-</div>
-<div class="signin-quote">
-  <p>Climb</p>
-</div>
-<div class="signin-action">
+<div class="signin-outer">
   <div id="signin_spin"></div>
-  <div class="signin-action-inner">
+  <div class="signin-inner">
+    <div class="signin-logo">
+      <img src="<%= __s %>/img/signin-logo.png" />
+    </div>
     <div>
       <div class="signin-strategies">
         <table>
           <tbody>
             <tr>
               <td>
-                <a class="button signin-strategy-btn facebook-btn from-login" 
-                    href="/auth/facebook">
+                <a tabindex="1" class="button signin-strategy-btn facebook-btn from-login" 
+                    href="/auth/facebook" style="margin-right: 30px;">
                   Connect with Facebook
                 </a>
               </td>
               <td>
-                <span class="signin-or">- or -</span>
-              </td>
-              <td>
-                <a class="button signin-strategy-btn twitter-btn from-login" 
+                <a tabindex="2" class="button signin-strategy-btn twitter-btn from-login" 
                     href="/auth/twitter">
                   Connect with Twitter
                 </a>
               </td>
             </tr>
+            <tr>
+              <td colspan="2">
+                <span class="signin-or">- or -</span>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
-      <div class="signin-controls">
-        <p id="signup_link">
-          <a href="javascript:;" style="font-weight:bold;">
-            Create an account &rarr;</a>
-        </p>
-        <p id="signin_link" style="display:none;">
-          <a href="javascript:;" style="font-weight:bold;">
-            &larr; Sign in if you already have an account</a>
-        </p>
-      </div>
       <div class="signin-forms">
-        <form id="signin_form" enctype="multipart/form-data" method="POST">
-          <table>
-            <tbody>
-              <tr>
-                <td style="padding-left:0;">
-                  <input class="from-login" name="username" type="text" 
-                      placeholder="username or email" />
-                </td>
-                <td>
-                  <input class="from-login" name="password" type="password" 
-                      placeholder="password" />
-                </td>
-                <td>
-                  <input id="signin" class="is-button from-login" type="submit" 
-                      value="Sign in" />
-                </td>
-              </tr>
-              <tr>
-                <td colspan="3">
-                  <span class="signin-error"></span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </form>
         <form id="signup_form" enctype="multipart/form-data" method="POST">
           <table>
             <tbody>
               <tr>
-                <td style="padding-left:0;">
-                  <input class="from-login" name="newusername" type="text" 
-                      placeholder="choose a username" />
+                <td colspan="1">
+                  <h1 class="title-static">Sign up</h1>
                 </td>
-                <td>
-                  <input class="from-login" name="newemail" type="text" 
-                      placeholder="your email (private)" />
-                </td>
-                <td>
-                  <input class="from-login" name="newpassword" type="password" 
-                      placeholder="choose a password" />
+                <td colspan="1" class="text-right">
+                  <span class="signin-error"></span>
                 </td>
               </tr>
               <tr>
                 <td colspan="2">
-                  <span class="signin-error"></span>
+                  <label for="newusername">New username</label>
                 </td>
-                <td colspan="1">
-                  <input id="signup" class="is-button from-login" type="submit" 
-                      value="Sign up" style="margin-top:10px; float:right;" />
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <input tabindex="3" name="newusername" type="text" />
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <label for="newemail">Email (private)</label>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <input tabindex="4" name="newemail" type="text" />
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <label for="newpassword">New password</label>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <input tabindex="5" name="newpassword" type="text" />
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <input tabindex="6" id="signup" type="submit" value="Sign up" />
                 </td>
               </tr>
             </tbody>
           </table>
         </form>
+        <form class="highlight" id="signin_form" enctype="multipart/form-data" method="POST">
+          <table>
+            <tbody>
+              <tr>
+                <td colspan="1">
+                  <h1 class="title-static">Log in</h1>
+                </td>
+                <td colspan="1" class="text-right">
+                  <span class="signin-error"></span>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <label for="username">Username or email</label>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <input tabindex="7" name="username" type="text" />
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <label for="password">Password</label>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <input tabindex="8" name="password" type="password" />
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <input tabindex="9" id="signin" type="submit" value="Sign in" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+        <div class="clear"></div>
       </div>
       <a href="/privacy" class="signin-link navigate">Privacy Policy</a>
     </div>

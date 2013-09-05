@@ -55,7 +55,7 @@ define([
         length: 12,
         width: 4,
         radius: 18,
-        color: '#808080'
+        color: '#4d4d4d'
       });
 
       // Embed the background video.
@@ -65,7 +65,7 @@ define([
 
       // Show the spinner when connecting.
       this.$('.signin-strategy-btn').click(_.bind(function (e) {
-        this.$('.signin-action-inner').empty();
+        this.$('.signin-inner').empty();
         this.spin.start();
       }, this));
 
@@ -88,36 +88,6 @@ define([
       // Save refs.
       this.signinForm = $('#signin_form');
       this.signupForm = $('#signup_form');
-      this.signinLink = $('#signin_link');
-      this.signupLink = $('#signup_link');
-
-      // Handle switching between forms.
-      $('a', this.signupLink).click(_.bind(function (e) {
-        this.signinForm.animate({
-          opacity: [0, 'easeOutExpo'],
-          left: ['-=300', 'linear']
-        }, 150, _.bind(function () {
-          this.signinForm.hide();
-          this.signinForm.css({opacity: 1, left: 0});
-          this.signupForm.fadeIn('fast');
-          this.focus();
-        }, this));
-        this.signupLink.hide();
-        this.signinLink.show();
-      }, this));
-      $('a', this.signinLink).click(_.bind(function (e) {
-        this.signupForm.animate({
-          opacity: [0, 'easeOutExpo'],
-          left: ['+=300', 'linear']
-        }, 150, _.bind(function () {
-          this.signupForm.hide();
-          this.signupForm.css({opacity: 1, left: 0});
-          this.signinForm.fadeIn('fast');
-          this.focus();
-        }, this));
-        this.signinLink.hide();
-        this.signupLink.show();
-      }, this));
 
       // Handle error display.
       this.$('input[type="text"], input[type="password"]').blur(function (e) {
@@ -126,15 +96,27 @@ define([
           el.removeClass('input-error');
       });
 
-      // Focus cursor.
-      this.focus();
+      // Switch highlighted region.
+      this.$('input[type="text"], input[type="password"]').focus(
+          _.bind(function (e) {
+        var form = $(e.target).closest('form');
+        if (!form.hasClass('highlight')) {
+          this.$('.signin-forms form').removeClass('highlight');
+          form.addClass('highlight');
+        }
+      }, this));
+
+      // Focus cursor initial.
+      _.delay(_.bind(function () { this.focus(); }, this), 1);
+      
 
       return this;
     },
 
     // Focus on the first empty input field.
     focus: function (e) {
-      _.find(this.$('input[type!="submit"]:visible'), function (i) {
+      _.find(this.$('form.highlight input[type!="submit"]:visible'),
+          function (i) {
         var empty = $(i).val().trim() === '';
         if (empty) $(i).focus();
         return empty;
@@ -191,7 +173,7 @@ define([
       }
 
       // All good, show spinner.
-      this.$('.signin-action-inner > div').hide();
+      this.$('.signin-inner > div').hide();
       this.spin.start();
 
       // Do the API request.
@@ -200,10 +182,10 @@ define([
 
           // Stop spinner.
           this.spin.stop();
-          this.$('.signin-action-inner > div').show();
+          this.$('.signin-inner > div').show();
 
           // Set the error display.
-          errorMsg.text(err.message + '.');
+          errorMsg.text(err.message);
 
           // Clear fields.
           $('input[type="text"], input[type="password"]',
@@ -258,7 +240,7 @@ define([
         // Set the error display.
         $('input[name="newemail"]', this.signupForm)
             .val('').addClass('input-error').focus();
-        var msg = 'That does not look like a valid email address.';
+        var msg = 'Please use a valid email address.';
         errorMsg.text(msg);
 
         return;
@@ -268,7 +250,7 @@ define([
         // Set the error display.
         $('input[name="newusername"]', this.signupForm)
             .val('').addClass('input-error').focus();
-        var msg = 'Username must be at least 4 characters.';
+        var msg = 'Username must be > 3 characters.';
         errorMsg.text(msg);
 
         return;
@@ -278,14 +260,14 @@ define([
         // Set the error display.
         $('input[name="newpassword"]', this.signupForm)
             .val('').addClass('input-error').focus();
-        var msg = 'Password must be at least 7 characters.';
+        var msg = 'Password must be > 6 characters.';
         errorMsg.text(msg);
 
         return;
       }
 
       // All good, show spinner.
-      this.$('.signin-action-inner > div').hide();
+      this.$('.signin-inner > div').hide();
       this.spin.start();
 
       // Do the API request.
@@ -294,10 +276,10 @@ define([
 
           // Stop spinner.
           this.spin.stop();
-          this.$('.signin-action-inner > div').show();
+          this.$('.signin-inner > div').show();
 
           // Set the error display.
-          errorMsg.text(err.message + '.');
+          errorMsg.text(err.message);
 
           // Clear fields.
           if (err === 'Username exists')

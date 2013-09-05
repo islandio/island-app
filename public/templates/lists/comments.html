@@ -1,7 +1,7 @@
 <%
   var member = this.app.profile.member;
   var gravatar = member ? 'https://www.gravatar.com/avatar/'
-      + member.gravatar + '?s=32&d='
+      + member.gravatar + '?s=34&d='
       + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png')
       : null;
 %>
@@ -20,7 +20,7 @@
   <% if (member) { %>
     <div class="comment">
       <span class="comment-avatar navigate">
-        <img src=<%= gravatar %> width="32" height="32" />
+        <img src=<%= gravatar %> width="34" height="34" />
       </span>
       <div class="comment-body">
         <form enctype="multipart/form-data" method="POST" class="comment-input-form">
