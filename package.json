@@ -1,7 +1,7 @@
 {
   "author": "Sander Pick <sanderpick@gmail.com> (git://github.com/sanderpick)",
   "name": "island",
-  "version": "2.0.42",
+  "version": "2.0.43",
   "cloudfront": "https://d10fiv677oa856.cloudfront.net",
   "homepage": "http://island.io",
   "repository": {
@@ -35,6 +35,7 @@
     "emailjstmp": "~0.3.4"
   },
   "devDependencies": {
+    "grunt": "0.4.x",
     "requirejs": "2.1.x",
     "wrench": "~1.4.4",
     "cli-color": "~0.2.2",
