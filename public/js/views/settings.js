@@ -6,7 +6,6 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
-  'Modernizr',
   'mps',
   'rpc',
   'util',
@@ -15,7 +14,7 @@ define([
   'text!../../templates/confirm.html',
   'text!../../templates/tip.html',
   'Spin'
-], function ($, _, Backbone, Modernizr, mps, rpc, util, Profile,
+], function ($, _, Backbone, mps, rpc, util, Profile,
       template, confirm, tip, Spin) {
 
   return Backbone.View.extend({

@@ -743,12 +743,23 @@ a.buy-button:hover {
 }
 #footer {
   width: 100%;
-  margin-top: 30px;
+  margin-top: 50px;
+  height: 30px;
 }
 #footer > div {
   margin: 0 auto;
-  width: 640px;
-  padding: 5px 0;
+  width: 984px;
+  text-align: right;
+  position: relative;
+}
+#footer small {
+  line-height: 25px;
+}
+div.footer-logo {
+  position: absolute;
+  left: -6px;
+  top: 0;
+  opacity: 0.5;
 }
 #zoom {
   top: 100px;
@@ -813,7 +824,7 @@ a.buy-button:hover {
   background: #fcfcfb;
   border-bottom: 1px solid #cdcdcd;
 }
-#header-inner {
+#header_inner {
   position: relative;
   font-size: 0;
   margin: 0 auto;
@@ -1121,6 +1132,12 @@ a.privacy-link:hover {
   text-decoration: underline;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––signin*/
+#saved {
+  display: none;
+}
+.form-iframe {
+  display: none;
+}
 #roll {
   position: absolute;
   z-index: -1;
@@ -1203,6 +1220,10 @@ a.privacy-link:hover {
   margin-bottom: 2px;
   font-size: 12px;
 }
+.signin-forms td input[type=text].saved,
+.signin-forms td input[type=password].saved {
+  background: #faffbd !important;
+}
 .signin-forms td input[type=submit] {
   width: 248px;
   margin-top: 8px;
@@ -1248,9 +1269,6 @@ span.signin-error {
   position: absolute;
   top: 50%;
   left: 50%;
-}
-#remember_me {
-  margin: 0 5px 0 0;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––map*/
 div#map {

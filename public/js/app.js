@@ -33,10 +33,18 @@ define([
   App.prototype.update = function (profile) {
 
     // Set the app profile.
-    if (this.profile)
+    if (this.profile) {
       this.profile.content = profile.content;
-    else
+      if (profile.member && !this.profile.member) {
+        this.profile.member = profile.member;
+        this.profile.notes = profile.notes;
+        this.profile.transloadit = profile.transloadit;
+        return true;
+      }
+    } else
       this.profile = profile;
+
+    return false;
   }
 
   App.prototype.title = function (str) {

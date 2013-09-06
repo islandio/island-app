@@ -6,13 +6,13 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
-  'Modernizr',
   'mps',
   'rpc',
   'util',
   'views/lists/flashes',
   'views/lists/choices',
-], function ($, _, Backbone, Modernizr, mps, rpc, util, Flashes, Choices) {
+  'text!../../templates/box.html',
+], function ($, _, Backbone, mps, rpc, util, Flashes, Choices, box) {
   return Backbone.View.extend({
 
     el: '#header',
@@ -26,7 +26,7 @@ define([
       this.subscriptions = [];
     },
 
-    render: function () {
+    render: function (login) {
 
       // Kill listeners / subscriptions.
       _.each(this.subscriptions, function (s) {
@@ -34,6 +34,21 @@ define([
       });
       this.undelegateEvents();
       this.stopListening();
+
+      if (login && this.app.profile.member) {
+        this.$('#signin').remove();
+
+        // UnderscoreJS rendering.
+        $(_.template(box).call(this)).appendTo(this.$('#header_inner'));
+
+        // Open notes if user wants that.
+        if (store.get('notesOpen')) {
+          var p = document.getElementById('panel');
+          var w = document.getElementById('wrap');
+          p.className = p.className + ' open';
+          w.className = w.className + ' panel-open';
+        }
+      }
 
       // Done rendering ... trigger setup.
       this.setup();
@@ -109,10 +124,14 @@ define([
 
     logout: function () {
 
+      _.each(this.subscriptions, function (s) {
+        mps.unsubscribe(s);
+      });
+
       // Swap member header content.
       this.$('div.member-box').remove();
       $('<a id="signin" class="button">Sign in</a>')
-          .appendTo(this.$('#header-inner'));
+          .appendTo(this.$('#header_inner'));
       
       // Close the panel.
       this.wrap.removeClass('panel-open');

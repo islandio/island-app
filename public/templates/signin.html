@@ -5,7 +5,7 @@
     <div class="signin-logo">
       <img src="<%= __s %>/img/signin-logo.png" width="200" height="50" />
     </div>
-    <div>
+    <div class="signin-inner-inner">
       <div class="signin-strategies">
         <table>
           <tbody>
@@ -32,8 +32,8 @@
         </table>
       </div>
       <div class="signin-forms">
-        <iframe src="/blank" id="form_target" name="form_target" style="display:none;"></iframe>
-        <form id="signup_form" enctype="multipart/form-data" target="form_target" method="POST" action="/">
+        <iframe src="/_blank" id="signup_target" name="signup_target" class="form-iframe"></iframe>
+        <form id="signup_form" enctype="multipart/form-data" target="signup_target" method="POST" action="_blank">
           <table>
             <tbody>
               <tr>
@@ -76,13 +76,14 @@
               </tr>
               <tr>
                 <td colspan="2">
-                  <input tabindex="6" id="signup" type="submit" value="Sign up" />
+                  <input tabindex="6" id="signup" type="submit" value="Create your account" />
                 </td>
               </tr>
             </tbody>
           </table>
         </form>
-        <form class="highlight" id="signin_form" enctype="multipart/form-data" target="form_target" method="POST" action="/">
+        <iframe src="/_blank" id="signin_target" name="signin_target" class="form-iframe"></iframe>
+        <form class="highlight" id="signin_form" enctype="multipart/form-data" target="signin_target" method="POST" action="_blank">
           <table>
             <tbody>
               <tr>

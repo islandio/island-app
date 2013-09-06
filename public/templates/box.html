@@ -1,0 +1,26 @@
+<%
+  var profile = this.app.profile.member;
+  var gravatar = 'https://www.gravatar.com/avatar/'
+      + profile.gravatar + '?s=50&d='
+      + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
+%>
+
+<div class="member-box">
+  <div class="divider-vertical"></div>
+  <a href="/<%= profile.username %>" id="header_avatar" class="header-avatar">
+    <img src="<%= gravatar %>" width="50" height="50" />
+  </a>
+  <a href="/settings" id="settings" class="header-action">
+    <i class="icon-params"></i>
+  </a>
+  <div class="divider-vertical"></div>
+  <a href="javascript:;" id="globe" class="header-action">
+    <i class="icon-globe"></i>
+    <span class="count"></span>
+  </a>
+  <div class="divider-vertical"></div>
+  <a href="/logout" id="logout" class="header-action">
+    <i class="icon-logout"></i>
+  </a>
+  <div class="divider-vertical"></div>
+</div>

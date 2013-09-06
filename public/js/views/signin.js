@@ -6,13 +6,12 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
-  'Modernizr',
   'mps',
   'rpc',
   'util',
   'text!../../templates/signin.html',
   'Spin'
-], function ($, _, Backbone, Modernizr, mps, rpc, util, template, Spin) {
+], function ($, _, Backbone, mps, rpc, util, template, Spin) {
 
   return Backbone.View.extend({
 
@@ -44,10 +43,6 @@ define([
         padding: 0
       });
 
-      // Add placeholder shim if need to.
-      if (!Modernizr.input.placeholder)
-        this.$('input').placeholder();
-
       // Init the load indicator.
       this.spin = new Spin(this.$('#signin_spin'), {
         lines: 17,
@@ -64,7 +59,7 @@ define([
 
       // Show the spinner when connecting.
       this.$('.signin-strategy-btn').click(_.bind(function (e) {
-        this.$('.signin-inner').empty();
+        this.signinInner.fadeOut('fast');
         this.spin.start();
       }, this));
 
@@ -76,7 +71,7 @@ define([
 
     // Bind mouse events.
     events: {
-      'click #signin': 'signin',
+      // 'click #signin': 'signin',
       'click #signup': 'signup',
       'click a.navigate': 'navigate',
     },
@@ -85,14 +80,37 @@ define([
     setup: function () {
 
       // Save refs.
-      this.signinForm = $('#signin_form');
-      this.signupForm = $('#signup_form');
+      this.signinTarget = this.$('#signin_target');
+      this.signupTarget = this.$('#signup_target');
+      this.signinForm = this.$('#signin_form');
+      this.signupForm = this.$('#signup_form');
+      this.signinInner = this.$('.signin-inner-inner');
+
+      // Let the forms submit to the frame, and use the
+      // on load event to take action.
+      this.signinTarget.on('load', _.bind(function (e) {
+        if (this.signinTarget.framed) this.signin();
+        else this.signinTarget.framed = true;
+      }, this));
+      this.signupTarget.on('load', _.bind(function (e) {
+        if (this.signupTarget.framed) this.signup();
+        else this.signupTarget.framed = true;
+      }, this));
 
       // Handle error display.
       this.$('input[type="text"], input[type="password"]').blur(function (e) {
         var el = $(e.target);
         if (el.hasClass('input-error'))
           el.removeClass('input-error');
+      });
+
+      // Handle saved.
+      this.$('input[type="text"], input[type="password"]').bind('keyup', function (e) {
+        var el = $(e.target);
+        if (el.hasClass('saved') && el.val() !== el.data('saved'))
+          el.removeClass('saved');
+        else if (el.val() === el.data('saved'))
+          el.addClass('saved');
       });
 
       // Switch highlighted region.
@@ -111,6 +129,15 @@ define([
       }).bind('keyup', function (e) {
         $(this).val(_.str.slugify($(this).val()).substr(0, 30));
       });
+
+      var _username = $('#saved input[name="username"]').val();
+      var _password = $('#saved input[name="password"]').val();
+      if (_username !== '')
+        this.$('input[name="username"]').val(_username)
+            .data('saved', _username).addClass('saved');
+      if (_password !== '')
+        this.$('input[name="password"]').val(_password)
+            .data('saved', _password).addClass('saved');
 
       // Focus cursor initial.
       _.delay(_.bind(function () { this.focus(); }, this), 1);
@@ -145,9 +172,7 @@ define([
       this.empty();
     },
 
-    signin: function (e) {
-      e.preventDefault();
-      e.stopPropagation();
+    signin: function () {
 
       // Sanitize.
       this.$('input[type!="submit"]:visible').each(function (i) {
@@ -175,11 +200,11 @@ define([
         var msg = 'All fields are required.';
         errorMsg.text(msg);
 
-        return;
+        return false;
       }
 
       // All good, show spinner.
-      this.$('.signin-inner > div').hide();
+      this.signinInner.fadeOut('fast');
       this.spin.start();
 
       // Do the API request.
@@ -188,7 +213,7 @@ define([
 
           // Stop spinner.
           this.spin.stop();
-          this.$('.signin-inner > div').show();
+          this.signinInner.fadeIn('fast');
 
           // Set the error display.
           errorMsg.text(err.message);
@@ -197,21 +222,20 @@ define([
           $('input[type="text"], input[type="password"]',
               this.signinForm).val('').addClass('input-error');
           this.focus();
-          
+
           return;
         }
 
-        // Submit the form so the browser can save the password.
-        this.signinForm.submit();
-        window.location.reload(true);
+        // Reload the current page.
+        this.refresh();
+        $.fancybox.close();
 
       }, this));
 
       return false;
     },
 
-    signup: function (e) {
-      e.preventDefault();
+    signup: function () {
 
       // Sanitize.
       this.$('input[type!="submit"]:visible').each(function (i) {
@@ -240,7 +264,7 @@ define([
         var msg = 'All fields are required.';
         errorMsg.text(msg);
 
-        return;
+        return false;
       }
       if (!util.isEmail(payload.newemail)) {
 
@@ -250,7 +274,7 @@ define([
         var msg = 'Please use a valid email address.';
         errorMsg.text(msg);
 
-        return;
+        return false;
       }
       if (payload.newusername.length < 4) {
 
@@ -260,7 +284,7 @@ define([
         var msg = 'Username must be > 3 characters.';
         errorMsg.text(msg);
 
-        return;
+        return false;
       }
       if (payload.newpassword.length < 7) {
 
@@ -270,11 +294,11 @@ define([
         var msg = 'Password must be > 6 characters.';
         errorMsg.text(msg);
 
-        return;
+        return false;
       }
 
       // All good, show spinner.
-      this.$('.signin-inner > div').hide();
+      this.signinInner.fadeOut('fast');
       this.spin.start();
 
       // Do the API request.
@@ -283,7 +307,7 @@ define([
 
           // Stop spinner.
           this.spin.stop();
-          this.$('.signin-inner > div').show();
+          this.signinInner.fadeIn('fast');
 
           // Set the error display.
           errorMsg.text(err.message);
@@ -301,13 +325,25 @@ define([
           return;
         }
 
-        // Submit the form so the browser can save the password.
+        // Put username and password into the signin form.
+        this.$('input[name="username"]').val(payload.newusername);
+        this.$('input[name="password"]').val(payload.newpassword);
+        this.signinTarget.off('load');
         this.signinForm.submit();
-        window.location.reload(true);
+
+        // Reload the current page.
+        this.refresh();
+        $.fancybox.close();
 
       }, this));
 
       return false;
+    },
+
+    refresh: function () {
+      var frag = Backbone.history.fragment;
+      Backbone.history.fragment = null;
+      this.app.router.navigate('/' + frag, {trigger: true});
     },
 
     navigate: function (e) {

@@ -12,14 +12,14 @@
   <div id="post_input" class="list-header">
     <div class="post">
       <span class="post-input-avatar">
-        <img src=<%= gravatar %> width="44" height="44" />
+        <img src="<%= gravatar %>" width="44" height="44" />
       </span>
       <div class="post-input-wrap">
         <form action="/api/posts" enctype="multipart/form-data" method="POST"
             id="post_input_form">
           <div id="post_dnd">
             <textarea name="body" class="post-input" tabindex="2" 
-                placeholder="Post something here..."></textarea>
+                placeholder="What's on your mind?"></textarea>
             <div id="post_select">
               Attach a video or photos by
               <% if (Modernizr.draganddrop) { %>

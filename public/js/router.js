@@ -46,7 +46,7 @@ define([
               + window.location.search);
         } catch (err) {}
 
-      // Page routes:
+      // Page routes.
       this.route(':un', 'profile', this.profile);
       this.route(':un/:k', 'post', this.post);
       this.route('crags/:y/:g', 'crag', this.crag);
@@ -58,6 +58,7 @@ define([
       this.route('contact', 'contact', this.contact);
       this.route('privacy', 'privacy', this.privacy);
       this.route('', 'home', this.home);
+      this.route('_blank', 'blank', function(){});
 
       // Fullfill navigation request from mps.
       mps.subscribe('navigate', _.bind(function (path) {
@@ -91,14 +92,12 @@ define([
 
     render: function (service, cb) {
 
-      function _render(err) {
+      function _render(err, login) {
 
         // Render page elements.
         if (!this.header)
           this.header = new Header(this.app).render();
-        else this.header.render();
-        if (!this.footer)
-          this.footer = new Footer(this.app).render();
+        else if (login) this.header.render(true);
         if (!this.map)
           this.map = new Map(this.app).render();
         if (!this.notifications && this.app.profile && this.app.profile.member)
@@ -132,8 +131,8 @@ define([
         }
 
         // Set the profile.
-        this.app.update(pro);
-        _render.call(this);
+        var login = this.app.update(pro);
+        _render.call(this, null, login);
 
       }, this));
     },

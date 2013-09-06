@@ -126,6 +126,18 @@ define([
       List.prototype.setup.call(this);
     },
 
+    // Kill this view.
+    destroy: function () {
+      _.each(this.subscriptions, function (s) {
+        mps.unsubscribe(s);
+      });
+      _.each(this.views, function (v) {
+        v.destroy();
+      });
+      this.undelegateEvents();
+      this.stopListening();
+    },
+
     // update the panel's height
     resize: function () {
       this.$el.parent().height($(window).height());
