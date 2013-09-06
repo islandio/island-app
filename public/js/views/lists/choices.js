@@ -53,11 +53,6 @@ define([
       if (!Modernizr.input.placeholder)
         this.input.placeholder();
 
-      // Firefox fix.
-      if (navigator.userAgent.indexOf('Firefox') !== -1
-        || navigator.userAgent.indexOf('MSIE') !== -1)
-        this.input.css({'padding-left': '5px'});
-
       // Handle searching.
       this.input.bind('keyup', _.bind(this.search, this));
       this.input.bind('keydown', _.bind(this.searchBlur, this));
@@ -86,7 +81,7 @@ define([
     },
 
     searchFocus: function (e) {
-      this.input.width(354).attr({placeholder: 'Search posts, members, & crags.'});
+      this.input.width(338).attr({placeholder: 'Search posts, members, & crags.'});
       this.active = true;
       if (this.searchVal() && this.collection.length > 0)
       this.results.show();

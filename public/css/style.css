@@ -812,11 +812,9 @@ div.footer-logo {
   top: 75% !important;
 }
 #filter_box {
-  font-size: 24px;
-  padding-left: 0;
-}
-#filter_box {
-  width: 419px;
+  font-size: 19px;
+  width: 401px;
+  visibility: hidden;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––header*/
 #header {
@@ -876,10 +874,7 @@ div#header_search {
 }
 input.header-search {
   width: 150px;
-  padding-left: 0;
-  padding-right: 4px;
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding: 5px;
   font-size: 11px;
   -webkit-transition: all 0.1s ease-in-out 0;
   -moz-transition: all 0.1s ease-in-out 0;

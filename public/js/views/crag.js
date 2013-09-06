@@ -94,12 +94,8 @@ define([
         this.routesFilter.addClass('disabled');
 
       // Handle filtering.
+      this.filterBox.width(401).css('visibility', 'visible');
       this.filterBox.bind('keyup search', _.bind(this.filter, this));
-
-      // Firefox fix.
-      if (navigator.userAgent.indexOf('Firefox') !== -1
-        || navigator.userAgent.indexOf('MSIE') !== -1)
-        this.filterBox.css({'padding-left': '5px'});
 
       // Add placeholder shim if need to.
       if (!Modernizr.input.placeholder)
