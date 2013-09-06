@@ -3,7 +3,7 @@
   <div id="signin_spin"></div>
   <div class="signin-inner">
     <div class="signin-logo">
-      <img src="<%= __s %>/img/signin-logo.png" />
+      <img src="<%= __s %>/img/signin-logo.png" width="200" height="50" />
     </div>
     <div>
       <div class="signin-strategies">
@@ -32,7 +32,8 @@
         </table>
       </div>
       <div class="signin-forms">
-        <form id="signup_form" enctype="multipart/form-data" method="POST">
+        <iframe src="/blank" id="form_target" name="form_target" style="display:none;"></iframe>
+        <form id="signup_form" enctype="multipart/form-data" target="form_target" method="POST" action="/">
           <table>
             <tbody>
               <tr>
@@ -55,7 +56,7 @@
               </tr>
               <tr>
                 <td colspan="2">
-                  <label for="newemail">Email (private)</label>
+                  <label for="newemail">Email address (private)</label>
                 </td>
               </tr>
               <tr>
@@ -70,7 +71,7 @@
               </tr>
               <tr>
                 <td colspan="2">
-                  <input tabindex="5" name="newpassword" type="text" />
+                  <input tabindex="5" name="newpassword" type="password" />
                 </td>
               </tr>
               <tr>
@@ -81,7 +82,7 @@
             </tbody>
           </table>
         </form>
-        <form class="highlight" id="signin_form" enctype="multipart/form-data" method="POST">
+        <form class="highlight" id="signin_form" enctype="multipart/form-data" target="form_target" method="POST" action="/">
           <table>
             <tbody>
               <tr>

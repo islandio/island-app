@@ -547,6 +547,7 @@ input[type=submit]:not(.submit)
 
   min-width 48px
   line-height 30px
+  min-height 30px
   outline 0
   text-align center
   display inline-block
@@ -613,11 +614,12 @@ input[type=submit].from-login:active
   border 1px solid black
 
 button.action-button
-  font-size 14px
-  height auto
+  font-size 12px
   padding 0 20px
   font-weight normal
   line-height 30px
+  min-height 30px
+  margin-left 7px
 
 button.action-button.danger
   border 1px solid #1a1a1a
@@ -1153,25 +1155,26 @@ a.privacy-link:hover
   z-index -1
   overflow hidden
   width 856px
-  height 481px
+  height 482px
   left -78px
   top 0
+  background #4d4d4d
 
 .signin
   width 700px
-  height 481px
+  height 482px
   position relative
   overflow hidden
 
 .signin-outer
   position relative
   width 100%
-  height 481px
+  height 482px
   z-index 100001
 
 .signin-inner
   width 640px
-  height 411px
+  height 412px
   margin 0 auto
   background rgba(242,242,242,0.4)
   padding 20px 30px 50px
@@ -1343,6 +1346,7 @@ div#map_control a.button
   line-height 21px
   border-radius 0 0 3px 3px
   border-top none
+  min-height inherit
 
 div#map_control a.split-left
   left -72px
@@ -2201,6 +2205,7 @@ span.setting-error
   color #339900
   font-size 11px
   font-weight bold
+  margin-right 10px
 
   -webkit-animation-name fadeIn
   -moz-animation-name fadeIn
@@ -2287,6 +2292,7 @@ span.setting-error
   text-align right
   background #fafafa
   border-radius 0 0 3px 3px
+  font-size 0
   
   -webkit-box-shadow inset 0 1px 0 white
   -moz-box-shadow inset 0 1px 0 white

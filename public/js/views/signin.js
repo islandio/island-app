@@ -11,8 +11,7 @@ define([
   'rpc',
   'util',
   'text!../../templates/signin.html',
-  'Spin',
-  'swfobject'
+  'Spin'
 ], function ($, _, Backbone, Modernizr, mps, rpc, util, template, Spin) {
 
   return Backbone.View.extend({
@@ -60,8 +59,8 @@ define([
 
       // Embed the background video.
       swfobject.embedSWF(
-          __s + '/swf/roll.swf', 'roll', '100%', '100%', 10,
-          '', {}, {menu: 'false', wmode: 'opaque'}, {});
+          __s + '/swf/roll.swf', 'roll', '856', '482', '10',
+          false, {}, {menu: 'false', wmode: 'opaque'});
 
       // Show the spinner when connecting.
       this.$('.signin-strategy-btn').click(_.bind(function (e) {
@@ -106,9 +105,15 @@ define([
         }
       }, this));
 
+      // Handle username.
+      this.$('input[name="newusername"]').bind('keydown', function (e) {
+        if (e.which === 32) return false;
+      }).bind('keyup', function (e) {
+        $(this).val(_.str.slugify($(this).val()).substr(0, 30));
+      });
+
       // Focus cursor initial.
       _.delay(_.bind(function () { this.focus(); }, this), 1);
-      
 
       return this;
     },
@@ -142,6 +147,7 @@ define([
 
     signin: function (e) {
       e.preventDefault();
+      e.stopPropagation();
 
       // Sanitize.
       this.$('input[type!="submit"]:visible').each(function (i) {
@@ -195,7 +201,8 @@ define([
           return;
         }
 
-        // TODO: Use the router.
+        // Submit the form so the browser can save the password.
+        this.signinForm.submit();
         window.location.reload(true);
 
       }, this));
@@ -294,7 +301,8 @@ define([
           return;
         }
 
-        // TODO: Use the router.
+        // Submit the form so the browser can save the password.
+        this.signinForm.submit();
         window.location.reload(true);
 
       }, this));

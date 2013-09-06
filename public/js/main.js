@@ -16,9 +16,7 @@ require.config({
     mps: 'lib/minpubsub/minpubsub',
     Pusher: 'lib/pusher/pusher',
     Spin: 'lib/spin/spin',
-    swfobject: 'lib/swfobject/swfobject.min',
-    plugins: 'lib/jquery/plugins',
-    // cartodb: 'lib/cartodb/cartodb'
+    plugins: 'lib/jquery/plugins'
   },
 
   // Dependency mapping:
@@ -46,15 +44,9 @@ require.config({
     Spin: {
       exports: 'Spin'
     },
-    swfobject: {
-      exports: 'swfobject'
-    },
     plugins: {
       deps: ['jQuery']
-    },
-    // cartodb: {
-    //   exports: 'cartodb'
-    // },
+    }
   }
 });
 

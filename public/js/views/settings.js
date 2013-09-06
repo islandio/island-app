@@ -131,6 +131,13 @@ define([
         this.instagram();
       }
 
+      // Handle username.
+      this.$('input[name="username"]').bind('keydown', function (e) {
+        if (e.which === 32) return false;
+      }).bind('keyup', function (e) {
+        $(this).val(_.str.slugify($(this).val()).substr(0, 30));
+      });
+
       return this;
     },
 
@@ -160,6 +167,7 @@ define([
       var errorMsg = $('span.setting-error', label.parent().parent()).hide();
       var val = util.sanitize(field.val());
 
+      // Handle checkbox.
       if (field.attr('type') === 'checkbox')
         val = field.is(':checked');
 
@@ -167,6 +175,12 @@ define([
       if (val === field.data('saved')) return false;
       var payload = {};
       payload[name] = val;
+
+      // Check for email.
+      if (payload.primaryEmail && !util.isEmail(payload.primaryEmail)) {
+        errorMsg.text('Please use a valid email address.').show();
+        return;
+      }
 
       // Now do the save.
       rpc.put('/api/members/' + this.app.profile.member.username, payload,

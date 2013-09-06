@@ -21,11 +21,11 @@ html(lang="en")
   body
     block content
     - if (process.env.NODE_ENV === 'production')
-      script(type="text/javascript", charset="utf-8", src="#{root}/js/store.min.js")
+      script(type="text/javascript", src="#{root}/js/store.min.js")
     - else
-      script(type="text/javascript", charset="utf-8", src="/js/lib/store/store.min.js")
+      script(type="text/javascript", src="/js/lib/store/store.min.js")
     - if (typeof member !== 'undefined')
-      script
+      script(type="text/javascript")
         if (window.store) {
           var notesOpen = store.get('notesOpen');
           if (notesOpen) {
@@ -35,7 +35,7 @@ html(lang="en")
             w.className = w.className + ' panel-open';
           }
         }
-    script
+    script(type="text/javascript")
       if (window.store) {
         var mapClosed = store.get('mapClosed');
         var m = document.getElementById('map');
@@ -48,13 +48,14 @@ html(lang="en")
           lm.style.display = 'none';
         }
       }
-    script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false")
-    script(src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js")
-    script(src="http://jwpsrv.com/library/1lrC0MMbEeKOnyIACqoQEQ.js")
+    script(type="text/javascript", src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js")
+    script(type="text/javascript", src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false")
+    script(type="text/javascript", src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js")
+    script(type="text/javascript", src="http://jwpsrv.com/library/1lrC0MMbEeKOnyIACqoQEQ.js")
     - if (process.env.NODE_ENV === 'production')
-      script(charset="utf-8", src="#{root}/js/min.js")
+      script(type="text/javascript", src="#{root}/js/min.js")
     - else
-      script(type="text/javascript", charset="utf-8", data-main="/js/main", src="/js/lib/require/require.js")
+      script(type="text/javascript", data-main="/js/main", src="/js/lib/require/require.js")
     script(type="text/javascript")
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-23247079-1']);
@@ -65,9 +66,9 @@ html(lang="en")
         ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
-    script
+    script(type="text/javascript")
       (function(){var uv=document.createElement('script');uv.type='text/javascript';uv.async=true;uv.src='//widget.uservoice.com/ivy4Fujcvyv0TzMb3Ps62w.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(uv,s)})()
-    script
+    script(type="text/javascript")
       UserVoice = window.UserVoice || [];
       UserVoice.push(['showTab', 'classic_widget', {
         mode: 'full',
