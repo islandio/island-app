@@ -7,7 +7,7 @@
   var location = data.location && data.location.name ? data.location.name: null;
   if (!location && data.hometown && data.hometown.name)
     location = data.hometown.name;
-  if (location) location = ' | ' + location;
+  if (location) location = location + ' / ';
 
   // Check image
   if (!data.image) {
@@ -66,8 +66,8 @@
 
 %>
 
-<div class="profile-title">
-  <a href="<%= data.username %>" class="navigate"><%= data.displayName %></a><%= location %>
+<div class="page-title">
+  <%= location %><a href="<%= data.username %>" class="navigate"><%= data.displayName %></a>
 </div>
 <div class="profile-picture">
   <img src="<%= gravatar %>" class="profile-avatar" width="48" height="48" />

@@ -9,8 +9,6 @@ define([
 ], function (_, Backbone, util) {
   return Backbone.Model.extend({
 
-    _path: 'api/notifications/',
-
     body: function () {
       var att = this.attributes;
       var owner;

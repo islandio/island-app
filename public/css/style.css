@@ -407,10 +407,12 @@ span.empty-list {
   border: 1px solid #d04c38 !important;
 }
 p.page {
-  margin-top: 10px;
+  margin: 10px 0 50px 0;
   color: #4d4d4d;
   font-size: 12px;
   line-height: 18px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid #eee;
 }
 label {
   color: #666;
@@ -1224,7 +1226,7 @@ a.privacy-link:hover {
   margin-top: 8px;
 }
 span.signin-error {
-  color: #f00;
+  color: #d04c38;
   font-size: 10px;
   -webkit-animation-name: fadeIn;
   -moz-animation-name: fadeIn;
@@ -1386,6 +1388,19 @@ div.cartodb-zoom {
   height: 40px;
   margin: 0 auto;
 }
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––page titles*/
+div.page-title {
+  margin: 0 0 5px 0;
+  font-family: Title, Verdana, Arial, sans-serif;
+  font-size: 18px;
+  text-transform: uppercase;
+  color: #666;
+  line-height: normal;
+}
+div.single > div.page-title,
+div.leftside > div.page-title {
+  font-size: 24px;
+}
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––profiles*/
 #profiles {
   margin: 12px 0 0 0;
@@ -1410,19 +1425,8 @@ div.profile {
 div.profile.single {
   margin: 62px auto 35px;
 }
-div.profile div.profile-title {
-  margin: 0 0 10px 0;
-  font-family: Title, Verdana, Arial, sans-serif;
-  font-size: 16px;
-  text-transform: uppercase;
-  color: #666;
-}
-div.profile.single div.profile-title {
-  font-size: 24px;
-  margin: 0 0 14px 0;
-}
-div.profile-title a {
-  color: #d12b83;
+div.profile div.page-title a {
+  color: #e76533;
 }
 .profile-info {
   width: 620px;
@@ -1497,17 +1501,10 @@ div.post.single {
   margin-top: 62px;
   width: 984px;
 }
-div.post-title {
-  margin: 0 0 10px 0;
-  font-family: Title, Verdana, Arial, sans-serif;
-  font-size: 16px;
-  text-transform: uppercase;
-  color: #666;
-}
-div.post-title span.post-title-photos {
+div.page-title span.post-title-photos {
   color: #4bb8d7;
 }
-div.post-title span.post-title-video {
+div.page-title span.post-title-video {
   color: #d04c38;
 }
 div.post div.post-mosaic {
@@ -1539,7 +1536,7 @@ a.post-avatar {
 a.post-avatar img,
 img.profile-avatar {
   position: absolute;
-  top: 23px;
+  top: 27px;
   left: 0;
   z-index: 1;
   width: 48px;
@@ -1550,6 +1547,9 @@ img.profile-avatar {
   -webkit-box-shadow: 2px 2px 2px rgba(0,0,0,0.1);
   -moz-box-shadow: 2px 2px 2px rgba(0,0,0,0.1);
   box-shadow: 2px 2px 2px rgba(0,0,0,0.1);
+}
+div.single > a.post-avatar img {
+  top: 35px;
 }
 img.profile-avatar {
   top: 0;
@@ -2161,7 +2161,7 @@ span.setting-error {
   animation-fill-mode: both;
 }
 span.setting-error {
-  color: #f00;
+  color: #d04c38;
 }
 .settings-gravatar img {
   display: inline;
@@ -2279,6 +2279,16 @@ span.no-media {
   margin: 20px 0;
   font-style: italic;
 }
+div.crag.single,
+div.ascent.single {
+  margin: 62px auto 35px;
+}
+div.crag div.page-title span {
+  color: #b1dc36;
+}
+div.ascent div.page-title span {
+  color: #d12b83;
+}
 div.ascent-filter {
   margin-top: 3px;
 }
@@ -2316,20 +2326,26 @@ ul.ascents a li {
   padding: 8px 7px 7px;
 }
 ul.ascents a li:hover {
-  background: #fdfdfd !important;
+  background: #e6e6e6 !important;
 }
 ul.ascents a li:hover span {
   text-decoration: underline;
 }
-ul.ascents a:first-child li {
-  -webkit-border-radius: 5px 5px 0 0;
-  -moz-border-radius: 5px 5px 0 0;
-  border-radius: 5px 5px 0 0;
+ul.ascents *:nth-child(2) li {
+  -webkit-border-top-left-radius: 3px;
+  -webkit-border-top-right-radius: 3px;
+  -moz-border-top-left-radius: 3px;
+  -moz-border-top-right-radius: 3px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
 }
 ul.ascents a:last-child li {
-  -webkit-border-radius: 0 0 5px 5px;
-  -moz-border-radius: 0 0 5px 5px;
-  border-radius: 0 0 5px 5px;
+  -webkit-border-bottom-right-radius: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  -moz-border-bottom-right-radius: 3px;
+  -moz-border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
 }
 span.ascent-grade {
   display: inline-block;

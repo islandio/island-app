@@ -2,12 +2,13 @@
 
 // colors
 green = #b1dc36
-orange = #d04c38
+red = #d04c38
 blue = #4bb8d7
 pink = #d12b83
+orange = #e76533
 
 lightgreen = #eff8d7
-lightorange = #f6dbd7
+lightred = #f6dbd7
 lightblue = #59dbff
 
 black = #1a1a1a
@@ -429,13 +430,15 @@ span.empty-list
   color gray
 
 .input-error
-  border 1px solid orange !important
+  border 1px solid red !important
 
 p.page
-  margin-top 10px
+  margin 10px 0 50px 0
   color #4d4d4d
   font-size 12px
   line-height 18px
+  padding-bottom 30px
+  border-bottom 1px solid #eee
 
 label
   color #666
@@ -1130,7 +1133,7 @@ span.count
   line-height 30px
 
 .block-error-txt
-  color orange
+  color red
 
 .block-error-txt a
   color white
@@ -1140,7 +1143,7 @@ span.count
   background rgba(208, 76, 56, 0.6)
 
 .block-error-txt a:active
-  background orange
+  background red
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––privacy*/
 
@@ -1413,6 +1416,20 @@ div.cartodb-zoom
   height 40px
   margin 0 auto
 
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––page titles*/
+
+div.page-title
+  margin 0 0 5px 0
+  font-family title
+  font-size 18px
+  text-transform uppercase
+  color #666
+  line-height normal
+
+div.single > div.page-title,
+div.leftside > div.page-title
+  font-size 24px
+
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––profiles*/
 
 #profiles
@@ -1439,19 +1456,8 @@ div.profile
 div.profile.single
   margin 62px auto 35px
 
-div.profile div.profile-title
-  margin 0 0 10px 0
-  font-family title
-  font-size 16px
-  text-transform uppercase
-  color #666
-
-div.profile.single div.profile-title
-  font-size 24px
-  margin 0 0 14px 0
-
-div.profile-title a
-  color pink
+div.profile div.page-title a
+  color orange
 
 .profile-info
   width 620px
@@ -1526,18 +1532,11 @@ div.post.single
   margin-top 62px
   width 984px
 
-div.post-title
-  margin 0 0 10px 0
-  font-family title
-  font-size 16px
-  text-transform uppercase
-  color #666
-
-div.post-title span.post-title-photos
+div.page-title span.post-title-photos
   color blue
 
-div.post-title span.post-title-video
-  color orange
+div.page-title span.post-title-video
+  color red
 
 div.post div.post-mosaic
   position relative
@@ -1568,7 +1567,7 @@ a.post-avatar
 a.post-avatar img,
 img.profile-avatar
   position absolute
-  top 23px
+  top 27px
   left 0
   z-index 1
   width 48px
@@ -1578,6 +1577,9 @@ img.profile-avatar
   -webkit-box-shadow 2px 2px 2px rgba(0,0,0,0.1)
   -moz-box-shadow 2px 2px 2px rgba(0,0,0,0.1)
   box-shadow 2px 2px 2px rgba(0,0,0,0.1)
+
+div.single > a.post-avatar img
+  top 35px
 
 img.profile-avatar
   top 0
@@ -2348,6 +2350,16 @@ span.no-media
   margin 20px 0
   font-style italic
 
+div.crag.single,
+div.ascent.single
+  margin 62px auto 35px
+
+div.crag div.page-title span
+  color green
+
+div.ascent div.page-title span
+  color pink
+
 div.ascent-filter
   margin-top 3px
 
@@ -2385,16 +2397,26 @@ ul.ascents a li
   padding 8px 7px 7px
 
 ul.ascents a li:hover
-  background #fdfdfd !important
+  background #e6e6e6 !important
 
 ul.ascents a li:hover span
   text-decoration underline
 
-ul.ascents a:first-child li
-  border-radius 5px 5px 0 0
+ul.ascents *:nth-child(2) li
+  -webkit-border-top-left-radius 3px;
+  -webkit-border-top-right-radius 3px;
+  -moz-border-top-left-radius 3px;
+  -moz-border-top-right-radius 3px;
+  border-top-left-radius 3px;
+  border-top-right-radius 3px;
 
 ul.ascents a:last-child li
-  border-radius 0 0 5px 5px
+  -webkit-border-bottom-right-radius: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  -moz-border-bottom-right-radius: 3px;
+  -moz-border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
 
 span.ascent-grade
   display inline-block

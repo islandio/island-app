@@ -9,8 +9,6 @@ define([
 ], function (_, Backbone, util) {
   return Backbone.Model.extend({
 
-    _path: 'api/posts/',
-
     date: function () {
       var date = new Date(this.get('created'));
       return date.format('mmm d');
