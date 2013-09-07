@@ -1,5 +1,5 @@
 /*
- * Login view
+ * Signin view
  */
 
 define([
@@ -71,8 +71,7 @@ define([
 
     // Bind mouse events.
     events: {
-      // 'click #signin': 'signin',
-      'click #signup': 'signup',
+      'click #forgot': 'forgot',
       'click a.navigate': 'navigate',
     },
 
@@ -344,6 +343,13 @@ define([
       var frag = Backbone.history.fragment;
       Backbone.history.fragment = null;
       this.app.router.navigate('/' + frag, {trigger: true});
+    },
+
+    forgot: function (e) {
+      e.preventDefault();
+
+      // Render the modal view.
+      mps.publish('member/forgot/open');
     },
 
     navigate: function (e) {

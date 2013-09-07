@@ -54,6 +54,7 @@ define([
 
     // Bind mouse events.
     events: {
+      'click a.navigate': 'navigate',
       'click #demolish': 'demolish'
     },
 
@@ -155,6 +156,15 @@ define([
       this.undelegateEvents();
       this.stopListening();
       this.empty();
+    },
+
+    navigate: function (e) {
+      e.preventDefault();
+
+      // Route to wherever.
+      var path = $(e.target).closest('a').attr('href');
+      if (path)
+        this.app.router.navigate(path, {trigger: true});
     },
 
     // Save the field.
@@ -380,7 +390,7 @@ define([
 
       // Render the confirm modal.
       $.fancybox(_.template(confirm)({
-        message: 'Your account will be removed, forever. This cannot be undone.',
+        message: 'Do you want to permanently delete your profile?',
         working: 'Working...'
       }), {
         openEffect: 'fade',
@@ -390,7 +400,7 @@ define([
       });
       
       // Refs.
-      var overlay = $('.confirm-overlay');
+      var overlay = $('.modal-overlay');
 
       // Setup actions.
       $('#confirm_cancel').click(function (e) {
@@ -425,7 +435,7 @@ define([
             $.fancybox.close();
           }, this), 2000);
 
-        }, this));        
+        }, this));
       }, this));
 
       return false;

@@ -209,7 +209,7 @@
         <tr><td colspan="2">&nbsp;</td></tr>
         <tr>
           <td colspan="2">
-            <h1 class="title-static">/ Notification Settings</h1>
+            <h1 class="title-static">Notification Settings</h1>
           </td>
         </tr>
         <tr>
@@ -230,7 +230,7 @@
         <tr><td colspan="2">&nbsp;</td></tr>
         <tr>
           <td colspan="2">
-            <h1 class="title-static">/ Services</h1>
+            <h1 class="title-static">Services</h1>
           </td>
         </tr>
         <tr>
@@ -280,10 +280,25 @@
             <% } %>
           </td>
         </tr>
+        <% if (data.provider === 'local') { %>
+          <tr><td colspan="2">&nbsp;</td></tr>
+          <tr>
+            <td colspan="2">
+              <h1 class="title-static">Security</h1>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <a tabindex="14" href="/reset" class="button signin-strategy-btn navigate">
+                Change your password
+              </a>
+            </td>
+          </tr>
+        <% } %>
         <tr><td colspan="2">&nbsp;</td></tr>
         <tr>
           <td colspan="2">
-            <h1 class="title-static">/ Danger Zone</h1>
+            <h1 class="title-static">Danger Zone</h1>
           </td>
         </tr>
         <tr>

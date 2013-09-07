@@ -14,6 +14,7 @@ define([
   'views/header',
   'views/footer',
   'views/signin',
+  'views/forgot',
   'views/lists/notifications',
   'views/map',
   'views/rows/profile',
@@ -21,6 +22,7 @@ define([
   'views/crag',
   'views/ascent',
   'views/settings',
+  'views/reset',
   'views/team',
   'views/films',
   'views/about',
@@ -28,8 +30,8 @@ define([
   'views/privacy',
   'views/home'
 ], function ($, _, Backbone, Spin, mps, rpc, util, Error, Header, Footer, 
-    Signin, Notifications, Map, Profile, Post, Crag, Ascent, Settings,
-    Team, Films, About, Contact, Privacy, Home) {
+    Signin, Forgot, Notifications, Map, Profile, Post, Crag, Ascent, Settings,
+    Reset, Team, Films, About, Contact, Privacy, Home) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -51,6 +53,7 @@ define([
       this.route(':un/:k', 'post', this.post);
       this.route('crags/:y/:g', 'crag', this.crag);
       this.route('crags/:y/:g/:t/:a', 'ascent', this.ascent);
+      this.route('reset', 'reset', this.reset);
       this.route('settings', 'settings', this.settings);
       this.route('team', 'team', this.team);
       this.route('films', 'films', this.films);
@@ -72,7 +75,12 @@ define([
 
       // Show the signin modal.
       mps.subscribe('member/signin/open', _.bind(function () {
-        this.signin = new Signin(this.app).render();
+        this.modal = new Signin(this.app).render();
+      }, this));
+
+      // Show the forgot modal.
+      mps.subscribe('member/forgot/open', _.bind(function () {
+        this.modal = new Forgot(this.app).render();
       }, this));
 
       // Init page spinner.
@@ -90,7 +98,11 @@ define([
       '*actions': 'default'
     },
 
-    render: function (service, cb) {
+    render: function (service, secure, cb) {
+      if (typeof secure === 'function') {
+        cb = secure;
+        secure = false;
+      }
 
       function _render(err, login) {
 
@@ -129,6 +141,8 @@ define([
           this.spin.stop();
           return;
         }
+        if (secure && !pro.member)
+          return this.navigate('/', true);
 
         // Set the profile.
         var login = this.app.update(pro);
@@ -200,9 +214,18 @@ define([
 
     settings: function () {
       this.start();
-      this.render('/service/settings.profile', _.bind(function (err) {
+      this.render('/service/settings.profile', true, _.bind(function (err) {
         if (err) return;
         this.page = new Settings(this.app).render();
+        this.stop();
+      }, this));
+    },
+
+    reset: function () {
+      this.start();
+      this.render('/service/static.profile', _.bind(function (err) {
+        if (err) return;
+        this.page = new Reset(this.app).render();
         this.stop();
       }, this));
     },
@@ -252,7 +275,7 @@ define([
       }, this));
     },
 
-    default: function (actions) {
+    default: function () {
       this.render(_.bind(function (err) {
         if (err) return;
         this.page = new Error(this.app).render({

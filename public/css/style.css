@@ -589,15 +589,12 @@ input[type=submit].from-login:active {
   color: #1a1a1a;
   border: 1px solid #1a1a1a;
 }
-button.action-button {
-  font-size: 12px;
+button.modal-button,
+input[type=submit].modal-button {
   padding: 0 20px;
-  font-weight: normal;
-  line-height: 30px;
-  min-height: 30px;
   margin-left: 7px;
 }
-button.action-button.danger {
+button.modal-button.danger {
   border: 1px solid #1a1a1a;
   color: #fff;
 }
@@ -658,6 +655,7 @@ a.signin-strategy-btn-disabled {
   font-weight: bold;
   padding: 0 0;
   display: block;
+  background: rgba(51,51,51,0.65);
   color: #fcfcfc;
   border: 1px solid #1a1a1a !important;
   -webkit-border-radius: 2px;
@@ -688,6 +686,7 @@ a.signin-strategy-btn-disabled {
   text-align: center;
 }
 a.signin-strategy-btn:hover {
+  background: rgba(51,51,51,0.75);
   color: #fff !important;
 }
 a.facebook-btn:hover {
@@ -708,6 +707,9 @@ a.instagram-btn:hover {
 a.delete-btn:hover,
 button.danger:hover {
   background: #d04c38;
+}
+a.signin-strategy-btn:active {
+  background: rgba(51,51,51,0.55);
 }
 a.facebook-btn:active {
   background: rgba(59,89,152,0.55);
@@ -1228,6 +1230,7 @@ a.privacy-link:hover {
 span.signin-error {
   color: #d04c38;
   font-size: 10px;
+  vertical-align: -1px;
   -webkit-animation-name: fadeIn;
   -moz-animation-name: fadeIn;
   -o-animation-name: fadeIn;
@@ -1240,6 +1243,12 @@ span.signin-error {
   -moz-animation-fill-mode: both;
   -o-animation-fill-mode: both;
   animation-fill-mode: both;
+}
+#password_reset span.signin-error {
+  vertical-align: -16px;
+}
+#password_reset input[type=submit] {
+  width: 100%;
 }
 .signin-or {
   font-style: italic;
@@ -1266,6 +1275,11 @@ span.signin-error {
   position: absolute;
   top: 50%;
   left: 50%;
+}
+#forgot {
+  margin-top: 10px;
+  display: block;
+  text-align: center;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––map*/
 div#map {
@@ -2061,7 +2075,7 @@ span.post-info-item {
   font-size: 9px;
   color: #b3b3b3;
 }
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––settings*/
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––settings & reset*/
 #settings_form table {
   margin: 0 0 0 -10px;
 }
@@ -2083,7 +2097,8 @@ span.post-info-item {
 #settings_form td {
   padding: 0 0 5px 10px;
 }
-#settings_form td input[type=text] {
+#settings_form td input[type=text],
+#settings_form td input[type=password] {
   width: 462px;
   padding: 8px;
   margin-bottom: 10px;
@@ -2174,7 +2189,7 @@ span.setting-error {
   font-weight: bold;
   margin-left: 2px;
 }
-.confirm {
+.modal {
   position: relative;
   background: #fff;
   width: 500px;
@@ -2182,26 +2197,7 @@ span.setting-error {
   -moz-border-radius: 3px;
   border-radius: 3px;
 }
-.tip {
-  position: relative;
-  background: #fff;
-  width: 500px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-}
-.confirm-body,
-.tip-body {
-  padding: 30px;
-}
-.confirm-body > p,
-.tip-body > p {
-  font-size: 12px;
-  line-height: 18px;
-  color: #4d4d4d;
-}
-.confirm-title,
-.tip-title {
+.modal-title {
   display: block;
   background: #f2f2f2;
   padding: 20px 0;
@@ -2222,13 +2218,26 @@ span.setting-error {
   background-image: -ms-linear-gradient(bottom, #f2f2f2 100%, #e6e6e6 0%);
   background-image: -webkit-gradient(linear, left bottom, left top, color-stop(1, #f2f2f2), color-stop(0, #e6e6e6));
 }
-.tip-title > img {
+.modal-title > img {
   vertical-align: -5px;
 }
-.confirm-actions,
-.tip-actions {
+.modal-body {
+  padding: 30px;
+}
+.modal-body > p {
+  font-size: 12px;
+  line-height: 18px;
+  color: #4d4d4d;
+}
+.modal-body td {
+  padding: 0 0 5px 0;
+}
+.modal-body input {
+  width: 420px !important;
+}
+.modal-actions {
   border-top: 1px solid #ddd;
-  padding: 15px 18px;
+  padding: 15px 30px;
   text-align: right;
   background: #fafafa;
   -webkit-border-radius: 0 0 3px 3px;
@@ -2239,11 +2248,16 @@ span.setting-error {
   -moz-box-shadow: inset 0 1px 0 #fff;
   box-shadow: inset 0 1px 0 #fff;
 }
-.tip-actions button.action-button {
-  width: 100%;
+.modal-actions span {
+  font-size: 10px;
+  float: left;
+  margin: 20px 0 0 0;
 }
-.confirm-overlay,
-.tip-overlay {
+button.modal-button.full {
+  width: 100%;
+  margin: 0;
+}
+.modal-overlay {
   display: none;
   position: absolute;
   top: 0;
@@ -2256,13 +2270,15 @@ span.setting-error {
   -moz-border-radius: 3px;
   border-radius: 3px;
 }
-.confirm-overlay > p,
-.tip-overlay > p {
+.modal-overlay > p {
   text-align: center;
   padding: 15px 20px;
   margin-top: 15%;
   font-weight: bold;
   font-size: 16px;
+}
+div.forgot .modal-overlay > p {
+  margin-top: 19%;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crags*/
 div.map {

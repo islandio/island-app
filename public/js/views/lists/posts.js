@@ -108,8 +108,17 @@ define([
       // Autogrow the write comment box.
       this.postBody.autogrow();
 
-      // Show the write comment box.
-      this.$('#post_input .post').show();
+      // Show the write post box if it exists and
+      // if the user is not using IE.
+      if (navigator.userAgent.indexOf('MSIE') !== -1) {
+        this.$('#post_input .post').remove();
+        mps.publish('flash/new', [{
+          message: 'Island does not support Internet Explorer for posting content. Please use Safari, Chrome, or Firefox.',
+          level: 'error',
+          sticky: true
+        }, true]);
+      } else
+        this.$('#post_input .post').show();
 
       // Add placeholder shim if need to.
       if (!Modernizr.input.placeholder)

@@ -1,0 +1,33 @@
+<div class="modal">
+  <div class="modal-overlay">
+    <p>Working...</p>
+  </div>
+  <span class="modal-title">Find Your Account</span>
+  <form enctype="multipart/form-data" method="POST">
+    <div class="modal-body">
+      <table>
+        <tbody>
+          <tr>
+            <td colspan="1">
+              <label for="email">Please enter your email address</label>
+            </td>
+            <td colspan="1" class="text-right">
+              <span class="signin-error"></span>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <input tabindex="1" name="email" type="text" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-actions">
+      <input tabindex="2" id="forgot_send" class="modal-button" type="submit" value="Find" />
+      <button tabindex="3" id="forgot_cancel" class="modal-button">Cancel</button>
+      <span><a href="mailto:support@island.io">I need more help</a></span>
+      <div class="clear"></div>
+    </div>
+  </form>
+</div>

@@ -312,8 +312,8 @@ define([
 
       // Render the confirm modal.
       $.fancybox(_.template(confirm)({
-        message: 'Are you sure you want to delete this post?',
-        working: '...working...'
+        message: 'Do you want to delete this post?',
+        working: 'Working...'
       }), {
         openEffect: 'fade',
         closeEffect: 'fade',
@@ -322,7 +322,7 @@ define([
       });
       
       // Refs.
-      var overlay = $('.confirm-overlay');
+      var overlay = $('.modal-overlay');
 
       // Setup actions.
       $('#confirm_cancel').click(function (e) {
