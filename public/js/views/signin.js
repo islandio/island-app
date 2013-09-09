@@ -104,13 +104,12 @@ define([
       });
 
       // Handle saved.
-      this.$('input[type="text"], input[type="password"]').bind('keyup', function (e) {
+      this.$('input[type="text"], input[type="password"]').bind('keyup',
+          _.bind(function (e) {
         var el = $(e.target);
-        if (el.hasClass('saved') && el.val() !== el.data('saved'))
-          el.removeClass('saved');
-        else if (el.val() === el.data('saved'))
-          el.addClass('saved');
-      });
+        if (el.hasClass('saved'))
+          this.$('.saved').removeClass('saved');
+      }, this));
 
       // Switch highlighted region.
       this.$('input[type="text"], input[type="password"]').focus(
@@ -312,10 +311,13 @@ define([
           errorMsg.text(err.message);
 
           // Clear fields.
-          if (err === 'Username exists')
+          if (err.message === 'Username exists')
             $('input[name="newusername"]', this.signupForm)
                 .val('').addClass('input-error').focus();
-          else {
+          else if (err.message === 'Email address exists') {
+            $('input[name="newemail"]', this.signupForm)
+                .val('').addClass('input-error').focus();
+          } else {
             $('input[type="text"], input[type="password"]',
                 this.signupForm).val('').addClass('input-error');
             this.focus();
