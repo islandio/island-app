@@ -24,7 +24,9 @@ define([
           var err;
           try {
             err = JSON.parse(res.responseText);
+            var data = err.data;
             err = {message: err.error, code: res.status};
+            if (data) err.data = data;
           } catch (e) { err = res.status + ' - "' + res.statusText + '"'; }
           cb(err);
         },

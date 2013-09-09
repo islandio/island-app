@@ -132,7 +132,12 @@ define([
           this.overlay.hide();
           if (err.code === 404)
             errorMsg.text('Sorry, we could not find your account.');
-          else errorMsg.text(err.message);
+          else if (err.message === 'No password') {
+            var provider = _.str.capitalize(err.data.provider);
+            errorMsg.html('Oops, this account was created via ' + provider
+                + '. <a href="/auth/' + err.data.provider
+                + '">Reconnect with ' + provider + '</a>.');
+          } else errorMsg.text(err.message);
 
           // Clear fields.
           this.input.val('').addClass('input-error').focus();
