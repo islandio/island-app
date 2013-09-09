@@ -248,8 +248,7 @@ Step(
 
       Step(
         function () {
-          var ei = process.env.NODE_ENV === 'production' || argv.index;
-          new Connection(app.get('MONGO_URI'), {ensureIndexes: false}, this);
+          new Connection(app.get('MONGO_URI'), {ensureIndexes: argv.index}, this);
         },
         function (err, connection) {
           if (err) {

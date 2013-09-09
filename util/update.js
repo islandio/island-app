@@ -36,39 +36,60 @@ boots.start({index: argv.index}, function (client) {
 
   Step(
 
-    function () {
-      console.log('members update...');
-      db.Members.list({}, this);
-    },
-    function (err, docs) {
-      boots.error(err);
+    // function () {
+    //   console.log('members update...');
+    //   db.Members.list({}, this);
+    // },
+    // function (err, docs) {
+    //   boots.error(err);
 
-      if (docs.length === 0) return this();
-      var _this = _.after(docs.length, this);
-      _.each(docs, function (d) {
+    //   function isEmail(str) {
+    //     var str = str.toLowerCase();
+    //     return (/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/).test(str);
+    //   }
 
-        db.Members._update({_id: d._id}, {$set: {username: d.username.toLowerCase()}}, _this);
+    //   if (docs.length === 0) return this();
+    //   var _this = _.after(docs.length, this);
+    //   _.each(docs, function (d) {
 
-      });
+    //     if (d.primaryEmail === null || (d.primaryEmail && !isEmail(d.primaryEmail)))
+    //       db.Members._update({_id: d._id}, {$unset: {primaryEmail: 1}}, _this);
+    //     else _this();
+
+    //   });
     
-    },
+    // },
 
-    function () {
-      console.log('posts update...');
-      db.Posts.list({}, this);
-    },
-    function (err, docs) {
-      boots.error(err);
+    // function () {
+    //   console.log('members update...');
+    //   var m = function () {
+    //     emit(this.primaryEmail, 1);
+    //   }
+    //   var r = function (k, vals) {
+    //     return Array.sum(vals);
+    //   }
+    //   db.Members.mapReduce(m, r, {
+    //     query: {primaryEmail: {$exists: 1}},
+    //     out: {inline: 1}
+    //   }, this);
+    // },
+    // function (err, res) {
+    //   boots.error(err);
 
-      if (docs.length === 0) return this();
-      var _this = _.after(docs.length, this);
-      _.each(docs, function (d) {
+    //   if (res.length === 0) return this();
+    //   var _this = _.after(res.length, this);
+    //   _.each(res, function (r) {
+    //     if (r.value < 2) return _this();
 
-        db.Posts._update({_id: d._id}, {$set: {key: d.key.toLowerCase()}}, _this);
+    //     db.Members.list({primaryEmail: r._id}, {limit: 1, sort: {created: -1}},
+    //         function (err, d) {
+    //       boots.error(err);
+    //       if (!d || !d[0]) return _this();
+    //       db.Members._update({_id: d[0]._id}, {$unset: {primaryEmail: 1}}, _this);
+    //     });
 
-      });
-    
-    },
+    //   });
+    // },
 
     // function (err) {
     //   boots.error(err);
