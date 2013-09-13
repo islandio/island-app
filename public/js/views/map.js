@@ -116,7 +116,7 @@ define([
       // Setup the map.
       this.sql = new cartodb.SQL({user: 'island'});
       cartodb.createVis('map_inner',
-          'http://island.cartodb.com/api/v1/viz/crags/viz.json', opts,
+          'https://island.cartodb.com/api/v1/viz/crags/viz.json', opts,
           _.bind(function (vis, layers) {
         this.vis = vis;
         this.vis.mapView.map_leaflet.options.maxZoom = 17;
