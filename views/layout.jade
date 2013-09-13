@@ -9,9 +9,9 @@ html(lang="en")
     meta(name="keywords", content="Climb, Climbing, Rock Climbing")
     meta(name="author", content="Island LLC")
     meta(charset="UTF-8")
-    <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-    link(rel="stylesheet", href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.css")
-    <!--[if lte IE 8]><link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.ie.css"><![endif]-->
+    <!--[if lt IE 9]><script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    link(rel="stylesheet", href="https://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.css")
+    <!--[if lte IE 8]><link rel="stylesheet" href="https://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.ie.css"><![endif]-->
     link(rel="stylesheet", href="#{root}/css/fancybox.css")
     link(rel="stylesheet", href="#{root}/css/fontello.css")
     link(rel="stylesheet", href="#{root}/css/animation.css")
@@ -48,10 +48,10 @@ html(lang="en")
           lm.style.display = 'none';
         }
       }
-    script(type="text/javascript", src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js")
+    script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js")
     script(type="text/javascript", src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false")
-    script(type="text/javascript", src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js")
-    script(type="text/javascript", src="http://jwpsrv.com/library/1lrC0MMbEeKOnyIACqoQEQ.js")
+    script(type="text/javascript", src="https://libs.cartocdn.com/cartodb.js/v2/cartodb.js")
+    script(type="text/javascript", src="https://ssl.jwpsrv.com/library/1lrC0MMbEeKOnyIACqoQEQ.js")
     - if (process.env.NODE_ENV === 'production')
       script(type="text/javascript", src="#{root}/js/min.js")
     - else

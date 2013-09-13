@@ -48,6 +48,8 @@ define([
 
       function insert(item) {
         var src = item.data.cf_url || item.data.url;
+        if (src.indexOf('http://') !== -1 && src.indexOf('https://') === -1)
+          src = 'https://' + src.substr(src.indexOf('http://') + 7);
         var anc = $('<a class="fancybox" rel="g-' + this.model.id + '" href="'
             + src + '">');
         var div = $('<div class="post-mosaic-wrap">').css(item.div).appendTo(anc);
