@@ -7,13 +7,14 @@ define([
   'Underscore',
   'mps',
   'rpc',
+  'util',
   'views/boiler/row',
   'models/post',
   'text!../../../templates/rows/post.html',
   'text!../../../templates/video.html',
   'views/lists/comments',
   'text!../../../templates/confirm.html'
-], function ($, _, mps, rpc, Row, Model, template, video, Comments, confirm) {
+], function ($, _, mps, rpc, util, Row, Model, template, video, Comments, confirm) {
   return Row.extend({
 
     attributes: function () {
@@ -47,9 +48,7 @@ define([
     render: function (single, prepend) {
 
       function insert(item) {
-        var src = item.data.cf_url || item.data.url;
-        if (src.indexOf('http://') !== -1 && src.indexOf('https://') === -1)
-          src = 'https://' + src.substr(src.indexOf('http://') + 7);
+        var src = util.https(item.data.cf_url || item.data.url);
         var anc = $('<a class="fancybox" rel="g-' + this.model.id + '" href="'
             + src + '">');
         var div = $('<div class="post-mosaic-wrap">').css(item.div).appendTo(anc);

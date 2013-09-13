@@ -434,6 +434,12 @@ define([
       if (!html) return '';
       html = html.replace(/"/ig, '');
       return $('<p>').html(html).text().trim();
+    },
+
+    https: function (str) {
+      if (str.indexOf('http://') !== -1 && str.indexOf('https://') === -1)
+        str = 'https://' + str.substr(str.indexOf('http://') + 7);
+      return str;
     }
 
   }

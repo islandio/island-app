@@ -9,9 +9,10 @@ define([
   'Modernizr',
   'mps',
   'rpc',
+  'util',
   'text!../../templates/popup.html',
   'Spin'
-], function ($, _, Backbone, Modernizr, mps, rpc, popup, Spin) {
+], function ($, _, Backbone, Modernizr, mps, rpc, util, popup, Spin) {
   return Backbone.View.extend({
 
     el: '#map',
@@ -218,7 +219,9 @@ define([
         if (remove) this.removeMarkers();
         _.each(data.rows, _.bind(function (r) {
           if (!this.markers[r.cartodb_id]) {
-            var img = '<img src="'+ r.turi + '" width="36" height="36" />';
+            r.uri = util.https(r.uri);
+            r.turi = util.https(r.turi);
+            var img = '<img src="' + r.turi + '" width="36" height="36" />';
             var marker = L.marker([r.y, r.x], _.extend({
               icon: L.divIcon({
                 html: img,
