@@ -236,6 +236,13 @@ Step(
       app.use(app.router);
       app.use(express.errorHandler());
 
+      // Force HTTPS
+      app.all('*', function (req, res, next) {
+        if ((req.headers['x-forwarded-proto'] || '').toLowerCase() === 'https')
+          return next();
+        res.redirect('https://' + req.headers.host + req.url);
+      });
+
       // PubSub init
       app.set('pubsub', new PubSub({
         appId: '35474',
@@ -270,6 +277,8 @@ Step(
         function (err) {
           if (err) return console.error(err);
 
+          
+
           // Init service.
           service.routes(app);
 
@@ -277,6 +286,8 @@ Step(
           app.use(function (req, res) {
             res.render('base', {member: req.user, root: app.get('ROOT_URI')});
           });
+
+          
 
           // Start server.
           http.createServer(app).listen(app.get('PORT'));
