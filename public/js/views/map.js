@@ -127,7 +127,6 @@ define([
 
         // Handle infowindows.
         layers[1].infowindow.set('template', _.template(popup).call(this));
-
         layers[1].on('featureClick', _.bind(function (e, pos, latlng, data) {
           _.delay(_.bind(function () {
             $('a.popup-link').click(_.bind(function (e) {
