@@ -20,10 +20,13 @@ html(lang="en")
     link(rel="shortcut icon", href="#{root}/img/favicon.ico", type="image/x-icon")
   body
     block content
+    script(type="text/javascript", src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false")
     - if (process.env.NODE_ENV === 'production')
       script(type="text/javascript", src="#{root}/js/store.min.js")
+        script(type="text/javascript", src="#{root}/js/cartodb.uncompressed.js")
     - else
       script(type="text/javascript", src="/js/lib/store/store.min.js")
+      script(type="text/javascript", src="/js/lib/cartodb/cartodb.uncompressed.js")
     - if (typeof member !== 'undefined')
       script(type="text/javascript")
         if (window.store) {
@@ -49,8 +52,6 @@ html(lang="en")
         }
       }
     script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js")
-    script(type="text/javascript", src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false")
-    script(type="text/javascript", src="https://d3voyrscnb0slx.cloudfront.net/cartodb.js/v2/cartodb.js")
     script(type="text/javascript", src="https://ssl.jwpsrv.com/library/1lrC0MMbEeKOnyIACqoQEQ.js")
     - if (process.env.NODE_ENV === 'production')
       script(type="text/javascript", src="#{root}/js/min.js")
