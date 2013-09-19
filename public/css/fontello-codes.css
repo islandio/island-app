@@ -5,6 +5,7 @@
 .icon-cancel:before { content: '\e805'; } /* '' */
 .icon-params:before { content: '\e801'; } /* '' */
 .icon-error:before { content: '\e807'; } /* '' */
+.icon-location:before { content: '\e80b'; } /* '' */
 .icon-logout:before { content: '\e802'; } /* '' */
 .icon-download-cloud:before { content: '\e804'; } /* '' */
 .icon-youtube-play:before { content: '\e809'; } /* '' */

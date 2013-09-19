@@ -5,12 +5,18 @@ block content
     header#header
       include header
     div#map
+      div#map_overlay
       div#map_spin
+      a.button.plot-button(href="javascript:;")
+        span
+          | +
+          i.icon-location
+        div#plot_spin
       div#map_control
         div
           a.button.split-left#hide_show(href="javascript:;") Hide map
           a.button.split-right#less_more(href="javascript:;") More map
-      div#map_inner.fade-in
+      div#map_inner
     div#content
       div#main
         block main

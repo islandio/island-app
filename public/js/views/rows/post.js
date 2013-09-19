@@ -230,6 +230,13 @@ define([
     setup: function () {
       Row.prototype.setup.call(this);
 
+      if (!this.parentView) {
+
+        // Set map view.
+        mps.publish('map/fly', [this.model.get('location') 
+            || this.model.get('hometown')]);
+      }
+
       // Render comments.
       this.comments = new Comments(this.app, {parentView: this});
     },
@@ -296,6 +303,7 @@ define([
               height: Math.ceil(984 *
                   this.video.video.meta.height / this.video.video.meta.width),
             });
+            this.$('span.post-mosaic-play-text').hide();
 
           }
           

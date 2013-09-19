@@ -729,17 +729,19 @@ a.signin-strategy-btn.from-login {
 }
 a.buy-button {
   float: right;
-  background: #b1dc36;
   color: #404040;
   border: 1px solid #404040;
   font-size: 12px;
-  height: 30px;
-  line-height: 31px;
-  margin-top: -19px;
+  margin-top: -12px;
+  margin-left: 5px;
+  background: #b1dc36;
 }
 a.buy-button:hover {
   color: #1a1a1a;
   border: 1px solid #1a1a1a;
+}
+div.single > a.buy-button {
+  margin-top: -4px;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––structure*/
 #main {
@@ -1305,6 +1307,9 @@ div#map.closed {
 div#map.opened {
   height: 600px;
 }
+div#map.plotting .cartodb-map-wrapper {
+  cursor: crosshair !important;
+}
 div#map_spin {
   position: absolute;
   top: 50%;
@@ -1313,6 +1318,10 @@ div#map_spin {
 div#map_inner {
   width: 100%;
   height: 100%;
+  -webkit-animation-name: fadeIn;
+  -moz-animation-name: fadeIn;
+  -o-animation-name: fadeIn;
+  animation-name: fadeIn;
   -webkit-animation-duration: 0.3s;
   -moz-animation-duration: 0.3s;
   -o-animation-duration: 0.3s;
@@ -1363,8 +1372,81 @@ div#map_control a.split-right {
   -moz-border-radius: 0 0 3px 0;
   border-radius: 0 0 3px 0;
 }
+a.plot-button {
+  visibility: hidden;
+  display: none;
+  position: absolute;
+  z-index: 1;
+  left: 57px;
+  top: 20px;
+  color: #999;
+  border: 1px solid #999;
+  background: #fff;
+  min-width: 0;
+  font-size: 12px;
+  line-height: 57px;
+  height: 57px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: rgba(0,0,0,0.2) 0 0 4px 2px;
+  -moz-box-shadow: rgba(0,0,0,0.2) 0 0 4px 2px;
+  box-shadow: rgba(0,0,0,0.2) 0 0 4px 2px;
+  -webkit-animation-name: fadeIn;
+  -moz-animation-name: fadeIn;
+  -o-animation-name: fadeIn;
+  animation-name: fadeIn;
+  -webkit-animation-duration: 0.3s;
+  -moz-animation-duration: 0.3s;
+  -o-animation-duration: 0.3s;
+  animation-duration: 0.3s;
+  -webkit-animation-fill-mode: both;
+  -moz-animation-fill-mode: both;
+  -o-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+a.plot-button i {
+  font-size: 20px;
+}
+a.plot-button [class^="icon-"]:before,
+[class*=" icon-"]:before {
+  margin: 0;
+}
+a.plot-button:hover {
+  color: #666 !important;
+  -webkit-box-shadow: rgba(0,0,0,0.2) 0 0 4px 2px !important;
+  -moz-box-shadow: rgba(0,0,0,0.2) 0 0 4px 2px !important;
+  box-shadow: rgba(0,0,0,0.2) 0 0 4px 2px !important;
+}
+a.plot-button:active {
+  -webkit-box-shadow: rgba(0,0,0,0.1) 0 0 4px 2px !important;
+  -moz-box-shadow: rgba(0,0,0,0.1) 0 0 4px 2px !important;
+  box-shadow: rgba(0,0,0,0.1) 0 0 4px 2px !important;
+}
+a.plot-button.active {
+  color: #1a1a1a !important;
+  padding: 0 20px;
+}
+div#plot_spin {
+  display: none;
+  top: 50%;
+  left: 50%;
+  position: absolute;
+}
 div.cartodb-zoom {
   display: none;
+  -webkit-animation-name: fadeIn;
+  -moz-animation-name: fadeIn;
+  -o-animation-name: fadeIn;
+  animation-name: fadeIn;
+  -webkit-animation-duration: 0.3s;
+  -moz-animation-duration: 0.3s;
+  -o-animation-duration: 0.3s;
+  animation-duration: 0.3s;
+  -webkit-animation-fill-mode: both;
+  -moz-animation-fill-mode: both;
+  -o-animation-fill-mode: both;
+  animation-fill-mode: both;
 }
 .leaflet-div-icon {
   border: 2px solid #f2f2f2;
@@ -2281,12 +2363,6 @@ div.forgot .modal-overlay > p {
   margin-top: 19%;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crags*/
-div.map {
-  width: 640px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-}
 span.no-description {
   font-style: italic;
 }

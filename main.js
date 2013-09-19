@@ -69,12 +69,6 @@ app.set('twitter', {
   consumerSecret: 'HiGnwoc8BBgsURlKshWsb1pGH8IQWE2Ve8Mqzz8'
 });
 
-// CartoDB params
-app.set('cartodb', {
-  user: 'island',
-  api_key: '883965c96f62fd219721f59f2e7c20f08db0123b'
-});
-
 // Grade map
 app.set('GRADES', ['9c+', '9c', '9b+', '9b', '9a+', '9a', '8c+', '8c',
     '8b+', '8b', '8a+', '8a', '7c+', '7c', '7b+', '7b', '7a+', '7a',
@@ -123,6 +117,15 @@ Step(
         img: 'https://d2a89oeknmk80g.cloudfront.net/',
         vid: 'https://d2c2zu8qn6mgju.cloudfront.net/',
         aud: 'https://d2oapa8usgizyg.cloudfront.net/'
+      });
+
+      // CartoDB params
+      app.set('cartodb', {
+        user: 'island',
+        api_key: '883965c96f62fd219721f59f2e7c20f08db0123b',
+        tables: {
+          medias: 'medias_dev',
+        }
       });
 
       // Job scheduling.
@@ -174,6 +177,15 @@ Step(
         img: 'https://d1da6a4is4i5z6.cloudfront.net/',
         vid: 'https://d1ehvayr9dfk4s.cloudfront.net/',
         aud: 'https://dp3piv67f7p06.cloudfront.net/'
+      });
+
+      // CartoDB params
+      app.set('cartodb', {
+        user: 'island',
+        api_key: '883965c96f62fd219721f59f2e7c20f08db0123b',
+        tables: {
+          medias: 'medias',
+        }
       });
 
       // Job scheduling.
@@ -277,8 +289,6 @@ Step(
         function (err) {
           if (err) return console.error(err);
 
-          
-
           // Init service.
           service.routes(app);
 
@@ -286,8 +296,6 @@ Step(
           app.use(function (req, res) {
             res.render('base', {member: req.user, root: app.get('ROOT_URI')});
           });
-
-          
 
           // Start server.
           http.createServer(app).listen(app.get('PORT'));

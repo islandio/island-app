@@ -17,7 +17,10 @@ define([
 
     el: '#map',
     mapped: false,
-    markers: {},
+    instaMarkers: {},
+    mediaMarkers: {},
+    plotting: false,
+    saving: false,
 
     initialize: function (app) {
 
@@ -29,7 +32,9 @@ define([
 
       // Socket subscriptions.
       this.app.socket.subscribe('map').bind('instagram.new',
-          _.bind(this.getMarkers, this, false));
+          _.bind(this.getInstaMarkers, this, false));
+      this.app.socket.subscribe('map').bind('media.new',
+          _.bind(this.getMediaMarkers, this, false));
     },
 
     render: function () {
@@ -43,7 +48,7 @@ define([
 
       // Listen for fly to requests.
       this.subscriptions.push(mps.subscribe('map/fly',
-          _.bind(this.fly, this)));
+          _.bind(this.flyTo, this)));
 
       // Get a geocoder.
       if (!this.geocoder)
@@ -58,6 +63,9 @@ define([
           width: 4,
           radius: 18
         });
+      if (!this.plotSpin)
+        this.plotSpin = new Spin(this.$('#plot_spin'));
+      this.plotSpin.start();
 
       // Create the map.
       if (!this.mapped) {
@@ -79,6 +87,9 @@ define([
     // Misc. setup.    
     setup: function () {
 
+      // Save refs.
+      this.plotButton = this.$('a.plot-button');
+
       // Changes to map display are animated.
       this.$el.addClass('animated');
 
@@ -89,12 +100,27 @@ define([
 
       // Shell event.
       this.delegateEvents();
+
+      // Do the first update.
+      this.update();
+    },
+
+    update: function () {
+
+      // Hide/show plot button.
+      if (this.app.profile.member && this.app.profile.member.role === 0
+          && this.app.profile.member.username === 'sander'
+          && this.app.profile.content.page
+          && !this.app.profile.content.page.username)
+        this.plotButton.css({visibility: 'visible'})
+      else this.plotButton.css({visibility: 'hidden'});
     },
 
     // Bind mouse events.
     events: {
       'click #hide_show': 'hideShow',
-      'click #less_more': 'lessMore'
+      'click #less_more': 'lessMore',
+      'click a.plot-button': 'listenForPlot',
     },
 
     map: function (pos) {
@@ -126,8 +152,8 @@ define([
         this.spin.stop();
 
         // Handle infowindows.
-        layers[1].infowindow.set('template', _.template(popup).call(this));
-        layers[1].on('featureClick', _.bind(function (e, pos, latlng, data) {
+        this.layers[1].infowindow.set('template', _.template(popup).call(this));
+        this.layers[1].on('featureClick', _.bind(function (e, pos, latlng, data) {
           _.delay(_.bind(function () {
             $('a.popup-link').click(_.bind(function (e) {
               e.preventDefault();
@@ -141,24 +167,33 @@ define([
 
         // Init events for markers.
         this.vis.mapView.map_leaflet.on('zoomend', 
-            _.bind(this.getMarkers, this, true));
+            _.bind(this.getInstaMarkers, this, true));
         this.vis.mapView.map_leaflet.on('moveend', 
-            _.bind(this.getMarkers, this, false));
+            _.bind(this.getInstaMarkers, this, false));
+        this.vis.mapView.map_leaflet.on('zoomend', 
+            _.bind(this.getMediaMarkers, this, true));
+        this.vis.mapView.map_leaflet.on('moveend', 
+            _.bind(this.getMediaMarkers, this, false));
+        this.vis.mapView.map_leaflet.on('click', _.bind(this.plotObject, this));
 
-        // Hide the zoomer if the map is hidden.
-        if (!store.get('mapClosed'))
-          this.$('.cartodb-zoom').show();
+        // Hide the zoomer and plot button if the map is hidden.
+        this.zoom = this.$('.cartodb-zoom');
+        if (!store.get('mapClosed')) {
+          this.zoom.show();
+          this.plotButton.show();
+        }
 
         // Get the markers.
-        this.getMarkers(true);
+        this.getInstaMarkers(true);
+        this.getMediaMarkers(true);
 
         // Fly to a location if there is one pending.
-        if (this.pendingLocation) this.fly(this.pendingLocation);
+        if (this.pendingLocation) this.flyTo(this.pendingLocation);
 
       }, this));
     },
 
-    fly: function (location) {
+    flyTo: function (location) {
       if (!location || (this.location && location.latitude
           && this.location.latitude === location.latitude
           && location.longitude
@@ -190,7 +225,7 @@ define([
         }, this));
     },
 
-    getMarkers: function (remove) {
+    getInstaMarkers: function (remove) {
       var map = this.vis.mapView.map_leaflet;
       var limit = remove ? 200: 100;
       var zoom = map.getZoom();
@@ -215,9 +250,9 @@ define([
         geobucket: 1,
         limit: limit
       }).done(_.bind(function (data) {
-        if (remove) this.removeMarkers();
+        if (remove) this.removeInstaMarkers();
         _.each(data.rows, _.bind(function (r) {
-          if (!this.markers[r.cartodb_id]) {
+          if (!this.instaMarkers[r.cartodb_id]) {
             r.uri = util.https(r.uri);
             r.turi = util.https(r.turi);
             var img = '<img src="' + r.turi + '" width="36" height="36" />';
@@ -269,16 +304,72 @@ define([
                 }
               });
             });
-            this.markers[r.cartodb_id] = marker;
+            this.instaMarkers[r.cartodb_id] = marker;
           }
         }, this));
       }, this));
     },
 
-    removeMarkers: function () {
-      _.each(this.markers, _.bind(function (v, k) {
+    getMediaMarkers: function (remove) {
+      var self = this;
+      var map = this.vis.mapView.map_leaflet;
+      var limit = remove ? 200: 100;
+      var zoom = map.getZoom();
+      var bounds = map.getBounds();
+      var buffer = (bounds.getNorthEast().lat - bounds.getSouthWest().lat) / 5;
+      var frame = "ST_Envelope(ST_MakeLine(CDB_LatLng("
+          + (bounds.getNorthWest().lat + buffer) + ","
+          + (bounds.getNorthWest().lng - buffer) + "),CDB_LatLng("
+          + (bounds.getSouthEast().lat - buffer) + ","
+          + (bounds.getSouthEast().lng + buffer) + ")))";
+
+      // Do SQL query.
+      var self = this;
+      this.sql.execute("WITH rg AS (SELECT cartodb_id, floor(st_x(the_geom_webmercator)/({{geobucket}}"
+          + " * CDB_XYZ_Resolution({{z}}))) mx, floor(st_y(the_geom_webmercator)/({{geobucket}}"
+          + " * CDB_XYZ_Resolution({{z}}))) my, st_x(the_geom) x, st_y(the_geom) y, mid, pkey, turi "
+          + "FROM {{table_name}} WHERE {{frame}} && the_geom ORDER BY created_at DESC LIMIT {{limit}}) "
+          + "SELECT DISTINCT ON (mx,my) cartodb_id, x, y, mid, pkey, turi FROM rg", {
+        table_name: window.__s ? 'medias': 'medias_dev',
+        frame: frame,
+        z: zoom,
+        geobucket: 1,
+        limit: limit
+      }).done(_.bind(function (data) {
+        if (remove) this.removeMediaMarkers();
+        _.each(data.rows, _.bind(function (r) {
+          if (!this.mediaMarkers[r.cartodb_id]) {
+            r.turi = util.https(r.turi);
+            var img = '<img src="' + r.turi + '" width="36" height="36" />';
+            var marker = L.marker([r.y, r.x], _.extend({
+              icon: L.divIcon({
+                html: img,
+                iconSize: [36, 36],
+                iconAnchor: [18, 46],
+              })
+            }, r)).addTo(map).on('click', function (e) {
+
+              // Route to post if it exists.
+              self.app.router.navigate(this.options.pkey, {trigger: true});
+
+            });
+            this.mediaMarkers[r.cartodb_id] = marker;
+          }
+        }, this));
+      }, this));
+    },
+
+    removeInstaMarkers: function () {
+      _.each(this.instaMarkers, _.bind(function (v, k) {
         this.vis.mapView.map_leaflet.removeLayer(v);
-        delete this.markers[k]
+        delete this.instaMarkers[k]
+      }, this));
+    },
+
+    removeMediaMarkers: function () {
+      _.each(this.mediaMarkers, _.bind(function (v, k) {
+        this.vis.mapView.map_leaflet.removeLayer(v);
+        delete this.mediaMarkers[k]
       }, this));
     },
 
@@ -288,14 +379,17 @@ define([
         this.hider.text('Hide map');
         this.hider.addClass('split-left');
         this.lesser.show();
-        this.$('.cartodb-zoom').fadeIn(300);
+        this.zoom.show();
+        this.plotButton.show();
         this.resize(250);
         store.set('mapClosed', false);
       } else {
         this.$el.addClass('closed');
         this.hider.text('Show map');
         this.hider.removeClass('split-left');
-        this.$('.cartodb-zoom').fadeOut(300);
+        this.plotButton.hide();
+        this.zoom.hide();
+        
         this.lesser.hide();
         store.set('mapClosed', true);
       }
@@ -317,6 +411,100 @@ define([
       }
     },
 
+    listenForPlot: function (e) {
+      if (e) e.preventDefault(e);
+      if (this.plotting) {
+        this.plotting = false;
+        this.plotButton.removeClass('active');
+        $('span', this.plotButton).html('+<i class="icon-location"></i>');
+        this.$el.removeClass('plotting');
+        this.layers[1].setInteraction(true);
+        this.$('.cartodb-infowindow').css({opacity: 1});
+      } else if (this.vis) {
+        this.plotting = true;
+        this.vis.mapView.map_leaflet.fire('focus');
+        this.plotButton.addClass('active');
+        $('span', this.plotButton).html('Click on the map to set this '
+            + this.getPlotType() + '\'s location.');
+        this.$el.addClass('plotting');
+        this.layers[1].setInteraction(false);
+        this.$('.cartodb-infowindow').css({opacity: 0});
+      }
+    },
+
+    getPlotType: function () {
+      if (!this.app.profile.content 
+          || !this.app.profile.content.page) return false;
+      var page = this.app.profile.content.page;
+      var type;
+      if (page.medias)
+        type = 'post';
+      else if (page.bcnt)
+        type = 'crag';
+      else if (page.crag_id)
+        type = 'ascent';
+      return type;
+    },
+
+    plotObject: function (e) {
+      if (!this.plotting || this.saving) return false;
+      this.saving = true;
+      
+      // Determine type.
+      var type = this.getPlotType();
+      if (!type) return false;
+
+      // Update info bar.
+      $('span', this.plotButton).hide();
+      this.plotSpin.target.show();
+      this.plotSpin.start();
+
+      // Grab new location.
+      var payload = {
+        location: {
+          latitude: e.latlng.lat,
+          longitude: e.latlng.lng
+        }
+      };
+
+      // Determine path.
+      var path = '/api/' + type + 's/';
+      var page = this.app.profile.content.page;
+      switch (type) {
+        case 'post': path += page.key; break;
+        case 'crag': path += 'crags/' + page.key; break;
+        case 'ascent': path += 'crags/' + page.key; break;
+      }
+
+      // Now do the save.
+      rpc.put(path, payload, _.bind(function (err, data) {
+
+        // Toggle plot button state.
+        this.listenForPlot();
+        $('span', this.plotButton).show();
+        this.plotSpin.target.hide();
+        this.plotSpin.stop();
+        this.saving = false;
+
+        if (err) {
+
+          // Publish error.
+          mps.publish('flash/new', [{
+            message: err.message,
+            level: 'error'
+          }, false]);
+
+          return;
+        }
+
+        // Refresh markers.
+        this.getMediaMarkers(true);
+
+      }, this));
+
+      return false;
+    },
+
     resize: function (height) {
       if (!this.vis) return;
       var sizer = setInterval(_.bind(function () {
@@ -330,8 +518,7 @@ define([
       e.preventDefault();
 
       // Route to href.
-      this.app.router.navigate($(e.target).attr('href'),
-          {trigger: true});
+      this.app.router.navigate($(e.target).attr('href'), {trigger: true});
 
       // Close the modal.
       $.fancybox.close();
