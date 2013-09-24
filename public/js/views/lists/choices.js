@@ -137,7 +137,7 @@ define([
 
     searchVal: function () {
       var str = util.sanitize(this.input.val());
-      return str === '' || str.length < 3 ? null: str;
+      return str === '' || str.length < 2 ? null: str;
     },
 
     search: function (e) {

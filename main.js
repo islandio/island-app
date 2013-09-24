@@ -43,7 +43,7 @@ var url = require('url');
 var Step = require('step');
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
-var Connection = require('./lib/db.js').Connection;
+var Connection = require('./lib/db').Connection;
 var resources = require('./lib/resources');
 var service = require('./lib/service');
 var Mailer = require('./lib/mailer');
@@ -97,7 +97,6 @@ Step(
         clientSecret: 'a3937ee32072457d92eaa2165bd7dd37',
         callbackURL: app.get('HOME_URI') + '/members/connect/instagram/callback',
         verifyToken: 'doesthisworkyet',
-        postCallbackURL: 'https://island.fwd.wf/api/instagram'
       });
 
       // Transloadit params
@@ -142,7 +141,7 @@ Step(
       // App params
       app.set('ROOT_URI', [app.get('package').cloudfront,
         app.get('package').version].join('/'));
-      app.set('HOME_URI', 'http://island.io');
+      app.set('HOME_URI', 'https://www.island.io');
 
       // Facebook params
       app.set('facebook', {
@@ -157,7 +156,6 @@ Step(
         clientSecret: '369ae2fbc8924c158316530ca8688647',
         callbackURL: app.get('HOME_URI') + '/members/connect/instagram/callback',
         verifyToken: 'doesthisworkyet',
-        postCallbackURL: 'http://island.io/api/instagram'
       });
 
       // Transloadit params

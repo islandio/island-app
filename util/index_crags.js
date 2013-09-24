@@ -36,11 +36,12 @@ boots.start(function (client) {
       function () {
         if (docs.length === 0) return this();
         var _this = _.after(docs.length, this);
-        _.each(docs, function (d) {
+        _.each(docs, function (d, i) {
           if (d.name && d.name !== '')
             if (d.name.match(/\w+/g))
-              search.index(d.name, d._id.toString());
-          _this();
+              search.index(d.name, d._id.toString(), _this);
+            else _this();
+          else _this();
         });
       },
       function (err) {

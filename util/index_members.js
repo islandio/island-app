@@ -38,16 +38,28 @@ boots.start(function (client) {
         if (docs.length === 0) return this();
         var _this = _.after(docs.length, this);
         _.each(docs, function (d) {
-          if (d.displayName && d.displayName !== ''
-              && d.displayName.match(/\w+/g))
-            search.index(d.displayName, d._id.toString());
-          if (d.username && d.username !== '') {
-            if (d.username.match(/\w+/g))
-              search.index(d.username, d._id.toString());
-            _this();
-          } else
-            db.Members._update({_id: d._id}, {$set: {username: com.key()}},
-                {safe: true}, _this);
+
+          Step(
+            function () {
+              if (d.displayName && d.displayName !== ''
+                && d.displayName.match(/\w+/g))
+                search.index(d.displayName, d._id.toString(), this);
+              else this();
+            },
+            function (err) {
+              boots.error(err);
+              if (d.username && d.username !== '')
+                if (d.username.match(/\w+/g))
+                  search.index(d.username, d._id.toString(), this);
+                else this();
+              else this();
+            },
+            function (err) {
+              boots.error(err);
+              _this();
+            }
+          );
+          
         });
       },
       function (err) {

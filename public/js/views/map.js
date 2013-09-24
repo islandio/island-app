@@ -136,7 +136,7 @@ define([
         _.extend(opts, {
           center_lat: pos.coords.latitude,
           center_lon: pos.coords.longitude,
-          zoom: 7
+          zoom: 10
         });
       }
 
@@ -205,8 +205,7 @@ define([
 
       function _fly() {
         this.vis.mapView.map_leaflet.setView(
-            new L.LatLng(location.latitude, location.longitude), 7,
-            {animate: true});
+            new L.LatLng(location.latitude, location.longitude), 10);
         this.location = location;
       }
 

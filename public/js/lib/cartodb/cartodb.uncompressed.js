@@ -21885,7 +21885,6 @@ var Vis = cdb.core.View.extend({
     var protocol = model.get('sql_protocol');
     var version = 'v1';
     if(domain.indexOf('cartodb.com') !== -1) {
-      protocol = 'https';
       domain = "cartodb.com";
       version = 'v2';
     }
