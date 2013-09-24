@@ -249,11 +249,11 @@ Step(
       app.use(express.errorHandler());
 
       // Force HTTPS
-      app.all('*', function (req, res, next) {
-        if ((req.headers['x-forwarded-proto'] || '').toLowerCase() === 'https')
-          return next();
-        res.redirect('https://' + req.headers.host + req.url);
-      });
+      // app.all('*', function (req, res, next) {
+      //   if ((req.headers['x-forwarded-proto'] || '').toLowerCase() === 'https')
+      //     return next();
+      //   res.redirect('https://' + req.headers.host + req.url);
+      // });
 
       // PubSub init
       app.set('pubsub', new PubSub({
