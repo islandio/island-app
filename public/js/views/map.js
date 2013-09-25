@@ -112,7 +112,7 @@ define([
       if (this.app.profile.member && this.app.profile.member.role === 0
           && this.app.profile.member.username === 'sander'
           && this.app.profile.content.page
-          && !this.app.profile.content.page.username)
+          && this.app.profile.content.page.author)
         this.plotButton.css({visibility: 'visible'})
       else this.plotButton.css({visibility: 'hidden'});
 
@@ -464,11 +464,11 @@ define([
 
     getPlotLocation: function () {
       var location = {
-        latitude: Number($('input[name="latitude"]', this.plotForm).val()),
-        longitude: Number($('input[name="longitude"]', this.plotForm).val())
+        latitude: parseFloat($('input[name="latitude"]', this.plotForm).val()),
+        longitude: parseFloat($('input[name="longitude"]', this.plotForm).val())
       };
-      if (!_.isNumber(location.latitude) && !_.isNaN(location.latitude)
-          && !_.isNumber(location.longitude) && !_.isNaN(location.longitude))
+      if (!_.isNumber(location.latitude) || _.isNaN(location.latitude)
+          || !_.isNumber(location.longitude) || _.isNaN(location.longitude))
         return false;
       else return location;
     },
@@ -484,7 +484,18 @@ define([
     plotObject: function (e) {
       if (!this.plotting || this.saving) return false;
       this.saving = true;
-      
+
+      // Grab new location.
+      var payload = {location: this.getPlotLocation()};
+      if (!payload.location) {
+        mps.publish('flash/new', [{
+          message: 'Invalid coordinates',
+          level: 'error'
+        }, false]);
+        this.saving = false;
+        return false;
+      }
+
       // Determine type.
       var type = this.getPlotType();
       if (!type) {
@@ -498,13 +509,6 @@ define([
       this.plotButton.show();
       this.plotSpin.target.show();
       this.plotSpin.start();
-
-      // Grab new location.
-      var payload = {location: this.getPlotLocation()};
-      if (!payload.location) {
-        finish.call(this);
-        return false;
-      }
 
       // Determine path.
       var path = '/api/' + type + 's/';
