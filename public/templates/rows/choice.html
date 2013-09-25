@@ -7,8 +7,8 @@
         + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
   else if (this.model.get('crag'))
     image = this.model.get('type') === 'b' ? __s + '/img/boulder_16.png': __s + '/img/route_16.png';
-  else if (this.model.get('name'))
-    image = __s + '/img/crag_16.png';  
+  else if (this.model.get('name') && !this.model.get('geometry'))
+    image = __s + '/img/crag_16.png';
 
 %>
 

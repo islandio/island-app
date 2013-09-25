@@ -12,6 +12,21 @@ block content
           | +
           i.icon-location
         div#plot_spin
+      div#plot_form
+        table
+          tr
+            td
+              input(type="text", name="latitude", placeholder="latitude")
+            td
+              input(type="text", name="longitude", placeholder="longitude")
+          tr
+            td
+              a.button.plot-cancel(href="javascript:;") Cancel
+            td
+              a.button.plot-map(href="javascript:;") Map
+          tr
+            td(colspan="2")
+              span Click on the map to grab coordinates.
       div#map_control
         div
           a.button.split-left#hide_show(href="javascript:;") Hide map

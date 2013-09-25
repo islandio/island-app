@@ -89,6 +89,7 @@ define([
 
       // Save refs.
       this.plotButton = this.$('a.plot-button');
+      this.plotForm = this.$('div#plot_form');
 
       // Changes to map display are animated.
       this.$el.addClass('animated');
@@ -114,6 +115,9 @@ define([
           && !this.app.profile.content.page.username)
         this.plotButton.css({visibility: 'visible'})
       else this.plotButton.css({visibility: 'hidden'});
+
+      // Reset.
+      if (this.plotting) this.listenForPlot();
     },
 
     // Bind mouse events.
@@ -121,6 +125,8 @@ define([
       'click #hide_show': 'hideShow',
       'click #less_more': 'lessMore',
       'click a.plot-button': 'listenForPlot',
+      'click a.plot-cancel': 'listenForPlot',
+      'click a.plot-map': 'plotObject',
     },
 
     map: function (pos) {
@@ -174,7 +180,12 @@ define([
             _.bind(this.getMediaMarkers, this, true));
         this.vis.mapView.map_leaflet.on('moveend', 
             _.bind(this.getMediaMarkers, this, false));
-        this.vis.mapView.map_leaflet.on('click', _.bind(this.plotObject, this));
+        this.vis.mapView.map_leaflet.on('click', _.bind(function (e) {
+          this.setPlotLocation({
+            latitude: e.latlng.lat,
+            longitude: e.latlng.lng
+          });
+        }, this));
 
         // Hide the zoomer and plot button if the map is hidden.
         this.zoom = this.$('.cartodb-zoom');
@@ -387,9 +398,8 @@ define([
         this.hider.text('Show map');
         this.hider.removeClass('split-left');
         this.plotButton.hide();
-        this.zoom.hide();
-        
         this.lesser.hide();
+        this.zoom.hide();
         store.set('mapClosed', true);
       }
     },
@@ -415,7 +425,8 @@ define([
       if (this.plotting) {
         this.plotting = false;
         this.plotButton.removeClass('active');
-        $('span', this.plotButton).html('+<i class="icon-location"></i>');
+        this.plotButton.show();
+        this.plotForm.hide();
         this.$el.removeClass('plotting');
         this.layers[1].setInteraction(true);
         this.$('.cartodb-infowindow').css({opacity: 1});
@@ -423,8 +434,14 @@ define([
         this.plotting = true;
         this.vis.mapView.map_leaflet.fire('focus');
         this.plotButton.addClass('active');
-        $('span', this.plotButton).html('Click on the map to set this '
-            + this.getPlotType() + '\'s location.');
+        this.plotButton.hide();
+        if (this.app.profile.content
+            && this.app.profile.content.page
+            && this.app.profile.content.page.location)
+          this.setPlotLocation(this.app.profile.content.page.location);
+        else
+          this.setPlotLocation();
+        this.plotForm.show();
         this.$el.addClass('plotting');
         this.layers[1].setInteraction(false);
         this.$('.cartodb-infowindow').css({opacity: 0});
@@ -445,26 +462,49 @@ define([
       return type;
     },
 
+    getPlotLocation: function () {
+      var location = {
+        latitude: Number($('input[name="latitude"]', this.plotForm).val()),
+        longitude: Number($('input[name="longitude"]', this.plotForm).val())
+      };
+      if (!_.isNumber(location.latitude) && !_.isNaN(location.latitude)
+          && !_.isNumber(location.longitude) && !_.isNaN(location.longitude))
+        return false;
+      else return location;
+    },
+
+    setPlotLocation: function (location) {
+      var latEl = $('input[name="latitude"]', this.plotForm);
+      var lonEl = $('input[name="longitude"]', this.plotForm);
+      latEl.val(location ? location.latitude: '');
+      lonEl.val(location ? location.longitude: '');
+      _.delay(function () { latEl.focus(); }, 0);
+    },
+
     plotObject: function (e) {
       if (!this.plotting || this.saving) return false;
       this.saving = true;
       
       // Determine type.
       var type = this.getPlotType();
-      if (!type) return false;
+      if (!type) {
+        finish.call(this);
+        return false;
+      }
 
       // Update info bar.
+      this.plotForm.hide();
       $('span', this.plotButton).hide();
+      this.plotButton.show();
       this.plotSpin.target.show();
       this.plotSpin.start();
 
       // Grab new location.
-      var payload = {
-        location: {
-          latitude: e.latlng.lat,
-          longitude: e.latlng.lng
-        }
-      };
+      var payload = {location: this.getPlotLocation()};
+      if (!payload.location) {
+        finish.call(this);
+        return false;
+      }
 
       // Determine path.
       var path = '/api/' + type + 's/';
@@ -479,11 +519,7 @@ define([
       rpc.put(path, payload, _.bind(function (err, data) {
 
         // Toggle plot button state.
-        this.listenForPlot();
-        $('span', this.plotButton).show();
-        this.plotSpin.target.hide();
-        this.plotSpin.stop();
-        this.saving = false;
+        finish.call(this);
 
         if (err) {
 
@@ -499,7 +535,18 @@ define([
         // Refresh markers.
         this.getMediaMarkers(true);
 
+        // Update page location/
+        this.app.profile.content.page.location = payload.location;
+
       }, this));
+
+      function finish() {
+        this.listenForPlot();
+        $('span', this.plotButton).show();
+        this.plotSpin.target.hide();
+        this.plotSpin.stop();
+        this.saving = false;
+      }
 
       return false;
     },

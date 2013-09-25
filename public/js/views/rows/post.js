@@ -233,7 +233,7 @@ define([
       if (!this.parentView) {
 
         // Set map view.
-        mps.publish('map/fly', [this.model.get('location') 
+        mps.publish('map/fly', [this.model.get('location')
             || this.model.get('hometown')]);
       }
 

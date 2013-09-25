@@ -43,18 +43,15 @@ boots.start({index: argv.index}, function (client) {
     // function (err, docs) {
     //   boots.error(err);
 
-    //   function isEmail(str) {
-    //     var str = str.toLowerCase();
-    //     return (/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/).test(str);
-    //   }
-
     //   if (docs.length === 0) return this();
     //   var _this = _.after(docs.length, this);
     //   _.each(docs, function (d) {
-
-    //     if (d.primaryEmail === null || (d.primaryEmail && !isEmail(d.primaryEmail)))
-    //       db.Members._update({_id: d._id}, {$unset: {primaryEmail: 1}}, _this);
-    //     else _this();
+    //     var unset = {};
+    //     if (!_.isObject(d.location)) unset.location = 1;
+    //     if (!_.isObject(d.hometown)) unset.hometown = 1;
+    //     if (!_.isEmpty(unset)) {
+    //       db.Members._update({_id: d._id}, {$unset: unset}, _this);
+    //     } else _this();
 
     //   });
     

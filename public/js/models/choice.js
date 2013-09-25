@@ -16,6 +16,8 @@ define([
         return '/crags/' + this.get('key');
       else if (this.get('type'))
         return '/' + this.get('key');
+      else if (this.get('geometry'))
+        return 'javascript:;';
       else
         return '/crags/' + this.get('key');
     },
@@ -36,6 +38,9 @@ define([
         title += '<strong>' + this.get('title') + '</strong>';
         if (this.get('body') && this.get('body') !== '')
           title += ': ' + _.str.prune(this.get('body'), 100);
+      } else if (this.get('geometry')) {
+        title += '<i class="icon-location"></i>'
+            + this.get('formatted_address');
       } else {
         title += '<strong>' + this.get('name') + '</strong>, '
             + this.get('country');
@@ -53,6 +58,8 @@ define([
         term += this.get('name');
       } else if (this.get('type')) {
         term += this.get('title');
+      } else if (this.get('geometry')) {
+        term += this.get('formatted_address');
       } else {
         term += this.get('name');
       }

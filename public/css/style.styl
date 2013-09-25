@@ -922,7 +922,7 @@ div.search-display
   left 0
   right 0
   z-index 10
-  max-height 285px
+  max-height 310px
   overflow-y auto
   
   border 1px solid rgba(0,0,0,0.3)
@@ -1410,7 +1410,7 @@ a.plot-button
   border 1px solid #999
   background white
   min-width 0
-  font-size 12px
+  font-size 14px
   line-height 57px
   height 57px
 
@@ -1452,7 +1452,6 @@ a.plot-button:active
   box-shadow rgba(0, 0, 0, 0.1) 0 0 4px 2px !important
 
 a.plot-button.active
-  color #1a1a1a !important
   padding 0 20px
 
 div#plot_spin
@@ -1460,6 +1459,45 @@ div#plot_spin
   top 50%
   left 50%
   position absolute
+
+div#plot_form
+  display none
+  position absolute
+  z-index 1
+  left 57px
+  top 20px
+  border 1px solid #999
+  background white
+  padding 0 5px 5px 0
+
+  border-radius 4px
+
+  -webkit-box-shadow rgba(0, 0, 0, 0.2) 0 0 4px 2px
+  -moz-box-shadow rgba(0, 0, 0, 0.2) 0 0 4px 2px
+  box-shadow rgba(0, 0, 0, 0.2) 0 0 4px 2px
+
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration .3s
+  -moz-animation-duration .3s
+  -o-animation-duration .3s
+  animation-duration .3s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
+
+div#plot_form td
+  padding 5px 0 0 5px
+
+div#plot_form a.button
+  width 142px
+
+div#plot_form span
+  font-style italic
+  color #666
 
 div.cartodb-zoom
   display none

@@ -54,6 +54,9 @@ define([
         this.input.placeholder();
 
       // Handle searching.
+      this.autocomplete = new google.maps.places.AutocompleteService();
+      // this.geocoder = new google.maps.Geocoder();
+      this.places = new google.maps.places.PlacesService($('<div>').get(0));
       this.input.bind('keyup', _.bind(this.search, this));
       this.input.bind('keydown', _.bind(this.searchBlur, this));
       $(document).on('mouseup', _.bind(this.searchBlur, this));
@@ -96,9 +99,8 @@ define([
         // Enter
         if (e.keyCode === 13 && e.which === 13) {
           if (this.selecting.el) {
-            this.app.router.navigate(this.selecting.el.attr('href'),
-                {trigger: true});
-            this.input.val(this.selecting.el.data('term')).select();
+            this.views[this.selecting.el.index() - 1].choose();
+            this.input.select();
             return false;
           }
         }
@@ -129,7 +131,7 @@ define([
       }
 
       // Blur.
-      this.input.width(150).attr({placeholder: 'Search...'});;
+      this.input.width(150).attr({placeholder: 'Search...'});
       this.results.hide();
       this.resetHighlight();
       this.active = false;
@@ -156,7 +158,7 @@ define([
 
       // Setup search types.
       var items = {};
-      var types = ['crags', 'members', 'posts'];
+      var types = ['crags', 'members', 'posts', 'places'];
       var done = _.after(types.length, _.bind(function () {
 
         // Render results.
@@ -180,22 +182,41 @@ define([
       }, this));
 
       // Perform searches.
-      _.each(types, function (t) {
-        rpc.post('/api/' + t + '/search/' + str, {},
-            _.bind(function (err, data) {
+      _.each(types, _.bind(function (t) {
+        if (t !== 'places')
+          rpc.post('/api/' + t + '/search/' + str, {},
+              _.bind(function (err, data) {
 
-          if (err) {
+            if (err) {
 
-            // Oops.
-            console.log('TODO: Retry, notify user, etc.');
-            return;
-          }
-          if (data.items.length !== 0)
-            items[t] = data.items;
-          done();
+              // Oops.
+              console.log('TODO: Retry, notify user, etc.');
+              return;
+            }
+            if (data.items.length !== 0)
+              items[t] = data.items;
+            done();
 
-        }, this));
-      });
+          }, this));
+        else
+          this.autocomplete.getPlacePredictions({input: str},
+              _.bind(function (preds, status) {
+            if (status !== google.maps.places.PlacesServiceStatus.OK
+              || preds.length === 0)
+              return done();
+            var _done = _.after(preds.length, done)
+            items.places = [];
+            _.each(preds, _.bind(function (p) {
+              this.places.getDetails({reference: p.reference},
+                  _.bind(function (place, stat) {
+                if (stat !== google.maps.places.PlacesServiceStatus.OK)
+                  return _done();
+                items.places.push(place);
+                _done();
+              }, this));
+            }, this));
+          }, this));
+      }, this));
 
     },
 

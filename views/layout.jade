@@ -20,7 +20,7 @@ html(lang="en")
     link(rel="shortcut icon", href="#{root}/img/favicon.ico", type="image/x-icon")
   body
     block content
-    script(type="text/javascript", src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false")
+    script(type="text/javascript", src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyAWgUokzlRODT2GBOjZC9Qd4WGmcKzyikA&sensor=false")
     - if (process.env.NODE_ENV === 'production')
       script(type="text/javascript", src="#{root}/js/store.min.js")
       script(type="text/javascript", src="#{root}/js/cartodb.uncompressed.js")

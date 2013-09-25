@@ -38,9 +38,20 @@ define([
     },
 
     choose: function (e) {
-      e.preventDefault();
+      if (e) e.preventDefault();
 
-      // Go to.
+      // Set map view.
+      var geometry = this.model.get('geometry');
+      if (geometry) {
+        var location = {
+          latitude: geometry.location.lat(),
+          longitude: geometry.location.lng()
+        };
+        mps.publish('map/fly', [location]);
+        return;
+      }
+
+      // Go to page.
       this.app.router.navigate(this.$el.attr('href'), {trigger: true});
     },
 
