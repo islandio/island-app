@@ -25,8 +25,8 @@ var Step = require('step');
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
 var boots = require('../boots');
-var db = require('../lib/db.js');
-var com = require('../lib/common.js');
+var db = require('../lib/db');
+var com = require('../lib/common');
 var resources = require('../lib/resources');
 var PubSub = require('../lib/pubsub').PubSub;
 

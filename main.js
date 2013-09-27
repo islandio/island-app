@@ -10,8 +10,7 @@ var argv = optimist
     .describe('help', 'Get help')
     .describe('port', 'Port to listen on')
       .default('port', 8000)
-    .describe('index', 'Ensure indexes on MongoDB collections'
-        + '(always `true` in production)')
+    .describe('index', 'Ensure indexes on MongoDB collections')
       .boolean('index')
     .describe('jobs', 'Schedule jobs'
         + '(always `true` in production)')
@@ -140,8 +139,9 @@ Step(
 
       // App params
       app.set('ROOT_URI', [app.get('package').cloudfront,
-        app.get('package').version].join('/'));
-      app.set('HOME_URI', 'https://www.island.io');
+          app.get('package').version].join('/'));
+      app.set('HOME_URI', [app.get('package').protocol,
+          app.get('package').domain].join('://'));
 
       // Facebook params
       app.set('facebook', {
@@ -202,8 +202,8 @@ Step(
 
     // Mailer init
     app.set('mailer', new Mailer({
-      user: 'robot@island.io',
-      password: 'I514nDr06ot',
+      user: app.get('package').gmail.user,
+      password: app.get('package').gmail.password,
       host: 'smtp.gmail.com',
       ssl: true
     }, app.get('HOME_URI')));
@@ -247,11 +247,12 @@ Step(
       app.use(express.errorHandler());
 
       // Force HTTPS
-      app.all('*', function (req, res, next) {
-        if ((req.headers['x-forwarded-proto'] || '').toLowerCase() === 'https')
-          return next();
-        res.redirect('https://' + req.headers.host + req.url);
-      });
+      if (app.get('package').protocol === 'https')
+        app.all('*', function (req, res, next) {
+          if ((req.headers['x-forwarded-proto'] || '').toLowerCase() === 'https')
+            return next();
+          res.redirect('https://' + req.headers.host + req.url);
+        });
 
       // PubSub init
       app.set('pubsub', new PubSub({
@@ -265,7 +266,8 @@ Step(
 
       Step(
         function () {
-          new Connection(app.get('MONGO_URI'), {ensureIndexes: argv.index}, this);
+          new Connection(app.get('MONGO_URI'),
+              {ensureIndexes: argv.index}, this);
         },
         function (err, connection) {
           if (err) {

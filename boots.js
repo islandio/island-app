@@ -11,7 +11,7 @@ var util = require('util');
 var Step = require('step');
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
-var Connection = require('./lib/db.js').Connection;
+var Connection = require('./lib/db').Connection;
 var resources = require('./lib/resources');
 var c = require('./config').get(process.env.NODE_ENV);
 

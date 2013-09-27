@@ -41,12 +41,11 @@ var wrench = require('wrench');
 var request = require('request');
 var Step = require('step');
 var boots = require(rel + 'boots');
-var db = require(rel + 'lib/db.js');
-var com = require(rel + 'lib/common.js');
+var db = require(rel + 'lib/db');
+var com = require(rel + 'lib/common');
 
 // Build vars.
 var dir = 'build';
-var cf = 'https://d10fiv677oa856.cloudfront.net';
 var pack = JSON.parse(fs.readFileSync(rel + 'package.json', 'utf8'));
 var bv = _.strLeftBack(pack.version, '.');
 var lv = parseInt(_.strRightBack(pack.version, '.')) + 1;
@@ -57,7 +56,7 @@ var aws = JSON.parse(fs.readFileSync(rel + 'aws.config.json', 'utf8'));
 var client = knox.createClient({
   key: aws.accessKeyId,
   secret: aws.secretAccessKey,
-  bucket: 'build.islandio'
+  bucket: pack.bucket
 });
 
 Step(
@@ -81,8 +80,8 @@ Step(
     wrench.rmdirSyncRecursive(rel + dir + '/templates');
     
     var min = fs.readFileSync(rel + dir + '/js/min.js', 'utf8');
-    var banner = '/*\n * island.io v' + nv + '\n */\n';
-    var vvar = 'var __s = "' + cf + '/' + nv + '";';
+    var banner = '/*\n * ' + pack.name + ' v' + nv + '\n */\n';
+    var vvar = 'var __s = "' + pack.cloudfront + '/' + nv + '";';
     fs.writeFileSync(rel + dir + '/js/min.js', banner + vvar + min);
 
     this();
