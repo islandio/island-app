@@ -10,8 +10,9 @@ define([
   'rpc',
   'util',
   'models/ascent',
-  'text!../../templates/ascent.html'
-], function ($, _, Backbone, mps, rpc, util, Ascent, template) {
+  'text!../../templates/ascent.html',
+  'views/lists/medias'
+], function ($, _, Backbone, mps, rpc, util, Ascent, template, Medias) {
 
   return Backbone.View.extend({
 
@@ -54,7 +55,7 @@ define([
 
     // Bind mouse events.
     events: {
-      'click a.navigate': 'navigate',
+      'click a.navigate': 'navigate'
     },
 
     // Misc. setup.
@@ -62,6 +63,9 @@ define([
 
       // Set map view.
       mps.publish('map/fly', [this.model.get('location')]);
+
+      // Render medias.
+      this.medias = new Medias(this.app, {parentView: this, reverse: true});
 
       return this;
     },

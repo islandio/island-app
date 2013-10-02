@@ -20,6 +20,7 @@ define([
     initialize: function (app, options) {
       this.template = _.template(template);
       this.collection = new Collection;
+      this.type = options.type;
       this.Row = Row;
 
       // Call super init.
@@ -130,7 +131,7 @@ define([
       input.val('').keyup();
 
       // Now save the comment to server.
-      rpc.post('/api/comments/post', payload,
+      rpc.post('/api/comments/' + this.type, payload,
           _.bind(function (err, data) {
 
         if (err) {

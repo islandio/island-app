@@ -238,7 +238,7 @@ define([
       }
 
       // Render comments.
-      this.comments = new Comments(this.app, {parentView: this});
+      this.comments = new Comments(this.app, {parentView: this, type: 'post'});
     },
 
     destroy: function () {
