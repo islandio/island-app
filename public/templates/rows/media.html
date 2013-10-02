@@ -1,0 +1,24 @@
+<%
+  var typeClass = this.model.get('type') === 'video' ? 'post-title-video': 'post-title-photos';
+%>
+
+<iframe src="<%= this.model.get('link') %>?api=1" width="640" height="360"
+    frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+<div class="post-info">
+  Added by <a href="/<%= this.model.get('author').username %>" class="navigate">
+    <%= this.model.get('author').displayName %></a>
+  <a href="/<%= this.model.get('key') %>" class="navigate"><time class="created" 
+        datetime="<%= this.model.get('created') %>" 
+        title="<%= this.model.get('created') %>">
+    <%= this.model.get('created') %>
+  </time></a>
+  <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+  <span class="post-info-item"><%= this.model.views() %> 
+      <%= (this.model.get('vcnt') || 0) !== 1 ? 'views': 'view' %></span>
+  <% if (this.app.profile.member &&
+      this.model.get('author').id === this.app.profile.member.id) { %>
+    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+    <span class="media-delete info-delete">delete</span>
+  <% } %>
+</div>
+<div class="comments"></div>

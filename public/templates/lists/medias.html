@@ -1,0 +1,35 @@
+<%
+  var member = this.app.profile.member;
+%>
+
+<% if (member) { %>
+  <div id="media_input" class="list-header">
+    <div class="media">
+      <form action="/api/medias" enctype="multipart/form-data" method="POST">
+        <table>
+          <tr>
+            <td>
+              <label for="link">Add a new photo or video of this ascent</label>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <input tabindex="1" id="media_link" name="link" type="text"
+                  placeholder="Image, Youtube, or Vimeo URL..." />
+            </td>
+            <td>
+              <input type="submit" id="media_button" value="Add" tabindex="2" />
+            </td>
+          </tr>
+        </table>
+      </form>
+    </div>
+  </div>
+<% } else { %>
+  <div class="list-header"></div>
+<% } %>
+<% if (this.collection.models.length > 0) { %>
+  <% _.each(this.collection.models, _.bind(function(row) { %>
+    <%= this.row(row) %>
+  <% }, this)); %>
+<% } %>
