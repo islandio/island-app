@@ -123,7 +123,6 @@ define([
     },
 
     logout: function () {
-
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });

@@ -139,16 +139,14 @@ define([
 
       // Grab payload.
       var payload = util.cleanObject(this.mediaForm.serializeObject());
-      if (payload.link)
-        payload.link = this.parseVideoURL(payload.link);
-      
+      payload.link = this.parseVideoURL(payload.link);
+
       // Check for empty payload.
       if (!payload.link) return false;
 
       // Add the parent id.
       payload.parent_id = this.parentView.model.id;
-
-      console.log(payload);
+      console.log(payload)
       // Now save the media to server.
       rpc.post('/api/medias/ascent', payload,
           _.bind(function (err, data) {
@@ -173,16 +171,32 @@ define([
     },
 
     parseVideoURL: function (url) {
-      var vid = url.match(/vimeo.com\/([0-9]*)/i);
+      if (!url) return false;
+
+      // Try Vimeo.
+      var vid = url.match(/vimeo.com\/([0-9]+)/i);
       if (!vid)
-        vid = url.match(/vimeo.com\/video\/([0-9]*)/i);
+        vid = url.match(/vimeo.com\/video\/([0-9]+)/i);
       if (vid)
-        return url = 'https://player.vimeo.com/video/' + vid[1];
+        return {
+          src: 'https://player.vimeo.com/video/' + vid[1] + '?api=1',
+          type: 'vimeo'
+        };
+
+      // Try Youtube.
+      vid = url.match(/youtube.com\/watch\?v=([0-9a-zA-Z]+)/i);
+      if (!vid)
+        vid = url.match(/youtu.be\/([0-9a-zA-Z]+)/i);
+      if (vid)
+        return {
+          src: '//www.youtube.com/embed/' + vid[1],
+          type: 'youtube'
+        };
       else
         return false;
     },
 
-    // check the panel's empty space and get more
+    // Check the panel's empty space and get more
     // notes to fill it up.
     checkHeight: function () {
       wh = $(window).height();
