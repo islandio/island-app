@@ -146,7 +146,7 @@ define([
 
       // Add the parent id.
       payload.parent_id = this.parentView.model.id;
-      console.log(payload)
+
       // Now save the media to server.
       rpc.post('/api/medias/ascent', payload,
           _.bind(function (err, data) {
@@ -174,22 +174,18 @@ define([
       if (!url) return false;
 
       // Try Vimeo.
-      var vid = url.match(/vimeo.com\/([0-9]+)/i);
-      if (!vid)
-        vid = url.match(/vimeo.com\/video\/([0-9]+)/i);
+      var vid = url.match(/vimeo.com\/(?:channels\/|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|)(\d+)(?:$|\/|\?)/);
       if (vid)
         return {
-          src: 'https://player.vimeo.com/video/' + vid[1] + '?api=1',
+          src: 'https://player.vimeo.com/video/' + vid[3] + '?api=1',
           type: 'vimeo'
         };
 
       // Try Youtube.
-      vid = url.match(/youtube.com\/watch\?v=([0-9a-zA-Z]+)/i);
-      if (!vid)
-        vid = url.match(/youtu.be\/([0-9a-zA-Z]+)/i);
+      vid = url.match(/(youtu\.be\/|youtube\.com\/(watch\?(.*&)?v=|(embed|v)\/))([^\?&"'>]+)/);
       if (vid)
         return {
-          src: '//www.youtube.com/embed/' + vid[1],
+          src: '//www.youtube.com/embed/' + vid[5],
           type: 'youtube'
         };
       else
