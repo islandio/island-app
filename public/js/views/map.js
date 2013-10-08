@@ -50,6 +50,10 @@ define([
       this.subscriptions.push(mps.subscribe('map/fly',
           _.bind(this.flyTo, this)));
 
+      // Listen for marker refresh.
+      this.subscriptions.push(mps.subscribe('map/refresh',
+          _.bind(this.getMediaMarkers, this, true)));
+
       // Get a geocoder.
       if (!this.geocoder)
         this.geocoder = new google.maps.Geocoder();

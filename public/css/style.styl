@@ -602,6 +602,12 @@ div[role=button]:focus:not(.disabled),
 input[type=submit]:focus:not(.disabled)
   border 1px solid #98c1e6
 
+a.button.spinning,
+button.spinning,
+div[role=button].spinning,
+input[type=submit].spinning:not(.submit)
+  color #f1f1f1
+
 input[type=submit].from-login:hover
   -moz-box-shadow 0 0 2px #1a1a1a
   -webkit-box-shadow 0 0 2px #1a1a1a
@@ -1551,6 +1557,11 @@ div.cartodb-zoom
   width 50px
   height 40px
   margin 0 auto
+
+.button-spin
+  position absolute
+  top 17px
+  left 43px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––page titles*/
 
@@ -2583,6 +2594,7 @@ div#media_input table
 
 div#media_input td
   padding 0 0 5px 10px
+  position relative
 
 #media_link
   width 544px
