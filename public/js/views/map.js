@@ -50,6 +50,10 @@ define([
       this.subscriptions.push(mps.subscribe('map/fly',
           _.bind(this.flyTo, this)));
 
+      // Listen for marker refresh.
+      this.subscriptions.push(mps.subscribe('map/refresh',
+          _.bind(this.getMediaMarkers, this, true)));
+
       // Get a geocoder.
       if (!this.geocoder)
         this.geocoder = new google.maps.Geocoder();
@@ -110,7 +114,6 @@ define([
 
       // Hide/show plot button.
       if (this.app.profile.member && this.app.profile.member.role === 0
-          && this.app.profile.member.username === 'sander'
           && this.app.profile.content.page
           && this.app.profile.content.page.author)
         this.plotButton.css({visibility: 'visible'})

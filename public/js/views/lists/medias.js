@@ -23,10 +23,12 @@ define([
     fetching: false,
     nomore: false,
     limit: 3,
+    adding: false,
 
     initialize: function (app, options) {
       this.template = _.template(template);
       this.collection = new Collection;
+      this.type = options.type;
       this.Row = Row;
 
       // Call super init.
@@ -53,8 +55,8 @@ define([
     },
 
     // collect new medias from socket events.
-    collect: function (post) {
-      this.collection.unshift(post);
+    collect: function (media) {
+      this.collection.unshift(media);
     },
 
     // initial bulk render of list
@@ -103,8 +105,13 @@ define([
       if (!Modernizr.input.placeholder)
         this.$('input, textarea').placeholder();
 
-      // Submit post.
+      // Submit media.
       this.mediaButton.click(_.bind(this.submit, this));
+
+      // Init the load indicator for the button.
+      this.mediaButtonSpin = new Spin($('.button-spin', this.el), {
+        color: '#4d4d4d'
+      });
 
       return List.prototype.setup.call(this);
     },
@@ -136,34 +143,61 @@ define([
         e.stopPropagation();
         e.preventDefault();
       }
+      if (this.adding) return false;
 
       // Grab payload.
-      var payload = util.cleanObject(this.mediaForm.serializeObject());
-      payload.link = this.parseVideoURL(payload.link);
+      var payload = {};
+      payload.video = util.cleanObject(this.mediaForm.serializeObject());
+      payload.video = this.parseVideoURL(payload.video.link);
 
       // Check for empty payload.
-      if (!payload.link) return false;
+      if (!payload.video) {
+        mps.publish('flash/new', [{
+          message: 'Invalid link. Please use a YouTube or Vimeo URL.',
+          level: 'error',
+          sticky: false
+        }, true]);
+        $('input[name="link"]', this.mediaForm).val('');
+        return false;
+      }
+      this.adding = true;
 
       // Add the parent id.
       payload.parent_id = this.parentView.model.id;
-      console.log(payload)
+
+      // Show loading.
+      this.mediaButtonSpin.start();
+      this.mediaButton.addClass('spinning');
+      this.mediaButton.addClass('disabled');
+      this.mediaButton.attr('disabled', 'disabled');
+
       // Now save the media to server.
-      rpc.post('/api/medias/ascent', payload,
+      rpc.post('/api/medias/' + this.type, payload,
           _.bind(function (err, data) {
 
         // Clear fields.
         $('input[name="link"]', this.mediaForm).val('');
 
+        // Hide loading.
+        this.mediaButtonSpin.stop();
+        this.mediaButton.removeClass('spinning');
+        this.mediaButton.removeClass('disabled');
+        this.mediaButton.attr('disabled', false);
+        this.adding = false;
+
         if (err) {
           console.log(err)
 
-          // Oops, post wasn't created.
+          // Oops, media wasn't created.
           console.log('TODO: Retry, notify user, etc.');
           return;
         }
 
         // TODO: make this optimistic.
         this.collect(data.media);
+
+        // Update map media.
+        mps.publish('map/refresh');
 
       }, this));
 
@@ -174,24 +208,20 @@ define([
       if (!url) return false;
 
       // Try Vimeo.
-      var vid = url.match(/vimeo.com\/([0-9]+)/i);
-      if (!vid)
-        vid = url.match(/vimeo.com\/video\/([0-9]+)/i);
-      if (vid)
-        return {
-          src: 'https://player.vimeo.com/video/' + vid[1] + '?api=1',
+      var m = url.match(/vimeo.com\/(?:channels\/|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|)(\d+)(?:$|\/|\?)/);
+      if (m)
+        return {link: {
+          id: m[3],
           type: 'vimeo'
-        };
+        }};
 
       // Try Youtube.
-      vid = url.match(/youtube.com\/watch\?v=([0-9a-zA-Z]+)/i);
-      if (!vid)
-        vid = url.match(/youtu.be\/([0-9a-zA-Z]+)/i);
-      if (vid)
-        return {
-          src: '//www.youtube.com/embed/' + vid[1],
+      m = url.match(/(youtu\.be\/|youtube\.com\/(watch\?(.*&)?v=|(embed|v)\/))([^\?&"'>]+)/);
+      if (m)
+        return {link: {
+          id: m[5],
           type: 'youtube'
-        };
+        }};
       else
         return false;
     },

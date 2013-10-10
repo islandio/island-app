@@ -131,7 +131,8 @@ define([
       }
 
       // Blur.
-      this.input.width(150).attr({placeholder: 'Search...'});
+      if (!this.searchVal())
+        this.input.width(150).attr({placeholder: 'Search...'});
       this.results.hide();
       this.resetHighlight();
       this.active = false;

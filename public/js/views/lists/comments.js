@@ -30,7 +30,7 @@ define([
       this.subscriptions = [];
 
       // Socket subscriptions
-      this.app.socket.subscribe('post-' + this.parentView.model.id)
+      this.app.socket.subscribe(this.type + '-' + this.parentView.model.id)
           .bind('comment.new', _.bind(this.collect, this))
           .bind('comment.removed', _.bind(this._remove, this));
 
@@ -131,7 +131,9 @@ define([
       input.val('').keyup();
 
       // Now save the comment to server.
-      rpc.post('/api/comments/' + this.type, payload,
+      var container = this.parentView.parentView ?
+          this.parentView.parentView.type || 'null': 'null';
+      rpc.post('/api/comments/' + [container, this.type].join('/'), payload,
           _.bind(function (err, data) {
 
         if (err) {
