@@ -28,6 +28,7 @@ define([
     initialize: function (app, options) {
       this.template = _.template(template);
       this.collection = new Collection;
+      this.type = options.type;
       this.Row = Row;
 
       // Call super init.
@@ -55,7 +56,6 @@ define([
 
     // collect new medias from socket events.
     collect: function (media) {
-      console.log(media)
       this.collection.unshift(media);
     },
 
@@ -146,11 +146,12 @@ define([
       if (this.adding) return false;
 
       // Grab payload.
-      var payload = util.cleanObject(this.mediaForm.serializeObject());
-      payload.link = this.parseVideoURL(payload.link);
+      var payload = {};
+      payload.video = util.cleanObject(this.mediaForm.serializeObject());
+      payload.video = this.parseVideoURL(payload.video.link);
 
       // Check for empty payload.
-      if (!payload.link) {
+      if (!payload.video) {
         mps.publish('flash/new', [{
           message: 'Invalid link. Please use a YouTube or Vimeo URL.',
           level: 'error',
@@ -171,7 +172,7 @@ define([
       this.mediaButton.attr('disabled', 'disabled');
 
       // Now save the media to server.
-      rpc.post('/api/medias/ascent', payload,
+      rpc.post('/api/medias/' + this.type, payload,
           _.bind(function (err, data) {
 
         // Clear fields.
@@ -209,18 +210,18 @@ define([
       // Try Vimeo.
       var m = url.match(/vimeo.com\/(?:channels\/|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|)(\d+)(?:$|\/|\?)/);
       if (m)
-        return {
-          vid: m[3],
+        return {link: {
+          id: m[3],
           type: 'vimeo'
-        };
+        }};
 
       // Try Youtube.
       m = url.match(/(youtu\.be\/|youtube\.com\/(watch\?(.*&)?v=|(embed|v)\/))([^\?&"'>]+)/);
       if (m)
-        return {
-          vid: m[5],
+        return {link: {
+          id: m[5],
           type: 'youtube'
-        };
+        }};
       else
         return false;
     },

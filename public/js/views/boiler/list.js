@@ -60,6 +60,7 @@ define([
     },
 
     setup: function () {
+      this.off('rendered', this.setup, this);
       return this;
     },
 

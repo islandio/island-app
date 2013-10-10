@@ -114,7 +114,6 @@ define([
 
       // Hide/show plot button.
       if (this.app.profile.member && this.app.profile.member.role === 0
-          && this.app.profile.member.username === 'sander'
           && this.app.profile.content.page
           && this.app.profile.content.page.author)
         this.plotButton.css({visibility: 'visible'})

@@ -9,14 +9,14 @@ define([
 ], function (_, Backbone, util) {
   return Backbone.Model.extend({
 
-    link: function () {
-      var link = this.get('link');
+    src: function () {
+      var link = this.get('video').link;
       switch (link.type) {
         case 'vimeo':
-          return 'https://player.vimeo.com/video/' + link.vid + '?api=1';
+          return 'https://player.vimeo.com/video/' + link.id + '?api=1';
           break;
         case 'youtube':
-          return '//www.youtube.com/embed/' + link.vid;
+          return '//www.youtube.com/embed/' + link.id;
           break;
         default:
           return '';
