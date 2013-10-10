@@ -34,6 +34,8 @@ define([
     },
 
     render: function (single, prepend) {
+      if (this.parentView)
+        this.parentView.off('rendered');
       this.$el.html(this.template.call(this));
       if (this.model.collection) {
         var d = this.model.collection.indexOf(this.model) * 30;
@@ -55,17 +57,15 @@ define([
           else
             this.$el.appendTo(this.wrap);
         }
+      this.time = null;
       this.trigger('rendered');
       return this;
     },
 
     setup: function () {
+      this.off('rendered', this.setup, this);
       if (!this.model.get('created'))
         this.model.created = Date.now();
-      this.$('.currency').each(function () {
-        var str = util.addCommas($(this).text());
-        $(this).text('$' + str.trim());
-      });
       this.timer = setInterval(_.bind(this.when, this), 5000);
       this.when();
       return this;
@@ -73,6 +73,10 @@ define([
 
     // Kill this view.
     destroy: function () {
+      if (this.subscriptions)
+        _.each(this.subscriptions, function (s) {
+          mps.unsubscribe(s);
+        });
       this.undelegateEvents();
       this.stopListening();
       if (this.timer)

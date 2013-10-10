@@ -65,7 +65,11 @@ define([
       mps.publish('map/fly', [this.model.get('location')]);
 
       // Render medias.
-      this.medias = new Medias(this.app, {parentView: this, reverse: true});
+      this.medias = new Medias(this.app, {
+        parentView: this,
+        reverse: true,
+        type: 'ascent'
+      });
 
       return this;
     },

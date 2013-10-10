@@ -11,28 +11,62 @@ define([
 
     body: function () {
       var att = this.attributes;
-      var owner;
-      var preverb = '';
-      if (att.event.data.action.i === att.event.data.target.i) {
-        owner = 'their';
-        preverb = 'also ';
-      } else if (att.subscriber_id === att.event.data.target.i)
-        owner = 'your';
-      else {
-        owner = att.event.data.target.a + '\'s';
-        preverb = 'also ';
-      }
 
       if (att.event.data.action.t === 'comment') {
-        var verb = preverb + 'commented on';
+        var verb = 'commented on';
+        var owner;
+
+        if (att.event.data.target.c === 'ascent') {
+          if (att.event.data.action.i === att.event.data.target.i) {
+            verb = 'also ' + verb;
+            owner = 'they added';
+          } else if (att.subscriber_id === att.event.data.target.i)
+            owner = 'you added';
+          else {
+            owner = '';
+            verb = 'also ' + verb;
+          }
+
+          return '<strong>' + att.event.data.action.a + '</strong> '
+              + verb + ' a <strong>'
+              + att.event.data.target.p + '</strong> '
+              + owner + ' of '
+              + '<strong>' + att.event.data.target.n + '</strong> at '
+              + att.event.data.target.w
+              + ': "' + att.event.data.action.b
+              + '".';
+        
+        } else if (!att.event.data.target.c) {
+          if (att.event.data.action.i === att.event.data.target.i) {
+            owner = 'their';
+            verb = 'also ' + verb;
+          } else if (att.subscriber_id === att.event.data.target.i)
+            owner = 'your';
+          else {
+            owner = att.event.data.target.a + '\'s';
+            verb = 'also ' + verb;
+          }
+
+          return '<strong>' + att.event.data.action.a + '</strong> '
+              + verb + ' <strong>'
+              + owner + '</strong> '
+              + att.event.data.target.t
+              + (att.event.data.target.n !== '' ? ' <strong>'
+              + att.event.data.target.n + '</strong>': '')
+              + ': "' + att.event.data.action.b
+              + '".';
+        }
+      
+      } else if (att.event.data.action.t === 'media') {
+        var verb = 'also added';
+
         return '<strong>' + att.event.data.action.a + '</strong> '
-            + verb + ' <strong>'
-            + owner + '</strong> '
-            + att.event.data.target.t
-            + (att.event.data.target.n !== '' ? ' <strong>'
-            + att.event.data.target.n + '</strong>': '')
-            + ': "' + att.event.data.action.b
-            + '".';
+            + verb + ' a <strong>'
+            + att.event.data.action.b + '</strong> of '
+            + '<strong>' + att.event.data.target.n + '</strong> at '
+            + att.event.data.target.w
+            + '.';
+      
       } else return '';
     }
 
