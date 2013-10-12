@@ -14,7 +14,7 @@ define([
   return Backbone.View.extend({
 
     // The DOM target element for this page:
-    id: 'error',
+    className: 'error',
 
     // Module entry point:
     initialize: function (app) {
@@ -39,7 +39,7 @@ define([
 
       // UnderscoreJS rendering.
       this.template = _.template(template);
-      this.$el.html(this.template.call(this)).appendTo('#main');
+      this.$el.html(this.template.call(this)).appendTo('div.main');
 
       // Done rendering ... trigger setup.
       this.trigger('rendered');
