@@ -39,7 +39,7 @@ define([
 
       // UnderscoreJS rendering.
       this.template = _.template(template);
-      this.$el.html(this.template.call(this)).appendTo('div.main');
+      this.$el.html(this.template.call(this)).appendTo('#main');
 
       // Done rendering ... trigger setup.
       this.trigger('rendered');
