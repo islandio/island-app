@@ -18,7 +18,7 @@ define([
       Collection, Row, Spin) {
   return List.extend({
 
-    el: '#posts',
+    el: '.posts',
 
     fetching: false,
     nomore: false,
@@ -34,7 +34,7 @@ define([
       List.prototype.initialize.call(this, app, options);
 
       // Init the load indicator.
-      this.spin = new Spin($('#posts_spin', this.parentView.el));
+      this.spin = new Spin($('.posts-spin', this.parentView.el));
       this.spin.start();
 
       // Client-wide subscriptions
@@ -96,14 +96,14 @@ define([
     setup: function () {
 
       // Save refs
-      this.postForm = this.$('#post_input_form');
+      this.postForm = this.$('.post-input-form');
       this.postBody = $('textarea[name="body"]', this.postForm);
       this.postTitle = this.$('input[name="title"]', this.postForm);
-      this.postButton = this.$('#post_button', this.postForm);
-      this.dropZone = this.$('#post_dnd');
-      this.postParams = this.$('#post_params');
-      this.postSelect = this.$('#post_select');
-      this.postFiles = this.$('#post_files');
+      this.postButton = this.$('.post-button', this.postForm);
+      this.dropZone = this.$('.post-dnd');
+      this.postParams = this.$('.post-params');
+      this.postSelect = this.$('.post-select');
+      this.postFiles = this.$('.post-files');
 
       // Autogrow the write comment box.
       this.postBody.autogrow();
@@ -111,22 +111,22 @@ define([
       // Show the write post box if it exists and
       // if the user is not using IE.
       if (navigator.userAgent.indexOf('MSIE') !== -1) {
-        this.$('#post_input .post').remove();
+        this.$('.post-input .post').remove();
         mps.publish('flash/new', [{
           message: 'Island does not support Internet Explorer for posting content. Please use Safari, Chrome, or Firefox.',
           level: 'error',
           sticky: true
         }, true]);
       } else
-        this.$('#post_input .post').show();
+        this.$('.post-input .post').show();
 
       // Add placeholder shim if need to.
       if (!Modernizr.input.placeholder)
         this.$('input, textarea').placeholder();
 
       // Add mouse events for dummy file selector.
-      var dummy = this.$('#post_file_chooser_dummy');
-      this.$('#post_file_chooser').on('mouseover', function (e) {
+      var dummy = this.$('.post-file-chooser-dummy');
+      this.$('.post-file-chooser').on('mouseover', function (e) {
         dummy.addClass('hover');
       })
       .on('mouseout', function (e) {

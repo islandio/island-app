@@ -15,7 +15,7 @@ define([
 ], function ($, _, List, mps, rpc, template, Collection, Row, Spin) {
   return List.extend({
 
-    el: '#panel_content',
+    el: '.panel-content',
 
     fetching: false,
     nomore: false,
@@ -44,7 +44,7 @@ define([
       $(window).resize(_.debounce(_.bind(this.resize, this), 50));
 
       // Init the load indicator.
-      this.spin = new Spin($('#notifications_spin', this.$el.parent()));
+      this.spin = new Spin($('.notifications-spin', this.$el.parent()));
       this.spin.start();
   
       // Reset the collection.
@@ -121,7 +121,7 @@ define([
       this.spin.stop();
       mps.publish('notification/change', []);
       this.$el.parent().addClass('animated');
-      $('#wrap').addClass('animated');
+      $('.wrap').addClass('animated');
       this.resize();
       List.prototype.setup.call(this);
     },

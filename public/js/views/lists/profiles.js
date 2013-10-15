@@ -18,7 +18,7 @@ define([
       Collection, Row, Spin) {
   return List.extend({
 
-    el: '#profiles',
+    el: '.profiles',
 
     fetching: false,
     nomore: false,
@@ -34,7 +34,7 @@ define([
       List.prototype.initialize.call(this, app, options);
 
       // Init the load indicator.
-      this.spin = new Spin($('#profiles_spin', this.parentView.el));
+      this.spin = new Spin($('.profiles-spin', this.parentView.el));
       this.spin.start();
 
       // Client-wide subscriptions

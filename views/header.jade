@@ -1,41 +1,41 @@
-div#saved
+.saved
   form(enctype="multipart/form-data", method="POST")
     input(name="username", type="text")
     input(name="password", type="password")
     input(value="_", type="submit")
-div#block_messages
+.block-messages
   ul
-div#header_inner
-  div.divider-vertical
-  a#logo(href="/")
+.header-inner
+  .divider-vertical
+  a.logo(href="/")
     span.tagline Climb
     img(src="#{root}/img/dots.png", width="140", height="48")
   div.divider-vertical.pad-right
-  div#header_search
-    input.header-search(type="search", tabindex="1", placeholder="Search...")
+  .header-search
+    input.header-search-input(type="search", tabindex="1", placeholder="Search...")
   ul.header-links
     li
-      a(id="team", href="/team") Team
+      a(class="navigate", href="/team") Team
     li
-      a(id="films", href="/films") Films
+      a(class="navigate", href="/films") Films
     li
-      a(id="contact", href="/contact") Contact
+      a(class="navigate", href="/contact") Contact
     li
-      a(id="about", href="/about") About
+      a(class="navigate", href="/about") About
   - if (member)
     div.member-box
       div.divider-vertical
-      a#header_avatar.header-avatar(href="/" + member.username)
+      a.header-avatar(href="/" + member.username)
         img(src="https://www.gravatar.com/avatar/" + member.gravatar + "?s=50&d=https%3A%2F%2Fd271mvlc6gc7bl.cloudfront.net%2Fmain%2Fimg%2Favatar_100.png", width="50", height="50")
-      a#settings.header-action(href="/settings")
+      a.header-action(href="/settings")
         i.icon-params
       div.divider-vertical
-      a#globe.header-action(href="javascript:;")
+      a.globe-button.header-action(href="javascript:;")
         i.icon-globe
         span.count
       div.divider-vertical
-      a#logout.header-action(href="/logout")
+      a.logout-button.header-action(href="/logout")
         i.icon-logout
       div.divider-vertical
   - else
-    a#signin.button(href="javascript:;") Sign in
+    a.signin-button.button(href="javascript:;") Sign in

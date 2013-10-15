@@ -16,7 +16,7 @@ define([
 ], function ($, _, Modernizr, List, mps, rpc, util, template, Collection, Row) {
   return List.extend({
     
-    el: '#header_search',
+    el: '.header-search',
     active: false,
     str: null,
     selecting: {el: null, i: -1},
@@ -39,15 +39,15 @@ define([
 
     // Bind mouse events.
     events: {
-      'focus input.header-search': 'searchFocus'
+      'focus .header-search-input': 'searchFocus'
     },
 
     // Misc. setup
     setup: function () {
 
       // Save refs.
-      this.input = this.$('input.header-search');
-      this.results = this.$('div.search-display');
+      this.input = this.$('.header-search-input');
+      this.results = this.$('.search-display');
 
       // Add placeholder shim if need to.
       if (!Modernizr.input.placeholder)
@@ -94,7 +94,7 @@ define([
       if (!this.active) return;
 
       // Ensure we are inside input.
-      if ($(e.target).hasClass('header-search')) {
+      if ($(e.target).hasClass('header-search-input')) {
 
         // Enter
         if (e.keyCode === 13 && e.which === 13) {

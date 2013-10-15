@@ -44,7 +44,7 @@ define([
       });
 
       // Init the load indicator.
-      this.spin = new Spin(this.$('#signin_spin'), {
+      this.spin = new Spin(this.$('.signin-spin'), {
         lines: 17,
         length: 12,
         width: 4,
@@ -71,8 +71,8 @@ define([
 
     // Bind mouse events.
     events: {
-      'click #forgot': 'forgot',
-      'click a.navigate': 'navigate',
+      'click .forgot-login': 'forgot',
+      'click .navigate': 'navigate',
     },
 
     // Misc. setup.
@@ -81,8 +81,8 @@ define([
       // Save refs.
       this.signinTarget = this.$('#signin_target');
       this.signupTarget = this.$('#signup_target');
-      this.signinForm = this.$('#signin_form');
-      this.signupForm = this.$('#signup_form');
+      this.signinForm = this.$('.signin-form');
+      this.signupForm = this.$('.signup-form');
       this.signinInner = this.$('.signin-inner-inner');
 
       // Let the forms submit to the frame, and use the

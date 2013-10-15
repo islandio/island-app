@@ -1,18 +1,18 @@
 extends layout
 
 block content
-  div#wrap
-    header#header
+  #wrap.wrap
+    header.header
       include header
-    div#map
-      div#map_overlay
-      div#map_spin
+    #map.map
+      .map-overlay
+      .map-spin
       a.button.plot-button(href="javascript:;")
         span
           | +
           i.icon-location
-        div#plot_spin
-      div#plot_form
+        .plot-spin
+      .plot-form
         table
           tr
             td
@@ -27,19 +27,19 @@ block content
           tr
             td(colspan="2")
               span Click on the map to grab coordinates.
-      div#map_control
+      .map-control
         div
-          a.button.split-left#hide_show(href="javascript:;") Hide map
-          a.button.split-right#less_more(href="javascript:;") More map
-      div#map_inner
-    div#content
-      div#main
+          a#hide_show.hide-show.button.split-left(href="javascript:;") Hide map
+          a#less_more.less-more.button.split-right(href="javascript:;") More map
+      #map_inner.map-inner
+    .content
+      .main
         block main
-      div#page_spin
-    div#panel
-      div#panel_content
-      div.list-spin
-        div#notifications_spin
+      .page-spin
+    #panel.panel
+      .panel-content
+      .list-spin
+        .notifications-spin
         span.empty-feed Showing all.
-    footer#footer
+    footer.footer
       include footer

@@ -15,7 +15,7 @@ define([
 ], function ($, _, Backbone, mps, rpc, util, Flashes, Choices, box) {
   return Backbone.View.extend({
 
-    el: '#header',
+    el: '.header',
 
     initialize: function (app) {
 
@@ -36,10 +36,10 @@ define([
       this.stopListening();
 
       if (login && this.app.profile.member) {
-        this.$('#signin').remove();
+        this.$('.signin-button').remove();
 
         // UnderscoreJS rendering.
-        $(_.template(box).call(this)).appendTo(this.$('#header_inner'));
+        $(_.template(box).call(this)).appendTo(this.$('.header-inner'));
 
         // Open notes if user wants that.
         if (store.get('notesOpen')) {
@@ -60,14 +60,13 @@ define([
     setup: function () {
 
       // Save refs.
-      this.panel = $('#panel');
-      this.wrap = $('#wrap');
+      this.panel = $('.panel');
+      this.wrap = $('.wrap');
 
       // Shell event.
       this.delegateEvents();
 
       // Shell listeners / subscriptions.
-      // Do this here intead of init ... re-renders often.
       if (this.app.profile && this.app.profile.member) {
         
         // Shell subscriptions.
@@ -88,15 +87,10 @@ define([
 
     // Bind mouse events.
     events: {
-      'click #logo': 'home',
-      'click #team': 'team',
-      'click #films': 'films',
-      'click #about': 'about',
-      'click #contact': 'contact',
-      'click #signin': 'signin',
-      'click #header_avatar': 'avatar',
-      'click #settings': 'settings',
-      'click #globe': 'togglePanel'
+      'click .signin-button': 'signin',
+      'click .header-avatar': 'avatar',
+      'click .globe-button': 'togglePanel',
+      'click .navigate': 'navigate',
     },
 
     togglePanel: function (e) {
@@ -115,7 +109,7 @@ define([
     },
 
     checkBeacon: function () {
-      var unread = $('#panel .unread');
+      var unread = $('.panel .unread');
       if (unread.length > 0)
         this.$('.count').text(unread.length).show();
       else
@@ -129,8 +123,8 @@ define([
 
       // Swap member header content.
       this.$('div.member-box').remove();
-      $('<a id="signin" class="button">Sign in</a>')
-          .appendTo(this.$('#header_inner'));
+      $('<a class="signin-button button">Sign in</a>')
+          .appendTo(this.$('.header-inner'));
       
       // Close the panel.
       this.wrap.removeClass('panel-open');
@@ -138,42 +132,7 @@ define([
       _.delay(function () {
         $(window).resize();
       }, 1000);
-    },
-
-    home: function (e) {
-      e.preventDefault();
-
-      // Route to home.
-      this.app.router.navigate('/', {trigger: true});
-    },
-
-    team: function (e) {
-      e.preventDefault();
-
-      // Route to about.
-      this.app.router.navigate('/team', {trigger: true});
-    },
-
-    films: function (e) {
-      e.preventDefault();
-
-      // Route to films.
-      this.app.router.navigate('/films', {trigger: true});
-    },
-
-    about: function (e) {
-      e.preventDefault();
-
-      // Route to about.
-      this.app.router.navigate('/about', {trigger: true});
-    },
-
-    contact: function (e) {
-      e.preventDefault();
-
-      // Route to about.
-      this.app.router.navigate('/contact', {trigger: true});
-    },
+    },    
 
     signin: function (e) {
       e.preventDefault();
@@ -186,15 +145,17 @@ define([
       e.preventDefault();
 
       // Route to profile.
-      this.app.router.navigate('/' + this.app.profile.member.username,
-          {trigger: true});
+      this.app.router.navigate('/'
+          + this.app.profile.member.username, {trigger: true});
     },
 
-    settings: function (e) {
+    navigate: function (e) {
       e.preventDefault();
 
-      // Route to settings.
-      this.app.router.navigate('/settings', {trigger: true});
+      // Route to wherever.
+      var path = $(e.target).closest('a').attr('href');
+      if (path)
+        this.app.router.navigate(path, {trigger: true});
     },
 
   });
