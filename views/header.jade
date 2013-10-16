@@ -1,4 +1,4 @@
-.saved
+.saved-ghost
   form(enctype="multipart/form-data", method="POST")
     input(name="username", type="text")
     input(name="password", type="password")
@@ -27,14 +27,14 @@
       div.divider-vertical
       a.header-avatar(href="/" + member.username)
         img(src="https://www.gravatar.com/avatar/" + member.gravatar + "?s=50&d=https%3A%2F%2Fd271mvlc6gc7bl.cloudfront.net%2Fmain%2Fimg%2Favatar_100.png", width="50", height="50")
-      a.header-action(href="/settings")
+      a.header-action.navigate(href="/settings")
         i.icon-params
       div.divider-vertical
       a.globe-button.header-action(href="javascript:;")
         i.icon-globe
         span.count
       div.divider-vertical
-      a.logout-button.header-action(href="/logout")
+      a.header-action(href="/logout")
         i.icon-logout
       div.divider-vertical
   - else

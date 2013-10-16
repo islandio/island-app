@@ -378,11 +378,11 @@ h1.title-sub
   text-align right
 
 .leftside
-  float left
   width 640px
-  margin 0 0 40px
+  margin 0 auto
 
 .rightside
+  display none
   margin 0 0 0 670px
 
 .middle
@@ -766,11 +766,11 @@ a.buy-button:hover
 .footer
   width 100%
   margin-top 50px
-  height 30px
+  height 40px
 
 .footer > div
   margin 0 auto
-  width 984px
+  width 640px
   text-align right
   position relative
 
@@ -824,7 +824,7 @@ a.buy-button:hover
   height 50px
   width 100%
 
-.filter-box
+input.filter-box
   font-size 19px
   width 401px
   visibility hidden
@@ -1010,26 +1010,26 @@ a.header-avatar:hover
   opacity 0.8
   background none
 
-a.signin
+a.signin-button
   float right
   width 90px
   margin-top 9px
 
-a.signin:hover
+a.signin-button:hover
   color #1a1a1a
   -moz-box-shadow 0 0 2px rgba(0, 0, 0, 0.2)
   -webkit-box-shadow 0 0 2px rgba(0, 0, 0, 0.2)
   box-shadow 0 0 2px rgba(0, 0, 0, 0.2)
   border 1px solid #898989
 
-a.signin:active
+a.signin-button:active
   color #1a1a1a
   -moz-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
   -webkit-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
   box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
   border 1px solid #898989
 
-a.signin:focus
+a.signin-button:focus
   border 1px solid #98c1e6
 
 span.count
@@ -1146,13 +1146,13 @@ a.privacy-link:hover
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––signin*/
 
-.saved
+.saved-ghost
   display none
 
 .form-iframe
   display none
 
-.roll
+#roll
   position absolute
   z-index -1
   overflow hidden
@@ -1291,7 +1291,7 @@ span.signin-error
   top 50%
   left 50%
 
-.forgot
+.forgot-password
   margin-top 10px
   display block
   text-align center
@@ -1586,8 +1586,8 @@ a.plot-button.active
   -o-animation-fill-mode both
   animation-fill-mode both
 
-// .profile.single
-//   margin 62px auto 35px
+.profile.single
+  margin 0 auto 35px
 
 .profile > .page-title a
   color orange

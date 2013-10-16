@@ -15,10 +15,10 @@ define([
 
   return Backbone.View.extend({
 
-    // The DOM target element for this page:
+    // The DOM target element for this page
     className: 'signin',
 
-    // Module entry point:
+    // Module entry point
     initialize: function (app) {
       
       // Save app reference.
@@ -128,8 +128,8 @@ define([
         $(this).val(_.str.slugify($(this).val()).substr(0, 30));
       });
 
-      var _username = $('#saved input[name="username"]').val();
-      var _password = $('#saved input[name="password"]').val();
+      var _username = $('.saved-ghost input[name="username"]').val();
+      var _password = $('.saved-ghost input[name="password"]').val();
       if (_username !== '')
         this.$('input[name="username"]').val(_username)
             .data('saved', _username).addClass('saved');

@@ -46,7 +46,7 @@ define([
 
     // Bind mouse events.
     events: {
-      'click a.navigate': 'navigate',
+      'click .navigate': 'navigate',
     },
 
     // Misc. setup.

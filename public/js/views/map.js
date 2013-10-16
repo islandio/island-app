@@ -92,7 +92,7 @@ define([
     setup: function () {
 
       // Save refs.
-      this.plotButton = this.$('a.plot-button');
+      this.plotButton = this.$('.plot-button');
       this.plotForm = this.$('.plot-form');
 
       // Changes to map display are animated.
@@ -126,11 +126,11 @@ define([
 
     // Bind mouse events.
     events: {
-      'click .hide_show': 'hideShow',
-      'click .less_more': 'lessMore',
-      'click a.plot-button': 'listenForPlot',
-      'click a.plot-cancel': 'listenForPlot',
-      'click a.plot-map': 'plotObject',
+      'click .hide-show': 'hideShow',
+      'click .less-more': 'lessMore',
+      'click .plot-button': 'listenForPlot',
+      'click .plot-cancel': 'listenForPlot',
+      'click .plot-map': 'plotObject',
     },
 
     map: function (pos) {

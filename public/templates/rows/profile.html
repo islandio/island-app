@@ -66,40 +66,36 @@
 
 %>
 
-<div class="leftside">
-  <div class="page-title">
-    <%= location %><a href="<%= data.username %>" class="navigate"><%= data.displayName %></a>
-  </div>
-  <div class="profile-picture">
-    <img src="<%= gravatar %>" class="profile-avatar" width="48" height="48" />
-    <img class="mask" width="640" style="top:0;"
-        src="<%= __s %>/img/cornermask-top.png" />
-    <img class="mask" width="640" style="top:280px;"
-        src="<%= __s %>/img/cornermask-btm.png" />
-    <img class="masked" src=<%= data.image.cf_url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
-  </div>
-  <div class="profile-info">
-    <% if (desc || links) { %>
-      <div class="profile-description">
-        <% if (desc) { %>
-          <p><%= this.model.description() %></p>
-        <% } %>
-        <% if (links) { %>
-          <span>More from <%= data.displayName %> at </span>
-          <span class="profile-links"><%= links %>.</span>
-        <% } %>
-      </div>
-    <% } %>
-    <span class="profile-details"><%= details %></span>
-    <div class="clear"></div>
-  </div>
-  <% if (!this.parentView) { %>
-    <div class="posts"></div>
-    <div class="list-spin">
-      <div id="posts_spin"></div>
-      <span class="empty-feed">Showing all.</span>
+<div class="page-title">
+  <%= location %><a href="<%= data.username %>" class="navigate"><%= data.displayName %></a>
+</div>
+<div class="profile-picture">
+  <img src="<%= gravatar %>" class="profile-avatar" width="48" height="48" />
+  <img class="mask" width="640" style="top:0;"
+      src="<%= __s %>/img/cornermask-top.png" />
+  <img class="mask" width="640" style="top:280px;"
+      src="<%= __s %>/img/cornermask-btm.png" />
+  <img class="masked" src=<%= data.image.cf_url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
+</div>
+<div class="profile-info">
+  <% if (desc || links) { %>
+    <div class="profile-description">
+      <% if (desc) { %>
+        <p><%= this.model.description() %></p>
+      <% } %>
+      <% if (links) { %>
+        <span>More from <%= data.displayName %> at </span>
+        <span class="profile-links"><%= links %>.</span>
+      <% } %>
     </div>
   <% } %>
+  <span class="profile-details"><%= details %></span>
+  <div class="clear"></div>
 </div>
-<div class="rightside"></div>
-<div class="clear"></div>
+<% if (!this.parentView) { %>
+  <div class="posts"></div>
+  <div class="list-spin">
+    <div class="posts-spin"></div>
+    <span class="empty-feed">Showing all.</span>
+  </div>
+<% } %>
