@@ -55,8 +55,13 @@
   // Member since
   var created = new Date(data.created);
   var since = [created.getMonth() + 1, created.getFullYear()].join('/');
-  var details = data.role === 0 ? 'Contributor since ' + since + ' | ' + data.pcnt + ' posts':
-      'Member since ' + since;
+  var details;
+  if (data.role !== 1) {
+    var pcnt = data.pcnt !== undefined ? data.pcnt: 0;
+    details = 'Contributor since ' + since + ' | ' + pcnt + ' post';
+    if (pcnt !== 1) details += 's';
+  } else
+    details = 'Member since ' + since;
 
 
   // Gravatar

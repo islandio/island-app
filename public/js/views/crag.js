@@ -11,8 +11,9 @@ define([
   'rpc',
   'util',
   'models/crag',
-  'text!../../templates/crag.html'
-], function ($, _, Modernizr, Backbone, mps, rpc, util, Crag, template) {
+  'text!../../templates/crag.html',
+  'views/lists/events'
+], function ($, _, Modernizr, Backbone, mps, rpc, util, Crag, template, Events) {
 
   return Backbone.View.extend({
 
@@ -108,6 +109,9 @@ define([
       // Set map view.
       mps.publish('map/fly', [this.model.get('location')]);
 
+      // Render lists.
+      this.events = new Events(this.app, {parentView: this, reverse: true});
+
       return this;
     },
 
@@ -123,6 +127,7 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
+      this.events.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

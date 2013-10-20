@@ -354,12 +354,17 @@ h1.title-sub {
   text-align: right;
 }
 .leftside {
+  float: left;
   width: 640px;
-  margin: 0 auto;
 }
 .rightside {
-  display: none;
-  margin: 0 0 0 670px;
+  margin: 0 0 0 700px;
+}
+.leftside-heading,
+.rightside-heading {
+  text-transform: uppercase;
+  color: #b3b3b3;
+  font-size: 10px;
 }
 .middle {
   width: 480px;
@@ -393,6 +398,27 @@ span.empty-list {
 }
 .input-error {
   border: 1px solid #d04c38 !important;
+}
+.info-delete {
+  color: #404040;
+  background: #f2f2f2;
+  cursor: pointer;
+  color: #666;
+  font-size: 9px;
+}
+.info-delete:hover {
+  background-color: rgba(75,184,215,0.25);
+}
+.info-delete:active {
+  background-color: rgba(75,184,215,0.5);
+}
+span.info-divider {
+  font-size: 8px;
+  color: #b3b3b3;
+}
+span.post-info-item {
+  font-size: 9px;
+  color: #b3b3b3;
 }
 p.page {
   margin: 10px 0 50px 0;
@@ -748,7 +774,7 @@ a.buy-button:hover {
 }
 .footer > div {
   margin: 0 auto;
-  width: 640px;
+  width: 984px;
   text-align: right;
   position: relative;
 }
@@ -1557,9 +1583,6 @@ a.plot-button.active {
 .profile.single {
   margin: 0 auto 35px;
 }
-.profile > .page-title a {
-  color: #e76533;
-}
 .profile-info {
   width: 620px;
   margin: 0 0 35px;
@@ -1609,7 +1632,7 @@ a.plot-button.active {
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––posts*/
 .posts {
-  margin: 12px 0 0 0;
+  margin: 20px 0 0 0;
 }
 .post {
   position: relative;
@@ -2116,6 +2139,53 @@ textarea.comment-input {
   color: #808080;
   font-style: italic;
 }
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––events*/
+.events {
+  margin: 12px 0 0 0;
+}
+.event {
+  display: none;
+  background: #f9f9f9;
+  border-bottom: 1px solid #e6e6e6;
+  cursor: pointer;
+  padding: 5px 0 20px;
+  -webkit-animation-name: fadeIn;
+  -moz-animation-name: fadeIn;
+  -o-animation-name: fadeIn;
+  animation-name: fadeIn;
+  -webkit-animation-duration: 0.2s;
+  -moz-animation-duration: 0.2s;
+  -o-animation-duration: 0.2s;
+  animation-duration: 0.2s;
+  -webkit-animation-fill-mode: both;
+  -moz-animation-fill-mode: both;
+  -o-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+.event:hover {
+  background: #f2f2f2;
+}
+.event a {
+  text-decoration: none;
+  color: #666;
+}
+.event-inner {
+  position: relative;
+  min-height: 32px;
+  padding: 5px;
+}
+.event-inner img {
+  float: left;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+.event-inner p {
+  margin: 0 0 0 40px;
+  font-size: 10px;
+  line-height: 13px;
+  color: #4d4d4d;
+}
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––notifications*/
 .notification {
   display: none;
@@ -2170,27 +2240,6 @@ textarea.comment-input {
   color: #b3b3b3;
 }
 .notification-info a {
-  color: #b3b3b3;
-}
-.info-delete {
-  color: #404040;
-  background: #f2f2f2;
-  cursor: pointer;
-  color: #666;
-  font-size: 9px;
-}
-.info-delete:hover {
-  background-color: rgba(75,184,215,0.25);
-}
-.info-delete:active {
-  background-color: rgba(75,184,215,0.5);
-}
-span.info-divider {
-  font-size: 8px;
-  color: #b3b3b3;
-}
-span.post-info-item {
-  font-size: 9px;
   color: #b3b3b3;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––settings & reset*/
@@ -2409,7 +2458,7 @@ span.no-media {
 }
 .crag.single,
 .ascent.single {
-  margin: 62px auto 35px;
+  margin: 0 0 35px;
 }
 .crag .page-title span {
   color: #b1dc36;

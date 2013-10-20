@@ -312,7 +312,7 @@ define([
     },
 
     unpaginate: function () {
-      $(window).unbind('scroll');
+      $(window).unbind('scroll', this._paginate).unbind('resize', this._paginate);
     }
 
   });

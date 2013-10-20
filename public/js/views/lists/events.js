@@ -1,5 +1,5 @@
 /*
- * Notification List view
+ * Events List view
  */
 
 define([
@@ -8,20 +8,19 @@ define([
   'views/boiler/list',
   'mps',
   'rpc',
-  'text!../../../templates/lists/notifications.html',
-  'collections/notifications',
-  'views/rows/notification',
+  'text!../../../templates/lists/events.html',
+  'collections/events',
+  'views/rows/event',
   'Spin'
 ], function ($, _, List, mps, rpc, template, Collection, Row, Spin) {
   return List.extend({
 
-    el: '.panel-content',
+    el: '.events',
 
     fetching: false,
     nomore: false,
     limit: 5,
 
-    // misc. init
     initialize: function (app, options) {
       this.template = _.template(template);
       this.collection = new Collection;
@@ -33,40 +32,23 @@ define([
       // Client-wide subscriptions
       this.subscriptions = [];
 
-      // Socket Subscriptions
-      this.channel = this.app.socket.subscribe('mem-'
-          + this.app.profile.member.id);
-      this.channel.bind('notification.new', _.bind(this.collect, this));
-      this.channel.bind('notification.read', _.bind(this.read, this));
-      this.channel.bind('notification.removed', _.bind(this._remove, this));
-
-      // Shell events
-      $(window).resize(_.debounce(_.bind(this.resize, this), 50));
+      // Socket subscriptions
+      this.app.socket.subscribe('events')
+          .bind('event.new', _.bind(this.collect, this))
+          .bind('event.removed', _.bind(this._remove, this));
 
       // Init the load indicator.
-      this.spin = new Spin($('.notifications-spin', this.$el.parent()));
+      this.spin = new Spin($('.events-spin', this.$el.parent()));
       this.spin.start();
-  
+
       // Reset the collection.
-      this.latest_list = this.app.profile.notes;
+      this.latest_list = this.app.profile.content.events;
       this.collection.reset(this.latest_list.items);
     },
 
-    // receive note from event bus
+    // receive event from event bus
     collect: function (data) {
       this.collection.unshift(data);
-    },
-
-    // receive update from event bus
-    read: function (data) {
-      var view = _.find(this.views, function (v) {
-        return v.model.id === data.id;
-      });
-
-      if (view) {
-        view.update();
-        mps.publish('notification/change', []);
-      }
     },
 
     // initial bulk render of list
@@ -78,7 +60,7 @@ define([
         }, this), (this.collection.length + 1) * 30);
       else {
         this.nomore = true;
-        $('<span class="empty-feed">No notifications.</span>').appendTo(this.$el);
+        $('<span class="empty-feed">No events.</span>').appendTo(this.$el);
         this.spin.stop();
       }
       this.paginate();
@@ -89,9 +71,7 @@ define([
     // (could be newly arived or older ones from pagination)
     renderLast: function (pagination) {
       List.prototype.renderLast.call(this, pagination);
-      mps.publish('notification/change', []);
       _.delay(_.bind(function () {
-        this.resize();
         if (pagination !== true)
           this.checkHeight();
       }, this), 60);
@@ -101,10 +81,6 @@ define([
     // misc. setup
     setup: function () {
       this.spin.stop();
-      mps.publish('notification/change', []);
-      this.$el.parent().addClass('animated');
-      $('.wrap').addClass('animated');
-      this.resize();
       List.prototype.setup.call(this);
     },
 
@@ -134,20 +110,14 @@ define([
         view._remove(_.bind(function () {
           this.collection.remove(view.model);
           this.checkHeight();
-          mps.publish('notification/change', []);
         }, this));
       }
-    },
-
-    // update the panel's height
-    resize: function () {
-      this.$el.parent().height($(window).height());
     },
 
     // check the panel's empty space and get more
     // notes to fill it up.
     checkHeight: function () {
-      wh = this.$el.parent().height();
+      wh = $(window).height();
       so = this.spin.target.offset().top;
       if (wh - so > this.spin.target.height() / 2)
         this.more();
@@ -198,10 +168,10 @@ define([
       // get more
       this.spin.start();
       this.fetching = true;
-      rpc.post('/api/notifications/list', {
-        subscriber_id: this.app.profile.member.id,
+      rpc.post('/api/events/list', {
         limit: this.limit,
         cursor: this.latest_list.cursor,
+        query: this.latest_list.query
       }, _.bind(function (err, data) {
 
         if (err) {
@@ -211,7 +181,7 @@ define([
         }
 
         // Add the items.
-        updateUI.call(this, data.posts);
+        updateUI.call(this, data.events);
 
       }, this));
 
@@ -219,18 +189,19 @@ define([
 
     // init pagination
     paginate: function () {
-      var wrap = this.$el.parent();
-      var paginate = _.debounce(_.bind(function (e) {
-        var pos = this.$el.height() - wrap.height() - wrap.scrollTop();
+      var wrap = $(window);
+      this._paginate = _.debounce(_.bind(function (e) {
+        var pos = this.$el.height() + this.$el.offset().top
+            - wrap.height() - wrap.scrollTop();
         if (!this.nomore && pos < -this.spin.target.height() / 2)
           this.more();
       }, this), 50);
-      wrap.scroll(paginate).resize(paginate);
+      wrap.scroll(this._paginate).resize(this._paginate);
     },
 
     unpaginate: function () {
       $(window).unbind('scroll', this._paginate).unbind('resize', this._paginate);
-    }
+    } 
 
   });
 });

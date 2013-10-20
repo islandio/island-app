@@ -1,0 +1,14 @@
+<%
+  var gravatar = 'https://www.gravatar.com/avatar/'
+      + this.model.get('data').action.g + '?s=32&d='
+      + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
+%>
+
+<a href="<%= this.model.get('data').target.s %>">
+  <div class="event-inner">
+    <img src=<%= gravatar %> width="32" height="32" />
+    <p>
+      <%= this.model.body() %>
+    </p>
+  </div>
+</a>

@@ -411,7 +411,7 @@ define([
             this.renderLast(true);
           }, this));
         _.delay(_.bind(function () {
-          // this.spin.stop();
+          this.spin.stop();
           this.fetching = false;
           if (list.items.length < this.limit) {
             this.spin.target.hide();
@@ -464,7 +464,7 @@ define([
     },
 
     unpaginate: function () {
-      $(window).unbind('scroll');
+      $(window).unbind('scroll', this._paginate).unbind('resize', this._paginate);
     }
 
   });

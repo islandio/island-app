@@ -7,8 +7,9 @@ define([
   'Underscore',
   'Backbone',
   'util',
-  'text!../../templates/privacy.html'
-], function ($, _, Backbone, util, template) {
+  'text!../../templates/privacy.html',
+  'views/lists/events'
+], function ($, _, Backbone, util, template, Events) {
 
   return Backbone.View.extend({
 
@@ -51,6 +52,10 @@ define([
 
     // Misc. setup.
     setup: function () {
+
+      // Render lists.
+      this.events = new Events(this.app, {parentView: this, reverse: true});
+
       return this;
     },
 
@@ -66,6 +71,7 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
+      this.events.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();
