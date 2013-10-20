@@ -60,7 +60,7 @@ define([
 
       // Init the load indicator.
       if (!this.spin)
-        this.spin = new Spin(this.$('#map_spin'), {
+        this.spin = new Spin(this.$('.map-spin'), {
           color: '#b3b3b3',
           lines: 17,
           length: 12,
@@ -68,7 +68,7 @@ define([
           radius: 18
         });
       if (!this.plotSpin)
-        this.plotSpin = new Spin(this.$('#plot_spin'));
+        this.plotSpin = new Spin(this.$('.plot-spin'));
       this.plotSpin.start();
 
       // Create the map.
@@ -92,16 +92,16 @@ define([
     setup: function () {
 
       // Save refs.
-      this.plotButton = this.$('a.plot-button');
-      this.plotForm = this.$('div#plot_form');
+      this.plotButton = this.$('.plot-button');
+      this.plotForm = this.$('.plot-form');
 
       // Changes to map display are animated.
       this.$el.addClass('animated');
 
       // Save DOM refs.
-      this.mapInner = this.$('#map_inner');
-      this.hider = this.$('#hide_show');
-      this.lesser = this.$('#less_more');
+      this.mapInner = this.$('.map-inner');
+      this.hider = this.$('.hide-show');
+      this.lesser = this.$('.less-more');
 
       // Shell event.
       this.delegateEvents();
@@ -126,11 +126,11 @@ define([
 
     // Bind mouse events.
     events: {
-      'click #hide_show': 'hideShow',
-      'click #less_more': 'lessMore',
-      'click a.plot-button': 'listenForPlot',
-      'click a.plot-cancel': 'listenForPlot',
-      'click a.plot-map': 'plotObject',
+      'click .hide-show': 'hideShow',
+      'click .less-more': 'lessMore',
+      'click .plot-button': 'listenForPlot',
+      'click .plot-cancel': 'listenForPlot',
+      'click .plot-map': 'plotObject',
     },
 
     map: function (pos) {

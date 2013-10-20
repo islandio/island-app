@@ -11,15 +11,16 @@ define([
   'rpc',
   'util',
   'models/crag',
-  'text!../../templates/crag.html'
-], function ($, _, Modernizr, Backbone, mps, rpc, util, Crag, template) {
+  'text!../../templates/crag.html',
+  'views/lists/events'
+], function ($, _, Modernizr, Backbone, mps, rpc, util, Crag, template, Events) {
 
   return Backbone.View.extend({
 
-    // The DOM target element for this page:
-    el: '#main',
+    // The DOM target element for this page
+    el: '.main',
 
-    // Module entry point:
+    // Module entry point
     initialize: function (app) {
 
       // Save app reference.
@@ -61,18 +62,18 @@ define([
 
     // Bind mouse events.
     events: {
-      'click a.navigate': 'navigate',
+      'click .navigate': 'navigate',
     },
 
     // Misc. setup.
     setup: function () {
 
       // Save refs.
-      this.filterBox = this.$('#filter_box');
-      this.bouldersFilter = this.$('#b_filter');
-      this.routesFilter = this.$('#r_filter');
-      this.boulders = this.$('#b_ascents');
-      this.routes = this.$('#r_ascents');
+      this.filterBox = this.$('.filter-box');
+      this.bouldersFilter = this.$('.b-filter');
+      this.routesFilter = this.$('.r-filter');
+      this.boulders = this.$('.b-ascents');
+      this.routes = this.$('.r-ascents');
 
       // Handle type changes.
       if (this.model.get('bcnt') > this.model.get('rcnt')) {
@@ -102,11 +103,14 @@ define([
         this.filterBox.placeholder();
 
       // Focus.
-      if (!$('#header_search .search-display').is(':visible'))
+      if (!$('.header-search .search-display').is(':visible'))
         this.filterBox.focus();
 
       // Set map view.
       mps.publish('map/fly', [this.model.get('location')]);
+
+      // Render lists.
+      this.events = new Events(this.app, {parentView: this, reverse: true});
 
       return this;
     },
@@ -123,6 +127,7 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
+      this.events.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();
@@ -132,7 +137,7 @@ define([
       e.preventDefault();
 
       // Route to wherever.
-      var path = $(e.target).closest('a').attr('href') || $(e.target).parent().attr('href');
+      var path = $(e.target).closest('a').attr('href');
       if (path)
         this.app.router.navigate(path, {trigger: true});
     },
@@ -145,27 +150,27 @@ define([
       this.$('.ascent-filter-buttons a.button').removeClass('selected');
       t.addClass('selected');
       this.$('.ascents-wrap').hide();
-      this.$('#' + this.currentType + '_ascents').show();
+      this.$('.' + this.currentType + '-ascents').show();
       this.filterBox.keyup();
     },
 
     filter: function (e) {
       var txt = this.filterBox.val().trim().toLowerCase();
       var ct = this.currentType;
-      $('#' + ct + '_ascents span.no-results').hide();
+      $('.' + ct + '-ascents span.no-results').hide();
       if (txt === '') {
-        $('#' + ct + '_ascents ul.ascents a').show();
-        $('#' + ct + '_ascents span.grade-heading').show();
+        $('.' + ct + '-ascents ul.ascents a').show();
+        $('.' + ct + '-ascents span.grade-heading').show();
         return false;
       }
-      $('#' + ct + '_ascents ul.ascents a').hide();
-      $('#' + ct + '_ascents span.grade-heading').hide();
+      $('.' + ct + '-ascents ul.ascents a').hide();
+      $('.' + ct + '-ascents span.grade-heading').hide();
       var rx = new RegExp('^(.*?(' + txt + ')[^$]*)$', 'ig');
       var y = false;
       _.each(this.flattened[ct], function (a) {
         if (rx.test(a.name)) {
           y = true;
-          var d = $('#' + ct + '_ascents ul.ascents a[id="' + a.id + '"]');
+          var d = $('.' + ct + '-ascents ul.ascents a[id="' + a.id + '"]');
           d.show();
           $('span.grade-heading', d.parent()).show();
         }

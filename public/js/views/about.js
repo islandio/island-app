@@ -7,13 +7,14 @@ define([
   'Underscore',
   'Backbone',
   'util',
-  'text!../../templates/about.html'
-], function ($, _, Backbone, util, template) {
+  'text!../../templates/about.html',
+  'views/lists/events'
+], function ($, _, Backbone, util, template, Events) {
 
   return Backbone.View.extend({
 
     // The DOM target element for this page:
-    el: '#main',
+    el: '.main',
 
     // Module entry point:
     initialize: function (app) {
@@ -46,11 +47,15 @@ define([
 
     // Bind mouse events.
     events: {
-      'click a.navigate': 'navigate',
+      'click .navigate': 'navigate',
     },
 
     // Misc. setup.
     setup: function () {
+
+      // Render lists.
+      this.events = new Events(this.app, {parentView: this, reverse: true});
+
       return this;
     },
 
@@ -66,6 +71,7 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
+      this.events.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

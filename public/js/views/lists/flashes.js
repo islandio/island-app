@@ -13,7 +13,7 @@ define([
 ], function ($, _, List, mps, template, Collection, Row) {
   return List.extend({
     
-    el: '#block_messages > ul',
+    el: '.block-messages > ul',
 
     initialize: function (app, options) {
       this.app = app;

@@ -39,7 +39,7 @@
 
 %>
 <div class="middle">
-  <div id="settings_form">
+  <div class="settings-form">
     <table>
       <tbody>
         <tr>
@@ -54,20 +54,20 @@
         </tr>
         <tr>
           <td colspan="2" width="480" height="215" style="vertical-align:top;">
-            <form id="settings_banner_form" enctype="multipart/form-data" method="POST">
+            <form class="settings-banner-form" enctype="multipart/form-data" method="POST">
               <input type="hidden" name="params"
                   value='<%= JSON.stringify(this.app.profile.transloadit.profile) %>' />
-              <div id="settings_banner_dnd" class="settings-banner-wrap">
+              <div class="settings-banner-dnd settings-banner-wrap">
                 <img class="mask" width="480" style="top:0;"
                     src="<%= __s %>/img/cornermask-top.png" />
                 <img class="mask" width="480" style="top:209px;"
                     src="<%= __s %>/img/cornermask-btm.png" />
                 <img class="masked settings-banner" src=<%= banner.cf_url %>
                     width=<%= w %> height=<%= h %> style=<%= t + l %> />
-                <div id="settings_banner_spin" style="height:100%;"></div>
-                <a id="banner_file_chooser_dummy" class="file-chooser-dummy important"
+                <div class="settings-banner-spin" style="height:100%;"></div>
+                <a class="banner-file-chooser-dummy file-chooser-dummy important"
                     href="javascript:;">Update by dragging &amp; dropping or selecting an image.</a>
-                <input id="banner_file_chooser" class="file-chooser" type="file"
+                <input class="banner-file-chooser file-chooser" type="file"
                     name="banner_img" accept="image/gif, image/jpeg, image/png" />
               </div>
             </form>
@@ -235,7 +235,7 @@
         </tr>
         <tr>
           <td colspan="2">
-            <div class="settings_services_spin"></div>
+            <div class="settings-services-spin"></div>
             <% if (!data.facebookId) { %>
               <a tabindex="11" class="button signin-strategy-btn facebook-btn"
                   href="/connect/facebook">
@@ -303,8 +303,8 @@
         </tr>
         <tr>
           <td colspan="2">
-            <a tabindex="14" id="demolish" href="javascript:;"
-                class="button signin-strategy-btn delete-btn">
+            <a tabindex="14" href="javascript:;"
+                class="demolish button signin-strategy-btn delete-btn">
               Delete profile
             </a>
           </td>

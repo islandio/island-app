@@ -20,7 +20,7 @@ define([
   return Backbone.View.extend({
     
     // The DOM target element for this page:
-    el: '#main',
+    el: '.main',
     uploading: false,
 
     // Module entry point:
@@ -55,19 +55,19 @@ define([
     // Bind mouse events.
     events: {
       'click a.navigate': 'navigate',
-      'click #demolish': 'demolish'
+      'click .demolish': 'demolish'
     },
 
     // Misc. setup.
     setup: function () {
 
       // Save refs
-      this.bannerForm = this.$('#settings_banner_form');
-      this.dropZone = this.$('#settings_banner_dnd');
+      this.bannerForm = this.$('.settings-banner-form');
+      this.dropZone = this.$('.settings-banner-dnd');
       this.banner = this.$('img.settings-banner');
 
       // Init the banner uploading indicator.
-      this.bannerSpin = new Spin(this.$('#settings_banner_spin'));
+      this.bannerSpin = new Spin(this.$('.settings-banner-spin'));
 
       // Autogrow all text areas.
       this.$('textarea').autogrow();
@@ -89,8 +89,8 @@ define([
       this.banner.bind('mousedown', _.bind(this.position, this));
 
       // Add mouse events for dummy file selector.
-      var dummy = this.$('#banner_file_chooser_dummy');
-      this.$('#banner_file_chooser').on('mouseover', function (e) {
+      var dummy = this.$('.banner-file-chooser-dummy');
+      this.$('.banner-file-chooser').on('mouseover', function (e) {
         dummy.addClass('hover');
       })
       .on('mouseout', function (e) {

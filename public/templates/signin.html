@@ -1,6 +1,6 @@
-<div id="roll"></div>
+<div id="roll" class="roll"></div>
 <div class="signin-outer">
-  <div id="signin_spin"></div>
+  <div class="signin-spin"></div>
   <div class="signin-inner">
     <div class="signin-logo">
       <img src="<%= __s %>/img/signin-logo.png" width="200" height="50" />
@@ -33,7 +33,7 @@
       </div>
       <div class="signin-forms">
         <iframe src="/_blank" id="signup_target" name="signup_target" class="form-iframe"></iframe>
-        <form id="signup_form" enctype="multipart/form-data" target="signup_target" method="POST" action="/_blank">
+        <form class="signup-form" enctype="multipart/form-data" target="signup_target" method="POST" action="/_blank">
           <table>
             <tbody>
               <tr>
@@ -83,7 +83,7 @@
           </table>
         </form>
         <iframe src="/_blank" id="signin_target" name="signin_target" class="form-iframe"></iframe>
-        <form class="highlight" id="signin_form" enctype="multipart/form-data" target="signin_target" method="POST" action="/_blank">
+        <form class="signin-form highlight" enctype="multipart/form-data" target="signin_target" method="POST" action="/_blank">
           <table>
             <tbody>
               <tr>
@@ -121,7 +121,7 @@
               </tr>
               <tr>
                 <td colspan="2">
-                  <a href="javascript:;" id="forgot">I forgot my password</a>
+                  <a href="javascript:;" class="forgot-password">I forgot my password</a>
                 </td>
               </tr>
             </tbody>

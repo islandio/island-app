@@ -18,7 +18,7 @@ define([
       Collection, Row, Spin) {
   return List.extend({
 
-    el: '#medias',
+    el: '.medias',
 
     fetching: false,
     nomore: false,
@@ -35,7 +35,7 @@ define([
       List.prototype.initialize.call(this, app, options);
 
       // Init the load indicator.
-      this.spin = new Spin($('#medias_spin', this.parentView.el));
+      this.spin = new Spin($('.medias-spin', this.parentView.el));
       this.spin.start();
 
       // Client-wide subscriptions
@@ -95,11 +95,11 @@ define([
     setup: function () {
 
       // Save refs
-      this.mediaForm = this.$('#media_input form');
-      this.mediaButton = this.$('#media_button', this.mediaForm);
+      this.mediaForm = this.$('.media-input form');
+      this.mediaButton = this.$('.media-button', this.mediaForm);
 
       // Show add media input.
-      this.$('#media_input .media').show();
+      this.$('.media-input .media').show();
 
       // Add placeholder shim if need to.
       if (!Modernizr.input.placeholder)
@@ -312,7 +312,7 @@ define([
     },
 
     unpaginate: function () {
-      $(window).unbind('scroll');
+      $(window).unbind('scroll', this._paginate).unbind('resize', this._paginate);
     }
 
   });

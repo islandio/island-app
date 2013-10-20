@@ -15,10 +15,10 @@ define([
 
   return Backbone.View.extend({
 
-    // The DOM target element for this page:
+    // The DOM target element for this page
     className: 'signin',
 
-    // Module entry point:
+    // Module entry point
     initialize: function (app) {
       
       // Save app reference.
@@ -44,7 +44,7 @@ define([
       });
 
       // Init the load indicator.
-      this.spin = new Spin(this.$('#signin_spin'), {
+      this.spin = new Spin(this.$('.signin-spin'), {
         lines: 17,
         length: 12,
         width: 4,
@@ -71,8 +71,8 @@ define([
 
     // Bind mouse events.
     events: {
-      'click #forgot': 'forgot',
-      'click a.navigate': 'navigate',
+      'click .forgot-login': 'forgot',
+      'click .navigate': 'navigate',
     },
 
     // Misc. setup.
@@ -81,8 +81,8 @@ define([
       // Save refs.
       this.signinTarget = this.$('#signin_target');
       this.signupTarget = this.$('#signup_target');
-      this.signinForm = this.$('#signin_form');
-      this.signupForm = this.$('#signup_form');
+      this.signinForm = this.$('.signin-form');
+      this.signupForm = this.$('.signup-form');
       this.signinInner = this.$('.signin-inner-inner');
 
       // Let the forms submit to the frame, and use the
@@ -128,8 +128,8 @@ define([
         $(this).val(_.str.slugify($(this).val()).substr(0, 30));
       });
 
-      var _username = $('#saved input[name="username"]').val();
-      var _password = $('#saved input[name="password"]').val();
+      var _username = $('.saved-ghost input[name="username"]').val();
+      var _password = $('.saved-ghost input[name="password"]').val();
       if (_username !== '')
         this.$('input[name="username"]').val(_username)
             .data('saved', _username).addClass('saved');

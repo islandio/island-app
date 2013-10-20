@@ -84,7 +84,7 @@ define([
       }, this));
 
       // Init page spinner.
-      this.spin = new Spin($('#page_spin'), {
+      this.spin = new Spin($('.page-spin'), {
         color: '#b3b3b3',
         lines: 17,
         length: 7,
@@ -169,7 +169,7 @@ define([
       this.render('/service/profile.profile/' + username,
           _.bind(function (err) {
         if (err) return;
-        this.page = new Profile({wrap: '#main'}, this.app).render(true);
+        this.page = new Profile({wrap: '.main'}, this.app).render(true);
         this.stop();
       }, this));
     },
@@ -179,7 +179,7 @@ define([
       var key = [username, key].join('/');
       this.render('/service/post.profile/' + key, _.bind(function (err) {
         if (err) return;
-        this.page = new Post({wrap: '#main'}, this.app).render(true);
+        this.page = new Post({wrap: '.main'}, this.app).render(true);
         this.stop();
       }, this));
     },

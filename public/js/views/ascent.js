@@ -11,13 +11,14 @@ define([
   'util',
   'models/ascent',
   'text!../../templates/ascent.html',
-  'views/lists/medias'
-], function ($, _, Backbone, mps, rpc, util, Ascent, template, Medias) {
+  'views/lists/medias',
+  'views/lists/events'
+], function ($, _, Backbone, mps, rpc, util, Ascent, template, Medias, Events) {
 
   return Backbone.View.extend({
 
     // The DOM target element for this page:
-    el: '#main',
+    el: '.main',
 
     // Module entry point:
     initialize: function (app) {
@@ -55,7 +56,7 @@ define([
 
     // Bind mouse events.
     events: {
-      'click a.navigate': 'navigate'
+      'click .navigate': 'navigate'
     },
 
     // Misc. setup.
@@ -64,12 +65,13 @@ define([
       // Set map view.
       mps.publish('map/fly', [this.model.get('location')]);
 
-      // Render medias.
+      // Render lists.
       this.medias = new Medias(this.app, {
         parentView: this,
         reverse: true,
         type: 'ascent'
       });
+      this.events = new Events(this.app, {parentView: this, reverse: true});
 
       return this;
     },
@@ -86,6 +88,8 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
+      this.medias.destroy();
+      this.events.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

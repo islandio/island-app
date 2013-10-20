@@ -1,5 +1,5 @@
 /*
- * Settings view.
+ * Reset password view.
  */
 
 define([
@@ -15,7 +15,7 @@ define([
   return Backbone.View.extend({
     
     // The DOM target element for this page:
-    el: '#main',
+    el: '.main',
 
     // Module entry point:
     initialize: function (app) {
@@ -45,8 +45,8 @@ define([
 
     // Bind mouse events.
     events: {
-      'click #reset': 'reset',
-      'click #forgot': 'forgot',
+      'click .reset-button': 'reset',
+      'click .forgot-password': 'forgot',
     },
 
     // Misc. setup.

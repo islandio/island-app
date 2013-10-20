@@ -1,29 +1,25 @@
 /*
- * Profiles List view
+ * Events List view
  */
 
 define([
   'jQuery',
   'Underscore',
-  'Modernizr',
   'views/boiler/list',
   'mps',
   'rpc',
-  'util',
-  'text!../../../templates/lists/profiles.html',
-  'collections/profiles',
-  'views/rows/profile',
+  'text!../../../templates/lists/events.html',
+  'collections/events',
+  'views/rows/event',
   'Spin'
-], function ($, _, Modernizr, List, mps, rpc, util, template,
-      Collection, Row, Spin) {
+], function ($, _, List, mps, rpc, template, Collection, Row, Spin) {
   return List.extend({
 
-    el: '.profiles',
+    el: '.events',
 
     fetching: false,
     nomore: false,
     limit: 5,
-    attachments: [],
 
     initialize: function (app, options) {
       this.template = _.template(template);
@@ -33,30 +29,26 @@ define([
       // Call super init.
       List.prototype.initialize.call(this, app, options);
 
-      // Init the load indicator.
-      this.spin = new Spin($('.profiles-spin', this.parentView.el));
-      this.spin.start();
-
       // Client-wide subscriptions
       this.subscriptions = [];
 
       // Socket subscriptions
-      this.app.socket.subscribe('profiles')
-          .bind('profile.new', _.bind(this.collect, this))
-          .bind('profile.removed', _.bind(this._remove, this));
+      this.app.socket.subscribe('events')
+          .bind('event.new', _.bind(this.collect, this))
+          .bind('event.removed', _.bind(this._remove, this));
 
-      // Misc.
-      this.empty_label = this.app.profile.content.page
-          && this.app.profile.content.page.role === 0 ? 'No followers.': '';
+      // Init the load indicator.
+      this.spin = new Spin($('.events-spin', this.$el.parent()));
+      this.spin.start();
 
       // Reset the collection.
-      this.latest_list = this.app.profile.content.profiles;
+      this.latest_list = this.app.profile.content.events;
       this.collection.reset(this.latest_list.items);
     },
 
-    // collect new profiles from socket events.
-    collect: function (mem) {
-      this.collection.unshift(mem);
+    // receive event from event bus
+    collect: function (data) {
+      this.collection.unshift(data);
     },
 
     // initial bulk render of list
@@ -68,8 +60,7 @@ define([
         }, this), (this.collection.length + 1) * 30);
       else {
         this.nomore = true;
-        $('<span class="empty-feed">' + this.empty_label
-            + '</span>').appendTo(this.$el);
+        $('<span class="empty-feed">No events.</span>').appendTo(this.$el);
         this.spin.stop();
       }
       this.paginate();
@@ -87,17 +78,23 @@ define([
       return this;
     },
 
-    // handle mouse events.
-    events: {},
-
     // misc. setup
     setup: function () {
-      return List.prototype.setup.call(this);
+      this.spin.stop();
+      List.prototype.setup.call(this);
     },
 
+    // Kill this view.
     destroy: function () {
       this.unpaginate();
-      return List.prototype.destroy.call(this);
+      _.each(this.subscriptions, function (s) {
+        mps.unsubscribe(s);
+      });
+      _.each(this.views, function (v) {
+        v.destroy();
+      });
+      this.undelegateEvents();
+      this.stopListening();
     },
 
     // remove a model
@@ -136,12 +133,12 @@ define([
         if (list.items.length === 0) {
           this.nomore = true;
           this.spin.target.hide();
-          var showingall = this.parentView.$('.list-spin .empty-feed');
+          var showingall = $('.list-spin .empty-feed', this.$el.parent());
           if (this.collection.length > 0)
             showingall.css('display', 'block');
           else {
-            showingall.hide();
-            $('<span class="empty-feed">' + this.empty_label + '</span>')
+            showingall.remove();
+            $('<span class="empty-feed">No notifications.</span>')
                 .appendTo(this.$el);
           }
         } else
@@ -154,8 +151,9 @@ define([
           this.fetching = false;
           if (list.items.length < this.limit) {
             this.spin.target.hide();
-            $('.list-spin .empty-feed', this.$el.parent())
-                .css('display', 'block');
+            if (!$('.empty-feed', this.$el.parent()).is(':visible'))
+              $('.list-spin .empty-feed', this.$el.parent())
+                  .css('display', 'block');
           }
         }, this), (list.items.length + 1) * 30);
       }
@@ -170,11 +168,10 @@ define([
       // get more
       this.spin.start();
       this.fetching = true;
-      rpc.post('/api/members/list', {
+      rpc.post('/api/events/list', {
         limit: this.limit,
         cursor: this.latest_list.cursor,
-        query: this.latest_list.query,
-        sort: this.latest_list.sort
+        query: this.latest_list.query
       }, _.bind(function (err, data) {
 
         if (err) {
@@ -184,7 +181,7 @@ define([
         }
 
         // Add the items.
-        updateUI.call(this, data.profiles);
+        updateUI.call(this, data.events);
 
       }, this));
 
@@ -193,19 +190,18 @@ define([
     // init pagination
     paginate: function () {
       var wrap = $(window);
-      var paginate = _.debounce(_.bind(function (e) {
+      this._paginate = _.debounce(_.bind(function (e) {
         var pos = this.$el.height() + this.$el.offset().top
             - wrap.height() - wrap.scrollTop();
         if (!this.nomore && pos < -this.spin.target.height() / 2)
           this.more();
       }, this), 50);
-
-      wrap.scroll(paginate).resize(paginate);
+      wrap.scroll(this._paginate).resize(this._paginate);
     },
 
     unpaginate: function () {
-      $(window).unbind('scroll');
-    }
+      $(window).unbind('scroll', this._paginate).unbind('resize', this._paginate);
+    } 
 
   });
 });

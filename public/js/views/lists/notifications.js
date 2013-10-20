@@ -15,7 +15,7 @@ define([
 ], function ($, _, List, mps, rpc, template, Collection, Row, Spin) {
   return List.extend({
 
-    el: '#panel_content',
+    el: '.panel-content',
 
     fetching: false,
     nomore: false,
@@ -44,7 +44,7 @@ define([
       $(window).resize(_.debounce(_.bind(this.resize, this), 50));
 
       // Init the load indicator.
-      this.spin = new Spin($('#notifications_spin', this.$el.parent()));
+      this.spin = new Spin($('.notifications-spin', this.$el.parent()));
       this.spin.start();
   
       // Reset the collection.
@@ -66,24 +66,6 @@ define([
       if (view) {
         view.update();
         mps.publish('notification/change', []);
-      }
-    },
-
-    // remove a model
-    _remove: function (data) {
-      var index = -1;
-      var view = _.find(this.views, function (v) {
-        ++index
-        return v.model.id === data.id;
-      });
-
-      if (view) {
-        this.views.splice(index, 1);
-        view._remove(_.bind(function () {
-          this.collection.remove(view.model);
-          this.checkHeight();
-          mps.publish('notification/change', []);
-        }, this));
       }
     },
 
@@ -121,13 +103,14 @@ define([
       this.spin.stop();
       mps.publish('notification/change', []);
       this.$el.parent().addClass('animated');
-      $('#wrap').addClass('animated');
+      $('.wrap').addClass('animated');
       this.resize();
       List.prototype.setup.call(this);
     },
 
     // Kill this view.
     destroy: function () {
+      this.unpaginate();
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
@@ -136,6 +119,24 @@ define([
       });
       this.undelegateEvents();
       this.stopListening();
+    },
+
+    // remove a model
+    _remove: function (data) {
+      var index = -1;
+      var view = _.find(this.views, function (v) {
+        ++index
+        return v.model.id === data.id;
+      });
+
+      if (view) {
+        this.views.splice(index, 1);
+        view._remove(_.bind(function () {
+          this.collection.remove(view.model);
+          this.checkHeight();
+          mps.publish('notification/change', []);
+        }, this));
+      }
     },
 
     // update the panel's height
@@ -154,6 +155,7 @@ define([
 
     // attempt to get more models (older) from server
     more: function () {
+
       // render models and handle edge cases
       function updateUI(list) {
         _.defaults(list, {items:[]});
@@ -225,6 +227,10 @@ define([
       }, this), 50);
       wrap.scroll(paginate).resize(paginate);
     },
+
+    unpaginate: function () {
+      $(window).unbind('scroll', this._paginate).unbind('resize', this._paginate);
+    }
 
   });
 });

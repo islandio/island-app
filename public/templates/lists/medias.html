@@ -3,7 +3,7 @@
 %>
 
 <% if (member) { %>
-  <div id="media_input" class="list-header">
+  <div class="media-input list-header">
     <div class="media">
       <form action="/api/medias" enctype="multipart/form-data" method="POST">
         <table>
@@ -14,11 +14,11 @@
           </tr>
           <tr>
             <td>
-              <input tabindex="1" id="media_link" name="link" type="text"
+              <input tabindex="1" class="media-link" name="link" type="text"
                   placeholder="YouTube or Vimeo link..." />
             </td>
             <td>
-              <input type="submit" id="media_button" value="Add" tabindex="2" />
+              <input type="submit" class="media-button" value="Add" tabindex="2" />
               <div class="button-spin"></div>
             </td>
           </tr>
