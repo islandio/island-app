@@ -75,11 +75,17 @@ define([
       if (!this.mapped) {
         if (!this.$el.hasClass('closed'))
           this.spin.start();
-        if (Modernizr.geolocation)
-          navigator.geolocation.getCurrentPosition(_.bind(this.map, this),
-              _.bind(this.map, this), {maximumAge:60000, timeout:5000, 
-                enableHighAccuracy:true});
-        else this.map();
+        this.map();
+        // if (Modernizr.geolocation)
+        //   navigator.geolocation.getCurrentPosition(_.bind(function (pos) {
+        //     if (pos && !pos.code)
+        //       this.flyTo({
+        //         latitude: pos.coords.latitude,
+        //         longitude: pos.coords.longitude
+        //       });
+        //   }, this),
+        //       function(){}, {maximumAge:60000, timeout:5000, 
+        //         enableHighAccuracy:true});
       }
 
       // Trigger setup.
@@ -133,7 +139,7 @@ define([
       'click .plot-map': 'plotObject',
     },
 
-    map: function (pos) {
+    map: function () {
       this.mapped = true;
 
       var opts = {
@@ -141,14 +147,6 @@ define([
         scrollwheel: false,
         https: true
       };
-
-      if (pos && !pos.code) {
-        _.extend(opts, {
-          center_lat: pos.coords.latitude,
-          center_lon: pos.coords.longitude,
-          zoom: 10
-        });
-      }
 
       // Setup the map.
       this.sql = new cartodb.SQL({user: 'island'});

@@ -110,7 +110,11 @@ define([
 
       // Init the load indicator for the button.
       this.mediaButtonSpin = new Spin($('.button-spin', this.el), {
-        color: '#4d4d4d'
+        color: '#4d4d4d',
+        lines: 13,
+        length: 3,
+        width: 2,
+        radius: 6
       });
 
       return List.prototype.setup.call(this);
@@ -242,10 +246,10 @@ define([
       function updateUI(list) {
         _.defaults(list, {items:[]});
         this.latest_list = list;
+        var showingall = this.parentView.$('.list-spin .empty-feed');
         if (list.items.length === 0) {
           this.nomore = true;
           this.spin.target.hide();
-          var showingall = this.parentView.$('.list-spin .empty-feed');
           if (this.collection.length > 0)
             showingall.css('display', 'block');
           else {
@@ -259,12 +263,12 @@ define([
             this.renderLast(true);
           }, this));
         _.delay(_.bind(function () {
-          // this.spin.stop();
+          this.spin.stop();
           this.fetching = false;
           if (list.items.length < this.limit) {
             this.spin.target.hide();
-            $('.list-spin .empty-feed', this.$el.parent())
-                .css('display', 'block');
+            if (!this.$('.empty-feed').is(':visible'))
+              showingall.css('display', 'block');
           }
         }, this), (list.items.length + 1) * 30);
       }

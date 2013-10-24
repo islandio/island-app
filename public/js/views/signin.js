@@ -71,7 +71,7 @@ define([
 
     // Bind mouse events.
     events: {
-      'click .forgot-login': 'forgot',
+      'click .forgot-password': 'forgot',
       'click .navigate': 'navigate',
     },
 

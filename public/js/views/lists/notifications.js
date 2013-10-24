@@ -160,14 +160,14 @@ define([
       function updateUI(list) {
         _.defaults(list, {items:[]});
         this.latest_list = list;
+        var showingall = $('.list-spin .empty-feed', this.$el.parent());
         if (list.items.length === 0) {
           this.nomore = true;
           this.spin.target.hide();
-          var showingall = $('.list-spin .empty-feed', this.$el.parent());
           if (this.collection.length > 0)
             showingall.css('display', 'block');
           else {
-            showingall.remove();
+            showingall.hide();
             $('<span class="empty-feed">No notifications.</span>')
                 .appendTo(this.$el);
           }
@@ -181,9 +181,8 @@ define([
           this.fetching = false;
           if (list.items.length < this.limit) {
             this.spin.target.hide();
-            if (!$('.empty-feed', this.$el.parent()).is(':visible'))
-              $('.list-spin .empty-feed', this.$el.parent())
-                  .css('display', 'block');
+            if (!this.$('.empty-feed').is(':visible'))
+              showingall.css('display', 'block');
           }
         }, this), (list.items.length + 1) * 30);
       }
