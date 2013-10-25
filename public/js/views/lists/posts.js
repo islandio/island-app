@@ -113,7 +113,8 @@ define([
       if (navigator.userAgent.indexOf('MSIE') !== -1) {
         this.$('.post-input .post').remove();
         mps.publish('flash/new', [{
-          message: 'Island does not support Internet Explorer for posting content. Please use Safari, Chrome, or Firefox.',
+          message: 'Island does not support Internet Explorer for posting content.'
+              + ' Please use Safari, Chrome, or Firefox.',
           level: 'error',
           sticky: true
         }, true]);
@@ -206,7 +207,8 @@ define([
       var set = $('<div class="upload-set">');
       var parts = [];
       _.each(files, function (file) {
-        parts.push('<div class="upload-progress-wrap"><div class="upload-remove"><i class="icon-cancel"></i></div><div '
+        parts.push('<div class="upload-progress-wrap"><div class="upload-remove">'
+            + '<i class="icon-cancel"></i></div><div '
             + 'class="upload-progress">' + '<span class="upload-label">',
             file.name, '</span><span class="upload-progress-txt">'
             + 'Waiting...</span>', '</div></div>');
