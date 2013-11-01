@@ -290,7 +290,7 @@ define([
 
             // Place the video in the fancybox.
             $.fancybox(_.template(video)({
-                data: this.video, width: 1024, 576}), opts);
+                data: this.video, width: 1024, height: 576}), opts);
 
           } else {
 
