@@ -280,8 +280,7 @@ define([
             file: this.video.video.cf_url,
             image: this.video.poster.cf_url,
             width: '1024',
-            height: Math.ceil(1024 *
-                this.video.video.meta.height / this.video.video.meta.width),
+            height: '576',
             autostart: true,
             primary: 'flash',
             ga: {}
@@ -291,7 +290,7 @@ define([
 
             // Place the video in the fancybox.
             $.fancybox(_.template(video)({
-                data: this.video, width: 1024}), opts);
+                data: this.video, width: 1024, 576}), opts);
 
           } else {
 
@@ -300,9 +299,7 @@ define([
                 .appendTo(this.$('.post-mosaic'));
             _.extend(params, {
               width: '984',
-              height: '554',
-              // height: Math.ceil(984 *
-              //     this.video.video.meta.height / this.video.video.meta.width),
+              height: '554'
             });
             this.$('span.post-mosaic-play-text').hide();
 
