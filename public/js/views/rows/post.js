@@ -296,12 +296,13 @@ define([
           } else {
 
             // Lay the video over the mosaic.
-            $(_.template(video)({data: this.video, width: 984}))
+            $(_.template(video)({data: this.video, width: 984, height: 554}))
                 .appendTo(this.$('.post-mosaic'));
             _.extend(params, {
               width: '984',
-              height: Math.ceil(984 *
-                  this.video.video.meta.height / this.video.video.meta.width),
+              height: '554',
+              // height: Math.ceil(984 *
+              //     this.video.video.meta.height / this.video.video.meta.width),
             });
             this.$('span.post-mosaic-play-text').hide();
 

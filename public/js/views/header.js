@@ -11,7 +11,7 @@ define([
   'util',
   'views/lists/flashes',
   'views/lists/choices',
-  'text!../../templates/box.html',
+  'text!../../templates/box.html'
 ], function ($, _, Backbone, mps, rpc, util, Flashes, Choices, box) {
   return Backbone.View.extend({
 

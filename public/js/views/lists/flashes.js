@@ -38,8 +38,8 @@ define([
     },
 
     // collect new flashes from socket events.
-    collect: function (flash) {
-      this.collection.push(flash);
+    collect: function (data) {
+      this.collection.push(data);
     },
 
     // remove a model

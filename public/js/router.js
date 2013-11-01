@@ -134,8 +134,7 @@ define([
           && this.app.profile.notes ? {n: 0}: {};
 
       // Get a profile, if needed.
-      rpc.get(service, query,
-          _.bind(function (err, pro) {
+      rpc.get(service, query, _.bind(function (err, pro) {
         if (err) {
           _render.call(this, err);
           this.page = new Error(this.app).render(err);
