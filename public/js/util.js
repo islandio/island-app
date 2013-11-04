@@ -312,11 +312,11 @@ define([
 
     formatText: function (str) {
       var link = /(?!src=")(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-      str = str.replace(/\n/g, '<br/>');
+      str = str.replace(/\n/g, '</p><p>');
       str = str.replace(link, function (txt) {
         return ('<a href="' + txt + '" target="_blank">' + txt + '</a>');
       }); 
-      return str;
+      return '<p>' + str + '</p>';
     },
 
     addCommas: function (str) {
