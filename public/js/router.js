@@ -98,7 +98,12 @@ define([
       '*actions': 'default'
     },
 
-    render: function (service, secure, cb) {
+    render: function (service, data, secure, cb) {
+      if (typeof data === 'function') {
+        cb = data;
+        data = {};
+        secure = false;
+      }
       if (typeof secure === 'function') {
         cb = secure;
         secure = false;
@@ -132,6 +137,7 @@ define([
       // Check if a profile exists already.
       var query = this.app.profile
           && this.app.profile.notes ? {n: 0}: {};
+      _.extend(query, data);
 
       // Get a profile, if needed.
       rpc.get(service, query, _.bind(function (err, pro) {
@@ -165,7 +171,9 @@ define([
 
     profile: function (username) {
       this.start();
-      this.render('/service/profile.profile/' + username,
+      var feed = store.get('feed') || {};
+      if (!feed.query) feed.query = {featured: true};
+      this.render('/service/profile.profile/' + username, feed,
           _.bind(function (err) {
         if (err) return;
         this.page = new Profile({wrap: '.main'}, this.app).render(true);
@@ -205,7 +213,10 @@ define([
 
     home: function () {
       this.start();
-      this.render('/service/home.profile', _.bind(function (err) {
+      var feed = store.get('feed') || {};
+      if (!feed.query) feed.query = {featured: true};
+      if (feed.query.author_id) delete feed.query.author_id;
+      this.render('/service/home.profile', feed, _.bind(function (err) {
         if (err) return;
         this.page = new Home(this.app).render();
         this.stop();
@@ -214,7 +225,7 @@ define([
 
     settings: function () {
       this.start();
-      this.render('/service/settings.profile', true, _.bind(function (err) {
+      this.render('/service/settings.profile', {}, true, _.bind(function (err) {
         if (err) return;
         this.page = new Settings(this.app).render();
         this.stop();

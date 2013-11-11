@@ -436,11 +436,11 @@ span.empty-list
 .info-delete:active
   background-color rgba(75, 184, 215, 0.5)
 
-span.info-divider
+.info-divider
   font-size 8px
   color #b3b3b3
   
-span.post-info-item
+.info-item
   font-size 9px
   color #b3b3b3
 
@@ -451,6 +451,8 @@ p.page
   line-height 18px
   padding-bottom 30px
   border-bottom 1px solid #eee
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––elements*/
 
 label
   color #666
@@ -650,6 +652,15 @@ input[type=submit].button-left
   border-right none !important
   border-radius 3px 0 0 3px
 
+a.button-middle,
+button.button-middle,
+div[role=button].button-middle,
+input[type=submit].button-middle
+  margin-left -1px
+  margin-right -1px
+  border-radius 0
+  z-index 1
+
 a.button-right,
 button.button-right,
 div[role=button].button-right,
@@ -658,16 +669,21 @@ input[type=submit].button-right
   border-radius 0 3px 3px 0
 
 a.button-left.selected,
+a.button-middle.selected,
 a.button-right.selected,
 button.button-left.selected,
+button.button-middle.selected,
 button.button-right.selected,
 div[role=button].button-left.selected,
+div[role=button].button-middle.selected,
 div[role=button].button-right.selected,
 input[type=submit].button-left.selected,
+input[type=submit].button-middle.selected,
 input[type=submit].button-right.selected
   color #404040
   background blue
   border-color #404040 !important
+  z-index 9
   
   -webkit-box-shadow inset 0 0 3px #808080
   -moz-box-shadow inset 0 0 3px #808080
@@ -679,6 +695,13 @@ div[role=button].button-left.selected,
 input[type=submit].button-left.selected
   border-right 1px solid #404040 !important
 
+a.button-middle.selected,
+button.button-middle.selected,
+div[role=button].button-middle.selected,
+input[type=submit].button-middle.selected
+  border-left 1px solid #404040 !important
+  border-right 1px solid #404040 !important
+
 a.button-right.selected,
 button.button-right.selected,
 div[role=button].button-right.selected,
@@ -686,6 +709,7 @@ input[type=submit].button-right.selected
   border-left 1px solid #404040 !important
 
 a.button-left.disabled,
+a.button-middle.disabled,
 a.button-right.disabled
   opacity 0.5
   cursor default
@@ -783,6 +807,24 @@ a.buy-button:hover
 
 .single > a.buy-button
   margin-top -4px
+
+.feed-filter
+  margin-right 6px
+  margin-bottom 30px
+  white-space nowrap
+  font-size 0
+  display inline-block
+
+a.feed-button
+  font-size 11px
+  line-height 22px
+  min-height 22px
+  width 72px
+  position relative
+
+  box-sizing border-box
+  -moz-box-sizing border-box
+  -webkit-box-sizing border-box
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––structure*/
 
@@ -1511,6 +1553,10 @@ a.plot-button.active
 .cartodb-zoom
   display none
 
+  -moz-user-select none
+  -webkit-user-select none
+  user-select none
+
   -webkit-animation-name fadeIn
   -moz-animation-name fadeIn
   -o-animation-name fadeIn
@@ -1666,7 +1712,7 @@ a.plot-button.active
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––posts*/
 
 .posts
-  margin 20px 0 0 0
+  margin 12px 0 0 0
 
 .post
   position relative

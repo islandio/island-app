@@ -44,11 +44,11 @@ html(lang="en")
         var m = document.getElementById('map');
         var hs = document.getElementById('hide_show');
         var lm = document.getElementById('less_more');
-        if (mapClosed && m && hs && lm) {
-          m.className = m.className + ' closed';
-          hs.className = 'hide-show button';
-          hs.innerHTML = 'Show map';
-          lm.style.display = 'none';
+        if (!mapClosed && m && hs && lm) {
+          m.className = 'map';
+          hs.className = 'hide-show button split-left';
+          hs.innerHTML = 'Hide map';
+          lm.style.display = 'inline-block';
         }
       }
     script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js")

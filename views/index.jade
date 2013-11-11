@@ -4,7 +4,7 @@ block content
   #wrap.wrap
     header.header
       include header
-    #map.map
+    #map.map.closed
       .map-overlay
       .map-spin
       a.button.plot-button(href="javascript:;")
@@ -29,8 +29,8 @@ block content
               span Click on the map to grab coordinates.
       .map-control
         div
-          a#hide_show.hide-show.button.split-left(href="javascript:;") Hide map
-          a#less_more.less-more.button.split-right(href="javascript:;") More map
+          a#hide_show.hide-show.button(href="javascript:;") Show map
+          a#less_more.less-more.button.split-right(href="javascript:;", style="display:none;") More map
       #map_inner.map-inner
     .content
       .main

@@ -36,6 +36,7 @@ define([
     },
 
     render: function (options) {
+      this.collection.off('reset', this.reset, this);
       options = options || {};
       if (this.parentView && this.$el.attr('class'))
         this.setElement(this.parentView.$('.' + this.$el.attr('class')));

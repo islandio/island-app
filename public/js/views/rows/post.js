@@ -42,7 +42,8 @@ define([
 
     events: {
       'click a.navigate': 'navigate',
-      'click .post-delete': 'delete'
+      'click .post-delete': 'delete',
+      'click .post-feature': 'feature'
     },
 
     render: function (single, prepend) {
@@ -364,6 +365,14 @@ define([
       this.$el.slideUp('fast', _.bind(function () {
         this.destroy();
         cb();
+      }, this));
+    },
+
+    feature: function (e) {
+      e.preventDefault();
+      rpc.post('/api/posts/feature/' + this.model.get('key'),
+          {}, _.bind(function (err, data) {
+        if (err) return console.log(err);
       }, this));
     },
 

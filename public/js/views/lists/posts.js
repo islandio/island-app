@@ -29,6 +29,8 @@ define([
       this.template = _.template(template);
       this.collection = new Collection;
       this.Row = Row;
+      this.filters = !options || options.filters === undefined ?
+          true: options.filters;
 
       // Call super init.
       List.prototype.initialize.call(this, app, options);
@@ -46,8 +48,9 @@ define([
           .bind('post.removed', _.bind(this._remove, this));
 
       // Misc.
-      this.empty_label = this.app.profile.content.page
-          && this.app.profile.content.page.role === 0 ? 'No posts.': '';
+      this.empty_label = !this.app.profile.content.page
+          || (this.app.profile.content.page
+          && this.app.profile.content.page.role === 0) ? 'No posts.': '';
 
       // Reset the collection.
       this.latest_list = this.app.profile.content.posts;
@@ -71,6 +74,7 @@ define([
         $('<span class="empty-feed">' + this.empty_label
             + '</span>').appendTo(this.$el);
         this.spin.stop();
+        this.spin.target.hide();
       }
       this.paginate();
       return this;
@@ -89,7 +93,8 @@ define([
 
     events: {
       'focus textarea[name="body"].post-input': 'focus',
-      'blur textarea[name="body"].post-input': 'blur'
+      'blur textarea[name="body"].post-input': 'blur',
+      'click .feed-button': 'filter',
     },
 
     // misc. setup
@@ -343,12 +348,7 @@ define([
         // Clear fields.
         this.cancel();
 
-        if (err) {
-
-          // Oops, post wasn't created.
-          console.log('TODO: Retry, notify user, etc.');
-          return;
-        }
+        if (err) return console.log(err);
 
         // TODO: make this optimistic.
         this.collect(data.post);
@@ -399,13 +399,16 @@ define([
         var showingall = this.parentView.$('.list-spin .empty-feed');
         if (list.items.length === 0) {
           this.nomore = true;
+          this.fetching = false;
+          this.spin.stop();
           this.spin.target.hide();
           if (this.collection.length > 0)
             showingall.css('display', 'block');
           else {
             showingall.hide();
-            $('<span class="empty-feed">' + this.empty_label + '</span>')
-                .appendTo(this.$el);
+            if (this.$('.empty-feed').length === 0)
+              $('<span class="empty-feed">' + this.empty_label + '</span>')
+                  .appendTo(this.$el);
           }
         } else
           _.each(list.items, _.bind(function (i) {
@@ -413,12 +416,15 @@ define([
             this.renderLast(true);
           }, this));
         _.delay(_.bind(function () {
-          this.spin.stop();
           this.fetching = false;
+          this.spin.stop();
           if (list.items.length < this.limit) {
             this.spin.target.hide();
             if (!this.$('.empty-feed').is(':visible'))
               showingall.css('display', 'block');
+          } else {
+            showingall.hide();
+            this.spin.target.show();
           }
         }, this), (list.items.length + 1) * 30);
       }
@@ -455,19 +461,55 @@ define([
     // init pagination
     paginate: function () {
       var wrap = $(window);
-      var paginate = _.debounce(_.bind(function (e) {
+      this._paginate = _.debounce(_.bind(function (e) {
         var pos = this.$el.height() + this.$el.offset().top
             - wrap.height() - wrap.scrollTop();
         if (!this.nomore && pos < -this.spin.target.height() / 2)
           this.more();
       }, this), 50);
 
-      wrap.scroll(paginate).resize(paginate);
+      wrap.scroll(this._paginate).resize(this._paginate);
     },
 
     unpaginate: function () {
       $(window).unbind('scroll', this._paginate).unbind('resize', this._paginate);
-    }
+    },
+
+    filter: function (e) {
+
+      // Update buttons.
+      var chosen = $(e.target);
+      if (chosen.hasClass('selected')) return;
+      var selected = $('.feed-button.selected', chosen.parent());
+      chosen.addClass('selected');
+      selected.removeClass('selected');
+
+      // Updata list query.
+      if (!this.latest_list.query)
+        this.latest_list.query = {};
+      if (chosen.hasClass('sort-featured'))
+        this.latest_list.query.featured = true;
+      else if (chosen.hasClass('sort-recent'))
+        delete this.latest_list.query.featured;
+      else if (chosen.hasClass('filter-all'))
+        delete this.latest_list.query.type;
+      else if (chosen.hasClass('filter-video'))
+        this.latest_list.query.type = 'video';
+      else if (chosen.hasClass('filter-image'))
+        this.latest_list.query.type = 'image';
+      store.set('feed', {query: this.latest_list.query});
+
+      // Reset the collection.
+      this.nomore = false;
+      this.latest_list.cursor = 0;
+      this.latest_list.more = true;
+      this.collection.reset([]);
+      _.each(this.views, function (v) {
+        v.destroy();
+      });
+      this.views = [];
+      this.more();
+    },
 
   });
 });

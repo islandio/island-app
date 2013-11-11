@@ -21,6 +21,7 @@ define([
     mediaMarkers: {},
     plotting: false,
     saving: false,
+    fliedTo: false,
 
     initialize: function (app) {
 
@@ -76,16 +77,16 @@ define([
         if (!this.$el.hasClass('closed'))
           this.spin.start();
         this.map();
-        // if (Modernizr.geolocation)
-        //   navigator.geolocation.getCurrentPosition(_.bind(function (pos) {
-        //     if (pos && !pos.code)
-        //       this.flyTo({
-        //         latitude: pos.coords.latitude,
-        //         longitude: pos.coords.longitude
-        //       });
-        //   }, this),
-        //       function(){}, {maximumAge:60000, timeout:5000, 
-        //         enableHighAccuracy:true});
+        if (Modernizr.geolocation)
+          navigator.geolocation.getCurrentPosition(_.bind(function (pos) {
+            if (pos && !pos.code && !this.fliedTo)
+              this.flyTo({
+                latitude: pos.coords.latitude,
+                longitude: pos.coords.longitude
+              });
+          }, this),
+              function(){}, {maximumAge:60000, timeout:5000, 
+                enableHighAccuracy:true});
       }
 
       // Trigger setup.
@@ -194,7 +195,7 @@ define([
         if (!store.get('mapClosed')) {
           this.zoom.show();
           this.plotButton.show();
-        }
+        } else this.zoom.hide();
 
         // Get the markers.
         this.getInstaMarkers(true);
@@ -211,6 +212,7 @@ define([
           && this.location.latitude === location.latitude
           && location.longitude
           && this.location.longitude === location.longitude)) return;
+      this.fliedTo = true;
       if (!this.vis) {
         this.pendingLocation = location;
         return;

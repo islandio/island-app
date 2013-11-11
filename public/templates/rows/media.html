@@ -13,7 +13,7 @@
     <%= this.model.get('created') %>
   </time></a>
   <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-  <span class="post-info-item"><%= this.model.views() %> 
+  <span class="info-item"><%= this.model.views() %> 
       <%= (this.model.get('vcnt') || 0) !== 1 ? 'views': 'view' %></span>
   <% if (this.app.profile.member &&
       this.model.get('author').id === this.app.profile.member.id) { %>

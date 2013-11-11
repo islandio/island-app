@@ -57,7 +57,8 @@ define([
     setup: function () {
 
       // Render posts.
-      this.posts = new Posts(this.app, {parentView: this, reverse: true});
+      this.posts = new Posts(this.app, {parentView: this,
+          reverse: true, filters: false});
       this.events = new Events(this.app, {parentView: this, reverse: true});
 
       return this;
