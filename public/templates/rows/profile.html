@@ -86,7 +86,7 @@
   <% if (desc || links) { %>
     <div class="profile-description">
       <% if (desc) { %>
-        <p><%= this.model.description() %></p>
+        <%= this.model.description() %>
       <% } %>
       <% if (links) { %>
         <span>More from <%= data.displayName %> at </span>
