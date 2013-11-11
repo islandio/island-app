@@ -258,7 +258,7 @@ define([
           + " * CDB_XYZ_Resolution({{z}}))) my, st_x(the_geom) x, st_y(the_geom) y, turi, uri, name, username, handle, caption "
           + "FROM {{table_name}} WHERE {{frame}} && the_geom ORDER BY created_at DESC LIMIT {{limit}}) "
           + "SELECT DISTINCT ON (mx,my) cartodb_id, x, y, turi, uri, name, username, handle, caption FROM rg", {
-        table_name: 'instagrams',
+        table_name: window.__s ? 'instagrams': 'instagrams_dev',
         frame: frame,
         z: zoom,
         geobucket: 1,

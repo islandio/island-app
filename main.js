@@ -123,6 +123,7 @@ Step(
         api_key: '883965c96f62fd219721f59f2e7c20f08db0123b',
         tables: {
           medias: 'medias_dev',
+          instagrams: 'instagrams_dev',
         }
       });
 
@@ -183,6 +184,7 @@ Step(
         api_key: '883965c96f62fd219721f59f2e7c20f08db0123b',
         tables: {
           medias: 'medias',
+          instagrams: 'instagrams',
         }
       });
 
