@@ -58,8 +58,13 @@ define([
     },
 
     // collect new posts from socket events.
-    collect: function (post) {
-      this.collection.unshift(post);
+    collect: function (data) {
+      if (!this.latest_list.query)
+        this.collection.unshift(data);
+      else if (this.latest_list.query.featured)
+        return;
+      else if (this.latest_list.query.type === 'all' || this.latest_list.query.type === data.type)
+        this.collection.unshift(data);
     },
 
     // initial bulk render of list
