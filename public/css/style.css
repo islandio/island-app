@@ -1798,7 +1798,6 @@ img.profile-avatar {
 }
 .post .post-body {
   margin: 10px 0 0;
-  padding: 0 30px 0 2px;
   font-size: 11px;
   line-height: 16px;
   color: #4d4d4d;
@@ -1807,7 +1806,6 @@ img.profile-avatar {
   margin-bottom: 10px;
 }
 .post.single .post-body {
-  width: 750px;
   margin: 30px 0 0;
   font-size: 16px;
   line-height: 28px;
@@ -1817,7 +1815,6 @@ img.profile-avatar {
 }
 .post-info {
   margin: 10px 0 0;
-  padding: 0 0 0 2px;
   font-size: 10px;
   line-height: 13px;
   color: #808080;
@@ -2065,7 +2062,7 @@ table.post-params label {
 .comments {
   margin: 10px 0 0 0;
   border-bottom: 1px solid #eee;
-  padding: 0 0 30px 2px;
+  padding: 0 0 30px 0;
 }
 .comments span.empty-list {
   margin: 10px 0 0 0;
