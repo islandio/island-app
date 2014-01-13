@@ -312,11 +312,11 @@ define([
 
     formatText: function (str) {
       var link = /(?!src=")(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-      str = str.replace(/\n/g, '</p><p>');
+      str = str.replace(/\n+/g, '</p><p>');
       str = str.replace(link, function (txt) {
         return ('<a href="' + txt + '" target="_blank">' + txt + '</a>');
-      }); 
-      return '<p>' + str + '</p>';
+      });
+      return str.length > 0 ? '<p>' + str + '</p>': '';
     },
 
     addCommas: function (str) {
@@ -440,7 +440,29 @@ define([
       if (str.indexOf('http://') !== -1 && str.indexOf('https://') === -1)
         str = 'https://' + str.substr(str.indexOf('http://') + 7);
       return str;
-    }
+    },
+
+    parseVideoURL: function (url) {
+      if (!url) return false;
+
+      // Try Vimeo.
+      var m = url.match(/vimeo.com\/(?:channels\/|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|)(\d+)(?:$|\/|\?)/);
+      if (m)
+        return {link: {
+          id: m[3],
+          type: 'vimeo'
+        }};
+
+      // Try Youtube.
+      m = url.match(/(youtu\.be\/|youtube\.com\/(watch\?(.*&)?v=|(embed|v)\/))([^\?&"'>]+)/);
+      if (m)
+        return {link: {
+          id: m[5],
+          type: 'youtube'
+        }};
+      else
+        return false;
+    },
 
   }
 });

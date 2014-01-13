@@ -50,7 +50,7 @@ define([
       // Misc.
       this.empty_label = !this.app.profile.content.page
           || (this.app.profile.content.page
-          && this.app.profile.content.page.role === 0) ? 'No posts.': '';
+          && this.app.profile.content.page.role !== 1) ? 'No posts.': '';
 
       // Reset the collection.
       this.latest_list = this.app.profile.content.posts;
@@ -63,7 +63,8 @@ define([
         this.collection.unshift(data);
       else if (this.latest_list.query.featured)
         return;
-      else if (this.latest_list.query.type === 'all' || this.latest_list.query.type === data.type)
+      else if (!this.latest_list.query.type
+          || this.latest_list.query.type === data.type)
         this.collection.unshift(data);
     },
 

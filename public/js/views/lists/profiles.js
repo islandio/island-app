@@ -47,7 +47,7 @@ define([
 
       // Misc.
       this.empty_label = this.app.profile.content.page
-          && this.app.profile.content.page.role === 0 ? 'No followers.': '';
+          && this.app.profile.content.page.role !== 1 ? 'No followers.': '';
 
       // Reset the collection.
       this.latest_list = this.app.profile.content.profiles;

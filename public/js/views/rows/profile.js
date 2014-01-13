@@ -24,9 +24,8 @@ define([
       this.template = _.template(template);
 
       // Allow single rendering (no parent view)
-      if (!options.parentView) {
+      if (!options.parentView)
         this.model = new Model(this.app.profile.content.page);
-      }
 
       // Boiler init.
       Row.prototype.initialize.call(this, options);
@@ -46,7 +45,9 @@ define([
 
       // Set page title
       if (!this.parentView) {
-        this.$el.addClass('single')
+        if (this.model.get('role') !== 2)
+          this.$el.addClass('single');
+        else this.$el.addClass('company');
         var title = this.model.get('username');
         if (this.model.get('displayName') !== '')
           title += ' (' + this.model.get('displayName') + ')';

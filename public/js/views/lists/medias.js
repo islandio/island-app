@@ -152,7 +152,7 @@ define([
       // Grab payload.
       var payload = {};
       payload.video = util.cleanObject(this.mediaForm.serializeObject());
-      payload.video = this.parseVideoURL(payload.video.link);
+      payload.video = util.parseVideoURL(payload.video.link);
 
       // Check for empty payload.
       if (!payload.video) {
@@ -206,28 +206,6 @@ define([
       }, this));
 
       return false;
-    },
-
-    parseVideoURL: function (url) {
-      if (!url) return false;
-
-      // Try Vimeo.
-      var m = url.match(/vimeo.com\/(?:channels\/|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|)(\d+)(?:$|\/|\?)/);
-      if (m)
-        return {link: {
-          id: m[3],
-          type: 'vimeo'
-        }};
-
-      // Try Youtube.
-      m = url.match(/(youtu\.be\/|youtube\.com\/(watch\?(.*&)?v=|(embed|v)\/))([^\?&"'>]+)/);
-      if (m)
-        return {link: {
-          id: m[5],
-          type: 'youtube'
-        }};
-      else
-        return false;
     },
 
     // Check the panel's empty space and get more

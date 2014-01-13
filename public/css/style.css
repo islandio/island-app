@@ -1628,6 +1628,31 @@ a.plot-button.active {
 .profile.single {
   margin: 0 auto 35px;
 }
+.profile.company {
+  width: 984px;
+  margin: 0 0 35px 0;
+}
+.profile.company .profile-inner {
+  float: left;
+  width: 640px;
+}
+.profile-sidebar {
+  margin: 0 0 0 700px;
+}
+ul.profile-team {
+  margin-top: 14px;
+  font-size: 0;
+}
+ul.profile-team li {
+  width: 140px;
+  height: 140px;
+  margin: 0 2px 2px 0;
+  list-style-type: none;
+  float: left;
+}
+ul.profile-team li:hover img {
+  opacity: 0.7;
+}
 .profile-info {
   width: 620px;
   margin: 0 0 35px;
@@ -1658,9 +1683,9 @@ a.plot-button.active {
 }
 .profile-description p {
   padding: 0 0 5px 0;
-  font-size: 12px;
-  line-height: 20px;
-  margin-bottom: 20px;
+  font-size: 14px;
+  line-height: 24px;
+  margin-bottom: 15px;
 }
 .profile-description a {
   text-decoration: underline;
@@ -1716,9 +1741,6 @@ a.plot-button.active {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
-  -webkit-box-shadow: 0 0 3px #b3b3b3;
-  -moz-box-shadow: 0 0 3px #b3b3b3;
-  box-shadow: 0 0 3px #b3b3b3;
 }
 .post.single .post-mosaic {
   width: 984px;
