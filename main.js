@@ -202,6 +202,9 @@ Step(
   function (err, rc) {
     if (err) return util.error(err);
 
+    // Common utils init.
+    require('./lib/common').init(app.get('ROOT_URI'));
+
     // Mailer init
     app.set('mailer', new Mailer({
       user: app.get('package').gmail.user,
@@ -246,7 +249,10 @@ Step(
       app.use(express.static(__dirname + '/public', {maxAge: 31557600000}));
       app.use(slashes(false));
       app.use(app.router);
-      app.use(express.errorHandler());
+      app.use(function (err, req, res, next) {
+        if (!err) return next();
+        res.render('500', {root: app.get('ROOT_URI')});
+      });
 
       // Force HTTPS
       if (app.get('package').protocol === 'https')
