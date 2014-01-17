@@ -3,6 +3,8 @@
   "css_prefix_text": "icon-",
   "css_use_suffix": false,
   "hinting": true,
+  "units_per_em": 1000,
+  "ascent": 850,
   "glyphs": [
     {
       "uid": "381da2c2f7fd51f8de877c044d7f439d",
@@ -26,6 +28,12 @@
       "uid": "f5999a012fc3752386635ec02a858447",
       "css": "download-cloud",
       "code": 59396,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "d35a1d35efeb784d1dc9ac18b9b6c2b6",
+      "css": "pencil",
+      "code": 59404,
       "src": "fontawesome"
     },
     {

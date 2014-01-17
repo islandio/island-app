@@ -221,8 +221,8 @@ img::-moz-focus-inner
 li
   list-style none
 
-caption, th
-  text-align left
+// caption, th
+//   text-align left
 
 h1, h2, h3, h4, h5, h6
   font-size 100%
@@ -550,9 +550,9 @@ textarea:focus
   border 1px solid blue
   outline none
 
-  -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,0.075),0 0 5px rgba(75, 184, 215, 0.5);
-  -moz-box-shadow: inset 0 1px 2px rgba(0,0,0,0.075),0 0 5px rgba(75, 184, 215, 0.5);
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.075),0 0 5px rgba(75, 184, 215, 0.5);
+  -webkit-box-shadow inset 0 1px 2px rgba(0,0,0,0.075),0 0 5px rgba(75, 184, 215, 0.5)
+  -moz-box-shadow inset 0 1px 2px rgba(0,0,0,0.075),0 0 5px rgba(75, 184, 215, 0.5)
+  box-shadow inset 0 1px 2px rgba(0,0,0,0.075),0 0 5px rgba(75, 184, 215, 0.5)
 
 input[type=file]:focus
   border none
@@ -563,7 +563,7 @@ textarea::-moz-focus-inner
   border none
 
 a.button,
-button,
+button.button,
 div[role=button],
 input[type=submit]:not(.submit)
   font-size 12px
@@ -600,7 +600,7 @@ input[type=submit].from-login
   border 1px solid black
 
 a.button:hover:not(.disabled),
-button:hover:not(.disabled),
+button.button:hover:not(.disabled),
 div[role=button]:hover:not(.disabled),
 input[type='submit']:hover:not(.disabled)
   color #1a1a1a
@@ -610,7 +610,7 @@ input[type='submit']:hover:not(.disabled)
   border 1px solid #898989
 
 a.button:active:not(.disabled),
-button:active:not(.disabled),
+button.button:active:not(.disabled),
 div[role=button]:active:not(.disabled),
 input[type='submit']:active:not(.disabled)
   color #1a1a1a
@@ -620,13 +620,13 @@ input[type='submit']:active:not(.disabled)
   border 1px solid #898989
 
 a.button:focus:not(.disabled),
-button:focus:not(.disabled),
+button.button:focus:not(.disabled),
 div[role=button]:focus:not(.disabled),
 input[type=submit]:focus:not(.disabled)
   border 1px solid #98c1e6
 
 a.button.spinning,
-button.spinning,
+button.button.spinning,
 div[role=button].spinning,
 input[type=submit].spinning:not(.submit)
   color #f1f1f1
@@ -645,24 +645,29 @@ input[type=submit].from-login:active
   color black
   border 1px solid black
 
-button.modal-button,
+button.button.modal-button,
 input[type=submit].modal-button
   padding 0 20px
   margin-left 7px
 
-button.modal-button.danger
+button.button.modal-button.danger
   border 1px solid #1a1a1a
   color white
 
+button.button.modal-button.continue
+  border 1px solid #1a1a1a
+  color white
+  background #b1dc36
+
 a.button-left,
-button.button-left,
+button.button.button-left,
 div[role=button].button-left,
 input[type=submit].button-left
   border-right none !important
   border-radius 3px 0 0 3px
 
 a.button-middle,
-button.button-middle,
+button.button.button-middle,
 div[role=button].button-middle,
 input[type=submit].button-middle
   margin-left -1px
@@ -671,7 +676,7 @@ input[type=submit].button-middle
   z-index 1
 
 a.button-right,
-button.button-right,
+button.button.button-right,
 div[role=button].button-right,
 input[type=submit].button-right
   border-left none !important
@@ -680,9 +685,9 @@ input[type=submit].button-right
 a.button-left.selected,
 a.button-middle.selected,
 a.button-right.selected,
-button.button-left.selected,
-button.button-middle.selected,
-button.button-right.selected,
+button.button.button-left.selected,
+button.button.button-middle.selected,
+button.button.button-right.selected,
 div[role=button].button-left.selected,
 div[role=button].button-middle.selected,
 div[role=button].button-right.selected,
@@ -699,20 +704,20 @@ input[type=submit].button-right.selected
   box-shadow inset 0 0 3px #808080
 
 a.button-left.selected,
-button.button-left.selected,
+button.button.button-left.selected,
 div[role=button].button-left.selected,
 input[type=submit].button-left.selected
   border-right 1px solid #404040 !important
 
 a.button-middle.selected,
-button.button-middle.selected,
+button.button.button-middle.selected,
 div[role=button].button-middle.selected,
 input[type=submit].button-middle.selected
   border-left 1px solid #404040 !important
   border-right 1px solid #404040 !important
 
 a.button-right.selected,
-button.button-right.selected,
+button.button.button-right.selected,
 div[role=button].button-right.selected,
 input[type=submit].button-right.selected
   border-left 1px solid #404040 !important
@@ -749,7 +754,7 @@ a.instagram-btn-disabled
   background rgba(69, 63, 56, 0.65)
 
 a.delete-btn,
-button.danger
+button.button.danger
   background rgba(208, 76, 56, 0.9)
 
 a.signin-strategy-btn-disabled
@@ -779,7 +784,7 @@ a.instagram-btn:hover
   background rgba(69, 63, 56, 0.75)
 
 a.delete-btn:hover,
-button.danger:hover
+button.button.danger:hover
   background rgba(208, 76, 56, 1)
 
 a.signin-strategy-btn:active
@@ -795,7 +800,7 @@ a.instagram-btn:active
   background rgba(69, 63, 56, 0.55)
 
 a.delete-btn:active,
-button.danger:active
+button.button.danger:active
   background rgba(208, 76, 56, 0.8)
 
 a.signin-strategy-btn.from-login
@@ -834,6 +839,34 @@ a.feed-button
   box-sizing border-box
   -moz-box-sizing border-box
   -webkit-box-sizing border-box
+
+a.session-button
+  position relative
+  display block
+  color rgb(57, 100, 0)
+  border 1px solid transparent
+  font-size 14px
+  margin 0 0 30px 0
+  padding 5px 0
+  background #b1dc36
+
+a.button.session-button:hover
+  color rgb(47, 90, 0)
+  border 1px solid transparent
+  -moz-box-shadow 0 0 2px rgba(0, 0, 0, 0)
+  -webkit-box-shadow 0 0 2px rgba(0, 0, 0, 0)
+  box-shadow 0 0 2px rgba(0, 0, 0, 0)
+
+a.button.session-button:active
+  -moz-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
+  -webkit-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
+  box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
+  background rgb(167, 210, 44)
+
+a.session-button i
+  position absolute
+  left 30px
+  color rgb(127, 170, 4)
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––structure*/
 
@@ -1373,6 +1406,69 @@ span.signin-error
   display block
   text-align center
 
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––signin*/
+
+.session
+  width 700px
+  position relative
+  overflow hidden
+
+.session .modal
+  width auto
+
+.session .modal-body
+  min-height 300px
+
+.session .modal-body table
+  width 100%
+
+.session .modal-body tr td.session-cell
+  padding 0 10px 5px 0
+
+.session .modal-body tr td.session-cell:last-child
+  padding 0 0 5px 0
+
+.session .modal-body td.session-cell input
+  width 100%
+  margin-bottom 10px
+
+  box-sizing border-box
+  -moz-box-sizing border-box
+  -webkit-box-sizing border-box
+
+.session .modal-body td.session-cell textarea
+  width 622px
+  margin-bottom 10px
+  font-size 12px
+  line-height 18px
+  border-radius 3px
+  min-height 60px
+  resize none
+  overflow hidden
+
+span.session-error
+  color red
+  font-size 10px
+  vertical-align -1px
+
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration .2s
+  -moz-animation-duration .2s
+  -o-animation-duration .2s
+  animation-duration .2s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
+
+.session-spin
+  position absolute
+  top 50%
+  left 50%
+
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––map*/
 
 .map
@@ -1644,6 +1740,102 @@ a.plot-button.active
 .leftside > .page-title
   font-size 24px
 
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––modal*/
+
+.modal
+  position relative
+  background white
+  width 500px
+  border-radius 3px
+
+.modal-title
+  display block
+  background #f2f2f2
+  padding 20px 0
+  font-size 16px
+  font-weight bold
+  text-align center
+  border-bottom 1px solid #ccc
+  border-radius 3px 3px 0 0
+
+  -moz-user-select none
+  -webkit-user-select none
+  user-select none
+  cursor default
+
+  -webkit-box-shadow inset 0 1px 0 white
+  -moz-box-shadow inset 0 1px 0 white
+  box-shadow inset 0 1px 0 white
+
+  background-image linear-gradient(bottom, #F2F2F2 100%, #E6E6E6 0%)
+  background-image -o-linear-gradient(bottom, #F2F2F2 100%, #E6E6E6 0%)
+  background-image -moz-linear-gradient(bottom, #F2F2F2 100%, #E6E6E6 0%)
+  background-image -webkit-linear-gradient(bottom, #F2F2F2 100%, #E6E6E6 0%)
+  background-image -ms-linear-gradient(bottom, #F2F2F2 100%, #E6E6E6 0%)
+  background-image -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(1, #F2F2F2),
+    color-stop(0, #E6E6E6)
+  )
+
+.modal-title > img
+  vertical-align -5px
+
+.modal-body
+  padding 30px
+
+.modal-body > p
+  font-size 12px
+  line-height 18px
+  color #4d4d4d
+
+.modal-body td
+  padding 0 0 5px 0
+
+.modal-actions
+  border-top 1px solid #ddd
+  padding 15px 30px
+  text-align right
+  background #fafafa
+  border-radius 0 0 3px 3px
+  font-size 0
+  
+  -webkit-box-shadow inset 0 1px 0 white
+  -moz-box-shadow inset 0 1px 0 white
+  box-shadow inset 0 1px 0 white
+
+.modal-actions span
+  font-size 10px
+  float left
+  margin 20px 0 0 0
+
+button.button.modal-button.full
+  width 100%
+  margin 0
+
+.modal-overlay
+  display none
+  position absolute
+  top 0
+  left 0
+  z-index 1
+  background white
+  width 100%
+  height 100%
+  border-radius 3px
+
+.modal-overlay > p
+  text-align center
+  padding 15px 20px
+  margin-top 15%
+  font-weight bold
+  font-size 16px
+
+.forgot .modal-overlay > p
+  margin-top 19%
+
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––profiles*/
 
 .profiles
@@ -1786,10 +1978,6 @@ ul.profile-team li:hover img
   background mattegray
 
   border-radius 3px
-
-  // -webkit-box-shadow 0 0 3px #b3b3b3
-  // -moz-box-shadow 0 0 3px #b3b3b3
-  // box-shadow 0 0 3px #b3b3b3
 
 .post.single .post-mosaic
   width 984px
@@ -2496,98 +2684,6 @@ span.setting-error
 .settings-gravatar a
   font-weight bold
   margin-left 2px
-
-.modal
-  position relative
-  background white
-  width 500px
-  border-radius 3px
-
-.modal-title
-  display block
-  background #f2f2f2
-  padding 20px 0
-  font-size 18px
-  font-weight bold
-  text-align center
-  border-bottom 1px solid #ccc
-  border-radius 3px 3px 0 0
-
-  -webkit-box-shadow inset 0 1px 0 white
-  -moz-box-shadow inset 0 1px 0 white
-  box-shadow inset 0 1px 0 white
-
-  background-image linear-gradient(bottom, #F2F2F2 100%, #E6E6E6 0%)
-  background-image -o-linear-gradient(bottom, #F2F2F2 100%, #E6E6E6 0%)
-  background-image -moz-linear-gradient(bottom, #F2F2F2 100%, #E6E6E6 0%)
-  background-image -webkit-linear-gradient(bottom, #F2F2F2 100%, #E6E6E6 0%)
-  background-image -ms-linear-gradient(bottom, #F2F2F2 100%, #E6E6E6 0%)
-  background-image -webkit-gradient(
-    linear,
-    left bottom,
-    left top,
-    color-stop(1, #F2F2F2),
-    color-stop(0, #E6E6E6)
-  )
-
-.modal-title > img
-  vertical-align -5px
-
-.modal-body
-  padding 30px
-
-.modal-body > p
-  font-size 12px
-  line-height 18px
-  color #4d4d4d
-
-.modal-body td
-  padding 0 0 5px 0
-
-.modal-body input
-  width 420px !important
-
-.modal-actions
-  border-top 1px solid #ddd
-  padding 15px 30px
-  text-align right
-  background #fafafa
-  border-radius 0 0 3px 3px
-  font-size 0
-  
-  -webkit-box-shadow inset 0 1px 0 white
-  -moz-box-shadow inset 0 1px 0 white
-  box-shadow inset 0 1px 0 white
-
-.modal-actions span
-  font-size 10px
-  float left
-  margin 20px 0 0 0
-
-button.modal-button.full
-  width 100%
-  margin 0
-
-.modal-overlay
-  display none
-  position absolute
-  top 0
-  left 0
-  z-index 1
-  background white
-  width 100%
-  height 100%
-  border-radius 3px
-
-.modal-overlay > p
-  text-align center
-  padding 15px 20px
-  margin-top 15%
-  font-weight bold
-  font-size 16px
-
-.forgot .modal-overlay > p
-  margin-top 19%
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crags*/
 

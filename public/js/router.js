@@ -28,10 +28,11 @@ define([
   'views/about',
   'views/contact',
   'views/privacy',
-  'views/home'
+  'views/home',
+  'views/session'
 ], function ($, _, Backbone, Spin, mps, rpc, util, Error, Header, Footer, 
     Signin, Forgot, Notifications, Map, Profile, Post, Crag, Ascent, Settings,
-    Reset, Team, Films, About, Contact, Privacy, Home) {
+    Reset, Team, Films, About, Contact, Privacy, Home, Session) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -81,6 +82,11 @@ define([
       // Show the forgot modal.
       mps.subscribe('member/forgot/open', _.bind(function () {
         this.modal = new Forgot(this.app).render();
+      }, this));
+
+      // Show the session modal.
+      mps.subscribe('member/session/open', _.bind(function (id) {
+        this.modal = new Session(this.app, {id: id}).render();
       }, this));
 
       // Init page spinner.

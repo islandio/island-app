@@ -50,7 +50,7 @@ define([
 
     // Bind mouse events.
     events: {
-
+      'click .session-button': 'session',
     },
 
     // Misc. setup.
@@ -81,6 +81,13 @@ define([
       this.undelegateEvents();
       this.stopListening();
       this.empty();
+    },
+
+    session: function (e) {
+      e.preventDefault();
+
+      // Render the session view.
+      mps.publish('member/session/open');
     },
 
   });

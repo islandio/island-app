@@ -1,0 +1,58 @@
+<div class="modal">
+  <span class="modal-title"><i class="icon-pencil"></i> New Session</span>
+  <form enctype="multipart/form-data" method="POST">
+    <div class="modal-body">
+      <div class="session-spin"></div>
+      <table>
+        <tbody>
+          <tr>
+            <td colspan="2" class="session-cell">
+              <label for="name">Give it a name</label>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="session-cell">
+              <input id="name" name="name" type="text" placeholder="(optional)" />
+            </td>
+          </tr>
+          <tr>
+            <td colspan="1" class="session-cell">
+              <label for="datepicker">When</label>
+            </td>
+            <td colspan="1" class="session-cell">
+              <label for="crag">Where</label>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="1" class="session-cell">
+              <input id="datepicker" name="datepicker" class="datepicker picker__input" type="text" placeholder="day month, year" readonly />
+            </td>
+            <td colspan="1" class="session-cell">
+              <input id="crag" name="crag" type="text" placeholder="Crag or gym name" />
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="session-cell">
+              <label for="note">Comments</label>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="session-cell">
+              <textarea id="note" name="note" placeholder="(optional)"></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="session-cell text-right">
+              <span class="session-error">&nbsp;</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-submit modal-button button continue">Log it</button>
+      <button class="modal-cancel modal-button button">Cancel</button>
+      <div class="clear"></div>
+    </div>
+  </form>
+</div>

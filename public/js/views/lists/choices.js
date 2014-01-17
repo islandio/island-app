@@ -163,9 +163,13 @@ define([
       var done = _.after(types.length, _.bind(function () {
 
         // Render results.
+        console.log(items)
         this._clear();
         this.resetHighlight();
         if (_.isEmpty(items)) {
+          this.results.hide();
+          return;
+        } else if (!_.find(items, function (i) { return i.length !== 0; })) {
           this.results.hide();
           return;
         }
