@@ -56,6 +56,7 @@ define([
       this.route('crags/:y/:g/:t/:a', 'ascent', this.ascent);
       this.route('reset', 'reset', this.reset);
       this.route('settings', 'settings', this.settings);
+      this.route('session', 'session', this.session);
       this.route('team', 'team', this.team);
       this.route('films', 'films', this.films);
       this.route('about', 'about', this.about);
@@ -82,11 +83,6 @@ define([
       // Show the forgot modal.
       mps.subscribe('member/forgot/open', _.bind(function () {
         this.modal = new Forgot(this.app).render();
-      }, this));
-
-      // Show the session modal.
-      mps.subscribe('member/session/open', _.bind(function (id) {
-        this.modal = new Session(this.app, {id: id}).render();
       }, this));
 
       // Init page spinner.
@@ -234,6 +230,15 @@ define([
       this.render('/service/settings.profile', {}, true, _.bind(function (err) {
         if (err) return;
         this.page = new Settings(this.app).render();
+        this.stop();
+      }, this));
+    },
+
+    session: function () {
+      this.start();
+      this.render('/service/session.profile', {}, true, _.bind(function (err) {
+        if (err) return;
+        this.page = new Session(this.app).render();
         this.stop();
       }, this));
     },

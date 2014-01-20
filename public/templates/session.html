@@ -1,58 +1,87 @@
-<div class="modal">
-  <span class="modal-title"><i class="icon-pencil"></i> New Session</span>
-  <form enctype="multipart/form-data" method="POST">
-    <div class="modal-body">
-      <div class="session-spin"></div>
+<div class="leftside">
+  <span class="leftside-heading">
+    Log New Session
+  </span>
+  <div class="session">
+    <form enctype="multipart/form-data" method="POST">      
       <table>
         <tbody>
           <tr>
             <td colspan="2" class="session-cell">
-              <label for="name">Give it a name</label>
+              <label for="session-crag">Where</label>
+            </td>
+            <td colspan="2" class="session-cell">
+              <label for="session-date">When</label>
             </td>
           </tr>
           <tr>
             <td colspan="2" class="session-cell">
-              <input id="name" name="name" type="text" placeholder="(optional)" />
+              <div class="session-search session-crag-search">
+                <input id="session-crag" name="crag" type="text"
+                    class="session-crag-search-input" placeholder="Find a crag..."
+                    autocomplete="off" />
+                <div class="search-choice">
+                  <div class="search-choice-content"></div>
+                  <a href="javascript:;" class="search-choice-clear" tabindex="-1">
+                    <i class="icon-cancel"></i>
+                  </a>
+                </div>
+                <div class="search-display">
+                  <div class="list-header"></div>
+                </div>
+              </div>
             </td>
-          </tr>
-          <tr>
-            <td colspan="1" class="session-cell">
-              <label for="datepicker">When</label>
-            </td>
-            <td colspan="1" class="session-cell">
-              <label for="crag">Where</label>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="1" class="session-cell">
-              <input id="datepicker" name="datepicker" class="datepicker picker__input" type="text" placeholder="day month, year" readonly />
-            </td>
-            <td colspan="1" class="session-cell">
-              <input id="crag" name="crag" type="text" placeholder="Crag or gym name" />
-            </td>
-          </tr>
-          <tr>
             <td colspan="2" class="session-cell">
-              <label for="note">Comments</label>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2" class="session-cell">
-              <textarea id="note" name="note" placeholder="(optional)"></textarea>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2" class="session-cell text-right">
-              <span class="session-error">&nbsp;</span>
+              <input id="session-date" name="date" type="text"
+                  class="session-datepicker picker__input" placeholder="dd month, year" readonly />
             </td>
           </tr>
         </tbody>
       </table>
-    </div>
-    <div class="modal-actions">
-      <button class="modal-submit modal-button button continue">Log it</button>
-      <button class="modal-cancel modal-button button">Cancel</button>
-      <div class="clear"></div>
-    </div>
-  </form>
+      <div class="session-activities">
+        <button class="button table-button activity-button">
+          <i class="icon-plus"></i> Activity
+        </button>
+      </div>
+      <table>
+        <tbody>
+          <tr>
+            <td colspan="4" class="session-cell">
+              <label for="session-note">Comments</label>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="4" class="session-cell">
+              <textarea id="session-note" name="note" placeholder="(optional)"></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="4" class="session-cell">
+              <label for="session-name">Name your session</label>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="4" class="session-cell">
+              <input id="session-name" name="name" type="text" placeholder="(optional)" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="session-error"></div>
+    </form>
+    <button class="session-button button">
+      <i class="icon-pencil"></i>Log it
+    </button>
+  </div>
 </div>
+<div class="rightside">
+  <span class="rightside-heading">
+    Activity
+  </span>
+  <div class="events"></div>
+  <div class="list-spin">
+    <div class="events-spin"></div>
+    <span class="empty-feed">Showing all.</span>
+  </div>
+</div>
+<div class="clear"></div>

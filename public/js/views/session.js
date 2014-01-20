@@ -10,13 +10,17 @@ define([
   'rpc',
   'util',
   'text!../../templates/session.html',
-  'Spin'
-], function ($, _, Backbone, mps, rpc, util, template, Spin) {
+  'text!../../templates/activity.html',
+  'text!../../templates/tick.html',
+  'views/lists/choices',
+  'views/lists/events'
+], function ($, _, Backbone, mps, rpc, util, template,
+    activityTemp, tickTemp, Choices, Events) {
 
   return Backbone.View.extend({
 
     // The DOM target element for this page
-    className: 'session',
+    el: '.main',
 
     // Module entry point
     initialize: function (app) {
@@ -26,38 +30,22 @@ define([
 
       // Shell events.
       this.on('rendered', this.setup, this);
+
+      // Client-wide subscriptions
+      this.subscriptions = [];
     },
 
     // Draw the template
     render: function () {
 
+      // Set page title
+      this.app.title('Session');
+
       // UnderscoreJS rendering.
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
-
-      // Dump content into modal.
-      $.fancybox(this.$el, {
-        openEffect: 'fade',
-        closeEffect: 'fade',
-        closeBtn: false,
-        padding: 0,
-        modal: true
-      });
-
-      // Init the load indicator.
-      this.spin = new Spin(this.$('.session-spin'), {
-        lines: 17,
-        length: 12,
-        width: 4,
-        radius: 18,
-        color: '#4d4d4d'
-      });
-
-      // Show the spinner when connecting.
-      this.$('.modal-submit').click(_.bind(function (e) {
-        this.signinInner.fadeOut('fast');
-        this.spin.start();
-      }, this));
+      this.activityTemp = _.template(activityTemp);
+      this.tickTemp = _.template(tickTemp);
 
       // Done rendering ... trigger setup.
       this.trigger('rendered');
@@ -67,8 +55,11 @@ define([
 
     // Bind mouse events.
     events: {
-      'click .modal-submit': 'submit',
-      'click .modal-cancel': 'cancel',
+      'click .activity-button': 'addActivity',
+      'click .session-activity-clear': 'deleteActivity',
+      'click .tick-button': 'addTick',
+      'click .session-tick-clear': 'deleteTick',
+      'click .session-button': 'submit',
       'click .navigate': 'navigate',
     },
 
@@ -76,8 +67,21 @@ define([
     setup: function () {
 
       // Save refs.
-      this.dateInput = this.$('.datepicker').pickadate();
+      this.dateInput = this.$('.session-datepicker').pickadate();
+      this.activities = this.$('.session-activities');
       this.datePicker = this.dateInput.pickadate('picker');
+      this.errorMsg = this.$('.session-error');
+
+      // Init choices.
+      this.choices = new Choices(this.app, {
+        reverse: true, 
+        el: '.session-crag-search',
+        choose: true,
+        types: ['crags']
+      });
+
+      // Add first activity.
+      this.addActivity();
 
       // Autogrow the write comment box.
       this.$('textarea[name="note"]').autogrow();
@@ -92,12 +96,16 @@ define([
       // Focus cursor initial.
       _.delay(_.bind(function () { this.focus(); }, this), 1);
 
+      // Render lists.
+      this.events = new Events(this.app, {parentView: this, reverse: true});
+
       return this;
     },
 
     // Focus on the first empty input field.
     focus: function (e) {
-      _.find(this.$('input[type!="submit"]:visible:not(.datepicker)'), function (i) {
+      _.find(this.$('input[type!="submit"]:visible:not(.session-datepicker)'),
+          function (i) {
         var empty = $(i).val().trim() === '';
         if (empty) $(i).focus();
         return empty;
@@ -116,28 +124,99 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
+      this.events.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();
     },
 
-    cancel: function (e) {
-      $.fancybox.close();
+    navigate: function (e) {
+      e.preventDefault();
+
+      // Route to wherever.
+      var path = $(e.target).closest('a').attr('href');
+      if (path)
+        this.app.router.navigate(path, {trigger: true});
+    },
+
+    addActivity: function (e) {
+      if (e) e.preventDefault();
+
+      // Render and attach.
+      var activity = $(this.activityTemp.call(this))
+          .insertBefore($('.activity-button'));
+
+      // Handle selects.
+      util.customSelects(activity);
+
+      // Restric numeric inputs.
+      util.numbersOnly($('.numeric', activity));
+
+      // Handle error display.
+      $('input[type="text"]', activity).blur(function (e) {
+        var el = $(e.target);
+        if (el.hasClass('input-error'))
+          el.removeClass('input-error');
+      });
+    },
+
+    deleteActivity: function (e) {
+      if (e) e.preventDefault();
+
+      // Remove.
+      $(e.target).closest('.session-activity').remove();
+    },
+
+    addTick: function (e) {
+      if (e) e.preventDefault();
+
+      // Render and attach.
+      var ctx = $(e.target).closest('.session-activity');
+      var tick = $(this.tickTemp.call(this))
+          .insertBefore($('.tick-button', ctx));
+
+      // Handle selects.
+      util.customSelects(tick);
+
+      // Restric numeric inputs.
+      util.numbersOnly($('.numeric', tick));
+
+      // Init choices.
+      new Choices(this.app, {
+        reverse: true, 
+        el: $('.session-ascent-search', tick).get(0),
+        choose: true,
+        types: ['ascents']
+      });
+
+      // Handle error display.
+      $('input[type="text"]', tick).blur(function (e) {
+        var el = $(e.target);
+        if (el.hasClass('input-error'))
+          el.removeClass('input-error');
+      });
+    },
+
+    deleteTick: function (e) {
+      if (e) e.preventDefault();
+
+      // Remove.
+      $(e.target).closest('.session-tick').remove();
     },
 
     submit: function (e) {
 
       // Sanitize.
-      this.$('input[type!="submit"]:visible').each(function (i) {
+      this.$('input[type!="submit"]:visible, textarea:visible').each(function (i) {
         $(this).val(util.sanitize($(this).val()));
       });
 
       // Grab the form data.
-      var payload = this.sessionForm.serializeObject();
+      var payload = this.$('form').serializeObject();
+      console.log(payload);
 
       // Client-side form check.
-      // var errorMsg = $('.signin-error', this.signinForm);
-      // var check = util.ensure(payload, ['username', 'password']);
+      var check = util.ensure(payload, []);
 
       // Add alerts.
       _.each(check.missing, _.bind(function (m, i) {
@@ -157,7 +236,7 @@ define([
       }
 
       // All good, show spinner.
-      this.spin.start();
+      // this.spin.start();
 
       // // Do the API request.
       // rpc.post('/api/sessions', payload, _.bind(function (err, data) {
@@ -185,17 +264,6 @@ define([
       // }, this));
 
       return false;
-    },
-
-    navigate: function (e) {
-      e.preventDefault();
-
-      // Route to wherever.
-      var path = $(e.target).closest('a').attr('href');
-      if (path) {
-        $.fancybox.close();
-        this.app.router.navigate(path, {trigger: true});
-      }
     },
 
   });

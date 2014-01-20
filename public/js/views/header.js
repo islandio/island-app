@@ -56,7 +56,7 @@ define([
       return this;
     },
 
-    // Misc. setup.    
+    // Misc. setup.
     setup: function () {
 
       // Save refs.
@@ -82,7 +82,14 @@ define([
 
       // Start search choices.
       if(!this.choices)
-        this.choices = new Choices(this.app, {reverse: true});
+        this.choices = new Choices(this.app, {
+          reverse: true, 
+          el: '.header-search',
+          collapse: true,
+          placeholder: 'Search posts, members, & crags.',
+          route: true,
+          types: ['crags', 'members', 'posts']
+        });
     },
 
     // Bind mouse events.

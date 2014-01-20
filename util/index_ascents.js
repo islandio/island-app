@@ -42,12 +42,11 @@ boots.start(function (client) {
             if (d.name.match(/\w+/g))
               search.index(d.name, d._id.toString());
           num -= 1;
-          console.log(num);
+          // console.log(num);
           _this();
         });
       },
       function (err) {
-        console.log(err, 'done');
         boots.error(err);
         process.exit(0);
       }

@@ -10,22 +10,21 @@ define([
   'mps',
   'rpc',
   'util',
-  'text!../../../templates/lists/choices.html',
   'collections/choices',
   'views/rows/choice'
-], function ($, _, Modernizr, List, mps, rpc, util, template, Collection, Row) {
+], function ($, _, Modernizr, List, mps, rpc, util, Collection, Row) {
   return List.extend({
-    
-    el: '.header-search',
+
     active: false,
     str: null,
     selecting: {el: null, i: -1},
 
     initialize: function (app, options) {
       this.app = app;
-      this.template = _.template(template);
       this.collection = new Collection;
       this.Row = Row;
+      this.options = options;
+      this.setElement(options.el);
 
       // Call super init.
       List.prototype.initialize.call(this, app, options);
@@ -37,17 +36,19 @@ define([
       this.collection.reset([]);
     },
 
-    // Bind mouse events.
+    // Mouse events.
     events: {
-      'focus .header-search-input': 'searchFocus'
+      'click .search-choice-clear': 'clearChoice',
     },
 
     // Misc. setup
     setup: function () {
 
       // Save refs.
-      this.input = this.$('.header-search-input');
+      this.input = this.$('input');
       this.results = this.$('.search-display');
+      this.choiceWrap = this.$('.search-choice');
+      this.choiceContent = this.$('.search-choice-content');
 
       // Add placeholder shim if need to.
       if (!Modernizr.input.placeholder)
@@ -57,6 +58,7 @@ define([
       this.autocomplete = new google.maps.places.AutocompleteService();
       // this.geocoder = new google.maps.Geocoder();
       this.places = new google.maps.places.PlacesService($('<div>').get(0));
+      this.input.bind('focus', _.bind(this.searchFocus, this));
       this.input.bind('keyup', _.bind(this.search, this));
       this.input.bind('keydown', _.bind(this.searchBlur, this));
       $(document).on('mouseup', _.bind(this.searchBlur, this));
@@ -84,7 +86,8 @@ define([
     },
 
     searchFocus: function (e) {
-      this.input.width(338).attr({placeholder: 'Search posts, members, & crags.'});
+      if (this.options.collapse)
+        this.input.width(338).attr({placeholder: this.options.placeholder});
       this.active = true;
       if (this.searchVal() && this.collection.length > 0)
       this.results.show();
@@ -94,13 +97,14 @@ define([
       if (!this.active) return;
 
       // Ensure we are inside input.
-      if ($(e.target).hasClass('header-search-input')) {
+      if ($(e.target).hasClass(this.input.attr('class'))) {
 
         // Enter
         if (e.keyCode === 13 && e.which === 13) {
           if (this.selecting.el) {
             this.views[this.selecting.el.index() - 1].choose();
-            this.input.select();
+            if (!this.options.choose)
+              this.input.select();
             return false;
           }
         }
@@ -131,7 +135,7 @@ define([
       }
 
       // Blur.
-      if (!this.searchVal())
+      if (!this.searchVal() && this.options.collapse)
         this.input.width(150).attr({placeholder: 'Search...'});
       this.results.hide();
       this.resetHighlight();
@@ -159,11 +163,10 @@ define([
 
       // Setup search types.
       var items = {};
-      var types = ['crags', 'members', 'posts', 'places'];
+      var types = this.options.types;
       var done = _.after(types.length, _.bind(function () {
 
         // Render results.
-        console.log(items)
         this._clear();
         this.resetHighlight();
         if (_.isEmpty(items)) {
@@ -191,13 +194,8 @@ define([
         if (t !== 'places')
           rpc.post('/api/' + t + '/search/' + str, {},
               _.bind(function (err, data) {
+            if (err) return console.log(err);
 
-            if (err) {
-
-              // Oops.
-              console.log('TODO: Retry, notify user, etc.');
-              return;
-            }
             if (data.items.length !== 0)
               items[t] = data.items;
             done();
@@ -231,6 +229,21 @@ define([
         v.destroy();
         this.collection.remove(v.model);
       }, this));
+    },
+
+    choose: function (choice) {
+      if (!this.options.choose) return;
+      this.choiceContent.html(choice.$el.html());
+      this.choiceWrap.show();
+      this.results.hide();
+      this.choice = choice;
+      this.input.val('');
+    },
+
+    clearChoice: function (e) {
+      this.choiceWrap.hide();
+      this.choice = null;
+      this.input.focus();
     },
 
   });

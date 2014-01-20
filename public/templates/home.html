@@ -9,9 +9,11 @@
   </div>
 </div>
 <div class="rightside">
-  <a href="javascript:;" class="session-button button">
-    <i class="icon-pencil"></i>Log Session
-  </a>
+  <% if (this.app.profile.member) { %>
+    <a href="/session" class="session-button button navigate">
+      <i class="icon-pencil"></i>Log Session
+    </a>
+  <% } %>
   <span class="rightside-heading">
     Activity
   </span>

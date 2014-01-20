@@ -488,7 +488,7 @@ textarea
   font-size 11px
   resize none
   font-weight normal
-  -webkit-font-smoothing: antialiased;
+  -webkit-font-smoothing antialiased
   padding 8px
   border 1px solid bordergray
   color #404040
@@ -658,6 +658,9 @@ button.button.modal-button.continue
   border 1px solid #1a1a1a
   color white
   background #b1dc36
+
+button.button.table-button
+  width 100%
 
 a.button-left,
 button.button.button-left,
@@ -840,30 +843,37 @@ a.feed-button
   -moz-box-sizing border-box
   -webkit-box-sizing border-box
 
-a.session-button
+a.button.session-button,
+button.button.session-button
   position relative
   display block
   color rgb(57, 100, 0)
   border 1px solid transparent
   font-size 14px
-  margin 0 0 30px 0
+  margin 0 0 20px 0
   padding 5px 0
   background #b1dc36
 
-a.button.session-button:hover
+button.button.session-button
+  width 100%
+
+a.button.session-button:hover,
+button.button.session-button:hover
   color rgb(47, 90, 0)
   border 1px solid transparent
   -moz-box-shadow 0 0 2px rgba(0, 0, 0, 0)
   -webkit-box-shadow 0 0 2px rgba(0, 0, 0, 0)
   box-shadow 0 0 2px rgba(0, 0, 0, 0)
 
-a.button.session-button:active
+a.button.session-button:active,
+button.button.session-button:active
   -moz-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
   -webkit-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
   box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
   background rgb(167, 210, 44)
 
-a.session-button i
+a.session-button i,
+button.button.session-button i
   position absolute
   left 30px
   color rgb(127, 170, 4)
@@ -1018,12 +1028,12 @@ input.header-search-input
   max-height 310px
   overflow-y auto
   
-  border 1px solid rgba(0,0,0,0.3)
-  border-radius 3px;
+  border 1px solid #cdcdcd
+  border-radius 0 0 3px 3px
 
-  -webkit-box-shadow 0 1px 5px rgba(0,0,0,0.25)
-  -moz-box-shadow 0 1px 5px rgba(0,0,0,0.25)
-  box-shadow 0 1px 5px rgba(0,0,0,0.25)
+  -webkit-box-shadow: 0 6px 18px 1px rgba(0, 0, 0, 0.12);
+  -moz-box-shadow: 0 6px 18px 1px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 6px 18px 1px rgba(0, 0, 0, 0.12);
 
   -webkit-animation-name fadeIn
   -moz-animation-name fadeIn
@@ -1038,7 +1048,8 @@ input.header-search-input
   -o-animation-fill-mode both
   animation-fill-mode both
 
-a.choice
+a.choice,
+.search-choice
   position relative
   padding 8px
   margin-bottom -1px
@@ -1053,8 +1064,26 @@ a.choice
   height 16px
   line-height 15px
 
+.search-choice
+  position absolute
+  display none
+  top 1px
+  left 1px
+  right 1px
+  height 13px
+  line-height 14px
+
+.search-choice .choice-prefix
+  margin-top -1px
+
+.search-choice-clear
+  position absolute
+  z-index 1
+  top 8px
+  right 8px
+
 a.choice:first-of-type
-  border-radius 3px 3px 0 0
+  border-radius 0
 
 a.choice:last-child
   border-radius 0 0 3px 3px
@@ -1064,7 +1093,6 @@ a.choice.hover
 
 a.choice:hover
   background-color #d0ecf2
-
 
 a.choice:active
   background-color #adc9d0
@@ -1242,6 +1270,134 @@ span.count
 .block-error-txt a:active
   background red
 
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––selects*/
+
+.select-hidden
+  display none
+  visibility hidden
+  padding-right 10px
+
+.select
+  cursor pointer
+  display block
+  position relative
+  font-size 11px
+  line-height 15px
+  color #4d4d4d
+  width 100%
+  height 33px
+
+  box-sizing border-box
+  -moz-box-sizing border-box
+  -webkit-box-sizing border-box
+
+.select-styled
+  position absolute
+  top 0
+  right 0
+  bottom 0
+  left 0
+  background-color #fcfcfc
+  padding 8px
+
+  border 1px solid #cdcdcd
+  -webkit-border-radius 3px
+  -moz-border-radius 3px
+  border-radius 3px
+
+  -webkit-box-shadow inset 0 1px 2px rgba(0,0,0,0.075)
+  -moz-box-shadow inset 0 1px 2px rgba(0,0,0,0.075)
+  box-shadow inset 0 1px 2px rgba(0,0,0,0.075)
+
+  -webkit-transition background-color 0.15s ease-in 0
+  -moz-transition background-color 0.15s ease-in
+  transition background-color 0.15s ease-in
+
+  -webkit-transition border-color 0.15s ease-in 0
+  -moz-transition border-color 0.15s ease-in
+  transition border-color 0.15s ease-in
+
+  -webkit-transition -webkit-box-shadow 0.15s ease-in 0
+  -moz-transition -moz-box-shadow 0.15s ease-in
+  transition box-shadow 0.15s ease-in
+
+.select-styled:after
+  content ""
+  width 0
+  height 0
+  border 7px solid transparent
+  border-color #4d4d4d transparent transparent transparent
+  position absolute
+  top 13px
+  right 10px
+
+.select-styled:hover
+  background-color #d0ecf2
+
+.select-styled:active,
+.select-styled.active
+  background-color #fff
+
+  border 1px solid blue
+  outline none
+
+  -webkit-box-shadow inset 0 1px 2px rgba(0,0,0,0.075),0 0 5px rgba(75, 184, 215, 0.5)
+  -moz-box-shadow inset 0 1px 2px rgba(0,0,0,0.075),0 0 5px rgba(75, 184, 215, 0.5)
+  box-shadow inset 0 1px 2px rgba(0,0,0,0.075),0 0 5px rgba(75, 184, 215, 0.5)
+
+.select-styled:active:after,
+.select-styled.active:after
+  top 6px
+  border-color transparent transparent #4d4d4d transparent
+
+.select-options
+  display none
+  position absolute
+  top 100%
+  right 0
+  left 0
+  z-index 999
+  margin 0
+  padding 0
+  list-style none
+  background-color #fcfcfc
+
+  border 1px solid #cdcdcd
+  border-radius 0 0 3px 3px
+
+  -webkit-box-shadow: 0 6px 18px 1px rgba(0, 0, 0, 0.12);
+  -moz-box-shadow: 0 6px 18px 1px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 6px 18px 1px rgba(0, 0, 0, 0.12);
+
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration .2s
+  -moz-animation-duration .2s
+  -o-animation-duration .2s
+  animation-duration .2s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
+
+.select-options li
+  margin 0
+  padding 8px
+  // text-indent 15px
+  line-height 15px
+  border-top 1px solid rgba(0,0,0,0.08)
+
+.select-options li:hover
+  background #d0ecf2
+
+.select-options li:active
+  background #adc9d0
+
+.select-options li[rel="hide"]
+  display none
+
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––privacy*/
 
 span.privacy-indent
@@ -1409,34 +1565,31 @@ span.signin-error
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––signin*/
 
 .session
-  width 700px
+  width 100%
+  margin-top 10px
   position relative
-  overflow hidden
 
-.session .modal
-  width auto
-
-.session .modal-body
-  min-height 300px
-
-.session .modal-body table
+.session table
+  table-layout fixed
   width 100%
 
-.session .modal-body tr td.session-cell
+.session tr td.session-cell
   padding 0 10px 5px 0
 
-.session .modal-body tr td.session-cell:last-child
+.session tr td.session-cell:last-child
   padding 0 0 5px 0
 
-.session .modal-body td.session-cell input
+.session td.session-cell input,
+.session td.session-cell select
   width 100%
   margin-bottom 10px
+  font-size 12px
 
   box-sizing border-box
   -moz-box-sizing border-box
   -webkit-box-sizing border-box
 
-.session .modal-body td.session-cell textarea
+.session td.session-cell textarea
   width 622px
   margin-bottom 10px
   font-size 12px
@@ -1446,10 +1599,61 @@ span.signin-error
   resize none
   overflow hidden
 
-span.session-error
+.session-search
+  position relative
+
+.session-search .search-display
+  margin-top -10px
+
+.session-activities
+  width 100%
+  margin-bottom 10px
+
+.session-ticks
+  width 100%
+
+.session-activity,
+.session-tick
+  position relative
+  background #fcfcfc
+  padding 10px
+  border-radius 2px
+  margin-bottom 5px
+
+  box-sizing border-box
+  -moz-box-sizing border-box
+  -webkit-box-sizing border-box
+
+.session-tick
+  background #f2f2f2
+  margin-top 3px
+  padding 10px
+
+.session-activity table,
+.session-tick table
+  margin 0 auto
+
+.session-activity-clear,
+.session-tick-clear
+  position absolute
+  right 0
+  top 0
+
+button.tick-button,
+button.activity-button
+  border 1px solid transparent
+  color #808080
+
+button.tick-button i,
+button.activity-button i
+  font-size 11px
+
+.session-error
+  display none
   color red
   font-size 10px
-  vertical-align -1px
+  text-align right
+  margin-top 10px
 
   -webkit-animation-name fadeIn
   -moz-animation-name fadeIn
@@ -1464,10 +1668,10 @@ span.session-error
   -o-animation-fill-mode both
   animation-fill-mode both
 
-.session-spin
-  position absolute
-  top 50%
-  left 50%
+// .session-spin
+//   position absolute
+//   top 50%
+//   left 50%
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––map*/
 

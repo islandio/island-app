@@ -50,7 +50,7 @@ define([
 
     // Bind mouse events.
     events: {
-      'click .session-button': 'session',
+      'click .navigate': 'navigate',
     },
 
     // Misc. setup.
@@ -83,11 +83,13 @@ define([
       this.empty();
     },
 
-    session: function (e) {
+    navigate: function (e) {
       e.preventDefault();
 
-      // Render the session view.
-      mps.publish('member/session/open');
+      // Route to wherever.
+      var path = $(e.target).closest('a').attr('href');
+      if (path)
+        this.app.router.navigate(path, {trigger: true});
     },
 
   });
