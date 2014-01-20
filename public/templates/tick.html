@@ -26,8 +26,17 @@
             </div>
           </div>
         </td>
-        <td class="session-cell" style="width: 25%;">
-          &nbsp;
+        <td class="session-cell" style="width: 12.5%; padding-right: 0;">
+          <label class="checkbox-styled">
+            <input type="checkbox" name="progress" value="progress" />
+            <span>Progress</span>
+          </label>
+        </td>
+        <td class="session-cell" style="width: 12.5%; padding-left: 10px;">
+          <label class="checkbox-styled">
+            <input type="checkbox" name="tick" value="tick" />
+            <span>Tick</span>
+          </label>
         </td>
       </tr>
       <tr>
@@ -35,19 +44,19 @@
           <label>Attempts</label>
         </td>
         <td class="session-cell" style="width: 25%;">
-          <label>How did it feel?</label>
-        </td>
-        <td class="session-cell" style="width: 25%;">
-          <label>Rating</label>
-        </td>
-        <td class="session-cell" style="width: 25%;">
           <label>Grade</label>
+        </td>
+        <td class="session-cell" style="width: 25%;">
+          &nbsp;
+        </td>
+        <td colspan="2" class="session-cell" style="width: 25%;">
+          <label>Stars</label>
         </td>
       </tr>
       <tr>
         <td class="session-cell" style="width: 25%;">
           <select name="attempts">
-            <option value="hide">-- Number --</option>
+            <option value="hide">--</option>
             <option value="1">Flash</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -55,33 +64,53 @@
           </select>
         </td>
         <td class="session-cell" style="width: 25%;">
-          <select name="feel">
-            <option value="hide">-- Level --</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-          </select>
-        </td>
-        <td class="session-cell" style="width: 25%;">
-          <select name="rating">
-            <option value="hide">-- Level --</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-          </select>
-        </td>
-        <td class="session-cell" style="width: 25%;">
           <select name="grade">
-            <option value="hide">-- Level --</option>
+            <option value="hide">--</option>
+            <option value="0">3</option>
+            <option value="1">4</option>
+            <option value="2">5a</option>
+            <option value="3">5b</option>
+            <option value="4">5c</option>
+            <option value="5">6a</option>
+            <option value="6">6a+</option>
+            <option value="7">6b</option>
+            <option value="8">6b+</option>
+            <option value="9">6c</option>
+            <option value="10">6c+</option>
+            <option value="11">7a</option>
+            <option value="12">7a+</option>
+            <option value="13">7b</option>
+            <option value="14">7b+</option>
+            <option value="15">7c</option>
+            <option value="16">7c+</option>
+            <option value="17">8a</option>
+            <option value="18">8a+</option>
+            <option value="19">8b</option>
+            <option value="20">8b+</option>
+            <option value="21">8c</option>
+            <option value="22">8c+</option>
+            <option value="23">9a</option>
+            <option value="24">9a+</option>
+            <option value="25">9b</option>
+            <option value="26">9b+</option>
+            <option value="27">9c</option>
+            <option value="28">9c+</option>
+          </select>
+        </td>
+        <td class="session-cell" style="width: 25%;">
+          <select name="feel">
+            <option value="0">--</option>
+            <option value="-1">Soft</option>
+            <option value="1">Hard</option>
+          </select>
+        </td>
+        <td colspan="2" class="session-cell" style="width: 25%;">
+          <select name="rating">
+            <option value="hide">--</option>
+            <option value="0">0</option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
           </select>
         </td>
       </tr>

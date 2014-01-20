@@ -1241,6 +1241,51 @@ span.count {
 .block-error-txt a:active {
   background: #d04c38;
 }
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––checkboxes*/
+.checkbox-styled {
+  display: block;
+}
+.checkbox-styled input[type="checkbox"] {
+  display: none;
+}
+.checkbox-styled input[type="checkbox"] + span {
+  display: block;
+  position: relative;
+  background: #fcfcfc;
+  color: #4d4d4d;
+  font-size: 10px;
+  text-align: center;
+  width: 100%;
+  line-height: 33px;
+  margin-top: -10px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  cursor: pointer;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-transition: background-color 0.15s ease-in 0;
+  -moz-transition: background-color 0.15s ease-in;
+  transition: background-color 0.15s ease-in;
+  -webkit-transition: border-color 0.15s ease-in 0;
+  -moz-transition: border-color 0.15s ease-in;
+  transition: border-color 0.15s ease-in;
+  -webkit-transition: -webkit-box-shadow 0.15s ease-in 0;
+  -moz-transition: -moz-box-shadow 0.15s ease-in;
+  transition: box-shadow 0.15s ease-in;
+}
+.checkbox-styled input[type="checkbox"] + span:active {
+  -moz-box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
+  -webkit-box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
+  box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
+}
+.checkbox-styled input[type="checkbox"]:checked + span {
+  background: #d0ecf2;
+  -moz-box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
+  -webkit-box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
+  box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
+}
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––selects*/
 .select-hidden {
   display: none;
@@ -1599,6 +1644,7 @@ span.signin-error {
   position: absolute;
   right: 0;
   top: 0;
+  color: #808080;
 }
 button.tick-button,
 button.activity-button {
