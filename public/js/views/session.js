@@ -21,6 +21,8 @@ define([
 
     // The DOM target element for this page
     el: '.main',
+    crag: null,
+    tickChoices: {},
 
     // Module entry point
     initialize: function (app) {
@@ -61,6 +63,9 @@ define([
       'click .session-tick-clear': 'deleteTick',
       'click .session-button': 'submit',
       'click .navigate': 'navigate',
+      'click .session-progress': 'checkProgress',
+      'click .session-ticked': 'checkTicked',
+      'change .session-activity-type': 'validateTicks'
     },
 
     // Misc. setup.
@@ -73,10 +78,11 @@ define([
       this.errorMsg = this.$('.session-error');
 
       // Init choices.
-      this.choices = new Choices(this.app, {
+      this.cragChoices = new Choices(this.app, {
         reverse: true, 
         el: '.session-crag-search',
         choose: true,
+        onChoose: _.bind(this.validateTicks, this),
         types: ['crags']
       });
 
@@ -167,6 +173,52 @@ define([
       $(e.target).closest('.session-activity').remove();
     },
 
+    validateTicks: function (e) {
+      if (!this.cragChoices.choice) {
+        this.$('.session-ticks').hide();
+        _.each(this.tickChoices, function (t) {
+          t.destroy();
+        });
+        this.tickChoices = {};
+        this.$('.session-tick').remove();
+        return;
+      }
+      var types = this.$('.session-activity-type');
+      _.each(types, _.bind(function (t) {
+        t = $(t);
+        var opt = $('option[value="' + t.val() + '"]', t);
+        var type = opt.data('type');
+        var ticks = $('.session-ticks', t.closest('.session-activity'));
+        var label = $('.tick-button span', ticks);
+        if (type) {
+          _.each($('.session-tick', ticks), _.bind(function (st) {
+            st = $(st);
+            var tid = st.data('tid');
+            var stt = this.tickChoices[tid].options.query.type;
+            if (stt && stt !== type) {
+              this.tickChoices[tid].destroy();
+              delete this.tickChoices[tid];
+              st.remove();
+            } else {
+              this.tickChoices[tid].options.query.type = type;
+            }
+          }, this));
+          ticks.show();
+          if (type === 'b') label.text('Problem');
+          else label.text('Route');
+        } else {
+          ticks.hide();
+          _.each($('.session-tick', ticks), _.bind(function (st) {
+            st = $(st);
+            var tid = st.data('tid');
+            this.tickChoices[tid].destroy();
+            delete this.tickChoices[tid];
+            st.remove();
+          }, this));
+        }
+      }, this));
+    },
+
     addTick: function (e) {
       if (e) e.preventDefault();
 
@@ -174,6 +226,8 @@ define([
       var ctx = $(e.target).closest('.session-activity');
       var tick = $(this.tickTemp.call(this))
           .insertBefore($('.tick-button', ctx));
+      var tid = util.makeID();
+      tick.attr('data-tid', tid);
 
       // Handle selects.
       util.customSelects(tick);
@@ -182,12 +236,17 @@ define([
       util.numbersOnly($('.numeric', tick));
 
       // Init choices.
-      new Choices(this.app, {
+      var choices = new Choices(this.app, {
         reverse: true, 
         el: $('.session-ascent-search', tick).get(0),
         choose: true,
-        types: ['ascents']
+        types: ['ascents'],
+        query: {
+          crag_id: this.cragChoices.choice.model.id,
+        }
       });
+      this.tickChoices[tid] = choices;
+      this.validateTicks();
 
       // Handle error display.
       $('input[type="text"]', tick).blur(function (e) {
@@ -201,13 +260,40 @@ define([
       if (e) e.preventDefault();
 
       // Remove.
-      $(e.target).closest('.session-tick').remove();
+      var tick = $(e.target).closest('.session-tick');
+      var tid = tick.data('tid');
+      this.tickChoices[tid].destroy();
+      delete this.tickChoices[tid];
+      tick.remove();
+    },
+
+    checkProgress: function (e) {
+      var ctx = $(e.target).closest('.session-tick');
+      var ticked = $('.session-ticked', ctx);
+      if (ticked.is(':checked')) {
+        $(ticked).attr('checked', false);
+        $('.session-tick-details', ctx).hide();
+      }
+    },
+
+    checkTicked: function (e) {
+      var ctx = $(e.target).closest('.session-tick');
+      var ticked = $('.session-ticked', ctx);
+      var progress = $('.session-progress', ctx);
+      if (progress.is(':checked')) {
+        $(progress).attr('checked', false);
+      }
+      if (ticked.is(':checked'))
+        $('.session-tick-details', ctx).show();
+      else
+        $('.session-tick-details', ctx).hide();
     },
 
     submit: function (e) {
 
       // Sanitize.
-      this.$('input[type!="submit"]:visible, textarea:visible').each(function (i) {
+      this.$('input[type!="submit"]:visible, textarea:visible')
+          .each(function (i) {
         $(this).val(util.sanitize($(this).val()));
       });
 

@@ -6,10 +6,10 @@
     <tbody>
       <tr>
         <td colspan="3" class="session-cell" style="width: 75%;">
-          <label>Name</label>
+          <label>Problem Name</label>
         </td>
       </tr>
-      <tr>
+      <tr class="session-row-nopad">
         <td colspan="3" class="session-cell" style="width: 75%;">
           <div class="session-search session-ascent-search">
             <input name="tick" type="text"
@@ -28,35 +28,21 @@
         </td>
         <td class="session-cell" style="width: 12.5%; padding-right: 0;">
           <label class="checkbox-styled">
-            <input type="checkbox" name="progress" value="progress" />
-            <span>Progress</span>
+            <input class="session-progress" type="checkbox" name="progress" value="progress" />
+            <span><i class="icon-ok"></i> Progress</span>
           </label>
         </td>
         <td class="session-cell" style="width: 12.5%; padding-left: 10px;">
           <label class="checkbox-styled">
-            <input type="checkbox" name="tick" value="tick" />
-            <span>Tick</span>
+            <input class="session-ticked" type="checkbox" name="tick" value="tick" />
+            <span><i class="icon-ok"></i> Tick</span>
           </label>
         </td>
       </tr>
-      <tr>
-        <td class="session-cell" style="width: 25%;">
-          <label>Attempts</label>
-        </td>
-        <td class="session-cell" style="width: 25%;">
-          <label>Grade</label>
-        </td>
-        <td class="session-cell" style="width: 25%;">
-          &nbsp;
-        </td>
-        <td colspan="2" class="session-cell" style="width: 25%;">
-          <label>Stars</label>
-        </td>
-      </tr>
-      <tr>
+      <tr class="session-tick-details">
         <td class="session-cell" style="width: 25%;">
           <select name="attempts">
-            <option value="hide">--</option>
+            <option value="hide">-- Attempts --</option>
             <option value="1">Flash</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -65,7 +51,7 @@
         </td>
         <td class="session-cell" style="width: 25%;">
           <select name="grade">
-            <option value="hide">--</option>
+            <option value="hide">-- Grade --</option>
             <option value="0">3</option>
             <option value="1">4</option>
             <option value="2">5a</option>
@@ -106,7 +92,7 @@
         </td>
         <td colspan="2" class="session-cell" style="width: 25%;">
           <select name="rating">
-            <option value="hide">--</option>
+            <option value="hide">-- Stars --</option>
             <option value="0">0</option>
             <option value="1">1</option>
             <option value="2">2</option>

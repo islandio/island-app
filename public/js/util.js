@@ -499,7 +499,7 @@ define([
         $listItems.click(function(e) {
           e.stopPropagation();
           $styledSelect.text($(this).text()).removeClass('active');
-          $this.val($(this).attr('rel'));
+          $this.val($(this).attr('rel')).trigger('change');
           $list.hide();
         });
 

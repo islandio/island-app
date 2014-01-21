@@ -4,58 +4,45 @@
   </a>
   <table>
     <tbody>
-      <tr>
-        <td class="session-cell" style="width: 25%;">
-          <label>Duration</label>
+      <tr class="session-row-nopad">
+        <td class="session-cell" style="width: 33.33%;">
+          <select class="session-activity-type" name="action">
+            <option value="hide">-- Type --</option>
+            <option value="boulder" data-type="b">Bouldering</option>
+            <option value="sport" data-type="r">Sport Climbing</option>
+            <option value="traditional" data-type="r">Trad. Climbing</option>
+            <option value="toprope" data-type="r">Top Roping</option>
+          </select>
         </td>
-        <td class="session-cell" style="width: 25%;">
-          <label>Activity</label>
-        </td>
-        <td class="session-cell" style="width: 25%;">
-          <label>Intensity</label>
-        </td>
-        <td class="session-cell" style="width: 25%;">
-          <label>How did you feel?</label>
-        </td>
-      </tr>
-      <tr>
-        <td class="session-cell" style="width: 25%;">
+        <td class="session-cell" style="width: 33.33%;">
           <select name="duration">
-            <option value="hide">-- Select --</option>
+            <option value="hide">-- Duration --</option>
+            <option value="180">Half-day</option>
+            <option value="360">All-day</option>
             <option value="30">30m</option>
             <option value="60">1h</option>
             <option value="90">1h 30m</option>
             <option value="120">2h</option>
             <option value="150">2h 30m</option>
+            <option value="180">3h</option>
+            <option value="210">3h 30m</option>
+            <option value="240">4h</option>
+            <option value="270">4h 30m</option>
+            <option value="300">5h</option>
+            <option value="330">5h 30m</option>
+            <option value="360">6h</option>
+            <option value="390">6h 30m</option>
+            <option value="420">7h</option>
+            <option value="450">7h 30m</option>
+            <option value="480">8h</option>
           </select>
         </td>
-        <td class="session-cell" style="width: 25%;">
-          <select name="action">
-            <option value="hide">-- Type --</option>
-            <option value="boulder">Bouldering</option>
-            <option value="sport">Sport Climbing</option>
-            <option value="traditional">Trad. Climbing</option>
-            <option value="toprope">Top Roping</option>
-          </select>
-        </td>
-        <td class="session-cell" style="width: 25%;">
-          <select name="intensity">
-            <option value="hide">-- Level --</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-          </select>
-        </td>
-        <td class="session-cell" style="width: 25%;">
+        <td class="session-cell" style="width: 33.33%;">
           <select name="feel">
-            <option value="hide">-- Level --</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
+            <option value="hide">-- Performance --</option>
+            <option value="-1">Weak</option>
+            <option value="0">Average</option>
+            <option value="1">Strong</option>
           </select>
         </td>
       </tr>
@@ -63,7 +50,7 @@
   </table>
   <div class="session-ticks">
     <button class="button table-button tick-button">
-      <i class="icon-plus"></i> Problem
+      <i class="icon-plus"></i> <span>Problem</span>
     </button>
   </div>
 </div>

@@ -24,6 +24,7 @@ define([
       this.collection = new Collection;
       this.Row = Row;
       this.options = options;
+      if (!this.options.query) this.options.query = {};
       this.setElement(options.el);
 
       // Call super init.
@@ -192,7 +193,7 @@ define([
       // Perform searches.
       _.each(types, _.bind(function (t) {
         if (t !== 'places')
-          rpc.post('/api/' + t + '/search/' + str, {},
+          rpc.post('/api/' + t + '/search/' + str, this.options.query,
               _.bind(function (err, data) {
             if (err) return console.log(err);
 
@@ -238,12 +239,16 @@ define([
       this.results.hide();
       this.choice = choice;
       this.input.val('');
+      if (this.options.onChoose)
+        this.options.onChoose();
     },
 
     clearChoice: function (e) {
       this.choiceWrap.hide();
       this.choice = null;
       this.input.focus();
+      if (this.options.onChoose)
+        this.options.onChoose();
     },
 
   });
