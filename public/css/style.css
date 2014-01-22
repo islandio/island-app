@@ -1689,7 +1689,10 @@ span.signin-error {
   padding-bottom: 0;
   border-left: 1px solid #cdcdcd;
 }
-.session-ticks .session-tick + button {
+.session-tick.hidden {
+  display: none;
+}
+.session-ticks .session-tick:not(.hidden) + button {
   margin-top: 8px;
 }
 .session-activity table,

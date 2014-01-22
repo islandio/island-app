@@ -195,13 +195,11 @@ define([
             st = $(st);
             var tid = st.data('tid');
             var stt = this.tickChoices[tid].options.query.type;
-            if (stt && stt !== type) {
-              this.tickChoices[tid].destroy();
-              delete this.tickChoices[tid];
-              st.remove();
-            } else {
+            if (stt)
+              if (stt !== type) st.addClass('hidden');
+              else st.removeClass('hidden');
+            else
               this.tickChoices[tid].options.query.type = type;
-            }
           }, this));
           ticks.show();
           if (type === 'b') label.text('Problem');
@@ -224,7 +222,10 @@ define([
 
       // Render and attach.
       var ctx = $(e.target).closest('.session-activity');
-      var tick = $(this.tickTemp.call(this))
+      var types = $('.session-activity-type', ctx);
+      var type = $('option[value="' + types.val() + '"]', types).data('type');
+      var title = type === 'b' ? 'Problem': 'Route';
+      var tick = $(this.tickTemp.call(this, {title: title}))
           .insertBefore($('.tick-button', ctx));
       var tid = util.makeID();
       tick.attr('data-tid', tid);

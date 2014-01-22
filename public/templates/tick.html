@@ -6,14 +6,14 @@
     <tbody>
       <tr>
         <td colspan="4" class="session-cell" style="width: 75%;">
-          <label>Problem Name</label>
+          <label><%= title %> Name</label>
         </td>
       </tr>
       <tr class="session-row-nopad">
         <td colspan="4" class="session-cell" style="width: 75%;">
           <div class="session-search session-ascent-search">
             <input name="tick" type="text"
-                class="session-tick-search-input" placeholder="Find an ascent..."
+                class="session-tick-search-input" placeholder="Find a <%= title.toLowerCase() %>..."
                 autocomplete="off" />
             <div class="search-choice">
               <div class="search-choice-content"></div>
@@ -42,7 +42,7 @@
       <tr class="session-tick-details">
         <td class="session-cell" style="width: 20%;">
           <select name="grade">
-            <option value="hide">- Grade -</option>
+            <option value="hide">-- Grade --</option>
             <option value="0">3</option>
             <option value="1">4</option>
             <option value="2">5a</option>
@@ -83,20 +83,21 @@
         </td>
         <td class="session-cell" style="width: 20%;">
           <select name="attempts">
-            <option value="hide">- Attempts -</option>
+            <option value="hide">-- Tries --</option>
+            <option value="1">Onsight</option>
             <option value="1">Flash</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">>3</option>
+            <option value="2">2nd try</option>
+            <option value="3">3rd try</option>
+            <option value="4">>3 tries</option>
           </select>
         </td>
         <td class="session-cell" style="width: 20%;">
           <select name="rating">
-            <option value="hide">- Stars -</option>
-            <option value="0">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
+            <option value="hide">-- Stars --</option>
+            <option value="0">No stars</option>
+            <option value="1">1 star</option>
+            <option value="2">2 stars</option>
+            <option value="3">3 stars</option>
           </select>
         </td>
         <td colspan="2" class="session-cell" style="width: 20%;">
