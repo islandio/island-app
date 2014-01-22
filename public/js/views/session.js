@@ -63,8 +63,8 @@ define([
       'click .session-tick-clear': 'deleteTick',
       'click .session-button': 'submit',
       'click .navigate': 'navigate',
-      'click .session-progress': 'checkProgress',
-      'click .session-ticked': 'checkTicked',
+      'click .session-tried': 'checkTried',
+      'click .session-sent': 'checkSent',
       'change .session-activity-type': 'validateTicks'
     },
 
@@ -235,6 +235,9 @@ define([
       // Restric numeric inputs.
       util.numbersOnly($('.numeric', tick));
 
+      // Autogrow the write comment box.
+      $('textarea[name="note"]', tick).autogrow();
+
       // Init choices.
       var choices = new Choices(this.app, {
         reverse: true, 
@@ -267,26 +270,22 @@ define([
       tick.remove();
     },
 
-    checkProgress: function (e) {
+    checkTried: function (e) {
       var ctx = $(e.target).closest('.session-tick');
-      var ticked = $('.session-ticked', ctx);
-      if (ticked.is(':checked')) {
-        $(ticked).attr('checked', false);
-        $('.session-tick-details', ctx).hide();
-      }
+      var sent = $('.session-sent', ctx);
+      var tried = $('.session-tried', ctx);
+      $(sent).attr('checked', false);
+      $(tried).attr('checked', true);
+      $('.session-tick-details', ctx).hide();
     },
 
-    checkTicked: function (e) {
+    checkSent: function (e) {
       var ctx = $(e.target).closest('.session-tick');
-      var ticked = $('.session-ticked', ctx);
-      var progress = $('.session-progress', ctx);
-      if (progress.is(':checked')) {
-        $(progress).attr('checked', false);
-      }
-      if (ticked.is(':checked'))
-        $('.session-tick-details', ctx).show();
-      else
-        $('.session-tick-details', ctx).hide();
+      var sent = $('.session-sent', ctx);
+      var tried = $('.session-tried', ctx);
+      $(sent).attr('checked', true);
+      $(tried).attr('checked', false);
+      $('.session-tick-details', ctx).show();
     },
 
     submit: function (e) {

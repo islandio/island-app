@@ -1339,6 +1339,9 @@ span.count
   -webkit-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
   box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
 
+.checkbox-styled input[type="checkbox"][value="sent"]:checked + span
+  background green
+
 .checkbox-styled input[type="checkbox"]:checked + span i
   display inline-block
 
@@ -1358,6 +1361,10 @@ span.count
   color #4d4d4d
   width 100%
   height 33px
+
+  -moz-user-select none
+  -webkit-user-select none
+  user-select none
 
   box-sizing border-box
   -moz-box-sizing border-box
@@ -1397,10 +1404,10 @@ span.count
   content ""
   width 0
   height 0
-  border 7px solid transparent
+  border 5px solid transparent
   border-color #4d4d4d transparent transparent transparent
   position absolute
-  top 13px
+  top 14px
   right 10px
 
 .select-styled:hover
@@ -1419,7 +1426,7 @@ span.count
 
 .select-styled:active:after,
 .select-styled.active:after
-  top 6px
+  top 8px
   border-color transparent transparent #4d4d4d transparent
 
 .select-options
@@ -1433,13 +1440,15 @@ span.count
   padding 0
   list-style none
   background-color #fcfcfc
-
   border 1px solid #cdcdcd
+  max-height 310px
+  overflow-y auto
+
   border-radius 0 0 3px 3px
 
-  -webkit-box-shadow: 0 6px 18px 1px rgba(0, 0, 0, 0.12);
-  -moz-box-shadow: 0 6px 18px 1px rgba(0, 0, 0, 0.12);
-  box-shadow: 0 6px 18px 1px rgba(0, 0, 0, 0.12);
+  -webkit-box-shadow 0 6px 18px 1px rgba(0, 0, 0, 0.12)
+  -moz-box-shadow 0 6px 18px 1px rgba(0, 0, 0, 0.12)
+  box-shadow 0 6px 18px 1px rgba(0, 0, 0, 0.12)
 
   -webkit-animation-name fadeIn
   -moz-animation-name fadeIn
@@ -1664,7 +1673,7 @@ span.signin-error
   -webkit-box-sizing border-box
 
 .session td.session-cell textarea
-  width 622px
+  width 100%
   margin-bottom 10px
   font-size 12px
   line-height 18px
@@ -1672,6 +1681,10 @@ span.signin-error
   min-height 60px
   resize none
   overflow hidden
+
+  box-sizing border-box
+  -moz-box-sizing border-box
+  -webkit-box-sizing border-box
 
 .session-search
   position relative
