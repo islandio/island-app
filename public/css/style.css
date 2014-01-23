@@ -833,22 +833,26 @@ button.button.session-button {
 button.button.session-button {
   width: 100%;
 }
-a.button.session-button:hover,
-button.button.session-button:hover {
+a.button.session-button:hover:not(.disabled),
+button.button.session-button:hover:not(.disabled) {
   color: #2f5a00;
   border: 1px solid transparent;
   -moz-box-shadow: 0 0 2px rgba(0,0,0,0);
   -webkit-box-shadow: 0 0 2px rgba(0,0,0,0);
   box-shadow: 0 0 2px rgba(0,0,0,0);
 }
-a.button.session-button:active,
-button.button.session-button:active {
+a.button.session-button:active:not(.disabled),
+button.button.session-button:active:not(.disabled) {
   -moz-box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
   -webkit-box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
   box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
   background: #a7d22c;
 }
-a.session-button i,
+a.button.session-button.disabled,
+button.button.session-button.disabled {
+  opacity: 0.25;
+}
+a.button.session-button i,
 button.button.session-button i {
   position: absolute;
   left: 30px;

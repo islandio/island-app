@@ -41,7 +41,7 @@ define([
     render: function () {
 
       // Set page title
-      this.app.title('Session');
+      this.app.title('Log Session');
 
       // UnderscoreJS rendering.
       this.template = _.template(template);
@@ -65,6 +65,10 @@ define([
       'click .navigate': 'navigate',
       'click .session-tried': 'checkTried',
       'click .session-sent': 'checkSent',
+      'keyup .session-crag-search-input': 'validate',
+      'click .session-crag-search .choice': 'validate',
+      'click .session-crag-search .search-choice-clear': 'validate',
+      'change .session-datepicker': 'validate',
       'change .session-activity-type': 'validateTicks'
     },
 
@@ -76,6 +80,7 @@ define([
       this.activities = this.$('.session-activities');
       this.datePicker = this.dateInput.pickadate('picker');
       this.errorMsg = this.$('.session-error');
+      this.submitButton = this.$('.session-button');
 
       // Init choices.
       this.cragChoices = new Choices(this.app, {
@@ -289,6 +294,15 @@ define([
       $('.session-tick-details', ctx).show();
     },
 
+    validate: function (e) {
+      if (!this.cragChoices.choice
+          || this.dateInput.val().trim() === '')
+        this.submitButton.attr('disabled', true).addClass('disabled');
+      else
+        this.submitButton.attr('disabled', false).removeClass('disabled');
+      return true;
+    },
+
     submit: function (e) {
 
       // Sanitize.
@@ -297,9 +311,59 @@ define([
         $(this).val(util.sanitize($(this).val()));
       });
 
-      // Grab the form data.
-      var payload = this.$('form').serializeObject();
+      // Build the payload.
+      var payload = {
+        crag_id: this.cragChoices.choice.model.id,
+        date: this.datePicker.get('select').pick,
+        note: this.$('#session-note').val().trim(),
+        name: this.$('#session-name').val().trim()
+      };
+
+      // Get all actions.
+      var actions = [];
+      _.each(this.$('.session-activity'), _.bind(function (a) {
+        a = $(a);
+        var type = $('.session-activity-type', a);
+        var action = {
+          type: type.val(),
+          duration: $('select[name="duration"]', a).val(),
+          performance: $('select[name="performance"]', a).val()
+        };
+
+        // Get all ticks.
+        var ticks = [];
+        var tickType = $('option[value="' + type.val() + '"]', type).data('type');
+        
+        console.log($('.session-tick', a).length)
+        _.each($('.session-tick', a), _.bind(function (t) {
+          t = $(t);
+          var choice = this.tickChoices[t.data('tid')].choice;
+          if (!choice) return;
+          var sent = $('.session-sent', t).is(':checked');
+          var tick = {
+            type: tickType,
+            ascent_id: choice.model.id,
+            sent: sent,
+            note: $('textarea[name="note"]', t).val().trim()
+          };
+          if (sent)
+            _.extend(tick, {
+              grade: $('select[name="grade"]', t).val(),
+              feel: $('select[name="feel"]', t).val(),
+              tries: $('select[name="tries"]', t).val(),
+              rating: $('select[name="rating"]', t).val(),
+              first: $('select[name="first"]', t).val()
+            });
+          ticks.push(tick);
+        }, this));
+
+        if (ticks.length !== 0) action.ticks = ticks;
+        actions.push(action);
+      }, this));
+      if (actions.length !== 0) payload.actions = actions;
+
       console.log(payload);
+      return;
 
       // Client-side form check.
       var check = util.ensure(payload, []);

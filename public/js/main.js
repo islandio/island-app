@@ -16,6 +16,8 @@ require.config({
     mps: 'lib/minpubsub/minpubsub',
     Pusher: 'lib/pusher/pusher',
     Spin: 'lib/spin/spin',
+    Picker: 'lib/pickadate/picker',
+    Pickadate: 'lib/pickadate/picker.date',
     plugins: 'lib/jquery/plugins'
   },
 
@@ -43,6 +45,12 @@ require.config({
     },
     Spin: {
       exports: 'Spin'
+    },
+    Picker: {
+      deps: ['jQuery'],
+    },
+    Pickadate: {
+      deps: ['Picker'],
     },
     plugins: {
       deps: ['jQuery']
