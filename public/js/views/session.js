@@ -349,11 +349,11 @@ define([
           var tick = {
             type: tickType,
             ascent_id: choice.model.id,
-            sent: sent,
             note: $('textarea[name="note"]', t).val().trim()
           };
           if (sent)
             _.extend(tick, {
+              sent: true,
               grade: $('select[name="grade"]', t).val(),
               feel: $('select[name="feel"]', t).val(),
               tries: $('select[name="tries"]', t).val(),
