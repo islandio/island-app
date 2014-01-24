@@ -9,12 +9,13 @@ define([
   'mps',
   'rpc',
   'util',
+  'Spin',
   'text!../../templates/session.html',
   'text!../../templates/activity.html',
   'text!../../templates/tick.html',
   'views/lists/choices',
   'views/lists/events'
-], function ($, _, Backbone, mps, rpc, util, template,
+], function ($, _, Backbone, mps, rpc, util, Spin, template,
     activityTemp, tickTemp, Choices, Events) {
 
   return Backbone.View.extend({
@@ -81,6 +82,13 @@ define([
       this.datePicker = this.dateInput.pickadate('picker');
       this.errorMsg = this.$('.session-error');
       this.submitButton = this.$('.session-button');
+      this.submitButtonSpin = new Spin($('.button-spin', this.el), {
+        color: '#4d4d4d',
+        lines: 13,
+        length: 3,
+        width: 2,
+        radius: 6,
+      });
 
       // Init choices.
       this.cragChoices = new Choices(this.app, {
@@ -90,9 +98,6 @@ define([
         onChoose: _.bind(this.validateTicks, this),
         types: ['crags']
       });
-
-      // Add first activity.
-      this.addActivity();
 
       // Autogrow the write comment box.
       this.$('textarea[name="note"]').autogrow();
@@ -324,17 +329,18 @@ define([
       _.each(this.$('.session-activity'), _.bind(function (a) {
         a = $(a);
         var type = $('.session-activity-type', a);
+        var actionType = type.val();
+        if (actionType === 'hide') return;
         var action = {
-          type: type.val(),
+          type: actionType,
           duration: $('select[name="duration"]', a).val(),
           performance: $('select[name="performance"]', a).val()
         };
 
         // Get all ticks.
         var ticks = [];
-        var tickType = $('option[value="' + type.val() + '"]', type).data('type');
-        
-        console.log($('.session-tick', a).length)
+        var tickType = $('option[value="' + actionType + '"]',
+            type).data('type');
         _.each($('.session-tick', a), _.bind(function (t) {
           t = $(t);
           var choice = this.tickChoices[t.data('tid')].choice;
@@ -362,56 +368,42 @@ define([
       }, this));
       if (actions.length !== 0) payload.actions = actions;
 
-      console.log(payload);
-      return;
-
-      // Client-side form check.
-      var check = util.ensure(payload, []);
-
-      // Add alerts.
-      _.each(check.missing, _.bind(function (m, i) {
-        var field = $('input[name="' + m + '"]', this.signinForm);
-        field.val('').addClass('input-error');
-        if (i === 0) field.focus();
-      }, this));
-
-      // Show messages.
-      if (!check.valid) {
-
-        // Set the error display.
-        var msg = 'All fields are required.';
-        errorMsg.text(msg);
-
-        return false;
-      }
-
       // All good, show spinner.
-      // this.spin.start();
+      this.submitButtonSpin.start();
+      this.submitButton.addClass('spinning');
 
-      // // Do the API request.
-      // rpc.post('/api/sessions', payload, _.bind(function (err, data) {
-      //   if (err) {
+      // Do the API request.
+      rpc.post('/api/sessions', payload, _.bind(function (err, data) {
 
-      //     // Stop spinner.
-      //     this.spin.stop();
+        // Stop spinner.
+        this.submitButtonSpin.stop();
+        this.submitButton.removeClass('spinning');
+        
+        if (err) {
 
-      //     // Set the error display.
-      //     errorMsg.text(err.message);
+          // Set the error display.
+          mps.publish('flash/new', [{
+            message: err,
+            level: 'error'
+          }, true]);
+          return;
+        }
 
-      //     // Clear fields.
-      //     $('input[type="text"], input[type="password"]',
-      //         this.signinForm).val('').addClass('input-error');
-      //     this.focus();
+        // Show success.
+        mps.publish('flash/new', [{
+          message: 'You logged a session.',
+          level: 'alert'
+        }, true]);
 
-      //     return;
-      //   }
+        // Clear fields.
+        _.each(this.tickChoices, function (tc) { tc.destroy(); });
+        this.tickChoices = {};
+        $('.session-activity').remove();
+        this.$('input[type="text"], textarea').val('');
+        this.cragChoices.clearChoice();
+        this.validate();
 
-      //   // Wait a little then close the modal.
-      //   _.delay(_.bind(function () {
-      //     $.fancybox.close();
-      //   }, this), 2000);
-
-      // }, this));
+      }, this));
 
       return false;
     },
