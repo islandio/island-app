@@ -6,10 +6,10 @@ define([
   ], function (_, spin) {
 
   var defaults = {
-    lines: 17, // The number of lines to draw
+    lines: 13, // The number of lines to draw
     length: 3, // The length of each line
     width: 2, // The line thickness
-    radius: 7, // The radius of the inner circle
+    radius: 6, // The radius of the inner circle
     corners: 1, // Corner roundness (0..1)
     rotate: 0, // The rotation offset
     direction: 1, // 1: clockwise, -1: counterclockwise

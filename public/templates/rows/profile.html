@@ -11,7 +11,7 @@
 
   // Check image
   if (!data.image) {
-    data.image = {meta: {width: 640, height: 288}};
+    data.image = {meta: {width: 690, height: 288}};
     if (!data.gender || 'male' === data.gender)
       data.image.cf_url = __s + '/img/blnk-pic-m.jpg';
     else
@@ -19,7 +19,7 @@
   }
 
   // Image meta
-  var _w = 640;
+  var _w = 690;
   var _h = 288;
   var w, h;
   var l = 'left:0;';
@@ -76,10 +76,8 @@
   </div>
   <div class="profile-picture">
     <img src="<%= gravatar %>" class="profile-avatar" width="48" height="48" />
-    <img class="mask" width="640" style="top:0;"
+    <img class="mask" width="690" style="top:0;"
         src="<%= __s %>/img/cornermask-top.png" />
-    <img class="mask" width="640" style="top:280px;"
-        src="<%= __s %>/img/cornermask-btm.png" />
     <img class="masked" src=<%= data.image.cf_url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
   </div>
   <div class="profile-info">

@@ -95,7 +95,7 @@ define([
         this.routesFilter.addClass('disabled');
 
       // Handle filtering.
-      this.filterBox.width(401).css('visibility', 'visible');
+      this.filterBox.width(451).css('visibility', 'visible');
       this.filterBox.bind('keyup search', _.bind(this.filter, this));
 
       // Add placeholder shim if need to.

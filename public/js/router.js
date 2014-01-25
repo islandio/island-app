@@ -86,13 +86,7 @@ define([
       }, this));
 
       // Init page spinner.
-      this.spin = new Spin($('.page-spin'), {
-        color: '#b3b3b3',
-        lines: 17,
-        length: 7,
-        width: 3,
-        radius: 12
-      });
+      this.spin = new Spin($('.page-spin'), {color: '#808080'});
     },
 
     routes: {

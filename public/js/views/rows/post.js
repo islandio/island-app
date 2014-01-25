@@ -101,8 +101,8 @@ define([
         return this;
       }
 
-      var W = this.parentView ? 640: 984;
-      var H = this.parentView ? 360: 554;
+      var W = this.parentView ? 690: 984;
+      var H = this.parentView ? 388: 554;
       var P = 2;
 
       // handle the first item (the main img for this post)

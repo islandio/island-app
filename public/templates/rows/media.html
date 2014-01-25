@@ -2,7 +2,7 @@
   var typeClass = this.model.get('type') === 'video' ? 'post-title-video': 'post-title-photos';
 %>
 
-<iframe src="<%= this.model.src() %>" width="640" height="360"
+<iframe src="<%= this.model.src() %>" width="690" height="388"
     frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
 <div class="post-info">
   Added by <a href="/<%= this.model.get('author').username %>" class="navigate">
