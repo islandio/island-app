@@ -101,8 +101,8 @@ define([
         return this;
       }
 
-      var W = this.parentView ? 690: 984;
-      var H = this.parentView ? 388: 554;
+      var W = this.parentView ? 680: 1024;
+      var H = this.parentView ? 383: 576;
       var P = 2;
 
       // handle the first item (the main img for this post)
@@ -296,11 +296,11 @@ define([
           } else {
 
             // Lay the video over the mosaic.
-            $(_.template(video)({data: this.video, width: 984, height: 554}))
+            $(_.template(video)({data: this.video, width: 1024, height: 576}))
                 .appendTo(this.$('.post-mosaic'));
             _.extend(params, {
-              width: '984',
-              height: '554'
+              width: '1024',
+              height: '576'
             });
             this.$('span.post-mosaic-play-text').hide();
 

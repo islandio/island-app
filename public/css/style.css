@@ -364,8 +364,8 @@ h1.title-sub {
 }
 .leftside {
   float: left;
-  width: 690px;
-  padding-right: 30px;
+  width: 680px;
+  padding-right: 40px;
   border-right: 1px solid #f2f2f2;
 }
 .rightside {
@@ -388,7 +388,7 @@ span.empty-feed {
   width: 100%;
   margin: 10px 0;
   font-style: italic;
-  color: #808080;
+  color: #b3b3b3;
   text-align: center;
 }
 span.empty-list {
@@ -1200,7 +1200,7 @@ span.count {
 .block-messages {
   position: relative;
   margin: 0 auto;
-  width: 984px;
+  width: 1024px;
   white-space: nowrap;
 }
 .block-remove {
@@ -2153,14 +2153,14 @@ button.button.modal-button.full {
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––profiles*/
 .profiles {
-  margin: 0;
+  margin-left: -30px;
 }
 .profile {
   position: relative;
   display: none;
-  width: 690px;
+  width: 680px;
   margin-bottom: 30px;
-  padding-bottom: 30px;
+  padding: 0 40px 30px 30px;
   border-bottom: 1px solid #f2f2f2;
   -webkit-animation-name: fadeIn;
   -moz-animation-name: fadeIn;
@@ -2177,19 +2177,19 @@ button.button.modal-button.full {
 }
 .profile:last-child {
   margin: 0;
-  padding: 0;
+  padding: 0 40px 0 30px;
   border: none;
 }
 .profile.single {
   margin: 0 auto 30px;
 }
 .profile.company {
-  width: 984px;
+  width: 1024px;
   margin: 0 0 30px 0;
 }
 .profile.company .profile-inner {
   float: left;
-  width: 690px;
+  width: 680px;
 }
 .profile-sidebar {
   margin: 0 0 0 700px;
@@ -2218,7 +2218,7 @@ ul.profile-team li:hover img {
 }
 .profile-picture {
   position: relative;
-  width: 690px;
+  width: 680px;
   height: 288px;
   overflow: hidden;
   margin: 0 0 5px 0;
@@ -2258,9 +2258,9 @@ ul.profile-team li:hover img {
 .post {
   position: relative;
   display: none;
-  width: 690px;
+  width: 680px;
   margin-bottom: 30px;
-  padding: 0 30px 30px 30px;
+  padding: 0 40px 30px 30px;
   border-bottom: 1px solid #f2f2f2;
   -webkit-animation-name: fadeIn;
   -moz-animation-name: fadeIn;
@@ -2277,12 +2277,14 @@ ul.profile-team li:hover img {
 }
 .post:last-child {
   margin: 0;
-  padding: 0 30px;
+  padding: 0 40px 0 30px;
   border: none;
 }
 .post.single {
-  margin-top: 30px;
-  width: 984px;
+  width: 1024px;
+  margin-top: 20px;
+  margin-bottom: 30px;
+  padding: 0;
 }
 .page-title span.post-title-photos {
   color: #4bb8d7;
@@ -2293,16 +2295,16 @@ ul.profile-team li:hover img {
 .post .post-mosaic {
   position: relative;
   overflow: hidden;
-  width: 690px;
-  height: 388px;
+  width: 680px;
+  height: 383px;
   background: #f2f2f2;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
 }
 .post.single .post-mosaic {
-  width: 984px;
-  height: 554px;
+  width: 1024px;
+  height: 576px;
 }
 .post-mosaic-wrap {
   position: absolute;
@@ -2329,7 +2331,8 @@ img.profile-avatar {
   box-shadow: 2px 2px 2px rgba(0,0,0,0.1);
 }
 .single > a.post-avatar img {
-  top: 30px;
+  top: 35px;
+  left: 0;
 }
 img.profile-avatar {
   top: 0;
@@ -2387,12 +2390,12 @@ img.profile-avatar {
   margin-bottom: 10px;
 }
 .post.single .post-body {
-  margin: 20px 0 0;
+  margin: 10px 0 0;
   font-size: 16px;
-  line-height: 28px;
+  line-height: 26px;
 }
 .post.single .post-body p {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 .post-info {
   margin: 10px 0 0;
@@ -2401,7 +2404,7 @@ img.profile-avatar {
   color: #808080;
 }
 .post-input .post {
-  width: 720px;
+  width: 710px;
   padding: 0;
 }
 span.post-input-avatar,
@@ -2486,7 +2489,7 @@ a.banner-file-chooser-dummy {
 textarea.post-input,
 textarea.comment-input {
   display: block;
-  width: 686px;
+  width: 676px;
   background: #fff;
   resize: none;
   overflow: hidden;
@@ -2515,7 +2518,7 @@ textarea.comment-input {
 }
 table.post-params {
   display: none;
-  width: 704px;
+  width: 694px;
   margin: 8px 0 3px 0;
 }
 table.post-params td {
@@ -3093,7 +3096,7 @@ span.ascent-name {
   position: relative;
 }
 input[type=text].media-link {
-  width: 594px;
+  width: 584px;
   font-size: 12px;
 }
 input[type=submit].media-button {
@@ -3101,12 +3104,15 @@ input[type=submit].media-button {
   font-size: 12px;
   padding: 0 20px;
 }
+.medias {
+  margin-left: -30px;
+}
 .media {
   position: relative;
   display: none;
-  width: 690px;
+  width: 680px;
   margin-bottom: 30px;
-  padding-bottom: 30px;
+  padding: 0 40px 30px 30px;
   border-bottom: 1px solid #f2f2f2;
   -webkit-animation-name: fadeIn;
   -moz-animation-name: fadeIn;
@@ -3123,7 +3129,7 @@ input[type=submit].media-button {
 }
 .media:last-child {
   margin: 0;
-  padding: 0;
+  padding: 0 40px 0 30px;
   border: none;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––other*/

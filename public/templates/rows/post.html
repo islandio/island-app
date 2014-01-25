@@ -30,19 +30,19 @@
 </a>
 <div class="post-mosaic">
   <% if (this.parentView) { %>
-    <img class="mask" width="690" style="top:0;" 
+    <img class="mask" width="680" style="top:0;" 
         src="<%= __s %>/img/cornermask-top.png" />
   <% } else { %>
-    <img class="mask" width="984" style="top:0;" 
+    <img class="mask" width="1024" style="top:0;" 
         src="<%= __s %>/img/cornermask-lrg-top.png" />
   <% } %>
 </div>
 <% if (this.model.link()) { %>
   <% if (this.parentView) { %>
-    <iframe src="<%= this.model.get('link') %>" width="690" height="388"
+    <iframe src="<%= this.model.get('link') %>" width="680" height="383"
         frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
   <% } else { %>
-    <iframe src="<%= this.model.get('link') %>" width="984" height="554"
+    <iframe src="<%= this.model.get('link') %>" width="1024" height="576"
         frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
   <% } %>  
 <% } %>
