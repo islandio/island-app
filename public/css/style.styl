@@ -905,6 +905,75 @@ button.button.session-button i
 .wrap.panel-open
   margin-right 220px
 
+.folder
+  position relative
+  margin 40px auto 0
+  width 1086px
+  background none
+
+.tabs
+  position relative
+  z-index 1
+  border 1px solid #e6e6e6
+  border-bottom none
+  border-radius 2px 2px 0 0
+  height 40px
+
+.tabs ul
+  position relative
+  height 39px
+  list-style-type none
+  display block
+  font-size 0
+  background #f9f9f9
+  border-radius 2px 2px 0 0
+  border-top 1px solid white
+
+li.tab
+  position relative
+  display inline-block
+  height 40px
+  border-right 1px solid #e6e6e6
+  margin-top -1px
+
+li.tab a
+  position relative
+  top 4px
+  display inline
+  padding 10px 20px 11px
+  background none
+  color #333
+  font-size 12px
+  line-height 36px
+  border-top 4px solid transparent
+
+  -moz-user-select none
+  -webkit-user-select none
+  user-select none
+
+li.tab a:hover
+  background #fff
+
+li.tab.active a
+  background #fff
+  border-top 4px solid blue
+  padding-top 11px
+  top 5px
+
+li.tab ~ li.tab
+  border-left 1px solid white
+  // border-top 1px solid white
+
+.content
+  position relative
+  margin 0 auto 30px
+  width 1024px
+  min-height 500px
+  padding 0 30px
+  background #fff
+  border-radius 2px
+  border 1px solid #e6e6e6
+
 .footer
   width 100%
   height 40px
@@ -947,25 +1016,10 @@ button.button.session-button i
 .panel.open
   right 0
 
-.content
-  position relative
-  margin 50px auto 30px
-  width 1024px
-  min-height 500px
-  padding 0 30px
-  background #fff
-  border-radius 2px
-  border 1px solid #e6e6e6
-
 .page-spin
   position absolute
-  left 40px
-  top 35px
-
-input.filter-box
-  font-size 19px
-  width 401px
-  visibility hidden
+  left 20px
+  top 20px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––header*/
 
@@ -2306,6 +2360,7 @@ ul.profile-team li:hover img
 
 .posts
   margin-left -30px
+  margin-top 30px
 
 .post
   position relative
@@ -2611,7 +2666,7 @@ table.post-params label
 
 .upload-progress-wrap
   position relative
-  width 672px
+  width 692px
   height 24px
   color #666
   border-top 1px solid #f2f2f2
@@ -3137,20 +3192,20 @@ ul.ascents a li:hover span
   text-decoration underline
 
 ul.ascents *:nth-child(2) li
-  -webkit-border-top-left-radius 3px;
-  -webkit-border-top-right-radius 3px;
-  -moz-border-top-left-radius 3px;
-  -moz-border-top-right-radius 3px;
-  border-top-left-radius 3px;
-  border-top-right-radius 3px;
+  -webkit-border-top-left-radius 3px
+  -webkit-border-top-right-radius 3px
+  -moz-border-top-left-radius 3px
+  -moz-border-top-right-radius 3px
+  border-top-left-radius 3px
+  border-top-right-radius 3px
 
 ul.ascents a:last-child li
-  -webkit-border-bottom-right-radius: 3px;
-  -webkit-border-bottom-left-radius: 3px;
-  -moz-border-bottom-right-radius: 3px;
-  -moz-border-bottom-left-radius: 3px;
-  border-bottom-right-radius: 3px;
-  border-bottom-left-radius: 3px;
+  -webkit-border-bottom-right-radius 3px
+  -webkit-border-bottom-left-radius 3px
+  -moz-border-bottom-right-radius 3px
+  -moz-border-bottom-left-radius 3px
+  border-bottom-right-radius 3px
+  border-bottom-left-radius 3px
 
 span.ascent-grade
   display inline-block
@@ -3164,6 +3219,11 @@ span.ascent-name
 
 span.ascent-sector
   // float right
+
+input.filter-box
+  font-size 19px
+  width 441px
+  visibility hidden
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––ascents media*/
 
