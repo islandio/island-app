@@ -12,6 +12,7 @@ define([
   'util',
   'views/error',
   'views/header',
+  'views/tabs',
   'views/footer',
   'views/signin',
   'views/forgot',
@@ -28,11 +29,12 @@ define([
   'views/about',
   'views/contact',
   'views/privacy',
-  'views/home',
+  'views/posts',
+  'views/sessions',
   'views/session'
-], function ($, _, Backbone, Spin, mps, rpc, util, Error, Header, Footer, 
+], function ($, _, Backbone, Spin, mps, rpc, util, Error, Header, Tabs, Footer, 
     Signin, Forgot, Notifications, Map, Profile, Post, Crag, Ascent, Settings,
-    Reset, Team, Films, About, Contact, Privacy, Home, Session) {
+    Reset, Team, Films, About, Contact, Privacy, Posts, Sessions, Session) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -62,7 +64,8 @@ define([
       this.route('about', 'about', this.about);
       this.route('contact', 'contact', this.contact);
       this.route('privacy', 'privacy', this.privacy);
-      this.route('', 'home', this.home);
+      this.route('posts', 'posts', this.posts);
+      this.route('', 'sessions', this.sessions);
       this.route('_blank', 'blank', function(){});
 
       // Fullfill navigation request from mps.
@@ -90,7 +93,7 @@ define([
     },
 
     routes: {
-      // Catch all:
+      // Catch all.
       '*actions': 'default'
     },
 
@@ -153,6 +156,14 @@ define([
       }, this));
     },
 
+    renderTabs: function (params) {
+      if (this.tabs) {
+        this.tabs.params = params;
+        this.tabs.render();
+      } else
+        this.tabs = new Tabs(this.app, params).render();
+    },
+
     start: function () {
       $(window).scrollTop(0);
       this.spin.target.show();
@@ -175,6 +186,7 @@ define([
         this.page = new Profile({wrap: '.main'}, this.app).render(true);
         this.stop();
       }, this));
+      this.renderTabs();
     },
 
     post: function (username, key) {
@@ -185,6 +197,7 @@ define([
         this.page = new Post({wrap: '.main'}, this.app).render(true);
         this.stop();
       }, this));
+      this.renderTabs();
     },
 
     crag: function (country, crag) {
@@ -195,6 +208,7 @@ define([
         this.page = new Crag(this.app).render();
         this.stop();
       }, this));
+      this.renderTabs();
     },
 
     ascent: function (country, crag, type, ascent) {
@@ -205,18 +219,36 @@ define([
         this.page = new Ascent(this.app).render();
         this.stop();
       }, this));
+      this.renderTabs();
     },
 
-    home: function () {
+    posts: function () {
       this.start();
       var feed = store.get('feed') || {};
       if (!feed.query) feed.query = {featured: true};
       if (feed.query.author_id) delete feed.query.author_id;
-      this.render('/service/home.profile', feed, _.bind(function (err) {
+      this.render('/service/posts.profile', feed, _.bind(function (err) {
         if (err) return;
-        this.page = new Home(this.app).render();
+        this.page = new Posts(this.app).render();
         this.stop();
       }, this));
+      this.renderTabs({tabs: [
+        {title: 'Sessions', href: '/'},
+        {title: 'Posts', href: '/posts', active: true}
+      ]});
+    },
+
+    sessions: function () {
+      this.start();
+      this.render('/service/sessions.profile', _.bind(function (err) {
+        if (err) return;
+        this.page = new Sessions(this.app).render();
+        this.stop();
+      }, this));
+      this.renderTabs({tabs: [
+        {title: 'Sessions', href: '/', active: true},
+        {title: 'Posts', href: '/posts'}
+      ]});
     },
 
     settings: function () {
@@ -226,6 +258,7 @@ define([
         this.page = new Settings(this.app).render();
         this.stop();
       }, this));
+      this.renderTabs();
     },
 
     session: function () {
@@ -235,6 +268,7 @@ define([
         this.page = new Session(this.app).render();
         this.stop();
       }, this));
+      this.renderTabs();
     },
 
     reset: function () {
@@ -244,16 +278,17 @@ define([
         this.page = new Reset(this.app).render();
         this.stop();
       }, this));
+      this.renderTabs();
     },
 
-    team: function () {
-      this.start();
-      this.render('/service/team.profile', _.bind(function (err) {
-        if (err) return;
-        this.page = new Team(this.app).render();
-        this.stop();
-      }, this));
-    },
+    // team: function () {
+    //   this.start();
+    //   this.render('/service/team.profile', _.bind(function (err) {
+    //     if (err) return;
+    //     this.page = new Team(this.app).render();
+    //     this.stop();
+    //   }, this));
+    // },
 
     films: function () {
       this.start();
@@ -262,6 +297,7 @@ define([
         this.page = new Films(this.app).render();
         this.stop();
       }, this));
+      this.renderTabs({title: 'Films', subtitle: 'Original content by Island'});
     },
 
     about: function () {
@@ -271,16 +307,17 @@ define([
         this.page = new About(this.app).render();
         this.stop();
       }, this));
+      this.renderTabs({title: 'About', subtitle: 'What\'s going on here?'});
     },
 
-    contact: function () {
-      this.start();
-      this.render('/service/static.profile', _.bind(function (err) {
-        if (err) return;
-        this.page = new Contact(this.app).render();
-        this.stop();
-      }, this));
-    },
+    // contact: function () {
+    //   this.start();
+    //   this.render('/service/static.profile', _.bind(function (err) {
+    //     if (err) return;
+    //     this.page = new Contact(this.app).render();
+    //     this.stop();
+    //   }, this));
+    // },
 
     privacy: function () {
       this.start();
@@ -289,6 +326,7 @@ define([
         this.page = new Privacy(this.app).render();
         this.stop();
       }, this));
+      this.renderTabs({title: 'Privacy Policy', subtitle: 'Last updated 7.27.2013'});
     },
 
     default: function () {
@@ -299,6 +337,7 @@ define([
           message: 'Sorry, this page isn\'t available'
         });
       }, this));
+      this.renderTabs();
     }
   
   });

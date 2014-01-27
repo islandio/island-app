@@ -1,5 +1,5 @@
 /*
- * Page view for home.
+ * Page view for sessions.
  */
 
 define([
@@ -9,10 +9,9 @@ define([
   'mps',
   'rpc',
   'util',
-  'text!../../templates/home.html',
-  'views/lists/posts',
-  'views/lists/events'
-], function ($, _, Backbone, mps, rpc, util, template, Posts, Events) {
+  'text!../../templates/sessions.html',
+  // 'views/lists/sessions',
+], function ($, _, Backbone, mps, rpc, util, template, Sessions) {
 
   return Backbone.View.extend({
 
@@ -36,9 +35,9 @@ define([
     render: function () {
 
       // Set page title
-      this.app.title('Climb');
+      this.app.title('Sessions');
 
-      // UnderscoreJS rendering.
+      // Content rendering.
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
 
@@ -50,16 +49,15 @@ define([
 
     // Bind mouse events.
     events: {
-      'click .navigate': 'navigate',
+      'click .navigate': 'navigate'
     },
 
     // Misc. setup.
     setup: function () {
 
       // Render lists.
-      this.posts = new Posts(this.app, {parentView: this,
-            reverse: true, input: true});
-      this.events = new Events(this.app, {parentView: this, reverse: true});
+      // this.sessions = new Sessions(this.app, {parentView: this,
+      //     reverse: true, input: true});
 
       return this;
     },
@@ -76,8 +74,7 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      this.posts.destroy();
-      this.events.destroy();
+      // this.sessions.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

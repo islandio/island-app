@@ -1,5 +1,5 @@
 /*
- * Page view for the about page.
+ * Page view for posts.
  */
 
 define([
@@ -7,10 +7,12 @@ define([
   'Underscore',
   'Backbone',
   'mps',
+  'rpc',
   'util',
-  'text!../../templates/about.html',
-  'views/lists/events'
-], function ($, _, Backbone, mps, util, template, Events) {
+  'text!../../templates/posts.html',
+  'views/lists/posts'
+  // 'views/lists/events'
+], function ($, _, Backbone, mps, rpc, util, template, Posts) {
 
   return Backbone.View.extend({
 
@@ -33,12 +35,12 @@ define([
     // Draw our template from the profile JSON.
     render: function () {
 
-      // Set page title.
-      this.app.title('About');
-      
-      // UnderscoreJS rendering.
+      // Set page title
+      this.app.title('Posts');
+
+      // Content rendering.
       this.template = _.template(template);
-      this.$el.html(this.template.call(this));
+      $(this.template.call(this)).appendTo('.main')
 
       // Done rendering ... trigger setup.
       this.trigger('rendered');
@@ -48,14 +50,16 @@ define([
 
     // Bind mouse events.
     events: {
-      'click .navigate': 'navigate',
+      'click .navigate': 'navigate'
     },
 
     // Misc. setup.
     setup: function () {
 
       // Render lists.
-      this.events = new Events(this.app, {parentView: this, reverse: true});
+      this.posts = new Posts(this.app, {parentView: this,
+            reverse: true, input: true});
+      // this.events = new Events(this.app, {parentView: this, reverse: true});
 
       return this;
     },
@@ -72,7 +76,8 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      this.events.destroy();
+      this.posts.destroy();
+      // this.events.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

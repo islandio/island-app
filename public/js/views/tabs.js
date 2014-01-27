@@ -6,39 +6,48 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
-  'mps',
   'util',
-  'text!../../templates/about.html',
-  'views/lists/events'
-], function ($, _, Backbone, mps, util, template, Events) {
+  'mps',
+  'text!../../templates/tabs.html'
+], function ($, _, Backbone, mps, util, template) {
 
   return Backbone.View.extend({
 
-    // The DOM target element for this page:
-    el: '.main',
+    // The DOM target element for this page.
+    el: '.tabs',
 
-    // Module entry point:
-    initialize: function (app) {
-
-      // Save app reference.
+    // Module entry point.
+    initialize: function (app, params) {
       this.app = app;
+      this.params = params || {};
 
-      // Shell events:
+      // Shell events.
       this.on('rendered', this.setup, this);
 
-      // Client-wide subscriptions
+      // Client-wide subscriptions.
       this.subscriptions = [];
     },
 
     // Draw our template from the profile JSON.
     render: function () {
+      if (!this.params.tabs) this.params.tabs = [];
 
-      // Set page title.
-      this.app.title('About');
-      
-      // UnderscoreJS rendering.
-      this.template = _.template(template);
-      this.$el.html(this.template.call(this));
+      // Render or activate tabs.
+      if (!this.params.tabs || this.params.tabs.length === 0)
+        this.empty();
+      var tabs = this.$('.tab');
+      if (tabs.length === 0) {
+        this.template = _.template(template);
+        this.$el.html(this.template.call(this));
+      } else {
+        var i = -1;
+        _.find(this.params.tabs, function (t) {
+          ++i;
+          return t.active;
+        });
+        tabs.removeClass('active');
+        this.$('.tab:eq(' + i + ')').addClass('active');
+      }
 
       // Done rendering ... trigger setup.
       this.trigger('rendered');
@@ -53,10 +62,6 @@ define([
 
     // Misc. setup.
     setup: function () {
-
-      // Render lists.
-      this.events = new Events(this.app, {parentView: this, reverse: true});
-
       return this;
     },
 
@@ -72,7 +77,6 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      this.events.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

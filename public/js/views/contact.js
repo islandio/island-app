@@ -7,9 +7,10 @@ define([
   'Underscore',
   'Backbone',
   'util',
+  'mps',
   'text!../../templates/contact.html',
   'views/lists/events'
-], function ($, _, Backbone, util, template, Events) {
+], function ($, _, Backbone, mps, util, template, Events) {
 
   return Backbone.View.extend({
 

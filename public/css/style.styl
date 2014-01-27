@@ -311,11 +311,10 @@ small a
 
 h1.title-left
   display inline-block
-  margin-top 20px
-  height 30px
-  font-size 24px
+  margin-left 30px
+  font-size 16px
   font-weight normal
-  line-height normal
+  line-height 40px
   color #404040
   font-family title
   text-transform uppercase
@@ -339,7 +338,7 @@ h1.title-static
 
 h1.title-sub
   display inline-block
-  font-size 9px
+  font-size 10px
   padding 0 0 0 5px
   line-height 6px
   color #666
@@ -452,7 +451,7 @@ span.empty-list
   color #b3b3b3
 
 p.page
-  margin 10px 0 30px 0
+  margin 30px 0
   color #4d4d4d
   font-size 12px
   line-height 18px
@@ -919,7 +918,8 @@ button.button.session-button i
   border-radius 2px 2px 0 0
   height 40px
 
-.tabs ul
+.tabs ul,
+.folder-title
   position relative
   height 39px
   list-style-type none
@@ -942,7 +942,7 @@ li.tab a
   display inline
   padding 10px 20px 11px
   background none
-  color #333
+  color #666
   font-size 12px
   line-height 36px
   border-top 4px solid transparent
@@ -951,18 +951,28 @@ li.tab a
   -webkit-user-select none
   user-select none
 
+  -webkit-transition all 0.2s
+  -moz-transition all 0.2s
+  -ms-transition all 0.2s
+  -o-transition all 0.2s
+  transition all 0.2s
+
 li.tab a:hover
   background #fff
-
-li.tab.active a
-  background #fff
-  border-top 4px solid blue
-  padding-top 11px
-  top 5px
+  color #333
 
 li.tab ~ li.tab
   border-left 1px solid white
-  // border-top 1px solid white
+
+li.tab.active
+  border-left none !important
+
+li.tab.active a
+  background #fff
+  color #333
+  border-top 4px solid blue
+  padding-top 11px
+  top 5px
 
 .content
   position relative
@@ -1018,8 +1028,9 @@ li.tab ~ li.tab
 
 .page-spin
   position absolute
-  left 20px
-  top 20px
+  z-index 2
+  right 22px
+  top 21px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––header*/
 
@@ -2153,10 +2164,12 @@ a.plot-button.active
   text-transform uppercase
   color #666
   line-height normal
+  height 22px
 
 .single > .page-title,
 .leftside > .page-title
   font-size 24px
+  height 30px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––modal*/
 
