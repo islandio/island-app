@@ -1,0 +1,14 @@
+<%
+  // Save model attributes
+  var data = this.model.attributes;
+
+  // Handle from
+  var location = data.location && data.location.name ? data.location.name: null;
+  if (!location && data.hometown && data.hometown.name)
+    location = data.hometown.name;
+  if (location) location = location + ' / ';
+%>
+
+<div class="page-title">
+  <%= location %><a href="<%= data.username %>" class="navigate"><%= data.displayName %></a>
+</div>

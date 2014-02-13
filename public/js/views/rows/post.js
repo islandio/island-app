@@ -11,10 +11,12 @@ define([
   'views/boiler/row',
   'models/post',
   'text!../../../templates/rows/post.html',
+  'text!../../../templates/post.title.html',
   'text!../../../templates/video.html',
   'views/lists/comments',
   'text!../../../templates/confirm.html'
-], function ($, _, mps, rpc, util, Row, Model, template, video, Comments, confirm) {
+], function ($, _, mps, rpc, util, Row, Model, template, title, video,
+      Comments, confirm) {
   return Row.extend({
 
     attributes: function () {
@@ -75,6 +77,9 @@ define([
       if (!this.parentView) {
         this.$el.addClass('single')
         this.app.title(this.model.get('title') || this.model.get('key'));
+
+        // Render title.
+        this.title = _.template(title).call(this);
       }
 
       // gather images

@@ -1,0 +1,23 @@
+<%
+  var video = _.find(this.model.get('medias'), function (m) {
+    return m.type === 'video';
+  });
+  var typeClass = video ? 'post-title-video': 'post-title-photos';
+%>
+
+<% if (this.model.get('product') && this.model.get('product').sku) { %>
+  <a class="button buy-button" target="_blank" 
+      href="http://transactions.digitaldeliveryapp.com/products/<%= this.model.get('product').sku %>/purchase">
+    <i class="icon-download-cloud"></i>
+    <%= this.model.get('product').subtype %> Film ($<%= this.model.get('product').price %>)
+  </a>
+<% } %>
+<div class="page-title">
+  <%= this.model.date() %> | 
+  <a href="/<%= this.model.get('author').username %>" class="navigate">
+    <%= this.model.get('author').displayName %></a> 
+  <% if (this.model.get('title')) { %>
+    / <a href="/<%= this.model.get('key') %>" class="navigate">
+    <span class="<%= typeClass %>"><%= this.model.get('title') %></span></a>
+  <% } %>
+</div>

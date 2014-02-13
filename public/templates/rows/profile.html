@@ -19,8 +19,8 @@
   }
 
   // Image meta
-  var _w = 680;
-  var _h = 288;
+  var _w = this.parentView ? 680: 1024;
+  var _h = this.parentView ? 288: 576;
   var w, h;
   var l = 'left:0;';
   var t = 'top:0;';
@@ -65,62 +65,73 @@
 
   // Gravatar
   var gravatar = 'https://www.gravatar.com/avatar/'
-      + data.gravatar + '?s=48&d='
+      + data.gravatar + '?s=24&d='
       + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
 
 %>
 
-<div class="profile-inner">
-  <div class="page-title">
-    <%= location %><a href="<%= data.username %>" class="navigate"><%= data.displayName %></a>
-  </div>
-  <div class="profile-picture">
-    <img src="<%= gravatar %>" class="profile-avatar" width="48" height="48" />
-    <img class="mask" width="680" style="top:0;"
-        src="<%= __s %>/img/cornermask-top.png" />
-    <img class="masked" src=<%= data.image.cf_url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
-  </div>
-  <div class="profile-info">
-    <% if (desc || links) { %>
-      <div class="profile-description">
-        <% if (desc) { %>
-          <%= this.model.description() %>
-        <% } %>
-        <% if (links) { %>
-          <span>More from <%= data.displayName %> at </span>
-          <span class="profile-links"><%= links %>.</span>
-        <% } %>
+<% if (!this.parentView) { %>
+  <div class="leftside">
+<% } %>
+
+  <div class="profile-inner">
+    <% if (this.parentView) { %>
+      <div class="page-title">
+        <img src="<%= gravatar %>" class="profile-avatar" width="24" height="24" />
+        <%= location %><a href="<%= data.username %>" class="navigate"><%= data.displayName %></a>
       </div>
     <% } %>
-    <span class="profile-details"><%= details %></span>
-    <div class="clear"></div>
-  </div>
-  <% if (!this.parentView) { %>
-    <div class="posts"></div>
-    <div class="list-spin">
-      <div class="posts-spin"></div>
-      <span class="empty-feed">Showing all.</span>
+    <div class="profile-picture">
+      <img class="masked" src=<%= data.image.cf_url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
     </div>
+    <div class="profile-info">
+      <% if (desc || links) { %>
+        <div class="profile-description">
+          <% if (desc) { %>
+            <%= this.model.description() %>
+          <% } %>
+          <% if (links) { %>
+            <span>More from <%= data.displayName %> at </span>
+            <span class="profile-links"><%= links %>.</span>
+          <% } %>
+        </div>
+      <% } %>
+      <div class="clear"></div>
+    </div>
+    <% if (!this.parentView) { %>
+      <div class="posts"></div>
+      <div class="list-spin">
+        <div class="posts-spin"></div>
+        <span class="empty-feed">Showing all.</span>
+      </div>
+    <% } %>
+  </div>
+  <% if (this.model.get('role') === 2) { %>
+    <div class="profile-sidebar">
+      <span class="rightside-heading">
+        Team
+      </span>
+      <ul class="profile-team">
+        <% _.each(this.model.get('team'), _.bind(function (m) {
+          var g = 'https://www.gravatar.com/avatar/'
+          + m.gravatar + '?s=140&d='
+          + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
+        %>
+          <li>
+            <a href="/<%= m.username %>" class="navigate">
+              <img src="<%= g %>" class="profile-team-avatar" width="140" height="140" />
+            </a>
+          </li>  
+        <% }, this)); %>
+      </ul>
+    </div>
+    <div class="clear"></div>
   <% } %>
-</div>
-<% if (this.model.get('role') === 2) { %>
-  <div class="profile-sidebar">
-    <span class="rightside-heading">
-      Team
-    </span>
-    <ul class="profile-team">
-      <% _.each(this.model.get('team'), _.bind(function (m) {
-        var g = 'https://www.gravatar.com/avatar/'
-        + m.gravatar + '?s=140&d='
-        + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
-      %>
-        <li>
-          <a href="/<%= m.username %>" class="navigate">
-            <img src="<%= g %>" class="profile-team-avatar" width="140" height="140" />
-          </a>
-        </li>  
-      <% }, this)); %>
-    </ul>
+
+<% if (!this.parentView) { %>
+  </div>
+  <div class="rightside">
+
   </div>
   <div class="clear"></div>
 <% } %>

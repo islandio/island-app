@@ -10,9 +10,8 @@ define([
   'rpc',
   'util',
   'text!../../templates/films.html',
-  'views/lists/posts',
-  'views/lists/events'
-], function ($, _, Backbone, mps, rpc, util, template, Posts, Events) {
+  'views/lists/posts'
+], function ($, _, Backbone, mps, rpc, util, template, Posts) {
 
   return Backbone.View.extend({
 
@@ -59,7 +58,6 @@ define([
       // Render posts.
       this.posts = new Posts(this.app, {parentView: this,
           reverse: true, filters: false});
-      this.events = new Events(this.app, {parentView: this, reverse: true});
 
       return this;
     },
@@ -77,7 +75,6 @@ define([
         mps.unsubscribe(s);
       });
       this.posts.destroy();
-      this.events.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

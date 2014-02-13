@@ -9,22 +9,24 @@
       + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
 %>
 
-<% if (this.model.get('product') && this.model.get('product').sku) { %>
-  <a class="button buy-button" target="_blank" 
-      href="http://transactions.digitaldeliveryapp.com/products/<%= this.model.get('product').sku %>/purchase">
-    <i class="icon-download-cloud"></i>
-    <%= this.model.get('product').subtype %> Film ($<%= this.model.get('product').price %>)
-  </a>
-<% } %>
-<div class="page-title">
-  <%= this.model.date() %> | 
-  <a href="/<%= this.model.get('author').username %>" class="navigate">
-    <%= this.model.get('author').displayName %></a> 
-  <% if (this.model.get('title')) { %>
-    / <a href="/<%= this.model.get('key') %>" class="navigate">
-    <span class="<%= typeClass %>"><%= this.model.get('title') %></span></a>
+<% if (this.parentView) { %>
+  <% if (this.model.get('product') && this.model.get('product').sku) { %>
+    <a class="button buy-button" target="_blank" 
+        href="http://transactions.digitaldeliveryapp.com/products/<%= this.model.get('product').sku %>/purchase">
+      <i class="icon-download-cloud"></i>
+      <%= this.model.get('product').subtype %> Film ($<%= this.model.get('product').price %>)
+    </a>
   <% } %>
-</div>
+  <div class="page-title">
+    <%= this.model.date() %> | 
+    <a href="/<%= this.model.get('author').username %>" class="navigate">
+      <%= this.model.get('author').displayName %></a> 
+    <% if (this.model.get('title')) { %>
+      / <a href="/<%= this.model.get('key') %>" class="navigate">
+      <span class="<%= typeClass %>"><%= this.model.get('title') %></span></a>
+    <% } %>
+  </div>
+<% } %>
 <a href="/<%= this.model.get('author').username %>" class="post-avatar navigate">
   <img src="<%= gravatar %>" width="48" height="48" />
 </a>

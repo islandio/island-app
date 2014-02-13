@@ -1,8 +1,12 @@
 <% if (this.params.tabs.length === 0) { %>
   <div class="folder-title">
-    <h1 class="title-left"><%= this.params.title || '' %></h1>
-    <% if (this.params.subtitle) { %>
-      <h1 class="title-sub"><%= this.params.subtitle %></h1>
+    <% if (this.params.html) { %>
+      <%= this.params.html %>
+    <% } else { %>
+      <h1 class="title-left"><%= this.params.title || '' %></h1>
+      <% if (this.params.subtitle) { %>
+        <h1 class="title-sub"><%= this.params.subtitle %></h1>
+      <% } %>
     <% } %>
   </div>
 <% } else { %>

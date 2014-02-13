@@ -158,7 +158,7 @@ define([
 
     renderTabs: function (params) {
       if (this.tabs) {
-        this.tabs.params = params;
+        this.tabs.params = params || {};
         this.tabs.render();
       } else
         this.tabs = new Tabs(this.app, params).render();
@@ -180,10 +180,12 @@ define([
       this.start();
       var feed = store.get('feed') || {};
       if (!feed.query) feed.query = {featured: true};
+      this.renderTabs();
       this.render('/service/profile.profile/' + username, feed,
           _.bind(function (err) {
         if (err) return;
         this.page = new Profile({wrap: '.main'}, this.app).render(true);
+        this.renderTabs({html: this.page.title});
         this.stop();
       }, this));
       this.renderTabs();
@@ -192,12 +194,13 @@ define([
     post: function (username, key) {
       this.start();
       var key = [username, key].join('/');
+      this.renderTabs();
       this.render('/service/post.profile/' + key, _.bind(function (err) {
         if (err) return;
         this.page = new Post({wrap: '.main'}, this.app).render(true);
+        this.renderTabs({html: this.page.title});
         this.stop();
       }, this));
-      this.renderTabs();
     },
 
     crag: function (country, crag) {
