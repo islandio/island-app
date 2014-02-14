@@ -7,8 +7,14 @@
   if (!location && data.hometown && data.hometown.name)
     location = data.hometown.name;
   if (location) location = location + ' / ';
+
+  // Gravatar
+  var gravatar = 'https://www.gravatar.com/avatar/'
+      + data.gravatar + '?s=26&d='
+      + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
 %>
 
 <div class="page-title">
-  <%= location %><a href="<%= data.username %>" class="navigate"><%= data.displayName %></a>
+  <img src="<%= gravatar %>" class="profile-avatar" width="26" height="26" /><%= location %>
+  <a href="<%= data.username %>" class="navigate"><%= data.displayName %></a>
 </div>

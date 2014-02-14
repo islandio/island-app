@@ -154,6 +154,7 @@ define([
       var str = this.searchVal();
 
       // Handle interaction.
+      if (str && str === this.str) return;
       this.str = str;
       if (!str) {
         this._clear();

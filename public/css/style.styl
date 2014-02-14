@@ -22,7 +22,8 @@ backgray = #fcfcfb
 mattegray = #f2f2f2
 
 // fonts
-standard = Verdana, Arial, sans-serif
+standard = Helvetica, Arial, "Lucida Grande", sans-serif
+standard_thin = "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
 title = Title, Verdana, Arial, sans-serif
 
 border-radius()
@@ -257,17 +258,21 @@ body
   background #f2f2f2
   color black
   font-family standard
-  font-size 10px
-  line-height 13px
+  font-size 12px
+  line-height 18px
   min-height 100%
 
 a
   color darkgray
-  background mattegray
+  background-color mattegray
   padding 0
   border none
   cursor pointer
   text-decoration none
+
+  -webkit-transition background-color 0.1s ease-in-out 0
+  -moz-transition background-color 0.1s ease-in-out 0
+  transition background-color 0.1s ease-in-out
 
 a:hover
   background-color rgba(75, 184, 215, 0.25)
@@ -282,15 +287,15 @@ a::-moz-focus-inner, button::-moz-focus-inner
   border none
 
 a.important
-  background rgba(75, 184, 215, 0.25)
+  background-color rgba(75, 184, 215, 0.25)
 
 a.important:hover,
 a.important.hover
-  background rgba(75, 184, 215, 0.5)
+  background-color rgba(75, 184, 215, 0.5)
 
 a.important:active,
 a.important.active
-  background rgba(75, 184, 215, 0.6)
+  background-color rgba(75, 184, 215, 0.6)
 
 a.contact-download
   color pink
@@ -452,10 +457,11 @@ span.empty-list
   color #b3b3b3
 
 p.page
+  font-family standard_thin
   margin 0 0 30px 0
   color #4d4d4d
-  font-size 12px
-  line-height 18px
+  font-size 16px
+  line-height 24px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––elements*/
 
@@ -584,12 +590,9 @@ input[type=submit]:not(.submit)
 
   cursor pointer
 
-  -moz-transition-timing-function ease-out
-  -moz-transition-duration 100ms
-  -webkit-transition-timing-function ease-out
-  -webkit-transition-duration 100ms
-  transition-timing-function ease-out
-  transition-duration 100ms
+  -webkit-transition all 0.1s ease-in-out 0
+  -moz-transition all 0.1s ease-in-out 0
+  transition all 0.1s ease-in-out
 
 input[type=submit].from-login
   color black
@@ -600,9 +603,7 @@ button.button:hover:not(.disabled),
 div[role=button]:hover:not(.disabled),
 input[type='submit']:hover:not(.disabled)
   color #1a1a1a
-  -moz-box-shadow 0 0 2px rgba(0, 0, 0, 0.2)
-  -webkit-box-shadow 0 0 2px rgba(0, 0, 0, 0.2)
-  box-shadow 0 0 2px rgba(0, 0, 0, 0.2)
+  background-color #e1e1e1
   border 1px solid #898989
 
 a.button:active:not(.disabled),
@@ -610,9 +611,9 @@ button.button:active:not(.disabled),
 div[role=button]:active:not(.disabled),
 input[type='submit']:active:not(.disabled)
   color #1a1a1a
-  -moz-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
-  -webkit-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
-  box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
+  -moz-box-shadow inset 0 2px 5px rgba(0, 0, 0, 0.3)
+  -webkit-box-shadow inset 0 2px 5px rgba(0, 0, 0, 0.3)
+  box-shadow inset 0 2px 5px rgba(0, 0, 0, 0.3)
   border 1px solid #898989
 
 a.button:focus:not(.disabled),
@@ -659,14 +660,14 @@ button.button.table-button
   width 100%
   margin 0
 
-a.button-left,
+a.button.button-left,
 button.button.button-left,
 div[role=button].button-left,
 input[type=submit].button-left
   border-right none !important
   border-radius 2px 0 0 2px
 
-a.button-middle,
+a.button.button-middle,
 button.button.button-middle,
 div[role=button].button-middle,
 input[type=submit].button-middle
@@ -675,16 +676,16 @@ input[type=submit].button-middle
   border-radius 0
   z-index 1
 
-a.button-right,
+a.button.button-right,
 button.button.button-right,
 div[role=button].button-right,
 input[type=submit].button-right
   border-left none !important
   border-radius 0 2px 2px 0
 
-a.button-left.selected,
-a.button-middle.selected,
-a.button-right.selected,
+a.button.button-left.selected,
+a.button.button-middle.selected,
+a.button.button-right.selected,
 button.button.button-left.selected,
 button.button.button-middle.selected,
 button.button.button-right.selected,
@@ -703,33 +704,33 @@ input[type=submit].button-right.selected
   -moz-box-shadow inset 0 0 3px #808080
   box-shadow inset 0 0 3px #808080
 
-a.button-left.selected,
+a.button.button-left.selected,
 button.button.button-left.selected,
 div[role=button].button-left.selected,
 input[type=submit].button-left.selected
   border-right 1px solid #404040 !important
 
-a.button-middle.selected,
+a.button.button-middle.selected,
 button.button.button-middle.selected,
 div[role=button].button-middle.selected,
 input[type=submit].button-middle.selected
   border-left 1px solid #404040 !important
   border-right 1px solid #404040 !important
 
-a.button-right.selected,
+a.button.button-right.selected,
 button.button.button-right.selected,
 div[role=button].button-right.selected,
 input[type=submit].button-right.selected
   border-left 1px solid #404040 !important
 
-a.button-left.disabled,
-a.button-middle.disabled,
-a.button-right.disabled
+a.button.button-left.disabled,
+a.button.button-middle.disabled,
+a.button.button-right.disabled
   opacity 0.5
   cursor default
 
-a.signin-strategy-btn,
-a.signin-strategy-btn-disabled
+a.button.signin-strategy-btn,
+a.button.signin-strategy-btn-disabled
   width 200px
   font-size 11px
   font-weight bold
@@ -741,72 +742,72 @@ a.signin-strategy-btn-disabled
   border 1px solid black !important
   border-radius 2px
 
-a.facebook-btn,
-a.facebook-btn-disabled
+a.button.facebook-btn,
+a.button.facebook-btn-disabled
   background rgba(59, 89, 152, 0.65)
 
-a.twitter-btn,
-a.twitter-btn-disabled
+a.button.twitter-btn,
+a.button.twitter-btn-disabled
   background rgba(60, 143, 201, 0.65)
 
-a.instagram-btn,
-a.instagram-btn-disabled
+a.button.instagram-btn,
+a.button.instagram-btn-disabled
   background rgba(69, 63, 56, 0.65)
 
-a.delete-btn,
+a.button.delete-btn,
 button.button.danger
   background rgba(208, 76, 56, 0.9)
 
-a.signin-strategy-btn-disabled
+a.button.signin-strategy-btn-disabled
   cursor default
   opacity 0.65
   line-height 30px
   outline 0
   text-align center
 
-a.signin-strategy-btn:hover
+a.button.signin-strategy-btn:hover
   background rgba(51, 51, 51, 0.75)
   color white !important
 
-a.facebook-btn:hover
+a.button.facebook-btn:hover
   background rgba(59, 89, 152, 0.75)
 
-a.facebook-btn.from-login:hover
+a.button.facebook-btn.from-login:hover
   background rgba(59, 89, 152, 1)
 
-a.twitter-btn:hover
+a.button.twitter-btn:hover
   background rgba(60, 143, 201, 0.75)
 
-a.twitter-btn.from-login:hover
+a.button.twitter-btn.from-login:hover
   background rgba(60, 143, 201, 1)
 
-a.instagram-btn:hover
+a.button.instagram-btn:hover
   background rgba(69, 63, 56, 0.75)
 
-a.delete-btn:hover,
+a.button.delete-btn:hover,
 button.button.danger:hover
   background rgba(208, 76, 56, 1)
 
-a.signin-strategy-btn:active
+a.button.signin-strategy-btn:active
   background rgba(51, 51, 51, 0.55)
 
-a.facebook-btn:active
+a.button.facebook-btn:active
   background rgba(59, 89, 152, 0.55)
 
 a.twitter-btn:active
   background rgba(60, 143, 201, 0.55)
 
-a.instagram-btn:active
+a.button.instagram-btn:active
   background rgba(69, 63, 56, 0.55)
 
-a.delete-btn:active,
+a.button.delete-btn:active,
 button.button.danger:active
   background rgba(208, 76, 56, 0.8)
 
-a.signin-strategy-btn.from-login
+a.button.signin-strategy-btn.from-login
   width 266px
 
-a.buy-button
+a.button.buy-button
   float right
   color #404040
   border 1px solid #404040
@@ -817,7 +818,7 @@ a.buy-button
   line-height 24px
   min-height 24px
 
-a.buy-button:hover
+a.button.buy-button:hover
   color #1a1a1a
   border 1px solid #1a1a1a
 
@@ -825,19 +826,21 @@ a.buy-button:hover
   margin-top 6px
   margin-right 30px
 
-.feed-filter
-  margin-right 6px
+.feed-filters
   margin-bottom 30px
+  white-space nowrap
+
+.feed-filter
   margin-left 30px
   white-space nowrap
   font-size 0
   display inline-block
 
-a.feed-button
-  font-size 11px
-  line-height 22px
-  min-height 22px
-  width 72px
+a.button.feed-button
+  font-size 12px
+  line-height 28px
+  min-height 28px
+  width 129.5px
   position relative
 
   box-sizing border-box
@@ -946,7 +949,7 @@ li.tab a
   padding 10px 20px 11px
   background none
   color #666
-  font-size 12px
+  font-size 13px
   line-height 36px
   border-top 4px solid transparent
 
@@ -976,6 +979,7 @@ li.tab.active a
   border-top 4px solid blue
   padding-top 11px
   top 5px
+  font-weight bold
 
 .content
   position relative
@@ -1060,8 +1064,8 @@ a.logo img
 
 span.tagline
   float right
-  margin 19px 10px 0 5px
-  font-size 8px
+  margin 16px 10px 0 5px
+  font-size 10px
   color #666
   font-weight bold
 
@@ -1209,7 +1213,7 @@ ul.header-links li
   margin 0 15px 0 0
 
 ul.header-links li a
-  font-size 11px
+  font-size 13px
   font-weight bold
 
 ul.header-links li a:hover
@@ -1229,10 +1233,6 @@ a.header-avatar
 
 a.header-avatar img
   display block
-
-a.header-avatar:hover
-  opacity 0.8
-  background none
 
 a.signin-button
   float right
@@ -2316,8 +2316,13 @@ button.button.modal-button.full
   float left
   width 680px
 
-.profile-sidebar
-  margin 0 0 0 700px
+img.profile-avatar
+  position relative
+  top 4px
+  width 26px
+  height 26px
+  margin-right 7px
+  border-radius 2px
 
 ul.profile-team
   margin-top 14px
@@ -2333,26 +2338,45 @@ ul.profile-team li
 ul.profile-team li:hover img
   opacity 0.7
 
+.profile-upper
+  margin 30px 0 20px 0
+
+h2.profile-section-title
+  margin-bottom 15px
+  font-weight bold
+  font-size 12px
+  color #2a2a2a
+  text-transform uppercase
+
+.profile-inner
+  margin-top -40px
+
 .profile-info
-  margin 15px 0 30px 0
+  margin 15px 0 25px 0
 
 .profile .profile-picture
   position relative
   width 680px
-  height 288px
+  height 306px
   overflow hidden
 
 .profile.single .profile-picture
   width 1024px
-  height 576px
+  height 460px
+
+.profile.single .profile-picture img
+  border-radius 2px
 
 .profile-description p
-  font-size 14px
+  font-family standard_thin
+  font-size 16px
   line-height 24px
   margin-bottom 15px
+  margin-top -10px
 
 .profile-description span
-  font-size 10px
+  font-size 12px
+  color #666
 
 .profile-description a
   text-decoration underline
@@ -2365,7 +2389,7 @@ ul.profile-team li:hover img
 .posts
   margin-left -30px
 
-.post-input + .feed-filter
+.post-input + .feed-filters
   margin-top 30px
 
 .post
@@ -2428,8 +2452,7 @@ a.post-avatar
   background none
   display block
 
-a.post-avatar img,
-img.profile-avatar
+a.post-avatar img
   position absolute
   top 27px
   left 30px
@@ -2443,10 +2466,6 @@ img.profile-avatar
   box-shadow 2px 2px 2px rgba(0,0,0,0.1)
 
 .single > a.post-avatar img
-  top 0
-  left 0
-
-img.profile-avatar
   top 0
   left 0
 
@@ -2495,24 +2514,25 @@ img.profile-avatar
 
 .post .post-body
   margin 10px 0 0
-  font-size 12px
-  line-height 20px
+  font-size 14px
+  line-height 22px
   color #4d4d4d
 
 .post .post-body p
+  font-family standard_thin
   margin-bottom 10px
 
 .post.single .post-body
   margin 10px 0 0
   font-size 16px
-  line-height 26px
+  line-height 24px
 
 .post.single .post-body p
   margin-bottom 15px
 
 .post-info
   margin 10px 0 0
-  font-size 10px
+  font-size 12px
   line-height 13px
   color #808080
 
@@ -2840,10 +2860,11 @@ table.post-params label
   padding 5px
 
 .comment-body p
-  padding 0 40px 0 40px
-  font-size 11px
-  line-height 15px
-  color #666
+  padding 0 40px
+  font-size 13px
+  line-height 16px
+  font-weight normal
+  color #4d4d4d
   margin 0
 
 span.comment-avatar,

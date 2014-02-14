@@ -66,30 +66,32 @@
   </div>
 <% } %>
 <% if (this.filters) { %>
-  <div class="feed-filter">
-    <% if (!feed.query || feed.query.featured) { %>
-      <a href="javascript:;" class="sort-featured button button-left feed-button selected">Featured</a>
-      <a href="javascript:;" class="sort-recent button button-right feed-button">Recent</a>
-    <% } else { %>
-      <a href="javascript:;" class="sort-featured button button-left feed-button">Featured</a>
-      <a href="javascript:;" class="sort-recent button button-right feed-button selected">Recent</a>
-    <% } %>
-  </div>
-  <div class="feed-filter">
-    <% if (!feed.query || !feed.query.type) { %>
-      <a href="javascript:;" class="filter-all button button-left feed-button selected">All</a>
-      <a href="javascript:;" class="filter-video button button-middle feed-button">Videos</a>
-      <a href="javascript:;" class="filter-image button button-right feed-button">Photos</a>
-    <% } else if (feed.query.type === 'video') { %>
-      <a href="javascript:;" class="filter-all button button-left feed-button">All</a>
-      <a href="javascript:;" class="filter-video button button-middle feed-button selected">Videos</a>
-      <a href="javascript:;" class="filter-image button button-right feed-button">Photos</a>
-    <% } else if (feed.query.type === 'image') { %>
-      <a href="javascript:;" class="filter-all button button-left feed-button">All</a>
-      <a href="javascript:;" class="filter-video button button-middle feed-button">Videos</a>
-      <a href="javascript:;" class="filter-image button button-right feed-button selected">Photos</a>
-    <% } %>
-  </div>
+  <div class="feed-filters">
+    <div class="feed-filter">
+      <% if (!feed.query || feed.query.featured) { %>
+        <a href="javascript:;" class="sort-featured button button-left feed-button selected">Featured</a>
+        <a href="javascript:;" class="sort-recent button button-right feed-button">Recent</a>
+      <% } else { %>
+        <a href="javascript:;" class="sort-featured button button-left feed-button">Featured</a>
+        <a href="javascript:;" class="sort-recent button button-right feed-button selected">Recent</a>
+      <% } %>
+    </div>
+    <div class="feed-filter">
+      <% if (!feed.query || !feed.query.type) { %>
+        <a href="javascript:;" class="filter-all button button-left feed-button selected">All</a>
+        <a href="javascript:;" class="filter-video button button-middle feed-button">Videos</a>
+        <a href="javascript:;" class="filter-image button button-right feed-button">Photos</a>
+      <% } else if (feed.query.type === 'video') { %>
+        <a href="javascript:;" class="filter-all button button-left feed-button">All</a>
+        <a href="javascript:;" class="filter-video button button-middle feed-button selected">Videos</a>
+        <a href="javascript:;" class="filter-image button button-right feed-button">Photos</a>
+      <% } else if (feed.query.type === 'image') { %>
+        <a href="javascript:;" class="filter-all button button-left feed-button">All</a>
+        <a href="javascript:;" class="filter-video button button-middle feed-button">Videos</a>
+        <a href="javascript:;" class="filter-image button button-right feed-button selected">Photos</a>
+      <% } %>
+    </div>
+  </div>  
 <% } %>
 <div class="list-header"></div>
 <% if (this.collection.models.length > 0) { %>
