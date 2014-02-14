@@ -13,10 +13,9 @@ define([
   'text!../../templates/session.html',
   'text!../../templates/activity.html',
   'text!../../templates/tick.html',
-  'views/lists/choices',
-  'views/lists/events'
+  'views/lists/choices'
 ], function ($, _, Backbone, mps, rpc, util, Spin, template,
-    activityTemp, tickTemp, Choices, Events) {
+    activityTemp, tickTemp, Choices) {
 
   return Backbone.View.extend({
 
@@ -112,9 +111,6 @@ define([
       // Focus cursor initial.
       _.delay(_.bind(function () { this.focus(); }, this), 1);
 
-      // Render lists.
-      this.events = new Events(this.app, {parentView: this, reverse: true});
-
       return this;
     },
 
@@ -140,7 +136,6 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      this.events.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

@@ -11,9 +11,9 @@ define([
   'util',
   'models/ascent',
   'text!../../templates/ascent.html',
-  'views/lists/medias',
-  'views/lists/events'
-], function ($, _, Backbone, mps, rpc, util, Ascent, template, Medias, Events) {
+  'text!../../templates/ascent.title.html',
+  'views/lists/medias'
+], function ($, _, Backbone, mps, rpc, util, Ascent, template, title, Medias) {
 
   return Backbone.View.extend({
 
@@ -39,10 +39,12 @@ define([
       // Use a model for the main content.
       this.model = new Ascent(this.app.profile.content.page);
 
-      // Set page title
-      var title = this.model.get('name') + ' - ' + [this.model.get('crag'),
-          this.model.get('country')].join(', ');
-      this.app.title(title);
+      // Set page title.
+      this.app.title(this.model.get('name') + ' - ' + [this.model.get('crag'),
+          this.model.get('country')].join(', '));
+      
+      // Render title.
+      this.title = _.template(title).call(this);
 
       // UnderscoreJS rendering.
       this.template = _.template(template);
@@ -71,7 +73,6 @@ define([
         reverse: true,
         type: 'ascent'
       });
-      this.events = new Events(this.app, {parentView: this, reverse: true});
 
       return this;
     },
@@ -89,7 +90,6 @@ define([
         mps.unsubscribe(s);
       });
       this.medias.destroy();
-      this.events.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

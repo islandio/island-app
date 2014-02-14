@@ -188,7 +188,6 @@ define([
         this.renderTabs({html: this.page.title});
         this.stop();
       }, this));
-      this.renderTabs();
     },
 
     post: function (username, key) {
@@ -206,23 +205,25 @@ define([
     crag: function (country, crag) {
       this.start();
       var key = [country, crag].join('/');
+      this.renderTabs();
       this.render('/service/crag.profile/' + key, _.bind(function (err) {
         if (err) return;
         this.page = new Crag(this.app).render();
+        this.renderTabs({html: this.page.title});
         this.stop();
       }, this));
-      this.renderTabs();
     },
 
     ascent: function (country, crag, type, ascent) {
       this.start();
       var key = [country, crag, type, ascent].join('/');
+      this.renderTabs();
       this.render('/service/ascent.profile/' + key, _.bind(function (err) {
         if (err) return;
         this.page = new Ascent(this.app).render();
+        this.renderTabs({html: this.page.title});
         this.stop();
       }, this));
-      this.renderTabs();
     },
 
     posts: function () {
@@ -256,12 +257,13 @@ define([
 
     settings: function () {
       this.start();
+      this.renderTabs();
       this.render('/service/settings.profile', {}, true, _.bind(function (err) {
         if (err) return;
         this.page = new Settings(this.app).render();
+        this.renderTabs({html: this.page.title});
         this.stop();
       }, this));
-      this.renderTabs();
     },
 
     session: function () {
@@ -271,7 +273,7 @@ define([
         this.page = new Session(this.app).render();
         this.stop();
       }, this));
-      this.renderTabs();
+      this.renderTabs({title: 'Log new session'});
     },
 
     reset: function () {
@@ -281,17 +283,8 @@ define([
         this.page = new Reset(this.app).render();
         this.stop();
       }, this));
-      this.renderTabs();
+      this.renderTabs({title: 'Password reset'});
     },
-
-    // team: function () {
-    //   this.start();
-    //   this.render('/service/team.profile', _.bind(function (err) {
-    //     if (err) return;
-    //     this.page = new Team(this.app).render();
-    //     this.stop();
-    //   }, this));
-    // },
 
     films: function () {
       this.start();
@@ -312,15 +305,6 @@ define([
       }, this));
       this.renderTabs({title: 'About', subtitle: 'What\'s going on here?'});
     },
-
-    // contact: function () {
-    //   this.start();
-    //   this.render('/service/static.profile', _.bind(function (err) {
-    //     if (err) return;
-    //     this.page = new Contact(this.app).render();
-    //     this.stop();
-    //   }, this));
-    // },
 
     privacy: function () {
       this.start();

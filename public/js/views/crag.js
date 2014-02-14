@@ -12,8 +12,8 @@ define([
   'util',
   'models/crag',
   'text!../../templates/crag.html',
-  'views/lists/events'
-], function ($, _, Modernizr, Backbone, mps, rpc, util, Crag, template, Events) {
+  'text!../../templates/crag.title.html'
+], function ($, _, Modernizr, Backbone, mps, rpc, util, Crag, template, title) {
 
   return Backbone.View.extend({
 
@@ -45,10 +45,12 @@ define([
         this.flattened[t] = _.flatten(ascents);
       }, this));
 
-      // Set page title
-      var title = [this.model.get('name'),
-          this.model.get('country')].join(', ');
-      this.app.title(title);
+      // Set page title.
+      this.app.title([this.model.get('name'),
+          this.model.get('country')].join(', '));
+
+      // Render title.
+      this.title = _.template(title).call(this);
 
       // UnderscoreJS rendering.
       this.template = _.template(template);
@@ -109,9 +111,6 @@ define([
       // Set map view.
       mps.publish('map/fly', [this.model.get('location')]);
 
-      // Render lists.
-      this.events = new Events(this.app, {parentView: this, reverse: true});
-
       return this;
     },
 
@@ -127,7 +126,6 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      this.events.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

@@ -316,7 +316,7 @@ h1.title-static {
 }
 h1.title-sub {
   display: inline-block;
-  font-size: 10px;
+  font-size: 12px;
   padding: 0 0 0 5px;
   line-height: 6px;
   color: #666;
@@ -324,7 +324,7 @@ h1.title-sub {
 }
 .created {
   color: #b3b3b3;
-  font-size: 9px;
+  font-size: 10px;
   display: inline-block;
 }
 .http-error {
@@ -439,7 +439,7 @@ p.page {
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––elements*/
 label {
   color: #666;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: bold;
 }
 td {
@@ -845,15 +845,10 @@ a.button.session-button:hover:not(.disabled),
 button.button.session-button:hover:not(.disabled) {
   color: #2f5a00;
   border: 1px solid transparent;
-  -moz-box-shadow: 0 0 2px rgba(0,0,0,0);
-  -webkit-box-shadow: 0 0 2px rgba(0,0,0,0);
-  box-shadow: 0 0 2px rgba(0,0,0,0);
+  background: #a7d22c;
 }
 a.button.session-button:active:not(.disabled),
 button.button.session-button:active:not(.disabled) {
-  -moz-box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
-  -webkit-box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
-  box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
   background: #a7d22c;
 }
 a.button.session-button.disabled,
@@ -1123,9 +1118,9 @@ a.choice,
   border-width: 1px 0;
   display: block;
   background: #fff;
-  font-size: 11px;
+  font-size: 12px;
   height: 16px;
-  line-height: 15px;
+  line-height: 16px;
 }
 .search-choice {
   position: absolute;
@@ -1133,16 +1128,16 @@ a.choice,
   top: 1px;
   left: 1px;
   right: 1px;
-  height: 13px;
+  height: 12px;
   line-height: 14px;
 }
 .search-choice .choice-prefix {
-  margin-top: -1px;
+  margin-top: -2px;
 }
 .search-choice-clear {
   position: absolute;
   z-index: 1;
-  top: 8px;
+  top: 7px;
   right: 8px;
 }
 a.choice:first-of-type {
@@ -1184,7 +1179,7 @@ span.choice-name i {
 }
 ul.header-links {
   float: left;
-  margin: 18px 10px 0 0;
+  margin: 17px 10px 0 0;
 }
 ul.header-links li {
   display: inline-block;
@@ -1268,7 +1263,7 @@ span.count {
 .block-messages {
   position: relative;
   margin: 0 auto;
-  width: 1024px;
+  width: 1084px;
   white-space: nowrap;
 }
 .block-remove {
@@ -1313,7 +1308,7 @@ span.count {
 }
 .block-error-txt,
 .block-alert-txt {
-  font-size: 10px;
+  font-size: 11px;
   padding: 0 10px;
   color: #4d4d4d;
   font-weight: bold;
@@ -1344,10 +1339,11 @@ span.count {
   position: relative;
   background: #fcfcfc;
   color: #4d4d4d;
-  font-size: 10px;
+  font-size: 12px;
   text-align: center;
   width: 100%;
   line-height: 33px;
+  height: 32px;
   margin-top: -10px;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
@@ -1411,8 +1407,8 @@ span.count {
   cursor: pointer;
   display: block;
   position: relative;
-  font-size: 11px;
-  line-height: 15px;
+  font-size: 12px;
+  line-height: 16px;
   color: #4d4d4d;
   width: 100%;
   height: 33px;
@@ -1511,7 +1507,7 @@ span.count {
 .select-options li {
   margin: 0;
   padding: 8px;
-  line-height: 15px;
+  line-height: 20px;
   border-top: 1px solid rgba(0,0,0,0.08);
 }
 .select-options li:hover {
@@ -1688,7 +1684,6 @@ span.signin-error {
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––signin*/
 .session {
   width: 100%;
-  margin-top: 10px;
   position: relative;
 }
 .session table {
@@ -1736,7 +1731,7 @@ span.signin-error {
 }
 .session-activities {
   width: 100%;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 .session-ticks {
   display: none;
@@ -2107,7 +2102,7 @@ a.plot-button.active {
 .button-spin {
   position: absolute;
   top: 17px;
-  left: 43px;
+  left: 63px;
 }
 .session-button .button-spin {
   top: 20px;
@@ -2130,6 +2125,7 @@ a.plot-button.active {
   text-transform: uppercase;
   color: #666;
   line-height: 40px;
+  height: auto;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––modal*/
 .modal {
@@ -2454,7 +2450,7 @@ a.post-avatar img {
   opacity: 0.8;
   font-size: 30px;
   top: 221px;
-  left: 113px;
+  left: 128px;
   font-weight: bold;
   -moz-user-select: none;
   -webkit-user-select: none;
@@ -2462,7 +2458,7 @@ a.post-avatar img {
 }
 .post.single span.post-mosaic-play-text {
   top: 318px;
-  left: 210px;
+  left: 225px;
 }
 .post .post-body {
   margin: 10px 0 0;
@@ -2475,7 +2471,7 @@ a.post-avatar img {
   margin-bottom: 10px;
 }
 .post.single .post-body {
-  margin: 10px 0 0;
+  margin: 15px 0 0;
   font-size: 16px;
   line-height: 24px;
 }
@@ -2517,7 +2513,7 @@ a.post-input-avatar img {
   -webkit-border-radius: 0 2px 2px 2px;
   -moz-border-radius: 0 2px 2px 2px;
   border-radius: 0 2px 2px 2px;
-  padding: 8px 8px 5px 8px;
+  padding: 8px 8px 3px 8px;
 }
 .post-dnd {
   display: inline-block;
@@ -2604,7 +2600,7 @@ textarea.comment-input {
 table.post-params {
   display: none;
   width: 694px;
-  margin: 8px 0 3px 0;
+  margin: 8px 0 5px 0;
 }
 table.post-params td {
   padding: 0 20px 0 0;
@@ -2833,7 +2829,7 @@ a.comment-author {
 }
 textarea.comment-input {
   width: 417px;
-  font-size: 11px;
+  font-size: 12px;
 }
 .show-older {
   padding: 5px 5px;
@@ -2899,8 +2895,8 @@ textarea.comment-input {
 }
 .event-inner p {
   margin: 0 0 0 40px;
-  font-size: 10px;
-  line-height: 13px;
+  font-size: 12px;
+  line-height: 16px;
   color: #4d4d4d;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––notifications*/
@@ -2935,7 +2931,7 @@ textarea.comment-input {
 .notification-inner {
   position: relative;
   min-height: 32px;
-  padding: 5px;
+  padding: 10px 10px 3px 10px;
 }
 .notification-inner img {
   float: left;
@@ -2944,10 +2940,9 @@ textarea.comment-input {
   border-radius: 2px;
 }
 .notification-inner p {
-  max-width: 145px;
   margin: 0 0 0 40px;
-  font-size: 10px;
-  line-height: 13px;
+  font-size: 11px;
+  line-height: 14px;
   color: #4d4d4d;
 }
 .notification-info {
@@ -3084,7 +3079,7 @@ span.no-media {
 }
 .crag.single,
 .ascent.single {
-  margin: 20px 0 30px;
+  margin: 0 0 30px;
 }
 .crag .page-title span {
   color: #b1dc36;
@@ -3102,9 +3097,9 @@ span.no-media {
   font-size: 0;
 }
 .ascent-filter-buttons a.button {
-  height: 39px;
-  line-height: 40px;
-  font-size: 14px;
+  height: 38px;
+  line-height: 38px;
+  font-size: 13px;
   padding: 0 20px;
 }
 .ascents-wrap {
@@ -3166,12 +3161,13 @@ input.filter-box {
   visibility: hidden;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––ascents media*/
-.ascent .profile-info {
+.ascent-info {
   margin-bottom: 15px;
 }
-.ascent .profile-description p {
-  margin-bottom: 0;
-  padding-bottom: 0;
+.ascent-description p {
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-size: 16px;
+  line-height: 24px;
 }
 .media-input {
   margin-bottom: 20px;
@@ -3187,13 +3183,11 @@ input.filter-box {
   position: relative;
 }
 input[type=text].media-link {
-  width: 584px;
+  width: 544px;
   font-size: 12px;
 }
 input[type=submit].media-button {
-  line-height: 31px;
-  font-size: 12px;
-  padding: 0 20px;
+  padding: 0 40px;
 }
 .medias {
   margin-left: -30px;

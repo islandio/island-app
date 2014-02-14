@@ -50,7 +50,7 @@ define([
   App.prototype.title = function (str) {
 
     // Set the document title.
-    document.title = 'Island | ' + str;
+    document.title = str;
   }
 
   App.prototype.logout = function () {
