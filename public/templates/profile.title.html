@@ -14,6 +14,20 @@
       + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
 %>
 
+<% if (this.app.profile.member) { %>
+  <% if (this.app.profile.member.id === data.id) { %>
+    <a href="/settings" class="button title-button navigate">
+      <i class="icon-params"></i> Settings</a>
+  <% } else { %>
+    <% if (this.app.profile.sub) { %>
+      <a href="javascript:;" class="button title-button unfollow-button">
+        <i class="icon-user-delete"></i> Unfollow</a>
+    <% } else { %>
+      <a href="javascript:;" class="button title-button follow-button">
+        <i class="icon-user-add"></i> Follow</a>
+    <% } %>
+  <% } %>
+<% } %>
 <div class="page-title">
   <img src="<%= gravatar %>" class="profile-avatar" width="26" height="26" /><%= location %>
   <a href="<%= data.username %>" class="navigate"><%= data.displayName %></a>

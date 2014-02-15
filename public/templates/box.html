@@ -10,17 +10,16 @@
   <a href="/<%= profile.username %>" class="header-avatar">
     <img src="<%= gravatar %>" width="50" height="50" />
   </a>
-  <a href="/settings" class="header-action navigate">
-    <i class="icon-params"></i>
-  </a>
-  <div class="divider-vertical"></div>
-  <a href="javascript:;" class="globe-button header-action">
+  <a href="javascript:;" class="button globe-button header-action">
     <i class="icon-globe"></i>
     <span class="count"></span>
   </a>
   <div class="divider-vertical"></div>
-  <a href="/logout" class="header-action">
+  <a href="/logout" class="button header-action">
     <i class="icon-logout"></i>
   </a>
   <div class="divider-vertical"></div>
+  <a href="/session" class="button header-session-button header-action navigate">
+    <i class="icon-pencil"></i> <span>Log session</span>
+  </a>
 </div>

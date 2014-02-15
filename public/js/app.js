@@ -38,6 +38,7 @@ define([
       if (profile.member && !this.profile.member) {
         this.profile.member = profile.member;
         this.profile.notes = profile.notes;
+        this.profile.sub = profile.sub;
         this.profile.transloadit = profile.transloadit;
         return true;
       }

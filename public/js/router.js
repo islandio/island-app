@@ -257,13 +257,12 @@ define([
 
     settings: function () {
       this.start();
-      this.renderTabs();
       this.render('/service/settings.profile', {}, true, _.bind(function (err) {
         if (err) return;
         this.page = new Settings(this.app).render();
-        this.renderTabs({html: this.page.title});
         this.stop();
       }, this));
+      this.renderTabs({title: 'Account Settings'});
     },
 
     session: function () {

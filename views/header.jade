@@ -7,7 +7,7 @@
   ul
 .header-inner
   .divider-vertical
-  a.logo.navigate(href="/")
+  a.button.logo.navigate(href="/")
     span.tagline Climb
     img(src="#{root}/img/dots.png", width="140", height="48")
   div.divider-vertical.pad-right
@@ -16,12 +16,8 @@
     .search-display
       .list-header
   ul.header-links
-    //- li
-    //-   a(class="navigate", href="/team") Team
     li
       a(class="navigate", href="/films") Films
-    //- li
-    //-   a(class="navigate", href="/contact") Contact
     li
       a(class="navigate", href="/about") About
   - if (member)
@@ -29,15 +25,18 @@
       div.divider-vertical
       a.header-avatar(href="/" + member.username)
         img(src="https://www.gravatar.com/avatar/" + member.gravatar + "?s=50&d=https%3A%2F%2Fd271mvlc6gc7bl.cloudfront.net%2Fmain%2Fimg%2Favatar_100.png", width="50", height="50")
-      a.header-action.navigate(href="/settings")
-        i.icon-params
-      div.divider-vertical
-      a.globe-button.header-action(href="javascript:;")
+      a.button.globe-button.header-action(href="javascript:;")
         i.icon-globe
         span.count
       div.divider-vertical
-      a.header-action(href="/logout")
+      a.button.header-action(href="/logout")
         i.icon-logout
       div.divider-vertical
+      a.button.header-session-button.header-action.navigate(href="/session")
+        i.icon-pencil 
+        span Log session
   - else
-    a.signin-button.button(href="javascript:;") Sign in
+    a.button.signin-button.header-action(href="javascript:;")
+      span Sign in 
+      i.icon-login
+      

@@ -6,7 +6,7 @@
 %>
 
 <% if (this.model.get('product') && this.model.get('product').sku) { %>
-  <a class="button buy-button" target="_blank" 
+  <a class="button title-buy-button" target="_blank" 
       href="http://transactions.digitaldeliveryapp.com/products/<%= this.model.get('product').sku %>/purchase">
     <i class="icon-download-cloud"></i>
     <%= this.model.get('product').subtype %> Film ($<%= this.model.get('product').price %>)

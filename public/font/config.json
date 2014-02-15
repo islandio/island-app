@@ -55,6 +55,12 @@
       "src": "fontawesome"
     },
     {
+      "uid": "3a00327e61b997b58518bd43ed83c3df",
+      "css": "login",
+      "code": 59406,
+      "src": "fontawesome"
+    },
+    {
       "uid": "0d20938846444af8deb1920dc85a29fb",
       "css": "logout",
       "code": 59394,
@@ -77,6 +83,24 @@
       "css": "youtube-play",
       "code": 59401,
       "src": "fontawesome"
+    },
+    {
+      "uid": "bczb7qup4axmc490xmuuv8qdhcnbgeyf",
+      "css": "user",
+      "code": 59407,
+      "src": "typicons"
+    },
+    {
+      "uid": "076f940ac56adee91dd43d6fd77dd0cf",
+      "css": "user-add",
+      "code": 59408,
+      "src": "typicons"
+    },
+    {
+      "uid": "d139ce97a43aedd333fa40f776328c3c",
+      "css": "user-delete",
+      "code": 59409,
+      "src": "typicons"
     },
     {
       "uid": "3ab229dd9bccaaaf6c71096da4b72c04",

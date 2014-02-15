@@ -8,13 +8,15 @@ define([
   'Backbone',
   'util',
   'mps',
+  'rpc',
   'text!../../templates/tabs.html'
-], function ($, _, Backbone, mps, util, template) {
+], function ($, _, Backbone, mps, util, rpc, template) {
 
   return Backbone.View.extend({
 
     // The DOM target element for this page.
     el: '.tabs',
+    working: false,
 
     // Module entry point.
     initialize: function (app, params) {
@@ -58,6 +60,8 @@ define([
     // Bind mouse events.
     events: {
       'click .navigate': 'navigate',
+      'click .follow-button': 'follow',
+      'click .unfollow-button': 'unfollow'
     },
 
     // Misc. setup.
@@ -89,6 +93,68 @@ define([
       var path = $(e.target).closest('a').attr('href');
       if (path)
         this.app.router.navigate(path, {trigger: true});
+    },
+
+    follow: function (e) {
+      var btn = $(e.target).closest('a');
+
+      // Prevent multiple requests.
+      if (this.working || !this.app.profile.content.page) return false;
+      this.working = true;
+
+      // Do the API request.
+      var username = this.app.profile.content.page.username;
+      rpc.post('/api/members/' + username + '/follow', {},
+          _.bind(function (err, data) {
+
+        // Clear.
+        this.working = false;
+
+        if (err) {
+
+          // Show error.
+          mps.publish('flash/new', [{err: err, level: 'error'}]);
+          return false;
+        }
+
+        // Update button content.
+        btn.removeClass('follow-button').addClass('unfollow-button')
+            .html('<i class="icon-user-delete"></i> Unfollow');
+
+      }, this));
+
+      return false;  
+    },
+
+    unfollow: function (e) {
+      var btn = $(e.target).closest('a');
+
+      // Prevent multiple requests.
+      if (this.working || !this.app.profile.content.page) return false;
+      this.working = true;
+
+      // Do the API request.
+      var username = this.app.profile.content.page.username;
+      rpc.post('/api/members/' + username + '/unfollow', {},
+          _.bind(function (err, data) {
+
+        // Clear.
+        this.working = false;
+
+        if (err) {
+
+          // Show error.
+          mps.publish('flash/new', [{err: err, level: 'error'}]);
+          return false;
+        }
+
+        // Update button content.
+        btn.removeClass('unfollow-button').addClass('follow-button')
+            .html('<i class="icon-user-add"></i> Follow');
+
+      }, this));
+
+      return false;  
     },
 
   });

@@ -137,7 +137,7 @@ define([
 
       // Blur.
       if (!this.searchVal() && this.options.collapse)
-        this.input.width(150).attr({placeholder: 'Search...'});
+        this.input.width(198).attr({placeholder: 'Search...'});
       this.results.hide();
       this.resetHighlight();
       this.active = false;

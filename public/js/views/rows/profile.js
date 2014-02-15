@@ -38,7 +38,7 @@ define([
     },
 
     events: {
-      'click a.navigate': 'navigate'
+      'click a.navigate': 'navigate',
     },
 
     render: function (single, prepend) {
