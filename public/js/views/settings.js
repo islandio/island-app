@@ -67,7 +67,9 @@ define([
       this.banner = this.$('img.settings-banner');
 
       // Init the banner uploading indicator.
-      this.bannerSpin = new Spin(this.$('.settings-banner-spin'));
+      this.bannerSpin = new Spin(this.$('.settings-banner-spin'), {
+        color: '#4d4d4d'
+      });
 
       // Autogrow all text areas.
       this.$('textarea').autogrow();
