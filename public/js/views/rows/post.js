@@ -239,8 +239,7 @@ define([
       if (!this.parentView) {
 
         // Set map view.
-        mps.publish('map/fly', [this.model.get('location')
-            || this.model.get('hometown')]);
+        mps.publish('map/fly', [this.model.get('location')]);
       }
 
       // Render comments.
@@ -343,7 +342,7 @@ define([
       });
       $('#confirm_delete').click(_.bind(function (e) {
 
-        // Delete the member.
+        // Delete the post.
         rpc.delete('/api/posts/' + this.model.get('key'),
             {}, _.bind(function (err, data) {
           if (err) {

@@ -7,7 +7,7 @@
   ul
 .header-inner
   .divider-vertical
-  a.button.logo.navigate(href="/")
+  a.button.logo(href="/")
     span.tagline Climb
     img(src="#{root}/img/dots.png", width="140", height="48")
   div.divider-vertical.pad-right
@@ -32,7 +32,7 @@
       a.button.header-action(href="/logout")
         i.icon-logout
       div.divider-vertical
-      a.button.header-session-button.header-action.navigate(href="/session")
+      a.button.header-session-button.header-action.navigate(href="/sessions/new")
         i.icon-pencil 
         span Log session
   - else

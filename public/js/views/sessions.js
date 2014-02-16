@@ -10,7 +10,7 @@ define([
   'rpc',
   'util',
   'text!../../templates/sessions.html',
-  // 'views/lists/sessions',
+  'views/lists/sessions',
 ], function ($, _, Backbone, mps, rpc, util, template, Sessions) {
 
   return Backbone.View.extend({
@@ -56,8 +56,7 @@ define([
     setup: function () {
 
       // Render lists.
-      // this.sessions = new Sessions(this.app, {parentView: this,
-      //     reverse: true, input: true});
+      this.sessions = new Sessions(this.app, {parentView: this, reverse: true});
 
       return this;
     },
@@ -74,7 +73,7 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      // this.sessions.destroy();
+      this.sessions.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

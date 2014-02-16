@@ -11,7 +11,6 @@ define([
   'util',
   'text!../../templates/posts.html',
   'views/lists/posts'
-  // 'views/lists/events'
 ], function ($, _, Backbone, mps, rpc, util, template, Posts) {
 
   return Backbone.View.extend({
@@ -59,7 +58,6 @@ define([
       // Render lists.
       this.posts = new Posts(this.app, {parentView: this,
             reverse: true, input: true});
-      // this.events = new Events(this.app, {parentView: this, reverse: true});
 
       return this;
     },
@@ -77,7 +75,6 @@ define([
         mps.unsubscribe(s);
       });
       this.posts.destroy();
-      // this.events.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

@@ -24,17 +24,15 @@ define([
   'views/ascent',
   'views/settings',
   'views/reset',
-  'views/team',
   'views/films',
   'views/about',
-  'views/contact',
   'views/privacy',
   'views/posts',
   'views/sessions',
-  'views/session'
+  'views/session.new'
 ], function ($, _, Backbone, Spin, mps, rpc, util, Error, Header, Tabs, Footer, 
     Signin, Forgot, Notifications, Map, Profile, Post, Crag, Ascent, Settings,
-    Reset, Team, Films, About, Contact, Privacy, Posts, Sessions, Session) {
+    Reset, Films, About, Privacy, Posts, Sessions, NewSession) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -58,14 +56,12 @@ define([
       this.route('crags/:y/:g/:t/:a', 'ascent', this.ascent);
       this.route('reset', 'reset', this.reset);
       this.route('settings', 'settings', this.settings);
-      this.route('session', 'session', this.session);
-      this.route('team', 'team', this.team);
       this.route('films', 'films', this.films);
       this.route('about', 'about', this.about);
-      this.route('contact', 'contact', this.contact);
       this.route('privacy', 'privacy', this.privacy);
       this.route('posts', 'posts', this.posts);
-      this.route('', 'sessions', this.sessions);
+      this.route('sessions/new', 'newSession', this.newSession);
+      this.route('sessions', 'sessions', this.sessions);
       this.route('_blank', 'blank', function(){});
 
       // Fullfill navigation request from mps.
@@ -237,7 +233,7 @@ define([
         this.stop();
       }, this));
       this.renderTabs({tabs: [
-        {title: 'Sessions', href: '/'},
+        {title: 'Sessions', href: '/sessions'},
         {title: 'Posts', href: '/posts', active: true}
       ]});
     },
@@ -250,7 +246,7 @@ define([
         this.stop();
       }, this));
       this.renderTabs({tabs: [
-        {title: 'Sessions', href: '/', active: true},
+        {title: 'Sessions', href: '/sessions', active: true},
         {title: 'Posts', href: '/posts'}
       ]});
     },
@@ -265,11 +261,11 @@ define([
       this.renderTabs({title: 'Account Settings'});
     },
 
-    session: function () {
+    newSession: function () {
       this.start();
-      this.render('/service/session.profile', {}, true, _.bind(function (err) {
+      this.render('/service/session.new.profile', {}, true, _.bind(function (err) {
         if (err) return;
-        this.page = new Session(this.app).render();
+        this.page = new NewSession(this.app).render();
         this.stop();
       }, this));
       this.renderTabs({title: 'Log new session'});

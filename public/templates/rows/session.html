@@ -1,0 +1,33 @@
+<%
+
+  
+%>
+
+<% if (this.parentView) { %>
+  <div class="page-title">
+    <%= this.model.date() %> | 
+    <a href="/<%= this.model.get('author').username %>" class="navigate">
+      <%= this.model.get('author').displayName %></a> 
+    <% if (this.model.get('name')) { %>
+      / <a href="/<%= this.model.get('author').username %>/sessions/<%= this.model.get('id') %>" class="navigate">
+      <span class=""><%= this.model.get('name') %></span></a>
+    <% } %>
+  </div>
+<% } %>
+
+<div class="session-body">
+  
+</div>
+<div class="session-info">
+  Logged <a href="/<%= this.model.get('author').username %>/sessions/<%= this.model.get('id') %>" class="navigate"><time class="created" 
+        datetime="<%= this.model.get('created') %>" 
+        title="<%= this.model.get('created') %>">
+    <%= this.model.get('created') %>
+  </time></a>
+  <% if (this.app.profile.member &&
+      this.model.get('author').id === this.app.profile.member.id) { %>
+    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+    <span class="session-delete info-delete">delete</span>
+  <% } %>
+</div>
+<div class="comments"></div>

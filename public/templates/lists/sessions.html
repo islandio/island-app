@@ -1,0 +1,101 @@
+<%
+
+  var member = this.app.profile.member;
+  var gravatar = member ? 'https://www.gravatar.com/avatar/'
+      + member.gravatar + '?s=50&d='
+      + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png')
+      : null;
+
+  var feed = store.get('feed') || {};
+
+%>
+
+<% if (member && options.input && member.role !== 1) { %>
+  <div class="post-input">
+    <div class="post">
+      <span class="post-input-avatar">
+        <img src="<%= gravatar %>" width="50" height="50" />
+      </span>
+      <div class="post-input-wrap">
+        <form action="/api/posts" enctype="multipart/form-data" method="POST"
+            class="post-input-form">
+          <div class="post-dnd">
+            <textarea name="body" class="post-input" tabindex="2" 
+                placeholder="What's on your mind?"></textarea>
+            <div class="post-select">
+              Attach a video or photos by
+              <% if (Modernizr.draganddrop) { %>
+                dragging &amp; dropping or 
+                <a class="post-file-chooser-dummy file-chooser-dummy important" href="javascript:;">selecting them</a>.
+                <input class="post-file-chooser file-chooser" type="file" name="post_file" multiple="multiple" />
+              <% } else { %>
+                <a class="post-file-chooser-dummy file-chooser-dummy important" href="javascript:;">selecting them</a>.
+                <input class="post-file-chooser file-chooser" type="file" name="post_file" multiple="multiple" style="left:78px;" />
+              <% } %>
+            </div>
+            <div class="post-files"></div>
+          </div>
+          <table class="post-params">
+            <tr>
+              <td style="width:213px;">
+                <input type="text" name="title" placeholder="Title (optional)"
+                    tabindex="3" style="width:200px;" />
+              </td>
+              <% if (member.facebookId) { %>
+                <td>
+                  <input id="facebook" name="facebook" type="checkbox" tabindex="4" />
+                  <label for="facebook">Post to Facebook</label>
+                </td>
+              <% } %>
+              <% if (member.twitterId) { %>
+                <td>
+                  <input id="twitter" name="twitter" type="checkbox" tabindex="5" />
+                  <label for="twitter">Tweet post</label>
+                </td>
+              <% } %>
+              <td class="last">
+                <input type="submit" class="post-button" value="Post" tabindex="6" />
+              </td>
+            </tr>
+          </table>
+          <input type="hidden" name="params"
+              value='<%= JSON.stringify(this.app.profile.transloadit.media) %>' />
+        </form>
+      </div>
+    </div>
+  </div>
+<% } %>
+<% if (this.filters) { %>
+  <div class="feed-filters">
+    <div class="feed-filter">
+      <% if (!feed.query || feed.query.featured) { %>
+        <a href="javascript:;" class="sort-featured button button-left feed-button selected">Featured</a>
+        <a href="javascript:;" class="sort-recent button button-right feed-button">Recent</a>
+      <% } else { %>
+        <a href="javascript:;" class="sort-featured button button-left feed-button">Featured</a>
+        <a href="javascript:;" class="sort-recent button button-right feed-button selected">Recent</a>
+      <% } %>
+    </div>
+    <div class="feed-filter">
+      <% if (!feed.query || !feed.query.type) { %>
+        <a href="javascript:;" class="filter-all button button-left feed-button selected">All</a>
+        <a href="javascript:;" class="filter-video button button-middle feed-button">Videos</a>
+        <a href="javascript:;" class="filter-image button button-right feed-button">Photos</a>
+      <% } else if (feed.query.type === 'video') { %>
+        <a href="javascript:;" class="filter-all button button-left feed-button">All</a>
+        <a href="javascript:;" class="filter-video button button-middle feed-button selected">Videos</a>
+        <a href="javascript:;" class="filter-image button button-right feed-button">Photos</a>
+      <% } else if (feed.query.type === 'image') { %>
+        <a href="javascript:;" class="filter-all button button-left feed-button">All</a>
+        <a href="javascript:;" class="filter-video button button-middle feed-button">Videos</a>
+        <a href="javascript:;" class="filter-image button button-right feed-button selected">Photos</a>
+      <% } %>
+    </div>
+  </div>  
+<% } %>
+<div class="list-header"></div>
+<% if (this.collection.models.length > 0) { %>
+  <% _.each(this.collection.models, _.bind(function(row) { %>
+    <%= this.row(row) %>
+  <% }, this)); %>
+<% } %>

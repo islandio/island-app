@@ -10,12 +10,13 @@ define([
   'mps',
   'rpc',
   'util',
+  'Spin',
   'text!../../../templates/lists/posts.html',
   'collections/posts',
   'views/rows/post',
   'Spin'
-], function ($, _, Modernizr, List, mps, rpc, util, template,
-      Collection, Row, Spin) {
+], function ($, _, Modernizr, List, mps, rpc, util, Spin, template,
+      Collection, Row) {
   return List.extend({
 
     el: '.posts',

@@ -425,7 +425,7 @@ span.empty-feed
   font-style italic
   color #b3b3b3
   text-align center
-  font-size 12px
+  font-size 11px
 
 span.empty-list
   display inline-block
@@ -459,7 +459,7 @@ span.empty-list
   color #b3b3b3
   
 .info-item
-  font-size 9px
+  font-size 11px
   color #b3b3b3
 
 p.page
@@ -1769,25 +1769,25 @@ span.signin-error
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––signin*/
 
-.session
+.new-session
   width 100%
   position relative
 
-.session table
+.new-session table
   table-layout fixed
   width 100%
 
-.session tr td.session-cell
+.new-session tr td.session-cell
   padding 0 10px 5px 0
 
-.session tr td.session-cell:last-child
+.new-session tr td.session-cell:last-child
   padding 0 0 5px 0
 
-.session tr.session-row-nopad td.session-cell
+.new-session tr.session-row-nopad td.session-cell
   padding-bottom 0
 
-.session td.session-cell input,
-.session td.session-cell select
+.new-session td.session-cell input,
+.new-session td.session-cell select
   width 100%
   margin-bottom 10px
   font-size 12px
@@ -1796,7 +1796,7 @@ span.signin-error
   -moz-box-sizing border-box
   -webkit-box-sizing border-box
 
-.session td.session-cell textarea
+.new-session td.session-cell textarea
   width 662px
   margin-bottom 10px
   font-size 12px
@@ -1881,7 +1881,7 @@ span.signin-error
   -o-animation-fill-mode both
   animation-fill-mode both
 
-.session tr.session-tick-details td.session-cell
+.new-session tr.session-tick-details td.session-cell
   padding-bottom 10px
 
 .session-activity-clear,
@@ -2551,7 +2551,7 @@ a.post-avatar img
 
 .post-info
   margin 10px 0 0
-  font-size 12px
+  font-size 11px
   line-height 13px
   color #808080
 
@@ -2843,7 +2843,91 @@ table.post-params label
 
 .upload-remove:active
   background rgba(0,0,0,0.15)
-  
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––sessions*/
+
+.sessions
+  margin-left -30px
+
+.session
+  position relative
+  display none
+  width 680px
+  margin-bottom 30px
+  padding 0 40px 30px 30px
+  border-bottom 1px solid #f2f2f2
+
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration .2s
+  -moz-animation-duration .2s
+  -o-animation-duration .2s
+  animation-duration .2s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
+
+.session:last-child
+  margin 0
+  padding 0 40px 0 30px
+  border none
+
+.session.single
+  width 1024px
+  margin-top 30px
+  margin-bottom 30px
+  padding 0
+
+.page-title span.session-title
+  color blue
+
+a.session-avatar
+  background none
+  display block
+
+a.session-avatar img
+  position absolute
+  top 27px
+  left 30px
+  z-index 1
+  width 48px
+  height 48px
+  border-radius 2px 0
+
+  -webkit-box-shadow 2px 2px 2px rgba(0,0,0,0.1)
+  -moz-box-shadow 2px 2px 2px rgba(0,0,0,0.1)
+  box-shadow 2px 2px 2px rgba(0,0,0,0.1)
+
+.single > a.session-avatar img
+  top 0
+  left 0
+
+.session .session-body
+  margin 10px 0 0
+  font-size 14px
+  line-height 22px
+  color #4d4d4d
+
+.session .session-body p
+  font-family standard_thin
+  margin-bottom 10px
+
+.session.single .session-body
+  margin 15px 0 0
+  font-size 16px
+  line-height 24px
+
+.session.single .session-body p
+  margin-bottom 15px
+
+.session-info
+  margin 10px 0 0
+  font-size 11px
+  line-height 13px
+  color #808080
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––comments*/
 
@@ -2882,7 +2966,7 @@ table.post-params label
 .comment-body p
   padding 0 40px
   font-size 13px
-  line-height 16px
+  line-height 17px
   font-weight normal
   color #4d4d4d
   margin 0

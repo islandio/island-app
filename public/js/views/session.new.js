@@ -10,7 +10,7 @@ define([
   'rpc',
   'util',
   'Spin',
-  'text!../../templates/session.html',
+  'text!../../templates/session.new.html',
   'text!../../templates/activity.html',
   'text!../../templates/tick.html',
   'views/lists/choices'
