@@ -1,5 +1,5 @@
 /*
- * Session view
+ * New session view
  */
 
 define([
@@ -58,29 +58,29 @@ define([
     // Bind mouse events.
     events: {
       'click .activity-button': 'addActivity',
-      'click .session-activity-clear': 'deleteActivity',
+      'click .new-session-activity-clear': 'deleteActivity',
       'click .tick-button': 'addTick',
-      'click .session-tick-clear': 'deleteTick',
-      'click .session-button': 'submit',
+      'click .new-session-tick-clear': 'deleteTick',
+      'click .new-session-button': 'submit',
       'click .navigate': 'navigate',
-      'click .session-tried': 'checkTried',
-      'click .session-sent': 'checkSent',
-      'keyup .session-crag-search-input': 'validate',
-      'click .session-crag-search .choice': 'validate',
-      'click .session-crag-search .search-choice-clear': 'validate',
-      'change .session-datepicker': 'validate',
-      'change .session-activity-type': 'validateTicks'
+      'click .new-session-tried': 'checkTried',
+      'click .new-session-sent': 'checkSent',
+      'keyup .new-session-crag-search-input': 'validate',
+      'click .new-session-crag-search .choice': 'validate',
+      'click .new-session-crag-search .search-choice-clear': 'validate',
+      'change .new-session-datepicker': 'validate',
+      'change .new-session-activity-type': 'validateTicks'
     },
 
     // Misc. setup.
     setup: function () {
 
       // Save refs.
-      this.dateInput = this.$('.session-datepicker').pickadate();
-      this.activities = this.$('.session-activities');
+      this.dateInput = this.$('.new-session-datepicker').pickadate();
+      this.activities = this.$('.new-session-activities');
       this.datePicker = this.dateInput.pickadate('picker');
-      this.errorMsg = this.$('.session-error');
-      this.submitButton = this.$('.session-button');
+      this.errorMsg = this.$('.new-session-error');
+      this.submitButton = this.$('.new-session-button');
       this.submitButtonSpin = new Spin($('.button-spin', this.el), {
         color: '#4d4d4d',
         lines: 13,
@@ -92,7 +92,7 @@ define([
       // Init choices.
       this.cragChoices = new Choices(this.app, {
         reverse: true, 
-        el: '.session-crag-search',
+        el: '.new-session-crag-search',
         choose: true,
         onChoose: _.bind(this.validateTicks, this),
         types: ['crags']
@@ -116,7 +116,7 @@ define([
 
     // Focus on the first empty input field.
     focus: function (e) {
-      _.find(this.$('input[type!="submit"]:visible:not(.session-datepicker)'),
+      _.find(this.$('input[type!="submit"]:visible:not(.new-session-datepicker)'),
           function (i) {
         var empty = $(i).val().trim() === '';
         if (empty) $(i).focus();
@@ -175,28 +175,28 @@ define([
       if (e) e.preventDefault();
 
       // Remove.
-      $(e.target).closest('.session-activity').remove();
+      $(e.target).closest('.new-session-activity').remove();
     },
 
     validateTicks: function (e) {
       if (!this.cragChoices.choice) {
-        this.$('.session-ticks').hide();
+        this.$('.new-session-ticks').hide();
         _.each(this.tickChoices, function (t) {
           t.destroy();
         });
         this.tickChoices = {};
-        this.$('.session-tick').remove();
+        this.$('.new-session-tick').remove();
         return;
       }
-      var types = this.$('.session-activity-type');
+      var types = this.$('.new-session-activity-type');
       _.each(types, _.bind(function (t) {
         t = $(t);
         var opt = $('option[value="' + t.val() + '"]', t);
         var type = opt.data('type');
-        var ticks = $('.session-ticks', t.closest('.session-activity'));
+        var ticks = $('.new-session-ticks', t.closest('.new-session-activity'));
         var label = $('.tick-button span', ticks);
         if (type) {
-          _.each($('.session-tick', ticks), _.bind(function (st) {
+          _.each($('.new-session-tick', ticks), _.bind(function (st) {
             st = $(st);
             var tid = st.data('tid');
             var stt = this.tickChoices[tid].options.query.type;
@@ -211,7 +211,7 @@ define([
           else label.text('Route');
         } else {
           ticks.hide();
-          _.each($('.session-tick', ticks), _.bind(function (st) {
+          _.each($('.new-session-tick', ticks), _.bind(function (st) {
             st = $(st);
             var tid = st.data('tid');
             this.tickChoices[tid].destroy();
@@ -226,8 +226,8 @@ define([
       if (e) e.preventDefault();
 
       // Render and attach.
-      var ctx = $(e.target).closest('.session-activity');
-      var types = $('.session-activity-type', ctx);
+      var ctx = $(e.target).closest('.new-session-activity');
+      var types = $('.new-session-activity-type', ctx);
       var type = $('option[value="' + types.val() + '"]', types).data('type');
       var title = type === 'b' ? 'Problem': 'Route';
       var tick = $(this.tickTemp.call(this, {title: title}))
@@ -247,7 +247,7 @@ define([
       // Init choices.
       var choices = new Choices(this.app, {
         reverse: true, 
-        el: $('.session-ascent-search', tick).get(0),
+        el: $('.new-session-ascent-search', tick).get(0),
         choose: true,
         types: ['ascents'],
         query: {
@@ -269,7 +269,7 @@ define([
       if (e) e.preventDefault();
 
       // Remove.
-      var tick = $(e.target).closest('.session-tick');
+      var tick = $(e.target).closest('.new-session-tick');
       var tid = tick.data('tid');
       this.tickChoices[tid].destroy();
       delete this.tickChoices[tid];
@@ -277,21 +277,21 @@ define([
     },
 
     checkTried: function (e) {
-      var ctx = $(e.target).closest('.session-tick');
-      var sent = $('.session-sent', ctx);
-      var tried = $('.session-tried', ctx);
+      var ctx = $(e.target).closest('.new-session-tick');
+      var sent = $('.new-session-sent', ctx);
+      var tried = $('.new-session-tried', ctx);
       $(sent).attr('checked', false);
       $(tried).attr('checked', true);
-      $('.session-tick-details', ctx).hide();
+      $('.new-session-tick-details', ctx).hide();
     },
 
     checkSent: function (e) {
-      var ctx = $(e.target).closest('.session-tick');
-      var sent = $('.session-sent', ctx);
-      var tried = $('.session-tried', ctx);
+      var ctx = $(e.target).closest('.new-session-tick');
+      var sent = $('.new-session-sent', ctx);
+      var tried = $('.new-session-tried', ctx);
       $(sent).attr('checked', true);
       $(tried).attr('checked', false);
-      $('.session-tick-details', ctx).show();
+      $('.new-session-tick-details', ctx).show();
     },
 
     validate: function (e) {
@@ -315,15 +315,19 @@ define([
       var payload = {
         crag_id: this.cragChoices.choice.model.id,
         date: this.datePicker.get('select').pick,
-        note: this.$('#session-note').val().trim(),
-        name: this.$('#session-name').val().trim()
+        note: this.$('#new-session-note').val().trim(),
+        name: this.$('#new-session-name').val().trim()
       };
+
+      // Handle name.
+      if (payload.name === '')
+        payload.name = (new Date).format('mm/dd/yy');
 
       // Get all actions.
       var actions = [];
-      _.each(this.$('.session-activity'), _.bind(function (a) {
+      _.each(this.$('.new-session-activity'), _.bind(function (a) {
         a = $(a);
-        var type = $('.session-activity-type', a);
+        var type = $('.new-session-activity-type', a);
         var actionType = type.val();
         if (actionType === 'hide') return;
         var action = {
@@ -336,11 +340,11 @@ define([
         var ticks = [];
         var tickType = $('option[value="' + actionType + '"]',
             type).data('type');
-        _.each($('.session-tick', a), _.bind(function (t) {
+        _.each($('.new-session-tick', a), _.bind(function (t) {
           t = $(t);
           var choice = this.tickChoices[t.data('tid')].choice;
           if (!choice) return;
-          var sent = $('.session-sent', t).is(':checked');
+          var sent = $('.new-session-sent', t).is(':checked');
           var tick = {
             type: tickType,
             ascent_id: choice.model.id,
@@ -393,7 +397,7 @@ define([
         // Clear fields.
         _.each(this.tickChoices, function (tc) { tc.destroy(); });
         this.tickChoices = {};
-        $('.session-activity').remove();
+        $('.new-session-activity').remove();
         this.$('input[type="text"], textarea').val('');
         this.cragChoices.clearChoice();
         this.validate();

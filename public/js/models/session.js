@@ -9,9 +9,22 @@ define([
 ], function (_, Backbone, util) {
   return Backbone.Model.extend({
 
-    date: function () {
-      var date = new Date(this.get('created'));
-      return date.format('mmm d');
+    name: function () {
+      return this.get('name') || new Date(this.get('date')).format('mm/dd/yy');
+    },
+
+    duration: function (mins) {
+      return (mins / 60) + 'hrs';
+    },
+
+    performance: function (int) {
+      var str;
+      switch (int) {
+        case -1: str = 'weak'; break;
+        case 0: str = 'average'; break;
+        case 1: str = 'strong'; break;
+      }
+      return str ? 'felt ' + str: '';
     },
 
   });

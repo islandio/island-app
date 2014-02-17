@@ -34,7 +34,7 @@ define([
     render: function () {
 
       // Set page title
-      this.app.title('Privacy Policy');
+      this.app.title('Island | Privacy Policy');
 
       // UnderscoreJS rendering.
       this.template = _.template(template);

@@ -76,7 +76,8 @@ define([
 
       if (!this.parentView) {
         this.$el.addClass('single')
-        this.app.title(this.model.get('title') || this.model.get('key'));
+        this.app.title(this.model.get('author').displayName
+            + ' | ' + this.model.get('title') || this.model.get('key'));
 
         // Render title.
         this.title = _.template(title).call(this);

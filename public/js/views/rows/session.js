@@ -52,7 +52,7 @@ define([
 
       if (!this.parentView) {
         this.$el.addClass('single')
-        this.app.title(this.model.get('name') || this.model.get('Session Log'));
+        this.app.title(this.model.name() + ' | ' + 'Session Log');
 
         // Render title.
         this.title = _.template(title).call(this);

@@ -29,8 +29,8 @@ define([
         if (this.get('displayName') && this.get('displayName') !== '')
           title += ' (' + this.get('displayName') + ')';
       } else if (this.get('crag')) {
-        title += '<strong>' + this.get('name') + '</strong>, '
-            + this.get('crag') + ', ' + this.get('country');
+        title += '<strong>' + this.get('name') + '</strong>';
+        if (this.get('sector')) title += ', ' + this.get('sector');
       } else if (this.get('type')) {
         title += this.get('type') === 'video' ?
             '<i class="icon-youtube-play"></i>':

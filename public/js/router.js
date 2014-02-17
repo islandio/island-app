@@ -29,10 +29,11 @@ define([
   'views/privacy',
   'views/posts',
   'views/sessions',
+  'views/rows/session',
   'views/session.new'
 ], function ($, _, Backbone, Spin, mps, rpc, util, Error, Header, Tabs, Footer, 
     Signin, Forgot, Notifications, Map, Profile, Post, Crag, Ascent, Settings,
-    Reset, Films, About, Privacy, Posts, Sessions, NewSession) {
+    Reset, Films, About, Privacy, Posts, Sessions, Session, NewSession) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -52,6 +53,7 @@ define([
       // Page routes.
       this.route(':un', 'profile', this.profile);
       this.route(':un/:k', 'post', this.post);
+      this.route('sessions/:k', 'session', this.session);
       this.route('crags/:y/:g', 'crag', this.crag);
       this.route('crags/:y/:g/:t/:a', 'ascent', this.ascent);
       this.route('reset', 'reset', this.reset);
@@ -89,6 +91,7 @@ define([
     },
 
     routes: {
+
       // Catch all.
       '*actions': 'default'
     },
@@ -193,6 +196,17 @@ define([
       this.render('/service/post.profile/' + key, _.bind(function (err) {
         if (err) return;
         this.page = new Post({wrap: '.main'}, this.app).render(true);
+        this.renderTabs({html: this.page.title});
+        this.stop();
+      }, this));
+    },
+
+    session: function (key) {
+      this.start();
+      this.renderTabs();
+      this.render('/service/session.profile/' + key, _.bind(function (err) {
+        if (err) return;
+        this.page = new Session({wrap: '.main'}, this.app).render(true);
         this.renderTabs({html: this.page.title});
         this.stop();
       }, this));

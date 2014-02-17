@@ -35,7 +35,7 @@ define([
     render: function () {
 
       // Set page title
-      this.app.title('Films');
+      this.app.title('Island | Films');
 
       // UnderscoreJS rendering.
       this.template = _.template(template);

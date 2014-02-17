@@ -1,33 +1,70 @@
 <%
 
+  var gravatar = 'https://www.gravatar.com/avatar/'
+      + this.model.get('author').gravatar + '?s=48&d='
+      + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
   
 %>
 
-<% if (this.parentView) { %>
-  <div class="page-title">
-    <%= this.model.date() %> | 
+<div class="session-right">
+  <div class="session-title">
     <a href="/<%= this.model.get('author').username %>" class="navigate">
-      <%= this.model.get('author').displayName %></a> 
-    <% if (this.model.get('name')) { %>
-      / <a href="/<%= this.model.get('author').username %>/sessions/<%= this.model.get('id') %>" class="navigate">
-      <span class=""><%= this.model.get('name') %></span></a>
+      <%= this.model.get('author').displayName %>
+    </a>
+    <span class="session-name">
+      <a href="/sessions/<%= this.model.get('key') %>" class="navigate">
+        <%= this.model.name() %>
+      </a>
+    </span>
+  </div>
+  <% _.each(this.model.get('actions'), _.bind(function (a) { %>
+    <div class="session-activity">
+      <ul class="session-activity-title">
+        <% if (a.type === 0) { %>
+          <li>Bouldering</li>
+        <% } else if (a.type === 1) { %>
+          <li>Trad. climbing</li>
+        <% } else if (a.type === 2) { %>
+          <li>Sport climbing</li>
+        <% } else if (a.type === 3) { %>
+          <li>Top roping</li>
+        <% } %>
+        <li><%= this.model.duration(a.duration) %></li>
+        <li><%= this.model.performance(a.performance) %></li>
+      </ul>
+      <ul class="session-ticks">
+        <% _.each(a.ticks, _.bind(function (t) { %>
+          <li>
+            <a href="/crags/<%= t.ascent.key %>" class="navigate">
+              <span><%= t.ascent.name %><%= t.ascent.sector ? ',</span> ' + t.ascent.sector: '</span>' %>
+            </a>
+          </li>
+        <% }, this)); %>
+      </ul>
+    </div>
+  <% }, this)); %>
+  <% if (this.model.get('note')) { %>
+    <div class="session-note">
+      <p>&ldquo;<%= this.model.get('note') %>&rdquo;</p>
+    </div>
+  <% } %>
+  <div class="session-info">
+    Logged <a href="/sessions/<%= this.model.get('key') %>" class="navigate"><time class="created" 
+          datetime="<%= this.model.get('created') %>" 
+          title="<%= this.model.get('created') %>">
+      <%= this.model.get('created') %>
+    </time></a>
+    <% if (this.app.profile.member &&
+        this.model.get('author').id === this.app.profile.member.id) { %>
+      <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+      <span class="session-delete info-delete">delete</span>
     <% } %>
   </div>
-<% } %>
-
-<div class="session-body">
-  
+  <div class="comments"></div>
 </div>
-<div class="session-info">
-  Logged <a href="/<%= this.model.get('author').username %>/sessions/<%= this.model.get('id') %>" class="navigate"><time class="created" 
-        datetime="<%= this.model.get('created') %>" 
-        title="<%= this.model.get('created') %>">
-    <%= this.model.get('created') %>
-  </time></a>
-  <% if (this.app.profile.member &&
-      this.model.get('author').id === this.app.profile.member.id) { %>
-    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-    <span class="session-delete info-delete">delete</span>
-  <% } %>
+<div class="session-left">
+  <a href="/<%= this.model.get('author').username %>" class="session-avatar navigate">
+    <img src="<%= gravatar %>" width="48" height="48" />
+  </a>
 </div>
-<div class="comments"></div>
+<div class="clear"></div>

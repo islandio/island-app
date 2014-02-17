@@ -56,13 +56,7 @@ define([
 
     // collect new data from socket events.
     collect: function (data) {
-      if (!this.latest_list.query)
-        this.collection.unshift(data);
-      else if (this.latest_list.query.featured)
-        return;
-      else if (!this.latest_list.query.type
-          || this.latest_list.query.type === data.type)
-        this.collection.unshift(data);
+      this.collection.unshift(data);
     },
 
     // initial bulk render of list

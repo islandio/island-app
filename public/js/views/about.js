@@ -33,7 +33,7 @@ define([
     render: function () {
 
       // Set page title.
-      this.app.title('About');
+      this.app.title('Island | About');
       
       // UnderscoreJS rendering.
       this.template = _.template(template);

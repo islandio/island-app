@@ -1,12 +1,12 @@
-<div class="session-activity">
-  <a href="javascript:;" class="session-activity-clear" tabindex="-1">
+<div class="new-session-activity">
+  <a href="javascript:;" class="new-session-activity-clear" tabindex="-1">
     <i class="icon-cancel"></i>
   </a>
   <table>
     <tbody>
-      <tr class="session-row-nopad">
-        <td class="session-cell" style="width: 33.33%;">
-          <select class="session-activity-type" name="action">
+      <tr class="new-session-row-nopad">
+        <td class="new-session-cell" style="width: 33.33%;">
+          <select class="new-session-activity-type" name="action">
             <option value="hide">-- Type --</option>
             <option value="0" data-type="b">Bouldering</option>
             <option value="1" data-type="r">Trad. Climbing</option>
@@ -14,11 +14,9 @@
             <option value="3" data-type="r">Top Roping</option>
           </select>
         </td>
-        <td class="session-cell" style="width: 33.33%;">
+        <td class="new-session-cell" style="width: 33.33%;">
           <select name="duration">
             <option value="hide">-- Duration --</option>
-            <option value="180">Half-day</option>
-            <option value="360">All-day</option>
             <option value="30">30m</option>
             <option value="60">1h</option>
             <option value="90">1h 30m</option>
@@ -35,9 +33,17 @@
             <option value="420">7h</option>
             <option value="450">7h 30m</option>
             <option value="480">8h</option>
+            <option value="51">8 30m</option>
+            <option value="54">9h</option>
+            <option value="57">9 30m</option>
+            <option value="60">10h</option>
+            <option value="63">10 30m</option>
+            <option value="66">11h</option>
+            <option value="69">11 30m</option>
+            <option value="72">12h</option>
           </select>
         </td>
-        <td class="session-cell" style="width: 33.33%;">
+        <td class="new-session-cell" style="width: 33.33%;">
           <select name="performance">
             <option value="hide">-- Performance --</option>
             <option value="-1">Weak</option>
@@ -48,7 +54,7 @@
       </tr>
     </tbody>
   </table>
-  <div class="session-ticks">
+  <div class="new-session-ticks">
     <button class="button table-button tick-button">
       <i class="icon-plus"></i> <span>Problem</span>
     </button>

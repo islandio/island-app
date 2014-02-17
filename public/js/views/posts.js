@@ -35,7 +35,7 @@ define([
     render: function () {
 
       // Set page title
-      this.app.title('Posts');
+      this.app.title('Island | Posts');
 
       // Content rendering.
       this.template = _.template(template);

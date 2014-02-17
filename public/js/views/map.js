@@ -65,7 +65,7 @@ define([
           color: '#b3b3b3',
           lines: 17,
           length: 12,
-          width: 4,
+          width: 3,
           radius: 18
         });
       if (!this.plotSpin)
@@ -240,6 +240,7 @@ define([
     },
 
     getInstaMarkers: function (remove) {
+      return;
       var map = this.vis.mapView.map_leaflet;
       var limit = remove ? 200: 100;
       var zoom = map.getZoom();
@@ -325,6 +326,7 @@ define([
     },
 
     getMediaMarkers: function (remove) {
+      return;
       var self = this;
       var map = this.vis.mapView.map_leaflet;
       var limit = remove ? 200: 100;
