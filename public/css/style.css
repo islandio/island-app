@@ -283,6 +283,20 @@ a.contact-link {
 a.image-anchor {
   background: none;
 }
+a.title {
+  background: none;
+  font-size: 12px;
+}
+a.title i:before {
+  margin: 0;
+}
+a.title-large {
+  display: block;
+  margin: 5px 0 11px;
+  background: none;
+  font-size: 18px;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+}
 small {
   font-size: 9px;
   line-height: 12px;
@@ -327,7 +341,7 @@ h1.title-sub {
   font-weight: bold;
 }
 time.created {
-  color: #b3b3b3;
+  color: #666;
   font-size: 10px;
   display: inline-block;
 }
@@ -2869,8 +2883,9 @@ table.post-params label {
 .session {
   position: relative;
   display: none;
-  width: 680px;
-  padding: 0 40px 0 30px;
+  width: 710px;
+  padding: 0 40px 0 0;
+  margin-right: -40px;
   -webkit-animation-name: fadeIn;
   -moz-animation-name: fadeIn;
   -o-animation-name: fadeIn;
@@ -2889,27 +2904,24 @@ table.post-params label {
 }
 .session.single {
   width: 1024px;
-  margin-top: 30px;
-  margin-bottom: 30px;
+  margin: 30px 0;
   padding: 0;
 }
 .session-left {
   float: left;
-  width: 78px;
+  width: 108px;
+  text-align: center;
 }
 .session-right {
-  margin: 0 0 0 78px;
+  margin: 0 0 0 108px;
   padding: 20px 0 20px 30px;
   border-left: 1px solid #f2f2f2;
 }
-a.session-avatar {
-  background: none;
+.session-avatar {
   display: block;
+  margin-top: 20px;
 }
-a.session-avatar img {
-  position: absolute;
-  top: 20px;
-  left: 30px;
+.session-avatar img {
   width: 48px;
   height: 48px;
   -webkit-border-radius: 2px;
@@ -2917,18 +2929,39 @@ a.session-avatar img {
   border-radius: 2px;
 }
 .session-title {
-  font-size: 12px;
+  width: 414px;
 }
-.session-title a {
-  background: none;
+.session-location {
+  float: right;
 }
-.session-name {
-  display: block;
-  font-size: 18px;
-  margin: 5px 0 10px;
-  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+.session-map {
+  display: none;
+  position: absolute;
+  top: 20px;
+  right: 40px;
+  width: 135px;
+  height: 76px;
+  background: #fcfcfc;
+  border: 1px solid #f9f9f9;
+  overflow: hidden;
+  -webkit-animation-name: fadeIn;
+  -moz-animation-name: fadeIn;
+  -o-animation-name: fadeIn;
+  animation-name: fadeIn;
+  -webkit-animation-duration: 0.2s;
+  -moz-animation-duration: 0.2s;
+  -o-animation-duration: 0.2s;
+  animation-duration: 0.2s;
+  -webkit-animation-fill-mode: both;
+  -moz-animation-fill-mode: both;
+  -o-animation-fill-mode: both;
+  animation-fill-mode: both;
 }
-.session-activity,
+.session-map .cartodb-logo,
+.session-map .cartodb-zoom,
+.session-map .leaflet-control-attribution {
+  display: none !important;
+}
 ul.session-activity-title {
   list-style: none;
   font-size: 0;
@@ -2946,10 +2979,8 @@ ul.session-activity-title li + li {
   font-size: 12px;
   font-weight: normal;
 }
-.session-note {
+p.session-note {
   width: 414px;
-}
-.session-note p {
   font-size: 13px;
   line-height: 18px;
   color: #3d3d3d;
@@ -2960,22 +2991,75 @@ ul.session-ticks {
   list-style: none;
 }
 ul.session-ticks li {
-  padding: 0 10px;
+  position: relative;
+  padding: 5px 10px;
   font-size: 14px;
-  line-height: 32px;
-  background: #f9f9f9;
-  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-  margin-bottom: 2px;
+  background: #fcfcfc;
+  border: 1px solid #f9f9f9;
+  margin-bottom: 5px;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
 }
-ul.session-ticks li a {
+ul.session-ticks li .session-tick-name {
+  display: block;
+}
+ul.session-ticks li .session-tick-name a {
+  font-size: 14px;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  color: #e76533;
   background: none;
+}
+ul.session-ticks li.sent .session-tick-name a {
   color: #4bb8d7;
 }
-ul.session-ticks li a:hover {
+ul.session-ticks li .session-tick-name a:hover {
   text-decoration: underline;
+}
+.session-tick-stars {
+  display: inline-block;
+  height: 15px;
+  margin-left: 5px;
+  color: #e6e6e6;
+  font-size: 0;
+  margin-left: 5px;
+}
+.session-tick-stars i {
+  font-size: 13px;
+}
+.session-tick-stars i.icon-star:not(.empty) {
+  color: #daa520;
+}
+.session-tick-stars i:before {
+  margin: 0 0.15em 0 0;
+}
+ul.session-ticks li .session-tick-grade {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-size: 13px;
+  color: #b3b3b3;
+}
+ul.session-ticks li.sent .session-tick-grade {
+  color: inherit;
+}
+ul.session-tick-details {
+  height: 17px;
+  list-style: none;
+  font-size: 0;
+}
+ul.session-tick-details li {
+  display: inline;
+  padding: 0 5px 0 0;
+  color: #666;
+  font-size: 11px;
+}
+p.session-tick-note {
+  margin-top: 5px;
+  font-size: 12px;
+  line-height: 18px;
+  color: #3d3d3d;
 }
 .session-info {
   margin: 10px 0 0;

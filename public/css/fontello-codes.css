@@ -8,12 +8,14 @@
 .icon-attention:before { content: '\e806'; } /* '' */
 .icon-location:before { content: '\e80b'; } /* '' */
 .icon-login:before { content: '\e80e'; } /* '' */
+.icon-logout:before { content: '\e802'; } /* '' */
 .icon-ok:before { content: '\e803'; } /* '' */
-.icon-right-dir:before { content: '\e808'; } /* '' */
 .icon-globe:before { content: '\e800'; } /* '' */
 .icon-youtube-play:before { content: '\e809'; } /* '' */
+.icon-star:before { content: '\e812'; } /* '' */
+.icon-star-empty:before { content: '\e813'; } /* '' */
 .icon-user:before { content: '\e80f'; } /* '' */
 .icon-user-add:before { content: '\e810'; } /* '' */
 .icon-user-delete:before { content: '\e811'; } /* '' */
 .icon-error:before { content: '\e807'; } /* '' */
-.icon-logout:before { content: '\e802'; } /* '' */
+.icon-right-dir:before { content: '\e808'; } /* '' */

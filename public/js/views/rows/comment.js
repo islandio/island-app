@@ -38,7 +38,7 @@ define([
       e.preventDefault();
 
       // Route to wherever.
-      var path = $(e.target).attr('href') || $(e.target).parent().attr('href');
+      var path = $(e.target).closest('a').attr('href');
       if (path)
         this.app.router.navigate(path, {trigger: true});
     },

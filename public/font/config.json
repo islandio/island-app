@@ -85,6 +85,18 @@
       "src": "fontawesome"
     },
     {
+      "uid": "25b34dea4784f72c710454f32ff8fa2b",
+      "css": "star",
+      "code": 59410,
+      "src": "entypo"
+    },
+    {
+      "uid": "0e3f1335f83cca67329b2c4bcb3aaec5",
+      "css": "star-empty",
+      "code": 59411,
+      "src": "entypo"
+    },
+    {
       "uid": "bczb7qup4axmc490xmuuv8qdhcnbgeyf",
       "css": "user",
       "code": 59407,

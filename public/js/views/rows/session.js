@@ -58,6 +58,23 @@ define([
         this.title = _.template(title).call(this);
       }
 
+      // Render crag location map.
+      var crag = this.model.get('crag');
+      if (crag.location && crag.location.latitude
+          && crag.location.longitude) {
+        this.$('.session-map').show();
+        cartodb.createVis('session_map_' + this.model.id,
+            'https://island.cartodb.com/api/v1/viz/crags/viz.json', {
+          zoom: 8,
+          center_lat: crag.location.latitude,
+          center_lon: crag.location.longitude,
+          zoomControl: false,
+          scrollwheel: false,
+          cartodb_logo: false,
+          https: true
+        }, _.bind(function (vis, layers) {}, this));
+      }
+
       return this;
     },
 
