@@ -115,6 +115,18 @@
       "src": "typicons"
     },
     {
+      "uid": "3838a5aba604532d2dbae5904615ea39",
+      "css": "down",
+      "code": 59413,
+      "src": "mfglabs"
+    },
+    {
+      "uid": "040e72500c863813088c9f9c9415f8e9",
+      "css": "up",
+      "code": 59412,
+      "src": "mfglabs"
+    },
+    {
       "uid": "3ab229dd9bccaaaf6c71096da4b72c04",
       "css": "error",
       "code": 59399,

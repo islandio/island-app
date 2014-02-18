@@ -2999,7 +2999,7 @@ table.post-params label
   
 .session-right
   margin 0 0 0 108px
-  padding 20px 0 20px 30px
+  padding 20px 0 20px 40px
   border-left 1px solid #f2f2f2
 
 .session-avatar
@@ -3012,7 +3012,7 @@ table.post-params label
   border-radius 2px
 
 .session-title
-  width 414px
+  width 404px
 
 .session-location
   float right
@@ -3047,7 +3047,19 @@ table.post-params label
   display none !important
 
 .session-activity
-  width 414px
+  position relative
+  width 404px
+
+.session-timeline-dot
+  position absolute
+  left -45px
+  top 10px
+  font-size 34px
+  color #e6e6e6
+  line-height 0
+
+.session-timeline-dot:before
+  content "\00b7"
 
 ul.session-activity-title
   list-style none
@@ -3064,18 +3076,20 @@ ul.session-activity-title li span
 
 ul.session-activity-title li + li
   float right
+  width 55px
   color #666
   font-size 13px
   font-weight normal
+  white-space nowrap
 
 p.session-note
-  width 414px
+  width 404px
   font-size 13px
   line-height 18px
   color #3d3d3d
 
 ul.session-ticks
-  width 414px
+  width 404px
   margin 0 0 10px
   list-style none
 
@@ -3087,6 +3101,38 @@ ul.session-ticks li
   border 1px solid #f9f9f9
   margin-bottom 2px
   border-radius 2px
+
+ul.session-ticks li .session-tick-label
+  display none
+  position absolute
+  left -41px
+  top 14px
+  width 41px
+  border-bottom 1px solid #f2f2f2
+  color #e6e6e6
+
+ul.session-ticks li .session-tick-label i
+  position absolute
+  left -11px
+  top -10px
+  padding 0 3px
+  border 1px solid #e6e6e6
+  border-radius 10px
+  font-size 9px
+  color #e6e6e6
+  line-height 19px
+  background #fff
+
+  -webkit-transition all 0.15s ease-in-out
+  -moz-transition all 0.15s ease-in-out
+  transition all 0.15s ease-in-out
+
+.session:hover ul.session-ticks li .session-tick-label i
+  color #4d4d4d
+  
+
+ul.session-ticks li.sent .session-tick-label
+  display block
 
 ul.session-ticks li .session-tick-name
   display block
@@ -3149,7 +3195,7 @@ p.session-tick-note
   color #3d3d3d
 
 .session-info
-  width 414px
+  width 404px
   margin 10px 0 0
   font-size 11px
   line-height 13px
@@ -3170,10 +3216,10 @@ p.session-tick-note
 
 .session .comment,
 .session .comments
-  width 414px
+  width 404px
 
 .session textarea.comment-input
-  width 347px
+  width 337px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––events*/
 

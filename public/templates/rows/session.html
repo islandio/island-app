@@ -28,6 +28,7 @@
   </a>
   <% _.each(this.model.get('actions'), _.bind(function (a) { %>
     <div class="session-activity">
+      <span class="session-timeline-dot"></span>
       <ul class="session-activity-title">
         <li>
           <% if (a.type === 0) { %>Bouldering
@@ -43,6 +44,7 @@
         <ul class="session-ticks">
           <% _.each(a.ticks, _.bind(function (t) { %>
             <li class="<%= t.sent ? 'sent': '' %>">
+              <span class="session-tick-label"><i class="icon-ok"></i></span>
               <span class="session-tick-grade">
                 <%= this.model.grade(t.grade, t.feel) || t.ascent.grades.join(' / ') %>
               </span>

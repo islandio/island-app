@@ -341,12 +341,13 @@ define([
         var ticks = [];
         var tickType = $('option[value="' + actionType + '"]',
             type).data('type');
-        _.each($('.new-session-tick', a), _.bind(function (t) {
+        _.each($('.new-session-tick', a), _.bind(function (t, i) {
           t = $(t);
           var choice = this.tickChoices[t.data('tid')].choice;
           if (!choice) return;
           var sent = $('.new-session-sent', t).is(':checked');
           var tick = {
+            index: i,
             type: tickType,
             ascent_id: choice.model.id,
             note: $('textarea[name="note"]', t).val().trim()
