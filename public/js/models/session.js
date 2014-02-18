@@ -18,17 +18,20 @@ define([
     },
 
     duration: function (mins) {
-      return (mins / 60) + 'hrs';
+      if (!mins) return '';
+      var hrs = mins / 60;
+      var units = hrs !== 1 ? 'hrs': 'hr';
+      return hrs + '<span class="units"> ' + units + '</span>';
     },
 
     performance: function (num) {
       var str;
       switch (num) {
         case -1: str = 'weak'; break;
-        case 0: str = 'average'; break;
+        case 0: str = 'good'; break;
         case 1: str = 'strong'; break;
       }
-      return str ? 'Felt ' + str: '';
+      return str ? 'felt ' + str: '';
     },
 
     grade: function (num, feel) {

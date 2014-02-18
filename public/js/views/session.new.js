@@ -325,12 +325,13 @@ define([
 
       // Get all actions.
       var actions = [];
-      _.each(this.$('.new-session-activity'), _.bind(function (a) {
+      _.each(this.$('.new-session-activity'), _.bind(function (a, i) {
         a = $(a);
         var type = $('.new-session-activity-type', a);
         var actionType = type.val();
         if (actionType === 'hide') return;
         var action = {
+          index: i,
           type: actionType,
           duration: $('select[name="duration"]', a).val(),
           performance: $('select[name="performance"]', a).val()
@@ -387,6 +388,9 @@ define([
           }, true]);
           return;
         }
+
+        // Scroll to top.
+        $(window).scrollTop(0);
 
         // Show success.
         mps.publish('flash/new', [{

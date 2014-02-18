@@ -305,6 +305,9 @@ small {
 small a {
   color: #808080;
 }
+.units {
+  font-size: 11px;
+}
 h1.title-left {
   display: inline-block;
   margin-left: 30px;
@@ -2939,10 +2942,10 @@ table.post-params label {
   position: absolute;
   top: 20px;
   right: 40px;
-  width: 135px;
-  height: 76px;
+  width: 125px;
+  height: 125px;
   background: #fcfcfc;
-  border: 1px solid #f9f9f9;
+  border: 1px solid #f2f2f2;
   overflow: hidden;
   -webkit-animation-name: fadeIn;
   -moz-animation-name: fadeIn;
@@ -2962,6 +2965,9 @@ table.post-params label {
 .session-map .leaflet-control-attribution {
   display: none !important;
 }
+.session-activity {
+  width: 414px;
+}
 ul.session-activity-title {
   list-style: none;
   font-size: 0;
@@ -2970,13 +2976,15 @@ ul.session-activity-title {
 ul.session-activity-title li {
   display: inline;
   padding: 0;
-  font-size: 13px;
-  font-weight: bold;
+  font-size: 14px;
+}
+ul.session-activity-title li span {
+  color: #666;
 }
 ul.session-activity-title li + li {
-  padding: 0 0 0 20px;
+  float: right;
   color: #666;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: normal;
 }
 p.session-note {
@@ -2996,7 +3004,7 @@ ul.session-ticks li {
   font-size: 14px;
   background: #fcfcfc;
   border: 1px solid #f9f9f9;
-  margin-bottom: 5px;
+  margin-bottom: 2px;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
@@ -3062,6 +3070,7 @@ p.session-tick-note {
   color: #3d3d3d;
 }
 .session-info {
+  width: 414px;
   margin: 10px 0 0;
   font-size: 11px;
   line-height: 13px;
@@ -3080,7 +3089,8 @@ p.session-tick-note {
   line-height: 30px;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 }
-.session .comment {
+.session .comment,
+.session .comments {
   width: 414px;
 }
 .session textarea.comment-input {
