@@ -11,13 +11,13 @@
       <%= this.model.body() %>
     </p>
     <div class="notification-info">
-      <time class="created" 
+      <span class="info-delete">Hide</span>
+      <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+      <time class="created static" 
           datetime="<%= this.model.get('created') %>" 
           title="<%= this.model.get('created') %>">
         <%= this.model.get('created') %>
       </time>
-      <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-      <span class="info-delete">hide</span>
     </div>
     <div class="clear"></div>
   </div>

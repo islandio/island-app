@@ -5,20 +5,20 @@
 <iframe src="<%= this.model.src() %>" width="680" height="383"
     frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
 <div class="post-info">
-  Added by <a href="/<%= this.model.get('author').username %>" class="navigate">
+  <% if (this.app.profile.member &&
+      this.model.get('author').id === this.app.profile.member.id) { %>
+    <span class="media-delete info-delete">Delete</span>
+    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+  <% } %>
+  Added by <a href="/<%= this.model.get('author').username %>" class="muted navigate">
     <%= this.model.get('author').displayName %></a>
-  <a href="/<%= this.model.get('key') %>" class="navigate"><time class="created" 
+  <a href="/<%= this.model.get('key') %>" class="muted navigate"><time class="created" 
         datetime="<%= this.model.get('created') %>" 
         title="<%= this.model.get('created') %>">
     <%= this.model.get('created') %>
   </time></a>
   <span class="info-divider">&nbsp;&middot;&nbsp;</span>
   <span class="info-item"><%= this.model.views() %> 
-      <%= (this.model.get('vcnt') || 0) !== 1 ? 'views': 'view' %></span>
-  <% if (this.app.profile.member &&
-      this.model.get('author').id === this.app.profile.member.id) { %>
-    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-    <span class="media-delete info-delete">delete</span>
-  <% } %>
+      <%= (this.model.get('vcnt') || 0) !== 1 ? 'Views': 'View' %></span>
 </div>
 <div class="comments"></div>

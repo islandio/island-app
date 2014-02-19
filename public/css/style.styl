@@ -307,6 +307,13 @@ a.contact-link
   color blue
   font-weight bold
 
+a.muted
+  color #999
+  background none
+
+a.muted:hover
+  color blue
+
 a.image-anchor
   background none
 
@@ -325,12 +332,9 @@ a.title-large
   font-family standard_thin
 
 small
-  font-size 9px
+  font-size 11px
   line-height 12px
-  color #808080
-
-small a
-  color #808080
+  color #999
 
 .units
   font-size 11px
@@ -371,12 +375,11 @@ h1.title-sub
   font-weight bold
 
 time.created
-  color #666
-  font-size 10px
+  font-size 11px
   display inline-block
 
-time.created:hover
-  color blue
+time.created.static
+  color #999
 
 .http-error
   display block
@@ -466,26 +469,20 @@ span.empty-list
   border 1px solid red !important
 
 .info-delete
-  color darkgray
-  background mattegray
+  font-size 11px
+  color #999
+  background none
   cursor pointer
-  color #666
-  font-size 10px
 
 .info-delete:hover
-  background-color rgba(75, 184, 215, 0.25)
   color blue
 
-.info-delete:active
-  background-color rgba(75, 184, 215, 0.5)
-
 .info-divider
-  font-size 8px
-  color #b3b3b3
+  font-size 11px
+  color #999
   
 .info-item
   font-size 11px
-  color #b3b3b3
 
 p.page
   font-family standard_thin
@@ -1062,9 +1059,8 @@ li.tab.active a
 
 .footer-logo
   position absolute
-  left -6px
-  top 0
-  opacity 0.5
+  left -5px
+  top -6px
 
 .panel
   position fixed
@@ -1112,12 +1108,15 @@ li.tab.active a
 a.logo
   float left
   height 50px
-  padding 0 10px
+  padding 0 15px 0 0
+  margin-left -5px
   border none !important
   border-radius 0
+  color #396400
+  background none
 
 a.logo img
-  margin-top 2px
+  margin-top 10px
 
 span.tagline
   float right
@@ -1303,8 +1302,9 @@ ul.header-links li
   margin 0 15px 0 0
 
 ul.header-links li a
-  font-size 13px
-  font-weight bold
+  font-size 14px
+  font-family standard_thin
+  background none
 
 ul.header-links li a:hover
   text-decoration none
@@ -2429,7 +2429,7 @@ h2.profile-section-title
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––comments*/
 
 .comments
-  margin 10px 0 0 0
+  margin 5px 0 0 0
 
 .comments span.empty-list
   margin 10px 0 0 0
@@ -2513,10 +2513,14 @@ a.comment-author
   color #666
   font-weight bold
   font-size 11px
+  background none
 
   -webkit-text-shadow 1px 1px 0 rgba(255,255,255,0.7)
   -moz-text-shadow 1px 1px 0 rgba(255,255,255,0.7)
   text-shadow 1px 1px 0 rgba(255,255,255,0.7)
+
+a.comment-author:hover
+  color blue
 
 .comment-info
   position relative
@@ -2679,7 +2683,7 @@ textarea.comment-input
   margin 10px 0 0
   font-size 11px
   line-height 13px
-  color #808080
+  color #999
 
 .post-input .post
   width 710px
@@ -3055,8 +3059,12 @@ table.post-params label
   left -45px
   top 10px
   font-size 34px
-  color #e6e6e6
+  color #b3b3b3
   line-height 0
+
+  -webkit-transition all 0.15s ease-in-out
+  -moz-transition all 0.15s ease-in-out
+  transition all 0.15s ease-in-out
 
 .session-timeline-dot:before
   content "\00b7"
@@ -3102,24 +3110,39 @@ ul.session-ticks li
   margin-bottom 2px
   border-radius 2px
 
+ul.session-ticks li.sent
+  background #f9f9f9
+
+  -webkit-transition all 0.15s ease-in-out
+  -moz-transition all 0.15s ease-in-out
+  transition all 0.15s ease-in-out
+
+.session:hover ul.session-ticks li.sent
+  border-color #e6e6e6
+
 ul.session-ticks li .session-tick-label
-  display none
   position absolute
   left -41px
   top 14px
   width 41px
   border-bottom 1px solid #f2f2f2
-  color #e6e6e6
+
+  -webkit-transition all 0.15s ease-in-out
+  -moz-transition all 0.15s ease-in-out
+  transition all 0.15s ease-in-out
+
+.session:hover ul.session-ticks li .session-tick-label
+  border-color #e6e6e6
 
 ul.session-ticks li .session-tick-label i
   position absolute
   left -11px
   top -10px
   padding 0 3px
-  border 1px solid #e6e6e6
+  border 1px solid #f2f2f2
   border-radius 10px
   font-size 9px
-  color #e6e6e6
+  color #b3b3b3
   line-height 19px
   background #fff
 
@@ -3129,10 +3152,24 @@ ul.session-ticks li .session-tick-label i
 
 .session:hover ul.session-ticks li .session-tick-label i
   color #4d4d4d
-  
+  border-color #e6e6e6
 
-ul.session-ticks li.sent .session-tick-label
-  display block
+ul.session-ticks li .session-tick-label-text
+  position absolute
+  left -150px
+  top 6px
+  width 93px
+  font-size 11px
+  color #b3b3b3
+  text-align right
+  white-space nowrap
+
+  -webkit-transition all 0.15s ease-in-out
+  -moz-transition all 0.15s ease-in-out
+  transition all 0.15s ease-in-out
+
+.session:hover ul.session-ticks li .session-tick-label-text
+  color #4d4d4d
 
 ul.session-ticks li .session-tick-name
   display block
@@ -3177,16 +3214,16 @@ ul.session-ticks li .session-tick-grade
 ul.session-ticks li.sent .session-tick-grade
   color inherit
 
-ul.session-tick-details
-  height 17px
-  list-style none
-  font-size 0
+// ul.session-tick-details
+//   height 17px
+//   list-style none
+//   font-size 0
 
-ul.session-tick-details li
-  display inline
-  padding 0 5px 0 0
-  color #666
-  font-size 11px
+// ul.session-tick-details li
+//   display inline
+//   padding 0 5px 0 0
+//   color #666
+//   font-size 11px
 
 p.session-tick-note
   margin-top 5px
@@ -3199,7 +3236,7 @@ p.session-tick-note
   margin 10px 0 0
   font-size 11px
   line-height 13px
-  color #808080
+  color #999
 
 .session-day-header
   border-bottom 1px solid #f2f2f2
@@ -3322,12 +3359,7 @@ p.session-tick-note
 
 .notification-info
   display block
-  font-size 8px
   margin 3px 0 0 40px
-  color #b3b3b3
-
-.notification-info a
-  color #b3b3b3
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––settings & reset*/
 

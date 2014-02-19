@@ -50,24 +50,24 @@
   <%= this.model.body(!this.parentView) %>
 </div>
 <div class="post-info">
-  Posted by <a href="/<%= this.model.get('author').username %>" class="navigate">
+  <% if (this.app.profile.member &&
+      this.model.get('author').id === this.app.profile.member.id) { %>
+    <span class="post-delete info-delete">Delete</span>
+    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+  <% } %>
+  <% if (this.app.profile.member && this.app.profile.member.admin) { %>
+    <a href="javascript:;" class="muted info-item post-feature">Feature</a>
+    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+  <% } %>
+  Posted by <a href="/<%= this.model.get('author').username %>" class="muted navigate">
     <%= this.model.get('author').displayName %></a>
-  <a href="/<%= this.model.get('key') %>" class="navigate"><time class="created" 
+  <a href="/<%= this.model.get('key') %>" class="muted navigate"><time class="created" 
         datetime="<%= this.model.get('created') %>" 
         title="<%= this.model.get('created') %>">
     <%= this.model.get('created') %>
   </time></a>
   <span class="info-divider">&nbsp;&middot;&nbsp;</span>
   <span class="info-item"><%= this.model.views() %> 
-      <%= (this.model.get('vcnt') || 0) !== 1 ? 'views': 'view' %></span>
-  <% if (this.app.profile.member &&
-      this.model.get('author').id === this.app.profile.member.id) { %>
-    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-    <span class="post-delete info-delete">delete</span>
-  <% } %>
-  <% if (this.app.profile.member && this.app.profile.member.admin) { %>
-    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-    <a href="javascript:;" class="info-item post-feature">feature</a>
-  <% } %>
+      <%= (this.model.get('vcnt') || 0) !== 1 ? 'Views': 'View' %></span>
 </div>
 <div class="comments"></div>

@@ -24,7 +24,7 @@
     </a>
   </div>
   <a href="/sessions/<%= this.model.get('key') %>" class="title-large navigate">
-    <%= this.model.name() %>
+    <%= this.model.formatName() %>
   </a>
   <% _.each(this.model.get('actions'), _.bind(function (a) { %>
     <div class="session-activity">
@@ -36,17 +36,24 @@
           <% } else if (a.type === 2) { %>Sport Climbing
           <% } else if (a.type === 3) { %>Top Roping
           <% } %>
-          <span><%= this.model.duration(a.duration) %></span>
+          <span><%= this.model.formatActivityDuration(a.duration) %></span>
         </li>
-        <li><%= this.model.performance(a.performance) %></li>
+        <li><%= this.model.formatActivityPerformance(a.performance) %></li>
       </ul>
       <% if (a.ticks.length !== 0) { %>
         <ul class="session-ticks">
           <% _.each(a.ticks, _.bind(function (t) { %>
             <li class="<%= t.sent ? 'sent': '' %>">
-              <span class="session-tick-label"><i class="icon-ok"></i></span>
+              <% if (t.sent) { %>
+                <span class="session-tick-label">
+                  <i class="icon-ok"></i>
+                </span>
+                <span class="session-tick-label-text">
+                  <%= this.model.formatTickDetails(t) %>
+                </span>
+              <% } %>
               <span class="session-tick-grade">
-                <%= this.model.grade(t.grade, t.feel) || t.ascent.grades.join(' / ') %>
+                <%= this.model.formatTickGrade(t.grade, t.feel) || t.ascent.grades.join(' / ') %>
               </span>
               <span class="session-tick-name">
                 <a href="/crags/<%= t.ascent.key %>" class="navigate">
@@ -62,22 +69,6 @@
                   </span>
                 <% } %>
               </span>
-              <% if (t.sent && (t.tries !== undefined || t.first !== undefined
-                    || t.firstf !== undefined)) { %>
-                <ul class="session-tick-details">
-                  <% if (t.first) { %><li>First ascent</li><li>&middot;</li>
-                  <% } else if (t.firstf) { %><li>First female ascent</li><li>&middot;</li>
-                  <% } %>
-                  <li>
-                    <% if (t.tries === 1) { %>Onsight
-                    <% } else if (t.tries === 2) { %>Flash
-                    <% } else if (t.tries === 3) { %>2nd go
-                    <% } else if (t.tries === 4) { %>3rd go
-                    <% } else if (t.tries === 5) { %>Redpoint
-                    <% } %>
-                  </li>
-                </ul>
-              <% } %>
               <% if (t.note) { %>
                 <p class="session-tick-note">
                   &ldquo;<%= t.note %>&rdquo;
@@ -95,16 +86,17 @@
     </p>
   <% } %>
   <div class="session-info">
-    Logged <a href="/sessions/<%= this.model.get('key') %>" class="navigate"><time class="created" 
+    <% if (this.app.profile.member &&
+        this.model.get('author').id === this.app.profile.member.id) { %>
+      <span class="session-delete info-delete">Delete</span>
+      <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+    <% } %>
+    Logged <a href="/sessions/<%= this.model.get('key') %>"
+          class="muted navigate"><time class="created" 
           datetime="<%= this.model.get('created') %>" 
           title="<%= this.model.get('created') %>">
       <%= this.model.get('created') %>
     </time></a>
-    <% if (this.app.profile.member &&
-        this.model.get('author').id === this.app.profile.member.id) { %>
-      <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-      <span class="session-delete info-delete">delete</span>
-    <% } %>
   </div>
   <div class="comments"></div>
 </div>
