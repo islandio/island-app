@@ -7,11 +7,10 @@ define([
   'Underscore',
   'Backbone',
   'mps',
-  'rpc',
   'util',
   'text!../../templates/posts.html',
   'views/lists/posts'
-], function ($, _, Backbone, mps, rpc, util, template, Posts) {
+], function ($, _, Backbone, mps, util, template, Posts) {
 
   return Backbone.View.extend({
 

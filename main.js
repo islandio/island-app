@@ -28,6 +28,7 @@ var http = require('http');
 var express = require('express');
 var slashes = require('connect-slashes');
 var mongodb = require('mongodb');
+var socketio = require('socket.io');
 var redis = require('redis');
 var reds = require('reds');
 var RedisStore = require('connect-redis')(express);
@@ -35,6 +36,7 @@ var request = require('request');
 var jade = require('jade');
 var stylus = require('stylus');
 var passport = require('passport');
+var psio = require('passport.socketio');
 var util = require('util');
 var fs = require('fs');
 var path = require('path');
@@ -43,6 +45,7 @@ var Step = require('step');
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
 var Connection = require('./lib/db').Connection;
+var Client = require('./lib/client').Client;
 var resources = require('./lib/resources');
 var service = require('./lib/service');
 var Mailer = require('./lib/mailer');
@@ -81,7 +84,11 @@ Step(
       app.set('SCHEDULE_JOBS', argv.jobs);
 
       // Redis connect
-      this(null, redis.createClient(app.get('REDIS_PORT'),
+      this.parallel()(null, redis.createClient(app.get('REDIS_PORT'),
+          app.get('REDIS_HOST')));
+      this.parallel()(null, redis.createClient(app.get('REDIS_PORT'),
+          app.get('REDIS_HOST')));
+      this.parallel()(null, redis.createClient(app.get('REDIS_PORT'),
           app.get('REDIS_HOST')));
     }
 
@@ -98,30 +105,47 @@ Step(
       app.set('SCHEDULE_JOBS', true);
 
       // Redis connect
-      var rc = redis.createClient(app.get('REDIS_PORT'), app.get('REDIS_HOST'));
-      rc.auth(app.get('REDIS_PASS'), _.bind(function (err) {
-        this(err, rc);
-      }, this));
+      var clients = [
+        redis.createClient(app.get('REDIS_PORT'), app.get('REDIS_HOST')),
+        redis.createClient(app.get('REDIS_PORT'), app.get('REDIS_HOST')),
+        redis.createClient(app.get('REDIS_PORT'), app.get('REDIS_HOST'))
+      ];
+      var next = _.after(clients.length, this);
+      _.each(clients, function (c) {
+        c.auth(app.get('REDIS_PASS'), function (err) {
+          next(err, clients[0], clients[1], clients[2]);
+        });
+      });
     }
 
   },
-  function (err, rc) {
+  function (err, rc, rp, rs) {
     if (err) return util.error(err);
 
-    // Common utils init.
+    // Common utils init
     require('./lib/common').init(app.get('ROOT_URI'));
 
     // Mailer init
     app.set('mailer', new Mailer(app.get('gmail'), app.get('HOME_URI')));
 
+    // PubSub init
+    app.set('pubsub', new PubSub({mailer: app.get('mailer')}));
+
+    // Express config
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');
+    app.set('sessionStore', new RedisStore({client: rc, maxAge: 2592000000}));
+    app.set('sessionSecret', 'weareisland');
+    app.set('sessionKey', 'express.sid');
+    app.set('cookieParser', express.cookieParser(app.get('sessionKey')));
+    app.use(express.favicon(__dirname + '/public/img/favicon.ico'));
     app.use(express.logger('dev'));
     app.use(express.bodyParser());
-    app.use(express.cookieParser());
+    app.use(app.get('cookieParser'));
     app.use(express.session({
-      store: new RedisStore({client: rc, maxAge: 2592000000}),
-      secret: '69topsecretislandshit69'
+      store: app.get('sessionStore'),
+      secret: app.get('sessionSecret'),
+      key: app.get('sessionKey')
     }));
     app.use(passport.initialize());
     app.use(passport.session());
@@ -135,13 +159,6 @@ Step(
       app.use(slashes(false));
       app.use(app.router);
       app.use(express.errorHandler({dumpExceptions: true, showStack: true}));
-
-      // PubSub init
-      app.set('pubsub', new PubSub({
-        appId: '43905',
-        key: '37fea545f4a0ce59464c',
-        secret: '1015c7f661849f639e49'
-      }, app.get('mailer')));
     }
 
     // Production only
@@ -162,13 +179,6 @@ Step(
             return next();
           res.redirect('https://' + req.headers.host + req.url);
         });
-
-      // PubSub init
-      app.set('pubsub', new PubSub({
-        appId: '35474',
-        key: 'c260ad31dfbb57bddd94',
-        secret: 'b29cec4949ef7c0d14cd'
-      }, app.get('mailer')));
     }
 
     if (!module.parent) {
@@ -206,8 +216,61 @@ Step(
             res.render('base', {member: req.user, root: app.get('ROOT_URI')});
           });
 
-          // Start server.
-          http.createServer(app).listen(app.get('PORT'));
+          // HTTP server.
+          var server = http.createServer(app);
+
+          // Socket handling
+          var sio = socketio.listen(server);
+          sio.set('store', new socketio.RedisStore({
+            redis: redis,
+            redisPub: rp,
+            redisSub: rs,
+            redisClient: rc
+          }));
+
+          // Development only.
+          if (process.env.NODE_ENV !== 'production') {
+            sio.set('log level', 2);
+          } else {
+            sio.enable('browser client minification');
+            sio.enable('browser client etag');
+            sio.enable('browser client gzip');
+            sio.set('log level', 1);
+            sio.set('transports', [
+              'websocket',
+              'flashsocket',
+              'htmlfile',
+              'xhr-polling',
+              'jsonp-polling'
+            ]);
+          }
+
+          // Socket auth
+          sio.set('authorization', psio.authorize({
+            cookieParser: express.cookieParser,
+            key: app.get('sessionKey'),
+            secret: app.get('sessionSecret'),
+            store: app.get('sessionStore'),
+            fail: function(data, accept) { accept(null, true); },
+            success: function(data, accept) { accept(null, true); }
+          }));
+
+          // Socket connect
+          sio.sockets.on('connection', function (socket) {
+            socket.join('events');
+            if (socket.handshake.user)
+              socket.join('mem-' + socket.handshake.user._id);
+
+            // FIXME: Use a key map instead of
+            // attaching this directly to the socket.
+            socket.client = new Client(socket, app.get('pubsub'), app.get('reds'));
+          });
+
+          // Set pubsub sio
+          app.get('pubsub').setSocketIO(sio);
+
+          // Start server
+          server.listen(app.get('PORT'));
           util.log('Web and API server listening on port ' + app.get('PORT'));
         }
       );

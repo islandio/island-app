@@ -7,10 +7,10 @@ define([
   'Underscore',
   'Backbone',
   'mps',
-  'rpc',
+  'rest',
   'util',
   'text!../../templates/forgot.html'
-], function ($, _, Backbone, mps, rpc, util, template) {
+], function ($, _, Backbone, mps, rest, util, template) {
 
   return Backbone.View.extend({
 
@@ -125,7 +125,7 @@ define([
       this.overlay.show();
 
       // Do the API request.
-      rpc.post('/api/members/forgot', payload, _.bind(function (err, data) {
+      rest.post('/api/members/forgot', payload, _.bind(function (err, data) {
         if (err) {
 
           // Set the error display.

@@ -1,72 +1,48 @@
 /*
- * Async execution of RPCs to the server.
+ * RPC Handling based on Socket.IO.
  */
 
 define([
   'jQuery',
   'Underscore',
-  'mps'
-], function ($, _, mps) {
-  return {  
+  'mps',
+  'util'
+], function ($, _, mps, util) {
+  return {
 
-    exec: function(type, url, data, cb) {
-      if (!data || typeof data === 'function') {
-        cb = data;
-        data = null;
-      }
-      cb = cb || function(){};
+    init: function () {
 
-      var params = {
-        url: url,
-        type: type,
-        success: _.bind(cb, cb, undefined),
-        error: function (res) {
-          var err;
-          try {
-            err = JSON.parse(res.responseText);
-            var data = err.data;
-            err = {message: err.error, code: res.status};
-            if (data) err.data = data;
-          } catch (e) { err = res.status + ' - "' + res.statusText + '"'; }
-          cb(err);
-        },
-        contentType: 'application/json', 
-        dataType: 'json'
-      };
-      if (data)
-        if (type === 'POST')
-          params.data = JSON.stringify(data);
-        else params.url += '?' + $.param(data);
+      // Attach a socket connection.
+      this.socket = io.connect(window.location.origin);
 
-      return $.ajax(params);
+      return this;
     },
 
-    get: function (url, data, cb) {
-      this.exec('GET', url, data, cb);
-    },
+    do: function () {
 
-    post: function (url, data, cb) {
-      this.exec('POST', url, data, cb);
-    },
+      // Check arguments.
+      var args = Array.prototype.slice.call(arguments);
+      if (args.length === 0)
+        return console.error('Missing method name');
+      if (args.length < 2 || typeof _.last(args) !== 'function')
+        return console.error('Missing callback');
 
-    put: function (url, data, cb) {
-      if (!data || typeof data === 'function') {
-        cb = data;
-        data = null;
-      }
+      // Parse arguments.
+      var cb = args.pop();
+      var handle = ['cb', util.rid32()].join(':');
+      args.push(handle);
+      args.unshift('rpc');
 
-      data._method = 'PUT';
-      this.exec('POST', url, data, cb);
-    },
+      // Listen for the callback.
+      // TODO: set timeout for destroying subscription
+      // if this not fired?
+      this.socket.on(handle, _.bind(function () {
+        this.socket.removeListener(handle, arguments.callee);
+        cb.apply(this, arguments);
+      }, this));
 
-    delete: function (url, data, cb) {
-      if (!data || typeof data === 'function') {
-        cb = data;
-        data = null;
-      }
-
-      data._method = 'DELETE';
-      this.exec('POST', url, data, cb);
+      // Finally, emit the event.
+      this.socket.emit.apply(this.socket, args);
     }
 
   }

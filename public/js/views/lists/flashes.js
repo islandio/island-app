@@ -22,10 +22,8 @@ define([
       this.Row = Row;
 
       // Socket subscriptions
-      if (this.app.profile && this.app.profile.member) {
-        this.app.socket.subscribe('mem-' + this.app.profile.member.id)
-            .bind('flash.new', _.bind(this.collect, this));
-      }
+      if (this.app.profile && this.app.profile.member)
+        this.app.rpc.socket.on('flash.new', _.bind(this.collect, this));
 
       // Shell subscriptions:
       mps.subscribe('flash/new', _.bind(function (data, clear) {

@@ -8,13 +8,13 @@ define([
   'Modernizr',
   'views/boiler/list',
   'mps',
-  'rpc',
+  'rest',
   'util',
   'text!../../../templates/lists/medias.html',
   'collections/medias',
   'views/rows/media',
   'Spin'
-], function ($, _, Modernizr, List, mps, rpc, util, template,
+], function ($, _, Modernizr, List, mps, rest, util, template,
       Collection, Row, Spin) {
   return List.extend({
 
@@ -42,9 +42,8 @@ define([
       this.subscriptions = [];
 
       // Socket subscriptions
-      this.app.socket.subscribe('ascent-' + this.parentView.model.id)
-          .bind('media.new', _.bind(this.collect, this))
-          .bind('media.removed', _.bind(this._remove, this));
+      this.app.rpc.socket.on('media.new', _.bind(this.collect, this));
+      this.app.rpc.socket.on('media.removed', _.bind(this._remove, this));
 
       // Misc.
       this.empty_label = this.app.profile.content.page ? 'No media.': '';
@@ -54,9 +53,10 @@ define([
       this.collection.reset(this.latest_list.items);
     },
 
-    // collect new medias from socket events.
-    collect: function (media) {
-      this.collection.unshift(media);
+    // collect new data from socket events.
+    collect: function (data) {
+      if (data.id === this.parentView.model.id)
+        this.collection.unshift(media);
     },
 
     // initial bulk render of list
@@ -176,7 +176,7 @@ define([
       this.mediaButton.attr('disabled', 'disabled');
 
       // Now save the media to server.
-      rpc.post('/api/medias/' + this.type, payload,
+      rest.post('/api/medias/' + this.type, payload,
           _.bind(function (err, data) {
 
         // Clear fields.
@@ -261,7 +261,7 @@ define([
       // get more
       this.spin.start();
       this.fetching = true;
-      rpc.post('/api/medias/list', {
+      rest.post('/api/medias/list', {
         limit: this.limit,
         cursor: this.latest_list.cursor,
         query: this.latest_list.query

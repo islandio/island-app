@@ -6,10 +6,10 @@ define([
   'jQuery',
   'Underscore',
   'mps',
-  'rpc',
+  'rest',
   'views/boiler/row',
   'text!../../../templates/rows/comment.html'
-], function ($, _, mps, rpc, Row, template) {
+], function ($, _, mps, rest, Row, template) {
   return Row.extend({
 
     attributes: function () {

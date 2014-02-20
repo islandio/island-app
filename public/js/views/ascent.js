@@ -7,13 +7,13 @@ define([
   'Underscore',
   'Backbone',
   'mps',
-  'rpc',
+  'rest',
   'util',
   'models/ascent',
   'text!../../templates/ascent.html',
   'text!../../templates/ascent.title.html',
   'views/lists/medias'
-], function ($, _, Backbone, mps, rpc, util, Ascent, template, title, Medias) {
+], function ($, _, Backbone, mps, rest, util, Ascent, template, title, Medias) {
 
   return Backbone.View.extend({
 

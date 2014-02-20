@@ -7,9 +7,9 @@ define([
   'Underscore',
   'views/boiler/row',
   'mps',
-  'rpc',
+  'rest',
   'text!../../../templates/rows/event.html'
-], function ($, _, Row, mps, rpc, template) {
+], function ($, _, Row, mps, rest, template) {
   return Row.extend({
 
     attributes: function () {

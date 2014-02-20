@@ -7,12 +7,12 @@ define([
   'Underscore',
   'views/boiler/list',
   'mps',
-  'rpc',
+  'rest',
+  'Spin',
   'text!../../../templates/lists/notifications.html',
   'collections/notifications',
-  'views/rows/notification',
-  'Spin'
-], function ($, _, List, mps, rpc, template, Collection, Row, Spin) {
+  'views/rows/notification'
+], function ($, _, List, mps, rest, Spin, template, Collection, Row) {
   return List.extend({
 
     el: '.panel-content',
@@ -34,11 +34,9 @@ define([
       this.subscriptions = [];
 
       // Socket Subscriptions
-      this.channel = this.app.socket.subscribe('mem-'
-          + this.app.profile.member.id);
-      this.channel.bind('notification.new', _.bind(this.collect, this));
-      this.channel.bind('notification.read', _.bind(this.read, this));
-      this.channel.bind('notification.removed', _.bind(this._remove, this));
+      this.app.rpc.socket.on('notification.new', _.bind(this.collect, this));
+      this.app.rpc.socket.on('notification.read', _.bind(this.read, this));
+      this.app.rpc.socket.on('notification.removed', _.bind(this._remove, this));
 
       // Shell events
       $(window).resize(_.debounce(_.bind(this.resize, this), 50));
@@ -197,7 +195,7 @@ define([
       // get more
       this.spin.start();
       this.fetching = true;
-      rpc.post('/api/notifications/list', {
+      rest.post('/api/notifications/list', {
         subscriber_id: this.app.profile.member.id,
         limit: this.limit,
         cursor: this.latest_list.cursor,

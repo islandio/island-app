@@ -6,7 +6,7 @@ define([
   'jQuery',
   'Underscore',
   'mps',
-  'rpc',
+  'rest',
   'util',
   'views/boiler/row',
   'models/session',
@@ -14,7 +14,7 @@ define([
   'text!../../../templates/session.title.html',
   'views/lists/comments',
   'text!../../../templates/confirm.html'
-], function ($, _, mps, rpc, util, Row, Model, template, title,
+], function ($, _, mps, rest, util, Row, Model, template, title,
       Comments, confirm) {
   return Row.extend({
 
@@ -132,7 +132,7 @@ define([
       $('#confirm_delete').click(_.bind(function (e) {
 
         // Delete the session.
-        rpc.delete('/api/sessions/' + this.model.get('id'),
+        rest.delete('/api/sessions/' + this.model.get('id'),
             {}, _.bind(function (err, data) {
           if (err) {
 

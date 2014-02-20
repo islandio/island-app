@@ -7,12 +7,12 @@ define([
   'Underscore',
   'views/boiler/list',
   'mps',
-  'rpc',
+  'rest',
   'text!../../../templates/lists/events.html',
   'collections/events',
   'views/rows/event',
   'Spin'
-], function ($, _, List, mps, rpc, template, Collection, Row, Spin) {
+], function ($, _, List, mps, rest, template, Collection, Row, Spin) {
   return List.extend({
 
     el: '.events',
@@ -33,9 +33,8 @@ define([
       this.subscriptions = [];
 
       // Socket subscriptions
-      this.app.socket.subscribe('events')
-          .bind('event.new', _.bind(this.collect, this))
-          .bind('event.removed', _.bind(this._remove, this));
+      this.app.rpc.socket.on('event.new', _.bind(this.collect, this));
+      this.app.rpc.socket.on('event.removed', _.bind(this._remove, this));
 
       // Init the load indicator.
       this.spin = new Spin($('.events-spin', this.$el.parent()));
@@ -167,7 +166,7 @@ define([
       // get more
       this.spin.start();
       this.fetching = true;
-      rpc.post('/api/events/list', {
+      rest.post('/api/events/list', {
         limit: this.limit,
         cursor: this.latest_list.cursor,
         query: this.latest_list.query

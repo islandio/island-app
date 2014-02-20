@@ -8,12 +8,12 @@ define([
   'Modernizr',
   'Backbone',
   'mps',
-  'rpc',
+  'rest',
   'util',
   'models/crag',
   'text!../../templates/crag.html',
   'text!../../templates/crag.title.html'
-], function ($, _, Modernizr, Backbone, mps, rpc, util, Crag, template, title) {
+], function ($, _, Modernizr, Backbone, mps, rest, util, Crag, template, title) {
 
   return Backbone.View.extend({
 

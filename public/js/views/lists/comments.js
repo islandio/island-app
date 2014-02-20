@@ -7,12 +7,12 @@ define([
   'Underscore',
   'views/boiler/list',
   'mps',
-  'rpc',
+  'rest',
   'util',
   'text!../../../templates/lists/comments.html',
   'collections/comments',
   'views/rows/comment'
-], function ($, _, List, mps, rpc, util, template, Collection, Row) {
+], function ($, _, List, mps, rest, util, template, Collection, Row) {
   return List.extend({
     
     el: '.comments',
@@ -30,9 +30,8 @@ define([
       this.subscriptions = [];
 
       // Socket subscriptions
-      this.app.socket.subscribe(this.type + '-' + this.parentView.model.id)
-          .bind('comment.new', _.bind(this.collect, this))
-          .bind('comment.removed', _.bind(this._remove, this));
+      this.app.rpc.socket.on('comment.new', _.bind(this.collect, this));
+      this.app.rpc.socket.on('comment.removed', _.bind(this._remove, this));
 
       // Reset the collection.
       this.collection.older =
@@ -71,9 +70,10 @@ define([
       'click .show-older': 'older',
     },
 
-    // Collect new comments from socket events.
-    collect: function (comment) {
-      this.collection.push(comment);
+    // Collect new data from socket events.
+    collect: function (data) {
+      if (data.parent_id === this.parentView.model.id)
+        this.collection.push(data);
     },
 
     // remove a model
@@ -133,7 +133,7 @@ define([
       // Now save the comment to server.
       var container = this.parentView.parentView ?
           this.parentView.parentView.type || 'null': 'null';
-      rpc.post('/api/comments/' + [container, this.type].join('/'), payload,
+      rest.post('/api/comments/' + [container, this.type].join('/'), payload,
           _.bind(function (err, data) {
 
         if (err) {
@@ -160,7 +160,7 @@ define([
       this.collection.older = 0;
 
       // Get the older comments.
-      rpc.post('/api/comments/list', {
+      rest.post('/api/comments/list', {
         cursor: 0, 
         limit: limit,
         parent_id: this.parentView.model.id,

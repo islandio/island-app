@@ -6,7 +6,7 @@ define([
   'jQuery',
   'Underscore',
   'mps',
-  'rpc',
+  'rest',
   'util',
   'views/boiler/row',
   'models/post',
@@ -15,7 +15,7 @@ define([
   'text!../../../templates/video.html',
   'views/lists/comments',
   'text!../../../templates/confirm.html'
-], function ($, _, mps, rpc, util, Row, Model, template, title, video,
+], function ($, _, mps, rest, util, Row, Model, template, title, video,
       Comments, confirm) {
   return Row.extend({
 
@@ -366,7 +366,7 @@ define([
       $('#confirm_delete').click(_.bind(function (e) {
 
         // Delete the post.
-        rpc.delete('/api/posts/' + this.model.get('key'),
+        rest.delete('/api/posts/' + this.model.get('key'),
             {}, _.bind(function (err, data) {
           if (err) {
 
@@ -397,7 +397,7 @@ define([
 
     feature: function (e) {
       e.preventDefault();
-      rpc.post('/api/posts/feature/' + this.model.get('key'),
+      rest.post('/api/posts/feature/' + this.model.get('key'),
           {}, _.bind(function (err, data) {
         if (err) return console.log(err);
       }, this));

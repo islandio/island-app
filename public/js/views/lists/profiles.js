@@ -8,13 +8,13 @@ define([
   'Modernizr',
   'views/boiler/list',
   'mps',
-  'rpc',
+  'rest',
   'util',
   'text!../../../templates/lists/profiles.html',
   'collections/profiles',
   'views/rows/profile',
   'Spin'
-], function ($, _, Modernizr, List, mps, rpc, util, template,
+], function ($, _, Modernizr, List, mps, rest, util, template,
       Collection, Row, Spin) {
   return List.extend({
 
@@ -41,9 +41,8 @@ define([
       this.subscriptions = [];
 
       // Socket subscriptions
-      this.app.socket.subscribe('profiles')
-          .bind('profile.new', _.bind(this.collect, this))
-          .bind('profile.removed', _.bind(this._remove, this));
+      this.app.rpc.socket.on('profile.new', _.bind(this.collect, this));
+      this.app.rpc.socket.on('profile.removed', _.bind(this._remove, this));
 
       // Misc.
       this.empty_label = this.app.profile.content.page
@@ -170,7 +169,7 @@ define([
       // get more
       this.spin.start();
       this.fetching = true;
-      rpc.post('/api/members/list', {
+      rest.post('/api/members/list', {
         limit: this.limit,
         cursor: this.latest_list.cursor,
         query: this.latest_list.query,

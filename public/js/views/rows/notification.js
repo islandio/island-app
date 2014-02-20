@@ -7,9 +7,9 @@ define([
   'Underscore',
   'views/boiler/row',
   'mps',
-  'rpc',
+  'rest',
   'text!../../../templates/rows/notification.html'
-], function ($, _, Row, mps, rpc, template) {
+], function ($, _, Row, mps, rest, template) {
   return Row.extend({
 
     attributes: function () {
@@ -33,7 +33,7 @@ define([
     read: function (e) {
       e.preventDefault();
       if (!this.$el.hasClass('unread')) return;
-      rpc.put('/api/notifications/read/' + this.model.id, {});
+      rest.put('/api/notifications/read/' + this.model.id, {});
       this.update();
     },
 
@@ -44,7 +44,7 @@ define([
 
     delete: function (e) {
       e.preventDefault();
-      rpc.delete('/api/notifications/' + this.model.id, {});
+      rest.delete('/api/notifications/' + this.model.id, {});
       this.parentView._remove({id: this.model.id});
     },
 

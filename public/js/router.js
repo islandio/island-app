@@ -8,7 +8,7 @@ define([
   'Backbone',
   'Spin',
   'mps',
-  'rpc',
+  'rest',
   'util',
   'views/error',
   'views/header',
@@ -31,7 +31,7 @@ define([
   'views/sessions',
   'views/rows/session',
   'views/session.new'
-], function ($, _, Backbone, Spin, mps, rpc, util, Error, Header, Tabs, Footer, 
+], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer, 
     Signin, Forgot, Notifications, Map, Profile, Post, Crag, Ascent, Settings,
     Reset, Films, About, Privacy, Posts, Sessions, Session, NewSession) {
 
@@ -97,15 +97,6 @@ define([
     },
 
     render: function (service, data, secure, cb) {
-      if (typeof data === 'function') {
-        cb = data;
-        data = {};
-        secure = false;
-      }
-      if (typeof secure === 'function') {
-        cb = secure;
-        secure = false;
-      }
 
       function _render(err, login) {
 
@@ -131,6 +122,14 @@ define([
         cb = service;
         return _render.call(this);
       }
+      if (typeof data === 'function') {
+        cb = data;
+        data = {};
+      }
+      if (typeof secure === 'function') {
+        cb = secure;
+        secure = false;
+      }
 
       // Check if a profile exists already.
       var query = this.app.profile
@@ -138,7 +137,7 @@ define([
       _.extend(query, data);
 
       // Get a profile, if needed.
-      rpc.get(service, query, _.bind(function (err, pro) {
+      rest.get(service, query, _.bind(function (err, pro) {
         if (err) {
           _render.call(this, err);
           this.page = new Error(this.app).render(err);

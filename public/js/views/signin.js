@@ -8,11 +8,11 @@ define([
   'Backbone',
   'Modernizr',
   'mps',
-  'rpc',
+  'rest',
   'util',
-  'text!../../templates/signin.html',
-  'Spin'
-], function ($, _, Backbone, Modernizr, mps, rpc, util, template, Spin) {
+  'Spin',
+  'text!../../templates/signin.html'
+], function ($, _, Backbone, Modernizr, mps, rest, util, Spin, template) {
 
   return Backbone.View.extend({
 

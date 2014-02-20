@@ -7,10 +7,10 @@ define([
   'Underscore',
   'Backbone',
   'mps',
-  'rpc',
+  'rest',
   'util',
   'text!../../templates/reset.html'
-], function ($, _, Backbone, mps, rpc, util, template) {
+], function ($, _, Backbone, mps, rest, util, template) {
 
   return Backbone.View.extend({
     
@@ -130,7 +130,7 @@ define([
       if (this.token) payload.token = this.token;
 
       // Now do the update.
-      rpc.post('/api/members/reset', payload,
+      rest.post('/api/members/reset', payload,
           _.bind(function (err, data) {
         if (err) {
 

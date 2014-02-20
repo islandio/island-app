@@ -28,15 +28,7 @@
     <% } %>
   </div>
 <% } %>
-<div class="post-mosaic">
-  <% if (this.parentView) { %>
-    <img class="mask" width="680" style="top:0;" 
-        src="<%= __s %>/img/cornermask-top.png" />
-  <% } else { %>
-    <img class="mask" width="1024" style="top:0;" 
-        src="<%= __s %>/img/cornermask-lrg-top.png" />
-  <% } %>
-</div>
+<div class="post-mosaic"></div>
 <% if (this.model.link()) { %>
   <% if (this.parentView) { %>
     <iframe src="<%= this.model.get('link') %>" width="680" height="383"
