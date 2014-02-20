@@ -40,6 +40,11 @@ define([
     choose: function (e) {
       if (e) e.preventDefault();
 
+      // Show selection.
+      this.parentView.choose(this);
+
+      if (!this.parentView.options.route) return;
+
       // Set map view.
       var geometry = this.model.get('geometry');
       if (geometry) {

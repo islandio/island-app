@@ -1,15 +1,17 @@
 /*
- * Page view for the contact page.
+ * Page view for sessions.
  */
 
 define([
   'jQuery',
   'Underscore',
   'Backbone',
+  'mps',
+  'rpc',
   'util',
-  'text!../../templates/contact.html',
-  'views/lists/events'
-], function ($, _, Backbone, util, template, Events) {
+  'text!../../templates/sessions.html',
+  'views/lists/sessions',
+], function ($, _, Backbone, mps, rpc, util, template, Sessions) {
 
   return Backbone.View.extend({
 
@@ -32,10 +34,10 @@ define([
     // Draw our template from the profile JSON.
     render: function () {
 
-      // Set page title.
-      this.app.title('Contact');
-      
-      // UnderscoreJS rendering.
+      // Set page title
+      this.app.title('Island | Sessions');
+
+      // Content rendering.
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
 
@@ -47,14 +49,14 @@ define([
 
     // Bind mouse events.
     events: {
-      'click a.navigate': 'navigate',
+      'click .navigate': 'navigate'
     },
 
     // Misc. setup.
     setup: function () {
 
       // Render lists.
-      this.events = new Events(this.app, {parentView: this, reverse: true});
+      this.sessions = new Sessions(this.app, {parentView: this, reverse: true});
 
       return this;
     },
@@ -71,7 +73,7 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      this.events.destroy();
+      this.sessions.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

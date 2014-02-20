@@ -288,7 +288,7 @@ define([
             - wrap.height() - wrap.scrollTop();
         if (!this.nomore && pos < -this.spin.target.height() / 2)
           this.more();
-      }, this), 50);
+      }, this), 20);
 
       wrap.scroll(paginate).resize(paginate);
     },

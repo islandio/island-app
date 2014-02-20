@@ -32,10 +32,12 @@ block content
           a#hide_show.hide-show.button(href="javascript:;") Show map
           a#less_more.less-more.button.split-right(href="javascript:;", style="display:none;") More map
       #map_inner.map-inner
-    .content
-      .main
-        block main
+    .folder
       .page-spin
+      .tabs
+      .content
+        .main
+          block main
     #panel.panel
       .panel-content
       .list-spin

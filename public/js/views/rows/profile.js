@@ -10,8 +10,9 @@ define([
   'views/boiler/row',
   'models/profile',
   'text!../../../templates/rows/profile.html',
+  'text!../../../templates/profile.title.html',
   'views/lists/posts'
-], function ($, _, mps, rpc, Row, Model, template, Posts) {
+], function ($, _, mps, rpc, Row, Model, template, title, Posts) {
   return Row.extend({
 
     attributes: function () {
@@ -37,7 +38,7 @@ define([
     },
 
     events: {
-      'click a.navigate': 'navigate'
+      'click a.navigate': 'navigate',
     },
 
     render: function (single, prepend) {
@@ -48,10 +49,13 @@ define([
         if (this.model.get('role') !== 2)
           this.$el.addClass('single');
         else this.$el.addClass('company');
-        var title = this.model.get('username');
+        var doctitle = this.model.get('username');
         if (this.model.get('displayName') !== '')
-          title += ' (' + this.model.get('displayName') + ')';
-        this.app.title(title);
+          doctitle += ' (' + this.model.get('displayName') + ')';
+        this.app.title(doctitle);
+
+        // Render title.
+        this.title = _.template(title).call(this);
       }
 
       return this;

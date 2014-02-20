@@ -67,7 +67,9 @@ define([
       this.banner = this.$('img.settings-banner');
 
       // Init the banner uploading indicator.
-      this.bannerSpin = new Spin(this.$('.settings-banner-spin'));
+      this.bannerSpin = new Spin(this.$('.settings-banner-spin'), {
+        color: '#4d4d4d'
+      });
 
       // Autogrow all text areas.
       this.$('textarea').autogrow();
@@ -78,7 +80,7 @@ define([
           .keyup(function (e) {
         var field = $(e.target);
         var label = $('label[for="' + field.attr('name') + '"]');
-        var saved = $('div.setting-saved', label.parent().parent());
+        var saved = $('div.setting-saved', label.parent().next());
 
         if (field.val().trim() !== field.data('saved'))
           saved.hide();
@@ -169,11 +171,12 @@ define([
 
     // Save the field.
     save: function (e) {
+      e.preventDefault();
       var field = $(e.target);
       var name = field.attr('name');
       var label = $('label[for="' + name + '"]');
-      var saved = $('div.setting-saved', label.parent().parent());
-      var errorMsg = $('span.setting-error', label.parent().parent()).hide();
+      var saved = $('div.setting-saved', label.parent().next());
+      var errorMsg = $('span.setting-error', label.parent().next()).hide();
       var val = util.sanitize(field.val());
 
       // Handle checkbox.
@@ -236,11 +239,11 @@ define([
         var d = {x: e.pageX - m.x, y: e.pageY - m.y};
         var top = d.y + p.y;
         var left = d.x + p.x;
-        if (top <= 0 && w.y + top >= 215) {
+        if (top <= 0 && w.y + top >= 306) {
           this.bannerTop = top;
           this.banner.css({top: top + 'px'});
         }
-        if (left <= 0 && w.x + left >= 480) {
+        if (left <= 0 && w.x + left >= 680) {
           this.bannerLeft = left;
           this.banner.css({left: left + 'px'});
         }
@@ -350,7 +353,7 @@ define([
             }
 
             var banner = assembly.results.image_full[0];
-            var _w = 480, _h = 215;
+            var _w = 680, _h = 306;
             var w, h, o;
             w = _w;
             h = (banner.meta.height / banner.meta.width) * _w;

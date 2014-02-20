@@ -5,48 +5,44 @@
   var typeClass = video ? 'post-title-video': 'post-title-photos';
 
   var gravatar = 'https://www.gravatar.com/avatar/'
-      + this.model.get('author').gravatar + '?s=48&d='
+      + this.model.get('author').gravatar + '?s=26&d='
       + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
 %>
 
-<% if (this.model.get('product') && this.model.get('product').sku) { %>
-  <a class="button buy-button" target="_blank" 
-      href="http://transactions.digitaldeliveryapp.com/products/<%= this.model.get('product').sku %>/purchase">
-    <i class="icon-download-cloud"></i>
-    <%= this.model.get('product').subtype %> Film ($<%= this.model.get('product').price %>)
-  </a>
-<% } %>
-<div class="page-title">
-  <%= this.model.date() %> | 
-  <a href="/<%= this.model.get('author').username %>" class="navigate">
-    <%= this.model.get('author').displayName %></a> 
-  <% if (this.model.get('title')) { %>
-    / <a href="/<%= this.model.get('key') %>" class="navigate">
-    <span class="<%= typeClass %>"><%= this.model.get('title') %></span></a>
+<% if (this.parentView) { %>
+  <% if (this.model.get('product') && this.model.get('product').sku) { %>
+    <a class="button buy-button" target="_blank" 
+        href="http://transactions.digitaldeliveryapp.com/products/<%= this.model.get('product').sku %>/purchase">
+      <i class="icon-download-cloud"></i>
+      <%= this.model.get('product').subtype %> Film ($<%= this.model.get('product').price %>)
+    </a>
   <% } %>
-</div>
-<a href="/<%= this.model.get('author').username %>" class="post-avatar navigate">
-  <img src="<%= gravatar %>" width="48" height="48" />
-</a>
+  <div class="page-title">
+    <a href="/<%= this.model.get('author').username %>" class="image-anchor navigate">
+      <img src="<%= gravatar %>" class="page-title-avatar" width="26" height="26" /></a><%= this.model.date() %> | 
+    <a href="/<%= this.model.get('author').username %>" class="navigate">
+      <%= this.model.get('author').displayName %></a> 
+    <% if (this.model.get('title')) { %>
+      / <a href="/<%= this.model.get('key') %>" class="navigate">
+      <span class="<%= typeClass %>"><%= this.model.get('title') %></span></a>
+    <% } %>
+  </div>
+<% } %>
 <div class="post-mosaic">
   <% if (this.parentView) { %>
-    <img class="mask" width="640" style="top:0;" 
+    <img class="mask" width="680" style="top:0;" 
         src="<%= __s %>/img/cornermask-top.png" />
-    <img class="mask" width="640" style="top:352px;"
-        src="<%= __s %>/img/cornermask-btm.png" />
   <% } else { %>
-    <img class="mask" width="984" style="top:0;" 
+    <img class="mask" width="1024" style="top:0;" 
         src="<%= __s %>/img/cornermask-lrg-top.png" />
-    <img class="mask" width="984" style="top:546px;"
-        src="<%= __s %>/img/cornermask-lrg-btm.png" />
   <% } %>
 </div>
 <% if (this.model.link()) { %>
   <% if (this.parentView) { %>
-    <iframe src="<%= this.model.get('link') %>" width="640" height="360"
+    <iframe src="<%= this.model.get('link') %>" width="680" height="383"
         frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
   <% } else { %>
-    <iframe src="<%= this.model.get('link') %>" width="984" height="554"
+    <iframe src="<%= this.model.get('link') %>" width="1024" height="576"
         frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
   <% } %>  
 <% } %>
@@ -54,24 +50,24 @@
   <%= this.model.body(!this.parentView) %>
 </div>
 <div class="post-info">
-  Posted by <a href="/<%= this.model.get('author').username %>" class="navigate">
+  <% if (this.app.profile.member &&
+      this.model.get('author').id === this.app.profile.member.id) { %>
+    <span class="post-delete info-delete">Delete</span>
+    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+  <% } %>
+  <% if (this.app.profile.member && this.app.profile.member.admin) { %>
+    <a href="javascript:;" class="muted info-item post-feature">Feature</a>
+    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+  <% } %>
+  Posted by <a href="/<%= this.model.get('author').username %>" class="muted navigate">
     <%= this.model.get('author').displayName %></a>
-  <a href="/<%= this.model.get('key') %>" class="navigate"><time class="created" 
+  <a href="/<%= this.model.get('key') %>" class="muted navigate"><time class="created" 
         datetime="<%= this.model.get('created') %>" 
         title="<%= this.model.get('created') %>">
     <%= this.model.get('created') %>
   </time></a>
   <span class="info-divider">&nbsp;&middot;&nbsp;</span>
   <span class="info-item"><%= this.model.views() %> 
-      <%= (this.model.get('vcnt') || 0) !== 1 ? 'views': 'view' %></span>
-  <% if (this.app.profile.member &&
-      this.model.get('author').id === this.app.profile.member.id) { %>
-    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-    <span class="post-delete info-delete">delete</span>
-  <% } %>
-  <% if (this.app.profile.member && this.app.profile.member.admin) { %>
-    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-    <a href="javascript:;" class="info-item post-feature">feature</a>
-  <% } %>
+      <%= (this.model.get('vcnt') || 0) !== 1 ? 'Views': 'View' %></span>
 </div>
 <div class="comments"></div>

@@ -56,7 +56,7 @@ define([
       return this;
     },
 
-    // Misc. setup.    
+    // Misc. setup.
     setup: function () {
 
       // Save refs.
@@ -82,7 +82,14 @@ define([
 
       // Start search choices.
       if(!this.choices)
-        this.choices = new Choices(this.app, {reverse: true});
+        this.choices = new Choices(this.app, {
+          reverse: true, 
+          el: '.header-search',
+          collapse: true,
+          placeholder: 'Search crags, posts, and members.',
+          route: true,
+          types: ['crags', 'members', 'posts']
+        });
     },
 
     // Bind mouse events.
@@ -123,7 +130,7 @@ define([
 
       // Swap member header content.
       this.$('div.member-box').remove();
-      $('<a class="signin-button button">Sign in</a>')
+      $('<a class="button signin-button header-action"><span>Sign in</span> <i class="icon-login"></i></a>')
           .appendTo(this.$('.header-inner'));
       
       // Close the panel.

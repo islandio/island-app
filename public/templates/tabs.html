@@ -1,0 +1,23 @@
+<% if (this.params.tabs.length === 0) { %>
+  <div class="folder-title">
+    <% if (this.params.html) { %>
+      <%= this.params.html %>
+    <% } else { %>
+      <h1 class="title-left"><%= this.params.title || '' %></h1>
+      <% if (this.params.subtitle) { %>
+        <h1 class="title-sub"><%= this.params.subtitle %></h1>
+      <% } %>
+    <% } %>
+  </div>
+<% } else { %>
+  <ul>
+    <% _.each(this.params.tabs, function (tab) { 
+      var klass = 'tab';
+      if (tab.active) klass += ' active';
+    %>
+      <li class="<%= klass %>">
+        <a href="<%= tab.href %>" class="navigate"><%= tab.title %></a>
+      </li>
+    <% }); %>
+  </ul>
+<% } %>

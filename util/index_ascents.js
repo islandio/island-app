@@ -29,30 +29,38 @@ boots.start(function (client) {
   var search = reds.createSearch('ascents');
   search.client = client;
 
-  db.Ascents.list({}, function (err, docs) {
-    boots.error(err);
+  var cursor = 0;
+  (function do100() {
+    db.Ascents.list({}, {limit: 100, skip: 100 * cursor},
+        function (err, docs) {
+      boots.error(err);
 
-    Step(
-      function () {
-        if (docs.length === 0) return this();
-        var _this = _.after(docs.length, this);
-        var num = docs.length;
-        _.each(docs, function (d) {
-          if (d.name && d.name !== '')
-            if (d.name.match(/\w+/g))
-              search.index(d.name, d._id.toString());
-          num -= 1;
-          console.log(num);
-          _this();
-        });
-      },
-      function (err) {
-        console.log(err, 'done');
-        boots.error(err);
-        process.exit(0);
-      }
-    );
+      Step(
+        function () {
+          if (docs.length === 0) return this();
+          var _this = _.after(docs.length, this);
+          _.each(docs, function (d) {
+            if (d.name && d.name !== '')
+              if (d.name.match(/\w+/g))
+                search.index(d.name, d._id.toString());
+            _this();
+          });
+        },
+        function (err) {
+          boots.error(err);
+          if (docs.length < 100)
+            process.exit(0);
+          else {
+            ++cursor;
+            console.log(cursor);
+            do100();
+          }
+        }
+      );
 
-  });
+    });  
+  })();
+
+  
   
 });

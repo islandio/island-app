@@ -6,10 +6,10 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
+  'mps',
   'util',
-  'text!../../templates/about.html',
-  'views/lists/events'
-], function ($, _, Backbone, util, template, Events) {
+  'text!../../templates/about.html'
+], function ($, _, Backbone, mps, util, template) {
 
   return Backbone.View.extend({
 
@@ -33,7 +33,7 @@ define([
     render: function () {
 
       // Set page title.
-      this.app.title('About');
+      this.app.title('Island | About');
       
       // UnderscoreJS rendering.
       this.template = _.template(template);
@@ -52,10 +52,6 @@ define([
 
     // Misc. setup.
     setup: function () {
-
-      // Render lists.
-      this.events = new Events(this.app, {parentView: this, reverse: true});
-
       return this;
     },
 
@@ -71,7 +67,6 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      this.events.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

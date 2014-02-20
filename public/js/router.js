@@ -12,6 +12,7 @@ define([
   'util',
   'views/error',
   'views/header',
+  'views/tabs',
   'views/footer',
   'views/signin',
   'views/forgot',
@@ -23,15 +24,16 @@ define([
   'views/ascent',
   'views/settings',
   'views/reset',
-  'views/team',
   'views/films',
   'views/about',
-  'views/contact',
   'views/privacy',
-  'views/home'
-], function ($, _, Backbone, Spin, mps, rpc, util, Error, Header, Footer, 
+  'views/posts',
+  'views/sessions',
+  'views/rows/session',
+  'views/session.new'
+], function ($, _, Backbone, Spin, mps, rpc, util, Error, Header, Tabs, Footer, 
     Signin, Forgot, Notifications, Map, Profile, Post, Crag, Ascent, Settings,
-    Reset, Team, Films, About, Contact, Privacy, Home) {
+    Reset, Films, About, Privacy, Posts, Sessions, Session, NewSession) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -51,16 +53,17 @@ define([
       // Page routes.
       this.route(':un', 'profile', this.profile);
       this.route(':un/:k', 'post', this.post);
+      this.route('sessions/:k', 'session', this.session);
       this.route('crags/:y/:g', 'crag', this.crag);
       this.route('crags/:y/:g/:t/:a', 'ascent', this.ascent);
       this.route('reset', 'reset', this.reset);
       this.route('settings', 'settings', this.settings);
-      this.route('team', 'team', this.team);
       this.route('films', 'films', this.films);
       this.route('about', 'about', this.about);
-      this.route('contact', 'contact', this.contact);
       this.route('privacy', 'privacy', this.privacy);
-      this.route('', 'home', this.home);
+      this.route('posts', 'posts', this.posts);
+      this.route('sessions/new', 'newSession', this.newSession);
+      this.route('sessions', 'sessions', this.sessions);
       this.route('_blank', 'blank', function(){});
 
       // Fullfill navigation request from mps.
@@ -84,17 +87,12 @@ define([
       }, this));
 
       // Init page spinner.
-      this.spin = new Spin($('.page-spin'), {
-        color: '#b3b3b3',
-        lines: 17,
-        length: 7,
-        width: 3,
-        radius: 12
-      });
+      this.spin = new Spin($('.page-spin'), {color: '#808080'});
     },
 
     routes: {
-      // Catch all:
+
+      // Catch all.
       '*actions': 'default'
     },
 
@@ -157,6 +155,14 @@ define([
       }, this));
     },
 
+    renderTabs: function (params) {
+      if (this.tabs) {
+        this.tabs.params = params || {};
+        this.tabs.render();
+      } else
+        this.tabs = new Tabs(this.app, params).render();
+    },
+
     start: function () {
       $(window).scrollTop(0);
       this.spin.target.show();
@@ -173,10 +179,12 @@ define([
       this.start();
       var feed = store.get('feed') || {};
       if (!feed.query) feed.query = {featured: true};
+      this.renderTabs();
       this.render('/service/profile.profile/' + username, feed,
           _.bind(function (err) {
         if (err) return;
         this.page = new Profile({wrap: '.main'}, this.app).render(true);
+        this.renderTabs({html: this.page.title});
         this.stop();
       }, this));
     },
@@ -184,9 +192,22 @@ define([
     post: function (username, key) {
       this.start();
       var key = [username, key].join('/');
+      this.renderTabs();
       this.render('/service/post.profile/' + key, _.bind(function (err) {
         if (err) return;
         this.page = new Post({wrap: '.main'}, this.app).render(true);
+        this.renderTabs({html: this.page.title});
+        this.stop();
+      }, this));
+    },
+
+    session: function (key) {
+      this.start();
+      this.renderTabs();
+      this.render('/service/session.profile/' + key, _.bind(function (err) {
+        if (err) return;
+        this.page = new Session({wrap: '.main'}, this.app).render(true);
+        this.renderTabs({html: this.page.title});
         this.stop();
       }, this));
     },
@@ -194,9 +215,11 @@ define([
     crag: function (country, crag) {
       this.start();
       var key = [country, crag].join('/');
+      this.renderTabs();
       this.render('/service/crag.profile/' + key, _.bind(function (err) {
         if (err) return;
         this.page = new Crag(this.app).render();
+        this.renderTabs({html: this.page.title});
         this.stop();
       }, this));
     },
@@ -204,23 +227,42 @@ define([
     ascent: function (country, crag, type, ascent) {
       this.start();
       var key = [country, crag, type, ascent].join('/');
+      this.renderTabs();
       this.render('/service/ascent.profile/' + key, _.bind(function (err) {
         if (err) return;
         this.page = new Ascent(this.app).render();
+        this.renderTabs({html: this.page.title});
         this.stop();
       }, this));
     },
 
-    home: function () {
+    posts: function () {
       this.start();
       var feed = store.get('feed') || {};
       if (!feed.query) feed.query = {featured: true};
       if (feed.query.author_id) delete feed.query.author_id;
-      this.render('/service/home.profile', feed, _.bind(function (err) {
+      this.render('/service/posts.profile', feed, _.bind(function (err) {
         if (err) return;
-        this.page = new Home(this.app).render();
+        this.page = new Posts(this.app).render();
         this.stop();
       }, this));
+      this.renderTabs({tabs: [
+        {title: 'Sessions', href: '/sessions'},
+        {title: 'Posts', href: '/posts', active: true}
+      ]});
+    },
+
+    sessions: function () {
+      this.start();
+      this.render('/service/sessions.profile', _.bind(function (err) {
+        if (err) return;
+        this.page = new Sessions(this.app).render();
+        this.stop();
+      }, this));
+      this.renderTabs({tabs: [
+        {title: 'Sessions', href: '/sessions', active: true},
+        {title: 'Posts', href: '/posts'}
+      ]});
     },
 
     settings: function () {
@@ -230,6 +272,17 @@ define([
         this.page = new Settings(this.app).render();
         this.stop();
       }, this));
+      this.renderTabs({title: 'Account Settings'});
+    },
+
+    newSession: function () {
+      this.start();
+      this.render('/service/session.new.profile', {}, true, _.bind(function (err) {
+        if (err) return;
+        this.page = new NewSession(this.app).render();
+        this.stop();
+      }, this));
+      this.renderTabs({title: 'Log new session'});
     },
 
     reset: function () {
@@ -239,15 +292,7 @@ define([
         this.page = new Reset(this.app).render();
         this.stop();
       }, this));
-    },
-
-    team: function () {
-      this.start();
-      this.render('/service/team.profile', _.bind(function (err) {
-        if (err) return;
-        this.page = new Team(this.app).render();
-        this.stop();
-      }, this));
+      this.renderTabs({title: 'Password reset'});
     },
 
     films: function () {
@@ -257,6 +302,7 @@ define([
         this.page = new Films(this.app).render();
         this.stop();
       }, this));
+      this.renderTabs({title: 'Films', subtitle: 'Original content by Island'});
     },
 
     about: function () {
@@ -266,15 +312,7 @@ define([
         this.page = new About(this.app).render();
         this.stop();
       }, this));
-    },
-
-    contact: function () {
-      this.start();
-      this.render('/service/static.profile', _.bind(function (err) {
-        if (err) return;
-        this.page = new Contact(this.app).render();
-        this.stop();
-      }, this));
+      this.renderTabs({title: 'About', subtitle: 'What\'s going on here?'});
     },
 
     privacy: function () {
@@ -284,6 +322,7 @@ define([
         this.page = new Privacy(this.app).render();
         this.stop();
       }, this));
+      this.renderTabs({title: 'Privacy Policy', subtitle: 'Last updated 7.27.2013'});
     },
 
     default: function () {
@@ -294,6 +333,7 @@ define([
           message: 'Sorry, this page isn\'t available'
         });
       }, this));
+      this.renderTabs();
     }
   
   });

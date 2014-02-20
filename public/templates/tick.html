@@ -1,0 +1,120 @@
+<div class="new-session-tick">
+  <a href="javascript:;" class="new-session-tick-clear" tabindex="-1">
+    <i class="icon-cancel"></i>
+  </a>
+  <table>
+    <tbody>
+      <tr>
+        <td colspan="4" class="new-session-cell" style="width: 75%;">
+          <label><%= title %> Name</label>
+        </td>
+      </tr>
+      <tr class="new-session-row-nopad">
+        <td colspan="4" class="new-session-cell" style="width: 75%;">
+          <div class="new-session-search new-session-ascent-search">
+            <input name="tick" type="text"
+                class="new-session-tick-search-input" placeholder="Find a <%= title.toLowerCase() %>..."
+                autocomplete="off" />
+            <div class="search-choice">
+              <div class="search-choice-content"></div>
+              <a href="javascript:;" class="search-choice-clear" tabindex="-1">
+                <i class="icon-cancel"></i>
+              </a>
+            </div>
+            <div class="search-display">
+              <div class="list-header"></div>
+            </div>
+          </div>
+        </td>
+        <td class="new-session-cell" style="width: 12.5%; padding-right: 0;">
+          <label class="checkbox-styled">
+            <input class="new-session-tried" type="checkbox" name="tried" value="tried" checked />
+            <span><i class="icon-ok"></i> Tried</span>
+          </label>
+        </td>
+        <td class="new-session-cell" style="width: 12.5%; padding-left: 10px;">
+          <label class="checkbox-styled">
+            <input class="new-session-sent" type="checkbox" name="sent" value="sent" />
+            <span><i class="icon-ok"></i> Sent</span>
+          </label>
+        </td>
+      </tr>
+      <tr class="new-session-tick-details">
+        <td class="new-session-cell" style="width: 20%;">
+          <select name="grade">
+            <option value="hide">-- Grade --</option>
+            <option value="0">3</option>
+            <option value="1">4</option>
+            <option value="2">5a</option>
+            <option value="3">5b</option>
+            <option value="4">5c</option>
+            <option value="5">6a</option>
+            <option value="6">6a+</option>
+            <option value="7">6b</option>
+            <option value="8">6b+</option>
+            <option value="9">6c</option>
+            <option value="10">6c+</option>
+            <option value="11">7a</option>
+            <option value="12">7a+</option>
+            <option value="13">7b</option>
+            <option value="14">7b+</option>
+            <option value="15">7c</option>
+            <option value="16">7c+</option>
+            <option value="17">8a</option>
+            <option value="18">8a+</option>
+            <option value="19">8b</option>
+            <option value="20">8b+</option>
+            <option value="21">8c</option>
+            <option value="22">8c+</option>
+            <option value="23">9a</option>
+            <option value="24">9a+</option>
+            <option value="25">9b</option>
+            <option value="26">9b+</option>
+            <option value="27">9c</option>
+            <option value="28">9c+</option>
+          </select>
+        </td>
+        <td class="new-session-cell" style="width: 20%;">
+          <select name="feel">
+            <option value="hide">-- Feel --</option>
+            <option value="0">--</option>
+            <option value="-1">Soft</option>
+            <option value="1">Hard</option>
+          </select>
+        </td>
+        <td class="new-session-cell" style="width: 20%;">
+          <select name="tries">
+            <option value="hide">-- Tries --</option>
+            <option value="1">Onsight</option>
+            <option value="2">Flash</option>
+            <option value="3">2nd try</option>
+            <option value="4">3rd try</option>
+            <option value="5">> 3 tries</option>
+          </select>
+        </td>
+        <td colspan="2" class="new-session-cell" style="width: 20%;">
+          <select name="first">
+            <option value="hide">-- Style --</option>
+            <option value="0">Repeat</option>
+            <option value="1">First ascent</option>
+            <option value="2">First female ascent</option>
+          </select>
+        </td>
+        <td class="new-session-cell" style="width: 20%;">
+          <select name="rating">
+            <option value="hide">-- Stars --</option>
+            <option value="0">No stars</option>
+            <option value="1">1 star</option>
+            <option value="2">2 stars</option>
+            <option value="3">3 stars</option>
+          </select>
+        </td>
+      </tr>
+      <tr class="new-session-row-nopad">
+        <td colspan="6" class="new-session-cell">
+          <textarea name="note" placeholder="Comments..." style="width:622px;"></textarea>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

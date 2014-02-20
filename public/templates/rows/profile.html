@@ -11,7 +11,7 @@
 
   // Check image
   if (!data.image) {
-    data.image = {meta: {width: 640, height: 288}};
+    data.image = {meta: {width: 680, height: 288}};
     if (!data.gender || 'male' === data.gender)
       data.image.cf_url = __s + '/img/blnk-pic-m.jpg';
     else
@@ -19,8 +19,8 @@
   }
 
   // Image meta
-  var _w = 640;
-  var _h = 288;
+  var _w = this.parentView ? 680: 1024;
+  var _h = this.parentView ? 306: 460;
   var w, h;
   var l = 'left:0;';
   var t = 'top:0;';
@@ -35,9 +35,6 @@
     l = 'left:' + (data.image.meta.left !== undefined
         ? data.image.meta.left: (-(w - _w) / 2)) + 'px;';
   }
-
-  // Description
-  var desc = data.description && data.description !== '' ? data.description: null;
 
   // Websites
   var links = data.website ? '': null;
@@ -65,64 +62,77 @@
 
   // Gravatar
   var gravatar = 'https://www.gravatar.com/avatar/'
-      + data.gravatar + '?s=48&d='
+      + data.gravatar + '?s=24&d='
       + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
 
 %>
 
-<div class="profile-inner">
-  <div class="page-title">
-    <%= location %><a href="<%= data.username %>" class="navigate"><%= data.displayName %></a>
+<% if (!this.parentView) { %>
+  <div class="profile-upper">
+    <div class="profile-picture">
+      <img class="masked" src=<%= data.image.cf_url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
+    </div>
   </div>
-  <div class="profile-picture">
-    <img src="<%= gravatar %>" class="profile-avatar" width="48" height="48" />
-    <img class="mask" width="640" style="top:0;"
-        src="<%= __s %>/img/cornermask-top.png" />
-    <img class="mask" width="640" style="top:280px;"
-        src="<%= __s %>/img/cornermask-btm.png" />
-    <img class="masked" src=<%= data.image.cf_url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
-  </div>
-  <div class="profile-info">
-    <% if (desc || links) { %>
+  <div class="leftside">
+<% } %>
+
+  <div class="profile-inner">
+    <% if (this.parentView) { %>
+      <div class="page-title">
+        <img src="<%= gravatar %>" class="profile-avatar" width="24" height="24" />
+        <%= location %><a href="<%= data.username %>" class="navigate"><%= data.displayName %></a>
+      </div>
+    <% } %>
+    <% if (this.parentView) { %>
+      <div class="profile-picture">
+        <img class="masked" src=<%= data.image.cf_url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
+      </div>
+    <% } %>
+    <div class="profile-info">
       <div class="profile-description">
-        <% if (desc) { %>
-          <%= this.model.description() %>
+        <% if (!this.parentView) { %>
+          <h2 class="profile-section-title">Bio</h2>
         <% } %>
+        <%= this.model.description() %>
         <% if (links) { %>
           <span>More from <%= data.displayName %> at </span>
           <span class="profile-links"><%= links %>.</span>
         <% } %>
       </div>
-    <% } %>
-    <span class="profile-details"><%= details %></span>
-    <div class="clear"></div>
-  </div>
-  <% if (!this.parentView) { %>
-    <div class="posts"></div>
-    <div class="list-spin">
-      <div class="posts-spin"></div>
-      <span class="empty-feed">Showing all.</span>
     </div>
-  <% } %>
-</div>
-<% if (this.model.get('role') === 2) { %>
-  <div class="profile-sidebar">
-    <span class="rightside-heading">
-      Team
-    </span>
-    <ul class="profile-team">
-      <% _.each(this.model.get('team'), _.bind(function (m) {
-        var g = 'https://www.gravatar.com/avatar/'
-        + m.gravatar + '?s=140&d='
-        + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
-      %>
-        <li>
-          <a href="/<%= m.username %>" class="navigate">
-            <img src="<%= g %>" class="profile-team-avatar" width="140" height="140" />
-          </a>
-        </li>  
-      <% }, this)); %>
-    </ul>
+    <% if (!this.parentView) { %>
+      <h2 class="profile-section-title">Posts</h2>
+      <div class="posts"></div>
+      <div class="list-spin">
+        <div class="posts-spin"></div>
+        <span class="empty-feed">Showing all.</span>
+      </div>
+    <% } %>
+  </div>
+
+<% if (!this.parentView) { %>
+  </div>
+  <div class="rightside sidebar">
+    <% if (this.model.get('role') === 2) { %>
+      <h2 class="profile-section-title">Team</h2>
+      <ul class="profile-team">
+        <% if (this.model.get('team').length === 0) { %>
+          <span class="empty-feed">Add your team athletes.</span>
+        <% } else { %>
+          <% _.each(this.model.get('team'), _.bind(function (m) {
+            var g = 'https://www.gravatar.com/avatar/'
+            + m.gravatar + '?s=274&d='
+            + encodeURIComponent(this.app.cfuri + '/avatars/avatar_274.png');
+          %>
+            <li>
+              <a href="/<%= m.username %>" class="navigate">
+                <img src="<%= g %>" class="profile-team-avatar" width="274" height="274" />
+              </a>
+            </li>  
+          <% }, this)); %>
+        <% } %>
+      </ul>
+    <% } %>
   </div>
   <div class="clear"></div>
 <% } %>

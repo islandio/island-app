@@ -1,0 +1,78 @@
+<div class="leftside">
+  <div class="new-session">
+    <form enctype="multipart/form-data" method="POST">      
+      <table>
+        <tbody>
+          <tr>
+            <td colspan="2" class="new-session-cell">
+              <label for="new-session-crag">Where</label>
+            </td>
+            <td colspan="2" class="new-session-cell">
+              <label for="new-session-date">When</label>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="new-session-cell">
+              <div class="new-session-search new-session-crag-search">
+                <input id="new-session-crag" name="crag" type="text"
+                    class="new-session-crag-search-input" placeholder="Find a crag..."
+                    autocomplete="off" />
+                <div class="search-choice">
+                  <div class="search-choice-content"></div>
+                  <a href="javascript:;" class="search-choice-clear" tabindex="-1">
+                    <i class="icon-cancel"></i>
+                  </a>
+                </div>
+                <div class="search-display">
+                  <div class="list-header"></div>
+                </div>
+              </div>
+            </td>
+            <td colspan="2" class="new-session-cell">
+              <input id="new-session-date" name="date" type="text"
+                  class="new-session-datepicker picker__input" placeholder="dd month, year" readonly />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="new-session-activities">
+        <button class="button table-button activity-button">
+          <i class="icon-plus"></i> Activity
+        </button>
+      </div>
+      <table>
+        <tbody>
+          <tr>
+            <td colspan="4" class="new-session-cell">
+              <label for="new-session-note">Comments</label>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="4" class="new-session-cell">
+              <textarea id="new-session-note" name="note" placeholder="(optional)"></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="4" class="new-session-cell">
+              <label for="new-session-name">Name your session</label>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="4" class="new-session-cell">
+              <input id="new-session-name" name="name" type="text" placeholder="(optional)" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="new-session-error"></div>
+    </form>
+    <button class="new-session-button button disabled" disabled>
+      <div class="button-spin"></div>
+      <i class="icon-pencil"></i>Log it
+    </button>
+  </div>
+</div>
+<div class="rightside">
+  
+</div>
+<div class="clear"></div>

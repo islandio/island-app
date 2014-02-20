@@ -9,7 +9,9 @@ define([
   return Backbone.Model.extend({
 
     description: function () {
-      return util.formatText(this.get('description'));
+      var str = this.get('description');
+      if (!str || str.trim() === '') return '<p>...</p>';
+      else return util.formatText(str);
     }
 
   });

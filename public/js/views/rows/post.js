@@ -11,10 +11,12 @@ define([
   'views/boiler/row',
   'models/post',
   'text!../../../templates/rows/post.html',
+  'text!../../../templates/post.title.html',
   'text!../../../templates/video.html',
   'views/lists/comments',
   'text!../../../templates/confirm.html'
-], function ($, _, mps, rpc, util, Row, Model, template, video, Comments, confirm) {
+], function ($, _, mps, rpc, util, Row, Model, template, title, video,
+      Comments, confirm) {
   return Row.extend({
 
     attributes: function () {
@@ -74,7 +76,11 @@ define([
 
       if (!this.parentView) {
         this.$el.addClass('single')
-        this.app.title(this.model.get('title') || this.model.get('key'));
+        this.app.title(this.model.get('author').displayName
+            + ' | ' + this.model.get('title') || this.model.get('key'));
+
+        // Render title.
+        this.title = _.template(title).call(this);
       }
 
       // gather images
@@ -101,8 +107,8 @@ define([
         return this;
       }
 
-      var W = this.parentView ? 640: 984;
-      var H = this.parentView ? 360: 554;
+      var W = this.parentView ? 680: 1024;
+      var H = this.parentView ? 383: 576;
       var P = 2;
 
       // handle the first item (the main img for this post)
@@ -234,8 +240,7 @@ define([
       if (!this.parentView) {
 
         // Set map view.
-        mps.publish('map/fly', [this.model.get('location')
-            || this.model.get('hometown')]);
+        mps.publish('map/fly', [this.model.get('location')]);
       }
 
       // Render comments.
@@ -296,11 +301,11 @@ define([
           } else {
 
             // Lay the video over the mosaic.
-            $(_.template(video)({data: this.video, width: 984, height: 554}))
+            $(_.template(video)({data: this.video, width: 1024, height: 576}))
                 .appendTo(this.$('.post-mosaic'));
             _.extend(params, {
-              width: '984',
-              height: '554'
+              width: '1024',
+              height: '576'
             });
             this.$('span.post-mosaic-play-text').hide();
 
@@ -338,7 +343,7 @@ define([
       });
       $('#confirm_delete').click(_.bind(function (e) {
 
-        // Delete the member.
+        // Delete the post.
         rpc.delete('/api/posts/' + this.model.get('key'),
             {}, _.bind(function (err, data) {
           if (err) {

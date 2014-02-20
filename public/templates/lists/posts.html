@@ -2,7 +2,7 @@
 
   var member = this.app.profile.member;
   var gravatar = member ? 'https://www.gravatar.com/avatar/'
-      + member.gravatar + '?s=44&d='
+      + member.gravatar + '?s=50&d='
       + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png')
       : null;
 
@@ -14,7 +14,7 @@
   <div class="post-input">
     <div class="post">
       <span class="post-input-avatar">
-        <img src="<%= gravatar %>" width="44" height="44" />
+        <img src="<%= gravatar %>" width="50" height="50" />
       </span>
       <div class="post-input-wrap">
         <form action="/api/posts" enctype="multipart/form-data" method="POST"
@@ -66,30 +66,32 @@
   </div>
 <% } %>
 <% if (this.filters) { %>
-  <div class="feed-filter">
-    <% if (!feed.query || feed.query.featured) { %>
-      <a href="javascript:;" class="sort-featured button button-left feed-button selected">Featured</a>
-      <a href="javascript:;" class="sort-recent button button-right feed-button">Recent</a>
-    <% } else { %>
-      <a href="javascript:;" class="sort-featured button button-left feed-button">Featured</a>
-      <a href="javascript:;" class="sort-recent button button-right feed-button selected">Recent</a>
-    <% } %>
-  </div>
-  <div class="feed-filter">
-    <% if (!feed.query || !feed.query.type) { %>
-      <a href="javascript:;" class="filter-all button button-left feed-button selected">All</a>
-      <a href="javascript:;" class="filter-video button button-middle feed-button">Videos</a>
-      <a href="javascript:;" class="filter-image button button-right feed-button">Photos</a>
-    <% } else if (feed.query.type === 'video') { %>
-      <a href="javascript:;" class="filter-all button button-left feed-button">All</a>
-      <a href="javascript:;" class="filter-video button button-middle feed-button selected">Videos</a>
-      <a href="javascript:;" class="filter-image button button-right feed-button">Photos</a>
-    <% } else if (feed.query.type === 'image') { %>
-      <a href="javascript:;" class="filter-all button button-left feed-button">All</a>
-      <a href="javascript:;" class="filter-video button button-middle feed-button">Videos</a>
-      <a href="javascript:;" class="filter-image button button-right feed-button selected">Photos</a>
-    <% } %>
-  </div>
+  <div class="feed-filters">
+    <div class="feed-filter">
+      <% if (!feed.query || feed.query.featured) { %>
+        <a href="javascript:;" class="sort-featured button button-left feed-button selected">Featured</a>
+        <a href="javascript:;" class="sort-recent button button-right feed-button">Recent</a>
+      <% } else { %>
+        <a href="javascript:;" class="sort-featured button button-left feed-button">Featured</a>
+        <a href="javascript:;" class="sort-recent button button-right feed-button selected">Recent</a>
+      <% } %>
+    </div>
+    <div class="feed-filter">
+      <% if (!feed.query || !feed.query.type) { %>
+        <a href="javascript:;" class="filter-all button button-left feed-button selected">All</a>
+        <a href="javascript:;" class="filter-video button button-middle feed-button">Videos</a>
+        <a href="javascript:;" class="filter-image button button-right feed-button">Photos</a>
+      <% } else if (feed.query.type === 'video') { %>
+        <a href="javascript:;" class="filter-all button button-left feed-button">All</a>
+        <a href="javascript:;" class="filter-video button button-middle feed-button selected">Videos</a>
+        <a href="javascript:;" class="filter-image button button-right feed-button">Photos</a>
+      <% } else if (feed.query.type === 'image') { %>
+        <a href="javascript:;" class="filter-all button button-left feed-button">All</a>
+        <a href="javascript:;" class="filter-video button button-middle feed-button">Videos</a>
+        <a href="javascript:;" class="filter-image button button-right feed-button selected">Photos</a>
+      <% } %>
+    </div>
+  </div>  
 <% } %>
 <div class="list-header"></div>
 <% if (this.collection.models.length > 0) { %>

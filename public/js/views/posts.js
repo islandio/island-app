@@ -1,5 +1,5 @@
 /*
- * Page view for team.
+ * Page view for posts.
  */
 
 define([
@@ -9,10 +9,9 @@ define([
   'mps',
   'rpc',
   'util',
-  'text!../../templates/team.html',
-  'views/lists/profiles',
-  'views/lists/events'
-], function ($, _, Backbone, mps, rpc, util, template, Profiles, Events) {
+  'text!../../templates/posts.html',
+  'views/lists/posts'
+], function ($, _, Backbone, mps, rpc, util, template, Posts) {
 
   return Backbone.View.extend({
 
@@ -36,11 +35,11 @@ define([
     render: function () {
 
       // Set page title
-      this.app.title('Team');
+      this.app.title('Island | Posts');
 
-      // UnderscoreJS rendering.
+      // Content rendering.
       this.template = _.template(template);
-      this.$el.html(this.template.call(this));
+      $(this.template.call(this)).appendTo('.main')
 
       // Done rendering ... trigger setup.
       this.trigger('rendered');
@@ -50,15 +49,15 @@ define([
 
     // Bind mouse events.
     events: {
-      'click a.navigate': 'navigate',
+      'click .navigate': 'navigate'
     },
 
     // Misc. setup.
     setup: function () {
 
-      // Render profiles.
-      this.profiles = new Profiles(this.app, {parentView: this, reverse: true});
-      this.events = new Events(this.app, {parentView: this, reverse: true});
+      // Render lists.
+      this.posts = new Posts(this.app, {parentView: this,
+            reverse: true, input: true});
 
       return this;
     },
@@ -75,8 +74,7 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      this.profiles.destroy();
-      this.events.destroy();
+      this.posts.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

@@ -6,10 +6,11 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
+  'mps',
   'util',
   'text!../../templates/privacy.html',
   'views/lists/events'
-], function ($, _, Backbone, util, template, Events) {
+], function ($, _, Backbone, mps, util, template, Events) {
 
   return Backbone.View.extend({
 
@@ -33,7 +34,7 @@ define([
     render: function () {
 
       // Set page title
-      this.app.title('Privacy Policy');
+      this.app.title('Island | Privacy Policy');
 
       // UnderscoreJS rendering.
       this.template = _.template(template);

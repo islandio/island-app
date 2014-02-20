@@ -1,0 +1,103 @@
+<%
+
+  var gravatar = 'https://www.gravatar.com/avatar/'
+      + this.model.get('author').gravatar + '?s=48&d='
+      + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
+  
+%>
+
+<div class="session-left">
+  <span class="session-avatar">
+    <a href="/<%= this.model.get('author').username %>" class="image-anchor navigate">
+      <img src="<%= gravatar %>" width="48" height="48" />
+    </a>
+  </span>
+</div>
+<div class="session-right">
+  <div class="session-map" id="session_map_<%= this.model.id %>"></div>
+  <div class="session-title">
+    <a href="/<%= this.model.get('author').username %>" class="title navigate">
+      <%= this.model.get('author').displayName %>
+    </a>
+    <a href="/crags/<%= this.model.get('crag').key %>" class="session-location title navigate">
+      <i class="icon-location"></i> <%= this.model.get('crag').name %>, <%= this.model.get('crag').country %>
+    </a>
+  </div>
+  <a href="/sessions/<%= this.model.get('key') %>" class="title-large navigate">
+    <%= this.model.formatName() %>
+  </a>
+  <% _.each(this.model.get('actions'), _.bind(function (a) { %>
+    <div class="session-activity">
+      <span class="session-timeline-dot"></span>
+      <ul class="session-activity-title">
+        <li>
+          <% if (a.type === 0) { %>Bouldering
+          <% } else if (a.type === 1) { %>Trad. Climbing
+          <% } else if (a.type === 2) { %>Sport Climbing
+          <% } else if (a.type === 3) { %>Top Roping
+          <% } %>
+          <span><%= this.model.formatActivityDuration(a.duration) %></span>
+        </li>
+        <li><%= this.model.formatActivityPerformance(a.performance) %></li>
+      </ul>
+      <% if (a.ticks.length !== 0) { %>
+        <ul class="session-ticks">
+          <% _.each(a.ticks, _.bind(function (t) { %>
+            <li class="<%= t.sent ? 'sent': '' %>">
+              <% if (t.sent) { %>
+                <span class="session-tick-label">
+                  <i class="icon-ok"></i>
+                </span>
+                <span class="session-tick-label-text">
+                  <%= this.model.formatTickDetails(t) %>
+                </span>
+              <% } %>
+              <span class="session-tick-grade">
+                <%= this.model.formatTickGrade(t.grade, t.feel) || t.ascent.grades.join(' / ') %>
+              </span>
+              <span class="session-tick-name">
+                <a href="/crags/<%= t.ascent.key %>" class="navigate">
+                  <%= t.ascent.name %><%= t.ascent.sector ? ', ' + t.ascent.sector: '' %></a>
+                <% if (t.sent) { %>
+                  <span class="session-tick-stars">
+                    <% for (var i=0; i < t.rating||0; ++i) { %>
+                      <i class="icon-star"></i>
+                    <% } %>
+                    <% for (var i=0; i < 3 - t.rating||0; ++i) { %>
+                      <i class="icon-star empty"></i>
+                    <% } %>
+                  </span>
+                <% } %>
+              </span>
+              <% if (t.note) { %>
+                <p class="session-tick-note">
+                  &ldquo;<%= t.note %>&rdquo;
+                </p>
+              <% } %>
+            </li>
+          <% }, this)); %>
+        </ul>
+      <% } %>
+    </div>
+  <% }, this)); %>
+  <% if (this.model.get('note')) { %>
+    <p class="session-note">
+      &ldquo;<%= this.model.get('note') %>&rdquo;
+    </p>
+  <% } %>
+  <div class="session-info">
+    <% if (this.app.profile.member &&
+        this.model.get('author').id === this.app.profile.member.id) { %>
+      <span class="session-delete info-delete">Delete</span>
+      <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+    <% } %>
+    Logged <a href="/sessions/<%= this.model.get('key') %>"
+          class="muted navigate"><time class="created" 
+          datetime="<%= this.model.get('created') %>" 
+          title="<%= this.model.get('created') %>">
+      <%= this.model.get('created') %>
+    </time></a>
+  </div>
+  <div class="comments"></div>
+</div>
+<div class="clear"></div>
