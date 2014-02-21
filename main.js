@@ -264,6 +264,8 @@ Step(
             socket.join('tick');
             socket.join('follow');
             socket.join('watch');
+            socket.join('map'); // tmp
+            socket.join('media'); // tmp
             if (socket.handshake.user)
               socket.join('mem-' + socket.handshake.user._id);
 

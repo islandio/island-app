@@ -132,7 +132,9 @@ define([
       input.val('').keyup();
 
       // Now save the comment to server.
-      rest.post('/api/comments/' + this.type, payload,
+      var container = this.parentView.parentView ?
+          this.parentView.parentView.type || 'null': 'null';
+      rest.post('/api/comments/' + [container, this.type].join('/'), payload,
           _.bind(function (err, data) {
         if (err) {
           this.collection.pop();
@@ -160,13 +162,7 @@ define([
         limit: limit,
         parent_id: this.parentView.model.id,
       }, _.bind(function (err, data) {
-
-        if (err) {
-
-          // Oops.
-          console.log('TODO: Retry, notify user, etc.');
-          return;
-        }
+        if (err) return console.log(err);
 
         // Update the collection.
         var ids = _.pluck(this.collection.models, 'id');

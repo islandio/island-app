@@ -189,13 +189,8 @@ define([
         this.mediaButton.attr('disabled', false);
         this.adding = false;
 
-        if (err) {
-          console.log(err)
-
-          // Oops, media wasn't created.
-          console.log('TODO: Retry, notify user, etc.');
-          return;
-        }
+        if (err)
+          return console.log(err);
 
         // TODO: make this optimistic.
         this.collect(data.media);
