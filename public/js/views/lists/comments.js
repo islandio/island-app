@@ -72,7 +72,8 @@ define([
 
     // Collect new data from socket events.
     collect: function (data) {
-      if (data.parent_id === this.parentView.model.id)
+      if (data.parent_id === this.parentView.model.id
+        && !this.collection.get(-1))
         this.collection.push(data);
     },
 
@@ -131,17 +132,11 @@ define([
       input.val('').keyup();
 
       // Now save the comment to server.
-      var container = this.parentView.parentView ?
-          this.parentView.parentView.type || 'null': 'null';
-      rest.post('/api/comments/' + [container, this.type].join('/'), payload,
+      rest.post('/api/comments/' + this.type, payload,
           _.bind(function (err, data) {
-
         if (err) {
-
-          // Oops, comment wasn't created.
-          console.log('TODO: Retry, notify user, etc.');
           this.collection.pop();
-          return;
+          return console.log(err);
         }
 
         // Update the comment id.

@@ -257,7 +257,13 @@ Step(
 
           // Socket connect
           sio.sockets.on('connection', function (socket) {
-            socket.join('events');
+            socket.join('event');
+            socket.join('post');
+            socket.join('session');
+            socket.join('comment');
+            socket.join('tick');
+            socket.join('follow');
+            socket.join('watch');
             if (socket.handshake.user)
               socket.join('mem-' + socket.handshake.user._id);
 

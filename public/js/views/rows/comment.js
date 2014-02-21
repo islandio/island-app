@@ -30,7 +30,7 @@ define([
 
     delete: function (e) {
       e.preventDefault();
-      rpc.delete('/api/comments/' + this.model.id, {});
+      rest.delete('/api/comments/' + this.model.id, {});
       this.parentView._remove({id: this.model.id});
     },
 
