@@ -62,12 +62,6 @@ _.each(require('./config').get(process.env.NODE_ENV), function (v, k) {
   app.set(k, v);
 });
 
-// Twitter params
-app.set('twitter', {
-  consumerKey: 'ithvzW8h1tEsUBewL3jxQ',
-  consumerSecret: 'HiGnwoc8BBgsURlKshWsb1pGH8IQWE2Ve8Mqzz8'
-});
-
 // Grade map
 app.set('GRADES', ['9c+', '9c', '9b+', '9b', '9a+', '9a', '8c+', '8c',
     '8b+', '8b', '8a+', '8a', '7c+', '7c', '7b+', '7b', '7a+', '7a',
@@ -82,50 +76,6 @@ Step(
       // App params
       app.set('ROOT_URI', '');
       app.set('HOME_URI', 'http://localhost:' + app.get('PORT'));
-
-      // Facebook params
-      app.set('facebook', {
-        name: 'Island (dev)',
-        clientID: 153015724883386,
-        clientSecret: '8cba32f72580806cca22306a879052bd'
-      });
-
-      // Instagram params
-      app.set('instagram', {
-        clientID: 'b6e0d7d608a14a578cf94763f70f1b49',
-        clientSecret: 'a3937ee32072457d92eaa2165bd7dd37',
-        callbackURL: app.get('HOME_URI') + '/members/connect/instagram/callback',
-        verifyToken: 'doesthisworkyet',
-      });
-
-      // Transloadit params
-      app.set('transloadit', {
-        media: {
-          auth: {key: '8a36aa56062f49c79976fa24a74db6cc'},
-          template_id: '29c60cfc5b9f4e8b8c8bf7a9b1191147'
-        },
-        profile: {
-          auth: {key: '8a36aa56062f49c79976fa24a74db6cc'},
-          template_id: '396d7cb3a2a5437eb258c3e86000f3bf'
-        }
-      });
-
-      // CloudFront URIs
-      app.set('cloudfront', {
-        img: 'https://d2a89oeknmk80g.cloudfront.net/',
-        vid: 'https://d2c2zu8qn6mgju.cloudfront.net/',
-        aud: 'https://d2oapa8usgizyg.cloudfront.net/'
-      });
-
-      // CartoDB params
-      app.set('cartodb', {
-        user: 'island',
-        api_key: '883965c96f62fd219721f59f2e7c20f08db0123b',
-        tables: {
-          medias: 'medias_dev',
-          instagrams: 'instagrams_dev',
-        }
-      });
 
       // Job scheduling.
       app.set('SCHEDULE_JOBS', argv.jobs);
@@ -143,50 +93,6 @@ Step(
           app.get('package').version].join('/'));
       app.set('HOME_URI', [app.get('package').protocol,
           app.get('package').domain].join('://'));
-
-      // Facebook params
-      app.set('facebook', {
-        name: 'Island',
-        clientID: 203397619757208,
-        clientSecret: 'af79cdc8b5ca447366e87b12c3ddaed2'
-      });
-
-      // Instagram params
-      app.set('instagram', {
-        clientID: 'a3003554a308427d8131cef13ef2619f',
-        clientSecret: '369ae2fbc8924c158316530ca8688647',
-        callbackURL: app.get('HOME_URI') + '/members/connect/instagram/callback',
-        verifyToken: 'doesthisworkyet',
-      });
-
-      // Transloadit params
-      app.set('transloadit', {
-        media: {
-          auth: {key: '8a36aa56062f49c79976fa24a74db6cc'},
-          template_id: 'dd77fc95cfff48e8bf4af6159fd6b2e7'
-        },
-        profile: {
-          auth: {key: '8a36aa56062f49c79976fa24a74db6cc'},
-          template_id: 'ddc4239217f34c8185178d2552f8ef9a'
-        }
-      });
-
-      // CloudFront URIs
-      app.set('cloudfront', {
-        img: 'https://d1da6a4is4i5z6.cloudfront.net/',
-        vid: 'https://d1ehvayr9dfk4s.cloudfront.net/',
-        aud: 'https://dp3piv67f7p06.cloudfront.net/'
-      });
-
-      // CartoDB params
-      app.set('cartodb', {
-        user: 'island',
-        api_key: '883965c96f62fd219721f59f2e7c20f08db0123b',
-        tables: {
-          medias: 'medias',
-          instagrams: 'instagrams',
-        }
-      });
 
       // Job scheduling.
       app.set('SCHEDULE_JOBS', true);
@@ -206,12 +112,7 @@ Step(
     require('./lib/common').init(app.get('ROOT_URI'));
 
     // Mailer init
-    app.set('mailer', new Mailer({
-      user: app.get('package').gmail.user,
-      password: app.get('package').gmail.password,
-      host: 'smtp.gmail.com',
-      ssl: true
-    }, app.get('HOME_URI')));
+    app.set('mailer', new Mailer(app.get('gmail'), app.get('HOME_URI')));
 
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');

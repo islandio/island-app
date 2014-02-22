@@ -5,11 +5,6 @@
   "protocol": "https",
   "domain": "www.island.io",
   "bucket": "build.islandio",
-  "cloudfront": "https://d10fiv677oa856.cloudfront.net",
-  "gmail": {
-    "user": "robot@island.io",
-    "password": "I514nDr06ot"
-  },
   "repository": {
     "type": "git",
     "url": "git://github.com/islandio/island.git"
