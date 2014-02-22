@@ -8,11 +8,11 @@ define([
   'views/boiler/list',
   'mps',
   'rest',
+  'Spin',
   'text!../../../templates/lists/events.html',
   'collections/events',
-  'views/rows/event',
-  'Spin'
-], function ($, _, List, mps, rest, template, Collection, Row, Spin) {
+  'views/rows/event'
+], function ($, _, List, mps, rest, Spin, template, Collection, Row) {
   return List.extend({
 
     el: '.events',
@@ -73,7 +73,7 @@ define([
       _.delay(_.bind(function () {
         if (pagination !== true)
           this.checkHeight();
-      }, this), 60);
+      }, this), 20);
       return this;
     },
 
@@ -137,7 +137,7 @@ define([
             showingall.css('display', 'block');
           else {
             showingall.hide();
-            $('<span class="empty-feed">No notifications.</span>')
+            $('<span class="empty-feed">No events.</span>')
                 .appendTo(this.$el);
           }
         } else

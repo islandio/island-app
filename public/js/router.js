@@ -27,13 +27,13 @@ define([
   'views/films',
   'views/about',
   'views/privacy',
-  'views/posts',
-  'views/sessions',
+  'views/crags',
+  'views/dashboard',
   'views/rows/session',
   'views/session.new'
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer, 
     Signin, Forgot, Notifications, Map, Profile, Post, Crag, Ascent, Settings,
-    Reset, Films, About, Privacy, Posts, Sessions, Session, NewSession) {
+    Reset, Films, About, Privacy, Crags, Dashboard, Session, NewSession) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -61,9 +61,9 @@ define([
       this.route('films', 'films', this.films);
       this.route('about', 'about', this.about);
       this.route('privacy', 'privacy', this.privacy);
-      this.route('posts', 'posts', this.posts);
       this.route('sessions/new', 'newSession', this.newSession);
-      this.route('sessions', 'sessions', this.sessions);
+      this.route('dashboard', 'dashboard', this.dashboard);
+      this.route('crags', 'crags', this.crags);
       this.route('_blank', 'blank', function(){});
 
       // Fullfill navigation request from mps.
@@ -235,32 +235,29 @@ define([
       }, this));
     },
 
-    posts: function () {
+    crags: function () {
       this.start();
-      var feed = store.get('feed') || {};
-      if (!feed.query) feed.query = {featured: true};
-      if (feed.query.author_id) delete feed.query.author_id;
-      this.render('/service/posts.profile', feed, _.bind(function (err) {
+      this.render('/service/crags.profile', _.bind(function (err) {
         if (err) return;
-        this.page = new Posts(this.app).render();
+        this.page = new Crags(this.app).render();
         this.stop();
       }, this));
       this.renderTabs({tabs: [
-        {title: 'Sessions', href: '/sessions'},
-        {title: 'Posts', href: '/posts', active: true}
+        {title: 'Activity Feed', href: '/dashboard'},
+        {title: 'Crags', href: '/crags', active: true}
       ]});
     },
 
-    sessions: function () {
+    dashboard: function () {
       this.start();
-      this.render('/service/sessions.profile', _.bind(function (err) {
+      this.render('/service/dashboard.profile', _.bind(function (err) {
         if (err) return;
-        this.page = new Sessions(this.app).render();
+        this.page = new Dashboard(this.app).render();
         this.stop();
       }, this));
       this.renderTabs({tabs: [
-        {title: 'Sessions', href: '/sessions', active: true},
-        {title: 'Posts', href: '/posts'}
+        {title: 'Activity Feed', href: '/dashboard', active: true},
+        {title: 'Crags', href: '/crags'}
       ]});
     },
 
