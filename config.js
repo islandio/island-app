@@ -25,7 +25,7 @@ exports.get = function (env) {
           callbackURL: 'URL',
           verifyToken: 'TOKEN',
         },
-        transloadit: 'transloadit', {
+        transloadit: {
           media: {
             auth: {key: 'KEY'},
             template_id: 'ID'
