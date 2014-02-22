@@ -1,3 +1,0 @@
-#!/bin/zsh
-
-ssh -t island "tail -f /var/log/nodejs/nodejs.log"

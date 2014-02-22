@@ -1,4 +1,0 @@
-#!/bin/zsh
-
-# redis://redistogo:8e79e951bd58df62a99fef22e32f6ede@beardfish.redistogo.com:9806/
-redis-cli -p 9806 -h beardfish.redistogo.com -a 8e79e951bd58df62a99fef22e32f6ede

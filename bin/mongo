@@ -1,4 +1,0 @@
-#!/bin/zsh
-
-# mongodb://islander:isL4nDm0n6o@zoe.mongohq.com:10016/island
-mongo --port 10016 --host zoe.mongohq.com --username islander --password isL4nDm0n6o island
