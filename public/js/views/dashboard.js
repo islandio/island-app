@@ -8,9 +8,9 @@ define([
   'Backbone',
   'mps',
   'util',
-  'text!../../templates/sessions.html',
-  'views/lists/sessions',
-], function ($, _, Backbone, mps, util, template, Sessions) {
+  'text!../../templates/events.html',
+  'views/lists/events',
+], function ($, _, Backbone, mps, util, template, Events) {
 
   return Backbone.View.extend({
 
@@ -34,7 +34,7 @@ define([
     render: function () {
 
       // Set page title
-      this.app.title('Island | Sessions');
+      this.app.title('Island | Home |' + this.app.profile.member.displayName);
 
       // Content rendering.
       this.template = _.template(template);
@@ -55,7 +55,7 @@ define([
     setup: function () {
 
       // Render lists.
-      this.sessions = new Sessions(this.app, {parentView: this, reverse: true});
+      this.events = new Events(this.app, {parentView: this, reverse: true});
 
       return this;
     },
@@ -72,7 +72,7 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      this.sessions.destroy();
+      this.events.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

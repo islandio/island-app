@@ -26,7 +26,10 @@ define([
             err = JSON.parse(res.responseText);
             var data = err.data;
             err = {
-              message: __s === '' ? 'Server Error' : err.error.message,
+              member: err.member,
+              content: err.content,
+              message: err.error.message,
+              stack: err.error.stack,
               code: res.status
             };
             if (data) err.data = data;

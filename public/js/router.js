@@ -139,17 +139,16 @@ define([
       // Get a profile, if needed.
       rest.get(service, query, _.bind(function (err, pro) {
         if (err) {
-          _render.call(this, err);
+          // _render.call(this, err);
           this.page = new Error(this.app).render(err);
           this.spin.stop();
-          return;
         }
         if (secure && !pro.member)
           return this.navigate('/', true);
 
         // Set the profile.
-        var login = this.app.update(pro);
-        _render.call(this, null, login);
+        var login = this.app.update(pro || err);
+        _render.call(this, err, login);
 
       }, this));
     },

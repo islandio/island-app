@@ -46,7 +46,7 @@ define([
       this.spin.start();
   
       // Reset the collection.
-      this.latest_list = this.app.profile.notes;
+      this.latest_list = this.app.profile.notes || {items: []};
       this.collection.reset(this.latest_list.items);
     },
 
