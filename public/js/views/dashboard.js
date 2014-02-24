@@ -8,8 +8,8 @@ define([
   'Backbone',
   'mps',
   'util',
-  'text!../../templates/events.html',
-  'views/lists/events',
+  'text!../../templates/dashboard.html',
+  'views/lists/events'
 ], function ($, _, Backbone, mps, util, template, Events) {
 
   return Backbone.View.extend({
@@ -23,7 +23,7 @@ define([
       // Save app reference.
       this.app = app;
 
-      // Shell events:
+      // Shell events.
       this.on('rendered', this.setup, this);
 
       // Client-wide subscriptions
@@ -34,28 +34,28 @@ define([
     render: function () {
 
       // Set page title
-      this.app.title('Island | Home |' + this.app.profile.member.displayName);
+      this.app.title('Island | Home | '
+          + this.app.profile.member.displayName);
 
       // Content rendering.
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
 
-      // Done rendering ... trigger setup.
+      // Trigger setup.
       this.trigger('rendered');
 
       return this;
-    },
-
-    // Bind mouse events.
-    events: {
-      'click .navigate': 'navigate'
     },
 
     // Misc. setup.
     setup: function () {
 
       // Render lists.
-      this.events = new Events(this.app, {parentView: this, reverse: true});
+      this.events = new Events(this.app, {
+        parentView: this,
+        reverse: true,
+        actions: ['session', 'post']
+      });
 
       return this;
     },
@@ -76,15 +76,6 @@ define([
       this.undelegateEvents();
       this.stopListening();
       this.empty();
-    },
-
-    navigate: function (e) {
-      e.preventDefault();
-
-      // Route to wherever.
-      var path = $(e.target).closest('a').attr('href');
-      if (path)
-        this.app.router.navigate(path, {trigger: true});
     },
 
   });

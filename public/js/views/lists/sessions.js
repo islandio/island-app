@@ -5,7 +5,6 @@
 define([
   'jQuery',
   'Underscore',
-  'Modernizr',
   'views/boiler/list',
   'mps',
   'rest',
@@ -14,8 +13,7 @@ define([
   'text!../../../templates/lists/sessions.html',
   'collections/sessions',
   'views/rows/session'
-], function ($, _, Modernizr, List, mps, rest, util, Spin, template,
-      Collection, Row) {
+], function ($, _, List, mps, rest, util, Spin, template, Collection, Row) {
   return List.extend({
 
     el: '.sessions',

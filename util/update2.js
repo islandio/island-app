@@ -34,15 +34,26 @@ boots.start({index: argv.index}, function (client) {
   Step(
 
     function () {
-      db.Events.list({}, this);
-    },
-    function (err, docs) {
-      boots.error(err);
+      var _this = this;
+      db.Events.list({}, function (err, docs) {
+        if (err) return _this(err);
+        if (docs.length === 0) return _this();
 
-      if (docs.length === 0) return this();
-      var _this = _.after(docs.length, this);
-      _.each(docs, function (d) {
-        db.Events._update({_id: d._id}, {$set: {action_type: d.data.action.t}}, _this);
+        // Prepare events.
+        var __this = _.after(docs.length, _this);
+        _.each(docs, function (d) {
+
+          // Inflate event action.
+          db.inflate(d, {action: {collection: d.action_type, '*': 1}}, function (err) {
+            if (err) return _this(err);
+            if (d.action === 404) {
+              db.Events.remove({_id: d._id}, __this);
+            } else
+              db.Events._update({_id: d._id},
+                  {$set: {date: d.action.date || d.action.created}}, __this);
+          });
+
+        });
       });
     },
     function (err) {

@@ -2965,12 +2965,12 @@ table.post-params label
 .upload-remove:active
   background rgba(0,0,0,0.15)
 
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––sessions*/
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––events*/
 
-.sessions
+.events
   margin-left -30px
 
-.session
+.event
   position relative
   display none
   width 710px
@@ -2990,32 +2990,47 @@ table.post-params label
   -o-animation-fill-mode both
   animation-fill-mode both
 
-.session:last-child
+.event:last-child
   border-bottom 1px solid #f2f2f2
 
-.session.single
+.event.single
   width 1024px
   margin 30px 0
   padding 0
 
-.session-left
+.event-left
   float left
   width 108px
   text-align center
   
-.session-right
+.event-right
   margin 0 0 0 108px
   padding 20px 0 20px 40px
   border-left 1px solid #f2f2f2
 
-.session-avatar
+.event-avatar
   display block
   margin-top 20px
 
-.session-avatar img
+.event-avatar img
   width 48px
   height 48px
   border-radius 2px
+
+.event-day-header
+  border-bottom 1px solid #f2f2f2
+  margin-right -40px
+
+.event-day-header span
+  display inline-block
+  padding 0 20px
+  color #999
+  background #f9f9f9
+  font-size 13px
+  line-height 30px
+  font-family standard_thin
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––sessions*/
 
 .session-title
   width 404px
@@ -3216,17 +3231,6 @@ ul.session-ticks li .session-tick-grade
 ul.session-ticks li.sent .session-tick-grade
   color inherit
 
-// ul.session-tick-details
-//   height 17px
-//   list-style none
-//   font-size 0
-
-// ul.session-tick-details li
-//   display inline
-//   padding 0 5px 0 0
-//   color #666
-//   font-size 11px
-
 p.session-tick-note
   margin-top 5px
   font-size 12px
@@ -3239,19 +3243,6 @@ p.session-tick-note
   font-size 11px
   line-height 13px
   color #999
-
-.session-day-header
-  border-bottom 1px solid #f2f2f2
-  margin-right -40px
-
-.session-day-header span
-  display inline-block
-  padding 0 20px
-  color #999
-  background #f9f9f9
-  font-size 13px
-  line-height 30px
-  font-family standard_thin
 
 .session .comment,
 .session .comments

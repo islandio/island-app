@@ -1,5 +1,21 @@
+<%
+
+%>
+
+<div class="list-header"></div>
 <% if (this.collection.models.length > 0) { %>
-  <% _.each(this.collection.models, _.bind(function (row) { %>
-    <%= this.row(row) %>
-  <% }, this)); %>  
+  <% 
+
+  var day;
+
+  _.each(this.collection.models, _.bind(function(m) { %>
+    <% var _day = new Date(m.get('date')).getDay() %>
+    <% if (_day !== day) { %>
+      <div class="event-day-header">
+        <span><%= (new Date(m.get('date')).format('mmmm dd, yyyy')) %></span>
+      </div>
+    <% } %>
+    <%= this.row(m) %>
+    <% day = _day %>
+  <% }, this)); %>
 <% } %>

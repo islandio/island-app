@@ -5,36 +5,35 @@
 define([
   'jQuery',
   'Underscore',
+  'Backbone',
   'mps',
   'rest',
   'util',
-  'views/boiler/row',
   'models/post',
   'text!../../../templates/rows/post.html',
   'text!../../../templates/post.title.html',
   'text!../../../templates/video.html',
   'views/lists/comments',
   'text!../../../templates/confirm.html'
-], function ($, _, mps, rest, util, Row, Model, template, title, video,
-      Comments, confirm) {
-  return Row.extend({
+], function ($, _, Backbone, mps, rest, util, Model,
+      template, title, video, Comments, confirm) {
+  return Backbone.View.extend({
 
     attributes: function () {
-      return _.defaults({class: 'post'},
-          Row.prototype.attributes.call(this));
+      return {
+        id: this.model.id,
+        class: 'post'
+      }
     },
 
     initialize: function (options, app) {
       this.app = app;
+      this.model = new Model(options.model);
+      this.parentView = options.parentView;
       this.template = _.template(template);
 
-      // Allow single rendering (no parent view)
-      if (!options.parentView) {
-        this.model = new Model(this.app.profile.content.page);
-      }
-
-      // Boiler init.
-      Row.prototype.initialize.call(this, options);
+      // Shell events.
+      this.on('rendered', this.setup, this);
 
       // Client-wide subscriptions.
       this.subscriptions = [];
@@ -48,7 +47,7 @@ define([
       'click .post-feature': 'feature'
     },
 
-    render: function (single, prepend) {
+    render: function () {
 
       function insert(item) {
         var src = util.https(item.data.cf_url || item.data.url);
@@ -72,8 +71,11 @@ define([
         anc.appendTo(this.$('.post-mosaic'));
       }
 
-      Row.prototype.render.call(this, single, prepend);
+      // Render content
+      this.$el.html(this.template.call(this))
+          .prependTo(this.parentView.$('.event-right'));
 
+      // Render title if single
       if (!this.parentView) {
         this.$el.addClass('single')
         this.app.title(this.model.get('author').displayName
@@ -231,20 +233,27 @@ define([
       // Handle fancybox.
       this.fancybox();
 
+      // Trigger setup.
+      this.trigger('rendered');
+
       return this;
     },
 
     setup: function () {
-      Row.prototype.setup.call(this);
 
-      if (!this.parentView) {
-
-        // Set map view.
+      // Set map view.
+      if (!this.parentView)
         mps.publish('map/fly', [this.model.get('location')]);
-      }
 
       // Render comments.
-      this.comments = new Comments(this.app, {parentView: this, type: 'post'});
+      this.comments = new Comments(this.app, {
+        parentView: this,
+        type: 'post'
+      });
+
+      // Handle time.
+      this.timer = setInterval(_.bind(this.when, this), 5000);
+      this.when();
     },
 
     destroy: function () {
@@ -252,7 +261,11 @@ define([
         mps.unsubscribe(s);
       });
       this.comments.destroy();
-      Row.prototype.destroy.call(this);
+      this.undelegateEvents();
+      this.stopListening();
+      if (this.timer)
+        clearInterval(this.timer);
+      this.remove();
     },
 
     navigate: function (e) {
@@ -368,12 +381,7 @@ define([
         // Delete the post.
         rest.delete('/api/posts/' + this.model.get('key'),
             {}, _.bind(function (err, data) {
-          if (err) {
-
-            // Oops.
-            console.log('TODO: Retry, notify user, etc.');
-            return;
-          }
+          if (err) return console.log(err);
 
           // close the modal.
           $.fancybox.close();
@@ -393,6 +401,13 @@ define([
         this.destroy();
         cb();
       }, this));
+    },
+
+    when: function () {
+      if (!this.model.get('created')) return;
+      if (!this.time)
+        this.time = this.$('time.created:first');
+      this.time.text(util.getRelativeTime(this.model.get('created')));
     },
 
     feature: function (e) {

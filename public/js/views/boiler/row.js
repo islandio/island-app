@@ -71,7 +71,6 @@ define([
       return this;
     },
 
-    // Kill this view.
     destroy: function () {
       if (this.subscriptions)
         _.each(this.subscriptions, function (s) {

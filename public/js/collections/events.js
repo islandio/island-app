@@ -8,7 +8,11 @@ define([
 ], function (List, Model) {
   return List.extend({
 
-    model: Model
+    model: Model,
+
+    comparator: function (model) {
+      return -model.get('date');
+    },
 
   });
 });

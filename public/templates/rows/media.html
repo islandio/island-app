@@ -12,11 +12,11 @@
   <% } %>
   Added by <a href="/<%= this.model.get('author').username %>" class="muted navigate">
     <%= this.model.get('author').displayName %></a>
-  <a href="/<%= this.model.get('key') %>" class="muted navigate"><time class="created" 
+  <time class="created static" 
         datetime="<%= this.model.get('created') %>" 
         title="<%= this.model.get('created') %>">
     <%= this.model.get('created') %>
-  </time></a>
+  </time>
   <span class="info-divider">&nbsp;&middot;&nbsp;</span>
   <span class="info-item"><%= this.model.views() %> 
       <%= (this.model.get('vcnt') || 0) !== 1 ? 'Views': 'View' %></span>

@@ -19,7 +19,7 @@ define([
 
     fetching: false,
     nomore: false,
-    limit: 5,
+    limit: 10,
 
     initialize: function (app, options) {
       this.template = _.template(template);
@@ -29,16 +29,16 @@ define([
       // Call super init.
       List.prototype.initialize.call(this, app, options);
 
+      // Init the load indicator.
+      this.spin = new Spin($('.events-spin', this.$el.parent()));
+      this.spin.start();
+
       // Client-wide subscriptions
       this.subscriptions = [];
 
       // Socket subscriptions
       this.app.rpc.socket.on('event.new', _.bind(this.collect, this));
       this.app.rpc.socket.on('event.removed', _.bind(this._remove, this));
-
-      // Init the load indicator.
-      this.spin = new Spin($('.events-spin', this.$el.parent()));
-      this.spin.start();
 
       // Reset the collection.
       this.latest_list = this.app.profile.content.events;
@@ -61,6 +61,7 @@ define([
         this.nomore = true;
         $('<span class="empty-feed">No events.</span>').appendTo(this.$el);
         this.spin.stop();
+        this.spin.target.hide();
       }
       this.paginate();
       return this;
@@ -79,21 +80,12 @@ define([
 
     // misc. setup
     setup: function () {
-      this.spin.stop();
-      List.prototype.setup.call(this);
+      return List.prototype.setup.call(this);
     },
 
-    // Kill this view.
     destroy: function () {
       this.unpaginate();
-      _.each(this.subscriptions, function (s) {
-        mps.unsubscribe(s);
-      });
-      _.each(this.views, function (v) {
-        v.destroy();
-      });
-      this.undelegateEvents();
-      this.stopListening();
+      return List.prototype.destroy.call(this);
     },
 
     // remove a model
@@ -129,16 +121,19 @@ define([
       function updateUI(list) {
         _.defaults(list, {items:[]});
         this.latest_list = list;
-        var showingall = $('.list-spin .empty-feed', this.$el.parent());
+        var showingall = this.parentView.$('.list-spin .empty-feed');
         if (list.items.length === 0) {
           this.nomore = true;
+          this.fetching = false;
+          this.spin.stop();
           this.spin.target.hide();
           if (this.collection.length > 0)
             showingall.css('display', 'block');
           else {
             showingall.hide();
-            $('<span class="empty-feed">No events.</span>')
-                .appendTo(this.$el);
+            if (this.$('.empty-feed').length === 0)
+              $('<span class="empty-feed">' + this.empty_label + '</span>')
+                  .appendTo(this.$el);
           }
         } else
           _.each(list.items, _.bind(function (i) {
@@ -146,12 +141,15 @@ define([
             this.renderLast(true);
           }, this));
         _.delay(_.bind(function () {
-          this.spin.stop();
           this.fetching = false;
+          this.spin.stop();
           if (list.items.length < this.limit) {
             this.spin.target.hide();
             if (!this.$('.empty-feed').is(':visible'))
               showingall.css('display', 'block');
+          } else {
+            showingall.hide();
+            this.spin.target.show();
           }
         }, this), (list.items.length + 1) * 30);
       }
@@ -166,7 +164,7 @@ define([
       // get more
       this.spin.start();
       this.fetching = true;
-      rest.post('/api/events/list', {
+      rest.post('/api/sessions/list', {
         limit: this.limit,
         cursor: this.latest_list.cursor,
         query: this.latest_list.query
@@ -179,7 +177,7 @@ define([
         }
 
         // Add the items.
-        updateUI.call(this, data.events);
+        updateUI.call(this, data.sessions);
 
       }, this));
 
@@ -194,12 +192,13 @@ define([
         if (!this.nomore && pos < -this.spin.target.height() / 2)
           this.more();
       }, this), 20);
+
       wrap.scroll(this._paginate).resize(this._paginate);
     },
 
     unpaginate: function () {
       $(window).unbind('scroll', this._paginate).unbind('resize', this._paginate);
-    } 
+    },
 
   });
 });
