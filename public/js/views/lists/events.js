@@ -78,8 +78,65 @@ define([
       return this;
     },
 
+    events: {
+      'focus textarea[name="body"].post-input': 'focus',
+      'blur textarea[name="body"].post-input': 'blur',
+      'click .feed-button': 'filter',
+    },
+
     // misc. setup
     setup: function () {
+
+      // Save refs
+      this.postForm = this.$('.post-input-form');
+      this.postBody = $('textarea[name="body"]', this.postForm);
+      this.postTitle = this.$('input[name="title"]', this.postForm);
+      this.postButton = this.$('.post-button', this.postForm);
+      this.dropZone = this.$('.post-dnd');
+      this.postParams = this.$('.post-params');
+      this.postSelect = this.$('.post-select');
+      this.postFiles = this.$('.post-files');
+
+      // Autogrow the write comment box.
+      this.postBody.autogrow();
+
+      // Show the write post box if it exists and
+      // if the user is not using IE.
+      if (navigator.userAgent.indexOf('MSIE') !== -1) {
+        this.$('.post-input .post').remove();
+        mps.publish('flash/new', [{
+          message: 'Internet Explorer isn\'t supported for posting content.'
+              + ' Please use Safari, Chrome, or Firefox.',
+          level: 'error',
+          sticky: true
+        }, true]);
+      } else
+        this.$('.post-input .post').show();
+
+      // Add mouse events for dummy file selector.
+      var dummy = this.$('.post-file-chooser-dummy');
+      this.$('.post-file-chooser').on('mouseover', function (e) {
+        dummy.addClass('hover');
+      })
+      .on('mouseout', function (e) {
+        dummy.removeClass('hover');
+      })
+      .on('mousedown', function (e) {
+        dummy.addClass('active');
+      })
+      .change(_.bind(this.drop, this));
+      $(document).on('mouseup', function (e) {
+        dummy.removeClass('active');
+      });
+
+      // Drag & drop events.
+      this.dropZone.on('dragover', _.bind(this.dragover, this))
+          .on('dragleave', _.bind(this.dragout, this))
+          .on('drop', _.bind(this.drop, this));
+
+      // Submit post.
+      this.postButton.click(_.bind(this.submit, this));
+
       return List.prototype.setup.call(this);
     },
 
@@ -198,6 +255,243 @@ define([
 
     unpaginate: function () {
       $(window).unbind('scroll', this._paginate).unbind('resize', this._paginate);
+    },
+
+    dragover: function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+      e.originalEvent.dataTransfer.dropEffect = 'copy';
+      this.dropZone.addClass('dragging');
+    },
+
+    dragout: function (e) {
+      this.dropZone.removeClass('dragging');
+    },
+
+    drop: function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+
+      // Stop drag styles.
+      this.dropZone.removeClass('dragging');
+      this.focus();
+      this.postBody.focus();
+
+      // Get the files, if any.
+      var files = e.target.files || e.originalEvent.dataTransfer.files;
+      if (files.length === 0) return false;
+
+      // We have files to upload.
+      var data = e.target.files ? null:
+          new FormData(this.postForm.get(0));
+
+      // Loop over each file, adding it the the display
+      // and from data object, if present.
+      var set = $('<div class="upload-set">');
+      var parts = [];
+      _.each(files, function (file) {
+        parts.push('<div class="upload-progress-wrap"><div class="upload-remove">'
+            + '<i class="icon-cancel"></i></div><div '
+            + 'class="upload-progress">' + '<span class="upload-label">',
+            file.name, '</span><span class="upload-progress-txt">'
+            + 'Waiting...</span>', '</div></div>');
+        if (data && typeof file === 'object') data.append('file', file);
+      });
+      this.postFiles.append(set.html(parts.join('')));
+      var bar = $('.upload-progress', set);
+      var txt = $('.upload-progress-txt', set);
+      var attachment = {uploading: true};
+      this.attachments.push(attachment);
+
+      // Transloadit options
+      var opts = {
+        wait: true,
+        autoSubmit: false,
+        modal: false,
+        onProgress: function (br, be) {
+          if (be === 0) return;
+          var per = Math.ceil(br / be * 100);
+          txt.text(per === 100 ? 'Processing...':
+              'Uploading ' + per + '%');
+          bar.width((br / be * 100) + '%');
+        },
+        onError: function (assembly) {
+          mps.publish('flash/new', [{
+            message: assembly.error + ': ' + assembly.message,
+            level: 'error'
+          }, false]);
+          bar.parent().remove();
+          attachment.uploading = false;
+        },
+        onSuccess: _.bind(function (assembly) {
+          if (_.isEmpty(assembly.results)) {
+            mps.publish('flash/new', [{
+              message: 'Whoa, there. You tried to attach an invalid file type.',
+              level: 'alert'
+            }, true]);
+            bar.parent().remove();
+          } else {
+            attachment.assembly = assembly;
+            txt.text('');
+          }
+          this.app.title('Climb');
+          attachment.uploading = false;
+        }, this)
+      };
+
+      // Use formData object if exists (dnd only)
+      if (data) opts.formData = data;
+
+      // Setup the uploader.
+      var uploader = this.postForm.transloadit(opts);
+
+      // For canceling.
+      $('.upload-remove', set).click(function (e) {
+        uploader.cancelled = true;
+        if (uploader.instance) {
+          clearTimeout(uploader.timer);
+          uploader._poll('?method=delete');
+        }
+        bar.parent().remove();
+        attachment.uploading = false;
+        delete attachment.assembly;
+      });
+
+      // Send files to Transloadit.
+      this.postForm.submit();
+
+      // Clear form events.
+      this.postForm.unbind('submit.transloadit');
+
+      return false;
+    },
+
+    submit: function (e) {
+      if (e) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
+
+      // Error checks.
+      var uploading = false;
+      var valid = true;
+      _.each(this.attachments, function (a) {
+        if (a.uploading) uploading = true;
+        if (a.assembly) {
+          if (a.assembly.ok !== 'ASSEMBLY_COMPLETED') {
+            mps.publish('flash/new', [{
+              message: 'Upload failed. Please try again.',
+              level: 'error'
+            }, true]);
+            valid = false;
+          }
+        }
+      });
+      if (uploading) {
+        mps.publish('flash/new', [{
+          message: 'Whoa, there. Uploads are still in progress...',
+          level: 'alert'
+        }, true]);
+        return false;
+      }
+      if (!valid) return false;
+
+      // Sanitize html fields.
+      this.postTitle.val(util.sanitize(this.postTitle.val()));
+      this.postBody.val(util.sanitize(this.postBody.val()));
+
+      // Gather form data.
+      var payload = this.postForm.serializeObject();
+      delete payload.params;
+      var results = {};
+      _.each(this.attachments, function (a) {
+        if (!a.assembly) return;
+        _.each(a.assembly.results, function (v, k) {
+          _.each(v, function (r) {
+            if (results[k]) results[k].push(r);
+            else results[k] = [r];
+          });
+        });
+      });
+      payload.assembly = {results: results};
+
+      // Check for empty post.
+      if (payload.body === '' && _.isEmpty(payload.assembly.results))
+        return false;
+
+      // Now save the post to server.
+      rest.post('/api/posts', payload,
+          _.bind(function (err, data) {
+
+        // Clear fields.
+        this.cancel();
+
+        if (err) return console.log(err);
+
+        // TODO: make this optimistic.
+        this.collect(data.post);
+
+      }, this));
+
+      return false;
+    },
+
+    cancel: function () {
+      this.uploading = false;
+      this.attachments = [];
+      this.postFiles.empty();
+      this.postSelect.show();
+      this.postTitle.val('');
+      this.postBody.val('').focus().keyup();
+    },
+
+    focus: function (e) {
+      this.postBody.css({'min-height': '60px'});
+      this.dropZone.addClass('focus');
+      if (!this.uploading) {
+        this.postParams.show();
+        this.postSelect.show();
+      }
+    },
+
+    blur: function (e) {
+      this.dropZone.removeClass('focus');
+    },
+
+    filter: function (e) {
+
+      // Update buttons.
+      var chosen = $(e.target);
+      if (chosen.hasClass('selected')) return;
+      var selected = $('.feed-button.selected', chosen.parent());
+      chosen.addClass('selected');
+      selected.removeClass('selected');
+
+      // Updata list query.
+      if (!this.latest_list.query)
+        this.latest_list.query = {};
+      if (chosen.hasClass('sort-featured'))
+        this.latest_list.query.featured = true;
+      else if (chosen.hasClass('sort-recent'))
+        delete this.latest_list.query.featured;
+      else if (chosen.hasClass('filter-all'))
+        delete this.latest_list.query.type;
+      else if (chosen.hasClass('filter-video'))
+        this.latest_list.query.type = 'video';
+      else if (chosen.hasClass('filter-image'))
+        this.latest_list.query.type = 'image';
+      store.set('feed', {query: this.latest_list.query});
+
+      // Reset the collection.
+      this.nomore = false;
+      this.latest_list.cursor = 0;
+      this.latest_list.more = true;
+      this.collection.reset([]);
+      _.each(this.views, function (v) {
+        v.destroy();
+      });
+      this.views = [];
+      this.more();
     },
 
   });
