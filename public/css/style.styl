@@ -262,6 +262,12 @@ body
   line-height 18px
   min-height 100%
 
+body.preload *
+  -webkit-transition none !important
+  -moz-transition none !important
+  -ms-transition none !important
+  -o-transition none !important
+
 a
   color darkgray
   background-color mattegray
@@ -2602,11 +2608,7 @@ textarea.comment-input
 
 .post
   position relative
-  display none
-  width 680px
-  margin-bottom 30px
-  padding 0 40px 30px 30px
-  border-bottom 1px solid #f2f2f2
+  width 561px
 
   -webkit-animation-name fadeIn
   -moz-animation-name fadeIn
@@ -2621,11 +2623,6 @@ textarea.comment-input
   -o-animation-fill-mode both
   animation-fill-mode both
 
-.post:last-child
-  margin 0
-  padding 0 40px 0 30px
-  border none
-
 .post.single
   width 1024px
   margin-top 30px
@@ -2638,13 +2635,16 @@ textarea.comment-input
 .page-title span.post-title-video
   color red
 
+.post-media
+  position relative
+
 .post .post-mosaic
   position relative
   overflow hidden
-  width 680px
-  height 383px
+  width 561px
+  height 316px
   background mattegray
-
+  margin-bottom 10px
   border-radius 2px
 
 .post.single .post-mosaic
@@ -2655,24 +2655,22 @@ textarea.comment-input
   position absolute
   overflow hidden
   background #4d4d4d
+  border-radius 2px
 
 .post-mosaic-wrap img
   position relative
 
 .post-mosaic-wrap:hover img
-  opacity 0.95
-
-.post-mosaic-wrap:active img
-  opacity 0.9
+  opacity 0.98
 
 .post img.post-mosaic-play
   position absolute !important
-  left 100px
-  top 100px
+  left 78px
+  top 78px
   opacity 0.9
 
 .post img.post-mosaic-play.trailer
-  top 75px
+  top 53px
 
 .post.single img.post-mosaic-play
   left 197px
@@ -2699,8 +2697,12 @@ textarea.comment-input
   top 318px
   left 225px
 
+.post .post-title
+  display block
+  position relative
+
 .post .post-body
-  margin 10px 0 0
+  margin 5px 0 0
   font-size 14px
   line-height 22px
   color #4d4d4d
@@ -2747,8 +2749,10 @@ a.post-input-avatar img
 
 .post-input-wrap
   background #f9f9f9
-  border-radius 0 2px 2px 2px
-  padding 8px 8px 3px 8px
+  padding 8px
+
+.post-input-form
+  line-height 0
 
 .post-dnd
   display inline-block
@@ -2782,6 +2786,7 @@ a.post-input-avatar img
   position relative
   padding 5px
   color #666
+  line-height 18px
   border-top 1px dashed bordergray
   background #fcfcfc
   border-radius 0 0 2px 2px
@@ -2833,7 +2838,7 @@ textarea.post-input
 table.post-params
   display none
   width 694px
-  margin 8px 0 5px 0
+  margin 8px 0 0 0
 
 table.post-params td
   padding 0 20px 0 0
@@ -3021,6 +3026,19 @@ table.post-params label
 .events .list-header
   margin-top 20px
 
+.event-day-header
+  border-bottom 1px solid #f2f2f2
+  margin-right -40px
+
+.event-day-header span
+  display inline-block
+  padding 0 20px
+  color #999
+  background #f9f9f9
+  font-size 13px
+  line-height 30px
+  font-family standard_thin
+
 .event
   position relative
   display none
@@ -3049,12 +3067,20 @@ table.post-params label
   margin 30px 0
   padding 0
 
+.event .comment,
+.event .comments
+  width 404px
+
+.event textarea.comment-input
+  width 337px
+
 .event-left
   float left
   width 108px
   text-align center
   
 .event-right
+  min-height 48px
   margin 0 0 0 108px
   padding 20px 0 20px 40px
   border-left 1px solid #f2f2f2
@@ -3068,22 +3094,85 @@ table.post-params label
   height 48px
   border-radius 2px
 
-.event-day-header
-  border-bottom 1px solid #f2f2f2
-  margin-right -40px
+.event-title
+  width 404px
 
-.event-day-header span
-  display inline-block
-  padding 0 20px
+.event-info
+  width 404px
+  margin 10px 0 0
+  font-size 11px
+  line-height 13px
   color #999
-  background #f9f9f9
-  font-size 13px
-  line-height 30px
-  font-family standard_thin
+
+.event-timeline-dot
+  position absolute
+  left -45px
+  top 10px
+  font-size 34px
+  color #b3b3b3
+  line-height 0
+
+  -webkit-transition all 0.15s ease-in-out
+  -moz-transition all 0.15s ease-in-out
+  transition all 0.15s ease-in-out
+
+.event-timeline-dot:before
+  content "\00b7"
+
+.event-timeline-label
+  position absolute
+  left -41px
+  top 14px
+  width 41px
+  border-bottom 1px solid #f2f2f2
+
+  -webkit-transition all 0.15s ease-in-out
+  -moz-transition all 0.15s ease-in-out
+  transition all 0.15s ease-in-out
+
+.event:hover .event-timeline-label
+  border-color #e6e6e6
+
+.event-timeline-label i
+  position absolute
+  left -11px
+  top -10px
+  padding 0 3px
+  border 1px solid #f2f2f2
+  border-radius 10px
+  font-size 9px
+  color #b3b3b3
+  line-height 19px
+  background #fff
+
+  -webkit-transition all 0.15s ease-in-out
+  -moz-transition all 0.15s ease-in-out
+  transition all 0.15s ease-in-out
+
+.event:hover .event-timeline-label i
+  color #4d4d4d
+  border-color #e6e6e6
+
+.event-timeline-label-text
+  position absolute
+  left -150px
+  top 6px
+  width 93px
+  font-size 11px
+  color #b3b3b3
+  text-align right
+  white-space nowrap
+
+  -webkit-transition all 0.15s ease-in-out
+  -moz-transition all 0.15s ease-in-out
+  transition all 0.15s ease-in-out
+
+.event:hover .event-timeline-label-text
+  color #4d4d4d
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––sessions*/
 
-.session-title
+.session .title-large
   width 404px
 
 .session-location
@@ -3121,21 +3210,6 @@ table.post-params label
 .session-activity
   position relative
   width 404px
-
-.session-timeline-dot
-  position absolute
-  left -45px
-  top 10px
-  font-size 34px
-  color #b3b3b3
-  line-height 0
-
-  -webkit-transition all 0.15s ease-in-out
-  -moz-transition all 0.15s ease-in-out
-  transition all 0.15s ease-in-out
-
-.session-timeline-dot:before
-  content "\00b7"
 
 ul.session-activity-title
   list-style none
@@ -3188,57 +3262,6 @@ ul.session-ticks li.sent
 .session:hover ul.session-ticks li.sent
   border-color #e6e6e6
 
-ul.session-ticks li .session-tick-label
-  position absolute
-  left -41px
-  top 14px
-  width 41px
-  border-bottom 1px solid #f2f2f2
-
-  -webkit-transition all 0.15s ease-in-out
-  -moz-transition all 0.15s ease-in-out
-  transition all 0.15s ease-in-out
-
-.session:hover ul.session-ticks li .session-tick-label
-  border-color #e6e6e6
-
-ul.session-ticks li .session-tick-label i
-  position absolute
-  left -11px
-  top -10px
-  padding 0 3px
-  border 1px solid #f2f2f2
-  border-radius 10px
-  font-size 9px
-  color #b3b3b3
-  line-height 19px
-  background #fff
-
-  -webkit-transition all 0.15s ease-in-out
-  -moz-transition all 0.15s ease-in-out
-  transition all 0.15s ease-in-out
-
-.session:hover ul.session-ticks li .session-tick-label i
-  color #4d4d4d
-  border-color #e6e6e6
-
-ul.session-ticks li .session-tick-label-text
-  position absolute
-  left -150px
-  top 6px
-  width 93px
-  font-size 11px
-  color #b3b3b3
-  text-align right
-  white-space nowrap
-
-  -webkit-transition all 0.15s ease-in-out
-  -moz-transition all 0.15s ease-in-out
-  transition all 0.15s ease-in-out
-
-.session:hover ul.session-ticks li .session-tick-label-text
-  color #4d4d4d
-
 ul.session-ticks li .session-tick-name
   display block
 
@@ -3287,20 +3310,6 @@ p.session-tick-note
   font-size 12px
   line-height 18px
   color #3d3d3d
-
-.session-info
-  width 404px
-  margin 10px 0 0
-  font-size 11px
-  line-height 13px
-  color #999
-
-.session .comment,
-.session .comments
-  width 404px
-
-.session textarea.comment-input
-  width 337px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––notifications*/
 

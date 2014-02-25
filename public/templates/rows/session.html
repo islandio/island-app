@@ -7,7 +7,7 @@
 %>
 
 <div class="session-map" id="session_map_<%= this.model.id %>"></div>
-<div class="session-title">
+<div class="event-title">
   <a href="/<%= this.model.get('author').username %>" class="title navigate">
     <%= this.model.get('author').displayName %>
   </a>
@@ -20,7 +20,7 @@
 </a>
 <% _.each(this.model.get('actions'), _.bind(function (a) { %>
   <div class="session-activity">
-    <span class="session-timeline-dot"></span>
+    <span class="event-timeline-dot"></span>
     <ul class="session-activity-title">
       <li>
         <% if (a.type === 0) { %>Bouldering
@@ -37,10 +37,10 @@
         <% _.each(a.ticks, _.bind(function (t) { %>
           <li class="<%= t.sent ? 'sent': '' %>">
             <% if (t.sent) { %>
-              <span class="session-tick-label">
+              <span class="event-timeline-label">
                 <i class="icon-ok"></i>
               </span>
-              <span class="session-tick-label-text">
+              <span class="event-timeline-label-text">
                 <%= this.model.formatTickDetails(t) %>
               </span>
             <% } %>
@@ -77,7 +77,7 @@
     &ldquo;<%= this.model.get('note') %>&rdquo;
   </p>
 <% } %>
-<div class="session-info">
+<div class="event-info">
   <% if (this.app.profile.member &&
       this.model.get('author').id === this.app.profile.member.id) { %>
     <span class="session-delete info-delete">Delete</span>

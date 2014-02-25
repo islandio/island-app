@@ -17,21 +17,27 @@
       <%= this.model.get('product').subtype %> Film ($<%= this.model.get('product').price %>)
     </a>
   <% } %>
-  <div class="page-title">
-    <a href="/<%= this.model.get('author').username %>" class="image-anchor navigate">
-      <img src="<%= gravatar %>" class="page-title-avatar" width="26" height="26" /></a><%= this.model.date() %> | 
-    <a href="/<%= this.model.get('author').username %>" class="navigate">
-      <%= this.model.get('author').displayName %></a> 
-    <% if (this.model.get('title')) { %>
-      / <a href="/<%= this.model.get('key') %>" class="navigate">
-      <span class="<%= typeClass %>"><%= this.model.get('title') %></span></a>
-    <% } %>
+  <div class="event-title">
+    <a href="/<%= this.model.get('author').username %>" class="title navigate">
+      <%= this.model.get('author').displayName %></a>
   </div>
+  <% if (this.model.get('title')) { %>
+    <span class="post-title">
+      <span class="event-timeline-dot"></span>
+      <a href="/<%= this.model.get('key') %>" class="title-large navigate">
+        <%= this.model.get('title') %></a>
+    </span>
+  <% } %>
 <% } %>
-<div class="post-mosaic"></div>
+<div class="post-media">
+  <span class="event-timeline-label">
+    <i class="icon-<%= video ? 'youtube-play': 'picture' %>"></i>
+  </span>
+  <div class="post-mosaic"></div>
+</div>
 <% if (this.model.link()) { %>
   <% if (this.parentView) { %>
-    <iframe src="<%= this.model.get('link') %>" width="680" height="383"
+    <iframe src="<%= this.model.get('link') %>" width="561" height="316"
         frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
   <% } else { %>
     <iframe src="<%= this.model.get('link') %>" width="1024" height="576"
@@ -41,25 +47,16 @@
 <div class="post-body">
   <%= this.model.body(!this.parentView) %>
 </div>
-<div class="post-info">
+<div class="event-info">
   <% if (this.app.profile.member &&
       this.model.get('author').id === this.app.profile.member.id) { %>
     <span class="post-delete info-delete">Delete</span>
     <span class="info-divider">&nbsp;&middot;&nbsp;</span>
   <% } %>
-  <% if (this.app.profile.member && this.app.profile.member.admin) { %>
-    <a href="javascript:;" class="muted info-item post-feature">Feature</a>
-    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-  <% } %>
-  Posted by <a href="/<%= this.model.get('author').username %>" class="muted navigate">
-    <%= this.model.get('author').displayName %></a>
-  <a href="/<%= this.model.get('key') %>" class="muted navigate"><time class="created" 
+  Posted <a href="/<%= this.model.get('key') %>" class="muted navigate"><time class="created" 
         datetime="<%= this.model.get('created') %>" 
         title="<%= this.model.get('created') %>">
     <%= this.model.get('created') %>
   </time></a>
-  <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-  <span class="info-item"><%= this.model.views() %> 
-      <%= (this.model.get('vcnt') || 0) !== 1 ? 'Views': 'View' %></span>
 </div>
 <div class="comments"></div>

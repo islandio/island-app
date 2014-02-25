@@ -8,11 +8,12 @@ define([
   'views/boiler/list',
   'mps',
   'rest',
+  'util',
   'Spin',
   'text!../../../templates/lists/events.html',
   'collections/events',
   'views/rows/event'
-], function ($, _, List, mps, rest, Spin, template, Collection, Row) {
+], function ($, _, List, mps, rest, util, Spin, template, Collection, Row) {
   return List.extend({
 
     el: '.events',
@@ -20,6 +21,7 @@ define([
     fetching: false,
     nomore: false,
     limit: 10,
+    attachments: [],
 
     initialize: function (app, options) {
       this.template = _.template(template);
@@ -321,6 +323,7 @@ define([
             level: 'error'
           }, false]);
           bar.parent().remove();
+          this.parentView.title();
           attachment.uploading = false;
         },
         onSuccess: _.bind(function (assembly) {
@@ -334,7 +337,7 @@ define([
             attachment.assembly = assembly;
             txt.text('');
           }
-          this.app.title('Climb');
+          this.parentView.title();
           attachment.uploading = false;
         }, this)
       };
@@ -429,7 +432,7 @@ define([
         if (err) return console.log(err);
 
         // TODO: make this optimistic.
-        this.collect(data.post);
+        // this.collect(data.post);
 
       }, this));
 

@@ -211,7 +211,7 @@ define([
       this.spin.start();
 
       // Do the API request.
-      rpc.post('/api/members/auth', payload, _.bind(function (err, data) {
+      rest.post('/api/members/auth', payload, _.bind(function (err, data) {
         if (err) {
 
           // Stop spinner.
@@ -305,7 +305,7 @@ define([
       this.spin.start();
 
       // Do the API request.
-      rpc.post('/api/members', payload, _.bind(function (err, data) {
+      rest.post('/api/members', payload, _.bind(function (err, data) {
         if (err) {
 
           // Stop spinner.

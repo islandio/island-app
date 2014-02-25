@@ -34,8 +34,7 @@ define([
     render: function () {
 
       // Set page title
-      this.app.title('Island | Home | '
-          + this.app.profile.member.displayName);
+      this.title();
 
       // Content rendering.
       this.template = _.template(template);
@@ -78,6 +77,11 @@ define([
       this.stopListening();
       this.empty();
     },
+
+    title: function () {
+      this.app.title('Island | Home | '
+          + this.app.profile.member.displayName);
+    }
 
   });
 });

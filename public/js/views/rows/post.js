@@ -50,7 +50,7 @@ define([
     render: function () {
 
       function insert(item) {
-        var src = util.https(item.data.cf_url || item.data.url);
+        var src = util.https(item.data.ssl_url || item.data.cf_url || item.data.url);
         var anc = $('<a class="fancybox" rel="g-' + this.model.id + '" href="'
             + src + '">');
         var div = $('<div class="post-mosaic-wrap">').css(item.div).appendTo(anc);
@@ -85,6 +85,9 @@ define([
         this.title = _.template(title).call(this);
       }
 
+      // Trigger setup.
+      this.trigger('rendered');
+
       // gather images
       var images = [];
       if (this.model.get('medias'))
@@ -104,13 +107,12 @@ define([
         }, this));
 
       if (images.length === 0) {
-        this.$('.post-mosaic').hide();
-        this.$('.post-avatar').hide();
+        this.$('.post-media').hide();
         return this;
       }
 
-      var W = this.parentView ? 680: 1024;
-      var H = this.parentView ? 383: 576;
+      var W = this.parentView ? 561: 1024;
+      var H = this.parentView ? 316: 576;
       var P = 2;
 
       // handle the first item (the main img for this post)
@@ -233,9 +235,6 @@ define([
       // Handle fancybox.
       this.fancybox();
 
-      // Trigger setup.
-      this.trigger('rendered');
-
       return this;
     },
 
@@ -326,6 +325,17 @@ define([
               image: this.video.poster.cf_url
             };
           _.extend(params, files);
+
+          _.extend(params, this.video.video.streaming_url ? {
+            playlist: [{
+              file: this.video.video.streaming_url,
+              image: this.video.poster.ssl_url,
+              provider: 'http://players.edgesuite.net/flash/plugins/jw/v3.3/AkamaiAdvancedJWStreamProvider.swf'
+            }],
+          }: {
+            file: this.video.video.cf_url,
+            image: this.video.poster.cf_url
+          });
 
           if (this.parentView) {
 

@@ -8,9 +8,9 @@
         this.filter('textarea').each(function() {
             
             var $this       = $(this),
-                minHeight   = $this.height(),
+                minHeight   = 0, //$this.height(),
                 lineHeight  = $this.css('lineHeight');
-            
+
             var shadow = $('<div></div>').css({
                 position:   'absolute',
                 top:        -10000,
