@@ -34,7 +34,7 @@ define([
         case 'session': Action = Session; break;
         case 'post': Action = Post; break;
       }
-      
+
       // Render action as sub-view.
       if (Action)
         this.action = new Action({

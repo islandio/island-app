@@ -126,23 +126,19 @@ define([
 
       // Render the confirm modal.
       $.fancybox(_.template(confirm)({
-        message: 'Do you want to delete this session log?',
-        working: 'Working...'
+        message: 'I want to delete this session log.',
       }), {
         openEffect: 'fade',
         closeEffect: 'fade',
         closeBtn: false,
         padding: 0
       });
-      
-      // Refs.
-      var overlay = $('.modal-overlay');
 
       // Setup actions.
-      $('#confirm_cancel').click(function (e) {
+      $('.modal-cancel').click(function (e) {
         $.fancybox.close();
       });
-      $('#confirm_delete').click(_.bind(function (e) {
+      $('.modal-confirm').click(_.bind(function (e) {
 
         // Delete the session.
         rest.delete('/api/sessions/' + this.model.get('id'),
@@ -160,13 +156,6 @@ define([
       }, this));
 
       return false;
-    },
-
-    _remove: function (cb) {
-      this.$el.slideUp('fast', _.bind(function () {
-        this.destroy();
-        cb();
-      }, this));
     },
 
     when: function () {

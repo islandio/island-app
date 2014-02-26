@@ -72,14 +72,7 @@
         <a href="javascript:;" class="navigate">All</a>
       </li>
       <li class="subtab">
-        <a href="javascript:;" class="navigate">Sponsored</a>
-      </li>
-    </ul>
-  </div>
-  <div class="subtabs">
-    <ul>
-      <li class="subtab active">
-        <a href="javascript:;" class="navigate">All</a>
+        <a href="javascript:;" class="navigate">Sessions</a>
       </li>
       <li class="subtab">
         <a href="javascript:;" class="navigate">Videos</a>
@@ -93,11 +86,13 @@
 <div class="list-header"></div>
 <% if (this.collection.models.length > 0) {
   var day;
-  _.each(this.collection.models, _.bind(function(m) { %>
-    <% var _day = new Date(m.get('date')).getDay() %>
+  _.each(this.collection.models, _.bind(function (m) { %>
+    <% var _date = new Date(m.get('date')) %>
+    <% var _day = _date.getDay() %>
     <% if (_day !== day) { %>
-      <div class="event-day-header">
-        <span><%= (new Date(m.get('date')).format('mmmm dd, yyyy')) %></span>
+      <% var date = new Date(_date.getFullYear(), _date.getMonth(), _date.getDate(), 23, 59, 59, 999); %>
+      <div class="event-day-header" data-ms="<%= date.valueOf() %>">
+        <span><%= (date.format('mmmm dd, yyyy')) %></span>
       </div>
     <% } %>
     <%= this.row(m) %>

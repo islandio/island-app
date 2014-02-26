@@ -326,17 +326,6 @@ define([
             };
           _.extend(params, files);
 
-          _.extend(params, this.video.video.streaming_url ? {
-            playlist: [{
-              file: this.video.video.streaming_url,
-              image: this.video.poster.ssl_url,
-              provider: 'http://players.edgesuite.net/flash/plugins/jw/v3.3/AkamaiAdvancedJWStreamProvider.swf'
-            }],
-          }: {
-            file: this.video.video.cf_url,
-            image: this.video.poster.cf_url
-          });
-
           if (this.parentView) {
 
             // Place the video in the fancybox.
@@ -370,23 +359,19 @@ define([
 
       // Render the confirm modal.
       $.fancybox(_.template(confirm)({
-        message: 'Do you want to delete this post?',
-        working: 'Working...'
+        message: 'I want to delete this post.',
       }), {
         openEffect: 'fade',
         closeEffect: 'fade',
         closeBtn: false,
         padding: 0
       });
-      
-      // Refs.
-      var overlay = $('.modal-overlay');
 
       // Setup actions.
-      $('#confirm_cancel').click(function (e) {
+      $('.modal-cancel').click(function (e) {
         $.fancybox.close();
       });
-      $('#confirm_delete').click(_.bind(function (e) {
+      $('.modal-confirm').click(_.bind(function (e) {
 
         // Delete the post.
         rest.delete('/api/posts/' + this.model.get('key'),
@@ -398,19 +383,9 @@ define([
 
         }, this));
 
-        // Remove from UI.
-        this.parentView._remove({id: this.model.id});
-
       }, this));
 
       return false;
-    },
-
-    _remove: function (cb) {
-      this.$el.slideUp('fast', _.bind(function () {
-        this.destroy();
-        cb();
-      }, this));
     },
 
     when: function () {

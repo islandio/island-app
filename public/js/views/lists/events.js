@@ -49,7 +49,8 @@ define([
 
     // receive event from event bus
     collect: function (data) {
-      this.collection.unshift(data);
+      if (_.contains(this.latest_list.actions, data.action_type))
+        this.collection.unshift(data);
     },
 
     // initial bulk render of list
@@ -73,6 +74,28 @@ define([
     // (could be newly arived or older ones from pagination)
     renderLast: function (pagination) {
       List.prototype.renderLast.call(this, pagination);
+
+      // Handle day headers.
+      var view = pagination !== true && this.collection.options
+          && this.collection.options.reverse ?
+          this.views[0]:
+          this.views[this.views.length - 1];  
+      var ms = new Date(view.model.get('date')).valueOf();
+      var header = this.$('.event-day-header').filter(function () {
+        return ms <= Number($(this).data('ms'));
+      });
+      if (header.length > 0)
+        header.detach().insertBefore(view.$el);
+      else {
+        var _date = new Date(view.model.get('date'));
+        var date = new Date(_date.getFullYear(), _date.getMonth(),
+            _date.getDate(), 23, 59, 59, 999);
+        header = $('<div class="event-day-header" data-ms="' + date.valueOf()
+            + '">' + '<span>' + date.format('mmmm dd, yyyy') + '</span></div>');
+        header.insertBefore(view.$el);
+      }
+
+      // Check for more.
       _.delay(_.bind(function () {
         if (pagination !== true)
           this.checkHeight();
@@ -159,6 +182,7 @@ define([
         this.views.splice(index, 1);
         view._remove(_.bind(function () {
           this.collection.remove(view.model);
+          this.$('.event-day-header + .event-day-header').prev().remove();
           this.checkHeight();
         }, this));
       }
@@ -223,9 +247,10 @@ define([
       // get more
       this.spin.start();
       this.fetching = true;
-      rest.post('/api/sessions/list', {
+      rest.post('/api/events/list', {
         limit: this.limit,
         cursor: this.latest_list.cursor,
+        actions: this.latest_list.actions,
         query: this.latest_list.query
       }, _.bind(function (err, data) {
 

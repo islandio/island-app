@@ -2321,6 +2321,10 @@ img.page-title-avatar {
   line-height: 18px;
   color: #4d4d4d;
 }
+p.modal-message {
+  font-weight: bold;
+  font-size: 14px;
+}
 .modal-body td {
   padding: 0 0 5px 0;
 }
