@@ -870,60 +870,6 @@ a.button.buy-button:hover {
   background: #b1dc36;
   border: 1px solid #1a1a1a;
 }
-.feed-filters {
-  margin-bottom: 20px;
-  margin-top: -30px;
-  text-align: right;
-  font-size: 0;
-  white-space: nowrap;
-}
-.feed-filter {
-  display: inline-block;
-  margin-right: 10px;
-  white-space: nowrap;
-  background: none;
-  font-size: 0;
-  border-bottom: 1px solid #e6e6e6;
-}
-.feed-filter:last-child {
-  margin-right: 0;
-}
-a.button.feed-button {
-  position: relative;
-  font-size: 11px;
-  min-height: 0;
-  line-height: 31px;
-  height: 30px;
-  width: 85px;
-  background: #f9f9f9;
-  border-left: 1px solid #e6e6e6;
-  border-right: 1px solid #e6e6e6;
-  border-top: none;
-  border-bottom: none;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  border-radius: 0;
-  box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-}
-a.button.feed-button:hover {
-  background: #f2f2f2;
-  border-left: 1px solid #e6e6e6;
-  border-right: 1px solid #e6e6e6;
-  border-top: none;
-  border-bottom: none;
-}
-a.button.feed-button.selected {
-  background: #fff;
-  border-left: none !important;
-  border-right: none !important;
-  border-top: none;
-  border-bottom: 4px solid #4bb8d7 !important;
-  -webkit-box-shadow: inset 0 0 3px #d6d6d6;
-  -moz-box-shadow: inset 0 0 3px #d6d6d6;
-  box-shadow: inset 0 0 3px #d6d6d6;
-}
 a.button.new-session-button,
 button.button.new-session-button {
   position: relative;
@@ -1052,6 +998,77 @@ li.tab.active a {
   color: #333;
   border-top: 4px solid #4bb8d7;
   padding-top: 11px;
+  top: 5px;
+}
+.subtabs {
+  position: relative;
+  top: 31px;
+  display: inline-block;
+  height: 30px;
+  margin-left: 20px;
+  border: 1px solid #e6e6e6;
+  border-bottom: none;
+  -webkit-border-radius: 2px 2px 0 0;
+  -moz-border-radius: 2px 2px 0 0;
+  border-radius: 2px 2px 0 0;
+}
+.subtabs ul {
+  position: relative;
+  height: 28px;
+  list-style-type: none;
+  display: block;
+  font-size: 0;
+  background: #f9f9f9;
+  -webkit-border-radius: 2px 2px 0 0;
+  -moz-border-radius: 2px 2px 0 0;
+  border-radius: 2px 2px 0 0;
+  border-top: 1px solid #fff;
+}
+li.subtab {
+  position: relative;
+  display: inline-block;
+  height: 30px;
+  border-right: 1px solid #e6e6e6;
+  margin-top: -1px;
+}
+li.subtab:last-child {
+  border-right: none;
+}
+li.subtab a {
+  position: relative;
+  top: 4px;
+  display: inline;
+  padding: 5px 20px 7px;
+  background: none;
+  color: #666;
+  font-size: 11px;
+  line-height: 24px;
+  border-top: 4px solid transparent;
+  font-weight: bold;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-transition: all 0.15s;
+  -moz-transition: all 0.15s;
+  -ms-transition: all 0.15s;
+  -o-transition: all 0.15s;
+  transition: all 0.15s;
+}
+li.subtab a:hover {
+  background: #fff;
+  color: #333;
+}
+li.subtab ~ li.subtab {
+  border-left: 1px solid #fff;
+}
+li.subtab.active {
+  border-left: none !important;
+}
+li.subtab.active a {
+  background: #fff;
+  color: #333;
+  border-top: 4px solid #4bb8d7;
+  padding-top: 6px;
   top: 5px;
 }
 .content {
@@ -2570,9 +2587,6 @@ textarea.comment-input {
 .posts {
   margin-left: -30px;
 }
-.post-input + .feed-filters {
-  margin-top: 30px;
-}
 .post {
   position: relative;
   width: 561px;
@@ -2939,10 +2953,11 @@ table.post-params label {
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––events*/
 .events {
+  position: relative;
   margin-left: -30px;
 }
-.events .list-header {
-  margin-top: 20px;
+.events-filter {
+  text-align: right;
 }
 .event-day-header {
   border-bottom: 1px solid #f2f2f2;

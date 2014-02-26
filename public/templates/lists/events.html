@@ -10,33 +10,6 @@
 
 %>
 
-<div class="feed-filters">
-  <div class="feed-filter">
-    <% if (!feed.query || feed.query.featured) { %>
-      <a href="javascript:;" class="sort-featured button button-left feed-button selected">Featured</a>
-      <a href="javascript:;" class="sort-recent button button-right feed-button">Recent</a>
-    <% } else { %>
-      <a href="javascript:;" class="sort-featured button button-left feed-button">Featured</a>
-      <a href="javascript:;" class="sort-recent button button-right feed-button selected">Recent</a>
-    <% } %>
-  </div>
-  <div class="feed-filter">
-    <% if (!feed.query || !feed.query.type) { %>
-      <a href="javascript:;" class="filter-all button button-left feed-button selected">All</a>
-      <a href="javascript:;" class="filter-video button button-middle feed-button">Videos</a>
-      <a href="javascript:;" class="filter-image button button-right feed-button">Photos</a>
-    <% } else if (feed.query.type === 'video') { %>
-      <a href="javascript:;" class="filter-all button button-left feed-button">All</a>
-      <a href="javascript:;" class="filter-video button button-middle feed-button selected">Videos</a>
-      <a href="javascript:;" class="filter-image button button-right feed-button">Photos</a>
-    <% } else if (feed.query.type === 'image') { %>
-      <a href="javascript:;" class="filter-all button button-left feed-button">All</a>
-      <a href="javascript:;" class="filter-video button button-middle feed-button">Videos</a>
-      <a href="javascript:;" class="filter-image button button-right feed-button selected">Photos</a>
-    <% } %>
-  </div>
-</div>
-
 <% if (member && this.collection.options.input) { %>
   <div class="post-input">
     <div class="post">
@@ -92,7 +65,31 @@
     </div>
   </div>
 <% } %>
-
+<div class="events-filter">
+  <div class="subtabs">
+    <ul>
+      <li class="subtab active">
+        <a href="javascript:;" class="navigate">All</a>
+      </li>
+      <li class="subtab">
+        <a href="javascript:;" class="navigate">Sponsored</a>
+      </li>
+    </ul>
+  </div>
+  <div class="subtabs">
+    <ul>
+      <li class="subtab active">
+        <a href="javascript:;" class="navigate">All</a>
+      </li>
+      <li class="subtab">
+        <a href="javascript:;" class="navigate">Videos</a>
+      </li>
+      <li class="subtab">
+        <a href="javascript:;" class="navigate">Photos</a>
+      </li>
+    </ul>
+  </div>
+</div>
 <div class="list-header"></div>
 <% if (this.collection.models.length > 0) {
   var day;
