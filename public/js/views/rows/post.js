@@ -283,14 +283,36 @@ define([
 
           // Video params
           var params = {
-            file: this.video.video.cf_url,
-            image: this.video.poster.cf_url,
             width: '1024',
             height: '576',
             autostart: true,
             primary: 'flash',
             ga: {}
           };
+          var files = {};
+
+          // Detect iOS decive.
+          if (/(iPad|iPhone|iPod)/g.test(navigator.userAgent)
+              && this.video.video.ios_url)
+            files = {
+              file: this.video.video.ios_url,
+              image: this.video.poster.ssl_url
+            };
+          else if (this.video.video.streaming_url)
+            files = {
+              playlist: [{
+                file: this.video.video.streaming_url,
+                image: this.video.poster.ssl_url,
+                provider: 'http://players.edgesuite.net/flash/plugins/jw/v3.3'
+                    + '/AkamaiAdvancedJWStreamProvider.swf'
+              }]
+            };
+          else
+            files = {
+              file: this.video.video.cf_url,
+              image: this.video.poster.cf_url
+            };
+          _.extend(params, files);
 
           if (this.parentView) {
 
