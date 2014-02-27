@@ -6,7 +6,7 @@ html(lang="en")
     - else
       title Island
     meta(name="description", content="We are Island.")
-    meta(name="keywords", content="Climb, Climbing, Rock Climbing")
+    meta(name="keywords", content="Climb, Climbing, Rock Climbing, Training, Log, Logging")
     meta(name="author", content="Island LLC")
     meta(charset="UTF-8")
     <!--[if lt IE 9]><script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
@@ -20,8 +20,9 @@ html(lang="en")
     link(rel="stylesheet", href="#{root}/css/classic.date.css")
     link(rel="stylesheet", href="#{root}/css/style.css")
     link(rel="shortcut icon", href="#{root}/img/favicon.ico", type="image/x-icon")
-  body
+  body.preload
     block content
+    script(type="text/javascript", charset="utf-8", src="/socket.io/socket.io.js")
     script(type="text/javascript", src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyAWgUokzlRODT2GBOjZC9Qd4WGmcKzyikA&sensor=false")
     - if (process.env.NODE_ENV === 'production')
       script(type="text/javascript", src="#{root}/js/store.min.js")
@@ -59,28 +60,29 @@ html(lang="en")
       script(type="text/javascript", src="#{root}/js/min.js")
     - else
       script(type="text/javascript", data-main="/js/main", src="/js/lib/require/require.js")
-    script(type="text/javascript")
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-23247079-1']);
-      _gaq.push(['_setDomainName', 'island.io']);
-      _gaq.push(['_trackPageview']);
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-    script(type="text/javascript")
-      (function(){var uv=document.createElement('script');uv.type='text/javascript';uv.async=true;uv.src='//widget.uservoice.com/ivy4Fujcvyv0TzMb3Ps62w.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(uv,s)})()
-    script(type="text/javascript")
-      UserVoice = window.UserVoice || [];
-      UserVoice.push(['showTab', 'classic_widget', {
-        mode: 'full',
-        primary_color: '#4d4d4d',
-        link_color: '#4bb8d7',
-        default_mode: 'feedback',
-        forum_id: 221231,
-        tab_label: 'Feedback & Support',
-        tab_color: '#4bb8d7',
-        tab_position: 'middle-left',
-        tab_inverted: false
-      }]);
+    - if (process.env.NODE_ENV === 'production')
+      script(type="text/javascript")
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-23247079-1']);
+        _gaq.push(['_setDomainName', 'island.io']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+      script(type="text/javascript")
+        (function(){var uv=document.createElement('script');uv.type='text/javascript';uv.async=true;uv.src='//widget.uservoice.com/ivy4Fujcvyv0TzMb3Ps62w.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(uv,s)})()
+      script(type="text/javascript")
+        UserVoice = window.UserVoice || [];
+        UserVoice.push(['showTab', 'classic_widget', {
+          mode: 'full',
+          primary_color: '#4d4d4d',
+          link_color: '#4bb8d7',
+          default_mode: 'feedback',
+          forum_id: 221231,
+          tab_label: 'Feedback & Support',
+          tab_color: '#4bb8d7',
+          tab_position: 'middle-left',
+          tab_inverted: false
+        }]);

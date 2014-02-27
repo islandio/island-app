@@ -8,11 +8,11 @@ define([
   'Modernizr',
   'views/boiler/list',
   'mps',
-  'rpc',
+  'rest',
   'util',
   'collections/choices',
   'views/rows/choice'
-], function ($, _, Modernizr, List, mps, rpc, util, Collection, Row) {
+], function ($, _, Modernizr, List, mps, rest, util, Collection, Row) {
   return List.extend({
 
     active: false,
@@ -193,7 +193,7 @@ define([
       // Perform searches.
       _.each(types, _.bind(function (t) {
         if (t !== 'places')
-          rpc.post('/api/' + t + '/search/' + str, this.options.query,
+          rest.post('/api/' + t + '/search/' + str, this.options.query,
               _.bind(function (err, data) {
             if (err) return console.log(err);
 

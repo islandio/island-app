@@ -7,12 +7,12 @@ define([
   'Underscore',
   'Backbone',
   'mps',
-  'rpc',
+  'rest',
   'util',
   'views/lists/flashes',
   'views/lists/choices',
   'text!../../templates/box.html'
-], function ($, _, Backbone, mps, rpc, util, Flashes, Choices, box) {
+], function ($, _, Backbone, mps, rest, util, Flashes, Choices, box) {
   return Backbone.View.extend({
 
     el: '.header',

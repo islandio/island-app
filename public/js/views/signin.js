@@ -8,11 +8,11 @@ define([
   'Backbone',
   'Modernizr',
   'mps',
-  'rpc',
+  'rest',
   'util',
-  'text!../../templates/signin.html',
-  'Spin'
-], function ($, _, Backbone, Modernizr, mps, rpc, util, template, Spin) {
+  'Spin',
+  'text!../../templates/signin.html'
+], function ($, _, Backbone, Modernizr, mps, rest, util, Spin, template) {
 
   return Backbone.View.extend({
 
@@ -211,7 +211,7 @@ define([
       this.spin.start();
 
       // Do the API request.
-      rpc.post('/api/members/auth', payload, _.bind(function (err, data) {
+      rest.post('/api/members/auth', payload, _.bind(function (err, data) {
         if (err) {
 
           // Stop spinner.
@@ -305,7 +305,7 @@ define([
       this.spin.start();
 
       // Do the API request.
-      rpc.post('/api/members', payload, _.bind(function (err, data) {
+      rest.post('/api/members', payload, _.bind(function (err, data) {
         if (err) {
 
           // Stop spinner.

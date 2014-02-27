@@ -1,14 +1,11 @@
 <div class="modal">
-  <div class="modal-overlay">
-    <p><%= working %></p>
-  </div>
-  <span class="modal-title">Just to be sure...</span>
+  <span class="modal-title"><i class="icon-attention"></i> Please Confirm</span>
   <div class="modal-body">
-    <p><%= message %></p>
+    <p class="modal-message"><%= message %></p>
   </div>
   <div class="modal-actions">
-    <button id="confirm_delete" class="modal-button button danger">Delete</button>
-    <button id="confirm_cancel" class="modal-button button">Cancel</button>
+    <button class="modal-confirm modal-button button danger">Delete</button>
+    <button class="modal-cancel modal-button button cancel">Cancel</button>
     <div class="clear"></div>
   </div>
 </div>

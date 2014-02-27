@@ -5,17 +5,15 @@
 define([
   'jQuery',
   'Underscore',
-  'Modernizr',
   'views/boiler/list',
   'mps',
-  'rpc',
+  'rest',
   'util',
   'Spin',
   'text!../../../templates/lists/sessions.html',
   'collections/sessions',
   'views/rows/session'
-], function ($, _, Modernizr, List, mps, rpc, util, Spin, template,
-      Collection, Row) {
+], function ($, _, List, mps, rest, util, Spin, template, Collection, Row) {
   return List.extend({
 
     el: '.sessions',
@@ -40,9 +38,8 @@ define([
       this.subscriptions = [];
 
       // Socket subscriptions
-      this.app.socket.subscribe('sessions')
-          .bind('session.new', _.bind(this.collect, this))
-          .bind('session.removed', _.bind(this._remove, this));
+      this.app.rpc.socket.on('session.new', _.bind(this.collect, this));
+      this.app.rpc.socket.on('session.removed', _.bind(this._remove, this));
 
       // Misc.
       this.empty_label = !this.app.profile.content.page
@@ -178,7 +175,7 @@ define([
       // get more
       this.spin.start();
       this.fetching = true;
-      rpc.post('/api/sessions/list', {
+      rest.post('/api/sessions/list', {
         limit: this.limit,
         cursor: this.latest_list.cursor,
         query: this.latest_list.query

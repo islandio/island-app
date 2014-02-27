@@ -16,7 +16,7 @@ define([
 
     body: function (full) {
       var txt = util.formatText(this.get('body'));
-      return full ? txt: util.blurb(txt, 500);
+      return txt;
     },
 
     link: function () {

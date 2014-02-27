@@ -2,6 +2,5 @@
 node_modules/
 build/
 aws.config.json
-config.js
 bin/
 .elasticbeanstalk/

@@ -7,20 +7,6 @@ define([
   'Underscore'
 ], function ($, _) {
 
-  if (typeof String.prototype.startsWith !== 'function') {
-    String.prototype.startsWith = function (str) {
-      return this.slice(0, str.length) === str;
-    };
-    String.prototype.format = function() {
-      var formatted = this;
-      for (var i = 0; i < arguments.length; i++) {
-        var regexp = new RegExp('\\{'+i+'\\}', 'gi');
-        formatted = formatted.replace(regexp, arguments[i]);
-      }
-      return formatted;
-    };
-  }
-
   var dateFormat = function () {
     var  token = /d{1,4}|m{1,4}|yy(?:yy)?|([HhMsTt])\1?|[LloSZ]|"[^"]*"|'[^']*'/g,
       timezone = /\b(?:[PMCEA][SDP]T|(?:Pacific|Mountain|Central|Eastern|Atlantic) (?:Standard|Daylight|Prevailing) Time|(?:GMT|UTC)(?:[-+]\d{4})?)\b/g,

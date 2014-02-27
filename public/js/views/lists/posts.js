@@ -8,14 +8,13 @@ define([
   'Modernizr',
   'views/boiler/list',
   'mps',
-  'rpc',
+  'rest',
   'util',
   'Spin',
   'text!../../../templates/lists/posts.html',
   'collections/posts',
-  'views/rows/post',
-  'Spin'
-], function ($, _, Modernizr, List, mps, rpc, util, Spin, template,
+  'views/rows/post'
+], function ($, _, Modernizr, List, mps, rest, util, Spin, template,
       Collection, Row) {
   return List.extend({
 
@@ -44,9 +43,8 @@ define([
       this.subscriptions = [];
 
       // Socket subscriptions
-      this.app.socket.subscribe('posts')
-          .bind('post.new', _.bind(this.collect, this))
-          .bind('post.removed', _.bind(this._remove, this));
+      this.app.rpc.socket.on('post.new', _.bind(this.collect, this));
+      this.app.rpc.socket.on('post.removed', _.bind(this._remove, this));
 
       // Misc.
       this.empty_label = !this.app.profile.content.page
@@ -349,7 +347,7 @@ define([
         return false;
 
       // Now save the post to server.
-      rpc.post('/api/posts', payload,
+      rest.post('/api/posts', payload,
           _.bind(function (err, data) {
 
         // Clear fields.
@@ -446,7 +444,7 @@ define([
       // get more
       this.spin.start();
       this.fetching = true;
-      rpc.post('/api/posts/list', {
+      rest.post('/api/posts/list', {
         limit: this.limit,
         cursor: this.latest_list.cursor,
         query: this.latest_list.query

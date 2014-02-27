@@ -8,9 +8,9 @@ define([
   'Backbone',
   'util',
   'mps',
-  'rpc',
+  'rest',
   'text!../../templates/tabs.html'
-], function ($, _, Backbone, mps, util, rpc, template) {
+], function ($, _, Backbone, mps, util, rest, template) {
 
   return Backbone.View.extend({
 

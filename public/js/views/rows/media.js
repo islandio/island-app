@@ -6,14 +6,14 @@ define([
   'jQuery',
   'Underscore',
   'mps',
-  'rpc',
+  'rest',
   'util',
   'views/boiler/row',
   'models/media',
   'text!../../../templates/rows/media.html',
   'views/lists/comments',
   'text!../../../templates/confirm.html'
-], function ($, _, mps, rpc, util, Row, Model, template, Comments, confirm) {
+], function ($, _, mps, rest, util, Row, Model, template, Comments, confirm) {
   return Row.extend({
 
     attributes: function () {
@@ -86,8 +86,8 @@ define([
       });
       $('#confirm_delete').click(_.bind(function (e) {
 
-        // Delete the member.
-        rpc.delete('/api/medias/' + this.model.id,
+        // Delete the media.
+        rest.delete('/api/medias/' + this.model.id,
             {}, _.bind(function (err, data) {
           if (err) {
 

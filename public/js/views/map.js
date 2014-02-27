@@ -8,11 +8,11 @@ define([
   'Backbone',
   'Modernizr',
   'mps',
-  'rpc',
+  'rest',
   'util',
-  'text!../../templates/popup.html',
-  'Spin'
-], function ($, _, Backbone, Modernizr, mps, rpc, util, popup, Spin) {
+  'Spin',
+  'text!../../templates/popup.html'
+], function ($, _, Backbone, Modernizr, mps, rest, util, Spin, popup) {
   return Backbone.View.extend({
 
     el: '#map',
@@ -32,10 +32,8 @@ define([
       this.subscriptions = [];
 
       // Socket subscriptions.
-      this.app.socket.subscribe('map').bind('instagram.new',
-          _.bind(this.getInstaMarkers, this, false));
-      this.app.socket.subscribe('map').bind('media.new',
-          _.bind(this.getMediaMarkers, this, false));
+      this.app.rpc.socket.on('instagram.new', _.bind(this.getInstaMarkers, this, false));
+      this.app.rpc.socket.on('media.new', _.bind(this.getMediaMarkers, this, false));
     },
 
     render: function () {
@@ -526,7 +524,7 @@ define([
       }
 
       // Now do the save.
-      rpc.put(path, payload, _.bind(function (err, data) {
+      rest.put(path, payload, _.bind(function (err, data) {
 
         // Toggle plot button state.
         finish.call(this);

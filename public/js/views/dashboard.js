@@ -7,11 +7,10 @@ define([
   'Underscore',
   'Backbone',
   'mps',
-  'rpc',
   'util',
-  'text!../../templates/sessions.html',
-  'views/lists/sessions',
-], function ($, _, Backbone, mps, rpc, util, template, Sessions) {
+  'text!../../templates/dashboard.html',
+  'views/lists/events'
+], function ($, _, Backbone, mps, util, template, Events) {
 
   return Backbone.View.extend({
 
@@ -24,7 +23,7 @@ define([
       // Save app reference.
       this.app = app;
 
-      // Shell events:
+      // Shell events.
       this.on('rendered', this.setup, this);
 
       // Client-wide subscriptions
@@ -35,28 +34,28 @@ define([
     render: function () {
 
       // Set page title
-      this.app.title('Island | Sessions');
+      this.title();
 
       // Content rendering.
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
 
-      // Done rendering ... trigger setup.
+      // Trigger setup.
       this.trigger('rendered');
 
       return this;
-    },
-
-    // Bind mouse events.
-    events: {
-      'click .navigate': 'navigate'
     },
 
     // Misc. setup.
     setup: function () {
 
       // Render lists.
-      this.sessions = new Sessions(this.app, {parentView: this, reverse: true});
+      this.events = new Events(this.app, {
+        parentView: this,
+        reverse: true,
+        actions: ['session', 'post'],
+        input: true
+      });
 
       return this;
     },
@@ -73,20 +72,16 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      this.sessions.destroy();
+      this.events.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();
     },
 
-    navigate: function (e) {
-      e.preventDefault();
-
-      // Route to wherever.
-      var path = $(e.target).closest('a').attr('href');
-      if (path)
-        this.app.router.navigate(path, {trigger: true});
-    },
+    title: function () {
+      this.app.title('Island | Home | '
+          + this.app.profile.member.displayName);
+    }
 
   });
 });

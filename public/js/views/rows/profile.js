@@ -6,13 +6,13 @@ define([
   'jQuery',
   'Underscore',
   'mps',
-  'rpc',
+  'rest',
   'views/boiler/row',
   'models/profile',
   'text!../../../templates/rows/profile.html',
   'text!../../../templates/profile.title.html',
   'views/lists/posts'
-], function ($, _, mps, rpc, Row, Model, template, title, Posts) {
+], function ($, _, mps, rest, Row, Model, template, title, Posts) {
   return Row.extend({
 
     attributes: function () {

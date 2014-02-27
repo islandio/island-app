@@ -5,36 +5,35 @@
 define([
   'jQuery',
   'Underscore',
+  'Backbone',
   'mps',
-  'rpc',
+  'rest',
   'util',
-  'views/boiler/row',
   'models/post',
   'text!../../../templates/rows/post.html',
   'text!../../../templates/post.title.html',
   'text!../../../templates/video.html',
   'views/lists/comments',
   'text!../../../templates/confirm.html'
-], function ($, _, mps, rpc, util, Row, Model, template, title, video,
-      Comments, confirm) {
-  return Row.extend({
+], function ($, _, Backbone, mps, rest, util, Model,
+      template, title, video, Comments, confirm) {
+  return Backbone.View.extend({
 
     attributes: function () {
-      return _.defaults({class: 'post'},
-          Row.prototype.attributes.call(this));
+      return {
+        id: this.model.id,
+        class: 'post'
+      }
     },
 
     initialize: function (options, app) {
       this.app = app;
+      this.model = new Model(options.model);
+      this.parentView = options.parentView;
       this.template = _.template(template);
 
-      // Allow single rendering (no parent view)
-      if (!options.parentView) {
-        this.model = new Model(this.app.profile.content.page);
-      }
-
-      // Boiler init.
-      Row.prototype.initialize.call(this, options);
+      // Shell events.
+      this.on('rendered', this.setup, this);
 
       // Client-wide subscriptions.
       this.subscriptions = [];
@@ -48,10 +47,10 @@ define([
       'click .post-feature': 'feature'
     },
 
-    render: function (single, prepend) {
+    render: function () {
 
       function insert(item) {
-        var src = util.https(item.data.cf_url || item.data.url);
+        var src = util.https(item.data.ssl_url || item.data.cf_url || item.data.url);
         var anc = $('<a class="fancybox" rel="g-' + this.model.id + '" href="'
             + src + '">');
         var div = $('<div class="post-mosaic-wrap">').css(item.div).appendTo(anc);
@@ -72,8 +71,11 @@ define([
         anc.appendTo(this.$('.post-mosaic'));
       }
 
-      Row.prototype.render.call(this, single, prepend);
+      // Render content
+      this.$el.html(this.template.call(this))
+          .prependTo(this.parentView.$('.event-right'));
 
+      // Render title if single
       if (!this.parentView) {
         this.$el.addClass('single')
         this.app.title(this.model.get('author').displayName
@@ -82,6 +84,9 @@ define([
         // Render title.
         this.title = _.template(title).call(this);
       }
+
+      // Trigger setup.
+      this.trigger('rendered');
 
       // gather images
       var images = [];
@@ -102,13 +107,12 @@ define([
         }, this));
 
       if (images.length === 0) {
-        this.$('.post-mosaic').hide();
-        this.$('.post-avatar').hide();
+        this.$('.post-media').hide();
         return this;
       }
 
-      var W = this.parentView ? 680: 1024;
-      var H = this.parentView ? 383: 576;
+      var W = this.parentView ? 561: 1024;
+      var H = this.parentView ? 316: 576;
       var P = 2;
 
       // handle the first item (the main img for this post)
@@ -235,16 +239,20 @@ define([
     },
 
     setup: function () {
-      Row.prototype.setup.call(this);
 
-      if (!this.parentView) {
-
-        // Set map view.
+      // Set map view.
+      if (!this.parentView)
         mps.publish('map/fly', [this.model.get('location')]);
-      }
 
       // Render comments.
-      this.comments = new Comments(this.app, {parentView: this, type: 'post'});
+      this.comments = new Comments(this.app, {
+        parentView: this,
+        type: 'post'
+      });
+
+      // Handle time.
+      this.timer = setInterval(_.bind(this.when, this), 5000);
+      this.when();
     },
 
     destroy: function () {
@@ -252,7 +260,11 @@ define([
         mps.unsubscribe(s);
       });
       this.comments.destroy();
-      Row.prototype.destroy.call(this);
+      this.undelegateEvents();
+      this.stopListening();
+      if (this.timer)
+        clearInterval(this.timer);
+      this.remove();
     },
 
     navigate: function (e) {
@@ -347,57 +359,45 @@ define([
 
       // Render the confirm modal.
       $.fancybox(_.template(confirm)({
-        message: 'Do you want to delete this post?',
-        working: 'Working...'
+        message: 'Delete this post forever?',
       }), {
         openEffect: 'fade',
         closeEffect: 'fade',
         closeBtn: false,
         padding: 0
       });
-      
-      // Refs.
-      var overlay = $('.modal-overlay');
 
       // Setup actions.
-      $('#confirm_cancel').click(function (e) {
+      $('.modal-cancel').click(function (e) {
         $.fancybox.close();
       });
-      $('#confirm_delete').click(_.bind(function (e) {
+      $('.modal-confirm').click(_.bind(function (e) {
 
         // Delete the post.
-        rpc.delete('/api/posts/' + this.model.get('key'),
+        rest.delete('/api/posts/' + this.model.get('key'),
             {}, _.bind(function (err, data) {
-          if (err) {
-
-            // Oops.
-            console.log('TODO: Retry, notify user, etc.');
-            return;
-          }
+          if (err) return console.log(err);
 
           // close the modal.
           $.fancybox.close();
 
         }, this));
 
-        // Remove from UI.
-        this.parentView._remove({id: this.model.id});
-
       }, this));
 
       return false;
     },
 
-    _remove: function (cb) {
-      this.$el.slideUp('fast', _.bind(function () {
-        this.destroy();
-        cb();
-      }, this));
+    when: function () {
+      if (!this.model.get('created')) return;
+      if (!this.time)
+        this.time = this.$('time.created:first');
+      this.time.text(util.getRelativeTime(this.model.get('created')));
     },
 
     feature: function (e) {
       e.preventDefault();
-      rpc.post('/api/posts/feature/' + this.model.get('key'),
+      rest.post('/api/posts/feature/' + this.model.get('key'),
           {}, _.bind(function (err, data) {
         if (err) return console.log(err);
       }, this));

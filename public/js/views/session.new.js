@@ -7,14 +7,14 @@ define([
   'Underscore',
   'Backbone',
   'mps',
-  'rpc',
+  'rest',
   'util',
   'Spin',
   'text!../../templates/session.new.html',
   'text!../../templates/activity.html',
   'text!../../templates/tick.html',
   'views/lists/choices'
-], function ($, _, Backbone, mps, rpc, util, Spin, template,
+], function ($, _, Backbone, mps, rest, util, Spin, template,
     activityTemp, tickTemp, Choices) {
 
   return Backbone.View.extend({
@@ -374,7 +374,7 @@ define([
       this.submitButton.addClass('spinning');
 
       // Do the API request.
-      rpc.post('/api/sessions', payload, _.bind(function (err, data) {
+      rest.post('/api/sessions', payload, _.bind(function (err, data) {
 
         // Stop spinner.
         this.submitButtonSpin.stop();

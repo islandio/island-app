@@ -1,5 +1,5 @@
 /*
- * Page view for posts.
+ * Page view for crags.
  */
 
 define([
@@ -7,11 +7,10 @@ define([
   'Underscore',
   'Backbone',
   'mps',
-  'rpc',
+  'rest',
   'util',
-  'text!../../templates/posts.html',
-  'views/lists/posts'
-], function ($, _, Backbone, mps, rpc, util, template, Posts) {
+  'text!../../templates/crags.html'
+], function ($, _, Backbone, mps, rest, util, template) {
 
   return Backbone.View.extend({
 
@@ -35,7 +34,7 @@ define([
     render: function () {
 
       // Set page title
-      this.app.title('Island | Posts');
+      this.app.title('Island | Crags');
 
       // Content rendering.
       this.template = _.template(template);
@@ -55,10 +54,6 @@ define([
     // Misc. setup.
     setup: function () {
 
-      // Render lists.
-      this.posts = new Posts(this.app, {parentView: this,
-            reverse: true, input: true});
-
       return this;
     },
 
@@ -74,7 +69,6 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      this.posts.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

@@ -7,15 +7,15 @@ define([
   'Underscore',
   'Backbone',
   'mps',
-  'rpc',
+  'rest',
   'util',
+  'Spin',
   'models/profile',
   'text!../../templates/settings.html',
   'text!../../templates/confirm.html',
-  'text!../../templates/tip.html',
-  'Spin'
-], function ($, _, Backbone, mps, rpc, util, Profile,
-      template, confirm, tip, Spin) {
+  'text!../../templates/tip.html'
+], function ($, _, Backbone, mps, rest, util, Spin, Profile,
+      template, confirm, tip) {
 
   return Backbone.View.extend({
     
@@ -195,7 +195,7 @@ define([
       }
 
       // Now do the save.
-      rpc.put('/api/members/' + this.app.profile.member.username, payload,
+      rest.put('/api/members/' + this.app.profile.member.username, payload,
           _.bind(function (err, data) {
         if (err) {
 
@@ -256,7 +256,7 @@ define([
 
         // Save.
         if (!self.uploading) return false;
-        rpc.put('/api/members/' + self.app.profile.member.username, {
+        rest.put('/api/members/' + self.app.profile.member.username, {
           bannerLeft: self.bannerLeft,
           bannerTop: self.bannerTop
         }, function (err, data) {
@@ -338,7 +338,7 @@ define([
           }
 
           // Now save the banner to server.
-          rpc.put('/api/members/' + this.app.profile.member.username,
+          rest.put('/api/members/' + this.app.profile.member.username,
               {assembly: assembly}, _.bind(function (err, data) {
 
             // Resets.
@@ -415,7 +415,7 @@ define([
         overlay.show();
 
         // Delete the member.
-        rpc.delete('/api/members/' + this.app.profile.member.username,
+        rest.delete('/api/members/' + this.app.profile.member.username,
             {}, _.bind(function (err, data) {
           if (err) {
 

@@ -9,25 +9,27 @@ define([
   'Pusher',
   'router',
   'mps',
-  'rpc'
-], function ($, _, Backbone, Pusher, Router, mps, rpc) {
-
-  // For dev:
-  window._rpc = rpc;
-  window._mps = mps;
+  'rpc',
+  'rest'
+], function ($, _, Backbone, Pusher, Router, mps, rpc, rest) {
 
   var App = function () {
 
-    // Open a socket.
-    this.socket = window.__s === '' ?
-        new Pusher('37fea545f4a0ce59464c'):
-        new Pusher('c260ad31dfbb57bddd94');
+    // Save connection to server.
+    this.rpc = rpc.init();
 
     // Location of static assets
     this.cfuri = 'https://d10fiv677oa856.cloudfront.net';
 
     // App model subscriptions.
-    mps.subscribe('member/delete', _.bind(this.logout, this))
+    mps.subscribe('member/delete', _.bind(this.logout, this));
+
+    // For local dev.
+    if (window.__s === '') {
+      window._rpc = rpc;
+      window._rest = rest;
+      window._mps = mps;
+    }
   }
 
   App.prototype.update = function (profile) {
@@ -68,6 +70,7 @@ define([
 
     // Creates the instance.
     init: function () {
+      $('body').removeClass('preload');
       var app = new App;
       app.router = new Router(app);
       Backbone.history.start({pushState: true});

@@ -7,12 +7,12 @@ define([
   'Underscore',
   'views/boiler/list',
   'mps',
-  'rpc',
+  'rest',
+  'Spin',
   'text!../../../templates/lists/notifications.html',
   'collections/notifications',
-  'views/rows/notification',
-  'Spin'
-], function ($, _, List, mps, rpc, template, Collection, Row, Spin) {
+  'views/rows/notification'
+], function ($, _, List, mps, rest, Spin, template, Collection, Row) {
   return List.extend({
 
     el: '.panel-content',
@@ -34,11 +34,9 @@ define([
       this.subscriptions = [];
 
       // Socket Subscriptions
-      this.channel = this.app.socket.subscribe('mem-'
-          + this.app.profile.member.id);
-      this.channel.bind('notification.new', _.bind(this.collect, this));
-      this.channel.bind('notification.read', _.bind(this.read, this));
-      this.channel.bind('notification.removed', _.bind(this._remove, this));
+      this.app.rpc.socket.on('notification.new', _.bind(this.collect, this));
+      this.app.rpc.socket.on('notification.read', _.bind(this.read, this));
+      this.app.rpc.socket.on('notification.removed', _.bind(this._remove, this));
 
       // Shell events
       $(window).resize(_.debounce(_.bind(this.resize, this), 50));
@@ -48,7 +46,7 @@ define([
       this.spin.start();
   
       // Reset the collection.
-      this.latest_list = this.app.profile.notes;
+      this.latest_list = this.app.profile.notes || {items: []};
       this.collection.reset(this.latest_list.items);
     },
 
@@ -94,7 +92,7 @@ define([
         this.resize();
         if (pagination !== true)
           this.checkHeight();
-      }, this), 60);
+      }, this), 20);
       return this;
     },
 
@@ -111,14 +109,10 @@ define([
     // Kill this view.
     destroy: function () {
       this.unpaginate();
-      _.each(this.subscriptions, function (s) {
-        mps.unsubscribe(s);
-      });
-      _.each(this.views, function (v) {
-        v.destroy();
-      });
-      this.undelegateEvents();
-      this.stopListening();
+      this.app.rpc.socket.removeAllListeners('notification.new');
+      this.app.rpc.socket.removeAllListeners('notification.read');
+      this.app.rpc.socket.removeAllListeners('notification.removed');
+      return List.prototype.destroy.call(this);
     },
 
     // remove a model
@@ -197,7 +191,7 @@ define([
       // get more
       this.spin.start();
       this.fetching = true;
-      rpc.post('/api/notifications/list', {
+      rest.post('/api/notifications/list', {
         subscriber_id: this.app.profile.member.id,
         limit: this.limit,
         cursor: this.latest_list.cursor,
@@ -228,7 +222,8 @@ define([
     },
 
     unpaginate: function () {
-      $(window).unbind('scroll', this._paginate).unbind('resize', this._paginate);
+      $(window).unbind('scroll', this._paginate)
+          .unbind('resize', this._paginate);
     }
 
   });
