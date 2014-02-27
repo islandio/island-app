@@ -64,6 +64,12 @@ define([
       return List.prototype.setup.call(this);
     },
 
+    destroy: function () {
+      this.app.rpc.socket.removeAllListeners('comment.new');
+      this.app.rpc.socket.removeAllListeners('comment.removed');
+      return List.prototype.destroy.call(this);
+    },
+
     // Bind mouse events.
     events: {
       'click .comments-signin': 'signin',

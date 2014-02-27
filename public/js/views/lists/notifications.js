@@ -92,7 +92,7 @@ define([
         this.resize();
         if (pagination !== true)
           this.checkHeight();
-      }, this), 60);
+      }, this), 20);
       return this;
     },
 
@@ -109,14 +109,10 @@ define([
     // Kill this view.
     destroy: function () {
       this.unpaginate();
-      _.each(this.subscriptions, function (s) {
-        mps.unsubscribe(s);
-      });
-      _.each(this.views, function (v) {
-        v.destroy();
-      });
-      this.undelegateEvents();
-      this.stopListening();
+      this.app.rpc.socket.removeAllListeners('notification.new');
+      this.app.rpc.socket.removeAllListeners('notification.read');
+      this.app.rpc.socket.removeAllListeners('notification.removed');
+      return List.prototype.destroy.call(this);
     },
 
     // remove a model
@@ -226,7 +222,8 @@ define([
     },
 
     unpaginate: function () {
-      $(window).unbind('scroll', this._paginate).unbind('resize', this._paginate);
+      $(window).unbind('scroll', this._paginate)
+          .unbind('resize', this._paginate);
     }
 
   });
