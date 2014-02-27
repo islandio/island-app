@@ -359,7 +359,7 @@ define([
 
       // Render the confirm modal.
       $.fancybox(_.template(confirm)({
-        message: 'I want to delete this post.',
+        message: 'Delete this post forever?',
       }), {
         openEffect: 'fade',
         closeEffect: 'fade',

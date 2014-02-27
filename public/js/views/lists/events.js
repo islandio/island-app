@@ -49,6 +49,7 @@ define([
 
     // receive event from event bus
     collect: function (data) {
+      console.log(data)
       if (_.contains(this.latest_list.actions, data.action_type))
         this.collection.unshift(data);
     },
@@ -71,7 +72,7 @@ define([
     },
 
     // render the latest model
-    // (could be newly arived or older ones from pagination)
+    // (could be newly arrived or older ones from pagination)
     renderLast: function (pagination) {
       List.prototype.renderLast.call(this, pagination);
 
@@ -143,12 +144,8 @@ define([
       this.$('.post-file-chooser').on('mouseover', function (e) {
         dummy.addClass('hover');
       })
-      .on('mouseout', function (e) {
-        dummy.removeClass('hover');
-      })
-      .on('mousedown', function (e) {
-        dummy.addClass('active');
-      })
+      .on('mouseout', function (e) { dummy.removeClass('hover'); })
+      .on('mousedown', function (e) { dummy.addClass('active'); })
       .change(_.bind(this.drop, this));
       $(document).on('mouseup', function (e) {
         dummy.removeClass('active');
@@ -167,6 +164,8 @@ define([
 
     destroy: function () {
       this.unpaginate();
+      this.app.rpc.socket.removeListener('event.new');
+      this.app.rpc.socket.removeListener('event.removed');
       return List.prototype.destroy.call(this);
     },
 
@@ -182,7 +181,9 @@ define([
         this.views.splice(index, 1);
         view._remove(_.bind(function () {
           this.collection.remove(view.model);
-          this.$('.event-day-header + .event-day-header').prev().remove();
+          this.$('.event-day-header').filter(function () {
+            return $(this).next('.event').length === 0;
+          }).remove();
           this.checkHeight();
         }, this));
       }

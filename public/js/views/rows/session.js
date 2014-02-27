@@ -126,7 +126,9 @@ define([
 
       // Render the confirm modal.
       $.fancybox(_.template(confirm)({
-        message: 'I want to delete this session log.',
+        message: 'Deleting a log also deletes all'
+            + ' associated activities and registered ascents.'
+            + ' Delete this log forever?',
       }), {
         openEffect: 'fade',
         closeEffect: 'fade',
@@ -141,7 +143,7 @@ define([
       $('.modal-confirm').click(_.bind(function (e) {
 
         // Delete the session.
-        rest.delete('/api/sessions/' + this.model.get('id'),
+        rest.delete('/api/sessions/' + this.model.id,
             {}, _.bind(function (err, data) {
           if (err) return console.log(err);
 
@@ -149,9 +151,6 @@ define([
           $.fancybox.close();
 
         }, this));
-
-        // Remove from UI.
-        this.parentView._remove({id: this.model.id});
 
       }, this));
 
