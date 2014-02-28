@@ -9,8 +9,8 @@
 <div class="session-map" id="session_map_<%= this.model.id %>"></div>
 <div class="event-title">
   <a href="/<%= this.model.get('author').username %>" class="title navigate">
-    <%= this.model.get('author').displayName %>
-  </a>
+    <%= this.model.get('author').displayName %></a> logged a 
+    <a href="/sessions/<%= this.model.get('key') %>" class="title navigate">session</a>.
   <a href="/crags/<%= this.model.get('crag').key %>" class="session-location title navigate">
     <i class="icon-location"></i> <%= this.model.get('crag').name %>, <%= this.model.get('crag').country %>
   </a>

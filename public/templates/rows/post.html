@@ -19,7 +19,7 @@
   <% } %>
   <div class="event-title">
     <a href="/<%= this.model.get('author').username %>" class="title navigate">
-      <%= this.model.get('author').displayName %></a>
+      <%= this.model.get('author').displayName %></a><%= this.model.explain() %>
   </div>
   <% if (this.model.get('title')) { %>
     <span class="post-title">

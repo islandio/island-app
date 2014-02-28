@@ -9,6 +9,24 @@ define([
 ], function (_, Backbone, util) {
   return Backbone.Model.extend({
 
+    explain: function () {
+      var name = '';
+      var cnt = this.get('medias_cnt');
+      switch (this.get('type')) {
+        case undefined:
+          break;
+        case 'image':
+          name += ' added ' + (cnt === 1 ? 'a':cnt)
+              + ' photo' + (cnt !== 1 ? 's.':'.');
+          break;
+        case 'video':
+          name += ' added a <a href="/' + this.get('key')
+              + '" class="title navigate">video</a>.';
+          break;
+      }
+      return name;
+    },
+
     date: function () {
       var date = new Date(this.get('created'));
       return date.format('mmm d');
