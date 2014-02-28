@@ -20,6 +20,7 @@ define([
   'views/map',
   'views/rows/profile',
   'views/rows/post',
+  'views/rows/session',
   'views/crag',
   'views/ascent',
   'views/settings',
@@ -29,11 +30,10 @@ define([
   'views/privacy',
   'views/crags',
   'views/dashboard',
-  'views/rows/session',
   'views/session.new'
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer, 
-    Signin, Forgot, Notifications, Map, Profile, Post, Crag, Ascent, Settings,
-    Reset, Films, About, Privacy, Crags, Dashboard, Session, NewSession) {
+    Signin, Forgot, Notifications, Map, Profile, Post, Session, Crag, Ascent,
+    Settings, Reset, Films, About, Privacy, Crags, Dashboard, NewSession) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({

@@ -430,6 +430,7 @@ time.created.static
 .leftside
   float left
   width 680px
+  min-height 276px
   padding 30px 40px 30px 0
   border-right 1px solid #f2f2f2
 
@@ -1093,7 +1094,7 @@ li.subtab.active a
   position relative
   margin 0 auto 30px
   width 1024px
-  min-height 300px
+  min-height 336px
   padding 0 30px
   background #fff
   border-radius 2px
@@ -2286,6 +2287,9 @@ a.plot-button.active
   line-height normal
   height 30px
 
+.page-title a
+  background none
+
 .folder-title .page-title
   margin 0 0 0 30px
   font-family title
@@ -3171,6 +3175,9 @@ table.post-params label
   color #4d4d4d
   border-color #e6e6e6
 
+.single .event-timeline-label
+  display none
+
 .event-timeline-label-text
   position absolute
   left -150px
@@ -3195,6 +3202,14 @@ table.post-params label
 
 .session-location
   float right
+
+.folder-title .session-location
+  padding-right 30px
+  font-size 14px
+  line-height 40px
+
+.session-title
+  color green
 
 .session-map
   display none
@@ -3224,6 +3239,14 @@ table.post-params label
 .session-map .cartodb-zoom,
 .session-map .leaflet-control-attribution
   display none !important
+
+.single .session-map
+  position relative
+  top 30px
+  right 0
+  width 274px
+  height 274px
+  margin-left 30px
 
 .session-activity
   position relative

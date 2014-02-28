@@ -10,8 +10,8 @@ define([
   'rest',
   'util',
   'text!../../templates/films.html',
-  'views/lists/posts'
-], function ($, _, Backbone, mps, rest, util, template, Posts) {
+  // 'views/lists/posts'
+], function ($, _, Backbone, mps, rest, util, template) {
 
   return Backbone.View.extend({
 
@@ -56,8 +56,8 @@ define([
     setup: function () {
 
       // Render posts.
-      this.posts = new Posts(this.app, {parentView: this,
-          reverse: true, filters: false});
+      // this.posts = new Posts(this.app, {parentView: this,
+      //     reverse: true, filters: false});
 
       return this;
     },

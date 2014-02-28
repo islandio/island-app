@@ -17,6 +17,11 @@ define([
       return this.get('name') || new Date(this.get('date')).format('mm/dd/yy');
     },
 
+    formatDate: function () {
+      var date = new Date(this.get('date'));
+      return date.format('mmm d');
+    },
+
     formatActivityDuration: function (mins) {
       if (!mins) return '';
       var hrs = mins / 60;

@@ -1,5 +1,5 @@
 /*
- * Post Row view
+ * Post View
  */
 
 define([
@@ -20,16 +20,16 @@ define([
   return Backbone.View.extend({
 
     attributes: function () {
-      return {
-        id: this.model.id,
-        class: 'post'
-      }
+      var attrs = {class: 'post'};
+      if (this.model) attrs.id = this.model.id;
+      return attrs;
     },
 
     initialize: function (options, app) {
       this.app = app;
-      this.model = new Model(options.model);
+      this.model = new Model(options.model || this.app.profile.content.page);
       this.parentView = options.parentView;
+      this.wrap = options.wrap;
       this.template = _.template(template);
 
       // Shell events.
@@ -72,8 +72,10 @@ define([
       }
 
       // Render content
-      this.$el.html(this.template.call(this))
-          .prependTo(this.parentView.$('.event-right'));
+      this.$el.html(this.template.call(this));
+      if (this.parentView)
+        this.$el.prependTo(this.parentView.$('.event-right'));
+      else this.$el.appendTo(this.wrap);
 
       // Render title if single
       if (!this.parentView) {

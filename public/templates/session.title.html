@@ -6,13 +6,14 @@
 
 %>
 
+<a href="/crags/<%= this.model.get('crag').key %>" class="session-location title navigate">
+  <i class="icon-location"></i> <%= this.model.get('crag').name %>, <%= this.model.get('crag').country %>
+</a>
 <div class="page-title">
   <a href="/<%= this.model.get('author').username %>" class="image-anchor navigate">
-    <img src="<%= gravatar %>" class="page-title-avatar" width="26" height="26" /></a><%= this.model.date() %> | 
+    <img src="<%= gravatar %>" class="page-title-avatar" width="26" height="26" /></a>
   <a href="/<%= this.model.get('author').username %>" class="navigate">
     <%= this.model.get('author').displayName %></a> 
-  <% if (this.model.get('name')) { %>
-    / <a href="/sessions/<%= this.model.get('key') %>" class="navigate">
-    <span class=""><%= this.model.get('name') %></span></a>
-  <% } %>
+  / <a href="/sessions/<%= this.model.get('key') %>" class="navigate">
+  <span class="session-title"><%= this.model.formatName() %></span></a>
 </div>

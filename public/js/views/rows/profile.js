@@ -10,9 +10,8 @@ define([
   'views/boiler/row',
   'models/profile',
   'text!../../../templates/rows/profile.html',
-  'text!../../../templates/profile.title.html',
-  'views/lists/posts'
-], function ($, _, mps, rest, Row, Model, template, title, Posts) {
+  'text!../../../templates/profile.title.html'
+], function ($, _, mps, rest, Row, Model, template, title) {
   return Row.extend({
 
     attributes: function () {
@@ -71,7 +70,7 @@ define([
             || this.model.get('hometown')]);
 
         // Render posts.
-        this.posts = new Posts(this.app, {parentView: this, reverse: true});
+        // this.posts = new Posts(this.app, {parentView: this, reverse: true});
       }
     },
 

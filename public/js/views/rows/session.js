@@ -19,16 +19,16 @@ define([
   return Backbone.View.extend({
 
     attributes: function () {
-      return {
-        id: this.model.id,
-        class: 'session'
-      }
+      var attrs = {class: 'session'};
+      if (this.model) attrs.id = this.model.id;
+      return attrs;
     },
 
     initialize: function (options, app) {
       this.app = app;
-      this.model = new Model(options.model);
+      this.model = new Model(options.model || this.app.profile.content.page);
       this.parentView = options.parentView;
+      this.wrap = options.wrap;
       this.template = _.template(template);
 
       // Shell events.
@@ -48,13 +48,15 @@ define([
     render: function () {
 
       // Render content
-      this.$el.html(this.template.call(this))
-          .prependTo(this.parentView.$('.event-right'));
+      this.$el.html(this.template.call(this));
+      if (this.parentView)
+        this.$el.prependTo(this.parentView.$('.event-right'));
+      else this.$el.appendTo(this.wrap);
 
       // Render title if single
       if (!this.parentView) {
         this.$el.addClass('single')
-        this.app.title(this.model.name() + ' | ' + 'Session Log');
+        this.app.title(this.model.formatName() + ' | ' + 'Session Log');
 
         // Render title.
         this.title = _.template(title).call(this);

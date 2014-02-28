@@ -6,18 +6,24 @@
   
 %>
 
-<div class="session-map" id="session_map_<%= this.model.id %>"></div>
-<div class="event-title">
-  <a href="/<%= this.model.get('author').username %>" class="title navigate">
-    <%= this.model.get('author').displayName %></a> logged a 
-    <a href="/sessions/<%= this.model.get('key') %>" class="title navigate">session</a>.
-  <a href="/crags/<%= this.model.get('crag').key %>" class="session-location title navigate">
-    <i class="icon-location"></i> <%= this.model.get('crag').name %>, <%= this.model.get('crag').country %>
+<% if (!this.parentView) { %>
+  <div class="leftside">
+<% } %>
+
+<% if (this.parentView) { %>
+  <div class="session-map" id="session_map_<%= this.model.id %>"></div>
+  <div class="event-title">
+    <a href="/<%= this.model.get('author').username %>" class="title navigate">
+      <%= this.model.get('author').displayName %></a> logged a 
+      <a href="/sessions/<%= this.model.get('key') %>" class="title navigate">session</a>.
+    <a href="/crags/<%= this.model.get('crag').key %>" class="session-location title navigate">
+      <i class="icon-location"></i> <%= this.model.get('crag').name %>, <%= this.model.get('crag').country %>
+    </a>
+  </div>
+  <a href="/sessions/<%= this.model.get('key') %>" class="title-large navigate">
+    <%= this.model.formatName() %>
   </a>
-</div>
-<a href="/sessions/<%= this.model.get('key') %>" class="title-large navigate">
-  <%= this.model.formatName() %>
-</a>
+<% } %>
 <% _.each(this.model.get('actions'), _.bind(function (a) { %>
   <div class="session-activity">
     <span class="event-timeline-dot"></span>
@@ -91,3 +97,11 @@
   </time></a>
 </div>
 <div class="comments"></div>
+
+<% if (!this.parentView) { %>
+  </div>
+  <div class="rightside">
+    <div class="session-map" id="session_map_<%= this.model.id %>"></div>    
+  </div>
+  <div class="clear"></div>
+<% } %>
