@@ -53,7 +53,6 @@ define([
       this.events = new Events(this.app, {
         parentView: this,
         reverse: true,
-        actions: ['session', 'post'],
         input: true
       });
 

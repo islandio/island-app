@@ -242,20 +242,29 @@ define([
         this.stop();
       }, this));
       this.renderTabs({tabs: [
-        {title: 'Activity Feed', href: '/dashboard'},
+        {title: 'Activity', href: '/dashboard'},
         {title: 'Crags', href: '/crags', active: true}
       ]});
     },
 
     dashboard: function () {
       this.start();
-      this.render('/service/dashboard.profile', _.bind(function (err) {
+      var feed = store.get('feed') || {};
+      if (!feed.actions || feed.actions === 'all')
+        feed.actions = ['session', 'post'];
+      else if (feed.actions === 'session')
+        feed.actions = ['session'];
+      else if (feed.actions === 'post')
+        feed.actions = ['post'];
+      if (feed.query && feed.query.author_id)
+        delete feed.query.author_id;
+      this.render('/service/dashboard.profile', feed, _.bind(function (err) {
         if (err) return;
         this.page = new Dashboard(this.app).render();
         this.stop();
       }, this));
       this.renderTabs({tabs: [
-        {title: 'Activity Feed', href: '/dashboard', active: true},
+        {title: 'Activity', href: '/dashboard', active: true},
         {title: 'Crags', href: '/crags'}
       ]});
     },

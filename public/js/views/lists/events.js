@@ -20,7 +20,6 @@ define([
 
     fetching: false,
     nomore: false,
-    limit: 10,
     attachments: [],
 
     initialize: function (app, options) {
@@ -43,14 +42,13 @@ define([
       this.app.rpc.socket.on('event.removed', _.bind(this._remove, this));
 
       // Reset the collection.
-      this.latest_list = this.app.profile.content.events;
-      this.collection.reset(this.latest_list.items);
+      this.latestList = this.app.profile.content.events;
+      this.collection.reset(this.latestList.items);
     },
 
     // receive event from event bus
     collect: function (data) {
-      console.log(data)
-      if (_.contains(this.latest_list.actions, data.action_type))
+      if (_.contains(this.latestList.actions, data.action_type))
         this.collection.unshift(data);
     },
 
@@ -83,16 +81,20 @@ define([
           this.views[this.views.length - 1];  
       var ms = new Date(view.model.get('date')).valueOf();
       var header = this.$('.event-day-header').filter(function () {
-        return ms <= Number($(this).data('ms'));
+        return ms >= Number($(this).data('beg'))
+            && ms <= Number($(this).data('end'));
       });
       if (header.length > 0)
         header.detach().insertBefore(view.$el);
       else {
         var _date = new Date(view.model.get('date'));
-        var date = new Date(_date.getFullYear(), _date.getMonth(),
+        var beg = new Date(_date.getFullYear(), _date.getMonth(),
+            _date.getDate());
+        var end = new Date(_date.getFullYear(), _date.getMonth(),
             _date.getDate(), 23, 59, 59, 999);
-        header = $('<div class="event-day-header" data-ms="' + date.valueOf()
-            + '">' + '<span>' + date.format('mmmm dd, yyyy') + '</span></div>');
+        header = $('<div class="event-day-header" data-beg="' + beg.valueOf()
+            + '" data-end="' + end.valueOf() + '">' + '<span>'
+            + end.format('mmmm dd, yyyy') + '</span></div>');
         header.insertBefore(view.$el);
       }
 
@@ -107,13 +109,14 @@ define([
     events: {
       'focus textarea[name="body"].post-input': 'focus',
       'blur textarea[name="body"].post-input': 'blur',
-      'click .feed-button': 'filter',
+      'click .events-filter .subtab': 'filter',
     },
 
     // misc. setup
     setup: function () {
 
       // Save refs
+      this.showingall = this.parentView.$('.list-spin .empty-feed');
       this.postForm = this.$('.post-input-form');
       this.postBody = $('textarea[name="body"]', this.postForm);
       this.postTitle = this.$('input[name="title"]', this.postForm);
@@ -204,17 +207,16 @@ define([
       // render models and handle edge cases
       function updateUI(list) {
         _.defaults(list, {items:[]});
-        this.latest_list = list;
-        var showingall = this.parentView.$('.list-spin .empty-feed');
+        this.latestList = list;
         if (list.items.length === 0) {
           this.nomore = true;
           this.fetching = false;
           this.spin.stop();
           this.spin.target.hide();
           if (this.collection.length > 0)
-            showingall.css('display', 'block');
+            this.showingall.css('display', 'block');
           else {
-            showingall.hide();
+            this.showingall.hide();
             if (this.$('.empty-feed').length === 0)
               $('<span class="empty-feed">' + this.empty_label + '</span>')
                   .appendTo(this.$el);
@@ -224,15 +226,16 @@ define([
             this.collection.push(i, {silent: true});
             this.renderLast(true);
           }, this));
+
         _.delay(_.bind(function () {
           this.fetching = false;
           this.spin.stop();
-          if (list.items.length < this.limit) {
+          if (list.items.length < this.latestList.limit) {
             this.spin.target.hide();
             if (!this.$('.empty-feed').is(':visible'))
-              showingall.css('display', 'block');
+              this.showingall.css('display', 'block');
           } else {
-            showingall.hide();
+            this.showingall.hide();
             this.spin.target.show();
           }
         }, this), (list.items.length + 1) * 30);
@@ -242,17 +245,17 @@ define([
       if (this.fetching) return;
 
       // there are no more, don't call server
-      if (this.nomore || !this.latest_list.more)
-        return updateUI.call(this, _.defaults({items:[]}, this.latest_list));
+      if (this.nomore || !this.latestList.more)
+        return updateUI.call(this, _.defaults({items:[]}, this.latestList));
 
       // get more
       this.spin.start();
       this.fetching = true;
       rest.post('/api/events/list', {
-        limit: this.limit,
-        cursor: this.latest_list.cursor,
-        actions: this.latest_list.actions,
-        query: this.latest_list.query
+        limit: this.latestList.limit,
+        cursor: this.latestList.cursor,
+        actions: this.latestList.actions,
+        query: this.latestList.query
       }, _.bind(function (err, data) {
 
         if (err) {
@@ -262,7 +265,7 @@ define([
         }
 
         // Add the items.
-        updateUI.call(this, data.sessions);
+        updateUI.call(this, data.events);
 
       }, this));
 
@@ -451,15 +454,10 @@ define([
       // Now save the post to server.
       rest.post('/api/posts', payload,
           _.bind(function (err, data) {
+        if (err) console.log(err);
 
         // Clear fields.
         this.cancel();
-
-        if (err) return console.log(err);
-
-        // TODO: make this optimistic.
-        // this.collect(data.post);
-
       }, this));
 
       return false;
@@ -490,36 +488,39 @@ define([
     filter: function (e) {
 
       // Update buttons.
-      var chosen = $(e.target);
-      if (chosen.hasClass('selected')) return;
-      var selected = $('.feed-button.selected', chosen.parent());
-      chosen.addClass('selected');
-      selected.removeClass('selected');
+      var chosen = $(e.target).closest('li');
+      if (chosen.hasClass('active')) return;
+      var active = $('.active', chosen.parent());
+      chosen.addClass('active');
+      active.removeClass('active');
 
-      // Updata list query.
-      if (!this.latest_list.query)
-        this.latest_list.query = {};
-      if (chosen.hasClass('sort-featured'))
-        this.latest_list.query.featured = true;
-      else if (chosen.hasClass('sort-recent'))
-        delete this.latest_list.query.featured;
-      else if (chosen.hasClass('filter-all'))
-        delete this.latest_list.query.type;
-      else if (chosen.hasClass('filter-video'))
-        this.latest_list.query.type = 'video';
-      else if (chosen.hasClass('filter-image'))
-        this.latest_list.query.type = 'image';
-      store.set('feed', {query: this.latest_list.query});
+      // Update list query.
+      switch (chosen.data('filter')) {
+        case 'all':
+          this.latestList.actions = ['session', 'post'];
+          break;
+        case 'session':
+          this.latestList.actions = ['session'];
+          break;
+        case 'post':
+          this.latestList.actions = ['post'];
+          break;
+      }
+
+      // Set feed state.
+      store.set('feed', {actions: chosen.data('filter')});
 
       // Reset the collection.
       this.nomore = false;
-      this.latest_list.cursor = 0;
-      this.latest_list.more = true;
+      this.latestList.cursor = 0;
+      this.latestList.more = true;
       this.collection.reset([]);
       _.each(this.views, function (v) {
         v.destroy();
       });
       this.views = [];
+      this.$('.event-day-header').remove();
+      this.showingall.hide();
       this.more();
     },
 

@@ -68,17 +68,14 @@
 <div class="events-filter">
   <div class="subtabs">
     <ul>
-      <li class="subtab active">
+      <li data-filter="all" class="subtab<%= !feed.actions || feed.actions === 'all' ? ' active': '' %>">
         <a href="javascript:;" class="navigate">All</a>
       </li>
-      <li class="subtab">
-        <a href="javascript:;" class="navigate">Sessions</a>
+      <li data-filter="session" class="subtab<%= feed.actions && feed.actions === 'session' ? ' active': '' %>">
+        <a href="javascript:;" class="navigate">Logs</a>
       </li>
-      <li class="subtab">
-        <a href="javascript:;" class="navigate">Videos</a>
-      </li>
-      <li class="subtab">
-        <a href="javascript:;" class="navigate">Photos</a>
+      <li data-filter="post" class="subtab<%= feed.actions && feed.actions === 'post' ? ' active': '' %>">
+        <a href="javascript:;" class="navigate">Posts</a>
       </li>
     </ul>
   </div>
@@ -90,9 +87,10 @@
     <% var _date = new Date(m.get('date')) %>
     <% var _day = _date.getDay() %>
     <% if (_day !== day) { %>
-      <% var date = new Date(_date.getFullYear(), _date.getMonth(), _date.getDate(), 23, 59, 59, 999); %>
-      <div class="event-day-header" data-ms="<%= date.valueOf() %>">
-        <span><%= (date.format('mmmm dd, yyyy')) %></span>
+      <% var beg = new Date(_date.getFullYear(), _date.getMonth(), _date.getDate()); %>
+      <% var end = new Date(_date.getFullYear(), _date.getMonth(), _date.getDate(), 23, 59, 59, 999); %>
+      <div class="event-day-header" data-beg="<%= beg.valueOf() %>" data-end="<%= end.valueOf() %>">
+        <span><%= (end.format('mmmm dd, yyyy')) %></span>
       </div>
     <% } %>
     <%= this.row(m) %>
