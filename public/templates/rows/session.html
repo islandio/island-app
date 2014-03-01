@@ -24,6 +24,9 @@
     <%= this.model.formatName() %>
   </a>
 <% } %>
+<% if (this.model.get('actions').length === 0) { %>
+  <span class="session-empty">No activities</span>
+<% } %>
 <% _.each(this.model.get('actions'), _.bind(function (a) { %>
   <div class="session-activity">
     <span class="event-timeline-dot"></span>

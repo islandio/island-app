@@ -2293,7 +2293,7 @@ a.plot-button.active
 .folder-title .page-title
   margin 0 0 0 30px
   font-family title
-  font-size 21px
+  font-size 18px
   text-transform uppercase
   color #666
   line-height 40px
@@ -2301,7 +2301,7 @@ a.plot-button.active
 
 img.page-title-avatar
   position relative
-  top 4px
+  top 5px
   width 26px
   height 26px
   margin-right 7px
@@ -2417,7 +2417,6 @@ button.button.modal-button.full
   width 680px
   margin-bottom 30px
   padding 0 40px 30px 30px
-  border-bottom 1px solid #f2f2f2
 
   -webkit-animation-name fadeIn
   -moz-animation-name fadeIn
@@ -2645,6 +2644,9 @@ textarea.comment-input
   margin-top 30px
   margin-bottom 30px
   padding 0
+
+.post.single .event-timeline-label
+  display none
 
 .page-title span.post-title-photos
   color blue
@@ -3126,6 +3128,9 @@ table.post-params label
   line-height 13px
   color #999
 
+.single .event-info
+  width 561px
+
 .event-timeline-dot
   position absolute
   left -45px
@@ -3175,9 +3180,6 @@ table.post-params label
   color #4d4d4d
   border-color #e6e6e6
 
-.single .event-timeline-label
-  display none
-
 .event-timeline-label-text
   position absolute
   left -150px
@@ -3196,6 +3198,12 @@ table.post-params label
   color #4d4d4d
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––sessions*/
+
+.session .leftside
+  width 562px
+  margin-left 78px
+  padding-left 40px
+  border-left 1px solid #f2f2f2
 
 .session .title-large
   width 404px
@@ -3248,9 +3256,17 @@ table.post-params label
   height 274px
   margin-left 30px
 
+.session-empty
+  font-size 12px
+  font-style italic
+  color #b3b3b3
+
 .session-activity
   position relative
   width 404px
+
+.single .session-activity
+  width 561px
 
 ul.session-activity-title
   list-style none
@@ -3279,10 +3295,16 @@ p.session-note
   line-height 18px
   color #3d3d3d
 
+.single p.session-note
+  width 561px
+
 ul.session-ticks
   width 404px
   margin 0 0 10px
   list-style none
+
+.single ul.session-ticks
+  width 561px
 
 ul.session-ticks li
   position relative

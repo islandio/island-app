@@ -176,7 +176,12 @@ define([
     profile: function (username) {
       this.start();
       var feed = store.get('feed') || {};
-      if (!feed.query) feed.query = {featured: true};
+      if (!feed.actions || feed.actions === 'all')
+        feed.actions = ['session', 'post'];
+      else if (feed.actions === 'session')
+        feed.actions = ['session'];
+      else if (feed.actions === 'post')
+        feed.actions = ['post'];
       this.renderTabs();
       this.render('/service/profile.profile/' + username, feed,
           _.bind(function (err) {

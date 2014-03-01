@@ -1,34 +1,33 @@
 /*
- * Profile Row view
+ * Profile view
  */
 
 define([
   'jQuery',
   'Underscore',
+  'Backbone',
   'mps',
   'rest',
-  'views/boiler/row',
+  'util',
   'models/profile',
   'text!../../../templates/rows/profile.html',
-  'text!../../../templates/profile.title.html'
-], function ($, _, mps, rest, Row, Model, template, title) {
-  return Row.extend({
+  'text!../../../templates/profile.title.html',
+  'views/lists/events'
+], function ($, _, Backbone, mps, rest, util, Model, template, title, Events) {
+  return Backbone.View.extend({
 
     attributes: function () {
-      return _.defaults({class: 'profile'},
-          Row.prototype.attributes.call(this));
+      return {class: 'profile'};
     },
 
     initialize: function (options, app) {
       this.app = app;
+      this.model = new Model(this.app.profile.content.page);
+      this.wrap = options.wrap;
       this.template = _.template(template);
 
-      // Allow single rendering (no parent view)
-      if (!options.parentView)
-        this.model = new Model(this.app.profile.content.page);
-
-      // Boiler init.
-      Row.prototype.initialize.call(this, options);
+      // Shell events.
+      this.on('rendered', this.setup, this);
 
       // Client-wide subscriptions.
       this.subscriptions = [];
@@ -40,46 +39,51 @@ define([
       'click a.navigate': 'navigate',
     },
 
-    render: function (single, prepend) {
-      Row.prototype.render.call(this, single, prepend);
+    render: function () {
+
+      this.$el.html(this.template.call(this)).appendTo(this.wrap);
 
       // Set page title
-      if (!this.parentView) {
-        if (this.model.get('role') !== 2)
-          this.$el.addClass('single');
-        else this.$el.addClass('company');
-        var doctitle = this.model.get('username');
-        if (this.model.get('displayName') !== '')
-          doctitle += ' (' + this.model.get('displayName') + ')';
-        this.app.title(doctitle);
+      if (this.model.get('role') !== 2)
+        this.$el.addClass('single');
+      else this.$el.addClass('company');
+      var doctitle = this.model.get('username');
+      if (this.model.get('displayName') !== '')
+        doctitle += ' (' + this.model.get('displayName') + ')';
+      this.app.title(doctitle);
 
-        // Render title.
-        this.title = _.template(title).call(this);
-      }
+      // Render title.
+      this.title = _.template(title).call(this);
+
+      // Trigger setup.
+      this.trigger('rendered');
 
       return this;
     },
 
     setup: function () {
-      Row.prototype.setup.call(this);
 
-      if (!this.parentView) {
+      // Set map view.
+      mps.publish('map/fly', [this.model.get('location') 
+          || this.model.get('hometown')]);
 
-        // Set map view.
-        mps.publish('map/fly', [this.model.get('location') 
-            || this.model.get('hometown')]);
+      // Render events.
+      this.events = new Events(this.app, {
+        parentView: this,
+        reverse: true
+      });
 
-        // Render posts.
-        // this.posts = new Posts(this.app, {parentView: this, reverse: true});
-      }
+      return this;
     },
 
     destroy: function () {
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      if (this.posts) this.posts.destroy();
-      Row.prototype.destroy.call(this);
+      this.events.destroy();
+      this.undelegateEvents();
+      this.stopListening();
+      this.remove();
     },
 
     navigate: function (e) {
@@ -89,13 +93,6 @@ define([
       var path = $(e.target).closest('a').attr('href');
       if (path)
         this.app.router.navigate(path, {trigger: true});
-    },
-
-    _remove: function (cb) {
-      this.$el.slideUp('fast', _.bind(function () {
-        this.destroy();
-        cb();
-      }, this));
     },
 
   });
