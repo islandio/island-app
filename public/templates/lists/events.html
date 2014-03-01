@@ -5,7 +5,6 @@
       + member.gravatar + '?s=50&d='
       + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png')
       : null;
-
   
   var input = member && this.collection.options.input
       && (!this.parentView.model || this.parentView.model.id === member.id);
@@ -68,6 +67,7 @@
     </div>
   </div>
 <% } %>
+<% if (this.collection.options.filters !== false) { %>
 <div class="events-filter">
   <div class="subtabs">
     <ul>
@@ -83,6 +83,7 @@
     </ul>
   </div>
 </div>
+<% } %>
 <div class="list-header"></div>
 <% if (this.collection.models.length > 0) {
   var day;

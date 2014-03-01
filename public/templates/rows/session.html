@@ -20,9 +20,11 @@
       <i class="icon-location"></i> <%= this.model.get('crag').name %>, <%= this.model.get('crag').country %>
     </a>
   </div>
-  <a href="/sessions/<%= this.model.get('key') %>" class="title-large navigate">
-    <%= this.model.formatName() %>
-  </a>
+  <span class="event-title-text">
+    <a href="/sessions/<%= this.model.get('key') %>" class="title-large navigate">
+      <%= this.model.formatName() %>
+    </a>
+  </span>
 <% } %>
 <% if (this.model.get('actions').length === 0) { %>
   <span class="session-empty">No activities</span>

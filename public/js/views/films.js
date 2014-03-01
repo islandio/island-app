@@ -10,8 +10,8 @@ define([
   'rest',
   'util',
   'text!../../templates/films.html',
-  // 'views/lists/posts'
-], function ($, _, Backbone, mps, rest, util, template) {
+  'views/lists/events'
+], function ($, _, Backbone, mps, rest, util, template, Events) {
 
   return Backbone.View.extend({
 
@@ -49,15 +49,15 @@ define([
 
     // Bind mouse events.
     events: {
-      'click a.navigate': 'navigate',
+      'click .navigate': 'navigate',
     },
 
     // Misc. setup.
     setup: function () {
 
-      // Render posts.
-      // this.posts = new Posts(this.app, {parentView: this,
-      //     reverse: true, filters: false});
+      // Render events.
+      this.events = new Events(this.app, {parentView: this,
+          reverse: true, filters: false});
 
       return this;
     },
@@ -74,7 +74,7 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      this.posts.destroy();
+      this.events.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

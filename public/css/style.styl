@@ -331,8 +331,6 @@ a.title i:before
   margin 0
 
 a.title-large
-  display block
-  margin 5px 0 11px
   background none
   font-size 18px
   font-family standard_thin
@@ -882,7 +880,7 @@ a.button.buy-button
   border 1px solid transparent
   background #b1dc36
   font-size 12px
-  margin-top 4px
+  margin-top 12px
   margin-right 0
   line-height 24px
   min-height 24px
@@ -2304,7 +2302,7 @@ img.page-title-avatar
   top 5px
   width 26px
   height 26px
-  margin-right 7px
+  margin-right 5px
   border-radius 2px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––modal*/
@@ -2407,9 +2405,6 @@ button.button.modal-button.full
   margin-top 19%
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––profiles*/
-
-.profiles
-  margin-left -30px
 
 .profile
   position relative
@@ -2605,12 +2600,13 @@ textarea.comment-input
   transition height 0.2s
   transition-timing-function height 0.2s
 
-.show-older
-  padding 5px 5px
+.comments-older
+  padding 6px 0 4px
   display block
   min-height 0
   width 474px
   text-align center
+  font-size 11px
   color #808080
   font-style italic
 
@@ -2651,7 +2647,8 @@ textarea.comment-input
 .post-media
   position relative
 
-.event-title + .post-media
+.event-title + .post-media,
+.event-title + .post-media + iframe
   margin-top 6px
 
 .post .post-mosaic
@@ -2701,8 +2698,8 @@ textarea.comment-input
   color white
   opacity 0.8
   font-size 30px
-  top 221px
-  left 128px
+  top 196px
+  left 107px
   font-weight bold
 
   -moz-user-select none
@@ -2712,10 +2709,6 @@ textarea.comment-input
 .post.single span.post-mosaic-play-text
   top 318px
   left 225px
-
-.post .post-title
-  display block
-  position relative
 
 .post .post-body
   margin 5px 0 0
@@ -3127,6 +3120,10 @@ table.post-params label
   width 404px
   color #666
 
+.event-title-text
+  display block
+  margin 5px 0 11px 
+
 .event-info
   width 404px
   margin 10px 0 0
@@ -3211,7 +3208,7 @@ table.post-params label
   padding-left 40px
   border-left 1px solid #f2f2f2
 
-.session .title-large
+.session .event-title-text
   width 404px
 
 .session-location

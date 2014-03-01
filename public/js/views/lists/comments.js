@@ -58,7 +58,7 @@ define([
       }, this));
 
       // Show other elements.
-      this.$('.show-older.comment').show();
+      this.$('.comments-older.comment').show();
       this.$('#comment_input .comment').show();
 
       return List.prototype.setup.call(this);
@@ -73,7 +73,7 @@ define([
     // Bind mouse events.
     events: {
       'click .comments-signin': 'signin',
-      'click .show-older': 'older',
+      'click .comments-older': 'older',
     },
 
     // Collect new data from socket events.
@@ -183,7 +183,7 @@ define([
         this.collection.options.reverse = false;
 
         // Hide the button.
-        this.$('.show-older.comment').hide();
+        this.$('.comments-older.comment').hide();
 
       }, this));
 

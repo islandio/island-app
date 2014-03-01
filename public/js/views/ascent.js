@@ -1,5 +1,5 @@
 /*
- * Page view for a ascent profile.
+ * Page view for an ascent profile.
  */
 
 define([

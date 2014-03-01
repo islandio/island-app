@@ -10,12 +10,11 @@ define([
   'mps',
   'rest',
   'util',
+  'Spin',
   'text!../../../templates/lists/medias.html',
   'collections/medias',
-  'views/rows/media',
-  'Spin'
-], function ($, _, Modernizr, List, mps, rest, util, template,
-      Collection, Row, Spin) {
+  'views/rows/media'
+], function ($, _, Modernizr, List, mps, rest, util, Spin, template, Collection, Row) {
   return List.extend({
 
     el: '.medias',
@@ -55,7 +54,7 @@ define([
 
     // collect new data from socket events.
     collect: function (data) {
-      if (data.parent_id === this.parentView.model.id)
+      if (data[this.type + '_id'] === this.parentView.model.id)
         this.collection.unshift(data);
     },
 
@@ -167,7 +166,7 @@ define([
       this.adding = true;
 
       // Add the parent id.
-      payload.parent_id = this.parentView.model.id;
+      payload[this.type + '_id'] = this.parentView.model.id;
 
       // Show loading.
       this.mediaButtonSpin.start();

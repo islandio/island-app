@@ -19,8 +19,8 @@
   }
 
   // Image meta
-  var _w = this.parentView ? 680: 1024;
-  var _h = this.parentView ? 306: 460;
+  var _w = 1024;
+  var _h = 460;
   var w, h;
   var l = 'left:0;';
   var t = 'top:0;';
@@ -67,31 +67,16 @@
 
 %>
 
-<% if (!this.parentView) { %>
-  <div class="profile-upper">
-    <div class="profile-picture">
-      <img class="masked" src=<%= data.image.cf_url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
-    </div>
+<div class="profile-upper">
+  <div class="profile-picture">
+    <img class="masked" src=<%= data.image.cf_url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
   </div>
-  <div class="leftside">
-<% } %>
+</div>
+<div class="leftside">
   <div class="profile-inner">
-    <% if (this.parentView) { %>
-      <div class="page-title">
-        <img src="<%= gravatar %>" class="profile-avatar" width="24" height="24" />
-        <%= location %><a href="<%= data.username %>" class="navigate"><%= data.displayName %></a>
-      </div>
-    <% } %>
-    <% if (this.parentView) { %>
-      <div class="profile-picture">
-        <img class="masked" src=<%= data.image.cf_url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
-      </div>
-    <% } %>
     <div class="profile-info">
       <div class="profile-description">
-        <% if (!this.parentView) { %>
-          <h2 class="profile-section-title">Bio</h2>
-        <% } %>
+        <h2 class="profile-section-title">Bio</h2>
         <%= this.model.description() %>
         <% if (links) { %>
           <span>More from <%= data.displayName %> at </span>
@@ -99,39 +84,34 @@
         <% } %>
       </div>
     </div>
-    <% if (!this.parentView) { %>
-      <h2 class="profile-section-title">Activity</h2>
-      <div class="events"></div>
-      <div class="list-spin">
-        <div class="events-spin"></div>
-        <span class="empty-feed">Showing all.</span>
-      </div>
-    <% } %>
+    <h2 class="profile-section-title">Activity</h2>
+    <div class="events"></div>
+    <div class="list-spin">
+      <div class="events-spin"></div>
+      <span class="empty-feed">Showing all.</span>
+    </div>
   </div>
-
-<% if (!this.parentView) { %>
-  </div>
-  <div class="rightside sidebar">
-    <% if (this.model.get('role') === 2) { %>
-      <h2 class="profile-section-title">Team</h2>
-      <ul class="profile-team">
-        <% if (this.model.get('team').length === 0) { %>
-          <span class="empty-feed">Add your team athletes.</span>
-        <% } else { %>
-          <% _.each(this.model.get('team'), _.bind(function (m) {
-            var g = 'https://www.gravatar.com/avatar/'
-            + m.gravatar + '?s=274&d='
-            + encodeURIComponent(this.app.cfuri + '/avatars/avatar_274.png');
-          %>
-            <li>
-              <a href="/<%= m.username %>" class="navigate">
-                <img src="<%= g %>" class="profile-team-avatar" width="274" height="274" />
-              </a>
-            </li>  
-          <% }, this)); %>
-        <% } %>
-      </ul>
-    <% } %>
-  </div>
-  <div class="clear"></div>
-<% } %>
+</div>
+<div class="rightside sidebar">
+  <% if (this.model.get('role') === 2) { %>
+    <h2 class="profile-section-title">Team</h2>
+    <ul class="profile-team">
+      <% if (this.model.get('team').length === 0) { %>
+        <span class="empty-feed">Add your team athletes.</span>
+      <% } else { %>
+        <% _.each(this.model.get('team'), _.bind(function (m) {
+          var g = 'https://www.gravatar.com/avatar/'
+          + m.gravatar + '?s=274&d='
+          + encodeURIComponent(this.app.cfuri + '/avatars/avatar_274.png');
+        %>
+          <li>
+            <a href="/<%= m.username %>" class="navigate">
+              <img src="<%= g %>" class="profile-team-avatar" width="274" height="274" />
+            </a>
+          </li>  
+        <% }, this)); %>
+      <% } %>
+    </ul>
+  <% } %>
+</div>
+<div class="clear"></div>

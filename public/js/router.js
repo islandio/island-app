@@ -18,7 +18,7 @@ define([
   'views/forgot',
   'views/lists/notifications',
   'views/map',
-  'views/rows/profile',
+  'views/profile',
   'views/rows/post',
   'views/rows/session',
   'views/crag',

@@ -22,8 +22,8 @@
       <%= this.model.get('author').displayName %></a><%= this.model.explain() %>
   </div>
   <% if (this.model.get('title')) { %>
-    <span class="post-title">
-      <span class="event-timeline-dot"></span>
+    <span class="event-timeline-dot"></span>
+    <span class="event-title-text">
       <a href="/<%= this.model.get('key') %>" class="title-large navigate">
         <%= this.model.get('title') %></a>
     </span>
