@@ -35,7 +35,7 @@ define([
     },
 
     events: {
-      'click a.navigate': 'navigate',
+      'click .navigate': 'navigate',
       'click .media-delete': 'delete'
     },
 
@@ -47,9 +47,6 @@ define([
     },
 
     destroy: function () {
-      _.each(this.subscriptions, function (s) {
-        mps.unsubscribe(s);
-      });
       this.comments.destroy();
       Row.prototype.destroy.call(this);
     },
@@ -68,33 +65,24 @@ define([
 
       // Render the confirm modal.
       $.fancybox(_.template(confirm)({
-        message: 'Do you want to delete this?',
-        working: 'Working...'
+        message: 'Delete this video forever?',
       }), {
         openEffect: 'fade',
         closeEffect: 'fade',
         closeBtn: false,
         padding: 0
       });
-      
-      // Refs.
-      var overlay = $('.modal-overlay');
 
       // Setup actions.
-      $('#confirm_cancel').click(function (e) {
+      $('.modal-cancel').click(function (e) {
         $.fancybox.close();
       });
-      $('#confirm_delete').click(_.bind(function (e) {
+      $('.modal-confirm').click(_.bind(function (e) {
 
         // Delete the media.
         rest.delete('/api/medias/' + this.model.id,
             {}, _.bind(function (err, data) {
-          if (err) {
-
-            // Oops.
-            console.log('TODO: Retry, notify user, etc.');
-            return;
-          }
+          if (err) return console.log(err);
 
           // close the modal.
           $.fancybox.close();

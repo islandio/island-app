@@ -104,7 +104,7 @@ define([
 
       // Do the API request.
       var username = this.app.profile.content.page.username;
-      rpc.post('/api/members/' + username + '/follow', {},
+      rest.post('/api/members/' + username + '/follow', {},
           _.bind(function (err, data) {
 
         // Clear.
@@ -135,7 +135,7 @@ define([
 
       // Do the API request.
       var username = this.app.profile.content.page.username;
-      rpc.post('/api/members/' + username + '/unfollow', {},
+      rest.post('/api/members/' + username + '/unfollow', {},
           _.bind(function (err, data) {
 
         // Clear.

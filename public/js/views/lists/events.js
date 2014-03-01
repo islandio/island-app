@@ -48,7 +48,9 @@ define([
 
     // receive event from event bus
     collect: function (data) {
-      if (_.contains(this.latestList.actions, data.action_type))
+      if (_.contains(this.latestList.actions, data.action_type)
+          && (!this.latestList.query || !this.latestList.query.subscribee_id
+            || this.latestList.query.subscribee_id === this.parentView.model.id))
         this.collection.unshift(data);
     },
 
@@ -61,7 +63,7 @@ define([
         }, this), (this.collection.length + 1) * 30);
       else {
         this.nomore = true;
-        $('<span class="empty-feed">No events.</span>').appendTo(this.$el);
+        $('<span class="empty-feed">Nothing to see here!.</span>').appendTo(this.$el);
         this.spin.stop();
         this.spin.target.hide();
       }
@@ -84,9 +86,10 @@ define([
         return ms >= Number($(this).data('beg'))
             && ms <= Number($(this).data('end'));
       });
-      if (header.length > 0)
-        header.detach().insertBefore(view.$el);
-      else {
+      if (header.length > 0) {
+        if (!pagination)
+          header.detach().insertBefore(view.$el);
+      } else {
         var _date = new Date(view.model.get('date'));
         var beg = new Date(_date.getFullYear(), _date.getMonth(),
             _date.getDate());
@@ -218,11 +221,11 @@ define([
           else {
             this.showingall.hide();
             if (this.$('.empty-feed').length === 0)
-              $('<span class="empty-feed">' + this.empty_label + '</span>')
+              $('<span class="empty-feed">Nothing to see here!</span>')
                   .appendTo(this.$el);
           }
         } else
-          _.each(list.items, _.bind(function (i) {
+          _.each(list.items, _.bind(function (i,o) {
             this.collection.push(i, {silent: true});
             this.renderLast(true);
           }, this));
@@ -349,7 +352,8 @@ define([
         onError: function (assembly) {
           mps.publish('flash/new', [{
             message: assembly.error + ': ' + assembly.message,
-            level: 'error'
+            level: 'error',
+            sticky: true
           }, false]);
           bar.parent().remove();
           this.parentView.title();

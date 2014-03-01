@@ -55,8 +55,8 @@ define([
 
     // collect new data from socket events.
     collect: function (data) {
-      if (data.id === this.parentView.model.id)
-        this.collection.unshift(media);
+      if (data.parent_id === this.parentView.model.id)
+        this.collection.unshift(data);
     },
 
     // initial bulk render of list
@@ -83,7 +83,7 @@ define([
       _.delay(_.bind(function () {
         if (pagination !== true)
           this.checkHeight();
-      }, this), 60);
+      }, this), 20);
       return this;
     },
 
@@ -189,11 +189,7 @@ define([
         this.mediaButton.attr('disabled', false);
         this.adding = false;
 
-        if (err)
-          return console.log(err);
-
-        // TODO: make this optimistic.
-        this.collect(data.media);
+        if (err) return console.log(err);
 
         // Update map media.
         mps.publish('map/refresh');
@@ -289,7 +285,8 @@ define([
     },
 
     unpaginate: function () {
-      $(window).unbind('scroll', this._paginate).unbind('resize', this._paginate);
+      $(window).unbind('scroll', this._paginate)
+          .unbind('resize', this._paginate);
     }
 
   });

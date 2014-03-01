@@ -6,11 +6,14 @@
       + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png')
       : null;
 
+  
+  var input = member && this.collection.options.input
+      && (!this.parentView.model || this.parentView.model.id === member.id);
   var feed = store.get('feed') || {};
 
 %>
 
-<% if (member && this.collection.options.input) { %>
+<% if (input) { %>
   <div class="post-input">
     <div class="post">
       <span class="post-input-avatar">

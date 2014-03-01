@@ -71,7 +71,8 @@ define([
       // Render events.
       this.events = new Events(this.app, {
         parentView: this,
-        reverse: true
+        reverse: true,
+        input: true
       });
 
       return this;

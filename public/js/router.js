@@ -261,8 +261,8 @@ define([
         feed.actions = ['session'];
       else if (feed.actions === 'post')
         feed.actions = ['post'];
-      if (feed.query && feed.query.author_id)
-        delete feed.query.author_id;
+      if (feed.query && feed.query.subscribee_id)
+        delete feed.query.subscribee_id;
       this.render('/service/dashboard.profile', feed, _.bind(function (err) {
         if (err) return;
         this.page = new Dashboard(this.app).render();

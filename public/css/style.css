@@ -2406,6 +2406,9 @@ ul.profile-team li {
   list-style-type: none;
   float: left;
 }
+ul.profile-team li:last-child {
+  margin-bottom: 30px;
+}
 ul.profile-team li img {
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
@@ -2957,8 +2960,20 @@ table.post-params label {
   position: relative;
   margin-left: -30px;
 }
+.profile .events > .post-input {
+  margin-top: 20px;
+}
+.profile .events > .events-filter:first-child {
+  margin-top: -25px;
+}
 .events-filter {
   text-align: right;
+}
+.events-filter + .list-header + .empty-feed {
+  width: 750px;
+  margin: 30px 0 0 0;
+  border-top: 1px solid #f2f2f2;
+  padding-top: 20px;
 }
 .event-day-header {
   border-bottom: 1px solid #f2f2f2;
@@ -3526,9 +3541,6 @@ ul.ascents a li {
 }
 ul.ascents a li:hover {
   background: #e6e6e6 !important;
-}
-ul.ascents a li:hover span {
-  text-decoration: underline;
 }
 ul.ascents *:nth-child(2) li {
   -webkit-border-top-left-radius: 3px;
