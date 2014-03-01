@@ -89,7 +89,7 @@ define([
 
       // Set map view.
       if (!this.parentView)
-        mps.publish('map/fly', [this.model.get('location')]);
+        mps.publish('map/fly', [this.model.get('crag').location]);
 
       // Render comments.
       this.comments = new Comments(this.app, {

@@ -486,6 +486,7 @@ define([
     },
 
     filter: function (e) {
+      e.preventDefault();
 
       // Update buttons.
       var chosen = $(e.target).closest('li');
@@ -522,6 +523,8 @@ define([
       this.$('.event-day-header').remove();
       this.showingall.hide();
       this.more();
+
+      return false;
     },
 
   });

@@ -41,7 +41,8 @@ define([
 
     render: function () {
 
-      this.$el.html(this.template.call(this)).appendTo(this.wrap);
+      // Render content.
+      this.$el.html(this.template.call(this)).appendTo(this.wrap).show();
 
       // Set page title
       if (this.model.get('role') !== 2)
