@@ -1,6 +1,6 @@
 *sublime-*
 node_modules/
 build/
-aws.config.json
-bin/
 .elasticbeanstalk/
+aws.config.json
+config.js
