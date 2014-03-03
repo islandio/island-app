@@ -12,8 +12,8 @@ define([
   'models/ascent',
   'text!../../templates/ascent.html',
   'text!../../templates/ascent.title.html',
-  'views/lists/medias'
-], function ($, _, Backbone, mps, rest, util, Ascent, template, title, Medias) {
+  'views/lists/events'
+], function ($, _, Backbone, mps, rest, util, Ascent, template, title, Events) {
 
   return Backbone.View.extend({
 
@@ -42,7 +42,7 @@ define([
       // Set page title.
       this.app.title(this.model.get('name') + ' - ' + [this.model.get('crag'),
           this.model.get('country')].join(', '));
-      
+
       // Render title.
       this.title = _.template(title).call(this);
 
@@ -67,11 +67,11 @@ define([
       // Set map view.
       mps.publish('map/fly', [this.model.get('location')]);
 
-      // Render lists.
-      this.medias = new Medias(this.app, {
+      // Render events.
+      this.events = new Events(this.app, {
         parentView: this,
         reverse: true,
-        type: 'ascent'
+        input: true
       });
 
       return this;
@@ -89,7 +89,7 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      this.medias.destroy();
+      this.events.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

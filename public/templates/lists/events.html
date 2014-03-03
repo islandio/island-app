@@ -6,8 +6,7 @@
       + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png')
       : null;
   
-  var input = member && this.collection.options.input
-      && (!this.parentView.model || this.parentView.model.id === member.id);
+  var input = member && this.collection.options.input;
   var feed = store.get('feed') || {};
 
 %>

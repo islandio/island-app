@@ -68,6 +68,7 @@ boots.start({index: argv.index}, function (client) {
               key: [m.author.username, com.createId_32()].join('/'),
               author_id: m.author._id,
               parent_id: doc._id,
+              created: m.created
             };
 
             // Create the post.

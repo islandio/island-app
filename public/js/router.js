@@ -230,6 +230,13 @@ define([
     ascent: function (country, crag, type, ascent) {
       this.start();
       var key = [country, crag, type, ascent].join('/');
+      var feed = store.get('feed') || {};
+      if (!feed.actions || feed.actions === 'all')
+        feed.actions = ['session', 'post'];
+      else if (feed.actions === 'session')
+        feed.actions = ['session'];
+      else if (feed.actions === 'post')
+        feed.actions = ['post'];
       this.renderTabs();
       this.render('/service/ascent.profile/' + key, _.bind(function (err) {
         if (err) return;
