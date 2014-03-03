@@ -138,9 +138,7 @@ define([
       input.val('').keyup();
 
       // Now save the comment to server.
-      var container = this.parentView.parentView ?
-          this.parentView.parentView.type || 'null': 'null';
-      rest.post('/api/comments/' + [container, this.type].join('/'), payload,
+      rest.post('/api/comments/' + this.type, payload,
           _.bind(function (err, data) {
         if (err) {
           this.collection.pop();

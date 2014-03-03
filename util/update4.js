@@ -72,52 +72,6 @@ boots.start({index: argv.index}, function (client) {
         });
       });
     },
-
-    function (err) {
-      boots.error(err);
-      db.Medias.list({ascent_id: {$exists: 1}}, {inflate: {
-        author: profiles.member,
-        ascent: {collection: 'ascent', '*': 1}
-      }}, this);
-    },
-    function (err, docs) {
-      boots.error(err);
-      if (docs.length === 0) return this();
-      var _this = _.after(docs.length, this);
-      _.each(docs, function (doc) {
-        db.Events.read({action_id: doc._id}, function (err, e) {
-          boots.error(err);
-          if (e) return _this();
-
-          pubsub.publish('media', 'media.new', {
-            data: doc,
-            event: {
-              actor_id: doc.author._id,
-              target_id: doc.ascent._id,
-              action_id: doc._id,
-              action_type: 'media',
-              data: {
-                action: {
-                  i: doc.author._id.toString(),
-                  a: doc.author.displayName,
-                  g: com.hash(doc.author.primaryEmail || 'foo@bar.baz'),
-                  t: 'media',
-                  b: doc.type
-                },
-                target: {
-                  t: 'ascent',
-                  n: doc.ascent.name,
-                  w: doc.ascent.crag,
-                  s: ['crags', doc.ascent.key].join('/')
-                }
-              }
-            }
-          }, _this);
-
-        });
-      });
-    },
-
     function (err) {
       boots.error(err);
       console.log('Good to go.');

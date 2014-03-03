@@ -52,13 +52,13 @@ define([
 
     formatTickDetails: function (t) {
       var parts = [];
-      if (t.first) parts.push('1st');
-      else if (t.firstf) parts.push('1st (f)');
+      if (t.first) parts.push('FA');
+      else if (t.firstf) parts.push('FFA');
       if (t.tries === 1) parts.push('onsight');
       else if (t.tries === 2) parts.push('flash');
       else if (t.tries === 3) parts.push('2nd go');
       else if (t.tries === 4) parts.push('3rd go');
-      else if (t.tries === 5) parts.push('redpoint');
+      else if (!t.tries || t.tries === 5) parts.push('redpoint');
       return parts.join(', ');
     },
 

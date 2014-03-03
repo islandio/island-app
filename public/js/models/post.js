@@ -29,7 +29,7 @@ define([
 
     date: function () {
       var date = new Date(this.get('created'));
-      return date.format('mmm d');
+      return date.format('mmm d, yyyy');
     },
 
     body: function (full) {
