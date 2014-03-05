@@ -18,7 +18,7 @@ html(lang="en")
     <!--[if IE 7]><link rel="stylesheet" href="#{root}/css/fontello-ie7.css"><![endif]-->
     link(rel="stylesheet", href="#{root}/css/style.css")
     link(rel="shortcut icon", href="#{root}/img/favicon.ico", type="image/x-icon")
-  body
+  body.preload
     block content
     script(type="text/javascript", src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyAWgUokzlRODT2GBOjZC9Qd4WGmcKzyikA&sensor=false")
     - if (process.env.NODE_ENV === 'production')

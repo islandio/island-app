@@ -66,6 +66,7 @@ define([
     // Creates the instance.
     init: function () {
       var app = new App;
+      $('body').removeClass('preload');
       app.router = new Router(app);
       Backbone.history.start({pushState: true});
     }
