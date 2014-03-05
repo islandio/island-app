@@ -236,6 +236,12 @@ body {
   font-size: 10px;
   line-height: 13px;
 }
+body.preload * {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -ms-transition: none !important;
+  -o-transition: none !important;
+}
 a {
   color: #404040;
   background: #f2f2f2;
