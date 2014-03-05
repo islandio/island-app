@@ -49,7 +49,9 @@ define([
     render: function (single, prepend) {
 
       function insert(item) {
-        var src = util.https(item.data.cf_url || item.data.url);
+        var ssl_url = item.data.ssl_url && item.data.ssl_url.indexOf('amazonaws') === -1 ?
+          item.data.ssl_url: false;
+        var src = util.https(ssl_url || item.data.cf_url || item.data.url);
         var anc = $('<a class="fancybox" rel="g-' + this.model.id + '" href="'
             + src + '">');
         var div = $('<div class="post-mosaic-wrap">').css(item.div).appendTo(anc);
@@ -278,14 +280,39 @@ define([
 
           // Video params
           var params = {
-            file: this.video.video.cf_url,
-            image: this.video.poster.cf_url,
             width: '1024',
             height: '576',
             autostart: true,
             primary: 'flash',
             ga: {}
           };
+          var files = {};
+
+          // Detect iOS decive.
+          var ssl_url = this.video.poster.ssl_url
+              && this.video.poster.ssl_url.indexOf('amazonaws') === -1 ?
+              this.video.poster.ssl_url: false;
+          if (/(iPad|iPhone|iPod)/g.test(navigator.userAgent)
+              && this.video.video.ios_url)
+            files = {
+              file: this.video.video.ios_url,
+              image: ssl_url || this.video.poster.cf_url
+            };
+          else if (this.video.video.streaming_url)
+            files = {
+              playlist: [{
+                file: this.video.video.streaming_url,
+                image: ssl_url || this.video.poster.cf_url,
+                provider: 'http://players.edgesuite.net/flash/plugins/jw/v3.3'
+                    + '/AkamaiAdvancedJWStreamProvider.swf'
+              }]
+            };
+          else
+            files = {
+              file: this.video.video.cf_url,
+              image: this.video.poster.cf_url
+            };
+          _.extend(params, files);
 
           if (this.parentView) {
 

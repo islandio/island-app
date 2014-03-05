@@ -1755,6 +1755,9 @@ ul.profile-team li:hover img {
   width: 984px;
   height: 554px;
 }
+.post-mosaic + .post-link {
+  margin-top: 10px;
+}
 .post-mosaic-wrap {
   position: absolute;
   overflow: hidden;

@@ -1,4 +1,9 @@
-<video src="<%= data.video.cf_url %>" id="video-<%= data.id %>" 
-    poster="<%= data.poster.cf_url %>" controls="controls" 
+<%
+var ssl_url = data.poster.ssl_url && data.poster.ssl_url.indexOf('amazonaws') === -1 ?
+    data.poster.ssl_url: false;
+%>
+
+<video src="<%= (data.video.streaming_url || data.video.cf_url) %>" id="video-<%= data.id %>" 
+    poster="<%= (ssl_url || data.poster.cf_url) %>" controls="controls" 
     preload="none" width="<%= width %>"
     height="<%= Math.ceil(width * data.video.meta.height / data.video.meta.width) %>" />
