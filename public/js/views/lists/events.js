@@ -74,13 +74,16 @@ define([
     // initial bulk render of list
     render: function (options) {
       List.prototype.render.call(this, options);
+      this.spin.stop();
       if (this.collection.length > 0)
         _.delay(_.bind(function () {
           this.checkHeight();
         }, this), (this.collection.length + 1) * 30);
       else {
         this.nomore = true;
-        $('<span class="empty-feed">Nothing to see here!.</span>').appendTo(this.$el);
+        this.listSpin.hide();
+        $('<span class="empty-feed">Nothing to see here!</span>')
+            .appendTo(this.$el);
         this.spin.stop();
         this.spin.target.hide();
       }
@@ -136,7 +139,8 @@ define([
     setup: function () {
 
       // Save refs
-      this.showingall = this.parentView.$('.list-spin .empty-feed');
+      this.listSpin = this.parentView.$('.list-spin');
+      this.showingAll = this.parentView.$('.list-spin .empty-feed');
       this.postForm = this.$('.post-input-form');
       this.postBody = $('textarea[name="body"]', this.postForm);
       this.postTitle = this.$('input[name="title"]', this.postForm);
@@ -234,12 +238,14 @@ define([
           this.spin.stop();
           this.spin.target.hide();
           if (this.collection.length > 0)
-            this.showingall.css('display', 'block');
+            this.showingAll.css('display', 'block');
           else {
-            this.showingall.hide();
-            if (this.$('.empty-feed').length === 0)
+            this.showingAll.hide();
+            if (this.$('.empty-feed').length === 0) {
+              this.listSpin.hide();
               $('<span class="empty-feed">Nothing to see here!</span>')
                   .appendTo(this.$el);
+            }
           }
         } else
           _.each(list.items, _.bind(function (i,o) {
@@ -253,9 +259,9 @@ define([
           if (list.items.length < this.latestList.limit) {
             this.spin.target.hide();
             if (!this.$('.empty-feed').is(':visible'))
-              this.showingall.css('display', 'block');
+              this.showingAll.css('display', 'block');
           } else {
-            this.showingall.hide();
+            this.showingAll.hide();
             this.spin.target.show();
           }
         }, this), (list.items.length + 1) * 30);
@@ -263,6 +269,9 @@ define([
 
       // already waiting on server
       if (this.fetching) return;
+
+      // Show spin region.
+      this.listSpin.show();
 
       // there are no more, don't call server
       if (this.nomore || !this.latestList.more)
@@ -280,6 +289,7 @@ define([
 
         if (err) {
           this.spin.stop();
+          this.spin.target.hide();
           this.fetching = false;
           return console.error(err.stack);
         }
@@ -300,7 +310,6 @@ define([
         if (!this.nomore && pos < -this.spin.target.height() / 2)
           this.more();
       }, this), 20);
-
       wrap.scroll(this._paginate).resize(this._paginate);
     },
 
@@ -472,13 +481,20 @@ define([
       if (payload.body === '' && _.isEmpty(payload.assembly.results))
         return false;
 
+      // Add parent (if parent).
+      if (this.collection.options.parentId
+          && this.collection.options.parentType) {
+        payload.parent_id = this.collection.options.parentId;
+        payload.type = this.collection.options.parentType;
+      }
+
       // Now save the post to server.
-      rest.post('/api/posts', payload,
-          _.bind(function (err, data) {
+      rest.post('/api/posts', payload, _.bind(function (err, data) {
         if (err) console.log(err);
 
         // Clear fields.
         this.cancel();
+        this.unfocus();
       }, this));
 
       return false;
@@ -500,6 +516,12 @@ define([
         this.postParams.show();
         this.postSelect.show();
       }
+    },
+
+    unfocus: function (e) {
+      this.postBody.css({'min-height': 'inherit'}).blur();
+      this.postParams.hide();
+      this.postSelect.hide();
     },
 
     blur: function (e) {
@@ -542,7 +564,7 @@ define([
       });
       this.views = [];
       this.$('.event-day-header').remove();
-      this.showingall.hide();
+      this.showingAll.hide();
       this.more();
 
       return false;

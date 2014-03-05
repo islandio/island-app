@@ -70,6 +70,8 @@ define([
       // Render events.
       this.events = new Events(this.app, {
         parentView: this,
+        parentId: this.model.id,
+        parentType: 'ascent',
         reverse: true,
         input: true
       });

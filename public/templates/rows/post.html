@@ -36,13 +36,18 @@
   <div class="post-mosaic"></div>
 </div>
 <% if (this.model.link()) { %>
-  <% if (this.parentView) { %>
-    <iframe src="<%= this.model.get('link') %>" width="561" height="316"
-        frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
-  <% } else { %>
-    <iframe src="<%= this.model.get('link') %>" width="1024" height="576"
-        frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
-  <% } %>  
+  <div class="post-link">
+    <span class="event-timeline-label">
+      <i class="icon-youtube-play"></i>
+    </span>
+    <% if (this.parentView) { %>
+      <iframe src="<%= this.model.get('link') %>" width="561" height="316"
+          frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+    <% } else { %>
+      <iframe src="<%= this.model.get('link') %>" width="1024" height="576"
+          frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+    <% } %>
+  </div>
 <% } %>
 <div class="post-body">
   <%= this.model.body(!this.parentView) %>
