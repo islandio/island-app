@@ -6,17 +6,28 @@
 %>
 
 <div class="leftside">
-  <div class="crag single">
-    <div class="ascent-filter">
-      <div class="ascent-filter-buttons">
-        <a class="b-filter button button-left" href="javascript:;"
-            style="width:70px;">
-          Boulders</a>
-        <a class="r-filter button button-right" href="javascript:;"
-            style="width:57px;">
-          Routes</a>
+  <div class="events"></div>
+  <div class="list-spin">
+    <div class="events-spin"></div>
+    <span class="empty-feed">Showing all.</span>
+  </div>
+</div>
+<div class="rightside">
+  <div class="crag">
+    <div class="ascents-filter">
+      <div class="subtabs">
+        <ul>
+          <li class="subtab">
+            <a href="javascript:;" class="b-filter">Boulders</a>
+          </li>
+          <li data-filter="r" class="subtab">
+            <a href="javascript:;" class="r-filter">Routes</a>
+          </li>
+        </ul>
       </div>
-      <input class="filter-box" type="search" tabindex="2" placeholder="filter ascents..." />
+      <div class="ascents-filter-input">
+        <input class="filter-box" type="search" tabindex="2" placeholder="filter ascents..." />
+      </div>
     </div>
     <% _.each(data.ascents, _.bind(function (ascents, t) {
       if (data[t + 'cnt'] === 0) return; %>
@@ -47,8 +58,5 @@
       </div>
     <% }, this)); %>
   </div>
-</div>
-<div class="rightside">
-  
 </div>
 <div class="clear"></div>

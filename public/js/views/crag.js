@@ -5,15 +5,15 @@
 define([
   'jQuery',
   'Underscore',
-  'Modernizr',
   'Backbone',
   'mps',
   'rest',
   'util',
   'models/crag',
   'text!../../templates/crag.html',
-  'text!../../templates/crag.title.html'
-], function ($, _, Modernizr, Backbone, mps, rest, util, Crag, template, title) {
+  'text!../../templates/crag.title.html',
+  'views/lists/events'
+], function ($, _, Backbone, mps, rest, util, Crag, template, title, Events) {
 
   return Backbone.View.extend({
 
@@ -64,27 +64,27 @@ define([
 
     // Bind mouse events.
     events: {
-      'click .navigate': 'navigate',
+      'click .navigate': 'navigate'
     },
 
     // Misc. setup.
     setup: function () {
 
       // Save refs.
-      this.filterBox = this.$('.filter-box');
-      this.bouldersFilter = this.$('.b-filter');
-      this.routesFilter = this.$('.r-filter');
+      this.filterBox = this.$('.ascents-filter-input input');
+      this.bouldersFilter = this.$('.b-filter').parent();
+      this.routesFilter = this.$('.r-filter').parent();
       this.boulders = this.$('.b-ascents');
       this.routes = this.$('.r-ascents');
 
       // Handle type changes.
       if (this.model.get('bcnt') > this.model.get('rcnt')) {
         this.currentType = 'b';
-        this.bouldersFilter.addClass('selected');
+        this.bouldersFilter.addClass('active');
         this.boulders.show();
       } else {
         this.currentType = 'r';
-        this.routesFilter.addClass('selected');
+        this.routesFilter.addClass('active');
         this.routes.show();
       }
       this.bouldersFilter.click(_.bind(this.changeType, this, 'b'));
@@ -97,12 +97,7 @@ define([
         this.routesFilter.addClass('disabled');
 
       // Handle filtering.
-      this.filterBox.width(441).css('visibility', 'visible');
       this.filterBox.bind('keyup search', _.bind(this.filter, this));
-
-      // Add placeholder shim if need to.
-      if (!Modernizr.input.placeholder)
-        this.filterBox.placeholder();
 
       // Focus.
       if (!$('.header-search .search-display').is(':visible'))
@@ -110,6 +105,15 @@ define([
 
       // Set map view.
       mps.publish('map/fly', [this.model.get('location')]);
+
+      // Render events.
+      this.events = new Events(this.app, {
+        parentView: this,
+        parentId: this.model.id,
+        parentType: 'crag',
+        reverse: true,
+        input: true
+      });
 
       return this;
     },
@@ -141,12 +145,16 @@ define([
     },
 
     changeType: function (type, e) {
-      var t = $(e.target);
-      if (t.hasClass('disabled')
-            || t.hasClass('selected')) return false;
+
+      // Update buttons.
+      var chosen = $(e.target).closest('li');
+      if (chosen.hasClass('active') || chosen.hasClass('disabled')) return;
+      var active = $('.active', chosen.parent());
+      chosen.addClass('active');
+      active.removeClass('active');
+
+      // Set new type.
       this.currentType = type;
-      this.$('.ascent-filter-buttons a.button').removeClass('selected');
-      t.addClass('selected');
       this.$('.ascents-wrap').hide();
       this.$('.' + this.currentType + '-ascents').show();
       this.filterBox.keyup();

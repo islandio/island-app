@@ -241,8 +241,8 @@ define([
             this.showingAll.css('display', 'block');
           else {
             this.showingAll.hide();
+            this.listSpin.hide();
             if (this.$('.empty-feed').length === 0) {
-              this.listSpin.hide();
               $('<span class="empty-feed">Nothing to see here!</span>')
                   .appendTo(this.$el);
             }

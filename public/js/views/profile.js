@@ -71,8 +71,10 @@ define([
       // Render events.
       this.events = new Events(this.app, {
         parentView: this,
+        parentId: this.model.id,
+        parentType: 'member',
         reverse: true,
-        input: true
+        input: this.model.id === this.app.profile.member.id
       });
 
       return this;

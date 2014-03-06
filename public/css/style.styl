@@ -1021,7 +1021,6 @@ li.tab.active a
 
 .subtabs
   position relative
-  top 31px
   display inline-block
   height 30px
   margin-left 20px
@@ -1087,6 +1086,12 @@ li.subtab.active a
   border-top 4px solid blue
   padding-top 6px
   top 5px
+
+li.subtab.disabled a
+  opacity 0.5
+  background none
+  color #666
+  cursor default
 
 .content
   position relative
@@ -3049,6 +3054,9 @@ table.post-params label
 .events-filter
   text-align right
 
+.events-filter .subtabs
+  top 31px
+
 .events-filter + .list-header + .empty-feed
   width 750px
   margin 30px 0 0 0
@@ -3574,14 +3582,11 @@ span.setting-error
 span.no-description
   font-style italic
 
-span.no-media
-  display block
-  margin 20px 0
-  font-style italic
-
-.crag.single,
-.ascent.single
+.crag, .ascent
   margin 0 0 30px
+
+.crag
+  padding 30px
 
 .crag .page-title span
   color green
@@ -3589,20 +3594,36 @@ span.no-media
 .ascent .page-title span
   color pink
 
-.ascent-filter
-  margin-top 3px
+.ascents-filter
+  text-align right
 
-.ascent-filter-buttons
-  width 211px
-  float right
-  white-space nowrap
-  font-size 0
+.ascents-filter .subtabs
+  top 1px
 
-.ascent-filter-buttons a.button
-  height 38px
-  line-height 38px
-  font-size 13px
-  padding 0 20px
+.ascents-filter-input
+  margin 0 -30px
+  padding 20px 30px 0
+  border-top 1px solid #f2f2f2
+
+.ascents-filter-input input
+  font-size 16px
+  width 100%
+
+// .ascents-filter-buttons
+//   margin-bottom 15px
+//   white-space nowrap
+//   font-size 0
+
+// .ascents-filter-buttons a.button
+//   width 50%
+//   height 30px
+//   line-height 30px
+//   font-size 12px
+//   padding 0 20px
+
+//   box-sizing border-box
+//   -moz-box-sizing border-box
+//   -webkit-box-sizing border-box
 
 .ascents-wrap
   margin 20px 0 0
@@ -3654,15 +3675,10 @@ span.ascent-name
   display inline-block
   font-weight bold
 
-input.filter-box
-  font-size 19px
-  width 441px
-  visibility hidden
-
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––ascents media*/
 
 .ascent-info
-  margin-bottom 15px
+  margin-bottom 30px
 
 .ascent-description p
   font-family standard_thin
