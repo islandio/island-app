@@ -173,22 +173,15 @@ define([
       $(window).scrollTop(0);
     },
 
-    getActions: function (types) {
+    getEventActions: function () {
       var feed = store.get('feed') || {};
-      var actions;
-      if (!feed.actions || feed.actions === 'all')
-        actions = types;
-      else
-        _.each(types, function (t) {
-          if (feed.actions === t) actions = [t];
-        });
-      return actions || [];
+      return feed.actions || 'all';
     },
 
     profile: function (username) {
       this.start();
       this.renderTabs();
-      var query = {actions: this.getActions(['session', 'post'])};
+      var query = {actions: this.getEventActions()};
       this.render('/service/profile.profile/' + username, query,
           _.bind(function (err) {
         if (err) return;
@@ -225,7 +218,7 @@ define([
       this.start();
       this.renderTabs();
       var key = [country, crag].join('/');
-      var query = {actions: this.getActions(['session', 'post'])};
+      var query = {actions: this.getEventActions()};
       this.render('/service/crag.profile/' + key, query, _.bind(function (err) {
         if (err) return;
         this.page = new Crag(this.app).render();
@@ -238,7 +231,7 @@ define([
       this.start();
       this.renderTabs();
       var key = [country, crag, type, ascent].join('/');
-      var query = {actions: this.getActions(['session', 'post'])};
+      var query = {actions: this.getEventActions()};
       this.render('/service/ascent.profile/' + key, query, _.bind(function (err) {
         if (err) return;
         this.page = new Ascent(this.app).render();
@@ -262,7 +255,7 @@ define([
 
     dashboard: function () {
       this.start();
-      var query = {actions: this.getActions(['session', 'post'])};
+      var query = {actions: this.getEventActions()};
       this.render('/service/dashboard.profile', query, _.bind(function (err) {
         if (err) return;
         this.page = new Dashboard(this.app).render();

@@ -6,27 +6,25 @@
 %>
 
 <div class="leftside">
-  <div class="ascent">
-    <div class="ascent-info">
-      <div class="ascent-description">
-        <p>
-          Crag: <a href="/crags/<%= this.model.parentKey() %>" class="navigate"><%= data.crag %></a>
+  <div class="page-info">
+    <div class="page-description">
+      <p>
+        Crag: <a href="/crags/<%= this.model.parentKey() %>" class="navigate"><%= data.crag %></a>
+        <br />
+        <% if (data.sector) { %>
+          Sector: <%= data.sector %>
           <br />
-          <% if (data.sector) { %>
-            Sector: <%= data.sector %>
-            <br />
-          <% } %>
-          Country: <%= data.country %>
-          <br />
-          Grade: <%= data.grades.sort().join(', ') %>
-        </p>
-      </div>
+        <% } %>
+        Country: <%= data.country %>
+        <br />
+        Grade: <%= data.grades.sort().join(', ') %>
+      </p>
     </div>
-    <div class="events"></div>
-    <div class="list-spin">
-      <div class="events-spin"></div>
-      <span class="empty-feed">Showing all.</span>
-    </div>
+  </div>
+  <div class="events"></div>
+  <div class="list-spin">
+    <div class="events-spin"></div>
+    <span class="empty-feed">Showing all.</span>
   </div>
 </div>
 <div class="rightside">

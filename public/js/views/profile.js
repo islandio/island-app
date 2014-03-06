@@ -74,7 +74,8 @@ define([
         parentId: this.model.id,
         parentType: 'member',
         reverse: true,
-        input: this.model.id === this.app.profile.member.id
+        input: this.app.profile.member
+            && this.app.profile.member.id === this.model.id
       });
 
       return this;

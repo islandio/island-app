@@ -3048,8 +3048,11 @@ table.post-params label
 .profile .events > .post-input
   margin-top 20px
 
+.events > .events-filter:first-child
+  margin-top -30px
+
 .profile .events > .events-filter:first-child
-  margin-top -25px
+  margin-top -20px
 
 .events-filter
   text-align right
@@ -3577,22 +3580,23 @@ span.setting-error
   font-weight bold
   margin-left 2px
 
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crags*/
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––page info*/
+
+.page-info
+  margin-bottom 30px
+
+.page-description p
+  font-family standard_thin
+  font-size 16px
+  line-height 24px
 
 span.no-description
   font-style italic
 
-.crag, .ascent
-  margin 0 0 30px
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crag*/
 
-.crag
+.crag-ascents
   padding 30px
-
-.crag .page-title span
-  color green
-
-.ascent .page-title span
-  color pink
 
 .ascents-filter
   text-align right
@@ -3608,22 +3612,6 @@ span.no-description
 .ascents-filter-input input
   font-size 16px
   width 100%
-
-// .ascents-filter-buttons
-//   margin-bottom 15px
-//   white-space nowrap
-//   font-size 0
-
-// .ascents-filter-buttons a.button
-//   width 50%
-//   height 30px
-//   line-height 30px
-//   font-size 12px
-//   padding 0 20px
-
-//   box-sizing border-box
-//   -moz-box-sizing border-box
-//   -webkit-box-sizing border-box
 
 .ascents-wrap
   margin 20px 0 0
@@ -3675,64 +3663,7 @@ span.ascent-name
   display inline-block
   font-weight bold
 
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––ascents media*/
-
-.ascent-info
-  margin-bottom 30px
-
-.ascent-description p
-  font-family standard_thin
-  font-size 16px
-  line-height 24px
-
-.media-input
-  margin-bottom 20px
-
-.media-input form
-  margin-left -10px
-
-.media-input table
-  width 100%
-
-.media-input td
-  padding 0 0 5px 10px
-  position relative
-
-input[type=text].media-link
-  width 544px
-  font-size 12px
-
-input[type=submit].media-button
-  padding 0 40px
-
-.medias
-  margin-left -30px
-
-.media
-  position relative
-  display none
-  width 680px
-  margin-bottom 30px
-  padding 0 40px 30px 30px
-  border-bottom 1px solid #f2f2f2
-
-  -webkit-animation-name fadeIn
-  -moz-animation-name fadeIn
-  -o-animation-name fadeIn
-  animation-name fadeIn
-  -webkit-animation-duration .2s
-  -moz-animation-duration .2s
-  -o-animation-duration .2s
-  animation-duration .2s
-  -webkit-animation-fill-mode both
-  -moz-animation-fill-mode both
-  -o-animation-fill-mode both
-  animation-fill-mode both
-
-.media:last-child
-  margin 0
-  padding 0 40px 0 30px
-  border none
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––ascent*/
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––other*/
 

@@ -6,6 +6,17 @@
 %>
 
 <div class="leftside">
+  <div class="page-info">
+    <div class="page-description">
+      <p>
+        Country: <%= data.country %>
+        <br />
+        Boulders: ~<%= this.model.count(data.bcnt) %>
+        <br />
+        Routes: ~<%= this.model.count(data.rcnt) %>
+      </p>
+    </div>
+  </div>
   <div class="events"></div>
   <div class="list-spin">
     <div class="events-spin"></div>
@@ -13,7 +24,7 @@
   </div>
 </div>
 <div class="rightside">
-  <div class="crag">
+  <div class="crag-ascents">
     <div class="ascents-filter">
       <div class="subtabs">
         <ul>
