@@ -11,19 +11,19 @@ define([
 
     explain: function () {
       var name = '';
-      var cnt = this.get('medias_cnt');
-      switch (this.get('type')) {
-        case undefined:
-          break;
-        case 'image':
-          name += ' added ' + (cnt === 1 ? 'a':cnt)
-              + ' photo' + (cnt !== 1 ? 's.':'.');
-          break;
-        case 'video':
-          name += ' added a <a href="/' + this.get('key')
-              + '" class="title navigate">video</a>.';
-          break;
-      }
+      var target = this.get('event').target;
+      if (target)
+        switch (target.t) {
+          case 'member':
+            if (target.u)
+              name += ' &rarr; <a href="' + target.u
+                  + '" class="title navigate">' + target.a + '</a>';
+            break;
+          case 'crag': case 'ascent':
+            name += ' &rarr; <a href="' + target.s
+                + '" class="title navigate">' + target.n + '</a>';
+            break;
+        }
       return name;
     },
 

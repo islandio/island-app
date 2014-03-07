@@ -36,11 +36,14 @@ define([
       }
 
       // Render action as sub-view.
-      if (Action)
+      if (Action) {
+        var model = this.model.get('action');
+        model.event = this.model.get('data');
         this.action = new Action({
           parentView: this,
-          model: this.model.get('action')
+          model: model
         }, this.app).render(true);
+      }
 
       return this;
     },

@@ -2415,7 +2415,7 @@ ul.profile-team li img {
   border-radius: 2px;
 }
 .profile-upper {
-  margin: 30px 0 20px 0;
+  margin: 30px 0 0 0;
 }
 h2.profile-section-title {
   font-size: 15px;
@@ -2427,10 +2427,10 @@ h2.profile-section-title {
   margin-bottom: 15px;
 }
 .profile-inner {
-  margin-top: -40px;
+  margin-top: -10px;
 }
 .profile-info {
-  margin: 10px 0 25px 0;
+  margin: 0 0 25px 0;
 }
 .profile .profile-picture {
   position: relative;
@@ -3097,7 +3097,8 @@ table.post-params label {
   -moz-transition: all 0.15s ease-in-out;
   transition: all 0.15s ease-in-out;
 }
-.event:hover .event-timeline-label {
+.event:hover .event-timeline-label,
+.single:hover .event-timeline-label {
   border-color: #e6e6e6;
 }
 .event-timeline-label i {
@@ -3117,7 +3118,8 @@ table.post-params label {
   -moz-transition: all 0.15s ease-in-out;
   transition: all 0.15s ease-in-out;
 }
-.event:hover .event-timeline-label i {
+.event:hover .event-timeline-label i,
+.single:hover .event-timeline-label i {
   color: #4d4d4d;
   border-color: #e6e6e6;
 }
@@ -3134,7 +3136,8 @@ table.post-params label {
   -moz-transition: all 0.15s ease-in-out;
   transition: all 0.15s ease-in-out;
 }
-.event:hover .event-timeline-label-text {
+.event:hover .event-timeline-label-text,
+.single:hover .event-timeline-label-text {
   color: #4d4d4d;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––sessions*/

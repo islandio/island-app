@@ -45,9 +45,8 @@ define([
       this.$el.html(this.template.call(this)).appendTo(this.wrap).show();
 
       // Set page title
-      if (this.model.get('role') !== 2)
-        this.$el.addClass('single');
-      else this.$el.addClass('company');
+      if (this.model.get('role') === 2)
+        this.$el.addClass('company');
       var doctitle = this.model.get('username');
       if (this.model.get('displayName') !== '')
         doctitle += ' (' + this.model.get('displayName') + ')';
