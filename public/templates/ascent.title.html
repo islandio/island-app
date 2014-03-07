@@ -1,10 +1,22 @@
 <%
-
   // Save model attributes
   var data = this.model.attributes;
-
+  var sub = this.app.profile.sub;
 %>
 
+<% if (this.app.profile.member) { %>
+  <% if (sub && sub.subscribee_id === this.model.id) { %>
+    <a href="javascript:;" class="button title-button unwatch-button"
+        data-path="/api/ascents/<%= this.model.id %>/unwatch"
+        data-_path="/api/ascents/<%= this.model.id %>/watch">
+      <i class="icon-eye-off"></i> Unwatch</a>
+  <% } else { %>
+    <a href="javascript:;" class="button title-button watch-button"
+        data-path="/api/ascents/<%= this.model.id %>/watch"
+        data-_path="/api/ascents/<%= this.model.id %>/unwatch">
+      <i class="icon-eye"></i> Watch</a>
+  <% } %>
+<% } %>
 <div class="page-title">
   <a href="/crags/<%= this.model.parentKey() %>" class="navigate" style="color:#666;"><%= data.crag %></a> / 
   <a href="/crags/<%= data.key %>" class="navigate"><span><%= data.name %></span></a>

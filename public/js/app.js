@@ -37,8 +37,7 @@ define([
     // Set the app profile.
     if (this.profile) {
       this.profile.content = profile.content;
-      if (profile.sub)
-        this.profile.sub = profile.sub;
+      this.profile.sub = profile.sub;
       if (profile.member && !this.profile.member) {
         this.profile.member = profile.member;
         this.profile.notes = profile.notes;
@@ -74,6 +73,9 @@ define([
       var app = new App;
       app.router = new Router(app);
       Backbone.history.start({pushState: true});
+
+      // For local dev.
+      if (window.__s === '') window._app = app;
     }
     
   };

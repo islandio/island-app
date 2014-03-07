@@ -1,6 +1,7 @@
 <%
   // Save model attributes
   var data = this.model.attributes;
+  var sub = this.app.profile.sub;
 
   // Handle from
   var location = data.location && data.location.name ? data.location.name: null;
@@ -19,11 +20,15 @@
     <a href="/settings" class="button title-button navigate">
       <i class="icon-params"></i> Settings</a>
   <% } else { %>
-    <% if (this.app.profile.sub) { %>
-      <a href="javascript:;" class="button title-button unfollow-button">
+    <% if (sub && sub.subscribee_id === data.id) { %>
+      <a href="javascript:;" class="button title-button unfollow-button"
+          data-path="/api/members/<%= this.model.get('username') %>/unfollow"
+          data-_path="/api/members/<%= this.model.get('username') %>/follow">
         <i class="icon-user-delete"></i> Unfollow</a>
     <% } else { %>
-      <a href="javascript:;" class="button title-button follow-button">
+      <a href="javascript:;" class="button title-button follow-button"
+          data-path="/api/members/<%= this.model.get('username') %>/follow"
+          data-_path="/api/members/<%= this.model.get('username') %>/unfollow">
         <i class="icon-user-add"></i> Follow</a>
     <% } %>
   <% } %>

@@ -31,6 +31,18 @@
       "src": "fontawesome"
     },
     {
+      "uid": "c5fd349cbd3d23e4ade333789c29c729",
+      "css": "eye",
+      "code": 59414,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "7fd683b2c518ceb9e5fa6757f2276faa",
+      "css": "eye-off",
+      "code": 59415,
+      "src": "fontawesome"
+    },
+    {
       "uid": "f5999a012fc3752386635ec02a858447",
       "css": "download-cloud",
       "code": 59396,

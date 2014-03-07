@@ -10,7 +10,7 @@ define([
   'mps',
   'rest',
   'text!../../templates/tabs.html'
-], function ($, _, Backbone, mps, util, rest, template) {
+], function ($, _, Backbone, util, mps, rest, template) {
 
   return Backbone.View.extend({
 
@@ -61,7 +61,9 @@ define([
     events: {
       'click .navigate': 'navigate',
       'click .follow-button': 'follow',
-      'click .unfollow-button': 'unfollow'
+      'click .unfollow-button': 'unfollow',
+      'click .watch-button': 'watch',
+      'click .unwatch-button': 'unwatch'
     },
 
     // Misc. setup.
@@ -97,46 +99,61 @@ define([
 
     follow: function (e) {
       var btn = $(e.target).closest('a');
-
-      // Prevent multiple requests.
-      if (this.working || !this.app.profile.content.page) return false;
-      this.working = true;
-
-      // Do the API request.
-      var username = this.app.profile.content.page.username;
-      rest.post('/api/members/' + username + '/follow', {},
-          _.bind(function (err, data) {
-
-        // Clear.
-        this.working = false;
-
-        if (err) {
-
-          // Show error.
-          mps.publish('flash/new', [{err: err, level: 'error'}]);
-          return false;
-        }
+      this.request.call(this, btn, function () {
 
         // Update button content.
         btn.removeClass('follow-button').addClass('unfollow-button')
             .html('<i class="icon-user-delete"></i> Unfollow');
+      });
 
-      }, this));
-
-      return false;  
+      return false;
     },
 
     unfollow: function (e) {
       var btn = $(e.target).closest('a');
+      this.request.call(this, btn, function () {
+
+        // Update button content.
+        btn.removeClass('unfollow-button').addClass('follow-button')
+            .html('<i class="icon-user-add"></i> Follow');
+      });
+
+      return false;
+    },
+
+    watch: function (e) {
+      var btn = $(e.target).closest('a');
+      this.request.call(this, btn, function () {
+
+        // Update button content.
+        btn.removeClass('watch-button').addClass('unwatch-button')
+            .html('<i class="icon-eye-off"></i> Unwatch');
+      });
+
+      return false;
+    },
+
+    unwatch: function (e) {
+      var btn = $(e.target).closest('a');
+      this.request.call(this, btn, function () {
+
+        // Update button content.
+        btn.removeClass('unwatch-button').addClass('watch-button')
+            .html('<i class="icon-eye"></i> Watch');
+      });
+
+      return false;
+    },
+
+    request: function (target, cb) {
 
       // Prevent multiple requests.
       if (this.working || !this.app.profile.content.page) return false;
       this.working = true;
 
-      // Do the API request.
-      var username = this.app.profile.content.page.username;
-      rest.post('/api/members/' + username + '/unfollow', {},
-          _.bind(function (err, data) {
+      // Make request.
+      var path = target.data('path');
+      rest.post(path, {}, _.bind(function (err, data) {
 
         // Clear.
         this.working = false;
@@ -148,14 +165,16 @@ define([
           return false;
         }
 
-        // Update button content.
-        btn.removeClass('unfollow-button').addClass('follow-button')
-            .html('<i class="icon-user-add"></i> Follow');
+        // Swap paths.
+        target.data('path', target.data('_path'));
+        target.data('_path', path);
 
+        cb();
       }, this));
 
-      return false;  
+      return false;
     },
 
   });
 });
+  
