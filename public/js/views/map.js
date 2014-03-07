@@ -32,8 +32,8 @@ define([
       this.subscriptions = [];
 
       // Socket subscriptions.
-      this.app.rpc.socket.on('instagram.new', _.bind(this.getInstaMarkers, this, false));
-      this.app.rpc.socket.on('media.new', _.bind(this.getMediaMarkers, this, false));
+      // this.app.rpc.socket.on('instagram.new', _.bind(this.getInstaMarkers, this, false));
+      // this.app.rpc.socket.on('media.new', _.bind(this.getMediaMarkers, this, false));
     },
 
     render: function () {
@@ -75,16 +75,16 @@ define([
         if (!this.$el.hasClass('closed'))
           this.spin.start();
         this.map();
-        if (Modernizr.geolocation)
-          navigator.geolocation.getCurrentPosition(_.bind(function (pos) {
-            if (pos && !pos.code && !this.fliedTo)
-              this.flyTo({
-                latitude: pos.coords.latitude,
-                longitude: pos.coords.longitude
-              });
-          }, this),
-              function(){}, {maximumAge:60000, timeout:5000, 
-                enableHighAccuracy:true});
+        // if (Modernizr.geolocation)
+        //   navigator.geolocation.getCurrentPosition(_.bind(function (pos) {
+        //     if (pos && !pos.code && !this.fliedTo)
+        //       this.flyTo({
+        //         latitude: pos.coords.latitude,
+        //         longitude: pos.coords.longitude
+        //       });
+        //   }, this),
+        //       function(){}, {maximumAge:60000, timeout:5000, 
+        //         enableHighAccuracy:true});
       }
 
       // Trigger setup.

@@ -73,26 +73,24 @@
   </div>
 </div>
 <div class="leftside">
-  <div class="profile-inner">
-    <div class="profile-info">
-      <div class="profile-description">
-        <h2 class="profile-section-title">Bio</h2>
-        <%= this.model.description() %>
-        <% if (links) { %>
-          <span>More from <%= data.displayName %> at </span>
-          <span class="profile-links"><%= links %>.</span>
-        <% } %>
-      </div>
-    </div>
-    <h2 class="profile-section-title">Activity</h2>
-    <div class="events"></div>
-    <div class="list-spin">
-      <div class="events-spin"></div>
-      <span class="empty-feed">Showing all.</span>
+  <div class="profile-info">
+    <div class="profile-description">
+      <h2 class="profile-section-title">Bio</h2>
+      <%= this.model.description() %>
+      <% if (links) { %>
+        <span>More from <%= data.displayName %> at </span>
+        <span class="profile-links"><%= links %>.</span>
+      <% } %>
     </div>
   </div>
+  <h2 class="profile-section-title">Activity</h2>
+  <div class="events"></div>
+  <div class="list-spin">
+    <div class="events-spin"></div>
+    <span class="empty-feed">Showing all.</span>
+  </div>
 </div>
-<div class="rightside sidebar">
+<div class="rightside">
   <% if (this.model.get('role') === 2) { %>
     <h2 class="profile-section-title">Team</h2>
     <ul class="profile-team">

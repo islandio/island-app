@@ -407,23 +407,9 @@ time.created.static {
 }
 .rightside {
   margin: 0 0 0 720px;
-  width: 334px;
-}
-.rightside.sidebar {
-  margin: 0 0 0 720px;
+  padding: 30px;
   width: 274px;
-  padding: 0 30px;
-}
-.leftside-heading,
-.rightside-heading {
-  text-transform: uppercase;
-  color: #b3b3b3;
-  font-size: 10px;
-}
-.middle {
-  width: 480px;
-  margin: 0 auto 10px;
-  padding: 0 30px 20px;
+  border-left: 1px solid #f2f2f2;
 }
 span.empty-feed {
   display: inline-block;
@@ -2402,9 +2388,8 @@ ul.profile-team {
 ul.profile-team li {
   width: 274px;
   height: 274px;
-  margin: 0 0 10px 0;
+  margin: 0 0 15px 0;
   list-style-type: none;
-  float: left;
 }
 ul.profile-team li:last-child {
   margin-bottom: 30px;
@@ -2425,9 +2410,6 @@ h2.profile-section-title {
   font-family: Title, Verdana, Arial, sans-serif;
   text-transform: uppercase;
   margin-bottom: 15px;
-}
-.profile-inner {
-  margin-top: -10px;
 }
 .profile-info {
   margin: 0 0 25px 0;
@@ -3515,9 +3497,6 @@ span.no-description {
   font-style: italic;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crag*/
-.crag-ascents {
-  padding: 30px;
-}
 .ascents-filter {
   text-align: right;
 }
@@ -3549,6 +3528,9 @@ span.grade-heading {
 }
 ul.ascents {
   margin: 0 0 20px;
+}
+ul.ascents:last-child {
+  margin: 0;
 }
 ul.ascents a li {
   list-style: none;
