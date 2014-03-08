@@ -88,7 +88,7 @@ define([
 
     searchFocus: function (e) {
       if (this.options.collapse)
-        this.input.width(338).attr({placeholder: this.options.placeholder});
+        this.input.width(308).attr({placeholder: this.options.placeholder});
       this.active = true;
       if (this.searchVal() && this.collection.length > 0)
       this.results.show();

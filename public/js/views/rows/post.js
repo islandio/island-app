@@ -386,8 +386,7 @@ define([
 
           // Go home if single view.
           if (!this.parentView)
-            this.app.router.navigate('/dashboard',
-                {trigger: true, replace: true});
+            this.app.router.navigate('/', {trigger: true, replace: true});
 
         }, this));
 

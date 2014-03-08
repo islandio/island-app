@@ -1,5 +1,5 @@
 /*
- * Session model
+ * Tick model
  */
 
 define([
@@ -27,23 +27,6 @@ define([
     formatDate: function () {
       var date = new Date(this.get('date'));
       return date.format('mmm d');
-    },
-
-    formatActivityDuration: function (mins) {
-      if (!mins) return '';
-      var hrs = mins / 60;
-      var units = hrs !== 1 ? 'hrs': 'hr';
-      return hrs + '<span class="units"> ' + units + '</span>';
-    },
-
-    formatActivityPerformance: function (num) {
-      var str;
-      switch (num) {
-        case -1: str = 'weak'; break;
-        case 0: str = 'good'; break;
-        case 1: str = 'strong'; break;
-      }
-      return str ? 'felt ' + str: '';
     },
 
     formatTickGrade: function (num, feel) {

@@ -155,7 +155,7 @@ define([
 
       // Set new type.
       this.currentType = type;
-      this.$('.ascents-wrap').hide();
+      this.$('.list-wrap').hide();
       this.$('.' + this.currentType + '-ascents').show();
       this.filterBox.keyup();
     },
@@ -163,25 +163,25 @@ define([
     filter: function (e) {
       var txt = this.filterBox.val().trim().toLowerCase();
       var ct = this.currentType;
-      $('.' + ct + '-ascents span.no-results').hide();
+      $('.' + ct + '-ascents .no-results').hide();
       if (txt === '') {
-        $('.' + ct + '-ascents ul.ascents a').show();
-        $('.' + ct + '-ascents span.grade-heading').show();
+        $('.' + ct + '-ascents .list a').show();
+        $('.' + ct + '-ascents .list-group-heading').show();
         return false;
       }
-      $('.' + ct + '-ascents ul.ascents a').hide();
-      $('.' + ct + '-ascents span.grade-heading').hide();
+      $('.' + ct + '-ascents .list a').hide();
+      $('.' + ct + '-ascents .list-group-heading').hide();
       var rx = new RegExp('^(.*?(' + txt + ')[^$]*)$', 'ig');
       var y = false;
       _.each(this.flattened[ct], function (a) {
         if (rx.test(a.name)) {
           y = true;
-          var d = $('.' + ct + '-ascents ul.ascents a[id="' + a.id + '"]');
+          var d = $('.' + ct + '-ascents .list a[id="' + a.id + '"]');
           d.show();
-          $('span.grade-heading', d.parent()).show();
+          $('.list-group-heading', d.parent()).show();
         }
       });
-      if (!y) $('div.ascents-wrap span.no-results').show();
+      if (!y) $('.list-wrap .no-results').show();
       return false;
     }
 

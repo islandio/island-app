@@ -143,6 +143,8 @@ define([
 
       var opts = {
         zoom: 3,
+        center_lat: 40,
+        center_lon: -20,
         scrollwheel: false,
         https: true
       };

@@ -86,7 +86,7 @@ define([
           reverse: true, 
           el: '.header-search',
           collapse: true,
-          placeholder: 'Search crags, posts, and members.',
+          placeholder: 'Search for something...',
           route: true,
           types: ['crags', 'members', 'posts']
         });

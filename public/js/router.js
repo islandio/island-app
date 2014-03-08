@@ -30,10 +30,13 @@ define([
   'views/privacy',
   'views/crags',
   'views/dashboard',
+  'views/sessions',
+  'views/ticks',
   'views/session.new'
-], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer, 
+], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
     Signin, Forgot, Notifications, Map, Profile, Post, Session, Crag, Ascent,
-    Settings, Reset, Films, About, Privacy, Crags, Dashboard, NewSession) {
+    Settings, Reset, Films, About, Privacy, Crags, Dashboard, Sessions,
+    Ticks, NewSession) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -58,12 +61,14 @@ define([
       this.route('crags/:y/:g/:t/:a', 'ascent', this.ascent);
       this.route('reset', 'reset', this.reset);
       this.route('settings', 'settings', this.settings);
-      this.route('films', 'films', this.films);
-      this.route('about', 'about', this.about);
       this.route('privacy', 'privacy', this.privacy);
-      this.route('sessions/new', 'newSession', this.newSession);
-      this.route('dashboard', 'dashboard', this.dashboard);
+      this.route('about', 'about', this.about);
+      this.route('films', 'films', this.films);
       this.route('crags', 'crags', this.crags);
+      this.route('ticks', 'ticks', this.ticks);
+      this.route('sessions/new', 'newSession', this.newSession);
+      this.route('sessions', 'sessions', this.sessions);
+      this.route('', 'dashboard', this.dashboard);
       this.route('_blank', 'blank', function(){});
 
       // Fullfill navigation request from mps.
@@ -178,80 +183,7 @@ define([
       return feed.actions || 'all';
     },
 
-    profile: function (username) {
-      this.start();
-      this.renderTabs();
-      var query = {actions: this.getEventActions()};
-      this.render('/service/profile.profile/' + username, query,
-          _.bind(function (err) {
-        if (err) return;
-        this.page = new Profile({wrap: '.main'}, this.app).render(true);
-        this.renderTabs({html: this.page.title});
-        this.stop();
-      }, this));
-    },
-
-    post: function (username, key) {
-      this.start();
-      var key = [username, key].join('/');
-      this.renderTabs();
-      this.render('/service/post.profile/' + key, _.bind(function (err) {
-        if (err) return;
-        this.page = new Post({wrap: '.main'}, this.app).render(true);
-        this.renderTabs({html: this.page.title});
-        this.stop();
-      }, this));
-    },
-
-    session: function (key) {
-      this.start();
-      this.renderTabs();
-      this.render('/service/session.profile/' + key, _.bind(function (err) {
-        if (err) return;
-        this.page = new Session({wrap: '.main'}, this.app).render(true);
-        this.renderTabs({html: this.page.title});
-        this.stop();
-      }, this));
-    },
-
-    crag: function (country, crag) {
-      this.start();
-      this.renderTabs();
-      var key = [country, crag].join('/');
-      var query = {actions: this.getEventActions()};
-      this.render('/service/crag.profile/' + key, query, _.bind(function (err) {
-        if (err) return;
-        this.page = new Crag(this.app).render();
-        this.renderTabs({html: this.page.title});
-        this.stop();
-      }, this));
-    },
-
-    ascent: function (country, crag, type, ascent) {
-      this.start();
-      this.renderTabs();
-      var key = [country, crag, type, ascent].join('/');
-      var query = {actions: this.getEventActions()};
-      this.render('/service/ascent.profile/' + key, query, _.bind(function (err) {
-        if (err) return;
-        this.page = new Ascent(this.app).render();
-        this.renderTabs({html: this.page.title});
-        this.stop();
-      }, this));
-    },
-
-    crags: function () {
-      this.start();
-      this.render('/service/crags.profile', _.bind(function (err) {
-        if (err) return;
-        this.page = new Crags(this.app).render();
-        this.stop();
-      }, this));
-      this.renderTabs({tabs: [
-        {title: 'Activity', href: '/dashboard'},
-        {title: 'Crags', href: '/crags', active: true}
-      ]});
-    },
+    // Routes //
 
     dashboard: function () {
       this.start();
@@ -262,19 +194,24 @@ define([
         this.stop();
       }, this));
       this.renderTabs({tabs: [
-        {title: 'Activity', href: '/dashboard', active: true},
-        {title: 'Crags', href: '/crags'}
+        {title: 'Activity', href: '/', active: true},
+        {title: 'My Sessions', href: '/sessions'},
+        {title: 'My Ticks', href: '/ticks'}
       ]});
     },
 
-    settings: function () {
+    sessions: function () {
       this.start();
-      this.render('/service/settings.profile', {}, true, _.bind(function (err) {
+      this.render('/service/sessions.profile', _.bind(function (err) {
         if (err) return;
-        this.page = new Settings(this.app).render();
+        this.page = new Sessions(this.app).render();
         this.stop();
       }, this));
-      this.renderTabs({title: 'Account Settings'});
+      this.renderTabs({tabs: [
+        {title: 'Activity', href: '/'},
+        {title: 'My Sessions', href: '/sessions', active: true},
+        {title: 'My Ticks', href: '/ticks'}
+      ]});
     },
 
     newSession: function () {
@@ -287,14 +224,28 @@ define([
       this.renderTabs({title: 'Log new session'});
     },
 
-    reset: function () {
+    ticks: function () {
       this.start();
-      this.render('/service/static.profile', _.bind(function (err) {
+      this.render('/service/ticks.profile', _.bind(function (err) {
         if (err) return;
-        this.page = new Reset(this.app).render();
+        this.page = new Ticks(this.app).render();
         this.stop();
       }, this));
-      this.renderTabs({title: 'Password reset'});
+      this.renderTabs({tabs: [
+        {title: 'Activity', href: '/'},
+        {title: 'My Sessions', href: '/sessions'},
+        {title: 'My Ticks', href: '/ticks', active: true}
+      ]});
+    },
+
+    crags: function () {
+      this.start();
+      this.render('/service/crags.profile', _.bind(function (err) {
+        if (err) return;
+        this.page = new Crags(this.app).render();
+        this.stop();
+      }, this));
+      this.renderTabs({title: 'Rock climbing crags'});
     },
 
     films: function () {
@@ -325,6 +276,88 @@ define([
         this.stop();
       }, this));
       this.renderTabs({title: 'Privacy Policy', subtitle: 'Last updated 7.27.2013'});
+    },
+
+    settings: function () {
+      this.start();
+      this.render('/service/settings.profile', {}, true, _.bind(function (err) {
+        if (err) return;
+        this.page = new Settings(this.app).render();
+        this.stop();
+      }, this));
+      this.renderTabs({title: 'Account Settings'});
+    },
+
+    reset: function () {
+      this.start();
+      this.render('/service/static.profile', _.bind(function (err) {
+        if (err) return;
+        this.page = new Reset(this.app).render();
+        this.stop();
+      }, this));
+      this.renderTabs({title: 'Password reset'});
+    },
+
+    ascent: function (country, crag, type, ascent) {
+      this.start();
+      this.renderTabs();
+      var key = [country, crag, type, ascent].join('/');
+      var query = {actions: this.getEventActions()};
+      this.render('/service/ascent.profile/' + key, query, _.bind(function (err) {
+        if (err) return;
+        this.page = new Ascent(this.app).render();
+        this.renderTabs({html: this.page.title});
+        this.stop();
+      }, this));
+    },
+
+    crag: function (country, crag) {
+      this.start();
+      this.renderTabs();
+      var key = [country, crag].join('/');
+      var query = {actions: this.getEventActions()};
+      this.render('/service/crag.profile/' + key, query, _.bind(function (err) {
+        if (err) return;
+        this.page = new Crag(this.app).render();
+        this.renderTabs({html: this.page.title});
+        this.stop();
+      }, this));
+    },
+
+    session: function (key) {
+      this.start();
+      this.renderTabs();
+      this.render('/service/session.profile/' + key, _.bind(function (err) {
+        if (err) return;
+        this.page = new Session({wrap: '.main'}, this.app).render(true);
+        this.renderTabs({html: this.page.title});
+        this.stop();
+      }, this));
+    },
+
+    post: function (username, key) {
+      this.start();
+      var key = [username, key].join('/');
+      this.renderTabs();
+      this.render('/service/post.profile/' + key, _.bind(function (err) {
+        if (err) return;
+        this.page = new Post({wrap: '.main'}, this.app).render(true);
+        this.renderTabs({html: this.page.title});
+        this.stop();
+      }, this));
+    },
+
+    profile: function (username) {
+      this.start();
+      this.renderTabs();
+      var query = {actions: this.getEventActions()};
+      this.render('/service/profile.profile/' + username, query,
+          _.bind(function (err) {
+        if (err) return;
+        this.page = new Profile({wrap: '.main'}, this.app).render(true);
+        this.renderTabs({html: this.page.title});
+        this.stop();
+      }, this));
     },
 
     default: function () {

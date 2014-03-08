@@ -9,6 +9,13 @@ define([
 ], function (_, Backbone, util) {
   return Backbone.Model.extend({
 
+    formatAuthorFor: function (member) {
+      if (member && member.id === this.get('author').id)
+        return 'You';
+      else
+        return this.get('author').displayName;
+    },
+
     explain: function () {
       var name = '';
       var target = this.get('event').target;
@@ -24,7 +31,8 @@ define([
                 + '" class="title navigate">' + target.n + '</a>';
             break;
         }
-      return name;
+      return name === '' ? ' added a <a href="/' + this.get('key')
+          + '" class="title navigate">post</a>.': name;
     },
 
     date: function () {

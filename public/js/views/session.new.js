@@ -1,5 +1,5 @@
 /*
- * New session view
+ * New log view
  */
 
 define([
@@ -11,8 +11,8 @@ define([
   'util',
   'Spin',
   'text!../../templates/session.new.html',
-  'text!../../templates/activity.html',
-  'text!../../templates/tick.html',
+  'text!../../templates/activity.new.html',
+  'text!../../templates/tick.new.html',
   'views/lists/choices'
 ], function ($, _, Backbone, mps, rest, util, Spin, template,
     activityTemp, tickTemp, Choices) {

@@ -1,5 +1,5 @@
 /*
- * Page view for all activity.
+ * Page view for user ticks.
  */
 
 define([
@@ -8,7 +8,7 @@ define([
   'Backbone',
   'mps',
   'util',
-  'text!../../templates/dashboard.html',
+  'text!../../templates/ticks.html',
   'views/lists/events'
 ], function ($, _, Backbone, mps, util, template, Events) {
 
@@ -53,7 +53,7 @@ define([
       this.events = new Events(this.app, {
         parentView: this,
         reverse: true,
-        input: true
+        filters: false
       });
 
       return this;
@@ -78,8 +78,7 @@ define([
     },
 
     title: function () {
-      this.app.title('Island | Home | '
-          + this.app.profile.member.displayName);
+      this.app.title('Island | My Ticks');
     }
 
   });

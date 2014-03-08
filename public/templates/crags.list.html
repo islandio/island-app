@@ -1,0 +1,26 @@
+<%
+  var code = null;
+  var i = 0;
+%>
+
+<% _.each(items, _.bind(function (c) { %>
+  <% var _code = _.str.strLeft(c.key, '/'); %>
+  <% if (_code !== code) { %>
+    <% i = 0; %>
+    <% if (code !== null) { %>
+      </ul>
+    <% } %>
+    <ul class="list">
+      <span class="list-group-heading"><%= c.country %></span>
+  <% } %>
+  <% var back = i % 2 === 0 ? '#f2f2f2': '#f9f9f9'; %>
+  <a href="/crags/<%= c.key %>" id="<%= c.id %>" class="navigate">
+    <li style="background:<%= back %>;">
+      <span class="list-row-title"><%= c.name %></span>
+    </li>
+  </a>
+  <% code = _code; ++i; %>
+  <% if (i === items.length) { %>
+    </ul>
+  <% } %>
+<% }, this)); %>

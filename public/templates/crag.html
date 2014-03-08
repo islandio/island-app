@@ -41,24 +41,24 @@
   </div>
   <% _.each(data.ascents, _.bind(function (ascents, t) {
     if (data[t + 'cnt'] === 0) return; %>
-    <div class="ascents-wrap <%= t %>-ascents">
+    <div class="list-wrap <%= t %>-ascents">
       <span class="no-results">No results.</span>
       <% _.each(this.model.grades, _.bind(function (grade) {
         var buck = ascents[grade];
         if (!buck) return;
         var i = 0; %>
-        <ul class="ascents">
-          <span class="grade-heading"><%= grade %></span>
+        <ul class="list">
+          <span class="list-group-heading"><%= grade %></span>
           <% _.each(buck, _.bind(function (a) {
             var back = i % 2 === 0 ? '#f2f2f2': '#f9f9f9'; %>
               <a href="/crags/<%= a.key %>" id="<%= a.id %>" class="navigate">
                 <li style="background:<%= back %>;">
                   <% if (a.sector) { %>
-                    <span class="ascent-name"><%= a.name %>, </span>
+                    <span class="list-row-title"><%= a.name %>, </span>
                   <% } else { %>
-                    <span class="ascent-name"><%= a.name %></span>
+                    <span class="list-row-title"><%= a.name %></span>
                   <% } %>
-                  <span class="ascent-sector"><%= a.sector %></span>
+                  <span><%= a.sector %></span>
                 </li>
               </a>
             <% ++i; %>

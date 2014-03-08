@@ -1,5 +1,5 @@
 /*
- * Session View
+ * Tick View
  */
 
 define([
@@ -9,17 +9,17 @@ define([
   'mps',
   'rest',
   'util',
-  'models/session',
-  'text!../../../templates/rows/session.html',
-  'text!../../../templates/session.title.html',
+  'models/tick',
+  'text!../../../templates/rows/tick.html',
+  'text!../../../templates/tick.title.html',
   'views/lists/comments',
   'text!../../../templates/confirm.html'
-], function ($, _, Backbone, mps, rest, util, Model,
-      template, title, Comments, confirm) {
+], function ($, _, Backbone, mps, rest, util, Model, template, title, Comments,
+      confirm) {
   return Backbone.View.extend({
 
     attributes: function () {
-      var attrs = {class: 'session'};
+      var attrs = {class: 'tick'};
       if (this.model) attrs.id = this.model.id;
       return attrs;
     },
@@ -42,7 +42,7 @@ define([
 
     events: {
       'click a.navigate': 'navigate',
-      'click .session-delete': 'delete',
+      'click .tick-delete': 'delete',
     },
 
     render: function () {
@@ -56,7 +56,7 @@ define([
       // Render title if single
       if (!this.parentView) {
         this.$el.addClass('single')
-        this.app.title(this.model.formatName() + ' | ' + 'Session Log');
+        this.app.title(this.model.formatName() + ' | ' + 'Tick');
 
         // Render title.
         this.title = _.template(title).call(this);
@@ -66,8 +66,8 @@ define([
       var crag = this.model.get('crag');
       if (crag.location && crag.location.latitude
           && crag.location.longitude) {
-        this.$('.session-map').show();
-        cartodb.createVis('session_map_' + this.model.id,
+        this.$('.tick-map').show();
+        cartodb.createVis('tick_map_' + this.model.id,
             'https://island.cartodb.com/api/v1/viz/crags/viz.json', {
           zoom: 8,
           center_lat: crag.location.latitude,
@@ -94,7 +94,7 @@ define([
       // Render comments.
       this.comments = new Comments(this.app, {
         parentView: this,
-        type: 'session'
+        type: 'tick'
       });
 
       // Handle time.
@@ -128,9 +128,7 @@ define([
 
       // Render the confirm modal.
       $.fancybox(_.template(confirm)({
-        message: 'Deleting a log also deletes all'
-            + ' associated activities and registered ascents.'
-            + ' Delete this log forever?',
+        message: 'Delete this tick forever?',
       }), {
         openEffect: 'fade',
         closeEffect: 'fade',
@@ -145,7 +143,7 @@ define([
       $('.modal-confirm').click(_.bind(function (e) {
 
         // Delete the session.
-        rest.delete('/api/sessions/' + this.model.id,
+        rest.delete('/api/ticks/' + this.model.id,
             {}, _.bind(function (err, data) {
           if (err) return console.log(err);
 
