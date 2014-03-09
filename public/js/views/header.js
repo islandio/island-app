@@ -88,7 +88,7 @@ define([
           collapse: true,
           placeholder: 'Search for something...',
           route: true,
-          types: ['crags', 'members', 'posts']
+          types: ['members', 'posts', 'crags']
         });
     },
 

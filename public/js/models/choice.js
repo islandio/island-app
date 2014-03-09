@@ -10,58 +10,65 @@ define([
   return Backbone.Model.extend({
 
     href: function () {
-      if (this.get('username'))
-        return '/' + this.get('username');
-      else if (this.get('crag'))
-        return '/crags/' + this.get('key');
-      else if (this.get('type'))
-        return '/' + this.get('key');
-      else if (this.get('geometry'))
-        return 'javascript:;';
-      else
-        return '/crags/' + this.get('key');
+      var href;
+      switch (this.get('_type')) {
+        case 'members':
+          href = '/' + this.get('username');
+          break;
+        case 'posts':
+          href = '/' + this.get('key');
+          break;
+        case 'crags':
+          href = '/crags/' + this.get('key');
+          break;
+      }
+      return href;
     },
 
     title: function () {
       var title = '';
-      if (this.get('username')) {
-        title += '<strong>' + this.get('username') + '</strong>';
-        if (this.get('displayName') && this.get('displayName') !== '')
-          title += ' (' + this.get('displayName') + ')';
-      } else if (this.get('crag')) {
-        title += '<strong>' + this.get('name') + '</strong>';
-        if (this.get('sector')) title += ', ' + this.get('sector');
-      } else if (this.get('type')) {
-        title += this.get('type') === 'video' ?
-            '<i class="icon-youtube-play"></i>':
-            '<i class="icon-picture"></i>';
-        title += '<strong>' + this.get('title') + '</strong>';
-        if (this.get('body') && this.get('body') !== '')
-          title += ': ' + _.str.prune(this.get('body'), 100);
-      } else if (this.get('geometry')) {
-        title += '<i class="icon-location"></i>'
-            + this.get('formatted_address');
-      } else {
-        title += '<strong>' + this.get('name') + '</strong>, '
+      switch (this.get('_type')) {
+        case 'members':
+          title += '<strong>' + this.get('displayName') + '</strong>';
+          title += ' (@' + this.get('username') + ')';
+          break;
+        case 'posts':
+          title += this.get('type') === 'video' ?
+              '<i class="icon-youtube-play"></i>':
+              '<i class="icon-picture"></i>';
+          var tmp = '';
+          if (this.get('title') && this.get('title') !== '')
+            tmp += '<strong>' + this.get('title') + '</strong>';
+          if (this.get('body') && this.get('body') !== '') {
+            if (tmp !== '') tmp += ': ';
+            tmp += _.str.prune(this.get('body'), 100);
+          } 
+          if (tmp === '')
+            title += this.get('key');
+          else title += tmp;
+          break;
+        case 'crags':
+          title += '<strong>' + this.get('name') + '</strong>, '
             + this.get('country');
+          break;
       }
       return title;
     },
 
     term: function () {
       var term = '';
-      if (this.get('username')) {
-        term += this.get('username');
-        if (this.get('displayName') && this.get('displayName') !== '')
-          term += ' (' + this.get('displayName') + ')';
-      } else if (this.get('crag')) {
-        term += this.get('name');
-      } else if (this.get('type')) {
-        term += this.get('title');
-      } else if (this.get('geometry')) {
-        term += this.get('formatted_address');
-      } else {
-        term += this.get('name');
+      switch (this.get('_type')) {
+        case 'members':
+          term += this.get('username');
+          if (this.get('displayName') && this.get('displayName') !== '')
+            term += ' (' + this.get('displayName') + ')';
+          break;
+        case 'posts':
+          term += this.get('title');
+          break;
+        case 'crags':
+          term += this.get('name');
+          break;
       }
       return term;
     },

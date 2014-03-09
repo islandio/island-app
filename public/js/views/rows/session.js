@@ -14,8 +14,8 @@ define([
   'text!../../../templates/session.title.html',
   'views/lists/comments',
   'text!../../../templates/confirm.html'
-], function ($, _, Backbone, mps, rest, util, Model,
-      template, title, Comments, confirm) {
+], function ($, _, Backbone, mps, rest, util, Model, template, title, Comments,
+      confirm) {
   return Backbone.View.extend({
 
     attributes: function () {
@@ -41,7 +41,7 @@ define([
     },
 
     events: {
-      'click a.navigate': 'navigate',
+      'click .navigate': 'navigate',
       'click .session-delete': 'delete',
     },
 
@@ -56,8 +56,8 @@ define([
       // Render title if single
       if (!this.parentView) {
         this.$el.addClass('single')
-        this.app.title(this.model.formatName() + ' | Session | '
-            + this.model.get('author').displayName);
+        this.app.title('Island | ' + this.model.get('author').displayName + ' - '
+            + this.model.formatName());
 
         // Render title.
         this.title = _.template(title).call(this);

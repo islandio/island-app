@@ -47,9 +47,8 @@ define([
       // Set page title
       if (this.model.get('role') === 2)
         this.$el.addClass('company');
-      var doctitle = this.model.get('username');
-      if (this.model.get('displayName') !== '')
-        doctitle += ' (' + this.model.get('displayName') + ')';
+      var doctitle = 'Island | ' + this.model.get('displayName');
+      doctitle += ' (@' + this.model.get('username') + ')';
       this.app.title(doctitle);
 
       // Render title.

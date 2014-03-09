@@ -46,7 +46,7 @@ define([
       }, this));
 
       // Set page title.
-      this.app.title([this.model.get('name'),
+      this.app.title('Island | ' + [this.model.get('name'),
           this.model.get('country')].join(', '));
 
       // Render title.

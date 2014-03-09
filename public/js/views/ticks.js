@@ -78,7 +78,8 @@ define([
     },
 
     title: function () {
-      this.app.title('Island | My Ticks');
+      this.app.title('Island | ' + this.app.profile.member.displayName
+          + ' - Ticks');
     }
 
   });

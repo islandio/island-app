@@ -80,8 +80,8 @@ define([
       // Render title if single
       if (!this.parentView) {
         this.$el.addClass('single')
-        this.app.title(this.model.get('author').displayName
-            + ' | ' + (this.model.get('title')
+        this.app.title('Island | ' + this.model.get('author').displayName
+            + ' - ' + (this.model.get('title')
             || new Date(this.model.get('created')).format('mmm d, yyyy')));
 
         // Render title.

@@ -2304,6 +2304,9 @@ span.list-row-title {
 .page-title a {
   background: none;
 }
+.page-title a .page-title-sub {
+  font-size: 14px;
+}
 .folder-title .page-title {
   margin: 0 0 0 30px;
   font-family: Title, Verdana, Arial, sans-serif;

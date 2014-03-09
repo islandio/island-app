@@ -40,7 +40,8 @@ define([
       this.model = new Ascent(this.app.profile.content.page);
 
       // Set page title.
-      this.app.title(this.model.get('name') + ' - ' + [this.model.get('crag'),
+      this.app.title('Island | ' + this.model.get('name')
+          + ' - ' + [this.model.get('crag'),
           this.model.get('country')].join(', '));
 
       // Render title.

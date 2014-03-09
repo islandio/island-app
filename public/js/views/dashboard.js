@@ -78,8 +78,8 @@ define([
     },
 
     title: function () {
-      this.app.title('Island | Home | '
-          + this.app.profile.member.displayName);
+      this.app.title('Island | ' + this.app.profile.member.displayName
+          + ' - Home');
     }
 
   });

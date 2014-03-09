@@ -197,8 +197,10 @@ define([
               _.bind(function (err, data) {
             if (err) return console.log(err);
 
-            if (data.items.length !== 0)
+            if (data.items.length !== 0) {
+              _.each(data.items, function (i) { i._type = t; });
               items[t] = data.items;
+            }
             done();
 
           }, this));
