@@ -1,6 +1,16 @@
 <%
   var code = null;
   var i = 0;
+
+  function formatCity(str) {
+    if (!str || str === '') return '';
+    str = _.map(str.split(','), function (p) {
+      var s = _.str.capitalize(p.trim());
+      if (s.length === 2) s = s.toUpperCase();
+      return s;
+    }).join(', ');
+    return str === '' ? '': 'near ' + str;
+  }
 %>
 
 <% _.each(items, _.bind(function (c) { %>
@@ -11,12 +21,16 @@
       </ul>
     <% } %>
     <ul class="list">
-      <span class="list-group-heading"><%= c.country %></span>
+      <span class="list-group-heading">
+        <%= c.country %>
+        <span>(<%= _code.toUpperCase() %>)</span>
+      </span>
   <% } %>
   <% var back = i % 2 === 0 ? '#f2f2f2': '#f9f9f9'; %>
   <a href="/crags/<%= c.key %>" id="<%= c.id %>" class="navigate">
     <li style="background:<%= back %>;">
       <span class="list-row-title"><%= c.name %></span>
+      <span><%= formatCity(c.city) %></span>
     </li>
   </a>
   <% code = _code; ++i; %>

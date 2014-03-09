@@ -56,7 +56,8 @@ define([
       // Render title if single
       if (!this.parentView) {
         this.$el.addClass('single')
-        this.app.title(this.model.formatName() + ' | ' + 'Session Log');
+        this.app.title(this.model.formatName() + ' | Session | '
+            + this.model.get('author').displayName);
 
         // Render title.
         this.title = _.template(title).call(this);

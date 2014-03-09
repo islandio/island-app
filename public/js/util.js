@@ -285,17 +285,6 @@ define([
       return blurb.substr(0, blurb.length - 1) + end;
     },
 
-    slugify: function (str) {
-      str = this.blurb(str, 30);
-      str = str
-        .toLowerCase()
-        .replace(/[^\w ]+/g,'')
-        .replace(/ +/g,'-');
-      if (str.substr(-1) === '-')
-        return str.substr(0, str.length - 1);
-      else return str;
-    },
-
     formatText: function (str) {
       var link = /(?!src=")(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
       str = str.replace(/\n+/g, '</p><p>');
@@ -316,78 +305,10 @@ define([
       return x1 + x2;
     },
 
-    validate: function (form) {
-      var valid = true;
-      // text fields
-      $('input[type!="submit"], input[type!="hidden"], input[type!="radio"], textarea', form)
-          .each(function (i, el) {
-        el = $(el);
-        var v = el.val().trim();
-        if (el.hasClass('required') && v === '' && el.attr('disabled') !== 'disabled') {
-          el.addClass('input-error');
-          valid = false;
-        }
-      });
-      // radios
-      var radioGroups = {};
-      $('input[type="radio"].required', form).each(function () {
-        radioGroups[$(this).attr('name')] = true;
-      });
-      _.each(radioGroups, function (v, group) {
-        if ($('input[type="radio"][name="' + group + '"]:checked').length === 0) {
-          $('.' + group + '-label').addClass('label-error');
-          valid = false;
-        }
-      });
-      return valid;
-    },
-
-    clear: function (form) {
-      $('input[type="text"], input[type="password"], input[type="search"]', form)
-          .val('');
-      $('textarea', form).val('');
-      return form;
-    },
-
-    initForm: function (form) {
-      function checkErrors(e) {
-        var el = $(e.target);
-        if (el.hasClass('input-error'))
-          el.removeClass('input-error');
-      }
-
-      function activateLabel(e) {
-        $('label[for*="'+ $(e.target).attr('name') + '"]').addClass('active');  
-        return false;
-      }
-
-      function deactivateLabel(e) {
-        $('label[for*="'+ $(e.target).attr('name') + '"]').removeClass('active');  
-        return false;
-      }
-
-      $('input[type="text"], input[type="password"], textarea', form).bind('focus',
-            function (e) {
-        checkErrors(e);
-        activateLabel(e);
-      });
-      $('input[type="text"], input[type="password"], textarea', form).bind('blur',
-            function (e) {
-        deactivateLabel(e);
-      });
-    },
-
-    cleanObject: function (obj) {
-      _.each(obj, function (p, k) {
-        if (p.trim() === '' || p === null || p === undefined)
-          delete obj[k];
-      });
-      return obj;
-    },
-
     sanitize: function(str) {
       str = str.replace(/\<script\>/ig, '');
       str = str.replace(/\<\/script\>/ig, '');
+      str = str.replace(/\//ig, '');
       str = $('<p>').html(str).text().trim();
       return str;
     },

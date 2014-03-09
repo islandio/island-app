@@ -13,7 +13,7 @@ define([
         '6c+', '6c', '6b+', '6b', '6a+', '6a', '5c', '5b', '5a', '4', '3'],
 
     count: function (n) {
-      return util.addCommas(n);
+      return n !== 0 ? '~' + util.addCommas(n): 0;
     }
 
   });

@@ -57,6 +57,7 @@ define([
       this.route(':un', 'profile', this.profile);
       this.route(':un/:k', 'post', this.post);
       this.route('sessions/:k', 'session', this.session);
+      this.route('crags/:y', 'crag', this.crags);
       this.route('crags/:y/:g', 'crag', this.crag);
       this.route('crags/:y/:g/:t/:a', 'ascent', this.ascent);
       this.route('reset', 'reset', this.reset);
@@ -238,14 +239,18 @@ define([
       ]});
     },
 
-    crags: function () {
+    crags: function (country) {
       this.start();
-      this.render('/service/crags.profile', _.bind(function (err) {
+      var query = {};
+      if (country) query.country = country;
+      var q = util.getParameterByName('q');
+      if (q) query.query = q;
+      this.render('/service/crags.profile', query, _.bind(function (err) {
         if (err) return;
         this.page = new Crags(this.app).render();
         this.stop();
       }, this));
-      this.renderTabs({title: 'Rock climbing crags'});
+      this.renderTabs({title: 'Crags'});
     },
 
     films: function () {
