@@ -10,7 +10,10 @@ define([
   return Backbone.Model.extend({
 
     body: function () {
-      return util.formatText(this.get('body'));
+      var name = '<a href="/' + this.get('author').username
+          + '" class="comment-author navigate">'
+          + this.get('author').displayName + '</a> ';
+      return util.formatText(name + this.get('body'));
     },
 
   });

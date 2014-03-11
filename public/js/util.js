@@ -160,7 +160,7 @@ define([
         return 'about a day ago';
       else if (delta < (10 * 24 * 60 * 60))
         return (parseInt(delta / 86400)).toString() + ' days ago';
-      else return this.toLocaleString(new Date(ts), 'm/d/yy h:MM TT Z');
+      else return this.toLocaleString(new Date(ts), 'm/d/yy');
     },
 
     getRelativeFutureTime: function (ts) {

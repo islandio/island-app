@@ -118,11 +118,6 @@ define([
         this.app.router.navigate(path, {trigger: true});
     },
 
-    searchVal: function () {
-      var str = util.sanitize(this.input.val());
-      return str === '' || str.length < 2 ? null: str;
-    },
-
     search: function (e) {
       this.noresults.hide();
 

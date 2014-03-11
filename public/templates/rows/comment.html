@@ -7,14 +7,7 @@
 <a href="/<%= this.model.get('author').username %>" class="comment-avatar navigate">
   <img src="<%= gravatar %>" width="34" height="34" />
 </a>
-<div class="comment-body">
-  <p>
-    <a href="/<%= this.model.get('author').username %>" class="comment-author navigate">
-      <%= this.model.get('author').displayName %>
-    </a>
-    <%= this.model.body() %>
-  </p>
-</div>
+<div class="comment-body"><%= this.model.body() %></div>
 <div class="comment-info">
   <% if (this.app.profile.member &&
         this.model.get('author').id === this.app.profile.member.id) { %>

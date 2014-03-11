@@ -200,7 +200,7 @@ define([
     _remove: function (data) {
       var index = -1;
       var view = _.find(this.views, function (v) {
-        ++index
+        ++index;
         return v.model.id === data.id;
       });
 
