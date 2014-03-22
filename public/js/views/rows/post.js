@@ -13,8 +13,9 @@ define([
   'text!../../../templates/rows/post.html',
   'text!../../../templates/video.html',
   'views/lists/comments',
-  'text!../../../templates/confirm.html'
-], function ($, _, mps, rpc, util, Row, Model, template, video, Comments, confirm) {
+  'text!../../../templates/confirm.html',
+  'device'
+], function ($, _, mps, rpc, util, Row, Model, template, video, Comments, confirm, device) {
   return Row.extend({
 
     attributes: function () {
@@ -88,11 +89,13 @@ define([
               images.push(m.image);
               break;
             case 'video':
-              this.video = m;
-              images.push(m.poster);
-              _.each(m.thumbs, function (t, i) {
-                if (i !== 1) images.push(t);
-              });
+              if (!this.video) {
+                this.video = m;
+                images.push(m.poster);
+                _.each(m.thumbs, function (t, i) {
+                  if (i !== 1) images.push(t);
+                });
+              }
               break;
           }
         }, this));
@@ -286,33 +289,52 @@ define([
             primary: 'flash',
             ga: {}
           };
-          var files = {};
+          var iphone = this.videoFor('iphone');
+          var ipad = this.videoFor('ipad');
+          var hd = this.videoFor('hd');
+          var streamer = 'http://players.edgesuite.net/flash/plugins/jw/v3.3'
+              + '/AkamaiAdvancedJWStreamProvider.swf';
 
-          // Detect iOS decive.
-          var ssl_url = this.video.poster.ssl_url
-              && this.video.poster.ssl_url.indexOf('amazonaws') === -1 ?
-              this.video.poster.ssl_url: false;
-          if (/(iPad|iPhone|iPod)/g.test(navigator.userAgent)
-              && this.video.video.ios_url)
-            files = {
-              file: this.video.video.ios_url,
-              image: ssl_url || this.video.poster.cf_url
-            };
-          else if (this.video.video.streaming_url)
-            files = {
+          // Desktops and mobile tablets.
+          if (!device.mobile() || (device.mobile() && device.tablet())) {
+            _.extend(params, {
               playlist: [{
-                file: this.video.video.streaming_url,
-                image: ssl_url || this.video.poster.cf_url,
-                provider: 'http://players.edgesuite.net/flash/plugins/jw/v3.3'
-                    + '/AkamaiAdvancedJWStreamProvider.swf'
+                image: hd.poster.ssl_url,
+                sources: [{
+                  file: device.ios() ?
+                      ipad.video.ios_url: ipad.video.streaming_url,
+                  provider: device.ios() ? undefined: streamer,
+                  label: '1200k'
+                },
+                {
+                  file: device.ios() ?
+                      hd.video.ios_url: hd.video.streaming_url,
+                  provider: device.ios() ? undefined: streamer,
+                  label: '4000k'
+                }]
               }]
-            };
-          else
-            files = {
-              file: this.video.video.cf_url,
-              image: this.video.poster.cf_url
-            };
-          _.extend(params, files);
+            });
+
+          // Mobile phones, ipod, etc.
+          } else {
+            _.extend(params, {
+              playlist: [{
+                image: iphone.poster.ssl_url,
+                sources: [{
+                  file: device.ios() ?
+                      iphone.video.ios_url: iphone.video.streaming_url,
+                  provider: device.ios() ? undefined: streamer,
+                  label: '700k'
+                },
+                {
+                  file: device.ios() ?
+                      ipad.video.ios_url: ipad.video.streaming_url,
+                  provider: device.ios() ? undefined: streamer,
+                  label: '1200k'
+                }]
+              }]
+            });
+          }
 
           if (this.parentView) {
 
@@ -401,6 +423,12 @@ define([
           {}, _.bind(function (err, data) {
         if (err) return console.log(err);
       }, this));
+    },
+
+    videoFor: function (quality) {
+      return _.find(this.model.get('medias'), function (m) {
+        return m.type === 'video' && m.quality === quality;
+      });
     },
 
   });

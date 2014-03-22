@@ -13,6 +13,7 @@ require.config({
     UnderscoreString: 'lib/underscore/underscore.string.src',
     Backbone: 'lib/backbone/backbone',
     Modernizr: 'lib/modernizr/modernizr.src',
+    device: 'lib/device/device',
     mps: 'lib/minpubsub/minpubsub',
     Pusher: 'lib/pusher/pusher',
     Spin: 'lib/spin/spin',
@@ -33,6 +34,9 @@ require.config({
     },
     Modernizr: {
       exports: 'Modernizr'
+    },
+    device: {
+      exports: 'device'
     },
     mps: {
       deps: ['jQuery', 'Underscore'],
