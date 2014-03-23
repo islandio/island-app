@@ -49,7 +49,8 @@ boots.start({index: argv.index}, function () {
     function () {
 
       // Get all image type media.
-      db.Medias.list({type: 'video', old: {$ne: true}, quality: {$exists: false}},
+      db.Medias.list({type: 'video', 'video.url': {$exists: true},
+          old: {$ne: true}, quality: {$exists: false}},
           {limit: Number(argv.limit), sort: {created: 1}}, this);
     },
     function (err, docs) {
@@ -67,7 +68,9 @@ boots.start({index: argv.index}, function () {
             db.Posts.read({_id: d.parent_id}, this);
           },
           function (err, post) {
+            if (!d.video.url) return _this();
 
+            util.log('Starting (' + d.video.url + ') ');
             client.send({
               steps: {
                 ':original': {
@@ -85,8 +88,8 @@ boots.start({index: argv.index}, function () {
                     boots.error(err);
                     body = JSON.parse(body);
                     util.log('Status (' + d._id.toString() + '): ' + body.ok);
-                    if (body.ok === 'ASSEMBLY_EXECUTING') check();
-                    else if (body.ok === 'ASSEMBLY_COMPLETED') {
+                    if (body.ok !== 'ASSEMBLY_COMPLETED') check();
+                    else {
 
                       var objs = [];
                       var files = body.results;

@@ -8,9 +8,9 @@
   if (!banner) {
     banner = {meta: {width: 480, height: 215}};
     if (!data.gender || 'male' === data.gender)
-      banner.cf_url = 'https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-blnk-pic-m.jpg';
+      banner.ssl_url = 'https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-blnk-pic-m.jpg';
     else
-      banner.cf_url = 'https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-blnk-pic-f.jpg';
+      banner.ssl_url = 'https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-blnk-pic-f.jpg';
   }
   var _w = 480;
   var _h = 215;
@@ -62,7 +62,7 @@
                     src="<%= __s %>/img/cornermask-top.png" />
                 <img class="mask" width="480" style="top:209px;"
                     src="<%= __s %>/img/cornermask-btm.png" />
-                <img class="masked settings-banner" src=<%= banner.cf_url %>
+                <img class="masked settings-banner" src=<%= banner.ssl_url %>
                     width=<%= w %> height=<%= h %> style=<%= t + l %> />
                 <div class="settings-banner-spin" style="height:100%;"></div>
                 <a class="banner-file-chooser-dummy file-chooser-dummy important"

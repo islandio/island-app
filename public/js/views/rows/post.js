@@ -50,9 +50,6 @@ define([
     render: function (single, prepend) {
 
       function insert(item) {
-        // var ssl_url = item.data.ssl_url && item.data.ssl_url.indexOf('amazonaws') === -1 ?
-        //   item.data.ssl_url: false;
-        // var src = util.https(ssl_url || item.data.cf_url || item.data.url);
         var src = item.data.ssl_url;
         var anc = $('<a class="fancybox" rel="g-' + this.model.id + '" href="'
             + src + '">');
