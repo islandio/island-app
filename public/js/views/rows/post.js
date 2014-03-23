@@ -15,7 +15,7 @@ define([
   'views/lists/comments',
   'text!../../../templates/confirm.html',
   'device'
-], function ($, _, mps, rpc, util, Row, Model, template, video, Comments, confirm, device) {
+], function ($, _, mps, rpc, util, Row, Model, template, video, Comments, confirm) {
   return Row.extend({
 
     attributes: function () {
@@ -50,9 +50,10 @@ define([
     render: function (single, prepend) {
 
       function insert(item) {
-        var ssl_url = item.data.ssl_url && item.data.ssl_url.indexOf('amazonaws') === -1 ?
-          item.data.ssl_url: false;
-        var src = util.https(ssl_url || item.data.cf_url || item.data.url);
+        // var ssl_url = item.data.ssl_url && item.data.ssl_url.indexOf('amazonaws') === -1 ?
+        //   item.data.ssl_url: false;
+        // var src = util.https(ssl_url || item.data.cf_url || item.data.url);
+        var src = item.data.ssl_url;
         var anc = $('<a class="fancybox" rel="g-' + this.model.id + '" href="'
             + src + '">');
         var div = $('<div class="post-mosaic-wrap">').css(item.div).appendTo(anc);
@@ -302,13 +303,15 @@ define([
                 image: hd.poster.ssl_url,
                 sources: [{
                   file: device.ios() ?
-                      ipad.video.ios_url: ipad.video.streaming_url,
+                      ipad.video.ios_url: (ipad.video.import_url ?
+                      ipad.video.ssl_url: ipad.video.streaming_url),
                   provider: device.ios() ? undefined: streamer,
                   label: '1200k'
                 },
                 {
                   file: device.ios() ?
-                      hd.video.ios_url: hd.video.streaming_url,
+                      hd.video.ios_url: (hd.video.import_url ?
+                      hd.video.ssl_url: hd.video.streaming_url),
                   provider: device.ios() ? undefined: streamer,
                   label: '4000k'
                 }]
@@ -322,13 +325,15 @@ define([
                 image: iphone.poster.ssl_url,
                 sources: [{
                   file: device.ios() ?
-                      iphone.video.ios_url: iphone.video.streaming_url,
+                      iphone.video.ios_url: (iphone.video.import_url ?
+                      iphone.video.ssl_url: iphone.video.streaming_url),
                   provider: device.ios() ? undefined: streamer,
                   label: '700k'
                 },
                 {
                   file: device.ios() ?
-                      ipad.video.ios_url: ipad.video.streaming_url,
+                      ipad.video.ios_url: (ipad.video.import_url ?
+                      ipad.video.ssl_url: ipad.video.streaming_url),
                   provider: device.ios() ? undefined: streamer,
                   label: '1200k'
                 }]

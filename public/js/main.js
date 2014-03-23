@@ -13,7 +13,7 @@ require.config({
     UnderscoreString: 'lib/underscore/underscore.string.src',
     Backbone: 'lib/backbone/backbone',
     Modernizr: 'lib/modernizr/modernizr.src',
-    device: 'lib/device/device',
+    device: 'lib/device/device.src',
     mps: 'lib/minpubsub/minpubsub',
     Pusher: 'lib/pusher/pusher',
     Spin: 'lib/spin/spin',

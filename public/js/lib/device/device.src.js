@@ -10,7 +10,7 @@
   _user_agent = window.navigator.userAgent.toLowerCase();
 
   device.ios = function() {
-    return this.iphone() || this.ipod() || this.ipad();
+    return device.iphone() || device.ipod() || device.ipad();
   };
 
   device.iphone = function() {
@@ -30,11 +30,11 @@
   };
 
   device.androidPhone = function() {
-    return this.android() && _find('mobile');
+    return device.android() && _find('mobile');
   };
 
   device.androidTablet = function() {
-    return this.android() && !_find('mobile');
+    return device.android() && !_find('mobile');
   };
 
   device.blackberry = function() {
@@ -42,11 +42,11 @@
   };
 
   device.blackberryPhone = function() {
-    return this.blackberry() && !_find('tablet');
+    return device.blackberry() && !_find('tablet');
   };
 
   device.blackberryTablet = function() {
-    return this.blackberry() && _find('tablet');
+    return device.blackberry() && _find('tablet');
   };
 
   device.windows = function() {
@@ -54,11 +54,11 @@
   };
 
   device.windowsPhone = function() {
-    return this.windows() && _find('phone');
+    return device.windows() && _find('phone');
   };
 
   device.windowsTablet = function() {
-    return this.windows() && _find('touch');
+    return device.windows() && _find('touch');
   };
 
   device.fxos = function() {
@@ -66,11 +66,11 @@
   };
 
   device.fxosPhone = function() {
-    return this.fxos() && _find('mobile');
+    return device.fxos() && _find('mobile');
   };
 
   device.fxosTablet = function() {
-    return this.fxos() && _find('tablet');
+    return device.fxos() && _find('tablet');
   };
 
   device.meego = function() {
@@ -78,11 +78,11 @@
   };
 
   device.mobile = function() {
-    return this.androidPhone() || this.iphone() || this.ipod() || this.windowsPhone() || this.blackberryPhone() || this.fxosPhone() || this.meego();
+    return device.androidPhone() || device.iphone() || device.ipod() || device.windowsPhone() || device.blackberryPhone() || device.fxosPhone() || device.meego();
   };
 
   device.tablet = function() {
-    return this.ipad() || this.androidTablet() || this.blackberryTablet() || this.windowsTablet() || this.fxosTablet();
+    return device.ipad() || device.androidTablet() || device.blackberryTablet() || device.windowsTablet() || device.fxosTablet();
   };
 
   device.portrait = function() {

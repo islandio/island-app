@@ -12,7 +12,7 @@ exports.get = function (env) {
         REDIS_PORT: 9806
       }:
       {
-        MONGO_URI: 'mongodb://localhost:27017/island_old',
+        MONGO_URI: 'mongodb://localhost:27017/island_2',
         REDIS_HOST: 'localhost',
         REDIS_PORT: 6379
       };
