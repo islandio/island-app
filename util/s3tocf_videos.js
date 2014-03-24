@@ -68,6 +68,7 @@ boots.start({index: argv.index}, function () {
             db.Posts.read({_id: d.parent_id}, this);
           },
           function (err, post) {
+            if (!post) return _this();
             if (!d.video.url) return _this();
 
             util.log('Starting (' + d.video.url + ') ');

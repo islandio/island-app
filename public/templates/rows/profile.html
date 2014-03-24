@@ -13,9 +13,9 @@
   if (!data.image) {
     data.image = {meta: {width: 640, height: 288}};
     if (!data.gender || 'male' === data.gender)
-      data.image.ssl_url = __s + '/img/blnk-pic-m.jpg';
+      data.image.url = __s + '/img/blnk-pic-m.jpg';
     else
-      data.image.ssl_url = __s + '/img/blnk-pic-f.jpg';
+      data.image.url = __s + '/img/blnk-pic-f.jpg';
   }
 
   // Image meta
@@ -80,7 +80,7 @@
         src="<%= __s %>/img/cornermask-top.png" />
     <img class="mask" width="640" style="top:280px;"
         src="<%= __s %>/img/cornermask-btm.png" />
-    <img class="masked" src=<%= data.image.ssl_url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
+    <img class="masked" src=<%= data.image.url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
   </div>
   <div class="profile-info">
     <% if (desc || links) { %>
