@@ -80,7 +80,7 @@
         src="<%= __s %>/img/cornermask-top.png" />
     <img class="mask" width="640" style="top:280px;"
         src="<%= __s %>/img/cornermask-btm.png" />
-    <img class="masked" src=<%= data.image.url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
+    <img class="masked" src=<%= data.image.ssl_url || data.image.url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
   </div>
   <div class="profile-info">
     <% if (desc || links) { %>

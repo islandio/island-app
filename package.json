@@ -39,7 +39,8 @@
     "red": "0.0.0",
     "connect-slashes": "0.0.10",
     "emailjstmp": "~0.3.4",
-    "cli-color": "~0.2.2"
+    "cli-color": "~0.2.2",
+    "mobile-detect": "^0.1.0"
   },
   "engines": {
     "node": "~0.10.x"

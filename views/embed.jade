@@ -5,38 +5,19 @@ html(lang="en")
     style
       html, body, video {margin: 0; padding: 0;}
   body
-    video(id="video", src="#{vid.url}", data-streaming-url="#{vid.streaming_url}",
-        data-ios-url="#{vid.ios_url}", poster="#{vid.poster_url}", controls="controls",
-        width="100%", height="100%", style="width:100%; height:100%;")
+    video(id="video", src="#{src}", data-params="#{params}",
+        controls="controls", width="100%", height="100%",
+        style="width:100%; height:100%;")
     script(type="text/javascript", src="https://jwpsrv.com/library/1lrC0MMbEeKOnyIACqoQEQ.js")
     script(type="text/javascript")
       var vid = document.getElementById('video');
-      var url = vid.getAttribute('src');
-      var streaming_url = vid.getAttribute('data-streaming-url');
-      var ios_url = vid.getAttribute('data-ios-url');
-      var poster_url = vid.getAttribute('poster');
-      var params = {
-        width: '100%',
-        height: '100%',
-        autostart: false,
-        primary: 'flash',
-        ga: {}
-      };
-      var files = {};
-      if (/(iPad|iPhone|iPod)/g.test(navigator.userAgent) && ios_url) {
-        params.file = ios_url;
-        params.image = poster_url;
-      } else if (streaming_url) {
-        params.playlist = [{
-          file: streaming_url,
-          image: poster_url,
-          provider: 'http://players.edgesuite.net/flash/plugins/jw/v3.3'
-              + '/AkamaiAdvancedJWStreamProvider.swf'
-        }];
-      } else {
-        params.file = url;
-        params.image = poster_url;
-      }
+      var params = vid.getAttribute('data-params');
+      var params = JSON.parse(params);
+      params.width = '100%';
+      params.height = '100%';
+      params.autostart = false;
+      params.primary = 'flash';
+      params.ga = {};
       jwplayer('video').setup(params);
     script(type="text/javascript")
       var _gaq = _gaq || [];
