@@ -54,7 +54,7 @@
     "node-transloadit": "0.0.4"
   },
   "engines": {
-    "node": "~0.8.x"
+    "node": "~0.10.x"
   },
   "scripts": {
     "start": "./main.js"
