@@ -25,9 +25,6 @@
     <span class="<%= typeClass %>"><%= this.model.get('title') %></span></a>
   <% } %>
 </div>
-<a href="/<%= this.model.get('author').username %>" class="post-avatar navigate">
-  <img src="<%= gravatar %>" width="48" height="48" />
-</a>
 <div class="post-mosaic">
   <% if (this.parentView) { %>
     <img class="mask" width="640" style="top:0;" 

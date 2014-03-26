@@ -18,6 +18,11 @@ html(lang="en")
       params.autostart = false;
       params.primary = 'flash';
       params.ga = {};
+      params.sharing.link = window.location.protocol
+          + '//' + window.location.host + '/' + params.sharing.key;
+      params.sharing.code = "<iframe width='100%' height='100%' src='//"
+          + window.location.host + window.location.pathname
+          + "' frameborder='0'></iframe>";
       jwplayer('video').setup(params);
     script(type="text/javascript")
       var _gaq = _gaq || [];

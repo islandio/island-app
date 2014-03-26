@@ -48,21 +48,21 @@ boots.start(function (client) {
                 else this();
               else this();
             },
-            function (err) {
-              boots.error(err);
-              if (d.author.displayName && d.author.displayName !== ''
-                && d.author.displayName.match(/\w+/g))
-                search.index(d.author.displayName, d._id.toString(), this);
-              else this();
-            },
-            function (err) {
-              boots.error(err);
-              if (d.author.username && d.author.username !== '')
-                if (d.author.username.match(/\w+/g))
-                  search.index(d.author.username, d._id.toString(), this);
-                else this();
-              else this();
-            },
+            // function (err) {
+            //   boots.error(err);
+            //   if (d.author.displayName && d.author.displayName !== ''
+            //     && d.author.displayName.match(/\w+/g))
+            //     search.index(d.author.displayName, d._id.toString(), this);
+            //   else this();
+            // },
+            // function (err) {
+            //   boots.error(err);
+            //   if (d.author.username && d.author.username !== '')
+            //     if (d.author.username.match(/\w+/g))
+            //       search.index(d.author.username, d._id.toString(), this);
+            //     else this();
+            //   else this();
+            // },
             function (err) {
               boots.error(err);
               _this();

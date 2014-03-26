@@ -279,19 +279,27 @@ define([
           e.stopPropagation();
           e.preventDefault();
 
+          var iphone = this.videoFor('iphone');
+          var ipad = this.videoFor('ipad');
+          var hd = this.videoFor('hd');
+          var streamer = 'http://players.edgesuite.net/flash/plugins/jw/v3.3'
+              + '/AkamaiAdvancedJWStreamProvider.swf';
+
           // Video params
           var params = {
             width: '1024',
             height: '576',
             autostart: true,
             primary: 'flash',
-            ga: {}
+            ga: {},
+            sharing: {
+              link: window.location.protocol + '//'
+                  + window.location.host + '/' + this.model.get('key'),
+              code: "<iframe width='100%' height='100%' src='//"
+                  + window.location.host + "/embed/"
+                  + ipad.video.id + "' frameborder='0'></iframe>"
+            }
           };
-          var iphone = this.videoFor('iphone');
-          var ipad = this.videoFor('ipad');
-          var hd = this.videoFor('hd');
-          var streamer = 'http://players.edgesuite.net/flash/plugins/jw/v3.3'
-              + '/AkamaiAdvancedJWStreamProvider.swf';
 
           // Desktops and mobile tablets.
           if (!device.mobile() || (device.mobile() && device.tablet())) {
