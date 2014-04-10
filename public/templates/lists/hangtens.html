@@ -1,0 +1,21 @@
+<%
+  var count = this.collection.length;
+  var str;
+  if (this.hangtened) {
+    --count;
+    str = 'You';
+    if (count === 1)
+      str += ' and ' + count + ' other person thinks';
+    else if (count > 1)
+      str += ' and ' + count + ' other people think';
+    else
+      str += ' think';
+  } else if (count === 1)
+    str = count + ' person thinks';
+  else if (count > 1)
+    str = count + ' people think';
+%>
+
+<% if (str) { %>
+  <p><%= str %> this is pretty hang ten.</p>
+<% } %>

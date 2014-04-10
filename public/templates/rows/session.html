@@ -89,6 +89,8 @@
   </p>
 <% } %>
 <div class="event-info">
+  <a href="javascript:;" class="muted hangten">Hang Ten</a>
+  <span class="info-divider">&nbsp;&middot;&nbsp;</span>
   <% if (this.app.profile.member &&
       this.model.get('author').id === this.app.profile.member.id) { %>
     <span class="session-delete info-delete">Delete</span>
@@ -100,9 +102,6 @@
         title="<%= this.model.get('created') %>">
     <%= this.model.get('created') %>
   </time></a>
-</div>
-<div class="hangtens">
-  <p>You and 6 others think this is pretty hang ten.</p>
 </div>
 <div class="comments"></div>
 

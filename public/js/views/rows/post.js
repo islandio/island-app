@@ -43,8 +43,7 @@ define([
 
     events: {
       'click a.navigate': 'navigate',
-      'click .post-delete': 'delete',
-      'click .post-feature': 'feature'
+      'click .post-delete': 'delete'
     },
 
     render: function () {
@@ -400,14 +399,6 @@ define([
       if (!this.time)
         this.time = this.$('time.created:first');
       this.time.text(util.getRelativeTime(this.model.get('created')));
-    },
-
-    feature: function (e) {
-      e.preventDefault();
-      rest.post('/api/posts/feature/' + this.model.get('key'),
-          {}, _.bind(function (err, data) {
-        if (err) return console.log(err);
-      }, this));
     },
 
   });

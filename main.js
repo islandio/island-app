@@ -260,8 +260,9 @@ Step(
             socket.join('event');
             socket.join('post');
             socket.join('session');
-            socket.join('comment');
             socket.join('tick');
+            socket.join('comment');
+            socket.join('hangten');
             socket.join('follow');
             socket.join('watch');
             socket.join('map'); // tmp

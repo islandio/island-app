@@ -11,8 +11,9 @@ define([
   'util',
   'text!../../../templates/lists/comments.html',
   'collections/comments',
-  'views/rows/comment'
-], function ($, _, List, mps, rest, util, template, Collection, Row) {
+  'views/rows/comment',
+  'views/lists/hangtens'
+], function ($, _, List, mps, rest, util, template, Collection, Row, Hangtens) {
   return List.extend({
     
     el: '.comments',
@@ -60,6 +61,9 @@ define([
       // Show other elements.
       this.$('.comments-older.comment').show();
       this.$('#comment_input .comment').show();
+
+      // Render hangtens.
+      this.hangtens = new Hangtens(this.app, {parentView: this});
 
       return List.prototype.setup.call(this);
     },

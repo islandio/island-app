@@ -11,7 +11,6 @@ define([
 
     body: function () {
       var att = this.attributes;
-
       if (att.event.data.action.t === 'comment') {
         var verb = 'commented on';
         var owner;
@@ -57,6 +56,15 @@ define([
               + '".';
         }
       
+      } else if (att.event.data.action.t === 'hangten') {
+
+        return '<strong>' + att.event.data.action.a + '</strong> '
+              + 'thinks your '
+              + att.event.data.target.t
+              + (att.event.data.target.n !== '' ? ' <strong>'
+              + att.event.data.target.n + '</strong>': '')
+              + ' is hang ten.';
+
       } else if (att.event.data.action.t === 'media') {
         var verb = 'also added';
 
