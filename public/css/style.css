@@ -3532,10 +3532,16 @@ p.session-tick-note {
   left: 0;
   top: 0;
 }
-.settings-notifications-txt {
+.settings-detail-txt {
   display: block;
   font-size: 12px;
   color: #666;
+}
+ul.settings-detail-list {
+  margin: 0 0 0 30px;
+}
+ul.settings-detail-list li {
+  list-style-type: disc;
 }
 .settings-heading {
   font-weight: bold;

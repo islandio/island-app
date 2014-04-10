@@ -75,7 +75,7 @@ define([
       this.$('textarea').autogrow();
 
       // Save field contents on blur.
-      this.$('textarea, input[type="text"], input[type="checkbox"]')
+      this.$('textarea, input[type="text"], input[type="checkbox"], input[type="radio"]')
           .change(_.bind(this.save, this))
           .keyup(function (e) {
         var field = $(e.target);

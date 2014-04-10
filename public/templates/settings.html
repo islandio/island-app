@@ -36,6 +36,7 @@
 
   // Notifications config
   var notes = data.config.notifications;
+  var privacy = data.config.privacy;
 
 %>
 
@@ -176,14 +177,68 @@
         </tr>
         <tr>
           <td colspan="6">
-            <textarea tabindex="9" name="website"
+            <textarea tabindex="7" name="website"
                 placeholder="One URL per line..."><%= data.website %></textarea>
           </td>
         </tr>
         <tr>
           <td colspan="6" class="settings-gravatar">
             <img src=<%= gravatar %> width="24" height="24" />
-            <a href="http://gravatar.com" class="important" target="_blank">Change your avatar at Gravatar.com</a>.
+            <a tabindex="8" href="http://gravatar.com" class="important" target="_blank">Change your avatar at Gravatar.com</a>.
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6">
+            <h1 class="title-static">Privacy</h1>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6">
+            <span class="settings-detail-txt">Enhanced Privacy Mode</span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6" style="padding-top: 5px;">
+            <% if (privacy.mode === 0 || privacy.mode === '0') { %>
+              <input tabindex="9" type="radio" name="config.privacy.mode"
+                  value="0" checked="checked" id="config.privacy.mode.0" />
+            <% } else { %>
+              <input tabindex="9" type="radio" name="config.privacy.mode"
+                  value="0" id="config.privacy.mode.0" />
+            <% } %>
+            <label for="config.privacy.mode.0" style="vertical-align:-1px;">Off</label>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6">
+            <ul class="settings-detail-txt settings-detail-list">
+              <li>Anyone can view your full name.</li>
+              <li>Logged-in Island athletes can follow you.</li>
+              <li>Anyone can see your Posts.</li>
+              <li>Logged-in Island athletes can see your activities on your Island Profile.</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6" style="padding-top: 5px;">
+            <% if (privacy.mode === 1 || privacy.mode === '1') { %>
+              <input tabindex="10" type="radio" name="config.privacy.mode"
+                  value="1" checked="checked" id="config.privacy.mode.1" />
+            <% } else { %>
+              <input tabindex="10" type="radio" name="config.privacy.mode"
+                  value="1" id="config.privacy.mode.1" />
+            <% } %>
+            <label for="config.privacy.mode.1" style="vertical-align:-1px;">On</label>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6">
+            <ul class="settings-detail-txt settings-detail-list">
+              <li>Your name will be anonymized (e.g. Sander P.) to all logged out athletes.</li>
+              <li>Only Island athletes that you approve can follow you.</li>
+              <li>Only Island athletes that you approve can see your Posts.</li>
+              <li>Only approved followers can see your activities on your Island Profile.</li>
+            </ul>
           </td>
         </tr>
         <tr>
@@ -193,17 +248,18 @@
         </tr>
         <tr>
           <td colspan="4">
-            <span class="settings-notifications-txt">Receive comment thread notifications?</span>
+            <span class="settings-detail-txt">Receive comment thread notifications?</span>
           </td>
           <td colspan="2" class="text-right">
             <% if (notes.comment.email === true || notes.comment.email === 'true') { %>
               <input type="checkbox" name="config.notifications.comment.email"
-                  tabindex="10" checked="checked" />
+                  tabindex="11" checked="checked" />
             <% } else { %>
-              <input type="checkbox" name="config.notifications.comment.email" />
+              <input type="checkbox" name="config.notifications.comment.email"
+                  tabindex="11" />
             <% } %>
             <label for="config.notifications.comment.email"
-                tabindex="10" style="vertical-align:-1px;">Email (requires address above)</label>
+                style="vertical-align:-1px;">Email (requires address above)</label>
           </td>
         </tr>
         <tr>
@@ -215,7 +271,7 @@
           <td colspan="6">
             <div class="settings-services-spin"></div>
             <% if (!data.facebookId) { %>
-              <a tabindex="11" class="button signin-strategy-btn facebook-btn"
+              <a tabindex="12" class="button signin-strategy-btn facebook-btn"
                   href="/connect/facebook">
                 Connect with Facebook
               </a>
@@ -227,7 +283,7 @@
             <% } %>
             <br />
             <% if (!data.twitterId) { %>
-              <a tabindex="12" class="button signin-strategy-btn twitter-btn"
+              <a tabindex="13" class="button signin-strategy-btn twitter-btn"
                   href="/connect/twitter">
                 Connect with Twitter
               </a>
@@ -239,12 +295,12 @@
             <% } %>
             <br />
             <% if (!data.instagramId) { %>
-              <a tabindex="13" class="button signin-strategy-btn instagram-btn"
+              <a tabindex="14" class="button signin-strategy-btn instagram-btn"
                   href="/connect/instagram">
                 Connect with Instagram
               </a>
             <% } else { %>
-              <a tabindex="13" class="button signin-strategy-btn instagram-btn"
+              <a tabindex="14" class="button signin-strategy-btn instagram-btn"
                   href="/connect/instagram">
                 Re-connect with Instagram
               </a>
@@ -266,7 +322,7 @@
           </tr>
           <tr>
             <td colspan="6">
-              <a tabindex="14" href="/reset" class="button signin-strategy-btn navigate">
+              <a tabindex="15" href="/reset" class="button signin-strategy-btn navigate">
                 Change your password
               </a>
             </td>
@@ -279,7 +335,7 @@
         </tr>
         <tr>
           <td colspan="6">
-            <a tabindex="14" href="javascript:;"
+            <a tabindex="16" href="javascript:;"
                 class="demolish button signin-strategy-btn delete-btn">
               Delete profile
             </a>
