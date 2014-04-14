@@ -53,8 +53,10 @@
   <%= this.model.body(!this.parentView) %>
 </div>
 <div class="event-info">
-  <a href="javascript:;" class="muted hangten">Hang Ten</a>
-  <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+  <% if (this.app.profile.member) { %>
+    <a href="javascript:;" class="muted hangten">Hang Ten</a>
+    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+  <% } %>
   <% if (this.app.profile.member &&
       this.model.get('author').id === this.app.profile.member.id) { %>
     <a href="javascript:;" class="muted post-delete">Delete</a>

@@ -89,8 +89,10 @@
   </p>
 <% } %>
 <div class="event-info">
-  <a href="javascript:;" class="muted hangten">Hang Ten</a>
-  <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+  <% if (this.app.profile.member) { %>
+    <a href="javascript:;" class="muted hangten">Hang Ten</a>
+    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+  <% } %>
   <% if (this.app.profile.member &&
       this.model.get('author').id === this.app.profile.member.id) { %>
     <span class="session-delete info-delete">Delete</span>
