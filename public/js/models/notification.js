@@ -59,11 +59,26 @@ define([
       } else if (att.event.data.action.t === 'hangten') {
 
         return '<strong>' + att.event.data.action.a + '</strong> '
-              + 'thinks your '
-              + att.event.data.target.t
-              + (att.event.data.target.n !== '' ? ' <strong>'
-              + att.event.data.target.n + '</strong>': '')
-              + ' is hang ten.';
+            + 'thinks your '
+            + att.event.data.target.t
+            + (att.event.data.target.n !== '' ? ' <strong>'
+            + att.event.data.target.n + '</strong>': '')
+            + ' is hang ten.';
+
+      } else if (att.event.data.action.t === 'request') {
+
+        return '<strong>' + att.event.data.action.a + '</strong> '
+            + 'wants to follow you.';
+
+      } else if (att.event.data.action.t === 'accept') {
+
+        return 'You are now following <strong>'
+            + att.event.data.action.a + '</strong>';
+
+      } else if (att.event.data.action.t === 'follow') {
+
+        return '<strong>' + att.event.data.action.a + '</strong> '
+            + 'is now following you.';
 
       } else if (att.event.data.action.t === 'media') {
         var verb = 'also added';

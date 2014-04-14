@@ -466,13 +466,15 @@ span.empty-list
 .input-error
   border 1px solid red !important
 
-.info-delete
+.info-delete,
+.info-accept
   font-size 11px
   color #999
   background none
   cursor pointer
 
-.info-delete:hover
+.info-delete:hover,
+.info-accept:hover
   color blue
 
 .info-divider
@@ -847,20 +849,25 @@ a.button.title-buy-button
   border-radius 0
   padding 0 20px
 
+a.button.title-button.disabled,
+a.button.title-buy-button.disabled
+  opacity 0.8
+  cursor default
+
 a.button.title-buy-button
   color rgb(57, 100, 0)
   background #b1dc36
   border none
   border-left 2px solid rgb(57, 100, 0)
 
-a.button.title-button:hover,
-a.button.title-button:focus
+a.button.title-button:hover:not(.disabled),
+a.button.title-button:focus:not(.disabled)
   color #1a1a1a
   border none
   border-left 2px solid #808080
 
-a.button.title-buy-button:hover,
-a.button.title-buy-button:focus
+a.button.title-buy-button:hover:not(.disabled),
+a.button.title-buy-button:focus:not(.disabled)
   color rgb(47, 90, 0)
   border none
   border-left 2px solid rgb(57, 100, 0)
@@ -876,7 +883,7 @@ a.button.buy-button
   line-height 24px
   min-height 24px
 
-a.button.buy-button:hover
+a.button.buy-button:hover:not(.disabled)
   color #1a1a1a
   background #b1dc36
   border 1px solid #1a1a1a
@@ -3515,11 +3522,14 @@ p.session-tick-note
   -o-animation-fill-mode both
   animation-fill-mode both
 
-.notification.unread
-  background #fbfff0
-
 .notification:hover
   background #f2f2f2
+
+.notification.unread
+  background #f7fbeb
+
+.notification.request
+  background #edf8fb
 
 .notification a
   text-decoration none
@@ -3528,7 +3538,7 @@ p.session-tick-note
 .notification-inner
   position relative
   min-height 32px
-  padding 10px 10px 3px 10px
+  padding 10px 10px 7px 10px
 
 .notification-inner img
   float left

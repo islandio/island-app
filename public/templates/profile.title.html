@@ -21,10 +21,15 @@
       <i class="icon-params"></i> Settings</a>
   <% } else { %>
     <% if (sub && sub.subscribee_id === data.id) { %>
-      <a href="javascript:;" class="button title-button unfollow-button"
-          data-path="/api/members/<%= this.model.get('username') %>/unfollow"
-          data-_path="/api/members/<%= this.model.get('username') %>/follow">
-        <i class="icon-user-delete"></i> Unfollow</a>
+      <% if (sub.meta.style === 'request') { %>
+        <a href="javascript:;" class="button title-button disabled">
+          <i class="icon-user"></i> Requested</a>
+      <% } else { %>
+        <a href="javascript:;" class="button title-button unfollow-button"
+            data-path="/api/members/<%= this.model.get('username') %>/unfollow"
+            data-_path="/api/members/<%= this.model.get('username') %>/follow">
+          <i class="icon-user-delete"></i> Unfollow</a>
+      <% } %>
     <% } else { %>
       <a href="javascript:;" class="button title-button follow-button"
           data-path="/api/members/<%= this.model.get('username') %>/follow"

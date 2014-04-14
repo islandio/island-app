@@ -99,11 +99,15 @@ define([
 
     follow: function (e) {
       var btn = $(e.target).closest('a');
-      this.request.call(this, btn, function () {
+      this.request.call(this, btn, function (data) {
 
         // Update button content.
-        btn.removeClass('follow-button').addClass('unfollow-button')
-            .html('<i class="icon-user-delete"></i> Unfollow');
+        if (data.following === 'request')
+          btn.removeClass('follow-button').addClass('disabled')
+              .html('<i class="icon-user"></i> Requested');
+        else
+          btn.removeClass('follow-button').addClass('unfollow-button')
+              .html('<i class="icon-user-delete"></i> Unfollow');
       });
 
       return false;
@@ -111,7 +115,7 @@ define([
 
     unfollow: function (e) {
       var btn = $(e.target).closest('a');
-      this.request.call(this, btn, function () {
+      this.request.call(this, btn, function (data) {
 
         // Update button content.
         btn.removeClass('unfollow-button').addClass('follow-button')
@@ -123,7 +127,7 @@ define([
 
     watch: function (e) {
       var btn = $(e.target).closest('a');
-      this.request.call(this, btn, function () {
+      this.request.call(this, btn, function (data) {
 
         // Update button content.
         btn.removeClass('watch-button').addClass('unwatch-button')
@@ -135,7 +139,7 @@ define([
 
     unwatch: function (e) {
       var btn = $(e.target).closest('a');
-      this.request.call(this, btn, function () {
+      this.request.call(this, btn, function (data) {
 
         // Update button content.
         btn.removeClass('unwatch-button').addClass('watch-button')
@@ -166,10 +170,14 @@ define([
         }
 
         // Swap paths.
-        target.data('path', target.data('_path'));
-        target.data('_path', path);
+        if (data.following === 'request')
+          target.data('path', '').data('_path', '');
+        else {
+          target.data('path', target.data('_path'));
+          target.data('_path', path);
+        }
 
-        cb();
+        cb(data);
       }, this));
 
       return false;

@@ -42,7 +42,11 @@ boots.start({index: argv.index}, function (client) {
       if (docs.length === 0) return this();
       var _this = _.after(docs.length, this);
       _.each(docs, function (d) {
-        db.Members._update({_id: d._id}, {$set: {'config.privacy': {mode: 0}}}, _this);
+        db.Members._update({_id: d._id}, {$set: {
+          'config.privacy': {mode: 0},
+          'config.notifications.follow.email': true,
+          'config.notifications.request.email': true
+        }}, _this);
       });
     },
     function (err) {

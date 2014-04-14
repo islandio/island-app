@@ -11,13 +11,19 @@
       <%= this.model.body() %>
     </p>
     <div class="notification-info">
-      <span class="info-delete">Hide</span>
-      <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-      <time class="created static" 
-          datetime="<%= this.model.get('created') %>" 
-          title="<%= this.model.get('created') %>">
-        <%= this.model.get('created') %>
-      </time>
+      <% if (this.model.get('event').data.action.t !== 'request') { %>
+        <time class="created static" 
+            datetime="<%= this.model.get('created') %>" 
+            title="<%= this.model.get('created') %>">
+          <%= this.model.get('created') %>
+        </time>
+        <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+        <span class="info-delete">Hide</span>
+      <% } else { %>
+        <span class="info-accept">Accept</span>
+        <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+        <span class="info-delete">Ignore</span>
+      <% } %>
     </div>
     <div class="clear"></div>
   </div>

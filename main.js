@@ -264,6 +264,8 @@ Step(
             socket.join('comment');
             socket.join('hangten');
             socket.join('follow');
+            socket.join('request');
+            socket.join('accept');
             socket.join('watch');
             socket.join('map'); // tmp
             socket.join('media'); // tmp
