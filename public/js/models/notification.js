@@ -34,7 +34,7 @@ define([
               + att.event.data.target.w
               + ': "' + att.event.data.action.b
               + '".';
-        
+
         } else if (!att.event.data.target.c) {
           if (att.event.data.action.i === att.event.data.target.i) {
             owner = 'their';
@@ -55,7 +55,7 @@ define([
               + ': "' + att.event.data.action.b
               + '".';
         }
-      
+
       } else if (att.event.data.action.t === 'hangten') {
 
         return '<strong>' + att.event.data.action.a + '</strong> '
@@ -89,7 +89,7 @@ define([
             + '<strong>' + att.event.data.target.n + '</strong> at '
             + att.event.data.target.w
             + '.';
-      
+
       } else return '';
     }
 
