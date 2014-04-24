@@ -82,8 +82,12 @@ define([
       else {
         this.nomore = true;
         this.listSpin.hide();
-        $('<span class="empty-feed">Nothing to see here!</span>')
+        if (this.app.profile.content.private)
+          $('<span class="empty-feed">This athlete is private.</span>')
             .appendTo(this.$el);
+        else
+          $('<span class="empty-feed">Nothing to see here!</span>')
+              .appendTo(this.$el);
         this.spin.stop();
         this.spin.target.hide();
       }

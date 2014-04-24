@@ -168,7 +168,6 @@ define([
       rest.post('/api/comments/list', {
         skip: this.collection.length,
         limit: limit,
-
         parent_id: this.parentView.model.id,
       }, _.bind(function (err, data) {
         if (err) return console.log(err);
@@ -187,7 +186,6 @@ define([
 
         // Hide the button.
         this.$('.comments-older.comment').hide();
-
       }, this));
 
     },

@@ -8,10 +8,11 @@
   
   var input = member && this.collection.options.input;
   var feed = store.get('feed') || {};
+  var private = this.app.profile.content.private;
 
 %>
 
-<% if (input) { %>
+<% if (!private && input) { %>
   <div class="post-input">
     <div class="post">
       <span class="post-input-avatar">
@@ -66,37 +67,39 @@
     </div>
   </div>
 <% } %>
-<% if (this.collection.options.filters !== false) { %>
-<div class="events-filter">
-  <div class="subtabs">
-    <ul>
-      <li data-filter="all" class="subtab<%= !feed.actions || feed.actions === 'all' ? ' active': '' %>">
-        <a href="javascript:;" class="navigate">All</a>
-      </li>
-      <li data-filter="session" class="subtab<%= feed.actions && feed.actions === 'session' ? ' active': '' %>">
-        <a href="javascript:;" class="navigate">Sessions</a>
-      </li>
-      <li data-filter="post" class="subtab<%= feed.actions && feed.actions === 'post' ? ' active': '' %>">
-        <a href="javascript:;" class="navigate">Posts</a>
-      </li>
-    </ul>
+<% if (!private && this.collection.options.filters !== false) { %>
+  <div class="events-filter">
+    <div class="subtabs">
+      <ul>
+        <li data-filter="all" class="subtab<%= !feed.actions || feed.actions === 'all' ? ' active': '' %>">
+          <a href="javascript:;" class="navigate">All</a>
+        </li>
+        <li data-filter="session" class="subtab<%= feed.actions && feed.actions === 'session' ? ' active': '' %>">
+          <a href="javascript:;" class="navigate">Sessions</a>
+        </li>
+        <li data-filter="post" class="subtab<%= feed.actions && feed.actions === 'post' ? ' active': '' %>">
+          <a href="javascript:;" class="navigate">Posts</a>
+        </li>
+      </ul>
+    </div>
   </div>
-</div>
 <% } %>
-<div class="list-header"></div>
-<% if (this.collection.models.length > 0) {
-  var day;
-  _.each(this.collection.models, _.bind(function (m) { %>
-    <% var _date = new Date(m.get('date')) %>
-    <% var _day = _date.getDay() %>
-    <% if (_day !== day) { %>
-      <% var beg = new Date(_date.getFullYear(), _date.getMonth(), _date.getDate()); %>
-      <% var end = new Date(_date.getFullYear(), _date.getMonth(), _date.getDate(), 23, 59, 59, 999); %>
-      <div class="event-day-header" data-beg="<%= beg.valueOf() %>" data-end="<%= end.valueOf() %>">
-        <span><%= (end.format('mmmm dd, yyyy')) %></span>
-      </div>
-    <% } %>
-    <%= this.row(m) %>
-    <% day = _day %>
-  <% }, this)); %>
+<% if (!private) { %>
+  <div class="list-header"></div>
+  <% if (this.collection.models.length > 0) {
+    var day;
+    _.each(this.collection.models, _.bind(function (m) { %>
+      <% var _date = new Date(m.get('date')) %>
+      <% var _day = _date.getDay() %>
+      <% if (_day !== day) { %>
+        <% var beg = new Date(_date.getFullYear(), _date.getMonth(), _date.getDate()); %>
+        <% var end = new Date(_date.getFullYear(), _date.getMonth(), _date.getDate(), 23, 59, 59, 999); %>
+        <div class="event-day-header" data-beg="<%= beg.valueOf() %>" data-end="<%= end.valueOf() %>">
+          <span><%= (end.format('mmmm dd, yyyy')) %></span>
+        </div>
+      <% } %>
+      <%= this.row(m) %>
+      <% day = _day %>
+    <% }, this)); %>
+  <% } %>
 <% } %>

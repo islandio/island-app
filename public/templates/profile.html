@@ -83,7 +83,9 @@
       <% } %>
     </div>
   </div>
-  <h2 class="profile-section-title">Activity</h2>
+  <% if (!this.app.profile.content.private) { %>
+    <h2 class="profile-section-title">Activity</h2>
+  <% } %>
   <div class="events"></div>
   <div class="list-spin">
     <div class="events-spin"></div>

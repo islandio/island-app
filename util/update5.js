@@ -44,8 +44,10 @@ boots.start({index: argv.index}, function (client) {
       _.each(docs, function (d) {
         db.Members._update({_id: d._id}, {$set: {
           'config.privacy': {mode: 0},
+          'config.notifications.hangten.email': true,
           'config.notifications.follow.email': true,
-          'config.notifications.request.email': true
+          'config.notifications.request.email': true,
+          'config.notifications.accept.email': true
         }}, _this);
       });
     },

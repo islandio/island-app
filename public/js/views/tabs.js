@@ -165,7 +165,7 @@ define([
         if (err) {
 
           // Show error.
-          mps.publish('flash/new', [{err: err, level: 'error'}]);
+          mps.publish('flash/new', [{err: err, level: 'error', sticky: true}]);
           return false;
         }
 

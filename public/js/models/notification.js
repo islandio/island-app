@@ -15,6 +15,7 @@ define([
         var verb = 'commented on';
         var owner;
 
+        // TMP
         if (att.event.data.target.c === 'ascent') {
           if (att.event.data.action.i === att.event.data.target.i) {
             verb = 'also ' + verb;
@@ -25,7 +26,6 @@ define([
             owner = '';
             verb = 'also ' + verb;
           }
-
           return '<strong>' + att.event.data.action.a + '</strong> '
               + verb + ' a <strong>'
               + att.event.data.target.p + '</strong> '
@@ -45,7 +45,6 @@ define([
             owner = att.event.data.target.a + '\'s';
             verb = 'also ' + verb;
           }
-
           return '<strong>' + att.event.data.action.a + '</strong> '
               + verb + ' <strong>'
               + owner + '</strong> '
@@ -55,41 +54,32 @@ define([
               + ': "' + att.event.data.action.b
               + '".';
         }
-
       } else if (att.event.data.action.t === 'hangten') {
-
         return '<strong>' + att.event.data.action.a + '</strong> '
             + 'thinks your '
             + att.event.data.target.t
             + (att.event.data.target.n !== '' ? ' <strong>'
             + att.event.data.target.n + '</strong>': '')
             + ' is hang ten.';
-
       } else if (att.event.data.action.t === 'request') {
-
         return '<strong>' + att.event.data.action.a + '</strong> '
             + 'wants to follow you.';
-
       } else if (att.event.data.action.t === 'accept') {
-
         return 'You are now following <strong>'
             + att.event.data.action.a + '</strong>';
-
       } else if (att.event.data.action.t === 'follow') {
-
         return '<strong>' + att.event.data.action.a + '</strong> '
             + 'is now following you.';
 
+      // TMP
       } else if (att.event.data.action.t === 'media') {
         var verb = 'also added';
-
         return '<strong>' + att.event.data.action.a + '</strong> '
             + verb + ' a <strong>'
             + att.event.data.action.b + '</strong> of '
             + '<strong>' + att.event.data.target.n + '</strong> at '
             + att.event.data.target.w
             + '.';
-
       } else return '';
     }
 

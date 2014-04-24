@@ -384,7 +384,7 @@ define([
 
           // Set the error display.
           mps.publish('flash/new', [{
-            message: err,
+            err: err,
             level: 'error'
           }, true]);
           return;

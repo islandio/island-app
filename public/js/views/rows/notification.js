@@ -64,8 +64,12 @@ define([
 
     navigate: function (e) {
       e.preventDefault();
-      if ($(e.target).hasClass('info-delete')) return;
-      var path = this.model.get('event').data.target.s;
+      if ($(e.target).hasClass('info-delete')
+          || $(e.target).hasClass('info-accept')) return;
+      var type = this.model.get('event').data.action.t;
+      var path = type === 'request' || type === 'accept' || type === 'follow' ?
+          this.model.get('event').data.action.s:
+          this.model.get('event').data.target.s;
       if (path) mps.publish('navigate', [path]);
       return false;
     },
