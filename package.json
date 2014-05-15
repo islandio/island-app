@@ -11,45 +11,44 @@
   },
   "dependencies": {
     "express": "~3.3.8",
-    "jade": "~0.28.1",
+    "jade": "~0.30.0",
     "stylus": "~0.32.0",
-    "mongodb": "~1.3.12",
+    "mongodb": "^1.4.4",
     "socket.io": "~0.9.16",
-    "passport": "~0.1.11",
+    "passport": "~0.1.17",
     "passport.socketio": "~1.2.1",
-    "passport-facebook": "~0.1.4",
+    "passport-facebook": "~1.0.1",
     "reds": "~0.2.3",
-    "optimist": "~0.3.4",
+    "optimist": "~0.5.0",
     "step": "0.0.5",
     "underscore": "~1.5.1",
     "underscore.string": "~2.3.3",
-    "passport-twitter": "~0.1.3",
+    "passport-twitter": "~1.0.2",
     "passport-local": "~0.1.3",
     "passport-instagram": "~0.1.1",
-    "request": "~2.9.203",
+    "request": "~2.27.0",
     "curlrequest": "~0.3.6",
     "connect-redis": "~1.4.5",
     "cookie": "~0.1.0",
-    "redis": "~0.8.2",
+    "redis": "^0.8.6",
     "cron": "~1.0.1",
     "time": "~0.9.2",
-    "red": "0.0.0",
     "connect-slashes": "0.0.10",
-    "emailjstmp": "~0.3.4"
+    "emailjstmp": "~0.3.4",
+    "cli-color": "~0.2.2"
   },
   "devDependencies": {
     "grunt": "0.4.x",
     "requirejs": "2.1.x",
     "grunt-requirejs": "~0.4.0",
     "wrench": "~1.4.4",
-    "cli-color": "~0.2.2",
     "iconv": "~2.0.2",
     "async": "~0.2.6",
     "walk": "~2.2.1",
     "knox": "~0.8.5"
   },
   "engines": {
-    "node": "~0.8.x"
+    "node": "~0.10.26"
   },
   "scripts": {
     "start": "./main.js"

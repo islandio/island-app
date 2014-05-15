@@ -36,7 +36,7 @@ define([
     },
 
     events: {
-      'click a.navigate': 'navigate',
+      'click .navigate': 'navigate',
     },
 
     render: function () {

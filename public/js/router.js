@@ -147,7 +147,7 @@ define([
         if (err) {
           // _render.call(this, err);
           this.page = new Error(this.app).render(err);
-          this.spin.stop();
+          this.stop();
         }
         if (secure && !pro.member)
           return this.navigate('/', true);
