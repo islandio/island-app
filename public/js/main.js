@@ -14,7 +14,7 @@ require.config({
     Backbone: 'lib/backbone/backbone',
     Modernizr: 'lib/modernizr/modernizr.src',
     mps: 'lib/minpubsub/minpubsub',
-    Pusher: 'lib/pusher/pusher',
+    device: 'lib/device/device.src',
     Spin: 'lib/spin/spin',
     Picker: 'lib/pickadate/picker',
     Pickadate: 'lib/pickadate/picker.date',
@@ -39,9 +39,6 @@ require.config({
     mps: {
       deps: ['jQuery', 'Underscore'],
       exports: 'mps'
-    },
-    Pusher: {
-      exports: 'Pusher'
     },
     Spin: {
       exports: 'Spin'

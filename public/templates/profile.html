@@ -13,9 +13,9 @@
   if (!data.image) {
     data.image = {meta: {width: 680, height: 288}};
     if (!data.gender || 'male' === data.gender)
-      data.image.cf_url = __s + '/img/blnk-pic-m.jpg';
+      data.image.url = __s + '/img/blnk-pic-m.jpg';
     else
-      data.image.cf_url = __s + '/img/blnk-pic-f.jpg';
+      data.image.url = __s + '/img/blnk-pic-f.jpg';
   }
 
   // Image meta
@@ -69,7 +69,7 @@
 
 <div class="profile-upper">
   <div class="profile-picture">
-    <img class="masked" src=<%= data.image.cf_url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
+    <img class="masked" src=<%= data.image.ssl_url || data.image.url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
   </div>
 </div>
 <div class="leftside">

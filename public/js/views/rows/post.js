@@ -14,9 +14,10 @@ define([
   'text!../../../templates/post.title.html',
   'text!../../../templates/video.html',
   'views/lists/comments',
-  'text!../../../templates/confirm.html'
-], function ($, _, Backbone, mps, rest, util, Model,
-      template, title, video, Comments, confirm) {
+  'text!../../../templates/confirm.html',
+  'device'
+], function ($, _, Backbone, mps, rest, util, Model, template, title, video,
+      Comments, confirm) {
   return Backbone.View.extend({
 
     attributes: function () {
@@ -49,7 +50,7 @@ define([
     render: function () {
 
       function insert(item) {
-        var src = util.https(item.data.ssl_url || item.data.cf_url || item.data.url);
+        var src = item.data.ssl_url || item.data.url;
         var anc = $('<a class="fancybox" rel="g-' + this.model.id + '" href="'
             + src + '">');
         var div = $('<div class="post-mosaic-wrap">').css(item.div).appendTo(anc);
@@ -99,11 +100,13 @@ define([
               images.push(m.image);
               break;
             case 'video':
-              this.video = m;
-              images.push(m.poster);
-              _.each(m.thumbs, function (t, i) {
-                if (i !== 1) images.push(t);
-              });
+              if (!this.video) {
+                this.video = m;
+                images.push(m.poster);
+                _.each(m.thumbs, function (t, i) {
+                  if (i !== 1) images.push(t);
+                });
+              }
               break;
           }
         }, this));
@@ -295,38 +298,72 @@ define([
           e.stopPropagation();
           e.preventDefault();
 
+          var iphone = this.videoFor('iphone');
+          var ipad = this.videoFor('ipad');
+          var hd = this.videoFor('hd');
+          var streamer = 'http://players.edgesuite.net/flash/plugins/jw/v3.3'
+              + '/AkamaiAdvancedJWStreamProvider.swf';
+
           // Video params
           var params = {
             width: '1024',
             height: '576',
             autostart: true,
             primary: 'flash',
-            ga: {}
+            ga: {},
+            sharing: {
+              link: window.location.protocol + '//'
+                  + window.location.host + '/' + this.model.get('key'),
+              code: "<iframe width='100%' height='100%' src='//"
+                  + window.location.host + "/embed/"
+                  + ipad.video.id + "' frameborder='0'></iframe>"
+            }
           };
-          var files = {};
 
-          // Detect iOS decive.
-          if (/(iPad|iPhone|iPod)/g.test(navigator.userAgent)
-              && this.video.video.ios_url)
-            files = {
-              file: this.video.video.ios_url,
-              image: this.video.poster.ssl_url
-            };
-          else if (this.video.video.streaming_url)
-            files = {
+          // Desktops and mobile tablets.
+          if (!device.mobile() || (device.mobile() && device.tablet())) {
+            _.extend(params, {
               playlist: [{
-                file: this.video.video.streaming_url,
-                image: this.video.poster.ssl_url,
-                provider: 'http://players.edgesuite.net/flash/plugins/jw/v3.3'
-                    + '/AkamaiAdvancedJWStreamProvider.swf'
+                image: hd.poster.ssl_url,
+                sources: [{
+                  file: device.ios() ?
+                      ipad.video.ios_url: (ipad.video.import_url ?
+                      ipad.video.ssl_url: ipad.video.streaming_url),
+                  provider: device.ios() ? undefined: streamer,
+                  label: '1200k'
+                },
+                {
+                  file: device.ios() ?
+                      hd.video.ios_url: (hd.video.import_url ?
+                      hd.video.ssl_url: hd.video.streaming_url),
+                  provider: device.ios() ? undefined: streamer,
+                  label: '4000k'
+                }]
               }]
-            };
-          else
-            files = {
-              file: this.video.video.cf_url,
-              image: this.video.poster.cf_url
-            };
-          _.extend(params, files);
+            });
+
+          // Mobile phones, ipod, etc.
+          } else {
+            _.extend(params, {
+              playlist: [{
+                image: iphone.poster.ssl_url,
+                sources: [{
+                  file: device.ios() ?
+                      iphone.video.ios_url: (iphone.video.import_url ?
+                      iphone.video.ssl_url: iphone.video.streaming_url),
+                  provider: device.ios() ? undefined: streamer,
+                  label: '700k'
+                },
+                {
+                  file: device.ios() ?
+                      ipad.video.ios_url: (ipad.video.import_url ?
+                      ipad.video.ssl_url: ipad.video.streaming_url),
+                  provider: device.ios() ? undefined: streamer,
+                  label: '1200k'
+                }]
+              }]
+            });
+          }
 
           if (this.parentView) {
 
@@ -392,6 +429,12 @@ define([
       }, this));
 
       return false;
+    },
+
+    videoFor: function (quality) {
+      return _.find(this.model.get('medias'), function (m) {
+        return m.type === 'video' && m.quality === quality;
+      });
     },
 
     when: function () {

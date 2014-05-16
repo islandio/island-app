@@ -1,0 +1,36 @@
+doctype 5
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    style
+      html, body, video {margin: 0; padding: 0;}
+  body
+    video(id="video", src="#{src}", data-params="#{params}",
+        controls="controls", width="100%", height="100%",
+        style="width:100%; height:100%;")
+    script(type="text/javascript", src="https://jwpsrv.com/library/1lrC0MMbEeKOnyIACqoQEQ.js")
+    script(type="text/javascript")
+      var vid = document.getElementById('video');
+      var params = vid.getAttribute('data-params');
+      var params = JSON.parse(params);
+      params.width = '100%';
+      params.height = '100%';
+      params.autostart = false;
+      params.primary = 'flash';
+      params.ga = {};
+      params.sharing.link = window.location.protocol
+          + '//' + window.location.host + '/' + params.sharing.key;
+      params.sharing.code = "<iframe width='100%' height='100%' src='//"
+          + window.location.host + window.location.pathname
+          + "' frameborder='0'></iframe>";
+      jwplayer('video').setup(params);
+    script(type="text/javascript")
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-23247079-1']);
+      _gaq.push(['_setDomainName', 'island.io']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();

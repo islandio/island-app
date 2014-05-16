@@ -35,7 +35,8 @@
     "time": "~0.9.2",
     "connect-slashes": "0.0.10",
     "emailjstmp": "~0.3.4",
-    "cli-color": "~0.2.2"
+    "cli-color": "~0.2.2",
+    "mobile-detect": "~0.1.1"
   },
   "devDependencies": {
     "grunt": "0.4.x",
@@ -51,6 +52,6 @@
     "node": "~0.10.26"
   },
   "scripts": {
-    "start": "./main.js"
+    "start": "./start.js"
   }
 }

@@ -185,8 +185,7 @@ Step(
 
       Step(
         function () {
-          new Connection(app.get('MONGO_URI'),
-              {ensureIndexes: argv.index}, this);
+          new Connection(app.get('MONGO_URI'), {ensureIndexes: argv.index}, this);
         },
         function (err, connection) {
           if (err) {

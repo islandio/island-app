@@ -6,12 +6,11 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
-  'Pusher',
   'router',
   'mps',
   'rpc',
   'rest'
-], function ($, _, Backbone, Pusher, Router, mps, rpc, rest) {
+], function ($, _, Backbone, Router, mps, rpc, rest) {
 
   var App = function () {
 

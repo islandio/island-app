@@ -26,22 +26,18 @@ exports.start = function (opts, cb) {
     cb = opts;
     opts = {};
   }
+  var props = {};
 
   Step(
     function () {
-
-      // Redis connect
-      if (c.REDIS_PASS) {
-        var rc = redis.createClient(c.REDIS_PORT, c.REDIS_HOST);
-        rc.auth(c.REDIS_PASS, _.bind(function (err) {
-          this(err, rc);
-        }, this));
-      } else
-        this(null, redis.createClient(c.REDIS_PORT, c.REDIS_HOST));
-
+      if (!opts.redis) return this();
+      this(null, redis.createClient(c.REDIS_PORT, c.REDIS_HOST));
     },
     function (err, rc) {
       error(err);
+      if (rc) {
+        props.redisClient = rc;
+      }
 
       Step(
         function () {
@@ -55,10 +51,9 @@ exports.start = function (opts, cb) {
         },
         function (err) {
           error(err);
-          cb(rc);
+          cb(props);
         }
       );
     }
-
   );
 }
