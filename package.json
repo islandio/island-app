@@ -4,7 +4,10 @@
   "version": "2.0.98",
   "protocol": "https",
   "domain": "www.island.io",
-  "bucket": "build.islandio",
+  "builds": {
+    "bucket": "build.islandio",
+    "cloudfront": "https://d10fiv677oa856.cloudfront.net"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/islandio/island.git"
