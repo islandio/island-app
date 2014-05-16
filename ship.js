@@ -43,7 +43,6 @@ var Step = require('step');
 var boots = require(rel + 'boots');
 var db = require(rel + 'lib/db');
 var com = require(rel + 'lib/common');
-var config = require('./config');
 
 // Build vars.
 var dir = 'build';
@@ -53,11 +52,11 @@ var lv = parseInt(_.strRightBack(pack.version, '.')) + 1;
 var nv = bv + '.' + String(lv);
 
 // AWS credentials.
-var aws = JSON.parse(fs.readFileSync(rel + 'aws.config.json', 'utf8'));
+var acf = fs.readFileSync(rel + '.aws/aws_credential_file', 'utf8');
 var client = knox.createClient({
-  key: aws.accessKeyId,
-  secret: aws.secretAccessKey,
-  bucket: pack.bucket
+  key: acf.match(/AWSAccessKeyId=(.+)/)[1],
+  secret: acf.match(/AWSSecretKey=(.+)/)[1],
+  bucket: pack.builds.bucket
 });
 
 Step(
@@ -82,7 +81,7 @@ Step(
     
     var min = fs.readFileSync(rel + dir + '/js/min.js', 'utf8');
     var banner = '/*\n * ' + pack.name + ' v' + nv + '\n */\n';
-    var vvar = 'var __s = "' + config.cloudfront.build + '/' + nv + '";';
+    var vvar = 'var __s = "' + pack.builds.cloudfront + '/' + nv + '";';
     fs.writeFileSync(rel + dir + '/js/min.js', banner + vvar + min);
 
     this();
