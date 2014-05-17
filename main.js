@@ -102,7 +102,7 @@ if (cluster.isMaster) {
         app.set('HOME_URI', 'http://localhost:' + app.get('PORT'));
 
         // Job scheduling.
-        app.set('SCHEDULE_JOBS', argv.jobs);
+        // app.set('SCHEDULE_JOBS', argv.jobs);
       }
 
       // Production only
@@ -115,7 +115,7 @@ if (cluster.isMaster) {
             app.get('package').domain].join('://'));
 
         // Job scheduling.
-        app.set('SCHEDULE_JOBS', true);
+        // app.set('SCHEDULE_JOBS', true);
       }
 
       // Redis connect
