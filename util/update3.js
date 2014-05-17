@@ -9,7 +9,7 @@ var optimist = require('optimist');
 var argv = optimist
     .describe('help', 'Get help')
     .describe('muri', 'MongoDB URI')
-      .default('muri', 'mongodb://localhost:27017/island')
+      .default('muri')
     .demand('limit')
     .default('cursor', 0)
     .argv;
