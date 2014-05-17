@@ -19,6 +19,7 @@ define([
           href = '/' + this.get('key');
           break;
         case 'crags':
+        case 'ascents':
           href = '/crags/' + this.get('key');
           break;
       }
@@ -51,6 +52,10 @@ define([
           title += '<strong>' + this.get('name') + '</strong>, '
             + this.get('country');
           break;
+        case 'ascents':
+          title += '<strong>' + this.get('name') + '</strong> '
+            + this.get('grades').join(', ');
+          break;
       }
       return title;
     },
@@ -67,6 +72,7 @@ define([
           term += this.get('title');
           break;
         case 'crags':
+        case 'ascents':
           term += this.get('name');
           break;
       }
