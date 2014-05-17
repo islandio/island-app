@@ -8,8 +8,8 @@
 var optimist = require('optimist');
 var argv = optimist
     .describe('help', 'Get help')
-    .describe('index', 'Ensure indexes on MongoDB collections')
-      .boolean('index')
+    .describe('muri', 'MongoDB URI')
+      .default('muri', 'mongodb://localhost:27017/island')
     .argv;
 
 if (argv._.length || argv.help) {
@@ -18,8 +18,6 @@ if (argv._.length || argv.help) {
 }
 
 // Module Dependencies
-var redis = require('redis');
-var reds = require('reds');
 var util = require('util');
 var Step = require('step');
 var _ = require('underscore');
@@ -27,10 +25,8 @@ _.mixin(require('underscore.string'));
 var boots = require('../boots');
 var db = require('../lib/db');
 var com = require('../lib/common');
-var resources = require('../lib/resources');
-var PubSub = require('../lib/pubsub').PubSub;
 
-boots.start({index: argv.index}, function (client) {
+boots.start({muri: argv.muri}, function (client) {
   Step(
 
     function () {

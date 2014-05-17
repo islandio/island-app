@@ -44,7 +44,7 @@ exports.start = function (opts, cb) {
 
       Step(
         function () {
-          new Connection(config.MONGO_URI, {ensureIndexes: opts.index}, this);
+          new Connection(opts.muri || config.MONGO_URI, {}, this);
         },
         function (err, connection) {
           error(err);
