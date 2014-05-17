@@ -20,8 +20,8 @@
   "INSTAGRAM_CALLBACK_URL": "/members/connect/instagram/callback",
   "INSTAGRAM_VERIFY_TOKEN": "doesthisworkyet",
   "GMAIL_FROM": "Island <robot@island.io>",
+  "GMAIL_USER": "robot@island.io",
   "GMAIL_HOST": "smtp.gmail.com",
   "GMAIL_PASSWORD": "I514nDr06ot",
-  "GMAIL_SSL": true,
-  "GMAIL_USER": "robot@island.io"
+  "GMAIL_SSL": true
 }

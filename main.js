@@ -133,8 +133,16 @@ if (cluster.isMaster) {
       // Common utils init
       require('./lib/common').init(app.get('ROOT_URI'));
 
+
+
       // Mailer init
-      app.set('mailer', new Mailer(app.get('gmail'), app.get('HOME_URI')));
+      app.set('mailer', new Mailer({
+        user: app.get('GMAIL_USER'),
+        password: app.get('GMAIL_PASSWORD'),
+        from: app.get('GMAIL_FROM'),
+        host: app.get('GMAIL_HOST'),
+        ssl: app.get('GMAIL_SSL'),
+      }, app.get('HOME_URI')));
 
       // PubSub init
       app.set('pubsub', new PubSub({mailer: app.get('mailer')}));
