@@ -10,8 +10,8 @@ define([
   'rest',
   'util',
   'models/profile',
-  'text!../../../templates/profile.html',
-  'text!../../../templates/profile.title.html',
+  'text!../../templates/profile.html',
+  'text!../../templates/profile.title.html',
   'views/lists/events'
 ], function ($, _, Backbone, mps, rest, util, Model, template, title, Events) {
   return Backbone.View.extend({
