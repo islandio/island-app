@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- * index.js: Index all users, datasets, views, and channels for search.
+ * index.js: Index all member, posts, crags, ascents for search.
  *
  */
 
@@ -8,6 +8,8 @@
 var optimist = require('optimist');
 var argv = optimist
     .describe('help', 'Get help')
+    .describe('muri', 'MongoDB URI')
+      .default('muri', 'mongodb://localhost:27017/island')
     .argv;
 
 if (argv._.length || argv.help) {
@@ -25,23 +27,22 @@ var boots = require('../boots');
 var db = require('../lib/db');
 var com = require('../lib/common');
 
-
-boots.start({redis: true}, function (client) {
+boots.start({redis: true, muri: argv.muri}, function (client) {
 
   // Create searches.
   reds.client = client.redisClient;
   var searches = {
-    users: reds.createSearch('users'),
-    datasets: reds.createSearch('datasets'),
-    views: reds.createSearch('views'),
-    channels: reds.createSearch('channels')
+    members: reds.createSearch('members'),
+    posts: reds.createSearch('posts'),
+    crags: reds.createSearch('crags'),
+    ascents: reds.createSearch('ascents')
   };
 
   Step(
     function () {
 
-      // Get all datasets.
-      db.Datasets.list({}, this);
+      // Get all members.
+      db.Members.list({}, this);
     },
     function (err, docs) {
       boots.error(err);
@@ -51,19 +52,19 @@ boots.start({redis: true}, function (client) {
       _.each(docs, function (d) {
 
         // Remove existing index.
-        searches.datasets.remove(d._id, function (err) {
+        searches.members.remove(d._id, function (err) {
           boots.error(err);
 
           // Add new.
-          com.index(searches.datasets, d, ['title', 'source', 'tags'], _this);
+          com.index(searches.members, d, ['displayName', 'username'], _this);
         });
       });
     },
     function (err) {
       boots.error(err);
 
-      // Get all views.
-      db.Views.list({}, this);
+      // Get all posts.
+      db.Posts.list({}, this);
     },
     function (err, docs) {
       boots.error(err);
@@ -73,19 +74,19 @@ boots.start({redis: true}, function (client) {
       _.each(docs, function (d) {
 
         // Remove existing index.
-        searches.views.remove(d._id, function (err) {
+        searches.posts.remove(d._id, function (err) {
           boots.error(err);
 
           // Add new.
-          com.index(searches.views, d, ['name', 'tags'], _this);
+          com.index(searches.posts, d, ['title'], _this);
         });
       });
     },
     function (err) {
       boots.error(err);
 
-      // Get all users.
-      db.Users.list({}, this);
+      // Get all crags.
+      db.Crags.list({}, this);
     },
     function (err, docs) {
       boots.error(err);
@@ -95,39 +96,54 @@ boots.start({redis: true}, function (client) {
       _.each(docs, function (d) {
 
         // Remove existing index.
-        searches.users.remove(d._id, function (err) {
+        searches.crags.remove(d._id, function (err) {
           boots.error(err);
 
           // Add new.
-          com.index(searches.users, d, ['displayName', 'username'], _this);
+          com.index(searches.crags, d, ['name'], _this);
         });
       });
     },
     function (err) {
       boots.error(err);
 
-      // Get all channels.
-      db.Channels.list({}, this);
-    },
-    function (err, docs) {
-      boots.error(err);
-
-      if (docs.length === 0) return this();
-      var _this = _.after(docs.length, this);
-      _.each(docs, function (d) {
-
-        // Remove existing index.
-        searches.channels.remove(d._id, function (err) {
+      var cursor = 0;
+      (function do100() {
+        db.Ascents.list({}, {limit: 100, skip: 100 * cursor},
+            function (err, docs) {
           boots.error(err);
 
-          // Add new.
-          com.index(searches.channels, d, ['humanName'], _this);
+          Step(
+            function () {
+              if (docs.length === 0) return this();
+              var _this = _.after(docs.length, this);
+              _.each(docs, function (d) {
+
+                // Remove existing index.
+                searches.ascents.remove(d._id, function (err) {
+                  boots.error(err);
+
+                  // Add new.
+                  com.index(searches.ascents, d, ['name'], _this);
+                });
+              });
+            },
+            function (err) {
+              boots.error(err);
+              if (docs.length < 100)
+                process.exit(0);
+              else {
+                ++cursor;
+                do100();
+              }
+            }
+          );
         });
-      });
+      })();
     },
     function (err) {
       boots.error(err);
-      util.log('Redis: Indexed users, datasets, views, and channels');
+      util.log('Redis: Indexed members, posts, crags, and ascents');
       process.exit(0);
     }
   );
