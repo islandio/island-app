@@ -8,8 +8,9 @@ define([
   'Backbone',
   'mps',
   'util',
+  'text!../../templates/banner.html',
   'text!../../templates/splash.html'
-], function ($, _, Backbone, mps, util, template) {
+], function ($, _, Backbone, mps, util, banner, template) {
   return Backbone.View.extend({
 
     el: '.folder',
@@ -21,9 +22,11 @@ define([
     },
 
     render: function () {
-      this.app.title('Island | Train / Climb');
+      this.app.title('Island | Train · Climb');
+      this.$('.main').html(_.template(template).call(this));
+
       this.template = _.template(template);
-      this.$('.main').html(this.template.call(this));
+      this.$('.banner').html(_.template(banner).call(this));
 
       this.trigger('rendered');
 
@@ -33,10 +36,9 @@ define([
     setup: function () {
 
       // Embed the background video.
-      // $('<div id="roll" class="roll"></div>').appendTo(this.$('.banner'));
-      // swfobject.embedSWF(
-      //     __s + '/swf/roll.swf', 'roll', '100%', 'auto', '10',
-      //     false, {}, {menu: 'false', wmode: 'opaque'});
+      swfobject.embedSWF(
+          __s + '/swf/roll.swf', 'roll', '100%', '100%', '10',
+          false, {}, {menu: 'false', wmode: 'opaque'});
 
       return this;
     },

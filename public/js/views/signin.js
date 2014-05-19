@@ -58,9 +58,9 @@ define([
       });
 
       // Embed the background video.
-      swfobject.embedSWF(
-          __s + '/swf/roll.swf', 'roll', '856', '482', '10',
-          false, {}, {menu: 'false', wmode: 'opaque'});
+      // swfobject.embedSWF(
+      //     __s + '/swf/roll.swf', 'roll', '856', '482', '10',
+      //     false, {}, {menu: 'false', wmode: 'opaque'});
 
       // Show the spinner when connecting.
       this.$('.signin-strategy-btn').click(_.bind(function (e) {

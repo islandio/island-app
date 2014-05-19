@@ -99,8 +99,8 @@ define([
     },
 
     setButtonText: function () {
-      if (this.hangtened) this.button.text('Unhang Ten');
-      else this.button.text('Hang Ten');
+      if (this.hangtened) this.button.text('UnhangTen');
+      else this.button.text('HangTen');
     },
 
     // Add or remove hangten

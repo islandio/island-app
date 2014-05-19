@@ -439,8 +439,7 @@ time.created.static
   border-left 1px solid #f2f2f2
 
 .center
-  width 100%
-  padding 30px
+  margin 0 -30px
 
 span.empty-feed
   display inline-block
@@ -893,7 +892,9 @@ a.button.buy-button:hover:not(.disabled)
   border 1px solid #1a1a1a
 
 a.button.new-session-button,
-button.button.new-session-button
+button.button.new-session-button,
+a.button.start-button,
+button.button.start-button,
   position relative
   display block
   color rgb(57, 100, 0)
@@ -903,6 +904,10 @@ button.button.new-session-button
   padding 5px 0
   background #b1dc36
 
+button.button.start-button
+  width 160px
+  margin 90px auto 0
+
 a.button.new-session-button.spinning,
 button.button.new-session-button.spinning
   color #b1dc36
@@ -911,13 +916,17 @@ button.button.new-session-button
   width 100%
 
 a.button.new-session-button:hover:not(.disabled),
-button.button.new-session-button:hover:not(.disabled)
+button.button.new-session-button:hover:not(.disabled),
+a.button.start-button:hover:not(.disabled),
+button.button.start-button:hover:not(.disabled)
   color rgb(47, 90, 0)
   border 1px solid transparent
   background rgb(167, 210, 44)
 
 a.button.new-session-button:active:not(.disabled),
-button.button.new-session-button:active:not(.disabled)
+button.button.new-session-button:active:not(.disabled),
+a.button.start-button:active:not(.disabled),
+button.button.start-button:active:not(.disabled)
   background rgb(167, 210, 44)
 
 a.button.new-session-button.disabled,
@@ -1108,9 +1117,10 @@ li.subtab.disabled a
 .banner
   display none
   overflow hidden
+  position relative
   width 100%
-  height 400px
-  margin 0 auto 40px
+  height 480px
+  margin 40px auto 40px
 
   -webkit-animation-name fadeIn
   -moz-animation-name fadeIn
@@ -1125,8 +1135,71 @@ li.subtab.disabled a
   -o-animation-fill-mode both
   animation-fill-mode both
 
+.banner-text
+  width 100%
+  position absolute
+  top 144px
+  text-align center
+  color #fff
+
+h2.banner-text-heading
+  font-size 56px
+  line-height 88px
+  text-transform uppercase
+  font-family title
+  
+h2.banner-text-subheading
+  font-size 36px
+  font-family standard_thin
+
 .folder.landing .banner
   display block
+
+h2.splash-heading
+  font-size 21px
+  font-weight normal
+  line-height normal
+  color #404040
+  font-family title
+  text-transform uppercase
+  margin-bottom 15px
+
+ul.splash-features
+  list-style none
+  font-size 0
+  margin-left -30px
+
+ul.splash-features li
+  display inline-block
+  width 33.333%
+  padding-left 30px
+  vertical-align top
+
+  box-sizing border-box
+  -moz-box-sizing border-box
+  -webkit-box-sizing border-box
+
+ul.splash-features li > div
+  border 1px solid #f2f2f2
+  border-radius 5px
+  background #f9f9f9
+  padding 20px 30px
+
+h2.feature-title
+  font-size 21px
+  line-height 25px
+  font-family standard_thin
+  margin-bottom 10px
+  
+ul.splash-features li p
+  font-size 16px
+  line-height 24px
+  font-family standard_thin
+  color #4d4d4d
+
+ul.splash-features li img
+  border-radius 3px
+  border 1px solid #e6e6e6
 
 .content
   position relative
@@ -1166,7 +1239,7 @@ li.subtab.disabled a
   z-index 1000
   top: 0
   bottom: 0
-  right -220px
+  right -221px
   width 220px
   height 100%
   overflow-y auto
@@ -1744,15 +1817,10 @@ a.privacy-link:hover
 .form-iframe
   display none
 
-#roll
-  position absolute
-  z-index -1
+.roll
   overflow hidden
-  width 856px
-  height 482px
-  left -78px
-  top 0
-  background #4d4d4d
+  width 100%
+  height 480px
 
 .signin
   width 700px

@@ -100,7 +100,7 @@
               <input type="hidden" name="params"
                   value='<%= JSON.stringify(this.app.profile.transloadit.profile) %>' />
               <div class="settings-banner-dnd settings-banner-wrap">
-                <img class="masked settings-banner" src=<%= banner.ssl_url %>
+                <img class="masked settings-banner" src=<%= banner.ssl_url || banner.url %>
                     width=<%= w %> height=<%= h %> style=<%= t + l %> />
                 <div class="settings-banner-spin" style="height:100%;"></div>
                 <a class="banner-file-chooser-dummy file-chooser-dummy important"
