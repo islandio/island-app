@@ -30,12 +30,13 @@ define([
   'views/privacy',
   'views/crags',
   'views/dashboard',
+  'views/splash',
   'views/sessions',
   'views/ticks',
   'views/session.new'
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
     Signin, Forgot, Notifications, Map, Profile, Post, Session, Crag, Ascent,
-    Settings, Reset, Films, About, Privacy, Crags, Dashboard, Sessions,
+    Settings, Reset, Films, About, Privacy, Crags, Dashboard, Splash, Sessions,
     Ticks, NewSession) {
 
   // Our application URL router.
@@ -71,6 +72,9 @@ define([
       this.route('sessions', 'sessions', this.sessions);
       this.route('', 'dashboard', this.dashboard);
       this.route('_blank', 'blank', function(){});
+
+      // Save dom refs.
+      this.folder = $('.folder');
 
       // Fullfill navigation request from mps.
       mps.subscribe('navigate', _.bind(function (path) {
@@ -188,21 +192,29 @@ define([
 
     dashboard: function () {
       this.start();
+      this.renderTabs();
       var query = {actions: this.getEventActions()};
       this.render('/service/dashboard.profile', query, _.bind(function (err) {
         if (err) return;
-        this.page = new Dashboard(this.app).render();
+        if (this.app.profile.content.events) {
+          this.page = new Dashboard(this.app).render();
+          this.renderTabs({tabs: [
+            {title: 'Activity', href: '/', active: true},
+            {title: 'My Sessions', href: '/sessions'},
+            {title: 'My Ticks', href: '/ticks'}
+          ]});
+        } else {
+          this.page = new Splash(this.app).render();
+          this.folder.addClass('landing');
+        }
         this.stop();
+        this.folder.removeClass('initial');
       }, this));
-      this.renderTabs({tabs: [
-        {title: 'Activity', href: '/', active: true},
-        {title: 'My Sessions', href: '/sessions'},
-        {title: 'My Ticks', href: '/ticks'}
-      ]});
     },
 
     sessions: function () {
       this.start();
+      this.folder.removeClass('landing').removeClass('initial');
       this.render('/service/sessions.profile', _.bind(function (err) {
         if (err) return;
         this.page = new Sessions(this.app).render();
@@ -217,6 +229,7 @@ define([
 
     newSession: function () {
       this.start();
+      this.folder.removeClass('landing').removeClass('initial');
       this.render('/service/session.new.profile', {}, true, _.bind(function (err) {
         if (err) return;
         this.page = new NewSession(this.app).render();
@@ -227,6 +240,7 @@ define([
 
     ticks: function () {
       this.start();
+      this.folder.removeClass('landing').removeClass('initial');
       this.render('/service/ticks.profile', _.bind(function (err) {
         if (err) return;
         this.page = new Ticks(this.app).render();
@@ -241,6 +255,7 @@ define([
 
     crags: function (country) {
       this.start();
+      this.folder.removeClass('landing').removeClass('initial');
       var query = {};
       if (country) query.country = country;
       var q = util.getParameterByName('q');
@@ -255,6 +270,7 @@ define([
 
     films: function () {
       this.start();
+      this.folder.removeClass('landing').removeClass('initial');
       this.render('/service/films.profile', _.bind(function (err) {
         if (err) return;
         this.page = new Films(this.app).render();
@@ -265,6 +281,7 @@ define([
 
     about: function () {
       this.start();
+      this.folder.removeClass('landing').removeClass('initial');
       this.render('/service/static.profile', _.bind(function (err) {
         if (err) return;
         this.page = new About(this.app).render();
@@ -275,6 +292,7 @@ define([
 
     privacy: function () {
       this.start();
+      this.folder.removeClass('landing').removeClass('initial');
       this.render('/service/static.profile', _.bind(function (err) {
         if (err) return;
         this.page = new Privacy(this.app).render();
@@ -285,6 +303,7 @@ define([
 
     settings: function () {
       this.start();
+      this.folder.removeClass('landing').removeClass('initial');
       this.render('/service/settings.profile', {}, true, _.bind(function (err) {
         if (err) return;
         this.page = new Settings(this.app).render();
@@ -295,6 +314,7 @@ define([
 
     reset: function () {
       this.start();
+      this.folder.removeClass('landing').removeClass('initial');
       this.render('/service/static.profile', _.bind(function (err) {
         if (err) return;
         this.page = new Reset(this.app).render();
@@ -305,6 +325,7 @@ define([
 
     ascent: function (country, crag, type, ascent) {
       this.start();
+      this.folder.removeClass('landing').removeClass('initial');
       this.renderTabs();
       var key = [country, crag, type, ascent].join('/');
       var query = {actions: this.getEventActions()};
@@ -318,6 +339,7 @@ define([
 
     crag: function (country, crag) {
       this.start();
+      this.folder.removeClass('landing').removeClass('initial');
       this.renderTabs();
       var key = [country, crag].join('/');
       var query = {actions: this.getEventActions()};
@@ -331,6 +353,7 @@ define([
 
     session: function (key) {
       this.start();
+      this.folder.removeClass('landing').removeClass('initial');
       this.renderTabs();
       this.render('/service/session.profile/' + key, _.bind(function (err) {
         if (err) return;
@@ -342,6 +365,7 @@ define([
 
     post: function (username, key) {
       this.start();
+      this.folder.removeClass('landing').removeClass('initial');
       var key = [username, key].join('/');
       this.renderTabs();
       this.render('/service/post.profile/' + key, _.bind(function (err) {
@@ -354,6 +378,7 @@ define([
 
     profile: function (username) {
       this.start();
+      this.folder.removeClass('landing').removeClass('initial');
       this.renderTabs();
       var query = {actions: this.getEventActions()};
       this.render('/service/profile.profile/' + username, query,
@@ -366,6 +391,7 @@ define([
     },
 
     default: function () {
+      this.folder.removeClass('landing').removeClass('initial');
       this.render(_.bind(function (err) {
         if (err) return;
         this.page = new Error(this.app).render({

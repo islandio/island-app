@@ -438,6 +438,10 @@ time.created.static
   width 274px
   border-left 1px solid #f2f2f2
 
+.center
+  width 100%
+  padding 30px
+
 span.empty-feed
   display inline-block
   width 100%
@@ -952,6 +956,13 @@ button.button.new-session-button i
   width 1086px
   background none
 
+.folder.initial
+  visibility hidden
+
+.folder.landing
+  width 100%
+  margin-top 0
+
 .tabs
   position relative
   z-index 1
@@ -959,6 +970,9 @@ button.button.new-session-button i
   border-bottom none
   border-radius 2px 2px 0 0
   height 40px
+
+.folder.landing .tabs
+  display none
 
 .tabs ul,
 .folder-title
@@ -1091,6 +1105,29 @@ li.subtab.disabled a
   color #666
   cursor default
 
+.banner
+  display none
+  overflow hidden
+  width 100%
+  height 400px
+  margin 0 auto 40px
+
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration .2s
+  -moz-animation-duration .2s
+  -o-animation-duration .2s
+  animation-duration .2s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
+
+.folder.landing .banner
+  display block
+
 .content
   position relative
   margin 0 auto 30px
@@ -1100,6 +1137,10 @@ li.subtab.disabled a
   background #fff
   border-radius 2px
   border 1px solid #e6e6e6
+
+.folder.landing .content
+  background none
+  border none
 
 .footer
   width 100%
@@ -2067,6 +2108,7 @@ button.activity-button i
   position absolute
   bottom -21px
   width 100%
+  z-index 2  
 
 .map-control div
   position relative
