@@ -1,7 +1,7 @@
 {
   "author": "Sander Pick <sanderpick@gmail.com> (git://github.com/sanderpick)",
   "name": "island",
-  "version": "2.0.122",
+  "version": "2.0.123",
   "protocol": "http",
   "domain": "island-env.elasticbeanstalk.com",
   "builds": {
