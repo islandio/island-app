@@ -72,8 +72,6 @@ define([
         // Shell subscriptions.
         this.subscriptions.push(mps.subscribe('notification/change',
             _.bind(this.checkBeacon, this)));
-        this.subscriptions.push(mps.subscribe('member/delete',
-            _.bind(this.logout, this)));
       }
 
       // Start block messages.
@@ -122,24 +120,6 @@ define([
       else
         this.$('.count').text('').hide();
     },
-
-    logout: function () {
-      _.each(this.subscriptions, function (s) {
-        mps.unsubscribe(s);
-      });
-
-      // Swap member header content.
-      this.$('div.member-box').remove();
-      $('<a class="button signin-button header-action"><span>Sign in</span> <i class="icon-login"></i></a>')
-          .appendTo(this.$('.header-inner'));
-      
-      // Close the panel.
-      this.wrap.removeClass('panel-open');
-      this.panel.removeClass('open');
-      _.delay(function () {
-        $(window).resize();
-      }, 1000);
-    },    
 
     signin: function (e) {
       e.preventDefault();

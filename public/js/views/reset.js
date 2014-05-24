@@ -11,51 +11,44 @@ define([
   'util',
   'text!../../templates/reset.html'
 ], function ($, _, Backbone, mps, rest, util, template) {
-
   return Backbone.View.extend({
-    
-    // The DOM target element for this page:
+
     el: '.main',
 
-    // Module entry point:
     initialize: function (app) {
-      
-      // Save app reference.
       this.app = app;
-      
-      // Shell events:
       this.on('rendered', this.setup, this);
     },
 
-    // Draw our template from the profile JSON.
     render: function () {
+      this.app.title('Island | Password Reset');
 
-      // Set page title
-      this.app.title('Password Reset');
-
-      // UnderscoreJS rendering.
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
 
-      // Done rendering ... trigger setup.
       this.trigger('rendered');
-
       return this;
     },
 
-    // Bind mouse events.
     events: {
-      'click .reset-button': 'reset',
+      'click .reset-submit': 'reset',
       'click .forgot-password': 'forgot',
     },
 
-    // Misc. setup.
     setup: function () {
 
       // Save refs.
       this.oldPassword = this.$('input[name="oldpassword"]');
       this.newPassword = this.$('input[name="newpassword"]');
       this.cnewPassword = this.$('input[name="cnewpassword"]');
+
+      // Handle error display.
+      this.$('input[type="text"], input[type="password"]').blur(function (e) {
+        var el = $(e.target);
+        if (el.hasClass('input-error')) {
+          el.removeClass('input-error');
+        }
+      });
 
       // Remove the old password field if token exists.
       this.token = util.getParameterByName('t');
@@ -70,7 +63,6 @@ define([
       return this;
     },
 
-    // Focus on the first empty input field.
     focus: function (e) {
       _.find(this.$('input[type!="submit"]'), function (i) {
         var empty = $(i).val().trim() === '';
@@ -79,14 +71,11 @@ define([
       });
     },
 
-    // Similar to Backbone's remove method, but empties
-    // instead of removes the view's DOM element.
     empty: function () {
       this.$el.empty();
       return this;
     },
 
-    // Kill this view.
     destroy: function () {
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
@@ -96,7 +85,6 @@ define([
       this.empty();
     },
 
-    // Do the reset.
     reset: function (e) {
       e.preventDefault();
 
@@ -104,7 +92,6 @@ define([
       var payload = this.$('form').serializeObject();
 
       // Client-side form check.
-      var errorMsg = this.$('.signin-error').hide();
       var fields = ['newpassword', 'cnewpassword'];
       if (!this.token) fields.push('oldpassword');
       var check = util.ensure(payload, fields);
@@ -120,22 +107,23 @@ define([
       if (!check.valid) {
 
         // Set the error display.
-        var msg = 'All fields are required.';
-        errorMsg.text(msg).show();
+        mps.publish('flash/new', [{err: {message: 'All fields are required.'},
+            level: 'error', sticky: true}, true]);
 
         return false;
       }
 
       // Add token.
-      if (this.token) payload.token = this.token;
+      if (this.token) {
+        payload.token = this.token;
+      }
 
       // Now do the update.
-      rest.post('/api/members/reset', payload,
-          _.bind(function (err, data) {
+      rest.post('/api/members/reset', payload, _.bind(function (err, data) {
         if (err) {
 
           // Set the error display.
-          errorMsg.text(err.message + '.').show();
+          mps.publish('flash/new', [{err: err, level: 'error', sticky: true}, true]);
 
           // Clear fields.
           this.$('input[type="password"]').val('').addClass('input-error');
@@ -151,12 +139,10 @@ define([
         // Inform user.
         mps.publish('flash/new', [{
           message: 'Your password has been reset.',
-          level: 'alert'
+          level: 'alert',
         }, true]);
 
-        // Go home.
         this.app.router.navigate('/', true);
-
       }, this));
 
       return false;
@@ -164,9 +150,7 @@ define([
 
     forgot: function (e) {
       e.preventDefault();
-
-      // Render the modal view.
-      mps.publish('member/forgot/open');
+      mps.publish('modal/forgot/open');
     },
 
   });

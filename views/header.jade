@@ -1,8 +1,3 @@
-.saved-ghost
-  form(enctype="multipart/form-data", method="POST")
-    input(name="username", type="text")
-    input(name="password", type="password")
-    input(value="_", type="submit")
 .block-messages
   ul
 .header-inner
@@ -37,7 +32,7 @@
         i.icon-pencil 
         span Log session
   - else
-    a.button.signin-button.header-action(href="javascript:;")
+    a.button.signin-button.header-action.navigate(href="/signin")
       span Sign in 
       i.icon-login
       

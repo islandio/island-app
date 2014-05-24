@@ -32,8 +32,12 @@ define([
               stack: err.error.stack,
               code: res.status
             };
-            if (data) err.data = data;
-          } catch (e) { err = res.status + ' - "' + res.statusText + '"'; }
+            if (data) {
+              err.data = data;
+            }
+          } catch (e) {
+            err = res.status + ' - "' + res.statusText + '"';
+          }
           cb(err);
         },
         contentType: 'application/json', 

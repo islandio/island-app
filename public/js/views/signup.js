@@ -1,5 +1,5 @@
 /*
- * Signin view
+ * Signup view
  */
 
 define([
@@ -10,7 +10,7 @@ define([
   'rest',
   'util',
   'Spin',
-  'text!../../templates/signin.html'
+  'text!../../templates/signup.html'
 ], function ($, _, Backbone, mps, rest, util, Spin, template) {
 
   return Backbone.View.extend({
@@ -23,7 +23,7 @@ define([
     },
 
     render: function () {
-      this.app.title('Island | Log In');
+      this.app.title('Island | Sign Up');
 
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
@@ -54,15 +54,14 @@ define([
     },
 
     events: {
-      'click .forgot-password': 'forgot',
       'click .navigate': 'navigate',
-      'click .signin-submit': 'signin'
+      'click .signup-submit': 'signup'
     },
 
     setup: function () {
 
-      // Save refs
-      this.signinButton = this.$('.signin-submit');
+      // Save refs.
+      this.signupButton = this.$('.signup-submit');
 
       // Handle error display.
       this.$('input[type="text"], input[type="password"]').blur(function (e) {
@@ -72,12 +71,22 @@ define([
         }
       });
 
+      // Handle username.
+      this.$('.signup-username').bind('keydown', function (e) {
+        if (e.which === 32) {
+          return false;
+        }
+      }).bind('keyup', function (e) {
+        $(this).val(_.str.slugify($(this).val()).substr(0, 30));
+      });
+
       // Focus cursor initial.
       _.delay(_.bind(function () { this.focus(); }, this), 1);
 
       return this;
     },
 
+    // Focus on the first empty input field.
     focus: function (e) {
       _.find(this.$('input[type!="submit"]'), function (i) {
         var empty = $(i).val().trim() === '';
@@ -102,8 +111,7 @@ define([
       this.empty();
     },
 
-    signin: function (e) {
-      e.preventDefault();
+    signup: function () {
 
       // Sanitize.
       this.$('input[type!="submit"]:visible').each(function (i) {
@@ -112,26 +120,61 @@ define([
 
       // Grab the form data.
       var payload = {
-        username: this.$('.signin-username').val().trim(),
-        password: this.$('.signin-password').val().trim()
+        newusername: this.$('.signup-username').val().trim(),
+        newemail: this.$('.signup-email').val().trim(),
+        newpassword: this.$('.signup-password').val().trim()
       };
 
       // Client-side form check.
       var spin = this.$('.button-spin').data().spin;
-      var check = util.ensure(payload, ['username', 'password']);
-
+      var check = util.ensure(payload, ['newusername', 'newemail',
+          'newpassword']);
+      
       // Add alerts.
       _.each(check.missing, _.bind(function (m, i) {
         var field = this.$('input[name="' + m + '"]');
         field.val('').addClass('input-error');
-        if (i === 0) field.focus();
+        if (i === 0) {
+          field.focus();
+        }
       }, this));
 
       // Show messages.
       if (!check.valid) {
 
         // Set the error display.
-        mps.publish('flash/new', [{err: {message: 'All fields are required.'},
+        var msg = 'All fields are required.';
+        mps.publish('flash/new', [{err: {message: msg},
+            level: 'error', sticky: true}, true]);
+
+        return false;
+      }
+      if (!util.isEmail(payload.newemail)) {
+
+        // Set the error display.
+        this.$('.signup-email').val('').addClass('input-error').focus();
+        var msg = 'Use a valid email address.';
+        mps.publish('flash/new', [{err: {message: msg},
+            level: 'error', sticky: true}, true]);
+
+        return false;
+      }
+      if (payload.newusername.length < 4) {
+
+        // Set the error display.
+        this.$('.signup-username').val('').addClass('input-error').focus();
+        var msg = 'Username must be > 3 chars.';
+        mps.publish('flash/new', [{err: {message: msg},
+            level: 'error', sticky: true}, true]);
+
+        return false;
+      }
+      if (payload.newpassword.length < 7) {
+
+        // Set the error display.
+        $('.signup-password').val('').addClass('input-error').focus();
+        var msg = 'Password must be > 6 chars.';
+        mps.publish('flash/new', [{err: {message: msg},
             level: 'error', sticky: true}, true]);
 
         return false;
@@ -139,22 +182,30 @@ define([
 
       // All good, show spinner.
       spin.start();
-      this.signinButton.addClass('loading');
+      this.signupButton.addClass('loading');
 
       // Do the API request.
-      rest.post('/api/members/auth', payload, _.bind(function (err, data) {
+      rest.post('/api/members', payload, _.bind(function (err, data) {
         if (err) {
 
           // Stop spinner.
           spin.stop();
-          this.signinButton.removeClass('loading');
+          this.signupButton.removeClass('loading');
+
+          // Set the error display.
           mps.publish('flash/new', [{err: err, level: 'error', sticky: true}, true]);
 
           // Clear fields.
-          this.$('input[type="text"], input[type="password"]').val('')
-              .addClass('input-error');
-          this.focus();
-
+          if (err.message === 'Username exists') {
+            this.$('.signup-username').val('').addClass('input-error').focus();
+          } else if (err.message === 'Email address exists') {
+            this.$('.signup-email').val('').addClass('input-error').focus();
+          } else {
+            this.$('input[type="text"], input[type="password"]').val('')
+                .addClass('input-error');
+            this.focus();
+          }
+          
           return;
         }
 
@@ -169,11 +220,6 @@ define([
       var frag = Backbone.history.fragment;
       Backbone.history.fragment = null;
       window.location.href = '/';
-    },
-
-    forgot: function (e) {
-      e.preventDefault();
-      mps.publish('modal/forgot/open');
     },
 
     navigate: function (e) {

@@ -246,8 +246,9 @@ define([
     setup: function () {
 
       // Set map view.
-      if (!this.parentView)
+      if (!this.parentView) {
         mps.publish('map/fly', [this.model.get('location')]);
+      }
 
       // Render comments.
       this.comments = new Comments(this.app, {
@@ -267,8 +268,9 @@ define([
       this.comments.destroy();
       this.undelegateEvents();
       this.stopListening();
-      if (this.timer)
+      if (this.timer) {
         clearInterval(this.timer);
+      }
       this.remove();
     },
 
@@ -277,8 +279,9 @@ define([
 
       // Route to wherever.
       var path = $(e.target).closest('a').attr('href');
-      if (path)
+      if (path) {
         this.app.router.navigate(path, {trigger: true});
+      }
     },
 
     fancybox: function () {
@@ -293,7 +296,7 @@ define([
       };
 
       // Bind anchor clicks.
-      if (this.video)
+      if (this.video) {
         this.$('.fancybox').click(_.bind(function (e) {
           e.stopPropagation();
           e.preventDefault();
@@ -389,8 +392,9 @@ define([
 
           return false;
         }, this));
-      else
+      } else {
         this.$('.fancybox').fancybox(opts);
+      }
     },
 
     delete: function (e) {
@@ -415,17 +419,19 @@ define([
         // Delete the post.
         rest.delete('/api/posts/' + this.model.get('key'),
             {}, _.bind(function (err, data) {
-          if (err) return console.log(err);
+          if (err) {
+            return console.log(err);
+          }
 
-          // close the modal.
+          // Close the modal.
           $.fancybox.close();
 
           // Go home if single view.
-          if (!this.parentView)
+          if (!this.parentView) {
             this.app.router.navigate('/', {trigger: true, replace: true});
+          }
 
         }, this));
-
       }, this));
 
       return false;

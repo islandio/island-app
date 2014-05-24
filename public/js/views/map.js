@@ -75,16 +75,6 @@ define([
         if (!this.$el.hasClass('closed'))
           this.spin.start();
         this.map();
-        // if (Modernizr.geolocation)
-        //   navigator.geolocation.getCurrentPosition(_.bind(function (pos) {
-        //     if (pos && !pos.code && !this.fliedTo)
-        //       this.flyTo({
-        //         latitude: pos.coords.latitude,
-        //         longitude: pos.coords.longitude
-        //       });
-        //   }, this),
-        //       function(){}, {maximumAge:60000, timeout:5000, 
-        //         enableHighAccuracy:true});
       }
 
       // Trigger setup.
@@ -108,11 +98,16 @@ define([
       this.hider = this.$('.hide-show');
       this.lesser = this.$('.less-more');
 
-      // Shell event.
       this.delegateEvents();
 
+      // Show carto buttons / loader.
+      _.delay(_.bind(function () {
+        this.$('.cartodb-zoom, .cartodb-tiles-loader')
+            .css({visibility: 'visible'});
+      }, this), 1000);
+
       // Do the first update.
-      this.update();
+      // this.update();
     },
 
     update: function () {

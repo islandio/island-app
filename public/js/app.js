@@ -20,9 +20,6 @@ define([
     // Location of static assets
     this.cfuri = 'https://d10fiv677oa856.cloudfront.net';
 
-    // App model subscriptions.
-    mps.subscribe('member/delete', _.bind(this.logout, this));
-
     // For local dev.
     if (window.__s === '') {
       window._rpc = rpc;
@@ -53,14 +50,6 @@ define([
 
     // Set the document title.
     document.title = str;
-  }
-
-  App.prototype.logout = function () {
-
-    // Update app profile.
-    delete this.profile.member;
-    delete this.profile.notes;
-    delete this.profile.transloadit;
   }
 
   return {

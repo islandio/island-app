@@ -31,8 +31,9 @@ define([
 
     render: function (single) {
       Row.prototype.render.call(this, single);
-      if (!this.model.get('sticky'))
+      if (!this.model.get('sticky')) {
         _.delay(_.bind(this.delete, this), 8000);
+      }
     },
 
     delete: function (e) {

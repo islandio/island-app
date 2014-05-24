@@ -15,6 +15,7 @@ define([
   'views/tabs',
   'views/footer',
   'views/signin',
+  'views/signup',
   'views/forgot',
   'views/lists/notifications',
   'views/map',
@@ -35,7 +36,7 @@ define([
   'views/ticks',
   'views/session.new'
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
-    Signin, Forgot, Notifications, Map, Profile, Post, Session, Crag, Ascent,
+    Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Crag, Ascent,
     Settings, Reset, Films, About, Privacy, Crags, Dashboard, Splash, Sessions,
     Ticks, NewSession) {
 
@@ -48,11 +49,12 @@ define([
       this.app = app;
       
       // Clear the shit that comes back from Zuckbook.
-      if (window.location.hash !== '')
+      if (window.location.hash !== '') {
         try {
           window.history.replaceState('', '', window.location.pathname
               + window.location.search);
         } catch (err) {}
+      }
 
       // Page routes.
       this.route(':un', 'profile', this.profile);
@@ -70,6 +72,8 @@ define([
       this.route('ticks', 'ticks', this.ticks);
       this.route('sessions/new', 'newSession', this.newSession);
       this.route('sessions', 'sessions', this.sessions);
+      this.route('signin', 'signin', this.signin);
+      this.route('signup', 'signup', this.signup);
       this.route('', 'dashboard', this.dashboard);
       this.route('_blank', 'blank', function(){});
 
@@ -81,18 +85,8 @@ define([
         this.navigate(path, {trigger: true});
       }, this));
 
-      // Kill the notifications view.
-      mps.subscribe('member/delete', _.bind(function () {
-        this.notifications.destroy();
-      }, this));
-
-      // Show the signin modal.
-      mps.subscribe('member/signin/open', _.bind(function () {
-        this.modal = new Signin(this.app).render();
-      }, this));
-
       // Show the forgot modal.
-      mps.subscribe('member/forgot/open', _.bind(function () {
+      mps.subscribe('modal/forgot/open', _.bind(function () {
         this.modal = new Forgot(this.app).render();
       }, this));
 
@@ -111,22 +105,28 @@ define([
       function _render(err, login) {
 
         // Render page elements.
-        if (!this.header)
+        if (!this.header) {
           this.header = new Header(this.app).render();
-        else if (login) this.header.render(true);
-        if (!this.map)
+        } else if (login) {
+          this.header.render(true);
+        }
+        if (!this.map) {
           this.map = new Map(this.app).render();
-        else this.map.update();
-        if (!this.notifications && this.app.profile && this.app.profile.member)
+        } else {
+          this.map.update();
+        }
+        if (!this.notifications && this.app.profile && this.app.profile.member) {
           this.notifications = new Notifications(this.app, {reverse: true});
+        }
 
         // Callback to route.
         cb(err);
       }
 
       // Kill the page view if it exists.
-      if (this.page)
+      if (this.page) {
         this.page.destroy();
+      }
 
       if (typeof service === 'function') {
         cb = service;
@@ -149,12 +149,12 @@ define([
       // Get a profile, if needed.
       rest.get(service, query, _.bind(function (err, pro) {
         if (err) {
-          // _render.call(this, err);
           this.page = new Error(this.app).render(err);
           this.stop();
         }
-        if (secure && !pro.member)
+        if (secure && !pro.member) {
           return this.navigate('/', true);
+        }
 
         // Set the profile.
         var login = this.app.update(pro || err);
@@ -167,8 +167,9 @@ define([
       if (this.tabs) {
         this.tabs.params = params || {};
         this.tabs.render();
-      } else
+      } else {
         this.tabs = new Tabs(this.app, params).render();
+      }
     },
 
     start: function () {
@@ -388,6 +389,28 @@ define([
         this.renderTabs({html: this.page.title});
         this.stop();
       }, this));
+    },
+
+    signin: function () {
+      this.start();
+      this.folder.removeClass('landing').removeClass('initial');
+      this.render(_.bind(function (err) {
+        if (err) return;
+        this.page = new Signin(this.app).render();
+        this.stop();
+      }, this));
+      this.renderTabs({title: 'Log In', subtitle: 'Welcome back'});
+    },
+
+    signup: function () {
+      this.start();
+      this.folder.removeClass('landing').removeClass('initial');
+      this.render(_.bind(function (err) {
+        if (err) return;
+        this.page = new Signup(this.app).render();
+        this.stop();
+      }, this));
+      this.renderTabs({title: 'Sign Up', subtitle: 'It\'s free'});
     },
 
     default: function () {

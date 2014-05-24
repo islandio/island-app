@@ -744,8 +744,8 @@ a.button.signin-strategy-btn-disabled {
   padding: 0 0;
   display: block;
   background: rgba(51,51,51,0.65);
-  color: #fcfcfc !important;
-  border: 1px solid #1a1a1a !important;
+  color: #fcfcfc;
+  border: 1px solid #1a1a1a;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
@@ -778,7 +778,8 @@ a.button.signin-strategy-btn-disabled {
 }
 a.button.signin-strategy-btn:hover {
   background: rgba(51,51,51,0.75);
-  color: #fff !important;
+  border: 1px solid #1a1a1a;
+  color: #fff;
 }
 a.button.facebook-btn:hover {
   background: rgba(59,89,152,0.75);
@@ -816,7 +817,10 @@ button.button.danger:active {
   background: rgba(208,76,56,0.8);
 }
 a.button.signin-strategy-btn.from-login {
-  width: 266px;
+  width: 100%;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
 }
 a.button.title-button,
 a.button.title-buy-button {
@@ -873,7 +877,7 @@ a.button.buy-button:hover:not(.disabled) {
 a.button.new-session-button,
 button.button.new-session-button,
 a.button.start-button,
-button.button.start-button,
+a.button.start-button,
 position relative {
   display: block;
   color: #396400;
@@ -883,8 +887,8 @@ position relative {
   padding: 5px 0;
   background: #b1dc36;
 }
-button.button.start-button {
-  width: 160px;
+a.button.start-button {
+  width: 300px;
   margin: 90px auto 0;
 }
 a.button.new-session-button.spinning,
@@ -897,7 +901,7 @@ button.button.new-session-button {
 a.button.new-session-button:hover:not(.disabled),
 button.button.new-session-button:hover:not(.disabled),
 a.button.start-button:hover:not(.disabled),
-button.button.start-button:hover:not(.disabled) {
+a.button.start-button:hover:not(.disabled) {
   color: #2f5a00;
   border: 1px solid transparent;
   background: #a7d22c;
@@ -905,7 +909,7 @@ button.button.start-button:hover:not(.disabled) {
 a.button.new-session-button:active:not(.disabled),
 button.button.new-session-button:active:not(.disabled),
 a.button.start-button:active:not(.disabled),
-button.button.start-button:active:not(.disabled) {
+a.button.start-button:active:not(.disabled) {
   background: #a7d22c;
 }
 a.button.new-session-button.disabled,
@@ -917,6 +921,11 @@ button.button.new-session-button i {
   position: absolute;
   left: 30px;
   color: #7faa04;
+}
+a.button.loading,
+div[role=button].loading,
+input[type=submit].loading {
+  color: transparent !important;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––structure*/
 .main {
@@ -1103,23 +1112,27 @@ li.subtab.disabled a {
   width: 100%;
   height: 480px;
   margin: 40px auto 40px;
-  -webkit-animation-name: fadeIn;
-  -moz-animation-name: fadeIn;
-  -o-animation-name: fadeIn;
-  animation-name: fadeIn;
-  -webkit-animation-duration: 0.2s;
-  -moz-animation-duration: 0.2s;
-  -o-animation-duration: 0.2s;
-  animation-duration: 0.2s;
-  -webkit-animation-fill-mode: both;
-  -moz-animation-fill-mode: both;
-  -o-animation-fill-mode: both;
-  animation-fill-mode: both;
+}
+.banner-roll {
+  overflow: hidden;
+  width: 100%;
+  height: 480px;
+  opacity: 0;
+  -webkit-transition: opacity 1s;
+  -moz-transition: opacity 1s;
+  -ms-transition: opacity 1s;
+  -o-transition: opacity 1s;
+  transition: opacity 1s;
+}
+.banner-roll-object {
+  width: 100%;
+  height: 480px;
 }
 .banner-text {
-  width: 100%;
   position: absolute;
   top: 144px;
+  z-index: 101;
+  width: 100%;
   text-align: center;
   color: #fff;
 }
@@ -1559,9 +1572,13 @@ span.count {
 }
 .block-error {
   background: #e6e6e6;
+  border: 1px solid #d0d0d0;
+  border-top: none;
 }
 .block-alert {
   background: #eff8d7;
+  border: 1px solid rgba(177,220,54,0.2);
+  border-top: none;
 }
 .block-error-txt,
 .block-alert-txt {
@@ -1786,151 +1803,19 @@ a.privacy-link:hover {
   text-decoration: underline;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––signin*/
-.saved-ghost {
-  display: none;
-}
-.form-iframe {
-  display: none;
-}
-.roll {
-  overflow: hidden;
+.signin-submit,
+.signup-submit,
+.reset-submit {
   width: 100%;
-  height: 480px;
-}
-.signin {
-  width: 700px;
-  height: 482px;
-  position: relative;
-  overflow: hidden;
-}
-.signin-outer {
-  position: relative;
-  width: 100%;
-  height: 482px;
-  z-index: 100001;
-}
-.signin-inner {
-  width: 640px;
-  height: 412px;
-  margin: 0 auto;
-  background: rgba(242,242,242,0.4);
-  padding: 20px 30px 50px;
-}
-.signin-logo {
-  width: 100%;
-  margin-bottom: 20px;
-}
-.signin-logo img {
-  margin: 0 auto;
-  display: block;
-}
-.signin-strategies {
-  margin: 0 auto;
-  width: 568px;
-}
-.signin-strategies table {
-  margin: 0 auto;
-}
-.signin-strategies td {
-  padding: 0;
-  text-align: center;
-}
-.signin-forms {
-  margin: 0 auto;
-  width: 568px;
-}
-.signin-forms h1.title-static {
-  font-size: 14px;
-  margin-bottom: 5px;
-}
-.signin-forms form {
-  background: rgba(255,255,255,0.6);
-  -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
-  border-radius: 2px;
-  padding: 10px;
-  -webkit-transition: background 0.2s;
-  -webkit-transition-timing-function: background 0.2s;
-  -moz-transition: background 0.2s;
-  -moz-transition-timing-function: background 0.2s;
-  transition: background 0.2s;
-  transition-timing-function: background 0.2s;
-}
-.signin-forms form.highlight {
-  background: #fff;
-}
-.signin-forms td {
-  padding: 0 0 5px 0;
-}
-.signin-forms td input[type=text],
-.signin-forms td input[type=password] {
-  width: 230px;
-  padding: 8px;
-  margin-bottom: 2px;
-  font-size: 12px;
-}
-.signin-forms td input[type=text].saved,
-.signin-forms td input[type=password].saved {
-  background: #faffbd !important;
-}
-.signin-forms td input[type=submit] {
-  width: 248px;
-  margin-top: 8px;
-}
-span.signin-error {
-  color: #d04c38;
-  font-size: 10px;
-  vertical-align: 2px;
-  -webkit-animation-name: fadeIn;
-  -moz-animation-name: fadeIn;
-  -o-animation-name: fadeIn;
-  animation-name: fadeIn;
-  -webkit-animation-duration: 0.2s;
-  -moz-animation-duration: 0.2s;
-  -o-animation-duration: 0.2s;
-  animation-duration: 0.2s;
-  -webkit-animation-fill-mode: both;
-  -moz-animation-fill-mode: both;
-  -o-animation-fill-mode: both;
-  animation-fill-mode: both;
-}
-.password-reset span.signin-error {
-  vertical-align: initial;
-}
-.password-reset input[type=submit] {
-  width: 100%;
-}
-.signin-or {
-  font-style: italic;
-  line-height: 40px;
-  font-weight: bold;
-  font-size: 12px;
-}
-.signin-link {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  background: rgba(255,255,255,0.6);
-  color: #4d4d4d;
-  font-weight: bold;
-  font-size: 10px;
-}
-.signin-form {
-  margin: 0 0 0 300px;
-}
-.signup-form {
-  float: left;
-}
-.signin-spin {
-  position: absolute;
-  top: 50%;
-  left: 50%;
 }
 .forgot-password {
-  margin-top: 10px;
-  display: block;
+  float: right;
   font-size: 10px;
-  text-align: center;
+}
+.signin-strategy {
+  position: relative;
+  margin-bottom: -8px;
+  margin-top: 23px;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––new session*/
 .new-session {
@@ -2099,7 +1984,7 @@ button.activity-button i {
   position: relative;
   width: 100%;
   height: 250px;
-  background: #fff;
+  background: #f2f2f2;
   -webkit-box-shadow: 0 0 3px #b3b3b3;
   -moz-box-shadow: 0 0 3px #b3b3b3;
   box-shadow: 0 0 3px #b3b3b3;
@@ -2285,7 +2170,7 @@ a.plot-button.active {
   font-style: italic;
   color: #666;
 }
-.cartodb-zoom {
+div.cartodb-zoom {
   -moz-user-select: none;
   -webkit-user-select: none;
   user-select: none;
@@ -2301,6 +2186,14 @@ a.plot-button.active {
   -moz-animation-fill-mode: both;
   -o-animation-fill-mode: both;
   animation-fill-mode: both;
+}
+div.cartodb-zoom,
+div.cartodb-tiles-loader {
+  visibility: hidden;
+  position: absolute;
+}
+div.cartodb-tiles-loader {
+  left: 50px;
 }
 .leaflet-div-icon {
   border: 2px solid #f2f2f2;
@@ -2403,8 +2296,8 @@ span.list-row-title {
 }
 .button-spin {
   position: absolute;
-  top: 17px;
-  left: 63px;
+  top: 16px;
+  left: 50%;
 }
 .new-session-button .button-spin {
   top: 20px;
@@ -2540,6 +2433,22 @@ button.button.modal-button.full {
 }
 .forgot .modal-overlay > p {
   margin-top: 19%;
+}
+.modal-error {
+  color: #d04c38;
+  font-size: 10px;
+  -webkit-animation-name: fadeIn;
+  -moz-animation-name: fadeIn;
+  -o-animation-name: fadeIn;
+  animation-name: fadeIn;
+  -webkit-animation-duration: 0.2s;
+  -moz-animation-duration: 0.2s;
+  -o-animation-duration: 0.2s;
+  animation-duration: 0.2s;
+  -webkit-animation-fill-mode: both;
+  -moz-animation-fill-mode: both;
+  -o-animation-fill-mode: both;
+  animation-fill-mode: both;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––profiles*/
 .profile {

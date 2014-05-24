@@ -39,6 +39,9 @@ define([
       swfobject.embedSWF(
           __s + '/swf/roll.swf', 'roll', '100%', '100%', '10',
           false, {}, {menu: 'false', wmode: 'opaque'});
+      _.delay(_.bind(function () {
+        this.$('.banner-roll').css({opacity: 1});
+      }, this), 300);
 
       return this;
     },

@@ -393,8 +393,7 @@ define([
 
       // Render the confirm modal.
       $.fancybox(_.template(confirm)({
-        message: 'Do you want to permanently delete your profile?',
-        working: 'Working...'
+        message: 'Delete your profile forever?',
       }), {
         openEffect: 'fade',
         closeEffect: 'fade',
@@ -406,37 +405,20 @@ define([
       var overlay = $('.modal-overlay');
 
       // Setup actions.
-      $('#confirm_cancel').click(function (e) {
+      $('.modal-cancel').click(function (e) {
         $.fancybox.close();
       });
-      $('#confirm_delete').click(_.bind(function (e) {
-
-        // Show the in-modal overlay.
-        overlay.show();
+      $('.modal-confirm').click(_.bind(function (e) {
 
         // Delete the member.
         rest.delete('/api/members/' + this.app.profile.member.username,
             {}, _.bind(function (err, data) {
           if (err) {
-
-            // Oops.
-            console.log('TODO: Retry, notify user, etc.');
-            return;
+            return console.log(err);
           }
 
-          // Change overlay message.
-          $('p', overlay).text('Hasta la pasta! - Love, Island');
-
-          // Logout client-side.
-          mps.publish('member/delete');
-
           // Route to home.
-          this.app.router.navigate('/', {trigger: true});
-
-          // Wait a little then close the modal.
-          _.delay(_.bind(function () {
-            $.fancybox.close();
-          }, this), 2000);
+          window.location.href = '/';
 
         }, this));
       }, this));
