@@ -1,0 +1,10 @@
+<%
+  
+  var subscribee = this.model.get('subscribee');
+  var gravatar = 'https://www.gravatar.com/avatar/'
+      + subscribee.gravatar + '?s=32&d='
+      + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
+%>
+
+<a href="/<%= subscribee.username %>" class="image-anchor navigate">
+  <img src="<%= gravatar %>" width="32" height="32" /></a>

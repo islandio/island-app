@@ -1817,6 +1817,51 @@ a.privacy-link:hover {
   margin-bottom: -8px;
   margin-top: 23px;
 }
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––sidebar*/
+.sidebar-items > div {
+  margin: 0 -30px 30px;
+  padding: 0 30px 30px;
+  border-bottom: 1px solid #f2f2f2;
+}
+.sidebar-items > div.sidebar-watchees {
+  border-bottom: none;
+}
+.sidebar-watchees > div {
+  margin-bottom: 30px;
+}
+.sidebar-watchees > div:last-child {
+  margin-bottom: 0;
+}
+.sidebar-heading,
+.sidebar-heading-small {
+  display: block;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-size: 16px;
+  padding-bottom: 10px;
+  color: #333;
+}
+.sidebar-heading-small {
+  font-size: 14px;
+  margin-top: 10px;
+}
+.sidebar-heading-cnt {
+  color: #808080;
+  font-size: 0.8em;
+}
+p.sidebar-tip {
+  display: none;
+  color: #404040;
+}
+p.sidebar-tip span {
+  font-style: italic;
+  font-weight: bold;
+}
+.sidebar-follow {
+  display: inline;
+  width: 32px;
+  height: 32px;
+  font-size: 0;
+}
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––new session*/
 .new-session {
   width: 100%;
@@ -2257,9 +2302,6 @@ ul.list:last-child {
 ul.list a li {
   list-style: none;
   padding: 8px 7px 7px;
-}
-ul.list a li:hover {
-  background: #e6e6e6 !important;
 }
 ul.list *:nth-child(2) li {
   -webkit-border-top-left-radius: 3px;

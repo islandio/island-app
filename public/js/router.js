@@ -193,7 +193,6 @@ define([
 
     dashboard: function () {
       this.start();
-      this.renderTabs();
       var query = {actions: this.getEventActions()};
       this.render('/service/dashboard.profile', query, _.bind(function (err) {
         if (err) return;

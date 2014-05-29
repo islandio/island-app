@@ -102,7 +102,8 @@ define([
 
       // Show carto buttons / loader.
       _.delay(_.bind(function () {
-        this.$('.cartodb-zoom, .cartodb-tiles-loader')
+        // this.$('.cartodb-zoom, .cartodb-tiles-loader')
+        this.$('.cartodb-zoom')
             .css({visibility: 'visible'});
       }, this), 1000);
 

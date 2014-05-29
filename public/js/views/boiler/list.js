@@ -22,8 +22,9 @@ define([
       this.parentView = options.parentView;
 
       // Default collection
-      if (!this.collection)
+      if (!this.collection) {
         this.collection = new Backbone.Collection({model: Backbone.Model});
+      }
       this.collection.options = options;
 
       // List views
@@ -38,17 +39,20 @@ define([
     render: function (options) {
       this.collection.off('reset', this.reset, this);
       options = options || {};
-      if (this.parentView && this.$el.attr('class'))
+      if (this.parentView && this.$el.attr('class')) {
         this.setElement(this.parentView.$('.' + this.$el.attr('class')));
-      if (this.template)
+      }
+      if (this.template) {
         this.$el.html(this.template(options));
+      }
       this.trigger('rendered');
       return this;
     },
 
     renderLast: function (pagination) {
-      if (this.collection.models.length === 1)
+      if (this.collection.models.length === 1) {
         this.$('.empty-feed').remove();
+      }
       if (pagination !== true && this.collection.options &&
           this.collection.options.reverse) {
         this.row(this.collection.models[0]);
@@ -66,7 +70,6 @@ define([
       return this;
     },
 
-    // Kill this view.
     destroy: function () {
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
@@ -85,10 +88,11 @@ define([
         model: model
       }, this.app);
       if (pagination !== true
-          && this.collection.options && this.collection.options.reverse)
+          && this.collection.options && this.collection.options.reverse) {
         this.views.unshift(view);
-      else
+      } else {
         this.views.push(view);
+      }
       return view.toHTML();
     },
 

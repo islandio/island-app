@@ -1,0 +1,13 @@
+<span class="sidebar-heading-small">
+  <%= this.heading %> <span class="sidebar-heading-cnt">(<%= this.collection.length %>)</span>
+</span>
+<p class="sidebar-tip">
+
+</p>
+<ul class="list">
+  <li class="list-header"></li>
+  <% _.each(this.collection.models, _.bind(function (row) { %>
+    <%= this.row(row) %>
+  <% }, this)); %>
+</ul>
+

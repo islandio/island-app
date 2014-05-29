@@ -1,0 +1,18 @@
+<%
+  
+  var subscribee = this.model.get('subscribee');
+  var name;
+  if (subscribee.type) {
+    name = subscribee.name + ', ' + subscribee.crag;
+  } else {
+    name = [subscribee.name, subscribee.country].join(', ');
+  }
+  var back = this.model.collection.indexOf(this.model) % 2 === 0 ? '#f2f2f2': '#f9f9f9'; 
+%>
+
+<li style="background:<%= back %>;">
+  <span class="list-row-title"><%= name %></span>
+  <% if (subscribee.grades) { %>
+    <%= subscribee.grades.join(', ') %>
+  <% } %>
+</li>
