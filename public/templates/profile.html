@@ -10,30 +10,25 @@
   if (location) location = location + ' / ';
 
   // Check image
-  if (!data.image) {
-    data.image = {meta: {width: 680, height: 288}};
-    if (!data.gender || 'male' === data.gender)
-      data.image.url = __s + '/img/blnk-pic-m.jpg';
-    else
-      data.image.url = __s + '/img/blnk-pic-f.jpg';
-  }
+  if (data.image) {
 
-  // Image meta
-  var _w = 1024;
-  var _h = 460;
-  var w, h;
-  var l = 'left:0;';
-  var t = 'top:0;';
-  w = _w
-  h = (data.image.meta.height / data.image.meta.width) * _w;
-  if (h - _h >= 0) {
-    t = 'top:' + (data.image.meta.top !== undefined 
-        ? data.image.meta.top: (-(h - _h) / 2)) + 'px;';
-  } else {
-    w = (data.image.meta.width / data.image.meta.height) * _h;
-    h = _h;
-    l = 'left:' + (data.image.meta.left !== undefined
-        ? data.image.meta.left: (-(w - _w) / 2)) + 'px;';
+    // Image meta
+    var _w = 1024;
+    var _h = 460;
+    var w, h;
+    var l = 'left:0;';
+    var t = 'top:0;';
+    w = _w
+    h = (data.image.meta.height / data.image.meta.width) * _w;
+    if (h - _h >= 0) {
+      t = 'top:' + (data.image.meta.top !== undefined 
+          ? data.image.meta.top: (-(h - _h) / 2)) + 'px;';
+    } else {
+      w = (data.image.meta.width / data.image.meta.height) * _h;
+      h = _h;
+      l = 'left:' + (data.image.meta.left !== undefined
+          ? data.image.meta.left: (-(w - _w) / 2)) + 'px;';
+    }
   }
 
   // Websites
@@ -66,12 +61,13 @@
       + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
 
 %>
-
-<div class="profile-upper">
-  <div class="profile-picture">
-    <img class="masked" src=<%= data.image.ssl_url || data.image.url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
+<% if (data.image) { %>
+  <div class="profile-upper">
+    <div class="profile-picture">
+      <img class="masked" src=<%= data.image.ssl_url || data.image.url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
+    </div>
   </div>
-</div>
+<% } %>
 <div class="leftside">
   <div class="profile-info">
     <div class="profile-description">
@@ -97,7 +93,7 @@
     <h2 class="profile-section-title">Team</h2>
     <ul class="profile-team">
       <% if (this.model.get('team').length === 0) { %>
-        <span class="empty-feed">Add your team athletes.</span>
+        <span class="empty-feed">No team athletes to show.</span>
       <% } else { %>
         <% _.each(this.model.get('team'), _.bind(function (m) {
           var g = 'https://www.gravatar.com/avatar/'
@@ -113,5 +109,15 @@
       <% } %>
     </ul>
   <% } %>
+  <div class="sidebar-items">
+    <div class="sidebar-followers"></div>
+    <div class="sidebar-followees"></div>
+    <div class="sidebar-watchees">
+      <span class="sidebar-heading">Watching</span>
+      <div class="sidebar-crags"></div>
+      <div class="sidebar-ascents-r"></div>
+      <div class="sidebar-ascents-b"></div>
+    </div>
+  </div>
 </div>
 <div class="clear"></div>

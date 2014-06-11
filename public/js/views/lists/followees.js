@@ -51,12 +51,18 @@ define([
 
     collect: function (data) {
       if (data.subscriber.id === this.app.profile.member.id) {
-        this.collection.unshift(data);
+        if (!this.app.profile.content.private) {
+          this.collection.unshift(data);
+        }
         this.updateCount();
       }
     },
 
     _remove: function (data) {
+      if (this.app.profile.content.private) {
+        this.updateCount();
+        return;
+      }
       var index = -1;
       var view = _.find(this.views, function (v) {
         ++index;

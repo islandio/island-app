@@ -62,6 +62,11 @@ define([
         mps.unsubscribe(s);
       });
       this.events.destroy();
+      this.followers.destroy();
+      this.followees.destroy();
+      this.crags.destroy();
+      this.routes.destroy();
+      this.boulders.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

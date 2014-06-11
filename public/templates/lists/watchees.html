@@ -4,10 +4,12 @@
 <p class="sidebar-tip">
 
 </p>
-<ul class="list">
-  <li class="list-header"></li>
-  <% _.each(this.collection.models, _.bind(function (row) { %>
-    <%= this.row(row) %>
-  <% }, this)); %>
-</ul>
 
+<% if (!this.app.profile.content.private) { %>
+  <ul class="list">
+    <li class="list-header"></li>
+    <% _.each(this.collection.models, _.bind(function (row) { %>
+      <%= this.row(row) %>
+    <% }, this)); %>
+  </ul>
+<% } %>

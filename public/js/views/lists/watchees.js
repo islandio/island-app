@@ -61,16 +61,22 @@ define([
     },
 
     collect: function (data) {
-      console.log(data)
-      if (data.subscriber.id === this.app.profile.member.id && data.meta.type === this.type) {
+      if (data.subscriber.id === this.app.profile.member.id
+          && data.meta.type === this.type) {
         if (data.subscribee.type === this.subtype) {
-          this.collection.unshift(data);
+          if (!this.app.profile.content.private) {
+            this.collection.unshift(data);
+          }
           this.updateCount();
         }
       }
     },
 
     _remove: function (data) {
+      if (this.app.profile.content.private) {
+        this.updateCount();
+        return;
+      }
       var index = -1;
       var view = _.find(this.views, function (v) {
         ++index;

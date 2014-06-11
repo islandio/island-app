@@ -12,8 +12,12 @@ define([
   'models/profile',
   'text!../../templates/profile.html',
   'text!../../templates/profile.title.html',
-  'views/lists/events'
-], function ($, _, Backbone, mps, rest, util, Model, template, title, Events) {
+  'views/lists/events',
+  'views/lists/followers',
+  'views/lists/followees',
+  'views/lists/watchees'
+], function ($, _, Backbone, mps, rest, util, Model, template, title, Events,
+    Followers, Followees, Watchees) {
   return Backbone.View.extend({
 
     attributes: function () {
@@ -25,12 +29,8 @@ define([
       this.model = new Model(this.app.profile.content.page);
       this.wrap = options.wrap;
       this.template = _.template(template);
-
-      // Shell events.
-      this.on('rendered', this.setup, this);
-
-      // Client-wide subscriptions.
       this.subscriptions = [];
+      this.on('rendered', this.setup, this);
 
       return this;
     },
@@ -40,8 +40,6 @@ define([
     },
 
     render: function () {
-
-      // Render content.
       this.$el.html(this.template.call(this)).appendTo(this.wrap).show();
 
       // Set page title
@@ -54,9 +52,7 @@ define([
       // Render title.
       this.title = _.template(title).call(this);
 
-      // Trigger setup.
       this.trigger('rendered');
-
       return this;
     },
 
@@ -66,7 +62,7 @@ define([
       mps.publish('map/fly', [this.model.get('location') 
           || this.model.get('hometown')]);
 
-      // Render events.
+      // Render lists.
       this.events = new Events(this.app, {
         parentView: this,
         parentId: this.model.id,
@@ -75,6 +71,14 @@ define([
         input: this.app.profile.member
             && this.app.profile.member.id === this.model.id
       });
+      this.followers = new Followers(this.app, {parentView: this, reverse: true});
+      this.followees = new Followees(this.app, {parentView: this, reverse: true});
+      this.crags = new Watchees(this.app, {parentView: this, reverse: true,
+          type: 'crag', heading: 'Crags'});
+      this.routes = new Watchees(this.app, {parentView: this, reverse: true,
+          type: 'ascent', subtype: 'r', heading: 'Routes'});
+      this.boulders = new Watchees(this.app, {parentView: this, reverse: true,
+          type: 'ascent', subtype: 'b', heading: 'Boulders'});
 
       return this;
     },
@@ -84,6 +88,11 @@ define([
         mps.unsubscribe(s);
       });
       this.events.destroy();
+      this.followers.destroy();
+      this.followees.destroy();
+      this.crags.destroy();
+      this.routes.destroy();
+      this.boulders.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.remove();

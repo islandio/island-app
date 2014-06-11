@@ -541,7 +541,7 @@ define([
         // Refresh markers.
         this.getMediaMarkers(true);
 
-        // Update page location/
+        // Update page location.
         this.app.profile.content.page.location = payload.location;
 
       }, this));
