@@ -545,13 +545,16 @@ define([
       // Update list query.
       switch (chosen.data('filter')) {
         case 'all':
-          this.latestList.actions = ['session', 'post'];
+          this.latestList.actions = this.collection.options.filters;
           break;
         case 'session':
           this.latestList.actions = ['session'];
           break;
         case 'post':
           this.latestList.actions = ['post'];
+          break;
+        case 'tick':
+          this.latestList.actions = ['tick'];
           break;
       }
 

@@ -16,46 +16,32 @@ define([
   'views/lists/choices'
 ], function ($, _, Backbone, mps, rest, util, Spin, template,
     activityTemp, tickTemp, Choices) {
-
   return Backbone.View.extend({
 
-    // The DOM target element for this page
     el: '.main',
     crag: null,
     tickChoices: {},
 
-    // Module entry point
     initialize: function (app) {
-      
-      // Save app reference.
       this.app = app;
-
-      // Shell events.
-      this.on('rendered', this.setup, this);
-
-      // Client-wide subscriptions
       this.subscriptions = [];
+      this.on('rendered', this.setup, this);
     },
 
-    // Draw the template
     render: function () {
 
       // Set page title
       this.app.title('Log Session');
 
-      // UnderscoreJS rendering.
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
       this.activityTemp = _.template(activityTemp);
       this.tickTemp = _.template(tickTemp);
 
-      // Done rendering ... trigger setup.
       this.trigger('rendered');
-
       return this;
     },
 
-    // Bind mouse events.
     events: {
       'click .activity-button': 'addActivity',
       'click .new-session-activity-clear': 'deleteActivity',
@@ -72,7 +58,6 @@ define([
       'change .new-session-activity-type': 'validateTicks'
     },
 
-    // Misc. setup.
     setup: function () {
 
       // Save refs.
@@ -114,7 +99,6 @@ define([
       return this;
     },
 
-    // Focus on the first empty input field.
     focus: function (e) {
       _.find(this.$('input[type!="submit"]:visible:not(.new-session-datepicker)'),
           function (i) {
@@ -124,14 +108,11 @@ define([
       });
     },
 
-    // Similar to Backbone's remove method, but empties
-    // instead of removes the view's DOM element.
     empty: function () {
       this.$el.empty();
       return this;
     },
 
-    // Kill this view.
     destroy: function () {
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);

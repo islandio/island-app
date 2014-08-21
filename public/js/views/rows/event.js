@@ -10,8 +10,9 @@ define([
   'rest',
   'text!../../../templates/rows/event.html',
   'views/rows/session',
+  'views/rows/tick',
   'views/rows/post'
-], function ($, _, Row, mps, rest, template, Session, Post) {
+], function ($, _, Row, mps, rest, template, Session, Tick, Post) {
   return Row.extend({
 
     attributes: function () {
@@ -32,6 +33,7 @@ define([
       var Action;
       switch (this.model.get('action_type')) {
         case 'session': Action = Session; break;
+        case 'tick': Action = Tick; break;
         case 'post': Action = Post; break;
       }
 

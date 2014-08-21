@@ -72,17 +72,20 @@ define([
       this.routesFilter.click(_.bind(this.changeType, this, 'r'));
 
       // Disable types if nothing to show.
-      if (this.model.get('bcnt') === 0)
+      if (this.model.get('bcnt') === 0) {
         this.bouldersFilter.addClass('disabled');
-      if (this.model.get('rcnt') === 0)
+      }
+      if (this.model.get('rcnt') === 0) {
         this.routesFilter.addClass('disabled');
+      }
 
       // Handle filtering.
       this.filterBox.bind('keyup search', _.bind(this.filter, this));
 
       // Focus.
-      if (!$('.header-search .search-display').is(':visible'))
+      if (!$('.header-search .search-display').is(':visible')) {
         this.filterBox.focus();
+      }
 
       // Set map view.
       mps.publish('map/fly', [this.model.get('location')]);
@@ -93,7 +96,8 @@ define([
         parentId: this.model.id,
         parentType: 'crag',
         reverse: true,
-        input: true
+        input: true,
+        filters: ['session', 'post']
       });
 
       return this;
@@ -125,7 +129,9 @@ define([
 
       // Update buttons.
       var chosen = $(e.target).closest('li');
-      if (chosen.hasClass('active') || chosen.hasClass('disabled')) return;
+      if (chosen.hasClass('active') || chosen.hasClass('disabled')) {
+        return;
+      }
       var active = $('.active', chosen.parent());
       chosen.addClass('active');
       active.removeClass('active');

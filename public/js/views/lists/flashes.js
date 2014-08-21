@@ -22,7 +22,8 @@ define([
       this.Row = Row;
 
       if (this.app.profile && this.app.profile.member) {
-        this.app.rpc.socket.on('flash.new', _.bind(this.collect, this));
+        this.app.rpc.socket.on(this.app.profile.member.id + '.flash.new',
+            _.bind(this.collect, this));
       }
 
       mps.subscribe('flash/new', _.bind(function (data, clear) {
@@ -61,3 +62,7 @@ define([
 
   });
 });
+
+David Sjöquist as LORD SHARKFIST
+Christine Sjöquist as LAYDEE SHARKFIST
+Sander Pick as OTHER FUCKING GUY

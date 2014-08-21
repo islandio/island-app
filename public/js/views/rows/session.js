@@ -30,13 +30,8 @@ define([
       this.parentView = options.parentView;
       this.wrap = options.wrap;
       this.template = _.template(template);
-
-      // Shell events.
-      this.on('rendered', this.setup, this);
-
-      // Client-wide subscriptions.
       this.subscriptions = [];
-
+      this.on('rendered', this.setup, this);
       return this;
     },
 
@@ -110,18 +105,18 @@ define([
       this.comments.destroy();
       this.undelegateEvents();
       this.stopListening();
-      if (this.timer)
+      if (this.timer) {
         clearInterval(this.timer);
+      }
       this.remove();
     },
 
     navigate: function (e) {
       e.preventDefault();
-
-      // Route to wherever.
       var path = $(e.target).closest('a').attr('href');
-      if (path)
+      if (path) {
         this.app.router.navigate(path, {trigger: true});
+      }
     },
 
     delete: function (e) {
@@ -129,9 +124,9 @@ define([
 
       // Render the confirm modal.
       $.fancybox(_.template(confirm)({
-        message: 'Deleting a log also deletes all'
-            + ' associated activities and registered ascents.'
-            + ' Delete this log forever?',
+        message: 'Deleting a session also deletes all'
+            + ' associated activities and ticks.'
+            + ' Delete this session forever?',
       }), {
         openEffect: 'fade',
         closeEffect: 'fade',

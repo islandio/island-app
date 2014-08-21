@@ -1,9 +1,54 @@
+<%
+
+  // Save model attributes
+  var data = this.model.attributes;
+
+%>
+
 <div class="leftside">
-  <div class="events"></div>
-  <div class="list-spin">
-    <div class="events-spin"></div>
-    <span class="empty-feed">Showing all.</span>
+  <div class="ticks-filter">
+    <div class="subtabs">
+      <ul>
+        <li class="subtab">
+          <a href="javascript:;" class="all-filter">All</a>
+        </li>
+        <li data-filter="sent" class="subtab">
+          <a href="javascript:;" class="sent-filter">Sent</a>
+        </li>
+      </ul>
+    </div>
+    <div class="ticks-filter-input">
+      <input class="filter-box" type="search" tabindex="2" placeholder="filter ticks..." />
+    </div>
   </div>
+  
+    <div class="list-wrap">
+      <span class="no-results">No results.</span>
+      <% _.each(this.model.grades, _.bind(function (grade) {
+        var ticks = ticks[grade];
+        if (!buck) return;
+        var i = 0; %>
+        <ul class="list">
+          <span class="list-group-heading"><%= grade %></span>
+          <% _.each(buck, _.bind(function (a) {
+            var back = i % 2 === 0 ? '#f2f2f2': '#f9f9f9'; %>
+              <a href="/crags/<%= a.key %>" id="<%= a.id %>" class="navigate">
+                <li style="background:<%= back %>;">
+                  <% if (a.sector) { %>
+                    <span class="list-row-title"><%= a.name %>, </span>
+                  <% } else { %>
+                    <span class="list-row-title"><%= a.name %></span>
+                  <% } %>
+                  <span><%= a.sector %></span>
+                </li>
+              </a>
+            <% ++i; %>
+          <% }, this)); %>
+        </ul>
+      <% }, this)); %>
+    </div>
+  
+
 </div>
 <div class="rightside">
   <div class="sidebar-items">

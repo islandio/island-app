@@ -876,9 +876,8 @@ a.button.buy-button:hover:not(.disabled) {
 }
 a.button.new-session-button,
 button.button.new-session-button,
-a.button.start-button,
-a.button.start-button,
-position relative {
+a.button.start-button {
+  position: relative;
   display: block;
   color: #396400;
   border: 1px solid transparent;
@@ -3466,15 +3465,13 @@ ul.session-ticks li .session-tick-name a:hover {
 .session-tick-stars i:before {
   margin: 0 0.15em 0 0;
 }
-ul.session-ticks li .session-tick-grade {
-  position: absolute;
-  top: 5px;
-  right: 10px;
+.session-tick-grade {
+  float: right;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-size: 13px;
   color: #b3b3b3;
 }
-ul.session-ticks li.sent .session-tick-grade {
+.sent .session-tick-grade {
   color: inherit;
 }
 p.session-tick-note {
@@ -3482,6 +3479,35 @@ p.session-tick-note {
   font-size: 12px;
   line-height: 18px;
   color: #3d3d3d;
+}
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––ticks*/
+.tick {
+  position: relative;
+}
+.tick .leftside {
+  width: 562px;
+  margin-left: 78px;
+  padding-left: 40px;
+  border-left: 1px solid #f2f2f2;
+}
+.tick .event-title {
+  font-size: 14px;
+}
+.tick .event-title a.title {
+  font-size: 14px;
+}
+.tick .event-timeline-label {
+  border: none;
+  top: 9px;
+}
+.tick .session-tick-stars {
+  float: right;
+}
+.tick-verb {
+  font-weight: bold;
+}
+.tick .session-tick-grade {
+  margin-left: 5px;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––notifications*/
 .notification {

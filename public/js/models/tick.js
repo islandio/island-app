@@ -13,26 +13,11 @@ define([
           '6c+', '7a', '7a+', '7b', '7b+', '7c', '7c+', '8a', '8a+', '8b',
           '8b+', '8c', '8c+', '9a', '9a+', '9b', '9b+', '9c', '9c+'],
 
-    formatAuthorFor: function (member) {
-      if (member && member.id === this.get('author').id)
-        return 'You';
-      else
-        return this.get('author').displayName;
-    },
-
-    formatName: function () {
-      return this.get('name') || new Date(this.get('date')).format('mm/dd/yy');
-    },
-
-    formatDate: function () {
-      var date = new Date(this.get('date'));
-      return date.format('mmm d');
-    },
-
-    formatTickGrade: function (num, feel) {
-      if (num === undefined) return;
+    formatGrade: function () {
+      var num = this.get('grade');
+      if (num === undefined) return '';
       var str = '';
-      switch (feel) {
+      switch (this.get('feel')) {
         case -1: str = ' (soft)'; break;
         case 0: str = ''; break;
         case 1: str = ' (hard)'; break;
@@ -40,16 +25,45 @@ define([
       return this.grades[num] + str;
     },
 
-    formatTickDetails: function (t) {
-      var parts = [];
-      if (t.first) parts.push('FA');
-      else if (t.firstf) parts.push('FFA');
-      if (t.tries === 1) parts.push('onsight');
-      else if (t.tries === 2) parts.push('flash');
-      else if (t.tries === 3) parts.push('2nd go');
-      else if (t.tries === 4) parts.push('3rd go');
-      else if (!t.tries || t.tries === 5) parts.push('redpoint');
-      return parts.join(', ');
+    formatDescription: function () {
+      var t = this.attributes;
+      var str = '<span class="tick-verb">';
+
+      if (t.sent) {
+        if (t.tries === 1) {
+          str += 'onsighted</span> *';
+        } else if (t.tries === 2) {
+          str += 'flashed</span> *';
+        } else if (t.tries === 3) {
+          str += 'sent</span> * 2nd go';
+        } else if (t.tries === 4) {
+          str += 'sent</span> * 3rd go';
+        } else if (!t.tries || t.tries === 5) {
+          str += 'sent</span> *';
+        }
+      } else {
+        str += 'tried</span> *';
+      }
+
+      var name = '<a href="/crags/' + t.ascent.key + '" class="title navigate">';
+      name += t.ascent.name + '</a>';
+      name += ' at <a href="/crags/' + t.crag.key + '" class="title navigate">';
+      name += t.crag.name + '</a>';
+      str = str.replace('*', name);
+      return str;
+    },
+
+    formatExtra: function () {
+      var t = this.attributes;
+      var str = '';
+
+      if (t.first) {
+        str = ' - FIRST ASCENT';
+      } else if (t.firstf) {
+        str = ' - FIRST FEMALE ASCENT';
+      }
+
+      return str;
     },
 
   });

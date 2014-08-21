@@ -20,7 +20,12 @@ define([
 
     attributes: function () {
       var attrs = {class: 'tick'};
-      if (this.model) attrs.id = this.model.id;
+      if (this.model) {
+        attrs.id = this.model.id;
+        if (this.model.sent) {
+          attrs.class = 'tick sent';
+        }
+      }
       return attrs;
     },
 
@@ -30,13 +35,8 @@ define([
       this.parentView = options.parentView;
       this.wrap = options.wrap;
       this.template = _.template(template);
-
-      // Shell events.
-      this.on('rendered', this.setup, this);
-
-      // Client-wide subscriptions.
       this.subscriptions = [];
-
+      this.on('rendered', this.setup, this);
       return this;
     },
 
@@ -63,20 +63,22 @@ define([
       }
 
       // Render crag location map.
-      var crag = this.model.get('crag');
-      if (crag.location && crag.location.latitude
-          && crag.location.longitude) {
-        this.$('.tick-map').show();
-        cartodb.createVis('tick_map_' + this.model.id,
-            'https://island.cartodb.com/api/v1/viz/crags/viz.json', {
-          zoom: 8,
-          center_lat: crag.location.latitude,
-          center_lon: crag.location.longitude,
-          zoomControl: false,
-          scrollwheel: false,
-          cartodb_logo: false,
-          https: true
-        }, _.bind(function (vis, layers) {}, this));
+      if (!this.parentView) {
+        var crag = this.model.get('crag');
+        if (crag.location && crag.location.latitude
+            && crag.location.longitude) {
+          this.$('.tick-map').show();
+          cartodb.createVis('tick_map_' + this.model.id,
+              'https://island.cartodb.com/api/v1/viz/crags/viz.json', {
+            zoom: 8,
+            center_lat: crag.location.latitude,
+            center_lon: crag.location.longitude,
+            zoomControl: false,
+            scrollwheel: false,
+            cartodb_logo: false,
+            https: true
+          }, _.bind(function (vis, layers) {}, this));
+        }
       }
 
       // Trigger setup.
@@ -88,8 +90,9 @@ define([
     setup: function () {
 
       // Set map view.
-      if (!this.parentView)
+      if (!this.parentView) {
         mps.publish('map/fly', [this.model.get('crag').location]);
+      }
 
       // Render comments.
       this.comments = new Comments(this.app, {
@@ -109,18 +112,18 @@ define([
       this.comments.destroy();
       this.undelegateEvents();
       this.stopListening();
-      if (this.timer)
+      if (this.timer) {
         clearInterval(this.timer);
+      }
       this.remove();
     },
 
     navigate: function (e) {
       e.preventDefault();
-
-      // Route to wherever.
       var path = $(e.target).closest('a').attr('href');
-      if (path)
+      if (path) {
         this.app.router.navigate(path, {trigger: true});
+      }
     },
 
     delete: function (e) {
@@ -151,11 +154,10 @@ define([
           $.fancybox.close();
 
           // Go home if single view.
-          if (!this.parentView)
+          if (!this.parentView) {
             this.app.router.navigate('/', {trigger: true, replace: true});
-
+          }
         }, this));
-
       }, this));
 
       return false;
@@ -163,8 +165,9 @@ define([
 
     when: function () {
       if (!this.model.get('created')) return;
-      if (!this.time)
+      if (!this.time) {
         this.time = this.$('time.created:first');
+      }
       this.time.text(util.getRelativeTime(this.model.get('created')));
     },
 

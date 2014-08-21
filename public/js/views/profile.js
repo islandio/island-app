@@ -69,7 +69,8 @@ define([
         parentType: 'member',
         reverse: true,
         input: this.app.profile.member
-            && this.app.profile.member.id === this.model.id
+            && this.app.profile.member.id === this.model.id,
+        filters: ['session', 'post']
       });
       this.followers = new Followers(this.app, {parentView: this, reverse: true});
       this.followees = new Followees(this.app, {parentView: this, reverse: true});

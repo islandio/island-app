@@ -74,12 +74,11 @@
         <li data-filter="all" class="subtab<%= !feed.actions || feed.actions === 'all' ? ' active': '' %>">
           <a href="javascript:;" class="navigate">All</a>
         </li>
-        <li data-filter="session" class="subtab<%= feed.actions && feed.actions === 'session' ? ' active': '' %>">
-          <a href="javascript:;" class="navigate">Sessions</a>
-        </li>
-        <li data-filter="post" class="subtab<%= feed.actions && feed.actions === 'post' ? ' active': '' %>">
-          <a href="javascript:;" class="navigate">Posts</a>
-        </li>
+        <% _.each(this.collection.options.filters, function (f) { %>
+          <li data-filter="<%= f %>" class="subtab<%= feed.actions && feed.actions === f ? ' active': '' %>">
+            <a href="javascript:;" class="navigate"><%= f.substr(0,1).toUpperCase() + f.substr(1) %>s</a>
+          </li>
+        <% }) %>
       </ul>
     </div>
   </div>

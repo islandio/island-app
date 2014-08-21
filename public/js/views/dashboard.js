@@ -38,8 +38,12 @@ define([
     setup: function () {
 
       // Render lists.
-      this.events = new Events(this.app, {parentView: this, reverse: true,
-          input: true});
+      this.events = new Events(this.app, {
+        parentView: this,
+        reverse: true,
+        input: true,
+        filters: ['session', 'post']
+      });
       this.followers = new Followers(this.app, {parentView: this, reverse: true});
       this.followees = new Followees(this.app, {parentView: this, reverse: true});
       this.crags = new Watchees(this.app, {parentView: this, reverse: true,
