@@ -308,16 +308,16 @@ define([
                 image: hd.poster.ssl_url,
                 sources: [{
                   file: device.ios() ?
-                      ipad.video.ios_url: (ipad.video.import_url ?
-                      ipad.video.ssl_url: ipad.video.streaming_url),
-                  provider: device.ios() ? undefined: streamer,
+                      ipad.video.ios_url: ipad.video.ssl_url,
+                      // ipad.video.ssl_url: ipad.video.streaming_url),
+                  // provider: device.ios() ? undefined: streamer,
                   label: '1200k'
                 },
                 {
                   file: device.ios() ?
-                      hd.video.ios_url: (hd.video.import_url ?
-                      hd.video.ssl_url: hd.video.streaming_url),
-                  provider: device.ios() ? undefined: streamer,
+                      hd.video.ios_url: hd.video.ssl_url,
+                      // hd.video.ssl_url: hd.video.streaming_url),
+                  // provider: device.ios() ? undefined: streamer,
                   label: '4000k'
                 }]
               }]
@@ -330,16 +330,16 @@ define([
                 image: iphone.poster.ssl_url,
                 sources: [{
                   file: device.ios() ?
-                      iphone.video.ios_url: (iphone.video.import_url ?
-                      iphone.video.ssl_url: iphone.video.streaming_url),
-                  provider: device.ios() ? undefined: streamer,
+                      iphone.video.ios_url: iphone.video.ssl_url,
+                      // iphone.video.ssl_url: iphone.video.streaming_url),
+                  // provider: device.ios() ? undefined: streamer,
                   label: '700k'
                 },
                 {
                   file: device.ios() ?
-                      ipad.video.ios_url: (ipad.video.import_url ?
-                      ipad.video.ssl_url: ipad.video.streaming_url),
-                  provider: device.ios() ? undefined: streamer,
+                      ipad.video.ios_url: ipad.video.ssl_url,
+                      // ipad.video.ssl_url: ipad.video.streaming_url),
+                  // provider: device.ios() ? undefined: streamer,
                   label: '1200k'
                 }]
               }]
