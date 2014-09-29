@@ -304,8 +304,6 @@ define([
           var iphone = this.videoFor('iphone');
           var ipad = this.videoFor('ipad');
           var hd = this.videoFor('hd');
-          var streamer = 'http://players.edgesuite.net/flash/plugins/jw/v3.3'
-              + '/AkamaiAdvancedJWStreamProvider.swf';
 
           // Video params
           var params = {
@@ -329,17 +327,11 @@ define([
               playlist: [{
                 image: hd.poster.ssl_url,
                 sources: [{
-                  file: device.ios() ?
-                      ipad.video.ios_url: (ipad.video.import_url ?
-                      ipad.video.ssl_url: ipad.video.streaming_url),
-                  provider: device.ios() ? undefined: streamer,
+                  file: device.ios() ? ipad.video.ios_url: ipad.video.ssl_url,
                   label: '1200k'
                 },
                 {
-                  file: device.ios() ?
-                      hd.video.ios_url: (hd.video.import_url ?
-                      hd.video.ssl_url: hd.video.streaming_url),
-                  provider: device.ios() ? undefined: streamer,
+                  file: device.ios() ? hd.video.ios_url: hd.video.ssl_url,
                   label: '4000k'
                 }]
               }]
@@ -351,17 +343,11 @@ define([
               playlist: [{
                 image: iphone.poster.ssl_url,
                 sources: [{
-                  file: device.ios() ?
-                      iphone.video.ios_url: (iphone.video.import_url ?
-                      iphone.video.ssl_url: iphone.video.streaming_url),
-                  provider: device.ios() ? undefined: streamer,
+                  file: device.ios() ? iphone.video.ios_url: iphone.video.ssl_url,
                   label: '700k'
                 },
                 {
-                  file: device.ios() ?
-                      ipad.video.ios_url: (ipad.video.import_url ?
-                      ipad.video.ssl_url: ipad.video.streaming_url),
-                  provider: device.ios() ? undefined: streamer,
+                  file: device.ios() ? ipad.video.ios_url: ipad.video.ssl_url,
                   label: '1200k'
                 }]
               }]
