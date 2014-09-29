@@ -11,6 +11,17 @@
   </div>
 </div>
 <div class="rightside">
-  
+  <% if (this.app.profile.member) { %>
+    <div class="sidebar-items">
+      <div class="sidebar-watchees">
+        <span class="sidebar-heading">Watching</span>
+        <div class="sidebar-crags"></div>
+        <div class="sidebar-ascents-r"></div>
+        <div class="sidebar-ascents-b"></div>
+      </div>
+      <div class="sidebar-followers"></div>
+      <div class="sidebar-followees"></div>
+    </div>
+  <% } %>
 </div>
 <div class="clear"></div>

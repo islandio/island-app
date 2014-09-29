@@ -1822,7 +1822,7 @@ a.privacy-link:hover {
   padding: 0 30px 30px;
   border-bottom: 1px solid #f2f2f2;
 }
-.sidebar-items > div.sidebar-watchees {
+.sidebar-items > div:last-child {
   border-bottom: none;
 }
 .sidebar-watchees > div {
@@ -3722,10 +3722,12 @@ span.no-description {
   width: 100%;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crag*/
-.ascents-filter {
+.ascents-filter,
+.ticks-filter {
   text-align: right;
 }
-.ascents-filter .subtabs {
+.ascents-filter .subtabs,
+.ticks-filter .subtabs {
   top: 1px;
 }
 .ascents-filter-input {
@@ -3733,7 +3735,13 @@ span.no-description {
   padding: 20px 30px 0;
   border-top: 1px solid #f2f2f2;
 }
-.ascents-filter-input input {
+.ticks-filter-input {
+  margin: 0 -40px 0 -30px;
+  padding: 20px 40px 0 30px;
+  border-top: 1px solid #f2f2f2;
+}
+.ascents-filter-input input,
+.ticks-filter-input input {
   font-size: 16px;
   width: 100%;
 }

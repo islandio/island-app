@@ -10,10 +10,10 @@
     <div class="subtabs">
       <ul>
         <li class="subtab">
-          <a href="javascript:;" class="all-filter">All</a>
+          <a href="javascript:;" class="b-filter">Boulders</a>
         </li>
-        <li data-filter="sent" class="subtab">
-          <a href="javascript:;" class="sent-filter">Sent</a>
+        <li data-filter="r" class="subtab">
+          <a href="javascript:;" class="r-filter">Routes</a>
         </li>
       </ul>
     </div>
@@ -21,45 +21,43 @@
       <input class="filter-box" type="search" tabindex="2" placeholder="filter ticks..." />
     </div>
   </div>
-  
-    <div class="list-wrap">
+  <% _.each(data.ticks, _.bind(function (ticks, type) {
+    if (ticks.length === 0) return;
+    ticks = this.model.ticksByGrade(type); %>
+    <div class="list-wrap <%= type %>-ticks">
       <span class="no-results">No results.</span>
-      <% _.each(this.model.grades, _.bind(function (grade) {
-        var ticks = ticks[grade];
-        if (!buck) return;
-        var i = 0; %>
+      <% _.each(this.model.grades.reverse(), _.bind(function (grade) { %>
+        <% if (!ticks[grade]) return; %>
         <ul class="list">
           <span class="list-group-heading"><%= grade %></span>
-          <% _.each(buck, _.bind(function (a) {
+          <% _.each(ticks[grade], _.bind(function (tick, i) {
             var back = i % 2 === 0 ? '#f2f2f2': '#f9f9f9'; %>
-              <a href="/crags/<%= a.key %>" id="<%= a.id %>" class="navigate">
-                <li style="background:<%= back %>;">
-                  <% if (a.sector) { %>
-                    <span class="list-row-title"><%= a.name %>, </span>
-                  <% } else { %>
-                    <span class="list-row-title"><%= a.name %></span>
-                  <% } %>
-                  <span><%= a.sector %></span>
-                </li>
-              </a>
-            <% ++i; %>
+            <a href="/crags/<%= tick.ascent.key %>" id="<%= tick.id %>" class="navigate">
+              <li style="background:<%= back %>;">
+                <span class="list-row-title"><%= tick.ascent.name %>, </span>
+                <% if (tick.ascent.sector) { %>
+                  <span><%= tick.ascent.crag %> (<%= tick.ascent.sector %>)</span>
+                <% } else { %>
+                  <span><%= tick.ascent.crag %></span>
+                <% } %>
+              </li>
+            </a>
           <% }, this)); %>
         </ul>
       <% }, this)); %>
     </div>
-  
-
+  <% }, this)) %>
 </div>
 <div class="rightside">
   <div class="sidebar-items">
-    <div class="sidebar-followers"></div>
-    <div class="sidebar-followees"></div>
     <div class="sidebar-watchees">
       <span class="sidebar-heading">Watching</span>
       <div class="sidebar-crags"></div>
       <div class="sidebar-ascents-r"></div>
       <div class="sidebar-ascents-b"></div>
     </div>
+    <div class="sidebar-followers"></div>
+    <div class="sidebar-followees"></div>
   </div>
 </div>
 <div class="clear"></div>

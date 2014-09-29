@@ -11,52 +11,42 @@ define([
   'util',
   'Spin',
   'text!../../templates/crags.html',
-  'text!../../templates/crags.list.html'
-], function ($, _, Backbone, mps, rest, util, Spin, template, list) {
+  'text!../../templates/crags.list.html',
+  'views/lists/followers',
+  'views/lists/followees',
+  'views/lists/watchees'
+], function ($, _, Backbone, mps, rest, util, Spin, template, list,
+    Followers, Followees, Watchees) {
 
   return Backbone.View.extend({
 
-    // The DOM target element for this page:
     el: '.main',
     str: null,
     num: 0,
 
-    // Module entry point:
     initialize: function (app) {
-
-      // Save app reference.
       this.app = app;
-
-      // Shell events:
-      this.on('rendered', this.setup, this);
-
-      // Client-wide subscriptions
       this.subscriptions = [];
+
+      this.on('rendered', this.setup, this);
     },
 
-    // Draw our template from the profile JSON.
     render: function () {
-
-      // Set page title
       this.app.title('Island | Crags');
 
-      // Content rendering.
       this.template = _.template(template);
       $(this.template.call(this)).appendTo('.main');
       this.list = _.template(list);
 
-      // Done rendering ... trigger setup.
       this.trigger('rendered');
 
       return this;
     },
 
-    // Bind mouse events.
     events: {
       'click .navigate': 'navigate'
     },
 
-    // Misc. setup.
     setup: function () {
 
       // Save refs.
@@ -78,28 +68,38 @@ define([
             [data.params.country, data.params.query].join(':'):
             data.params.query;
         this.input.val(this.str);
-        if (data.items.length === 0)
+        if (data.items.length === 0) {
           this.noresults.show();
-        else
+        } else {
           $(this.list.call(this, data)).appendTo(this.results);
+        }
       }
 
       // Focus.
-      if (!$('.header-search .search-display').is(':visible'))
+      if (!$('.header-search .search-display').is(':visible')) {
         this.input.focus();
+      }
 
+      // Render lists.
+      if (this.app.profile.member) {
+        this.followers = new Followers(this.app, {parentView: this, reverse: true});
+        this.followees = new Followees(this.app, {parentView: this, reverse: true});
+        this.crags = new Watchees(this.app, {parentView: this, reverse: true,
+            type: 'crag', heading: 'Crags'});
+        this.routes = new Watchees(this.app, {parentView: this, reverse: true,
+            type: 'ascent', subtype: 'r', heading: 'Routes'});
+        this.boulders = new Watchees(this.app, {parentView: this, reverse: true,
+            type: 'ascent', subtype: 'b', heading: 'Boulders'});
+      }
 
       return this;
     },
 
-    // Similar to Backbone's remove method, but empties
-    // instead of removes the view's DOM element.
     empty: function () {
       this.$el.empty();
       return this;
     },
 
-    // Kill this view.
     destroy: function () {
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
@@ -111,11 +111,10 @@ define([
 
     navigate: function (e) {
       e.preventDefault();
-
-      // Route to wherever.
       var path = $(e.target).closest('a').attr('href');
-      if (path)
+      if (path) {
         this.app.router.navigate(path, {trigger: true});
+      }
     },
 
     search: function (e) {
@@ -126,8 +125,9 @@ define([
 
       // Handle interaction.
       if (str === this.str) {
-        if (this.num === 0 && str !== '')
+        if (this.num === 0 && str !== '') {
           this.noresults.show();
+        }
         return false;
       }
       this.str = str;
@@ -141,7 +141,9 @@ define([
       // Call server.
       this.spin.start();
       rest.post('/api/crags/search/' + str, {}, _.bind(function (err, data) {
-        if (err) return console.log(err);
+        if (err) {
+          return console.log(err);
+        }
         this.spin.stop();
 
         // Update URL.
@@ -154,8 +156,9 @@ define([
 
         // Save count.
         this.num = data.items.length;
-        if (data.items.length === 0)
+        if (data.items.length === 0) {
           return this.noresults.show();
+        }
 
         // Render results.
         $(this.list.call(this, data)).appendTo(this.results);

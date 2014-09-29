@@ -51,16 +51,16 @@
           <span class="list-group-heading"><%= grade %></span>
           <% _.each(buck, _.bind(function (a) {
             var back = i % 2 === 0 ? '#f2f2f2': '#f9f9f9'; %>
-              <a href="/crags/<%= a.key %>" id="<%= a.id %>" class="navigate">
-                <li style="background:<%= back %>;">
-                  <% if (a.sector) { %>
-                    <span class="list-row-title"><%= a.name %>, </span>
-                  <% } else { %>
-                    <span class="list-row-title"><%= a.name %></span>
-                  <% } %>
-                  <span><%= a.sector %></span>
-                </li>
-              </a>
+            <a href="/crags/<%= a.key %>" id="<%= a.id %>" class="navigate">
+              <li style="background:<%= back %>;">
+                <% if (a.sector) { %>
+                  <span class="list-row-title"><%= a.name %>, </span>
+                <% } else { %>
+                  <span class="list-row-title"><%= a.name %></span>
+                <% } %>
+                <span><%= a.sector %></span>
+              </li>
+            </a>
             <% ++i; %>
           <% }, this)); %>
         </ul>

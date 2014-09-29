@@ -8,8 +8,12 @@ define([
   'Backbone',
   'mps',
   'util',
-  'text!../../templates/about.html'
-], function ($, _, Backbone, mps, util, template) {
+  'text!../../templates/about.html',
+  'views/lists/followers',
+  'views/lists/followees',
+  'views/lists/watchees'
+], function ($, _, Backbone, mps, util, template,
+    Followers, Followees, Watchees) {
   return Backbone.View.extend({
 
     el: '.main',
@@ -34,6 +38,17 @@ define([
     },
 
     setup: function () {
+
+      // Render lists.
+      this.followers = new Followers(this.app, {parentView: this, reverse: true});
+      this.followees = new Followees(this.app, {parentView: this, reverse: true});
+      this.crags = new Watchees(this.app, {parentView: this, reverse: true,
+          type: 'crag', heading: 'Crags'});
+      this.routes = new Watchees(this.app, {parentView: this, reverse: true,
+          type: 'ascent', subtype: 'r', heading: 'Routes'});
+      this.boulders = new Watchees(this.app, {parentView: this, reverse: true,
+          type: 'ascent', subtype: 'b', heading: 'Boulders'});
+
       return this;
     },
 
@@ -46,6 +61,11 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
+      this.followers.destroy();
+      this.followees.destroy();
+      this.crags.destroy();
+      this.routes.destroy();
+      this.boulders.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

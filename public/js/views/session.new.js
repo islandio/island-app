@@ -13,9 +13,12 @@ define([
   'text!../../templates/session.new.html',
   'text!../../templates/activity.new.html',
   'text!../../templates/tick.new.html',
-  'views/lists/choices'
+  'views/lists/choices',
+  'views/lists/followers',
+  'views/lists/followees',
+  'views/lists/watchees'
 ], function ($, _, Backbone, mps, rest, util, Spin, template,
-    activityTemp, tickTemp, Choices) {
+    activityTemp, tickTemp, Choices, Followers, Followees, Watchees) {
   return Backbone.View.extend({
 
     el: '.main',
@@ -96,6 +99,16 @@ define([
       // Focus cursor initial.
       _.delay(_.bind(function () { this.focus(); }, this), 1);
 
+      // Render lists.
+      this.followers = new Followers(this.app, {parentView: this, reverse: true});
+      this.followees = new Followees(this.app, {parentView: this, reverse: true});
+      this.crags = new Watchees(this.app, {parentView: this, reverse: true,
+          type: 'crag', heading: 'Crags'});
+      this.routes = new Watchees(this.app, {parentView: this, reverse: true,
+          type: 'ascent', subtype: 'r', heading: 'Routes'});
+      this.boulders = new Watchees(this.app, {parentView: this, reverse: true,
+          type: 'ascent', subtype: 'b', heading: 'Boulders'});
+
       return this;
     },
 
@@ -117,6 +130,11 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
+      this.followers.destroy();
+      this.followees.destroy();
+      this.crags.destroy();
+      this.routes.destroy();
+      this.boulders.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

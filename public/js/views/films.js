@@ -10,8 +10,12 @@ define([
   'rest',
   'util',
   'text!../../templates/films.html',
-  'views/lists/events'
-], function ($, _, Backbone, mps, rest, util, template, Events) {
+  'views/lists/events',
+  'views/lists/followers',
+  'views/lists/followees',
+  'views/lists/watchees'
+], function ($, _, Backbone, mps, rest, util, template, Events,
+    Followers, Followees, Watchees) {
 
   return Backbone.View.extend({
 
@@ -59,6 +63,16 @@ define([
       this.events = new Events(this.app, {parentView: this,
           reverse: true, filters: false});
 
+      // Render lists.
+      this.followers = new Followers(this.app, {parentView: this, reverse: true});
+      this.followees = new Followees(this.app, {parentView: this, reverse: true});
+      this.crags = new Watchees(this.app, {parentView: this, reverse: true,
+          type: 'crag', heading: 'Crags'});
+      this.routes = new Watchees(this.app, {parentView: this, reverse: true,
+          type: 'ascent', subtype: 'r', heading: 'Routes'});
+      this.boulders = new Watchees(this.app, {parentView: this, reverse: true,
+          type: 'ascent', subtype: 'b', heading: 'Boulders'});
+
       return this;
     },
 
@@ -75,6 +89,11 @@ define([
         mps.unsubscribe(s);
       });
       this.events.destroy();
+      this.followers.destroy();
+      this.followees.destroy();
+      this.crags.destroy();
+      this.routes.destroy();
+      this.boulders.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

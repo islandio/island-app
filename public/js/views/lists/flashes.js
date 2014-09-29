@@ -62,7 +62,3 @@ define([
 
   });
 });
-
-David Sjöquist as LORD SHARKFIST
-Christine Sjöquist as LAYDEE SHARKFIST
-Sander Pick as OTHER FUCKING GUY

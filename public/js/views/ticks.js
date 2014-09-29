@@ -41,19 +41,31 @@ define([
 
       // Save refs.
       this.filterBox = this.$('.ticks-filter-input input');
-      this.allFilter = this.$('.all-filter').parent();
-      this.sentFilter = this.$('.sent-filter').parent();
+      this.bouldersFilter = this.$('.b-filter').parent();
+      this.routesFilter = this.$('.r-filter').parent();
+      this.boulders = this.$('.b-ticks');
+      this.routes = this.$('.r-ticks');
 
-      this.allFilter.click(_.bind(this.changeType, this, 'all'));
-      this.sentFilter.click(_.bind(this.changeType, this, 'sent'));
+      // Handle type changes.
+      if (this.model.get('ticks').b.length > this.model.get('ticks').r.length) {
+        this.currentType = 'b';
+        this.bouldersFilter.addClass('active');
+        this.boulders.show();
+      } else {
+        this.currentType = 'r';
+        this.routesFilter.addClass('active');
+        this.routes.show();
+      }
+      this.bouldersFilter.click(_.bind(this.changeType, this, 'b'));
+      this.routesFilter.click(_.bind(this.changeType, this, 'r'));
 
-      // // Disable types if nothing to show.
-      // if (this.model.get('bcnt') === 0) {
-      //   this.bouldersFilter.addClass('disabled');
-      // }
-      // if (this.model.get('rcnt') === 0) {
-      //   this.routesFilter.addClass('disabled');
-      // }
+      // Disable types if nothing to show.
+      if (this.model.get('ticks').b.length === 0) {
+        this.bouldersFilter.addClass('disabled');
+      }
+      if (this.model.get('ticks').r.length === 0) {
+        this.routesFilter.addClass('disabled');
+      }
 
       // Handle filtering.
       this.filterBox.bind('keyup search', _.bind(this.filter, this));
@@ -68,9 +80,9 @@ define([
       this.followees = new Followees(this.app, {parentView: this, reverse: true});
       this.crags = new Watchees(this.app, {parentView: this, reverse: true,
           type: 'crag', heading: 'Crags'});
-      this.routes = new Watchees(this.app, {parentView: this, reverse: true,
+      this.sroutes = new Watchees(this.app, {parentView: this, reverse: true,
           type: 'ascent', subtype: 'r', heading: 'Routes'});
-      this.boulders = new Watchees(this.app, {parentView: this, reverse: true,
+      this.sboulders = new Watchees(this.app, {parentView: this, reverse: true,
           type: 'ascent', subtype: 'b', heading: 'Boulders'});
 
       return this;
@@ -88,8 +100,8 @@ define([
       this.followers.destroy();
       this.followees.destroy();
       this.crags.destroy();
-      this.routes.destroy();
-      this.boulders.destroy();
+      this.sroutes.destroy();
+      this.sboulders.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();
@@ -112,36 +124,36 @@ define([
       active.removeClass('active');
 
       // Set new type.
-      // this.currentType = type;
-      // this.$('.list-wrap').hide();
-      // this.$('.' + this.currentType + '-ascents').show();
-      // this.filterBox.keyup();
+      this.currentType = type;
+      this.$('.list-wrap').hide();
+      this.$('.' + this.currentType + '-ticks').show();
+      this.filterBox.keyup();
     },
 
     filter: function (e) {
       var txt = this.filterBox.val().trim().toLowerCase();
       var ct = this.currentType;
-      // $('.' + ct + '-ascents .no-results').hide();
-      // if (txt === '') {
-      //   $('.' + ct + '-ascents .list a').show();
-      //   $('.' + ct + '-ascents .list-group-heading').show();
-      //   return false;
-      // }
-      // $('.' + ct + '-ascents .list a').hide();
-      // $('.' + ct + '-ascents .list-group-heading').hide();
-      // var rx = new RegExp('^(.*?(' + txt + ')[^$]*)$', 'ig');
-      // var y = false;
-      // _.each(this.flattened[ct], function (a) {
-      //   if (rx.test(a.name)) {
-      //     y = true;
-      //     var d = $('.' + ct + '-ascents .list a[id="' + a.id + '"]');
-      //     d.show();
-      //     $('.list-group-heading', d.parent()).show();
-      //   }
-      // });
-      // if (!y) {
-      //   $('.list-wrap .no-results').show();
-      // }
+      $('.' + ct + '-ticks .no-results').hide();
+      if (txt === '') {
+        $('.' + ct + '-ticks .list a').show();
+        $('.' + ct + '-ticks .list-group-heading').show();
+        return false;
+      }
+      $('.' + ct + '-ticks .list a').hide();
+      $('.' + ct + '-ticks .list-group-heading').hide();
+      var rx = new RegExp('^(.*?(' + txt + ')[^$]*)$', 'ig');
+      var y = false;
+      _.each(this.model.get('ticks')[ct], function (t) {
+        if (rx.test(t.ascent.name)) {
+          y = true;
+          var d = $('.' + ct + '-ticks .list a[id="' + t.id + '"]');
+          d.show();
+          $('.list-group-heading', d.parent()).show();
+        }
+      });
+      if (!y) {
+        $('.list-wrap .no-results').show();
+      }
       return false;
     }
 
