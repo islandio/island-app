@@ -1,0 +1,50 @@
+<%
+
+%>
+
+<div class="ascents-filter">
+  <div class="subtabs">
+    <ul>
+      <li class="subtab">
+        <a href="javascript:;" class="b-filter">Boulders</a>
+      </li>
+      <li data-filter="r" class="subtab">
+        <a href="javascript:;" class="r-filter">Routes</a>
+      </li>
+    </ul>
+  </div>
+  <div class="ascents-filter-input">
+    <input class="filter-box" type="search" tabindex="2" placeholder="filter ascents..." />
+  </div>
+</div>
+<% _.each(this.data.ascents, _.bind(function (ascents, t) {
+  if (this.data[t + 'cnt'] === 0) return; %>
+  <div class="list-wrap <%= t %>-ascents">
+    <span class="no-results">No results.</span>
+    <% _.each(this.app.grades, _.bind(function (grade) {
+      var buck = ascents[grade];
+      if (!buck) return;
+      var i = 0; %>
+      <ul class="list">
+        <span class="list-group-heading"><%= grade %></span>
+        <% _.each(buck, _.bind(function (a) {
+          var back = i % 2 === 0 ? '#f2f2f2': '#f9f9f9'; %>
+          <li style="background:<%= back %>;" id="<%= a.id %>" data-cid="<%= a.crag_id %>">
+            <a href="/crags/<%= a.key %>" class="navigate">
+              <% if (a.sector) { %>
+                <span class="list-row-title"><%= a.name %>, </span>
+              <% } else { %>
+                <span class="list-row-title"><%= a.name %></span>
+              <% } %>
+              <span><%= a.sector %></span>
+            </a>
+            <a href="javascript:;" class="list-button">
+              <i class="icon-pencil"></i>
+            </a>
+          </li>
+          <% ++i; %>
+        <% }, this)); %>
+      </ul>
+    <% }, this)); %>
+  </div>
+<% }, this)); %>

@@ -50,11 +50,12 @@ define([
           break;
         case 'crags':
           title += '<strong>' + this.get('name') + '</strong>, '
-            + this.get('country');
+              + this.get('country');
           break;
         case 'ascents':
-          title += '<strong>' + this.get('name') + '</strong> '
-            + this.get('grades').join(', ');
+          title += '<strong>' + this.get('name') + '</strong>, '
+              + this.get('crag') + ' ('
+              + this.get('grades').join(', ') + ')';
           break;
       }
       return title;

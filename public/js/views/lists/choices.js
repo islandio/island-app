@@ -5,14 +5,13 @@
 define([
   'jQuery',
   'Underscore',
-  'Modernizr',
   'views/boiler/list',
   'mps',
   'rest',
   'util',
   'collections/choices',
   'views/rows/choice'
-], function ($, _, Modernizr, List, mps, rest, util, Collection, Row) {
+], function ($, _, List, mps, rest, util, Collection, Row) {
   return List.extend({
 
     active: false,
@@ -24,7 +23,9 @@ define([
       this.collection = new Collection;
       this.Row = Row;
       this.options = options;
-      if (!this.options.query) this.options.query = {};
+      if (!this.options.query) {
+        this.options.query = {};
+      }
       this.setElement(options.el);
 
       // Call super init.
@@ -51,10 +52,6 @@ define([
       this.choiceWrap = this.$('.search-choice');
       this.choiceContent = this.$('.search-choice-content');
 
-      // Add placeholder shim if need to.
-      if (!Modernizr.input.placeholder)
-        this.input.placeholder();
-
       // Handle searching.
       this.autocomplete = new google.maps.places.AutocompleteService();
       // this.geocoder = new google.maps.Geocoder();
@@ -75,10 +72,11 @@ define([
       var be = h + this.selecting.el.offset().top - this.results.offset().top - 1;
       var H = this.results.height();
       var s = this.results.scrollTop();
-      if (be > H)
+      if (be > H) {
         this.results.scrollTop(this.results.scrollTop() + h);
-      else if (be < h)
+      } else if (be < h) {
         this.results.scrollTop(this.results.scrollTop() - h);
+      }
     },
 
     resetHighlight: function () {
@@ -87,11 +85,13 @@ define([
     },
 
     searchFocus: function (e) {
-      if (this.options.collapse)
+      if (this.options.collapse) {
         this.input.width(308).attr({placeholder: this.options.placeholder});
+      }
       this.active = true;
-      if (this.searchVal() && this.collection.length > 0)
-      this.results.show();
+      if (this.searchVal() && this.collection.length > 0) {
+        this.results.show();
+      }
     },
 
     searchBlur: function (e) {
@@ -104,8 +104,9 @@ define([
         if (e.keyCode === 13 && e.which === 13) {
           if (this.selecting.el) {
             this.views[this.selecting.el.index() - 1].choose();
-            if (!this.options.choose)
+            if (!this.options.choose) {
               this.input.select();
+            }
             return false;
           }
         }
@@ -136,8 +137,9 @@ define([
       }
 
       // Blur.
-      if (!this.searchVal() && this.options.collapse)
+      if (!this.searchVal() && this.options.collapse) {
         this.input.width(198).attr({placeholder: 'Search...'});
+      }
       this.results.hide();
       this.resetHighlight();
       this.active = false;
@@ -180,10 +182,11 @@ define([
         
         // Add to collection.
         _.each(types, _.bind(function (t) {
-          if (items[t])
+          if (items[t]) {
             _.each(items[t], _.bind(function (i) {
               this.collection.unshift(i);
             }, this));
+          }
         }, this));
 
         // Show results display.
@@ -192,7 +195,7 @@ define([
 
       // Perform searches.
       _.each(types, _.bind(function (t) {
-        if (t !== 'places')
+        if (t !== 'places') {
           rest.post('/api/' + t + '/search/' + str, this.options.query,
               _.bind(function (err, data) {
             if (err) return console.log(err);
@@ -202,26 +205,28 @@ define([
               items[t] = data.items;
             }
             done();
-
           }, this));
-        else
+        } else {
           this.autocomplete.getPlacePredictions({input: str},
               _.bind(function (preds, status) {
             if (status !== google.maps.places.PlacesServiceStatus.OK
-              || preds.length === 0)
+              || preds.length === 0) {
               return done();
+            }
             var _done = _.after(preds.length, done)
             items.places = [];
             _.each(preds, _.bind(function (p) {
               this.places.getDetails({reference: p.reference},
                   _.bind(function (place, stat) {
-                if (stat !== google.maps.places.PlacesServiceStatus.OK)
+                if (stat !== google.maps.places.PlacesServiceStatus.OK) {
                   return _done();
+                }
                 items.places.push(place);
                 _done();
               }, this));
             }, this));
           }, this));
+        }
       }, this));
 
     },
@@ -241,16 +246,31 @@ define([
       this.results.hide();
       this.choice = choice;
       this.input.val('');
-      if (this.options.onChoose)
+      if (this.options.onChoose) {
         this.options.onChoose();
+      }
+    },
+
+    preChoose: function (opts) {
+      rest.get('/api/' + opts.type + '/' + opts.id, {},
+          _.bind(function (err, data) {
+        if (err) return console.log(err);
+
+        data._type = opts.type;
+        this.collection.unshift(data);
+        this.choose(this.views[0]);
+      }, this));
     },
 
     clearChoice: function (e) {
       this.choiceWrap.hide();
       this.choice = null;
-      this.input.focus();
-      if (this.options.onChoose)
-        this.options.onChoose();
+      if (e) {
+        this.input.focus();
+        if (this.options.onChoose) {
+          this.options.onChoose();
+        }
+      }
     },
 
   });

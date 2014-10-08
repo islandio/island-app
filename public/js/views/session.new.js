@@ -13,64 +13,59 @@ define([
   'text!../../templates/session.new.html',
   'text!../../templates/activity.new.html',
   'text!../../templates/tick.new.html',
-  'views/lists/choices',
-  'views/lists/followers',
-  'views/lists/followees',
-  'views/lists/watchees'
+  'views/lists/choices'
 ], function ($, _, Backbone, mps, rest, util, Spin, template,
-    activityTemp, tickTemp, Choices, Followers, Followees, Watchees) {
+    activityTemp, tickTemp, Choices) {
   return Backbone.View.extend({
 
-    el: '.main',
+    className: 'new-session',
     crag: null,
     tickChoices: {},
 
-    initialize: function (app) {
+    initialize: function (app, options) {
       this.app = app;
+      this.options = options;
       this.subscriptions = [];
       this.on('rendered', this.setup, this);
     },
 
     render: function () {
-
-      // Set page title
-      this.app.title('Log Session');
-
       this.template = _.template(template);
-      this.$el.html(this.template.call(this));
       this.activityTemp = _.template(activityTemp);
       this.tickTemp = _.template(tickTemp);
+      this.$el.html(this.template.call(this, {tick: this.tickTemp.call(this,
+          {closable: false})}));
+
+      // Handle selects.
+      util.customSelects(this.el);
+
+      // Dump content into modal.
+      $.fancybox(this.$el, {
+        openEffect: 'fade',
+        closeEffect: 'fade',
+        closeBtn: false,
+        padding: 0,
+        minWidth: 680
+      });
 
       this.trigger('rendered');
       return this;
     },
 
     events: {
-      'click .activity-button': 'addActivity',
-      'click .new-session-activity-clear': 'deleteActivity',
-      'click .tick-button': 'addTick',
-      'click .new-session-tick-clear': 'deleteTick',
       'click .new-session-button': 'submit',
-      'click .navigate': 'navigate',
       'click .new-session-tried': 'checkTried',
       'click .new-session-sent': 'checkSent',
-      'keyup .new-session-crag-search-input': 'validate',
-      'click .new-session-crag-search .choice': 'validate',
-      'click .new-session-crag-search .search-choice-clear': 'validate',
-      'change .new-session-datepicker': 'validate',
-      'change .new-session-activity-type': 'validateTicks'
+      'click .modal-cancel': 'cancel'
     },
 
     setup: function () {
 
       // Save refs.
-      this.dateInput = this.$('.new-session-datepicker').pickadate();
-      this.activities = this.$('.new-session-activities');
-      this.datePicker = this.dateInput.pickadate('picker');
       this.errorMsg = this.$('.new-session-error');
       this.submitButton = this.$('.new-session-button');
       this.submitButtonSpin = new Spin($('.button-spin', this.el), {
-        color: '#4d4d4d',
+        color: '#396400',
         lines: 13,
         length: 3,
         width: 2,
@@ -82,43 +77,75 @@ define([
         reverse: true, 
         el: '.new-session-crag-search',
         choose: true,
-        onChoose: _.bind(this.validateTicks, this),
+        onChoose: _.bind(this.validate, this),
         types: ['crags']
       });
+      if (this.options.crag_id) {
+        this.cragChoices.preChoose({type: 'crags', id: this.options.crag_id});
+      }
+
+      // Init choices.
+      var query = this.options.crag_id ? {crag_id: this.options.crag_id}: null;
+      this.tickChoices = new Choices(this.app, {
+        reverse: true,
+        el: '.new-session-ascent-search',
+        choose: true,
+        onChoose: _.bind(this.validate, this),
+        types: ['ascents'],
+        query: query
+      });
+      if (this.options.ascent_id) {
+        this.tickChoices.preChoose({type: 'ascents', id: this.options.ascent_id});
+      }
+
+      // Handle date.
+      this.dateInput = this.$('.new-session-datepicker').pickadate({
+        onStart: function () {
+          var date = new Date();
+          this.set('select', [date.getFullYear(), date.getMonth() + 1, date.getDate()]);
+        },
+        onSet: _.bind(this.validate, this)
+      });
+      this.datePicker = this.dateInput.pickadate('picker');
+
+      // Restric numeric inputs.
+      util.numbersOnly(this.$('.numeric'));
 
       // Autogrow the write comment box.
       this.$('textarea[name="note"]').autogrow();
 
-      // Handle error display.
+      // Handle warning, and error displays.
       this.$('input[type="text"]').blur(function (e) {
         var el = $(e.target);
-        if (el.hasClass('input-error'))
+        if (el.hasClass('required') && el.val().trim() === ''
+            && !$('.search-choice', el.parent()).is(':visible')) {
+          el.addClass('input-warning');
+        }
+        if (el.hasClass('input-error')) {
           el.removeClass('input-error');
+        }
+      });
+
+      // Handle tips on focus.
+      this.$('input[type="text"]').focus(function (e) {
+        var el = $(e.target);
+        if (el.hasClass('input-warning')) {
+          el.removeClass('input-warning');
+        }
       });
 
       // Focus cursor initial.
-      _.delay(_.bind(function () { this.focus(); }, this), 1);
-
-      // Render lists.
-      this.followers = new Followers(this.app, {parentView: this, reverse: true});
-      this.followees = new Followees(this.app, {parentView: this, reverse: true});
-      this.crags = new Watchees(this.app, {parentView: this, reverse: true,
-          type: 'crag', heading: 'Crags'});
-      this.routes = new Watchees(this.app, {parentView: this, reverse: true,
-          type: 'ascent', subtype: 'r', heading: 'Routes'});
-      this.boulders = new Watchees(this.app, {parentView: this, reverse: true,
-          type: 'ascent', subtype: 'b', heading: 'Boulders'});
+      _.delay(_.bind(function () {
+        if (!this.options.crag_id) {
+          this.$('.new-session-crag-search-input').focus();
+        } else if (!this.options.ascent_id) {
+          this.$('.new-session-ascent-search-input').focus();
+        } else {
+          this.$('textarea[name="note"]').focus();
+        }
+      }, this), 1);
 
       return this;
-    },
-
-    focus: function (e) {
-      _.find(this.$('input[type!="submit"]:visible:not(.new-session-datepicker)'),
-          function (i) {
-        var empty = $(i).val().trim() === '';
-        if (empty) $(i).focus();
-        return empty;
-      });
     },
 
     empty: function () {
@@ -130,11 +157,8 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      this.followers.destroy();
-      this.followees.destroy();
-      this.crags.destroy();
-      this.routes.destroy();
-      this.boulders.destroy();
+      this.cragChoices.destroy();
+      this.tickChoices.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();
@@ -142,137 +166,36 @@ define([
 
     navigate: function (e) {
       e.preventDefault();
-
-      // Route to wherever.
       var path = $(e.target).closest('a').attr('href');
-      if (path)
+      if (path) {
         this.app.router.navigate(path, {trigger: true});
-    },
-
-    addActivity: function (e) {
-      if (e) e.preventDefault();
-
-      // Render and attach.
-      var activity = $(this.activityTemp.call(this))
-          .insertBefore($('.activity-button'));
-
-      // Handle selects.
-      util.customSelects(activity);
-
-      // Restric numeric inputs.
-      util.numbersOnly($('.numeric', activity));
-
-      // Handle error display.
-      $('input[type="text"]', activity).blur(function (e) {
-        var el = $(e.target);
-        if (el.hasClass('input-error'))
-          el.removeClass('input-error');
-      });
-    },
-
-    deleteActivity: function (e) {
-      if (e) e.preventDefault();
-
-      // Remove.
-      $(e.target).closest('.new-session-activity').remove();
-    },
-
-    validateTicks: function (e) {
-      if (!this.cragChoices.choice) {
-        this.$('.new-session-ticks').hide();
-        _.each(this.tickChoices, function (t) {
-          t.destroy();
-        });
-        this.tickChoices = {};
-        this.$('.new-session-tick').remove();
-        return;
       }
-      var types = this.$('.new-session-activity-type');
-      _.each(types, _.bind(function (t) {
-        t = $(t);
-        var opt = $('option[value="' + t.val() + '"]', t);
-        var type = opt.data('type');
-        var ticks = $('.new-session-ticks', t.closest('.new-session-activity'));
-        var label = $('.tick-button span', ticks);
-        if (type) {
-          _.each($('.new-session-tick', ticks), _.bind(function (st) {
-            st = $(st);
-            var tid = st.data('tid');
-            var stt = this.tickChoices[tid].options.query.type;
-            if (stt)
-              if (stt !== type) st.addClass('hidden');
-              else st.removeClass('hidden');
-            else
-              this.tickChoices[tid].options.query.type = type;
-          }, this));
-          ticks.show();
-          if (type === 'b') label.text('Problem');
-          else label.text('Route');
-        } else {
-          ticks.hide();
-          _.each($('.new-session-tick', ticks), _.bind(function (st) {
-            st = $(st);
-            var tid = st.data('tid');
-            this.tickChoices[tid].destroy();
-            delete this.tickChoices[tid];
-            st.remove();
-          }, this));
-        }
-      }, this));
     },
 
-    addTick: function (e) {
-      if (e) e.preventDefault();
+    validate: function () {
+      var crag = this.cragChoices.choice;
+      var tick = this.tickChoices.choice;
 
-      // Render and attach.
-      var ctx = $(e.target).closest('.new-session-activity');
-      var types = $('.new-session-activity-type', ctx);
-      var type = $('option[value="' + types.val() + '"]', types).data('type');
-      var title = type === 'b' ? 'Problem': 'Route';
-      var tick = $(this.tickTemp.call(this, {title: title}))
-          .insertBefore($('.tick-button', ctx));
-      var tid = util.makeID();
-      tick.attr('data-tid', tid);
-
-      // Handle selects.
-      util.customSelects(tick);
-
-      // Restric numeric inputs.
-      util.numbersOnly($('.numeric', tick));
-
-      // Autogrow the write comment box.
-      $('textarea[name="note"]', tick).autogrow();
-
-      // Init choices.
-      var choices = new Choices(this.app, {
-        reverse: true, 
-        el: $('.new-session-ascent-search', tick).get(0),
-        choose: true,
-        types: ['ascents'],
-        query: {
-          crag_id: this.cragChoices.choice.model.id,
+      // Ensure the tick is from the crag.
+      if (crag) {
+        if (tick && tick.model.get('crag_id') !== crag.model.get('id')) {
+          this.tickChoices.clearChoice();
         }
-      });
-      this.tickChoices[tid] = choices;
-      this.validateTicks();
+        this.tickChoices.options.query.crag_id = crag.model.get('id');
+      } else if (!crag) {
+        if (tick && !this.tickChoices.options.query.crag_id) {
+          this.cragChoices.preChoose({type: 'crags', id: tick.model.get('crag_id')});
+        }
+        this.tickChoices.options.query = {};
+      }
 
-      // Handle error display.
-      $('input[type="text"]', tick).blur(function (e) {
-        var el = $(e.target);
-        if (el.hasClass('input-error'))
-          el.removeClass('input-error');
-      });
-    },
-
-    deleteTick: function (e) {
-      if (e) e.preventDefault();
-
-      // Remove.
-      var tick = $(e.target).closest('.new-session-tick');
-      var tid = tick.data('tid');
-      this.tickChoices[tid].destroy();
-      delete this.tickChoices[tid];
-      tick.remove();
+      // Validate log button.
+      var dateTxt = this.dateInput ? this.dateInput.val().trim(): '';
+      if (!crag || !tick || dateTxt === '') {
+        this.submitButton.attr('disabled', true).addClass('disabled');
+      } else {
+        this.submitButton.attr('disabled', false).removeClass('disabled');
+      }
     },
 
     checkTried: function (e) {
@@ -293,16 +216,8 @@ define([
       $('.new-session-tick-details', ctx).show();
     },
 
-    validate: function (e) {
-      if (!this.cragChoices.choice
-          || this.dateInput.val().trim() === '')
-        this.submitButton.attr('disabled', true).addClass('disabled');
-      else
-        this.submitButton.attr('disabled', false).removeClass('disabled');
-      return true;
-    },
-
     submit: function (e) {
+      e.preventDefault();
 
       // Sanitize.
       this.$('input[type!="submit"]:visible, textarea:visible')
@@ -310,74 +225,60 @@ define([
         $(this).val(util.sanitize($(this).val()));
       });
 
+      var tickChoice = this.tickChoices.choice.model.attributes;
+      var cragChoice = this.cragChoices.choice.model.attributes;
+
       // Build the payload.
       var payload = {
-        crag_id: this.cragChoices.choice.model.id,
+        crag_id: cragChoice.id,
         date: this.datePicker.get('select').pick,
-        note: this.$('#new-session-note').val().trim(),
-        name: this.$('#new-session-name').val().trim()
+        name: (new Date).format('mm/dd/yy')
       };
-
-      // Handle name.
-      if (payload.name === '')
-        payload.name = (new Date).format('mm/dd/yy');
 
       // Get all actions.
       var actions = [];
-      _.each(this.$('.new-session-activity'), _.bind(function (a, i) {
-        a = $(a);
-        var type = $('.new-session-activity-type', a);
-        var actionType = type.val();
-        if (actionType === 'hide') return;
-        var action = {
-          index: i,
-          type: actionType,
-          duration: $('select[name="duration"]', a).val(),
-          performance: $('select[name="performance"]', a).val()
-        };
+      var action = {
+        type: tickChoice.type
+      };
 
-        // Get all ticks.
-        var ticks = [];
-        var tickType = $('option[value="' + actionType + '"]',
-            type).data('type');
-        _.each($('.new-session-tick', a), _.bind(function (t, i) {
-          t = $(t);
-          var choice = this.tickChoices[t.data('tid')].choice;
-          if (!choice) return;
-          var sent = $('.new-session-sent', t).is(':checked');
-          var tick = {
-            index: i,
-            type: tickType,
-            ascent_id: choice.model.id,
-            note: $('textarea[name="note"]', t).val().trim()
-          };
-          if (sent)
-            _.extend(tick, {
-              sent: true,
-              grade: $('select[name="grade"]', t).val(),
-              feel: $('select[name="feel"]', t).val(),
-              tries: $('select[name="tries"]', t).val(),
-              rating: $('select[name="rating"]', t).val(),
-              first: $('select[name="first"]', t).val()
-            });
-          ticks.push(tick);
-        }, this));
-
-        if (ticks.length !== 0) action.ticks = ticks;
-        actions.push(action);
-      }, this));
-      if (actions.length !== 0) payload.actions = actions;
+      // Get tick.
+      var ticks = [];
+      var tick = {
+        type: tickChoice.type,
+        ascent_id: tickChoice.id,
+        duration: this.$('select[name="duration"]').val(),
+        performance: this.$('select[name="performance"]').val(),
+        note: this.$('textarea[name="note"]').val().trim()
+      };
+      var sent = this.$('.new-session-sent').is(':checked');
+      if (sent) {
+        _.extend(tick, {
+          sent: true,
+          grade: this.$('select[name="grade"]').val(),
+          feel: this.$('select[name="feel"]').val(),
+          tries: this.$('select[name="tries"]').val(),
+          rating: this.$('select[name="rating"]').val(),
+          first: this.$('select[name="first"]').val()
+        });
+      }
+      ticks.push(tick);
+      action.ticks = ticks;
+      actions.push(action);
+      payload.actions = actions;
 
       // All good, show spinner.
       this.submitButtonSpin.start();
-      this.submitButton.addClass('spinning');
+      this.submitButton.addClass('spinning').attr('disabled', true);
+
+      console.log(payload)
+      return false;
 
       // Do the API request.
       rest.post('/api/sessions', payload, _.bind(function (err, data) {
 
         // Stop spinner.
         this.submitButtonSpin.stop();
-        this.submitButton.removeClass('spinning');
+        this.submitButton.removeClass('spinning').attr('disabled', false);
         
         if (err) {
 
@@ -389,26 +290,25 @@ define([
           return;
         }
 
-        // Scroll to top.
-        $(window).scrollTop(0);
-
         // Show success.
         mps.publish('flash/new', [{
-          message: 'You logged a session.',
+          message: 'You logged an ascent.',
           level: 'alert'
         }, true]);
 
         // Clear fields.
-        _.each(this.tickChoices, function (tc) { tc.destroy(); });
-        this.tickChoices = {};
-        $('.new-session-activity').remove();
-        this.$('input[type="text"], textarea').val('');
         this.cragChoices.clearChoice();
-        this.validate();
-
+        this.tickChoices.clearChoice();
+        this.$('input[type="text"], textarea').val('');
+        this.destroy();
       }, this));
 
       return false;
+    },
+
+    cancel: function (e) {
+      e.preventDefault();
+      $.fancybox.close();
     },
 
   });

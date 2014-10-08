@@ -1,19 +1,16 @@
 <div class="new-session-tick">
-  <a href="javascript:;" class="new-session-tick-clear" tabindex="-1">
-    <i class="icon-cancel"></i>
-  </a>
+  <% if (typeof closable === 'undefined' || closable) { %>
+    <a href="javascript:;" class="new-session-tick-clear" tabindex="-1">
+      <i class="icon-cancel"></i>
+    </a>
+  <% } %>
   <table>
     <tbody>
-      <tr>
-        <td colspan="4" class="new-session-cell" style="width: 75%;">
-          <label><%= title %> Name</label>
-        </td>
-      </tr>
       <tr class="new-session-row-nopad">
-        <td colspan="4" class="new-session-cell" style="width: 75%;">
-          <div class="new-session-search new-session-ascent-search">
-            <input name="tick" type="text"
-                class="new-session-tick-search-input" placeholder="Find a <%= title.toLowerCase() %>..."
+        <td colspan="3" class="new-session-cell" style="width: 50%;">
+          <div class="new-session-search new-session-crag-search">
+            <input id="new-session-crag" name="crag" type="text"
+                class="new-session-crag-search-input required" placeholder="Find a crag..."
                 autocomplete="off" />
             <div class="search-choice">
               <div class="search-choice-content"></div>
@@ -21,7 +18,29 @@
                 <i class="icon-cancel"></i>
               </a>
             </div>
-            <div class="search-display">
+            <div class="search-display" style="max-height: 275px;">
+              <div class="list-header"></div>
+            </div>
+          </div>
+        </td>
+        <td colspan="3" class="new-session-cell" style="width: 50%;">
+          <input id="new-session-date" name="date" type="text"
+              class="new-session-datepicker picker__input required" placeholder="dd mm, yyyy" readonly />
+        </td>
+      </tr>
+      <tr class="new-session-row-nopad">
+        <td colspan="4" class="new-session-cell" style="width: 75%;">
+          <div class="new-session-search new-session-ascent-search">
+            <input name="tick" type="text"
+                class="new-session-tick-search-input required" placeholder="Find an ascent..."
+                autocomplete="off" />
+            <div class="search-choice">
+              <div class="search-choice-content"></div>
+              <a href="javascript:;" class="search-choice-clear" tabindex="-1">
+                <i class="icon-cancel"></i>
+              </a>
+            </div>
+            <div class="search-display" style="max-height: 210px;">
               <div class="list-header"></div>
             </div>
           </div>
@@ -37,6 +56,45 @@
             <input class="new-session-sent" type="checkbox" name="sent" value="sent" />
             <span><i class="icon-ok"></i> Sent</span>
           </label>
+        </td>
+      </tr>
+      <tr class="new-session-row-nopad">
+        <td colspan="3" class="new-session-cell" style="width: 50%;">
+          <select name="duration" style="max-height: 165px;">
+            <option value="hide">-- Duration --</option>
+            <option value="30">30m</option>
+            <option value="60">1h</option>
+            <option value="90">1h 30m</option>
+            <option value="120">2h</option>
+            <option value="150">2h 30m</option>
+            <option value="180">3h</option>
+            <option value="210">3h 30m</option>
+            <option value="240">4h</option>
+            <option value="270">4h 30m</option>
+            <option value="300">5h</option>
+            <option value="330">5h 30m</option>
+            <option value="360">6h</option>
+            <option value="390">6h 30m</option>
+            <option value="420">7h</option>
+            <option value="450">7h 30m</option>
+            <option value="480">8h</option>
+            <option value="51">8 30m</option>
+            <option value="54">9h</option>
+            <option value="57">9 30m</option>
+            <option value="60">10h</option>
+            <option value="63">10 30m</option>
+            <option value="66">11h</option>
+            <option value="69">11 30m</option>
+            <option value="72">12h</option>
+          </select>
+        </td>
+        <td colspan="3" class="new-session-cell" style="width: 50%;">
+          <select name="performance">
+            <option value="hide">-- Performance --</option>
+            <option value="-1">Weak</option>
+            <option value="0">Good</option>
+            <option value="1">Strong</option>
+          </select>
         </td>
       </tr>
       <tr class="new-session-tick-details">
@@ -112,7 +170,7 @@
       </tr>
       <tr class="new-session-row-nopad">
         <td colspan="6" class="new-session-cell">
-          <textarea name="note" placeholder="Comments..." style="width:622px;"></textarea>
+          <textarea name="note" placeholder="Comments..."></textarea>
         </td>
       </tr>
     </tbody>

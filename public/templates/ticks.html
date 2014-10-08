@@ -2,6 +2,7 @@
 
   // Save model attributes
   var data = this.model.attributes;
+  var grades = ['not graded'].concat(this.model.grades);
 
 %>
 
@@ -26,8 +27,9 @@
     ticks = this.model.ticksByGrade(type); %>
     <div class="list-wrap <%= type %>-ticks">
       <span class="no-results">No results.</span>
-      <% _.each(this.model.grades.reverse(), _.bind(function (grade) { %>
-        <% if (!ticks[grade]) return; %>
+      <% for (var j = grades.length - 1; j > -1; --j) {
+        var grade = grades[j];
+        if (!ticks[grade]) continue; %>
         <ul class="list">
           <span class="list-group-heading"><%= grade %></span>
           <% _.each(ticks[grade], _.bind(function (tick, i) {
@@ -44,7 +46,8 @@
             </a>
           <% }, this)); %>
         </ul>
-      <% }, this)); %>
+      <% } %>
+
     </div>
   <% }, this)) %>
 </div>

@@ -383,7 +383,8 @@ define([
         $styledSelect.text($this.children('option').eq(0).text());
       
         var $list = $('<ul />', {
-          'class': 'select-options'
+          'class': 'select-options',
+          'style': $this.attr('style')
         }).insertAfter($styledSelect);
 
         for (var i = 0; i < numberOfOptions; i++) {

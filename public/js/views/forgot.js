@@ -17,6 +17,7 @@ define([
 
     initialize: function (app) {
       this.app = app;
+      this.subscriptions = [];
       this.on('rendered', this.setup, this);
     },
 
