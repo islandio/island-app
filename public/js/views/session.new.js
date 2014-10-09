@@ -148,11 +148,6 @@ define([
       return this;
     },
 
-    empty: function () {
-      this.$el.empty();
-      return this;
-    },
-
     destroy: function () {
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
@@ -161,7 +156,7 @@ define([
       this.tickChoices.destroy();
       this.undelegateEvents();
       this.stopListening();
-      this.empty();
+      $.fancybox.close();
     },
 
     navigate: function (e) {
@@ -238,12 +233,14 @@ define([
       // Get all actions.
       var actions = [];
       var action = {
+        index: 0,
         type: tickChoice.type
       };
 
       // Get tick.
       var ticks = [];
       var tick = {
+        index: 0,
         type: tickChoice.type,
         ascent_id: tickChoice.id,
         duration: this.$('select[name="duration"]').val(),
@@ -269,9 +266,6 @@ define([
       // All good, show spinner.
       this.submitButtonSpin.start();
       this.submitButton.addClass('spinning').attr('disabled', true);
-
-      console.log(payload)
-      return false;
 
       // Do the API request.
       rest.post('/api/sessions', payload, _.bind(function (err, data) {
