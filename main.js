@@ -199,7 +199,7 @@ if (cluster.isMaster) {
           });
       }
 
-      //Instagram.init(app);
+      Instagram.init(app);
 
       if (!module.parent) {
 
