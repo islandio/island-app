@@ -71,6 +71,8 @@ if (cluster.isMaster) {
   var service = require('./lib/service');
   var Mailer = require('./lib/mailer');
   var PubSub = require('./lib/pubsub').PubSub;
+      // Add instagram routes and subscriptions
+  var Instagram = require('./lib/instagram');
 
   // Setup Environments
   var app = express();
@@ -167,9 +169,6 @@ if (cluster.isMaster) {
       app.use(passport.session());
       app.use(express.methodOverride());
 
-      // Add instagram routes and subscriptions
-      require('./lib/instagram').init(app);
-
       // Development only
       if (process.env.NODE_ENV !== 'production') {
         app.use(express.favicon(__dirname + '/public/img/favicon.ico'));
@@ -199,6 +198,8 @@ if (cluster.isMaster) {
             res.redirect('https://' + req.headers.host + req.url);
           });
       }
+
+      //Instagram.init(app);
 
       if (!module.parent) {
 
