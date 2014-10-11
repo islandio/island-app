@@ -91,25 +91,6 @@ if (cluster.isMaster) {
       '8b+', '8b', '8a+', '8a', '7c+', '7c', '7b+', '7b', '7a+', '7a',
       '6c+', '6c', '6b+', '6b', '6a+', '6a', '5c', '5b', '5a', '4', '3']);
 
-  function rawBody(rawMimeTypes) {
-    return function (req, res, next) {
-      if ('GET' == req.method || 'HEAD' == req.method) return next();
-      var mimeType = (req.headers['content-type'] || '').split(';')[0];
-      if (_.contains(rawMimeTypes, mimeType)
-          && (!req.body || _.isEmpty(req.body))) {
-        var buf = new Buffer('');
-        req.on('data', function (chunk) {
-          buf = Buffer.concat([buf, chunk]); });
-        req.on('end', function () {
-          req.rawBody = buf;
-          next();
-        });
-      } else {
-        next();
-      }
-    }
-  }
-
   Step(
     function () {
 
@@ -175,7 +156,6 @@ if (cluster.isMaster) {
       app.set('cookieParser', express.cookieParser(app.get('sessionKey')));
       app.use(express.favicon(__dirname + '/public/img/favicon.ico'));
       app.use(express.logger('dev'));
-      app.use(rawBody(['application/json']));
       app.use(express.bodyParser());
       app.use(app.get('cookieParser'));
       app.use(express.session({
@@ -186,6 +166,9 @@ if (cluster.isMaster) {
       app.use(passport.initialize());
       app.use(passport.session());
       app.use(express.methodOverride());
+
+      // Add instagram routes and subscriptions
+      require('./lib/instagram').init(app);
 
       // Development only
       if (process.env.NODE_ENV !== 'production') {
@@ -216,9 +199,6 @@ if (cluster.isMaster) {
             res.redirect('https://' + req.headers.host + req.url);
           });
       }
-
-      // Add instagram routes and subscriptions
-      require('./lib/instagram').init(app);
 
       if (!module.parent) {
 
