@@ -11,11 +11,13 @@ define([
   'util',
   'models/session',
   'text!../../../templates/rows/session.html',
+  'text!../../../templates/rows/session.activity.html',
+  'text!../../../templates/rows/session.tick.html',
   'text!../../../templates/session.title.html',
   'views/lists/comments',
   'text!../../../templates/confirm.html'
-], function ($, _, Backbone, mps, rest, util, Model, template, title, Comments,
-      confirm) {
+], function ($, _, Backbone, mps, rest, util, Model, template, activityTemp,
+      tickTemp, title, Comments, confirm) {
   return Backbone.View.extend({
 
     attributes: function () {
@@ -30,7 +32,14 @@ define([
       this.parentView = options.parentView;
       this.wrap = options.wrap;
       this.template = _.template(template);
+      this.activityTemp = _.template(activityTemp);
+      this.tickTemp = _.template(tickTemp);
       this.subscriptions = [];
+
+      // Socket subscriptions
+      this.app.rpc.socket.on('tick.new', _.bind(this.collect, this));
+      this.app.rpc.socket.on('tick.removed', _.bind(this._remove, this));
+
       this.on('rendered', this.setup, this);
       return this;
     },
@@ -44,9 +53,11 @@ define([
 
       // Render content
       this.$el.html(this.template.call(this));
-      if (this.parentView)
+      if (this.parentView) {
         this.$el.prependTo(this.parentView.$('.event-right'));
-      else this.$el.appendTo(this.wrap);
+      } else {
+        this.$el.appendTo(this.wrap);
+      }
 
       // Render title if single
       if (!this.parentView) {
@@ -59,10 +70,10 @@ define([
       }
 
       // Render crag location map.
+      this.$('.session-map').show();
       var crag = this.model.get('crag');
       if (crag.location && crag.location.latitude
           && crag.location.longitude) {
-        this.$('.session-map').show();
         cartodb.createVis('session_map_' + this.model.id,
             'https://island.cartodb.com/api/v1/viz/crags/viz.json', {
           zoom: 8,
@@ -73,6 +84,8 @@ define([
           cartodb_logo: false,
           https: true
         }, _.bind(function (vis, layers) {}, this));
+      } else {
+        $('#session_map_' + this.model.id).text('?');
       }
 
       // Trigger setup.
@@ -84,8 +97,9 @@ define([
     setup: function () {
 
       // Set map view.
-      if (!this.parentView)
+      if (!this.parentView) {
         mps.publish('map/fly', [this.model.get('crag').location]);
+      }
 
       // Render comments.
       this.comments = new Comments(this.app, {
@@ -96,6 +110,31 @@ define([
       // Handle time.
       this.timer = setInterval(_.bind(this.when, this), 5000);
       this.when();
+    },
+
+    // Collect a tick.
+    collect: function (data) {
+      if (data.session_id === this.model.id) {
+        var tick = this.renderTick(data);
+        var activity = this.$('.session-activity[data-type="' + data.type + '"]');
+        if (activity.length > 0) {
+          $(tick).appendTo($('.session-ticks', activity));
+        } else {
+          data.action.ticks = [data];
+          activity = this.renderActivity(data.action);
+          $(activity).insertAfter(this.$('.session-activity').last());
+        }
+      }
+    },
+
+    // Remove a tick.
+    _remove: function (data) {
+      console.log('remove', data)
+
+      // this.$el.slideUp('fast', _.bind(function () {
+      //   this.destroy();
+      //   cb();
+      // }, this));
     },
 
     destroy: function () {
@@ -149,8 +188,9 @@ define([
           $.fancybox.close();
 
           // Go home if single view.
-          if (!this.parentView)
+          if (!this.parentView) {
             this.app.router.navigate('/', {trigger: true, replace: true});
+          }
 
         }, this));
 
@@ -160,11 +200,20 @@ define([
     },
 
     when: function () {
-      if (!this.model.get('created')) return;
-      if (!this.time)
+      if (!this.model.get('updated')) return;
+      if (!this.time) {
         this.time = this.$('time.created:first');
-      this.time.text(util.getRelativeTime(this.model.get('created')));
+      }
+      this.time.text(util.getRelativeTime(this.model.get('updated')));
     },
+
+    renderActivity: function (a) {
+      return this.activityTemp.call(this, {a: a});
+    },
+
+    renderTick: function (t) {
+      return this.tickTemp.call(this, {t: t});
+    }
 
   });
 });

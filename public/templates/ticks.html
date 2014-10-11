@@ -2,7 +2,7 @@
 
   // Save model attributes
   var data = this.model.attributes;
-  var grades = ['not graded'].concat(this.model.grades);
+  var grades = ['not graded by you'].concat(this.model.grades);
 
 %>
 
@@ -34,16 +34,17 @@
           <span class="list-group-heading"><%= grade %></span>
           <% _.each(ticks[grade], _.bind(function (tick, i) {
             var back = i % 2 === 0 ? '#f2f2f2': '#f9f9f9'; %>
-            <a href="/crags/<%= tick.ascent.key %>" id="<%= tick.id %>" class="navigate">
-              <li style="background:<%= back %>;">
-                <span class="list-row-title"><%= tick.ascent.name %>, </span>
+            <li style="background:<%= back %>;">
+              <a href="/crags/<%= tick.ascent.key %>" id="<%= tick.id %>" class="navigate">
+                <span class="list-row-title"><%= tick.ascent.name %>,
                 <% if (tick.ascent.sector) { %>
                   <span><%= tick.ascent.crag %> (<%= tick.ascent.sector %>)</span>
                 <% } else { %>
                   <span><%= tick.ascent.crag %></span>
                 <% } %>
-              </li>
-            </a>
+                </span>
+              </a>
+            </li>
           <% }, this)); %>
         </ul>
       <% } %>

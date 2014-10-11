@@ -8,16 +8,18 @@ define([
   'mps',
   'rest',
   'views/boiler/row',
-  'text!../../../templates/rows/watchee.html'
-], function ($, _, mps, rest, Row, template) {
+  'text!../../../templates/rows/watchee.html',
+  'views/session.new'
+], function ($, _, mps, rest, Row, template, Session) {
   return Row.extend({
 
-    tagName: 'a',
+    tagName: 'li',
 
     attributes: function () {
+      var back = this.model.collection.indexOf(this.model) % 2 === 0 ? '#f2f2f2': '#f9f9f9';
       return _.defaults({
-        class: 'sidebar-watch navigate',
-        href: '/crags/' + this.model.get('subscribee').key
+        class: 'sidebar-watch',
+        style: 'background:' + back + ';'
       }, Row.prototype.attributes.call(this));
     },
 
@@ -32,7 +34,8 @@ define([
     },
 
     events: {
-      'click .navigate': 'navigate'
+      'click .navigate': 'navigate',
+      'click .list-button': 'log'
     },
 
     navigate: function (e) {
@@ -49,6 +52,18 @@ define([
         cb();
       }, this));
     },
+
+    log: function (e) {
+      e.preventDefault();
+      var opts = {};
+      var subscribee = this.model.get('subscribee');
+      if (subscribee.crag) {
+        opts.ascent_id = subscribee.id;
+      } else {
+        opts.crag_id = subscribee.id;
+      }
+      new Session(this.app, opts).render();
+    }
 
   });
 });

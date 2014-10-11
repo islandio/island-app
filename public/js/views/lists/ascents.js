@@ -10,7 +10,7 @@ define([
   'rest',
   'util',
   'views/session.new',
-  'text!../../../templates/lists/ascents.html',
+  'text!../../../templates/ascents.html',
 ], function ($, _, Backbone, mps, rest, util, Session, template) {
   return Backbone.View.extend({
 

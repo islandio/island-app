@@ -48,22 +48,29 @@ define([
 
     // receive event from event bus
     collect: function (data) {
-      if (!_.contains(this.latestList.actions, data.action_type))
+      if (!_.contains(this.latestList.actions, data.action_type)) {
         return;
+      }
       if (this.latestList.query) {
         if (this.latestList.query.subscribee_id
             && data.actor_id !== this.latestList.query.subscribee_id
-            && data.target_id !== this.latestList.query.subscribee_id)
+            && data.target_id !== this.latestList.query.subscribee_id) {
           return;
+        }
         if (this.latestList.query.action) {
-          if (data.action_type !== this.latestList.query.action.type)
+          if (data.action_type !== this.latestList.query.action.type) {
             return;
+          }
           var valid = true;
           _.each(this.latestList.query.action.query, function (v, p) {
             if (v.$ne !== undefined) {
               v = !v.$ne;
-              if (!!data.action[p] !== v) valid = false;
-            } else if (data.action[p] !== v) valid = false;
+              if (!!data.action[p] !== v) {
+                valid = false;
+              }
+            } else if (data.action[p] !== v) {
+              valid = false;
+            }
           });
           if (!valid) return;
         }
@@ -75,19 +82,20 @@ define([
     render: function (options) {
       List.prototype.render.call(this, options);
       this.spin.stop();
-      if (this.collection.length > 0)
+      if (this.collection.length > 0) {
         _.delay(_.bind(function () {
           this.checkHeight();
         }, this), (this.collection.length + 1) * 30);
-      else {
+      } else {
         this.nomore = true;
         this.listSpin.hide();
-        if (this.app.profile.content.private)
+        if (this.app.profile.content.private) {
           $('<span class="empty-feed">This athlete is private.</span>')
             .appendTo(this.$el);
-        else
+        } else {
           $('<span class="empty-feed">Nothing to see here!</span>')
               .appendTo(this.$el);
+        }
         this.spin.stop();
         this.spin.target.hide();
       }
@@ -95,34 +103,46 @@ define([
       return this;
     },
 
-    // render the latest model
-    // (could be newly arrived or older ones from pagination)
+
     renderLast: function (pagination) {
       List.prototype.renderLast.call(this, pagination);
 
       // Handle day headers.
-      var view = pagination !== true && this.collection.options
-          && this.collection.options.reverse ?
-          this.views[0]:
-          this.views[this.views.length - 1];  
-      var ms = new Date(view.model.get('date')).valueOf();
-      var header = this.$('.event-day-header').filter(function () {
-        return ms >= Number($(this).data('beg'))
-            && ms <= Number($(this).data('end'));
-      });
-      if (header.length > 0) {
-        if (pagination !== true)
-          header.detach().insertBefore(view.$el);
+      if (!this.collection.options
+          || this.collection.options.headers !== false) {
+        var view = pagination !== true && this.collection.options
+            && this.collection.options.reverse ?
+            this.views[0]:
+            this.views[this.views.length - 1];  
+        var ms = new Date(view.model.get('date')).valueOf();
+        var header = this.$('.event-day-header').filter(function () {
+          return ms >= Number($(this).data('beg'))
+              && ms <= Number($(this).data('end'));
+        });
+        if (header.length > 0) {
+          if (pagination !== true) {
+            header.detach().insertBefore(view.$el);
+            $('<div class="event-divider">').insertAfter(view.$el).show();
+          } else {
+            $('<div class="event-divider">').insertBefore(view.$el).show();
+          }
+        } else {
+          var _date = new Date(view.model.get('date'));
+          var beg = new Date(_date.getFullYear(), _date.getMonth(),
+              _date.getDate());
+          var end = new Date(_date.getFullYear(), _date.getMonth(),
+              _date.getDate(), 23, 59, 59, 999);
+          header = $('<div class="event-day-header" data-beg="' + beg.valueOf()
+              + '" data-end="' + end.valueOf() + '">' + '<span>'
+              + end.format('mmmm dd, yyyy') + '</span></div>');
+          header.insertBefore(view.$el);
+        }
       } else {
-        var _date = new Date(view.model.get('date'));
-        var beg = new Date(_date.getFullYear(), _date.getMonth(),
-            _date.getDate());
-        var end = new Date(_date.getFullYear(), _date.getMonth(),
-            _date.getDate(), 23, 59, 59, 999);
-        header = $('<div class="event-day-header" data-beg="' + beg.valueOf()
-            + '" data-end="' + end.valueOf() + '">' + '<span>'
-            + end.format('mmmm dd, yyyy') + '</span></div>');
-        header.insertBefore(view.$el);
+        var view = pagination !== true && this.collection.options
+            && this.collection.options.reverse ?
+            this.views[0]:
+            this.views[this.views.length - 1];
+        $('<div class="event-divider">').insertBefore(view.$el).show();
       }
 
       // Check for more.
@@ -132,6 +152,47 @@ define([
       }, this), 20);
       return this;
     },
+
+
+    // render the latest model
+    // (could be newly arrived or older ones from pagination)
+    // renderLast: function (pagination) {
+    //   List.prototype.renderLast.call(this, pagination);
+
+    //   // Handle day headers.
+    //   var view = pagination !== true && this.collection.options
+    //       && this.collection.options.reverse ?
+    //       this.views[0]:
+    //       this.views[this.views.length - 1];  
+    //   var ms = new Date(view.model.get('date')).valueOf();
+    //   var header = this.$('.event-day-header').filter(function () {
+    //     return ms >= Number($(this).data('beg'))
+    //         && ms <= Number($(this).data('end'));
+    //   });
+    //   if (header.length > 0) {
+    //     if (pagination !== true) {
+    //       header.detach().insertBefore(view.$el);
+    //     }
+    //   } else {
+    //     var _date = new Date(view.model.get('date'));
+    //     var beg = new Date(_date.getFullYear(), _date.getMonth(),
+    //         _date.getDate());
+    //     var end = new Date(_date.getFullYear(), _date.getMonth(),
+    //         _date.getDate(), 23, 59, 59, 999);
+    //     header = $('<div class="event-day-header" data-beg="' + beg.valueOf()
+    //         + '" data-end="' + end.valueOf() + '">' + '<span>'
+    //         + end.format('mmmm dd, yyyy') + '</span></div>');
+    //     header.insertBefore(view.$el);
+    //   }
+
+    //   // Check for more.
+    //   _.delay(_.bind(function () {
+    //     if (pagination !== true) {
+    //       this.checkHeight();
+    //     }
+    //   }, this), 20);
+    //   return this;
+    // },
 
     events: {
       'focus textarea[name="body"].post-input': 'focus',
@@ -167,8 +228,9 @@ define([
           level: 'error',
           sticky: true
         }, true]);
-      } else
+      } else {
         this.$('.post-input .post').show();
+      }
 
       // Add mouse events for dummy file selector.
       var dummy = this.$('.post-file-chooser-dummy');
@@ -225,8 +287,9 @@ define([
     checkHeight: function () {
       wh = $(window).height();
       so = this.spin.target.offset().top;
-      if (wh - so > this.spin.target.height() / 2)
+      if (wh - so > this.spin.target.height() / 2) {
         this.more();
+      }
     },
 
     // attempt to get more models (older) from server
@@ -241,9 +304,9 @@ define([
           this.fetching = false;
           this.spin.stop();
           this.spin.target.hide();
-          if (this.collection.length > 0)
+          if (this.collection.length > 0) {
             this.showingAll.css('display', 'block');
-          else {
+          } else {
             this.showingAll.hide();
             this.listSpin.hide();
             if (this.$('.empty-feed').length === 0) {
@@ -251,19 +314,21 @@ define([
                   .appendTo(this.$el);
             }
           }
-        } else
+        } else {
           _.each(list.items, _.bind(function (i,o) {
             this.collection.push(i, {silent: true});
             this.renderLast(true);
           }, this));
+        }
 
         _.delay(_.bind(function () {
           this.fetching = false;
           this.spin.stop();
           if (list.items.length < this.latestList.limit) {
             this.spin.target.hide();
-            if (!this.$('.empty-feed').is(':visible'))
+            if (!this.$('.empty-feed').is(':visible')) {
               this.showingAll.css('display', 'block');
+            }
           } else {
             this.showingAll.hide();
             this.spin.target.show();
@@ -272,14 +337,17 @@ define([
       }
 
       // already waiting on server
-      if (this.fetching) return;
+      if (this.fetching) {
+        return;
+      }
 
       // Show spin region.
       this.listSpin.show();
 
       // there are no more, don't call server
-      if (this.nomore || !this.latestList.more)
+      if (this.nomore || !this.latestList.more) {
         return updateUI.call(this, _.defaults({items:[]}, this.latestList));
+      }
 
       // get more
       this.spin.start();
@@ -311,8 +379,9 @@ define([
       this._paginate = _.debounce(_.bind(function (e) {
         var pos = this.$el.height() + this.$el.offset().top
             - wrap.height() - wrap.scrollTop();
-        if (!this.nomore && pos < -this.spin.target.height() / 2)
+        if (!this.nomore && pos < -this.spin.target.height() / 2) {
           this.more();
+        }
       }, this), 20);
       wrap.scroll(this._paginate).resize(this._paginate);
     },
@@ -343,11 +412,12 @@ define([
 
       // Get the files, if any.
       var files = e.target.files || e.originalEvent.dataTransfer.files;
-      if (files.length === 0) return false;
+      if (files.length === 0) {
+        return false;
+      }
 
       // We have files to upload.
-      var data = e.target.files ? null:
-          new FormData(this.postForm.get(0));
+      var data = e.target.files ? null: new FormData(this.postForm.get(0));
 
       // Loop over each file, adding it the the display
       // and from data object, if present.
@@ -359,7 +429,9 @@ define([
             + 'class="upload-progress">' + '<span class="upload-label">',
             file.name, '</span><span class="upload-progress-txt">'
             + 'Waiting...</span>', '</div></div>');
-        if (data && typeof file === 'object') data.append('file', file);
+        if (data && typeof file === 'object') {
+          data.append('file', file);
+        }
       });
       this.postFiles.append(set.html(parts.join('')));
       var bar = $('.upload-progress', set);
@@ -406,7 +478,9 @@ define([
       };
 
       // Use formData object if exists (dnd only)
-      if (data) opts.formData = data;
+      if (data) {
+        opts.formData = data;
+      }
 
       // Setup the uploader.
       var uploader = this.postForm.transloadit(opts);
@@ -442,7 +516,9 @@ define([
       var uploading = false;
       var valid = true;
       _.each(this.attachments, function (a) {
-        if (a.uploading) uploading = true;
+        if (a.uploading) {
+          uploading = true;
+        }
         if (a.assembly) {
           if (a.assembly.ok !== 'ASSEMBLY_COMPLETED') {
             mps.publish('flash/new', [{
@@ -460,7 +536,9 @@ define([
         }, true]);
         return false;
       }
-      if (!valid) return false;
+      if (!valid) {
+        return false;
+      }
 
       // Sanitize html fields.
       this.postTitle.val(util.sanitize(this.postTitle.val()));
@@ -474,16 +552,20 @@ define([
         if (!a.assembly) return;
         _.each(a.assembly.results, function (v, k) {
           _.each(v, function (r) {
-            if (results[k]) results[k].push(r);
-            else results[k] = [r];
+            if (results[k]) {
+              results[k].push(r);
+            } else {
+              results[k] = [r];
+            }
           });
         });
       });
       payload.assembly = {results: results};
 
       // Check for empty post.
-      if (payload.body === '' && _.isEmpty(payload.assembly.results))
+      if (payload.body === '' && _.isEmpty(payload.assembly.results)) {
         return false;
+      }
 
       // Add parent (if parent).
       if (this.collection.options.parentId
@@ -571,6 +653,7 @@ define([
       });
       this.views = [];
       this.$('.event-day-header').remove();
+      this.$('.event-divider').remove();
       this.showingAll.hide();
       this.more();
 

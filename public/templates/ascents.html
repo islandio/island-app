@@ -13,8 +13,8 @@
     <input class="filter-box" type="search" tabindex="2" placeholder="filter ascents..." />
   </div>
 </div>
-<% _.each(data.ascents, _.bind(function (ascents, t) {
-  if (data[t + 'cnt'] === 0) return; %>
+<% _.each(this.data.ascents, _.bind(function (ascents, t) {
+  if (this.data[t + 'cnt'] === 0) return; %>
   <div class="list-wrap <%= t %>-ascents">
     <span class="no-results">No results.</span>
     <% _.each(this.app.grades, _.bind(function (grade) {
@@ -25,16 +25,18 @@
         <span class="list-group-heading"><%= grade %></span>
         <% _.each(buck, _.bind(function (a) {
           var back = i % 2 === 0 ? '#f2f2f2': '#f9f9f9'; %>
-          <a href="/crags/<%= a.key %>" id="<%= a.id %>" class="navigate">
-            <li style="background:<%= back %>;">
+          <li style="background:<%= back %>;" id="<%= a.id %>" data-cid="<%= a.crag_id %>">
+            <a href="/crags/<%= a.key %>" class="navigate">
               <% if (a.sector) { %>
-                <span class="list-row-title"><%= a.name %>, </span>
+                <span class="list-row-title"><%= a.name %>, <span><%= a.sector %></span></span>
               <% } else { %>
                 <span class="list-row-title"><%= a.name %></span>
               <% } %>
-              <span><%= a.sector %></span>
-            </li>
-          </a>
+            </a>
+            <a href="javascript:;" class="list-button">
+              <i class="icon-pencil"></i>
+            </a>
+          </li>
           <% ++i; %>
         <% }, this)); %>
       </ul>

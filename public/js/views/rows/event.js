@@ -28,6 +28,7 @@ define([
 
     render: function (single, prepend) {
       Row.prototype.render.call(this, single, prepend);
+      this.$el.prev('.event-divider').show();
 
       // Determine sub view type.
       var Action;

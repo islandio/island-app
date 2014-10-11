@@ -1,9 +1,9 @@
 <%
-
   var gravatar = 'https://www.gravatar.com/avatar/'
       + this.model.get('author').gravatar + '?s=48&d='
       + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
-  
+  var timeVerb = new Date(this.model.get('updated')).getTime()
+      > new Date(this.model.get('created')).getTime() ? 'Updated' : 'Logged';
 %>
 
 <% if (!this.parentView) { %>
@@ -30,58 +30,9 @@
   <span class="session-empty">No activities</span>
 <% } %>
 <% _.each(this.model.get('actions'), _.bind(function (a) { %>
-  <div class="session-activity">
-    <span class="event-timeline-dot"></span>
-    <ul class="session-activity-title">
-      <li>
-        <% if (a.type === 0) { %>Bouldering
-        <% } else if (a.type === 1) { %>Trad. Climbing
-        <% } else if (a.type === 2) { %>Sport Climbing
-        <% } else if (a.type === 3) { %>Top Roping
-        <% } %>
-        <span><%= this.model.formatActivityDuration(a.duration) %></span>
-      </li>
-      <li><%= this.model.formatActivityPerformance(a.performance) %></li>
-    </ul>
-    <% if (a.ticks.length !== 0) { %>
-      <ul class="session-ticks">
-        <% _.each(a.ticks, _.bind(function (t) { %>
-          <li class="<%= t.sent ? 'sent': '' %>">
-            <% if (t.sent) { %>
-              <span class="event-timeline-label">
-                <i class="icon-ok"></i>
-              </span>
-              <span class="event-timeline-label-text">
-                <%= this.model.formatTickDetails(t) %>
-              </span>
-            <% } %>
-            <span class="session-tick-grade">
-              <%= this.model.formatTickGrade(t.grade, t.feel) || t.ascent.grades.join(' / ') %>
-            </span>
-            <span class="session-tick-name">
-              <a href="/crags/<%= t.ascent.key %>" class="navigate">
-                <%= t.ascent.name %><%= t.ascent.sector ? ', ' + t.ascent.sector: '' %></a>
-              <% if (t.sent) { %>
-                <span class="session-tick-stars">
-                  <% for (var i=0; i < t.rating||0; ++i) { %>
-                    <i class="icon-star"></i>
-                  <% } %>
-                  <% for (var i=0; i < 3 - t.rating||0; ++i) { %>
-                    <i class="icon-star empty"></i>
-                  <% } %>
-                </span>
-              <% } %>
-            </span>
-            <% if (t.note) { %>
-              <p class="session-tick-note">
-                &ldquo;<%= t.note %>&rdquo;
-              </p>
-            <% } %>
-          </li>
-        <% }, this)); %>
-      </ul>
-    <% } %>
-  </div>
+  <% if (a.ticks.length > 0) { %>
+    <%= this.renderActivity(a) %>
+  <% } %>
 <% }, this)); %>
 <% if (this.model.get('note')) { %>
   <p class="session-note">
@@ -98,11 +49,11 @@
     <span class="session-delete info-delete">Delete</span>
     <span class="info-divider">&nbsp;&middot;&nbsp;</span>
   <% } %>
-  Logged <a href="/sessions/<%= this.model.get('key') %>"
+  <%= timeVerb %> <a href="/sessions/<%= this.model.get('key') %>"
         class="muted navigate"><time class="created" 
-        datetime="<%= this.model.get('created') %>" 
-        title="<%= this.model.get('created') %>">
-    <%= this.model.get('created') %>
+        datetime="<%= this.model.get('updated') %>" 
+        title="<%= this.model.get('updated') %>">
+    <%= this.model.get('updated') %>
   </time></a>
 </div>
 <div class="comments"></div>

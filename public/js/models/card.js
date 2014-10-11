@@ -31,10 +31,11 @@ define([
           }
           ticks[this.grades[t.grade]].push(t);
         } else {
-          if (!ticks['not graded']) {
-            ticks['not graded'] = [];
+          var k = 'not graded by you';
+          if (!ticks[k]) {
+            ticks[k] = [];
           }
-          ticks['not graded'].push(t);
+          ticks[k].push(t);
         }
       }, this));
       return ticks;

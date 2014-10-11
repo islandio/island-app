@@ -500,7 +500,7 @@ textarea {
   resize: none;
   font-weight: normal;
   -webkit-font-smoothing: antialiased;
-  padding: 8px;
+  padding: 9px 8px 7px;
   border: 1px solid #cdcdcd;
   color: #404040;
   vertical-align: top;
@@ -888,6 +888,9 @@ a.button.start-button {
 a.button.start-button {
   width: 300px;
   margin: 90px auto 0;
+  display: block;
+  font-size: 14px;
+  padding: 5px 0;
 }
 a.button.new-session-button:hover:not(.disabled),
 button.button.new-session-button:hover:not(.disabled),
@@ -2329,14 +2332,40 @@ ul.list li a {
   background: none;
   padding: 8px 7px 7px;
 }
+ul.list li a:not(.list-button) {
+  max-width: 80%;
+}
 ul.list li a.list-button {
   position: absolute;
   right: 0;
   top: 0;
+  bottom: 0;
   color: #e6e6e6;
-  -webkit-border-radius: 0 3px 3px 0;
-  -moz-border-radius: 0 3px 3px 0;
-  border-radius: 0 3px 3px 0;
+  -webkit-display: flex;
+  -webkit-align-items: center;
+  -webkit-justify-content: center;
+  -moz-display: flex;
+  -moz-align-items: center;
+  -moz-justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+ul.list li:nth-child(2) a.list-button {
+  -webkit-border-top-left-radius: 0;
+  -webkit-border-top-right-radius: 3px;
+  -moz-border-top-left-radius: 0;
+  -moz-border-top-right-radius: 3px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 3px;
+}
+ul.list li:last-child a.list-button {
+  -webkit-border-bottom-right-radius: 3px;
+  -webkit-border-bottom-left-radius: 0;
+  -moz-border-bottom-right-radius: 3px;
+  -moz-border-bottom-left-radius: 0;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 0;
 }
 ul.list li a.list-button:hover {
   color: #2f5a00;
@@ -2348,6 +2377,9 @@ ul.list li a.list-button:active {
 span.list-row-title {
   display: inline-block;
   font-weight: bold;
+}
+span.list-row-title span {
+  font-weight: normal;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––spins*/
 .list-spin {
@@ -3196,6 +3228,26 @@ table.post-params label {
   line-height: 30px;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 }
+.event-divider {
+  display: none;
+  border-top: 1px dashed #ececec;
+  margin-right: -40px;
+  -webkit-animation-name: fadeIn;
+  -moz-animation-name: fadeIn;
+  -o-animation-name: fadeIn;
+  animation-name: fadeIn;
+  -webkit-animation-duration: 0.5s;
+  -moz-animation-duration: 0.5s;
+  -o-animation-duration: 0.5s;
+  animation-duration: 0.5s;
+  -webkit-animation-fill-mode: both;
+  -moz-animation-fill-mode: both;
+  -o-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+.event-divider + .event-divider {
+  display: none !important;
+}
 .event {
   position: relative;
   display: none;
@@ -3339,7 +3391,7 @@ table.post-params label {
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––sessions*/
 .session .leftside {
-  width: 562px;
+  width: 561px;
   margin-left: 78px;
   padding-left: 40px;
   border-left: 1px solid #f2f2f2;
@@ -3368,6 +3420,11 @@ table.post-params label {
   background: #fcfcfc;
   border: 1px solid #f2f2f2;
   overflow: hidden;
+  color: #f2f2f2;
+  text-align: center;
+  line-height: 125px;
+  font-size: 36px;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   -webkit-animation-name: fadeIn;
   -moz-animation-name: fadeIn;
   -o-animation-name: fadeIn;
@@ -3390,8 +3447,10 @@ table.post-params label {
   position: relative;
   top: 0;
   right: 0;
-  width: 274px;
+  width: 270px;
   height: 274px;
+  line-height: 274px;
+  font-size: 72px;
 }
 .session-empty {
   font-size: 12px;
@@ -3465,6 +3524,10 @@ ul.session-ticks li.sent {
 }
 ul.session-ticks li .session-tick-name {
   display: block;
+  max-width: 320px;
+}
+ul.session-ticks li.own .session-tick-name {
+  max-width: 296px;
 }
 ul.session-ticks li .session-tick-name a {
   font-size: 14px;
@@ -3504,18 +3567,58 @@ ul.session-ticks li .session-tick-name a:hover {
 .sent .session-tick-grade {
   color: inherit;
 }
+.own .session-tick-grade {
+  margin-right: 26px;
+}
+.session-tick-detail {
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-size: 11px;
+  color: #b3b3b3;
+}
 p.session-tick-note {
   margin-top: 5px;
   font-size: 12px;
   line-height: 18px;
   color: #3d3d3d;
 }
+.own .session-tick-note {
+  margin-right: 26px;
+}
+a.session-tick-button {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  color: #e6e6e6;
+  font-size: 12px;
+  background: none;
+  padding: 8px 7px 7px;
+  -webkit-border-radius: 0 2px 2px 0;
+  -moz-border-radius: 0 2px 2px 0;
+  border-radius: 0 2px 2px 0;
+  -webkit-display: flex;
+  -webkit-align-items: center;
+  -webkit-justify-content: center;
+  -moz-display: flex;
+  -moz-align-items: center;
+  -moz-justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+a.session-tick-button:hover {
+  color: #2f5a00;
+  background: #a7d22c;
+}
+a.session-tick-button:active {
+  background: #a7d22c;
+}
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––ticks*/
 .tick {
   position: relative;
 }
 .tick .leftside {
-  width: 562px;
+  width: 561px;
   margin-left: 78px;
   padding-left: 40px;
   border-left: 1px solid #f2f2f2;

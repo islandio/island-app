@@ -102,7 +102,7 @@ define([
       this.dateInput = this.$('.new-session-datepicker').pickadate({
         onStart: function () {
           var date = new Date();
-          this.set('select', [date.getFullYear(), date.getMonth() + 1, date.getDate()]);
+          this.set('select', [date.getFullYear(), date.getMonth(), date.getDate()]);
         },
         onSet: _.bind(this.validate, this)
       });
@@ -227,7 +227,7 @@ define([
       var payload = {
         crag_id: cragChoice.id,
         date: this.datePicker.get('select').pick,
-        name: (new Date).format('mm/dd/yy')
+        name: (new Date(this.datePicker.get('select').pick)).format('mm.dd.yy')
       };
 
       // Get all actions.
