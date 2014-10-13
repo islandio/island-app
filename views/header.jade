@@ -21,18 +21,21 @@
       div.divider-vertical
       a.header-avatar(href="/" + member.username)
         img(src="https://www.gravatar.com/avatar/" + member.gravatar + "?s=50&d=https%3A%2F%2Fd271mvlc6gc7bl.cloudfront.net%2Fmain%2Fimg%2Favatar_100.png", width="50", height="50")
-      a.button.globe-button.header-action(href="javascript:;")
+      a.button.header-action.header-add-button.header-add-crag-button(href="javascript:;", title="Add new crag")
+        i.icon-plus
+        i.icon-location
+      div.divider-vertical
+      a.button.header-action.header-add-button.header-add-ascent-button(href="javascript:;", title="Add new ascent")
+        i.icon-plus
+        i.icon-up
+      div.divider-vertical
+      a.button.globe-button.header-action(href="javascript:;", title="Notifications")
         i.icon-globe
         span.count
       div.divider-vertical
-      a.button.header-action(href="/logout")
+      a.button.header-action(href="/logout", title="Sign out")
         i.icon-logout
-      div.divider-vertical
-      a.button.header-session-button.header-action.navigate(href="/sessions/new")
-        i.icon-pencil 
-        span Log session
   - else
     a.button.signin-button.header-action.navigate(href="/signin")
       span Sign in 
       i.icon-login
-      

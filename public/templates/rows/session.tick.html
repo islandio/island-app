@@ -4,7 +4,7 @@
       this.model.get('author').id === this.app.profile.member.id ? ' own': '';
 %>
 
-<li class="<%= klass %>">
+<li class="<%= klass %>" id="<%= t.id %>">
   <% if (t.sent) { %>
     <span class="event-timeline-label">
       <i class="icon-ok"></i>

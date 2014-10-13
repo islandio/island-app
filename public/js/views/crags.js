@@ -11,12 +11,8 @@ define([
   'util',
   'Spin',
   'text!../../templates/crags.html',
-  'text!../../templates/crags.list.html',
-  'views/lists/followers',
-  'views/lists/followees',
-  'views/lists/watchees'
-], function ($, _, Backbone, mps, rest, util, Spin, template, list,
-    Followers, Followees, Watchees) {
+  'text!../../templates/crags.list.html'
+], function ($, _, Backbone, mps, rest, util, Spin, template, list) {
 
   return Backbone.View.extend({
 
@@ -78,18 +74,6 @@ define([
       // Focus.
       if (!$('.header-search .search-display').is(':visible')) {
         this.input.focus();
-      }
-
-      // Render lists.
-      if (this.app.profile.member) {
-        this.followers = new Followers(this.app, {parentView: this, reverse: true});
-        this.followees = new Followees(this.app, {parentView: this, reverse: true});
-        this.crags = new Watchees(this.app, {parentView: this, reverse: true,
-            type: 'crag', heading: 'Crags'});
-        this.routes = new Watchees(this.app, {parentView: this, reverse: true,
-            type: 'ascent', subtype: 'r', heading: 'Routes'});
-        this.boulders = new Watchees(this.app, {parentView: this, reverse: true,
-            type: 'ascent', subtype: 'b', heading: 'Boulders'});
       }
 
       return this;

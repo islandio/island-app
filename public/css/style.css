@@ -1359,6 +1359,13 @@ a.button.header-action.header-session-button span {
   font-weight: bold;
   vertical-align: 1px;
 }
+a.button.header-action.header-add-button {
+  width: 50px;
+}
+a.button.header-action.header-add-button i.icon-plus {
+  font-size: 0.6em;
+  margin-right: -5px;
+}
 div.header-search {
   float: left;
   position: relative;
@@ -1491,7 +1498,6 @@ ul.header-links li a:hover {
   text-decoration: none;
 }
 .member-box {
-  width: 293px;
   float: right;
   white-space: nowrap;
 }
@@ -2327,7 +2333,7 @@ ul.list li:last-child {
   border-bottom-right-radius: 3px;
   border-bottom-left-radius: 3px;
 }
-ul.list li a {
+ul.list li a:not(.session-tick-button) {
   display: inline-block;
   background: none;
   padding: 8px 7px 7px;
@@ -3614,6 +3620,31 @@ a.session-tick-button:active {
   background: #a7d22c;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––ticks*/
+.tick-list {
+  margin-top: 30px;
+}
+.tick-list ul.session-ticks {
+  margin: 0 0 20px;
+  width: auto;
+}
+.tick-list ul.session-ticks li {
+  margin: 0 0 2px 108px;
+}
+.tick-list-group-heading {
+  border-bottom: 1px solid #f2f2f2;
+  margin-right: -40px;
+  margin-left: -30px;
+  margin-bottom: 20px;
+}
+.tick-list-group-heading span {
+  display: inline-block;
+  padding: 0 20px;
+  color: #999;
+  background: #f9f9f9;
+  font-size: 13px;
+  line-height: 30px;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+}
 .tick {
   position: relative;
 }

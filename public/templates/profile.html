@@ -1,5 +1,8 @@
 <%
 
+  var own = !this.model || (this.app.profile.member && this.model.id === this.app.profile.member.id);
+  var owner = own ? 'You\'re': this.model.get('displayName').trim() + ' is ';
+
   // Save model attributes
   var data = this.model.attributes;
 
@@ -111,7 +114,7 @@
   <% } %>
   <div class="sidebar-items">
     <div class="sidebar-watchees">
-      <span class="sidebar-heading">Watching</span>
+      <span class="sidebar-heading"><%= owner %> watching</span>
       <div class="sidebar-crags"></div>
       <div class="sidebar-ascents-r"></div>
       <div class="sidebar-ascents-b"></div>

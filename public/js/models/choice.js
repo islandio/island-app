@@ -49,7 +49,8 @@ define([
           else title += tmp;
           break;
         case 'crags':
-          title += '<strong>' + this.get('name') + '</strong>, '
+          title += '<i class="icon-location"></i>'
+              + '<strong>' + this.get('name') + '</strong>, '
               + this.get('country');
           break;
         case 'ascents':

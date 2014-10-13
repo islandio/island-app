@@ -129,11 +129,12 @@ define([
 
     // Remove a tick.
     _remove: function (data) {
-      console.log('remove', data)
+      var t = this.$('li#' + data.id)
+      console.log(t[0])
 
       // this.$el.slideUp('fast', _.bind(function () {
-      //   this.destroy();
-      //   cb();
+      
+        
       // }, this));
     },
 

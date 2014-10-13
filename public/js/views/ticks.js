@@ -10,10 +10,11 @@ define([
   'util',
   'models/card',
   'text!../../templates/ticks.html',
+  'text!../../templates/rows/session.tick.html',
   'views/lists/followers',
   'views/lists/followees',
   'views/lists/watchees'
-], function ($, _, Backbone, mps, util, Card, template,
+], function ($, _, Backbone, mps, util, Card, template, tickTemp,
     Followers, Followees, Watchees) {
   return Backbone.View.extend({
 
@@ -31,6 +32,7 @@ define([
       this.title();
 
       this.template = _.template(template);
+      this.tickTemp = _.template(tickTemp);
       this.$el.html(this.template.call(this));
 
       this.trigger('rendered');
@@ -135,26 +137,31 @@ define([
       var ct = this.currentType;
       $('.' + ct + '-ticks .no-results').hide();
       if (txt === '') {
-        $('.' + ct + '-ticks .list a').show();
-        $('.' + ct + '-ticks .list-group-heading').show();
+        $('.' + ct + '-ticks .session-ticks li').show();
+        $('.' + ct + '-ticks .tick-list-group-heading').show();
         return false;
       }
-      $('.' + ct + '-ticks .list a').hide();
-      $('.' + ct + '-ticks .list-group-heading').hide();
+      $('.' + ct + '-ticks .session-ticks li').hide();
+      $('.' + ct + '-ticks .tick-list-group-heading').hide();
       var rx = new RegExp('^(.*?(' + txt + ')[^$]*)$', 'ig');
       var y = false;
       _.each(this.model.get('ticks')[ct], function (t) {
+        console.log(t.ascent.name)
         if (rx.test(t.ascent.name)) {
           y = true;
-          var d = $('.' + ct + '-ticks .list a[id="' + t.id + '"]');
+          var d = $('.' + ct + '-ticks .session-ticks li[id="' + t.id + '"]');
           d.show();
-          $('.list-group-heading', d.parent()).show();
+          $('.tick-list-group-heading', d.parent()).show();
         }
       });
       if (!y) {
         $('.list-wrap .no-results').show();
       }
       return false;
+    },
+
+    renderTick: function (t) {
+      return this.tickTemp.call(this, {t: t});
     }
 
   });

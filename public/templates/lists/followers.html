@@ -1,8 +1,14 @@
+<%
+  var author = !this.parentView.model ? null: (this.parentView.model.get('username') ? this.parentView.model.attributes: this.parentView.model.get('author'));
+  var own = !this.parentView.model || (this.app.profile.member && author.id === this.app.profile.member.id);
+  var owner = own ? 'Your': author.get('displayName').trim() + '\'s';
+%>
+
 <span class="sidebar-heading">
-  Followers <span class="sidebar-heading-cnt">(<%= this.collection.length %>)</span>
+  <%= owner %> followers <span class="sidebar-heading-cnt">(<%= this.collection.length %>)</span>
 </span>
 <p class="sidebar-tip">
-
+  You don't have any followers yet.
 </p>
 
 <% if (!this.app.profile.content.private) { %>
