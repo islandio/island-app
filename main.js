@@ -52,7 +52,6 @@ if (cluster.isMaster) {
   var mongodb = require('mongodb');
   var socketio = require('socket.io');
   var redis = require('redis');
-  var reds = require('reds');
   var RedisStore = require('connect-redis')(express);
   var request = require('request');
   var jade = require('jade');
@@ -67,6 +66,7 @@ if (cluster.isMaster) {
   _.mixin(require('underscore.string'));
   var Connection = require('./lib/db').Connection;
   var Client = require('./lib/client').Client;
+  var Search = require('node-lexsearch').Search;
   var resources = require('./lib/resources');
   var service = require('./lib/service');
   var Mailer = require('./lib/mailer');
@@ -217,12 +217,13 @@ if (cluster.isMaster) {
             // Attach a connection ref to app.
             app.set('connection', connection);
 
-            // Attach a reds ref to app.
-            reds.client = rc;
-            app.set('reds', reds);
+            app.set('cache', new Search({
+              redisHost: app.get('REDIS_HOST'),
+              redisPort: app.get('REDIS_PORT')
+            }, this.parallel()));
 
             // Init resources.
-            resources.init(app, this);
+            resources.init(app, this.parallel());
           },
           function (err) {
             if (err) return console.error(err);
@@ -293,7 +294,7 @@ if (cluster.isMaster) {
 
               // FIXME: Use a key map instead of
               // attaching this directly to the socket.
-              socket.client = new Client(socket, app.get('pubsub'), app.get('reds'));
+              socket.client = new Client(socket, app.get('pubsub'));
             });
 
             // Set pubsub sio
