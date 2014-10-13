@@ -141,8 +141,11 @@ define([
         zoom: 3,
         center_lat: 40,
         center_lon: -20,
-        scrollwheel: false,
-        https: true
+        scrollwheel: true,
+        https: true,
+        zoomControl: true,
+        fullscreen: true,
+        cartodb_logo: false
       };
 
       // Setup the map.
@@ -157,8 +160,9 @@ define([
         this.spin.stop();
 
         // Handle infowindows.
-        this.layers[1].infowindow.set('template', _.template(popup).call(this));
-        this.layers[1].on('featureClick', _.bind(function (e, pos, latlng, data) {
+        this.layers[1].getSubLayer(0).infowindow.set('template', _.template(popup).call(this));
+        this.layers[1].getSubLayer(0).on('featureClick', _.bind(function (e, pos, latlng, data) {
+          console.log(data)
           _.delay(_.bind(function () {
             $('a.popup-link').click(_.bind(function (e) {
               e.preventDefault();
@@ -171,34 +175,38 @@ define([
         }, this));
 
         // Init events for markers.
-        this.vis.mapView.map_leaflet.on('zoomend', 
-            _.bind(this.getInstaMarkers, this, true));
-        this.vis.mapView.map_leaflet.on('moveend', 
-            _.bind(this.getInstaMarkers, this, false));
-        this.vis.mapView.map_leaflet.on('zoomend', 
-            _.bind(this.getMediaMarkers, this, true));
-        this.vis.mapView.map_leaflet.on('moveend', 
-            _.bind(this.getMediaMarkers, this, false));
-        this.vis.mapView.map_leaflet.on('click', _.bind(function (e) {
-          this.setPlotLocation({
-            latitude: e.latlng.lat,
-            longitude: e.latlng.lng
-          });
-        }, this));
+        // this.vis.mapView.map_leaflet.on('zoomend', 
+        //     _.bind(this.getInstaMarkers, this, true));
+        // this.vis.mapView.map_leaflet.on('moveend', 
+        //     _.bind(this.getInstaMarkers, this, false));
+        // this.vis.mapView.map_leaflet.on('zoomend', 
+        //     _.bind(this.getMediaMarkers, this, true));
+        // this.vis.mapView.map_leaflet.on('moveend', 
+        //     _.bind(this.getMediaMarkers, this, false));
+        // this.vis.mapView.map_leaflet.on('click', _.bind(function (e) {
+        //   this.setPlotLocation({
+        //     latitude: e.latlng.lat,
+        //     longitude: e.latlng.lng
+        //   });
+        // }, this));
 
         // Hide the zoomer and plot button if the map is hidden.
         this.zoom = this.$('.cartodb-zoom');
         if (!store.get('mapClosed')) {
           this.zoom.show();
           this.plotButton.show();
-        } else this.zoom.hide();
+        } else {
+          this.zoom.hide();
+        }
 
         // Get the markers.
-        this.getInstaMarkers(true);
-        this.getMediaMarkers(true);
+        // this.getInstaMarkers(true);
+        // this.getMediaMarkers(true);
 
         // Fly to a location if there is one pending.
-        if (this.pendingLocation) this.flyTo(this.pendingLocation);
+        if (this.pendingLocation) {
+          this.flyTo(this.pendingLocation);
+        }
 
       }, this));
     },

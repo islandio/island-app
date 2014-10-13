@@ -10,8 +10,7 @@ html(lang="en")
     meta(name="author", content="Island LLC")
     meta(charset="UTF-8")
     <!--[if lt IE 9]><script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-    link(rel="stylesheet", href="https://d3voyrscnb0slx.cloudfront.net/cartodb.js/v2/themes/css/cartodb.css")
-    <!--[if lte IE 8]><link rel="stylesheet" href="https://d3voyrscnb0slx.cloudfront.net/cartodb.js/v2/themes/css/cartodb.ie.css"><![endif]-->
+    link(rel="stylesheet", href="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/themes/css/cartodb.css")
     link(rel="stylesheet", href="#{root}/css/fancybox.css")
     link(rel="stylesheet", href="#{root}/css/fontello.css")
     link(rel="stylesheet", href="#{root}/css/animation.css")
@@ -26,10 +25,8 @@ html(lang="en")
     script(type="text/javascript", src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyAWgUokzlRODT2GBOjZC9Qd4WGmcKzyikA&sensor=false")
     - if (process.env.NODE_ENV === 'production')
       script(type="text/javascript", src="#{root}/js/store.min.js")
-      script(type="text/javascript", src="#{root}/js/cartodb.uncompressed.js")
     - else
       script(type="text/javascript", src="/js/lib/store/store.min.js")
-      script(type="text/javascript", src="/js/lib/cartodb/cartodb.uncompressed.js")
     - if (typeof member !== 'undefined')
       script(type="text/javascript")
         if (window.store) {
@@ -56,6 +53,7 @@ html(lang="en")
       }
     script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js")
     script(type="text/javascript", src="https://jwpsrv.com/library/1lrC0MMbEeKOnyIACqoQEQ.js")
+    script(src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/cartodb.js")
     - if (process.env.NODE_ENV === 'production')
       script(type="text/javascript", src="#{root}/js/min.js")
     - else
