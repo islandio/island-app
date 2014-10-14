@@ -1437,6 +1437,9 @@ a.choice,
 .search-choice .choice-prefix {
   margin-top: -2px;
 }
+.search-choice.fixed .search-choice-clear {
+  display: none;
+}
 .search-choice-clear {
   position: absolute;
   z-index: 1;

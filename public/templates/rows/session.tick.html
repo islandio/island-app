@@ -4,7 +4,8 @@
       this.model.get('author').id === this.app.profile.member.id ? ' own': '';
 %>
 
-<li class="<%= klass %>" id="<%= t.id %>">
+<li class="<%= klass %>" id="<%= t.id %>" data-aid="<%= t.ascent.id %>"
+    data-cid="<%= t.crag_id %>" data-type="<%= t.type %>">
   <% if (t.sent) { %>
     <span class="event-timeline-label">
       <i class="icon-ok"></i>

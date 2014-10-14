@@ -239,9 +239,12 @@ define([
       }, this));
     },
 
-    choose: function (choice) {
+    choose: function (choice, fixed) {
       if (!this.options.choose) return;
       this.choiceContent.html(choice.$el.html());
+      if (fixed) {
+        this.choiceWrap.addClass('fixed');
+      }
       this.choiceWrap.show();
       this.results.hide();
       this.choice = choice;
@@ -251,14 +254,16 @@ define([
       }
     },
 
-    preChoose: function (opts) {
+    preChoose: function (opts, fixed) {
       rest.get('/api/' + opts.type + '/' + opts.id, {},
           _.bind(function (err, data) {
-        if (err) return console.log(err);
+        if (err) {
+          return console.log(err);
+        }
 
         data._type = opts.type;
         this.collection.unshift(data);
-        this.choose(this.views[0]);
+        this.choose(this.views[0], fixed);
       }, this));
     },
 

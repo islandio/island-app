@@ -1,3 +1,9 @@
+<%
+
+var tick = this.options.tick;
+
+%>
+
 <div class="new-session-tick">
   <% if (typeof closable === 'undefined' || closable) { %>
     <a href="javascript:;" class="new-session-tick-clear" tabindex="-1">
@@ -78,14 +84,38 @@
             <option value="420">7h</option>
             <option value="450">7h 30m</option>
             <option value="480">8h</option>
-            <option value="51">8 30m</option>
-            <option value="54">9h</option>
-            <option value="57">9 30m</option>
-            <option value="60">10h</option>
-            <option value="63">10 30m</option>
-            <option value="66">11h</option>
-            <option value="69">11 30m</option>
-            <option value="72">12h</option>
+            <option value="510">8 30m</option>
+            <option value="540">9h</option>
+            <option value="570">9 30m</option>
+            <option value="600">10h</option>
+            <option value="630">10 30m</option>
+            <option value="660">11h</option>
+            <option value="690">11 30m</option>
+            <option value="720">12h</option>
+            <option value="750">12h 30m</option>
+            <option value="780">13h</option>
+            <option value="810">13h 30m</option>
+            <option value="840">14h</option>
+            <option value="870">14h 30m</option>
+            <option value="900">15h</option>
+            <option value="930">15h 30m</option>
+            <option value="960">16h</option>
+            <option value="990">16h 30m</option>
+            <option value="1020">17h</option>
+            <option value="1050">17h 30m</option>
+            <option value="1080">18h</option>
+            <option value="1110">18h 30m</option>
+            <option value="1140">19h</option>
+            <option value="1170">19h 30m</option>
+            <option value="1200">20h</option>
+            <option value="1230">20h 30m</option>
+            <option value="1260">21h</option>
+            <option value="1290">21h 30m</option>
+            <option value="1320">22h</option>
+            <option value="1350">22h 30m</option>
+            <option value="1380">23h</option>
+            <option value="1410">23h 30m</option>
+            <option value="1440">24h</option>
           </select>
         </td>
         <td colspan="3" class="new-session-cell" style="width: 50%;">
@@ -99,7 +129,7 @@
       </tr>
       <tr class="new-session-tick-details">
         <td class="new-session-cell" style="width: 20%;">
-          <select name="grade">
+          <select name="grade" style="max-height: 175px;">
             <option value="hide">-- Grade --</option>
             <option value="0">3</option>
             <option value="1">4</option>

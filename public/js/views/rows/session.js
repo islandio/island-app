@@ -10,13 +10,14 @@ define([
   'rest',
   'util',
   'models/session',
+  'views/session.new',
   'text!../../../templates/rows/session.html',
   'text!../../../templates/rows/session.activity.html',
   'text!../../../templates/rows/session.tick.html',
   'text!../../../templates/session.title.html',
   'views/lists/comments',
   'text!../../../templates/confirm.html'
-], function ($, _, Backbone, mps, rest, util, Model, template, activityTemp,
+], function ($, _, Backbone, mps, rest, util, Model, NewSession, template, activityTemp,
       tickTemp, title, Comments, confirm) {
   return Backbone.View.extend({
 
@@ -47,6 +48,7 @@ define([
     events: {
       'click .navigate': 'navigate',
       'click .session-delete': 'delete',
+      'click .session-tick-button': 'edit',
     },
 
     render: function () {
@@ -198,6 +200,22 @@ define([
       }, this));
 
       return false;
+    },
+
+    edit: function (e) {
+      e.preventDefault();
+      var tid = $(e.target).closest('li').attr('id');
+      var aid = $(e.target).closest('li').data('aid');
+      var cid = $(e.target).closest('li').data('cid');
+      var type = $(e.target).closest('li').data('type');
+      var action = _.find(this.model.get('actions'), function (a) {
+        return a.type === type;
+      });
+      var tick = _.find(action.ticks, function (t) {
+        return t.id === tid;
+      });
+      new NewSession(this.app, {tick: tick, crag_id: cid, ascent_id: aid})
+          .render();
     },
 
     when: function () {

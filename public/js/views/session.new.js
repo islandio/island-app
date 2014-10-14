@@ -60,6 +60,7 @@ define([
     },
 
     setup: function () {
+      var tick = this.options.tick;
 
       // Save refs.
       this.errorMsg = this.$('.new-session-error');
@@ -81,7 +82,8 @@ define([
         types: ['crags']
       });
       if (this.options.crag_id) {
-        this.cragChoices.preChoose({type: 'crags', id: this.options.crag_id});
+        this.cragChoices.preChoose({type: 'crags', id: this.options.crag_id},
+            !!tick);
       }
 
       // Init choices.
@@ -95,14 +97,17 @@ define([
         query: query
       });
       if (this.options.ascent_id) {
-        this.tickChoices.preChoose({type: 'ascents', id: this.options.ascent_id});
+        this.tickChoices.preChoose({type: 'ascents',
+            id: this.options.ascent_id}, !!tick);
       }
 
       // Handle date.
+      var date = this.options.tick ? this.options.tick.date: null;
+      date = date ? new Date(date): new Date();
       this.dateInput = this.$('.new-session-datepicker').pickadate({
         onStart: function () {
-          var date = new Date();
-          this.set('select', [date.getFullYear(), date.getMonth(), date.getDate()]);
+          this.set('select', [date.getFullYear(), date.getMonth(),
+              date.getDate()]);
         },
         onSet: _.bind(this.validate, this)
       });
@@ -136,16 +141,51 @@ define([
 
       // Focus cursor initial.
       _.delay(_.bind(function () {
-        if (!this.options.crag_id) {
-          this.$('.new-session-crag-search-input').focus();
-        } else if (!this.options.ascent_id) {
+        if (!this.options.ascent_id) {
           this.$('.new-session-ascent-search-input').focus();
         } else {
           this.$('textarea[name="note"]').focus();
         }
       }, this), 1);
 
+      // Choose values if tick present.
+      if (tick) {
+        this.selectOption('duration', tick.duration);
+        this.selectOption('performance', tick.performance);
+        this.selectOption('grade', tick.grade);
+        this.selectOption('feel', tick.feel);
+        this.selectOption('tries', tick.tries);
+        this.selectOption('rating', tick.rating);
+        if (tick.first !== undefined || tick.firstf !== undefined) {
+          if (tick.first === true) {
+            tick.first = 1;
+          } else if (tick.firstf === true) {
+            tick.first = 2;
+          } else {
+            tick.first = 0;
+          }
+          this.selectOption('first', tick.first);
+        }
+        if (tick.note) {
+          this.$('textarea[name="note"]').val(tick.note)
+        }
+        if (tick.sent) {
+          this.checkSent();
+        }
+      }
+
       return this;
+    },
+
+    selectOption: function (key, val) {
+      if (val === undefined) {
+        return;
+      }
+      var opt = this.$('select[name="' + key + '"] option[value="'
+          + val + '"]');
+      $('.select-styled', this.$('select[name="' + key + '"]').parent())
+          .text(opt.text());
+      opt.attr('selected', true);
     },
 
     destroy: function () {
@@ -194,7 +234,7 @@ define([
     },
 
     checkTried: function (e) {
-      var ctx = $(e.target).closest('.new-session-tick');
+      var ctx = this.$('.new-session-tick');
       var sent = $('.new-session-sent', ctx);
       var tried = $('.new-session-tried', ctx);
       $(sent).attr('checked', false);
@@ -203,7 +243,7 @@ define([
     },
 
     checkSent: function (e) {
-      var ctx = $(e.target).closest('.new-session-tick');
+      var ctx = this.$('.new-session-tick');
       var sent = $('.new-session-sent', ctx);
       var tried = $('.new-session-tried', ctx);
       $(sent).attr('checked', true);
@@ -213,6 +253,7 @@ define([
 
     submit: function (e) {
       e.preventDefault();
+      var oldTick = this.options.tick;
 
       // Sanitize.
       this.$('input[type!="submit"]:visible, textarea:visible')
@@ -229,6 +270,9 @@ define([
         date: this.datePicker.get('select').pick,
         name: (new Date(this.datePicker.get('select').pick)).format('mm.dd.yy')
       };
+      if (oldTick) {
+        payload.tick_id = oldTick.id;
+      }
 
       // Get all actions.
       var actions = [];
@@ -267,8 +311,11 @@ define([
       this.submitButtonSpin.start();
       this.submitButton.addClass('spinning').attr('disabled', true);
 
+      var fn = oldTick ? rest.put: rest.post;
+      var path = oldTick ? '/api/sessions/' + oldTick.id: '/api/sessions';
+
       // Do the API request.
-      rest.post('/api/sessions', payload, _.bind(function (err, data) {
+      fn(path, payload, _.bind(function (err, data) {
 
         // Stop spinner.
         this.submitButtonSpin.stop();
@@ -286,14 +333,10 @@ define([
 
         // Show success.
         mps.publish('flash/new', [{
-          message: 'You logged an ascent.',
+          message: 'You ' + (oldTick ? 'updated': 'logged') + ' an ascent.',
           level: 'alert'
         }, true]);
 
-        // Clear fields.
-        this.cragChoices.clearChoice();
-        this.tickChoices.clearChoice();
-        this.$('input[type="text"], textarea').val('');
         this.destroy();
       }, this));
 
