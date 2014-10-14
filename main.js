@@ -6,23 +6,41 @@
 
 var cluster = require('cluster');
 var util = require('util');
+var ngrok = require('ngrok');
 
 if (cluster.isMaster) {
 
-  // Count the machine's CPUs
-  var cpus = require('os').cpus().length;
+  var ngrokUrl = null;
 
-  // Create a worker for each CPU
-  for (var i = 0; i < cpus; ++i)
-    cluster.fork();
+  // Setup an outside tunnel to our localhost in development
+  // We will pass this to the workers
+  if (process.env.NODE_ENV !== 'production') {
+    ngrok.connect(8000, function (err, url) {
+      console.log('Setting up tunnel from this machine to ' + url);
+      ngrokUrl = url;
+      createWorkers();
+    });
+  }
+  else {
+    createWorkers();
+  }
 
-  // Listen for dying workers
-  cluster.on('exit', function (worker) {
+  var createWorkers = function() {
+    // Count the machine's CPUs
+    var cpus = require('os').cpus().length;
 
-    // Replace the dead worker.
-    util.log('Worker ' + worker.id + ' died');
-    cluster.fork();
-  });
+    // Create a worker for each CPU
+    for (var i = 0; i < cpus; ++i)
+      cluster.fork({NGROKURL: ngrokUrl})
+
+    // Listen for dying workers
+    cluster.on('exit', function (worker) {
+
+      // Replace the dead worker.
+      util.log('Worker ' + worker.id + ' died');
+      cluster.fork({NGROKURL: ngrokUrl})
+    });
+  }
 
 } else {
 
@@ -102,6 +120,7 @@ if (cluster.isMaster) {
         // App params
         app.set('ROOT_URI', '');
         app.set('HOME_URI', 'http://localhost:' + app.get('PORT'));
+        app.set('TUNNEL_URI', process.env['NGROKURL']);
 
         // Job scheduling.
         // app.set('SCHEDULE_JOBS', argv.jobs);
@@ -158,6 +177,20 @@ if (cluster.isMaster) {
       app.set('cookieParser', express.cookieParser(app.get('sessionKey')));
       app.use(express.favicon(__dirname + '/public/img/favicon.ico'));
       app.use(express.logger('dev'));
+
+      // Get the raw body
+      // http://stackoverflow.com/questions/18710225/node-js-get-raw-request-body-using-express
+      app.use(function(req, res, next) {
+        req.rawBody = '';
+        req.setEncoding('utf8');
+
+        req.on('data', function(chunk) { 
+          req.rawBody += chunk;
+        });
+
+        next();
+      });
+
       app.use(express.bodyParser());
       app.use(app.get('cookieParser'));
       app.use(express.session({
