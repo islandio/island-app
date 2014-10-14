@@ -1,7 +1,7 @@
 {
   "author": "Sander Pick <sanderpick@gmail.com> (git://github.com/sanderpick)",
   "name": "island",
-  "version": "1.0.118",
+  "version": "1.0.119",
   "protocol": "https",
   "domain": "www.island.io",
   "bucket": "build.islandio",
@@ -40,6 +40,16 @@
     "emailjstmp": "~0.3.4",
     "cli-color": "~0.2.2",
     "mobile-detect": "~0.1.1"
+  },
+  "devDependencies": {
+    "grunt": "0.4.4",
+    "requirejs": "2.1.11",
+    "grunt-requirejs": "~0.4.0",
+    "wrench": "~1.4.4",
+    "iconv": "~2.0.2",
+    "async": "~0.2.6",
+    "walk": "~2.2.1",
+    "knox": "~0.8.5"
   },
   "engines": {
     "node": "~0.10.26"
