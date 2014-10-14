@@ -251,7 +251,7 @@ if (cluster.isMaster) {
             app.set('connection', connection);
 
             app.set('cache', new Search({
-              redisHost: app.get('REDIS_HOST'),
+              redisHost: app.get('REDIS_SEARCH_HOST'),
               redisPort: app.get('REDIS_PORT')
             }, this.parallel()));
 

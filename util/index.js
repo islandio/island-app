@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- * index.js: Index all ascents, members, crags, and posts for search.
+ * index.js: Index all members, crags, and posts for search.
  *
  */
 
@@ -26,7 +26,6 @@ var db = require('../lib/db');
 var membersIndexed = 0;
 var postsIndexed = 0;
 var cragsIndexed = 0;
-var ascentsIndexed = 0;
 
 boots.start({redis: true, muri: argv.muri}, function (client) {
 
@@ -72,27 +71,6 @@ boots.start({redis: true, muri: argv.muri}, function (client) {
             _this);
       });
     },
-    /*
-     *  woah, this takes forever
-    function (err) {
-      boots.error(err);
-
-      // Get all ascents.
-      db.Ascents.list({}, this.parallel());
-      cache.del('ascents-search', this.parallel());
-    },
-    function (err, docs) {
-      boots.error(err);
-
-      if (docs.length === 0) return this();
-      var _this = _.after(docs.length, this);
-      _.each(docs, function (d, idx) {
-        // Add new.
-        ascentsIndexed += cache.index('ascents', d, ['name'],
-            _this);
-      });
-    },
-    */
     function (err) {
       boots.error(err);
 
@@ -114,11 +92,10 @@ boots.start({redis: true, muri: argv.muri}, function (client) {
     },
     function (err) {
       boots.error(err);
-      util.log('Redis: Indexed ascents, members, crags, and posts');
+      util.log('Redis: Indexed members, crags, and posts');
       util.log('Members entries: ' + membersIndexed);
       util.log('Posts entries: ' + postsIndexed);
       util.log('Crags entries: ' + cragsIndexed);
-      util.log('Ascents entries: ' + ascentsIndexed);
       process.exit(0);
     }
   );

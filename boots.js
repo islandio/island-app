@@ -54,7 +54,7 @@ exports.start = function (opts, cb) {
           resources.init({connection: connection}, this.parallel());
 
           props.cache = new Search({
-              redisHost: config.REDIS_HOST,
+              redisHost: config.REDIS_SEARCH_HOST,
               redisPort: config.REDIS_PORT
           }, this.parallel());
 

@@ -1,5 +1,6 @@
 {
   "MONGO_URI": "mongodb://localhost:27017/islandio",
+  "REDIS_SEARCH_HOST": "54.172.94.25",
   "REDIS_HOST": "localhost",
   "REDIS_PORT": 6379,
   "TRANSLOADIT_MEDIA_TEMPLATE_ID": "29c60cfc5b9f4e8b8c8bf7a9b1191147",
