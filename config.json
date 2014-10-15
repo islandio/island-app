@@ -1,5 +1,5 @@
 {
-  "MONGO_URI": "mongodb://localhost:27017/islandio",
+  "MONGO_URI": "mongodb://localhost:27017/island",
   "REDIS_SEARCH_HOST": "localhost",
   "REDIS_HOST": "localhost",
   "REDIS_PORT": 6379,
