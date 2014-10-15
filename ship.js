@@ -65,12 +65,9 @@ Step(
     // Run grunt tasks from Gruntfile.js
     util.log(clc.blackBright('Starting statics build for new version ')
         + clc.underline(clc.green(nv)) + clc.blackBright(' ...'));
-    console.log(dir);
     exec('grunt build --dir=' + dir, this);
   },
   function (err) {
-
-    console.log(err);
     boots.error(err);
     fs.renameSync(rel + dir + '/js/main.js', rel + dir + '/min.js');
     fs.renameSync(rel + dir + '/js/lib/store/store.min.js', rel + dir + '/store.min.js');
@@ -90,8 +87,6 @@ Step(
     this();
   },
   function (err) {
-
-    console.log('here');
 
     // Walk the build dir.
     var walker = walk.walk(rel + dir, {

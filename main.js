@@ -12,19 +12,6 @@ if (cluster.isMaster) {
 
   var ngrokUrl = null;
 
-  // Setup an outside tunnel to our localhost in development
-  // We will pass this to the workers
-  if (process.env.NODE_ENV !== 'production') {
-    ngrok.connect(8000, function (err, url) {
-      console.log('Setting up tunnel from this machine to ' + url);
-      ngrokUrl = url;
-      createWorkers();
-    });
-  }
-  else {
-    createWorkers();
-  }
-
   var createWorkers = function() {
     // Count the machine's CPUs
     var cpus = require('os').cpus().length;
@@ -40,6 +27,19 @@ if (cluster.isMaster) {
       util.log('Worker ' + worker.id + ' died');
       cluster.fork({NGROKURL: ngrokUrl})
     });
+  }
+
+  // Setup an outside tunnel to our localhost in development
+  // We will pass this to the workers
+  if (process.env.NODE_ENV !== 'production') {
+    ngrok.connect(8000, function (err, url) {
+      console.log('Setting up tunnel from this machine to ' + url);
+      ngrokUrl = url;
+      createWorkers();
+    });
+  }
+  else {
+    createWorkers();
   }
 
 } else {
