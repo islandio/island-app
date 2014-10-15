@@ -189,12 +189,15 @@ if (cluster.isMaster) {
         });
 
         // Force HTTPS
-        if (app.get('package').protocol === 'https')
+        if (app.get('package').protocol === 'https') {
           app.all('*', function (req, res, next) {
-            if ((req.headers['x-forwarded-proto'] || '').toLowerCase() === 'https')
+            if ((req.headers['x-forwarded-proto'] || '').toLowerCase()
+                === 'https') {
               return next();
+            }
             res.redirect('https://' + req.headers.host + req.url);
           });
+        }
       }
 
       if (!module.parent) {

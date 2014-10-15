@@ -115,6 +115,7 @@ define([
     },
 
     // Collect a tick.
+    // - replace old tick, action with new
     collect: function (data) {
       if (data.session_id === this.model.id) {
         var tick = this.renderTick(data);
@@ -130,14 +131,12 @@ define([
     },
 
     // Remove a tick.
+    // - hide empty activity
     _remove: function (data) {
-      var t = this.$('li#' + data.id)
-      console.log(t[0])
-
-      // this.$el.slideUp('fast', _.bind(function () {
-      
-        
-      // }, this));
+      var t = this.$('li#' + data.id);
+      t.slideUp('fast', _.bind(function () {
+        t.remove();
+      }, this));
     },
 
     destroy: function () {
@@ -167,7 +166,7 @@ define([
       // Render the confirm modal.
       $.fancybox(_.template(confirm)({
         message: 'Deleting a session also deletes all'
-            + ' associated activities and ticks.'
+            + ' associated bouldering and climbing.'
             + ' Delete this session forever?',
       }), {
         openEffect: 'fade',

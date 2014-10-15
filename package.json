@@ -24,7 +24,7 @@
     "reds": "~0.2.3",
     "optimist": "~0.5.0",
     "step": "0.0.5",
-    "underscore": "~1.5.1",
+    "underscore": "~1.7.0",
     "underscore.string": "~2.3.3",
     "passport-twitter": "~1.0.2",
     "passport-local": "~0.1.3",

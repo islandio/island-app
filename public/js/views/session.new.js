@@ -270,9 +270,6 @@ define([
         date: this.datePicker.get('select').pick,
         name: (new Date(this.datePicker.get('select').pick)).format('mm.dd.yy')
       };
-      if (oldTick) {
-        payload.tick_id = oldTick.id;
-      }
 
       // Get all actions.
       var actions = [];
@@ -315,7 +312,7 @@ define([
       var path = oldTick ? '/api/sessions/' + oldTick.id: '/api/sessions';
 
       // Do the API request.
-      fn(path, payload, _.bind(function (err, data) {
+      fn.call(rest, path, payload, _.bind(function (err, data) {
 
         // Stop spinner.
         this.submitButtonSpin.stop();
