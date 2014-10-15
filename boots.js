@@ -17,6 +17,7 @@ var config = require('./config.json');
 _.each(config, function (v, k) {
   config[k] = process.env[k] || v;
 });
+var Search = require('node-lexsearch').Search;
 
 var error = exports.error = function(err) {
   if (!err) return;
@@ -50,7 +51,13 @@ exports.start = function (opts, cb) {
           error(err);
 
           // Init resources.
-          resources.init({connection: connection}, this);
+          resources.init({connection: connection}, this.parallel());
+
+          props.cache = new Search({
+              redisHost: config.REDIS_SEARCH_HOST,
+              redisPort: config.REDIS_PORT
+          }, this.parallel());
+
         },
         function (err) {
           error(err);
