@@ -3,7 +3,7 @@
   "name": "island",
   "version": "2.0.136",
   "protocol": "http",
-  "domain": "island-env.elasticbeanstalk.com",
+  "domain": "islandio.elasticbeanstalk.com",
   "builds": {
     "bucket": "build.islandio",
     "cloudfront": "https://d10fiv677oa856.cloudfront.net"
