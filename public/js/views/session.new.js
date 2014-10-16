@@ -14,7 +14,7 @@ define([
   'text!../../templates/tick.new.html',
   'views/lists/choices'
 ], function ($, _, Backbone, mps, rest, util, Spin, template,
-    activityTemp, tickTemp, Choices) {
+    tickTemp, Choices) {
   return Backbone.View.extend({
 
     className: 'new-session',
@@ -30,7 +30,6 @@ define([
 
     render: function () {
       this.template = _.template(template);
-      this.activityTemp = _.template(activityTemp);
       this.tickTemp = _.template(tickTemp);
       this.$el.html(this.template.call(this, {tick: this.tickTemp.call(this,
           {closable: false})}));
