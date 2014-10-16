@@ -115,7 +115,6 @@ define([
     },
 
     // Collect a tick.
-    // - replace old tick, action with new
     collect: function (data) {
       if (data.session_id === this.model.id) {
         var tick = this.renderTick(data);
@@ -127,15 +126,31 @@ define([
           activity = this.renderActivity(data.action);
           $(activity).insertAfter(this.$('.session-activity').last());
         }
+        var action = _.find(this.model.get('actions'), function (a) {
+          return a.id === data.action.id;
+        });
+        if (!action) {
+          this.model.get('actions').push(data.action);
+        } else {
+          action.ticks = _.reject(action.ticks, function (t) {
+            return t.id === data.id;
+          });
+          action.ticks.push(data);
+        }
+        console.log(this.model)
       }
     },
 
     // Remove a tick.
-    // - hide empty activity
     _remove: function (data) {
       var t = this.$('li#' + data.id);
+      var a = t.closest('.session-activity');
+      var list = $('.session-ticks', a);
       t.slideUp('fast', _.bind(function () {
         t.remove();
+        if (list.children().length === 0) {
+          a.remove();
+        }
       }, this));
     },
 

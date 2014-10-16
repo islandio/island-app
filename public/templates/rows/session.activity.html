@@ -5,9 +5,7 @@
       <% if (a.type === 'b') { %>Bouldering
       <% } else if (a.type === 'r') { %>Climbing
       <% } %>
-      <span><%= this.model.formatActivityDuration(a.duration) %></span>
     </li>
-    <li><%= this.model.formatActivityPerformance(a.performance) %></li>
   </ul>
   <% if (a.ticks.length !== 0) { %>
     <ul class="session-ticks">
