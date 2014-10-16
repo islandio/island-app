@@ -50,7 +50,7 @@
   </div>
 <% } %>
 <div class="post-body">
-  <%= this.model.body(!this.parentView) %>
+  <%= this.styleBody(this.model.body(!this.parentView)) %>
 </div>
 <div class="event-info">
   <% if (this.app.profile.member) { %>
