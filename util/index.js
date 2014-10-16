@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- * index.js: Index all member, posts, crags, ascents for search.
+ * index.js: Index all members, crags, and posts for search.
  *
  */
 
@@ -8,8 +8,6 @@
 var optimist = require('optimist');
 var argv = optimist
     .describe('help', 'Get help')
-    .describe('muri', 'MongoDB URI')
-      .default('muri')
     .argv;
 
 if (argv._.length || argv.help) {
@@ -18,132 +16,86 @@ if (argv._.length || argv.help) {
 }
 
 // Module Dependencies
-var reds = require('reds');
 var util = require('util');
 var Step = require('step');
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
 var boots = require('../boots');
 var db = require('../lib/db');
-var com = require('../lib/common');
+
+var membersIndexed = 0;
+var postsIndexed = 0;
+var cragsIndexed = 0;
 
 boots.start({redis: true, muri: argv.muri}, function (client) {
 
-  // Create searches.
-  reds.client = client.redisClient;
-  var searches = {
-    members: reds.createSearch('members'),
-    posts: reds.createSearch('posts'),
-    crags: reds.createSearch('crags'),
-    ascents: reds.createSearch('ascents')
-  };
+  var cache = client.cache;
 
   Step(
     function () {
 
       // Get all members.
-      db.Members.list({}, this);
+      db.Members.list({}, this.parallel());
+      cache.del('members-search', this.parallel());
     },
-    function (err, docs) {
+    function (err, docs, res) {
       boots.error(err);
 
       if (docs.length === 0) return this();
-      var _this = _.after(docs.length, this);
-      _.each(docs, function (d) {
 
-        // Remove existing index.
-        searches.members.remove(d._id, function (err) {
-          boots.error(err);
-
-          // Add new.
-          com.index(searches.members, d, ['displayName', 'username'], _this);
-        });
-      });
-    },
-    function (err) {
-      boots.error(err);
-
-      // Get all posts.
-      db.Posts.list({}, this);
-    },
-    function (err, docs) {
-      boots.error(err);
-
-      if (docs.length === 0) return this();
-      var _this = _.after(docs.length, this);
-      _.each(docs, function (d) {
-
-        // Remove existing index.
-        searches.posts.remove(d._id, function (err) {
-          boots.error(err);
-
-          // Add new.
-          com.index(searches.posts, d, ['title'], _this);
-        });
+      var _this = _.after(docs.length * 2, this);
+      _.each(docs, function (d, idx) {
+        // Add new.
+        membersIndexed += cache.index('members', d, ['displayName', 'userName'],
+            _this);
+        membersIndexed += cache.index('members', d, ['displayName'],
+            _this, {strategy: 'noTokens'});
       });
     },
     function (err) {
       boots.error(err);
 
       // Get all crags.
-      db.Crags.list({}, this);
+      db.Crags.list({}, this.parallel());
+      cache.del('crags-search', this.parallel());
     },
-    function (err, docs) {
+    function (err, docs, res) {
       boots.error(err);
 
       if (docs.length === 0) return this();
-      var _this = _.after(docs.length, this);
-      _.each(docs, function (d) {
-
-        // Remove existing index.
-        searches.crags.remove(d._id, function (err) {
-          boots.error(err);
-
-          // Add new.
-          com.index(searches.crags, d, ['name'], _this);
-        });
+      var _this = _.after(docs.length * 2, this);
+      _.each(docs, function (d, idx) {
+        // Add new.
+        cragsIndexed += cache.index('crags', d, ['name'], _this);
+        cragsIndexed += cache.index('crags', d, ['name'], {strategy: 'noTokens'},
+            _this);
       });
     },
     function (err) {
       boots.error(err);
 
-      var cursor = 0;
-      (function do100() {
-        db.Ascents.list({}, {limit: 100, skip: 100 * cursor},
-            function (err, docs) {
-          boots.error(err);
+      // Get all posts.
+      db.Posts.list({}, this.parallel());
+      cache.del('posts-search', this.parallel());
+    },
+    function (err, docs) {
+      boots.error(err);
 
-          Step(
-            function () {
-              if (docs.length === 0) return this();
-              var _this = _.after(docs.length, this);
-              _.each(docs, function (d) {
-
-                // Remove existing index.
-                searches.ascents.remove(d._id, function (err) {
-                  boots.error(err);
-
-                  // Add new.
-                  com.index(searches.ascents, d, ['name'], _this);
-                });
-              });
-            },
-            function (err) {
-              boots.error(err);
-              if (docs.length < 100)
-                process.exit(0);
-              else {
-                ++cursor;
-                do100();
-              }
-            }
-          );
-        });
-      })();
+      if (docs.length === 0) return this();
+      var _this = _.after(docs.length * 2, this);
+      _.each(docs, function (d) {
+        // Add new.
+        postsIndexed += cache.index('posts', d, ['title'], _this);
+        postsIndexed += cache.index('posts', d, ['title'],
+            {strategy: 'noTokens'}, _this);
+      });
     },
     function (err) {
       boots.error(err);
-      util.log('Redis: Indexed members, posts, crags, and ascents');
+      util.log('Redis: Indexed members, crags, and posts');
+      util.log('Members entries: ' + membersIndexed);
+      util.log('Posts entries: ' + postsIndexed);
+      util.log('Crags entries: ' + cragsIndexed);
       process.exit(0);
     }
   );

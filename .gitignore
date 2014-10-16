@@ -5,3 +5,4 @@ build/
 .elasticbeanstalk/
 .aws/
 aws.config.json
+dump.rdb

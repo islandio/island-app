@@ -11,7 +11,6 @@ define([
   'util',
   'Spin',
   'text!../../templates/session.new.html',
-  'text!../../templates/activity.new.html',
   'text!../../templates/tick.new.html',
   'views/lists/choices'
 ], function ($, _, Backbone, mps, rest, util, Spin, template,

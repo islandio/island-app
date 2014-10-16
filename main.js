@@ -6,23 +6,41 @@
 
 var cluster = require('cluster');
 var util = require('util');
+var ngrok = require('ngrok');
 
 if (cluster.isMaster) {
 
-  // Count the machine's CPUs
-  var cpus = require('os').cpus().length;
+  var ngrokUrl = null;
 
-  // Create a worker for each CPU
-  for (var i = 0; i < cpus; ++i)
-    cluster.fork();
+  var createWorkers = function() {
+    // Count the machine's CPUs
+    var cpus = require('os').cpus().length;
 
-  // Listen for dying workers
-  cluster.on('exit', function (worker) {
+    // Create a worker for each CPU
+    for (var i = 0; i < cpus; ++i)
+      cluster.fork({NGROKURL: ngrokUrl})
 
-    // Replace the dead worker.
-    util.log('Worker ' + worker.id + ' died');
-    cluster.fork();
-  });
+    // Listen for dying workers
+    cluster.on('exit', function (worker) {
+
+      // Replace the dead worker.
+      util.log('Worker ' + worker.id + ' died');
+      cluster.fork({NGROKURL: ngrokUrl})
+    });
+  }
+
+  // Setup an outside tunnel to our localhost in development
+  // We will pass this to the workers
+  if (process.env.NODE_ENV !== 'production') {
+    ngrok.connect(8000, function (err, url) {
+      console.log('Setting up tunnel from this machine to ' + url);
+      ngrokUrl = url;
+      createWorkers();
+    });
+  }
+  else {
+    createWorkers();
+  }
 
 } else {
 
@@ -52,7 +70,6 @@ if (cluster.isMaster) {
   var mongodb = require('mongodb');
   var socketio = require('socket.io');
   var redis = require('redis');
-  var reds = require('reds');
   var RedisStore = require('connect-redis')(express);
   var request = require('request');
   var jade = require('jade');
@@ -67,10 +84,13 @@ if (cluster.isMaster) {
   _.mixin(require('underscore.string'));
   var Connection = require('./lib/db').Connection;
   var Client = require('./lib/client').Client;
+  var Search = require('node-lexsearch').Search;
   var resources = require('./lib/resources');
   var service = require('./lib/service');
   var Mailer = require('./lib/mailer');
   var PubSub = require('./lib/pubsub').PubSub;
+      // Add instagram routes and subscriptions
+  var Instagram = require('./lib/instagram');
 
   // Setup Environments
   var app = express();
@@ -100,6 +120,7 @@ if (cluster.isMaster) {
         // App params
         app.set('ROOT_URI', '');
         app.set('HOME_URI', 'http://localhost:' + app.get('PORT'));
+        app.set('TUNNEL_URI', process.env['NGROKURL']);
 
         // Job scheduling.
         // app.set('SCHEDULE_JOBS', argv.jobs);
@@ -156,6 +177,20 @@ if (cluster.isMaster) {
       app.set('cookieParser', express.cookieParser(app.get('sessionKey')));
       app.use(express.favicon(__dirname + '/public/img/favicon.ico'));
       app.use(express.logger('dev'));
+
+      // Get the raw body
+      // http://stackoverflow.com/questions/18710225/node-js-get-raw-request-body-using-express
+      app.use(function(req, res, next) {
+        req.rawBody = '';
+        req.setEncoding('utf8');
+
+        req.on('data', function(chunk) { 
+          req.rawBody += chunk;
+        });
+
+        next();
+      });
+
       app.use(express.bodyParser());
       app.use(app.get('cookieParser'));
       app.use(express.session({
@@ -200,6 +235,8 @@ if (cluster.isMaster) {
         }
       }
 
+      Instagram.init(app);
+
       if (!module.parent) {
 
         Step(
@@ -216,12 +253,13 @@ if (cluster.isMaster) {
             // Attach a connection ref to app.
             app.set('connection', connection);
 
-            // Attach a reds ref to app.
-            reds.client = rc;
-            app.set('reds', reds);
+            app.set('cache', new Search({
+              redisHost: app.get('REDIS_SEARCH_HOST'),
+              redisPort: app.get('REDIS_PORT')
+            }, this.parallel()));
 
             // Init resources.
-            resources.init(app, this);
+            resources.init(app, this.parallel());
           },
           function (err) {
             if (err) return console.error(err);
@@ -292,7 +330,7 @@ if (cluster.isMaster) {
 
               // FIXME: Use a key map instead of
               // attaching this directly to the socket.
-              socket.client = new Client(socket, app.get('pubsub'), app.get('reds'));
+              socket.client = new Client(socket, app.get('pubsub'));
             });
 
             // Set pubsub sio
