@@ -110,8 +110,6 @@ define([
         }
         if (!this.map) {
           this.map = new Map(this.app).render();
-        } else {
-          this.map.update();
         }
         if (!this.notifications && this.app.profile && this.app.profile.member) {
           this.notifications = new Notifications(this.app, {reverse: true});

@@ -1,0 +1,61 @@
+<div class="modal">
+  <span class="modal-title"><i class="icon-pencil"></i> Log climbing</span>
+  <form enctype="multipart/form-data" method="POST">
+    <div class="modal-body">
+
+
+      <div class="new-crag">
+        <table>
+          <tbody>
+            <tr class="new-session-row-nopad">
+              <td class="new-session-cell">
+                <input name="name" type="text" class="required"
+                    placeholder="New crag name..." autocomplete="off" />
+              </td>
+              <td class="new-session-cell">
+                <input name="city" type="text"
+                    placeholder="Near city..." autocomplete="off" />
+              </td>
+              <td class="new-session-cell">
+                <div class="new-session-search new-crag-country-search">
+                  <input id="new-crag-country" name="country" type="text"
+                      class="new-crag-country-search-input required" placeholder="Country..."
+                      autocomplete="off" />
+                  <div class="search-choice">
+                    <div class="search-choice-content"></div>
+                    <a href="javascript:;" class="search-choice-clear" tabindex="-1">
+                      <i class="icon-cancel"></i>
+                    </a>
+                  </div>
+                  <div class="search-display" style="max-height: 275px;">
+                    <div class="list-header"></div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr class="new-session-row-nopad">
+              <td class="new-session-cell">
+                <input name="latitude" type="text" class="required"
+                    placeholder="° latitude" autocomplete="off" />
+              </td>
+              <td class="new-session-cell">
+                <input name="longitude" type="text"
+                    placeholder="° longitude" autocomplete="off" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      
+    </div>
+    <div class="modal-actions">
+      <button tabindex="2" class="modal-confirm modal-button button new-session-button disabled" disabled>
+        <div class="button-spin"></div>
+        <i class="icon-ok"></i> <%= this.options.tick ? 'Update': 'Log' %> it
+      </button>
+      <button tabindex="3" class="modal-cancel modal-button button">Cancel</button>
+      <div class="clear"></div>
+    </div>
+  </form>
+</div>

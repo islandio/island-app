@@ -15,18 +15,23 @@ block content
       .plot-form
         table
           tr
+            td(colspan="2")
+              input.required(type="text", name="name", placeholder="New crag name...")
+          tr
             td
-              input(type="text", name="latitude", placeholder="latitude")
+              input.required(type="text", name="latitude", placeholder="° latitude")
             td
-              input(type="text", name="longitude", placeholder="longitude")
+              input.required(type="text", name="longitude", placeholder="° longitude")
           tr
             td
               a.button.plot-cancel(href="javascript:;") Cancel
             td
-              a.button.plot-map(href="javascript:;") Map
+              a.button.new-session-button.disabled(href="javascript:;", disabled="disabled")
+                i.icon-plus 
+                | Add it
           tr
             td(colspan="2")
-              span Click on the map to grab coordinates.
+              span Click on the map to grab the crag's coordinates.
       .map-control
         div
           a#hide_show.hide-show.button(href="javascript:;") Show map

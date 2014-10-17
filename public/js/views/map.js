@@ -11,54 +11,51 @@ define([
   'rest',
   'util',
   'Spin',
-  'text!../../templates/popup.html'
-], function ($, _, Backbone, Modernizr, mps, rest, util, Spin, popup) {
+  'text!../../templates/popup.html',
+  'text!../../templates/carto/crags.css'
+], function ($, _, Backbone, Modernizr, mps, rest, util, Spin, popup, css) {
   return Backbone.View.extend({
 
     el: '#map',
     mapped: false,
-    instaMarkers: {},
-    mediaMarkers: {},
     plotting: false,
     saving: false,
     fliedTo: false,
+    api_key: '883965c96f62fd219721f59f2e7c20f08db0123b',
 
     initialize: function (app) {
-
-      // Save app reference.
       this.app = app;
-
-      // Client-wide subscriptions.
       this.subscriptions = [];
 
-      // Socket subscriptions.
-      // this.app.rpc.socket.on('instagram.new', _.bind(this.getInstaMarkers, this, false));
-      // this.app.rpc.socket.on('media.new', _.bind(this.getMediaMarkers, this, false));
+      this.table = window.__s ? 'crags': 'crags_dev';
+      this.pre = "select *, st_asgeojson(the_geom) as geometry from " + this.table
+          + " where forbidden is NULL";
     },
 
     render: function () {
-
-      // Kill listeners / subscriptions.
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
       this.undelegateEvents();
       this.stopListening();
 
+      this.cssTemplate = _.template(css);
+
       // Listen for fly to requests.
       this.subscriptions.push(mps.subscribe('map/fly',
           _.bind(this.flyTo, this)));
 
       // Listen for marker refresh.
-      this.subscriptions.push(mps.subscribe('map/refresh',
-          _.bind(this.getMediaMarkers, this, true)));
+      // this.subscriptions.push(mps.subscribe('map/refresh',
+      //     _.bind(this.getMediaMarkers, this, true)));
 
       // Get a geocoder.
-      if (!this.geocoder)
+      if (!this.geocoder) {
         this.geocoder = new google.maps.Geocoder();
+      }
 
       // Init the load indicator.
-      if (!this.spin)
+      if (!this.spin) {
         this.spin = new Spin(this.$('.map-spin'), {
           color: '#b3b3b3',
           lines: 17,
@@ -66,20 +63,21 @@ define([
           width: 3,
           radius: 18
         });
-      if (!this.plotSpin)
+      }
+      if (!this.plotSpin) {
         this.plotSpin = new Spin(this.$('.plot-spin'));
+      }
       this.plotSpin.start();
 
       // Create the map.
       if (!this.mapped) {
-        if (!this.$el.hasClass('closed'))
+        if (!this.$el.hasClass('closed')) {
           this.spin.start();
+        }
         this.map();
       }
 
-      // Trigger setup.
       this.setup();
-
       return this;
     },
 
@@ -89,6 +87,7 @@ define([
       // Save refs.
       this.plotButton = this.$('.plot-button');
       this.plotForm = this.$('.plot-form');
+      this.submitButton = this.$('.new-session-button');
 
       // Changes to map display are animated.
       this.$el.addClass('animated');
@@ -98,31 +97,35 @@ define([
       this.hider = this.$('.hide-show');
       this.lesser = this.$('.less-more');
 
-      this.delegateEvents();
-
-      // Show carto buttons / loader.
-      _.delay(_.bind(function () {
-        // this.$('.cartodb-zoom, .cartodb-tiles-loader')
-        this.$('.cartodb-zoom')
-            .css({visibility: 'visible'});
-      }, this), 1000);
-
-      // Do the first update.
-      // this.update();
-    },
-
-    update: function () {
-
       // Hide/show plot button.
-      if (this.app.profile && this.app.profile.member
-          && this.app.profile.member.role !== 1
-          && this.app.profile.content.page
-          && this.app.profile.content.page.author)
+      if (this.app.profile && this.app.profile.member) {
         this.plotButton.css({visibility: 'visible'})
-      else this.plotButton.css({visibility: 'hidden'});
+      } else {
+        this.plotButton.css({visibility: 'hidden'});
+      }
 
-      // Reset.
-      if (this.plotting) this.listenForPlot();
+      // Handle warning, and error displays.
+      this.$('input[type="text"]').blur(function (e) {
+        var el = $(e.target);
+        if (el.hasClass('required') && el.val().trim() === '') {
+          el.addClass('input-warning');
+        }
+        if (el.hasClass('input-error')) {
+          el.removeClass('input-error');
+        }
+      });
+
+      // Handle warnings on focus.
+      this.$('input[type="text"]').focus(function (e) {
+        var el = $(e.target);
+        if (el.hasClass('input-warning')) {
+          el.removeClass('input-warning');
+        }
+      });
+
+      this.$('input[type="text"]').keyup(_.bind(this.validateCrag, this));
+
+      this.delegateEvents();
     },
 
     // Bind mouse events.
@@ -131,108 +134,137 @@ define([
       'click .less-more': 'lessMore',
       'click .plot-button': 'listenForPlot',
       'click .plot-cancel': 'listenForPlot',
-      'click .plot-map': 'plotObject',
+      'click .new-session-button': 'addCrag',
     },
 
     map: function () {
-      this.mapped = true;
 
-      var opts = {
+      // Setup the base map.
+      this.sql = new cartodb.SQL({user: 'island', api_key: this.api_key,
+          protocol: 'https'});
+      this.map = new L.Map('map_inner', {
+        center: [40, -20],
         zoom: 3,
-        center_lat: 40,
-        center_lon: -20,
-        scrollwheel: true,
-        https: true,
-        zoomControl: true,
-        fullscreen: true,
-        cartodb_logo: false
-      };
+        minZoom: 2
+      });
 
-      // Setup the map.
-      this.sql = new cartodb.SQL({user: 'island'});
-      cartodb.createVis('map_inner',
-          'https://island.cartodb.com/api/v1/viz/crags/viz.json', opts,
-          _.bind(function (vis, layers) {
-        this.vis = vis;
-        this.vis.mapView.map_leaflet.options.maxZoom = 17;
-        this.vis.mapView.map_leaflet.options.minZoom = 3;
-        this.layers = layers;
-        this.spin.stop();
+      // Add a base tile layer.
+      // http://1.maps.nlp.nokia.com/maptile/2.1/maptile/newest/terrain.day/{LOD}/{X}/{Y}/256/png?app_code=INSERT_LICENCE_TOKEN_HERE&app_id=INSERT_APP_ID_HERE
+      L.tileLayer('https://{s}.maps.nlp.nokia.com/maptile/2.1/' +
+          'maptile/{mapID}/{variant}/{z}/{x}/{y}/256/png8?' +
+          'app_id={app_id}&app_code={app_code}', {
+        attribution:
+            'Map &copy; 1987-2014 <a href="http://developer.here.com">HERE</a>',
+        subdomains: '1234',
+        mapID: 'newest',
+        'app_id': 'PvVIz1964Y3C1MabyVqB',
+        'app_code': 'yuYSbxg5Z5b2c594mYfLtA',
+        base: 'base',
+        variant: 'terrain.day',
+        minZoom: 0,
+        maxZoom: 20
+      }).addTo(this.map);
 
-        // Handle infowindows.
-        this.layers[1].getSubLayer(0).infowindow.set('template', _.template(popup).call(this));
-        this.layers[1].getSubLayer(0).on('featureClick', _.bind(function (e, pos, latlng, data) {
-          console.log(data)
-          _.delay(_.bind(function () {
-            $('a.popup-link').click(_.bind(function (e) {
-              e.preventDefault();
+      // Create the data layer.
+      cartodb.createLayer(this.map, {
+        user_name: 'island',
+        type: 'cartodb',
+        cartodb_logo: false,
+        extra_params: {
+          map_key: this.api_key
+        },
+        sublayers: [{
+          sql: this.pre,
+          cartocss: this.cssTemplate.call(this),
+          interactivity: 'cartodb_id,geometry,id,key,name'
+        }]
+      }, {https: true})
+      .addTo(this.map)
+      .done(_.bind(function (layer) {
+        this.dataLayer = layer.getSubLayer(0);
 
-              // Route to crag.
-              this.app.router.navigate($(e.target).closest('a').attr('href'),
-                  {trigger: true});
-            }, this));
-          }, this), 500);
+        this.dataLayer.bind('featureOver', _.bind(this.featureOver, this));
+        this.dataLayer.bind('featureOut', _.bind(this.featureOut, this));
+        this.dataLayer.bind('featureClick', _.bind(this.featureClick, this));
+        this.dataLayer.setInteraction(true);
+
+        this.map.on('click', _.bind(function (e) {
+          this.setPlotLocation({
+            latitude: e.latlng.lat,
+            longitude: e.latlng.lng
+          });
         }, this));
 
-        // Init events for markers.
-        // this.vis.mapView.map_leaflet.on('zoomend', 
-        //     _.bind(this.getInstaMarkers, this, true));
-        // this.vis.mapView.map_leaflet.on('moveend', 
-        //     _.bind(this.getInstaMarkers, this, false));
-        // this.vis.mapView.map_leaflet.on('zoomend', 
-        //     _.bind(this.getMediaMarkers, this, true));
-        // this.vis.mapView.map_leaflet.on('moveend', 
-        //     _.bind(this.getMediaMarkers, this, false));
-        // this.vis.mapView.map_leaflet.on('click', _.bind(function (e) {
-        //   this.setPlotLocation({
-        //     latitude: e.latlng.lat,
-        //     longitude: e.latlng.lng
-        //   });
-        // }, this));
+        this.mapped = true;
+        this.spin.stop();
 
-        // Hide the zoomer and plot button if the map is hidden.
-        this.zoom = this.$('.cartodb-zoom');
-        if (!store.get('mapClosed')) {
-          this.zoom.show();
-          this.plotButton.show();
-        } else {
-          this.zoom.hide();
-        }
-
-        // Get the markers.
-        // this.getInstaMarkers(true);
-        // this.getMediaMarkers(true);
-
-        // Fly to a location if there is one pending.
+        // Check pending.
         if (this.pendingLocation) {
           this.flyTo(this.pendingLocation);
         }
-
       }, this));
+    },
+
+    featureOver: function (e, pos, latlng, data) {
+      $(this.map.getContainer()).css('cursor', 'pointer');
+      if (this.point) {
+        if (data.cartodb_id === this.point.cartodb_id) {
+          return;
+        }
+        this.map.removeLayer(this.point);
+        this.point.cartodb_id = data.cartodb_id;
+      }
+      // this.point = new L.GeoJSON(JSON.parse(data.geometry), {
+      //   pointToLayer: function (feature, latlng) {
+      //     return new L.CircleMarker(latlng, {
+      //       color: '#666',
+      //       weight: 1.5,
+      //       fillColor: '#4bb8d7',
+      //       fillOpacity: 0.3,
+      //       clickable: false
+      //     }).setRadius(12);
+      //   }
+      // }).addTo(this.map);
+    },
+
+    featureOut: function() {
+      $(this.map.getContainer()).css('cursor', 'auto');
+      if (this.point) {
+        this.map.removeLayer(this.point);
+        this.point.cartodb_id = null;
+      }
+    },
+
+    featureClick: function (e, pos, latlng, data) {
+      this.app.router.navigate('crags/' + data.key, {trigger: true});
     },
 
     flyTo: function (location) {
       if (!location || (this.location && location.latitude
           && this.location.latitude === location.latitude
           && location.longitude
-          && this.location.longitude === location.longitude)) return;
+          && this.location.longitude === location.longitude)) {
+        return;
+      }
       this.fliedTo = true;
-      if (!this.vis) {
+      if (!this.map) {
         this.pendingLocation = location;
         return;
       }
 
       function _fly() {
-        this.vis.mapView.map_leaflet.setView(
-            new L.LatLng(location.latitude, location.longitude), 10);
+        this.map.setView(new L.LatLng(location.latitude,
+            location.longitude), 10);
         this.location = location;
       }
 
       // Use hard coords if available.
-      if (location.latitude && location.longitude) return _fly.call(this);
+      if (location.latitude && location.longitude) {
+        return _fly.call(this);
+      }
 
       // Attempt to geocode an address string, if available.
-      if (location.name)
+      if (location.name) {
         this.geocoder.geocode({address: location.name},
             _.bind(function (res, stat) {
           if (stat === google.maps.GeocoderStatus.OK) {
@@ -241,156 +273,7 @@ define([
             _fly.call(this);
           }
         }, this));
-    },
-
-    getInstaMarkers: function (remove) {
-      return;
-      var map = this.vis.mapView.map_leaflet;
-      var limit = remove ? 200: 100;
-      var zoom = map.getZoom();
-      var bounds = map.getBounds();
-      var buffer = (bounds.getNorthEast().lat - bounds.getSouthWest().lat) / 5;
-      var frame = "ST_Envelope(ST_MakeLine(CDB_LatLng("
-          + (bounds.getNorthWest().lat + buffer) + ","
-          + (bounds.getNorthWest().lng - buffer) + "),CDB_LatLng("
-          + (bounds.getSouthEast().lat - buffer) + ","
-          + (bounds.getSouthEast().lng + buffer) + ")))";
-
-      // Do SQL query.
-      var self = this;
-      this.sql.execute("WITH rg AS (SELECT cartodb_id, floor(st_x(the_geom_webmercator)/({{geobucket}}"
-          + " * CDB_XYZ_Resolution({{z}}))) mx, floor(st_y(the_geom_webmercator)/({{geobucket}}"
-          + " * CDB_XYZ_Resolution({{z}}))) my, st_x(the_geom) x, st_y(the_geom) y, turi, uri, name, username, handle, caption "
-          + "FROM {{table_name}} WHERE {{frame}} && the_geom ORDER BY created_at DESC LIMIT {{limit}}) "
-          + "SELECT DISTINCT ON (mx,my) cartodb_id, x, y, turi, uri, name, username, handle, caption FROM rg", {
-        table_name: window.__s ? 'instagrams': 'instagrams_dev',
-        frame: frame,
-        z: zoom,
-        geobucket: 1,
-        limit: limit
-      }).done(_.bind(function (data) {
-        if (remove) this.removeInstaMarkers();
-        _.each(data.rows, _.bind(function (r) {
-          if (!this.instaMarkers[r.cartodb_id]) {
-            r.uri = util.https(r.uri);
-            r.turi = util.https(r.turi);
-            var img = '<img src="' + r.turi + '" width="36" height="36" />';
-            var marker = L.marker([r.y, r.x], _.extend({
-              icon: L.divIcon({
-                html: img,
-                iconSize: [36, 36],
-                iconAnchor: [18, 46],
-              })
-            }, r)).addTo(map).on('click', function (e) {
-
-              // Blur map.
-              map.fire('blur');
-
-              // Convert marker to fancybox object.
-              function box(m) {
-                return {
-                  href: m.options.uri,
-                  title: '"' + m.options.caption + '" - '
-                      + '<a href="/' + m.options.username + '" class="navigate">'
-                      + m.options.name + '</a>'
-                      + ' (@' + m.options.handle + ')'
-                };
-              }
-
-              // Build current list of images.
-              var imgs = [box(this)];
-              _.each(self.markers, function (m) {
-                if (m.options.uri !== imgs[0].href)
-                  imgs.push(box(m));
-              });
-
-              // Show list in modal.
-              $.fancybox(imgs, {
-                openEffect: 'fade',
-                closeEffect: 'fade',
-                closeBtn: false,
-                nextClick: true,
-                padding: 0,
-                afterShow: function () {
-
-                  // Init links in title.
-                  $('.fancybox-title a.navigate').click(_.bind(self.navigate, self));
-                },
-                afterClose: function () {
-                  
-                  // Blur map.
-                  map.fire('focus');
-                }
-              });
-            });
-            this.instaMarkers[r.cartodb_id] = marker;
-          }
-        }, this));
-      }, this));
-    },
-
-    getMediaMarkers: function (remove) {
-      return;
-      var self = this;
-      var map = this.vis.mapView.map_leaflet;
-      var limit = remove ? 200: 100;
-      var zoom = map.getZoom();
-      var bounds = map.getBounds();
-      var buffer = (bounds.getNorthEast().lat - bounds.getSouthWest().lat) / 5;
-      var frame = "ST_Envelope(ST_MakeLine(CDB_LatLng("
-          + (bounds.getNorthWest().lat + buffer) + ","
-          + (bounds.getNorthWest().lng - buffer) + "),CDB_LatLng("
-          + (bounds.getSouthEast().lat - buffer) + ","
-          + (bounds.getSouthEast().lng + buffer) + ")))";
-
-      // Do SQL query.
-      var self = this;
-      this.sql.execute("WITH rg AS (SELECT cartodb_id, floor(st_x(the_geom_webmercator)/({{geobucket}}"
-          + " * CDB_XYZ_Resolution({{z}}))) mx, floor(st_y(the_geom_webmercator)/({{geobucket}}"
-          + " * CDB_XYZ_Resolution({{z}}))) my, st_x(the_geom) x, st_y(the_geom) y, mid, pkey, turi "
-          + "FROM {{table_name}} WHERE {{frame}} && the_geom ORDER BY created_at DESC LIMIT {{limit}}) "
-          + "SELECT DISTINCT ON (mx,my) cartodb_id, x, y, mid, pkey, turi FROM rg", {
-        table_name: window.__s ? 'medias': 'medias_dev',
-        frame: frame,
-        z: zoom,
-        geobucket: 1,
-        limit: limit
-      }).done(_.bind(function (data) {
-        if (remove) this.removeMediaMarkers();
-        _.each(data.rows, _.bind(function (r) {
-          if (!this.mediaMarkers[r.cartodb_id]) {
-            r.turi = util.https(r.turi);
-            var img = '<img src="' + r.turi + '" width="36" height="36" />';
-            var marker = L.marker([r.y, r.x], _.extend({
-              icon: L.divIcon({
-                html: img,
-                iconSize: [36, 36],
-                iconAnchor: [18, 46],
-              })
-            }, r)).addTo(map).on('click', function (e) {
-
-              // Route to post if it exists.
-              self.app.router.navigate(this.options.pkey, {trigger: true});
-
-            });
-            this.mediaMarkers[r.cartodb_id] = marker;
-          }
-        }, this));
-      }, this));
-    },
-
-    removeInstaMarkers: function () {
-      _.each(this.instaMarkers, _.bind(function (v, k) {
-        this.vis.mapView.map_leaflet.removeLayer(v);
-        delete this.instaMarkers[k]
-      }, this));
-    },
-
-    removeMediaMarkers: function () {
-      _.each(this.mediaMarkers, _.bind(function (v, k) {
-        this.vis.mapView.map_leaflet.removeLayer(v);
-        delete this.mediaMarkers[k]
-      }, this));
+      }
     },
 
     hideShow: function (e) {
@@ -399,7 +282,6 @@ define([
         this.hider.text('Hide map');
         this.hider.addClass('split-left');
         this.lesser.show();
-        this.zoom.show();
         this.plotButton.show();
         this.resize(250);
         store.set('mapClosed', false);
@@ -409,7 +291,6 @@ define([
         this.hider.removeClass('split-left');
         this.plotButton.hide();
         this.lesser.hide();
-        this.zoom.hide();
         store.set('mapClosed', true);
       }
     },
@@ -421,12 +302,14 @@ define([
         this.lesser.addClass('split-right');
         this.hider.show();
         this.resize(250);
+        store.set('mapTall', false);
       } else {
         this.$el.addClass('opened');
         this.lesser.text('Less map');
         this.lesser.removeClass('split-right');
         this.hider.hide();
         this.resize(600);
+        store.set('mapTall', true);
       }
     },
 
@@ -438,80 +321,70 @@ define([
         this.plotButton.show();
         this.plotForm.hide();
         this.$el.removeClass('plotting');
-        this.layers[1].setInteraction(true);
+        this.dataLayer.setInteraction(true);
         this.$('.cartodb-infowindow').css({opacity: 1});
-      } else if (this.vis) {
+        this.$('input[type="text"]').val('');
+      } else if (this.map) {
         this.plotting = true;
-        this.vis.mapView.map_leaflet.fire('focus');
+        this.map.fire('focus');
         this.plotButton.addClass('active');
         this.plotButton.hide();
-        if (this.app.profile.content
-            && this.app.profile.content.page
-            && this.app.profile.content.page.location)
-          this.setPlotLocation(this.app.profile.content.page.location);
-        else
-          this.setPlotLocation();
+        this.setPlotLocation();
         this.plotForm.show();
         this.$el.addClass('plotting');
-        this.layers[1].setInteraction(false);
+        this.dataLayer.setInteraction(false);
         this.$('.cartodb-infowindow').css({opacity: 0});
       }
     },
 
-    getPlotType: function () {
-      if (!this.app.profile.content 
-          || !this.app.profile.content.page) return false;
-      var page = this.app.profile.content.page;
-      var type;
-      if (page.medias)
-        type = 'post';
-      else if (page.bcnt)
-        type = 'crag';
-      else if (page.crag_id)
-        type = 'ascent';
-      return type;
-    },
-
-    getPlotLocation: function () {
-      var location = {
-        latitude: parseFloat($('input[name="latitude"]', this.plotForm).val()),
-        longitude: parseFloat($('input[name="longitude"]', this.plotForm).val())
-      };
-      if (!_.isNumber(location.latitude) || _.isNaN(location.latitude)
-          || !_.isNumber(location.longitude) || _.isNaN(location.longitude))
+    getNewCragPayload: function () {
+      var name = $('input[name="name"]', this.plotForm).val().trim();
+      var latitude = parseFloat($('input[name="latitude"]', this.plotForm).val());
+      var longitude = parseFloat($('input[name="longitude"]', this.plotForm).val());
+      if (name === '') {
         return false;
-      else return location;
+      } else if (!_.isNumber(latitude) || _.isNaN(latitude)
+          || !_.isNumber(longitude) || _.isNaN(longitude)) {
+        return false;
+      } else {
+        return {
+          name: name,
+          latitude: latitude,
+          longitude: longitude
+        };
+      }
     },
 
     setPlotLocation: function (location) {
+      var nameEl = $('input[name="name"]', this.plotForm);
       var latEl = $('input[name="latitude"]', this.plotForm);
       var lonEl = $('input[name="longitude"]', this.plotForm);
-      latEl.val(location ? location.latitude: '');
-      lonEl.val(location ? location.longitude: '');
-      _.delay(function () { latEl.focus(); }, 0);
+      if (location && location.latitude) {
+        latEl.val(location.latitude).removeClass('input-warning');
+      }
+      if (location && location.longitude) {
+        lonEl.val(location.longitude).removeClass('input-warning');
+      }
+      _.delay(function () { nameEl.focus(); }, 0);
     },
 
-    plotObject: function (e) {
-      if (!this.plotting || this.saving) return false;
+    validateCrag: function () {
+      if (!this.getNewCragPayload()) {
+        this.submitButton.attr('disabled', true).addClass('disabled');
+      } else {
+        this.submitButton.attr('disabled', false).removeClass('disabled');
+      }
+    },
+
+    addCrag: function (e) {
+      if (!this.plotting || this.saving) {
+        return false;
+      }
+      var payload = this.getNewCragPayload();
+      if (!payload) {
+        return false;
+      }
       this.saving = true;
-
-      // Grab new location.
-      var payload = {location: this.getPlotLocation()};
-      if (!payload.location) {
-        mps.publish('flash/new', [{
-          message: 'Invalid coordinates',
-          level: 'error'
-        }, false]);
-        this.saving = false;
-        return false;
-      }
-
-      // Determine type.
-      var type = this.getPlotType();
-      if (!type) {
-        finish.call(this);
-        return false;
-      }
 
       // Update info bar.
       this.plotForm.hide();
@@ -520,17 +393,8 @@ define([
       this.plotSpin.target.show();
       this.plotSpin.start();
 
-      // Determine path.
-      var path = '/api/' + type + 's/';
-      var page = this.app.profile.content.page;
-      switch (type) {
-        case 'post': path += page.key; break;
-        case 'crag': path += 'crags/' + page.key; break;
-        case 'ascent': path += 'crags/' + page.key; break;
-      }
-
       // Now do the save.
-      rest.put(path, payload, _.bind(function (err, data) {
+      rest.post('/api/crags', payload, _.bind(function (err, data) {
 
         // Toggle plot button state.
         finish.call(this);
@@ -539,19 +403,11 @@ define([
 
           // Publish error.
           mps.publish('flash/new', [{
-            message: err.message,
+            err: err,
             level: 'error'
-          }, false]);
-
+          }, true]);
           return;
         }
-
-        // Refresh markers.
-        this.getMediaMarkers(true);
-
-        // Update page location.
-        this.app.profile.content.page.location = payload.location;
-
       }, this));
 
       function finish() {
@@ -566,23 +422,25 @@ define([
     },
 
     resize: function (height) {
-      if (!this.vis) return;
+      if (!this.map) {
+        return;
+      }
       var sizer = setInterval(_.bind(function () {
-        this.vis.mapView.map_leaflet.invalidateSize();
-        if (this.$el.height() === height)
+        this.map.invalidateSize();
+        if (this.$el.height() + 1 >= height) {
           clearInterval(sizer);
+        }
       }, this), 20);
     },
 
     navigate: function (e) {
       e.preventDefault();
-
-      // Route to href.
-      this.app.router.navigate($(e.target).attr('href'), {trigger: true});
-
-      // Close the modal.
+      var path = $(e.target).closest('a').attr('href');
+      if (path) {
+        this.app.router.navigate(path, {trigger: true});
+      }
       $.fancybox.close();
-    }
+    },
 
   });
 });

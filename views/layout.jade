@@ -41,11 +41,18 @@ html(lang="en")
     script(type="text/javascript")
       if (window.store) {
         var mapClosed = store.get('mapClosed');
+        var mapTall = store.get('mapTall');
         var m = document.getElementById('map');
         var hs = document.getElementById('hide_show');
         var lm = document.getElementById('less_more');
         if (!mapClosed && m && hs && lm) {
-          m.className = 'map';
+          if (mapTall) {
+            m.className = 'map opened';
+            hs.style.display = 'none';
+            lm.innerHTML = 'Less map';
+          } else {
+            m.className = 'map';
+          }
           hs.className = 'hide-show button split-left';
           hs.innerHTML = 'Hide map';
           lm.style.display = 'inline-block';
