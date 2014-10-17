@@ -33,12 +33,11 @@ define([
   'views/dashboard',
   'views/splash',
   'views/sessions',
-  'views/ticks',
-  'views/session.new'
+  'views/ticks'
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
     Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Crag, Ascent,
     Settings, Reset, Films, About, Privacy, Crags, Dashboard, Splash, Sessions,
-    Ticks, NewSession) {
+    Ticks) {
 
   // Our application URL router.
   var Router = Backbone.Router.extend({
@@ -70,7 +69,6 @@ define([
       this.route('films', 'films', this.films);
       this.route('crags', 'crags', this.crags);
       this.route('ticks', 'ticks', this.ticks);
-      this.route('sessions/new', 'newSession', this.newSession);
       this.route('sessions', 'sessions', this.sessions);
       this.route('signin', 'signin', this.signin);
       this.route('signup', 'signup', this.signup);
@@ -225,17 +223,6 @@ define([
         {title: 'My Sessions', href: '/sessions', active: true},
         {title: 'My Ticks', href: '/ticks'}
       ]});
-    },
-
-    newSession: function () {
-      this.start();
-      this.folder.removeClass('landing').removeClass('initial');
-      this.render('/service/session.new.profile', {}, true, _.bind(function (err) {
-        if (err) return;
-        this.page = new NewSession(this.app).render();
-        this.stop();
-      }, this));
-      this.renderTabs({title: 'Log new session'});
     },
 
     ticks: function () {

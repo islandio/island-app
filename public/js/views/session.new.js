@@ -54,7 +54,9 @@ define([
       'click .new-session-button': 'submit',
       'click .new-session-tried': 'checkTried',
       'click .new-session-sent': 'checkSent',
-      'click .modal-cancel': 'cancel'
+      'click .modal-cancel': 'cancel',
+      'click .add-crag': 'addNewCrag',
+      'click .add-ascent': 'addNewAscent'
     },
 
     setup: function () {
@@ -341,6 +343,18 @@ define([
     cancel: function (e) {
       e.preventDefault();
       $.fancybox.close();
+    },
+
+    addNewCrag: function (e) {
+      e.preventDefault();
+      
+      return false;
+    },
+
+    addNewAscent: function (e) {
+      e.preventDefault();
+      
+      return false;
     },
 
   });
