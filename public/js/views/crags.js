@@ -11,8 +11,9 @@ define([
   'util',
   'Spin',
   'text!../../templates/crags.html',
-  'text!../../templates/crags.list.html'
-], function ($, _, Backbone, mps, rest, util, Spin, template, list) {
+  'text!../../templates/crags.list.html',
+  'views/session.new',
+], function ($, _, Backbone, mps, rest, util, Spin, template, list, Session) {
 
   return Backbone.View.extend({
 
@@ -40,7 +41,8 @@ define([
     },
 
     events: {
-      'click .navigate': 'navigate'
+      'click .navigate': 'navigate',
+      'click .list-button': 'log'
     },
 
     setup: function () {
@@ -149,6 +151,12 @@ define([
       }, this));
 
       return false;
+    },
+
+    log: function (e) {
+      e.preventDefault();
+      var cid = $(e.target).closest('li').attr('id');
+      new Session(this.app, {crag_id: cid}).render();
     }
 
   });

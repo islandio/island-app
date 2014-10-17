@@ -27,12 +27,14 @@
       </span>
   <% } %>
   <% var back = i % 2 === 0 ? '#f2f2f2': '#f9f9f9'; %>
-  <a href="/crags/<%= c.key %>" id="<%= c.id %>" class="navigate">
-    <li style="background:<%= back %>;">
-      <span class="list-row-title"><%= c.name %></span>
-      <span><%= formatCity(c.city) %></span>
-    </li>
-  </a>
+  <li style="background:<%= back %>;" id="<%= c.id %>">
+    <a href="/crags/<%= c.key %>" id="<%= c.id %>" class="navigate">
+      <span class="list-row-title"><%= c.name %>, <span><%= c.country %></span></span>
+    </a>
+    <a href="javascript:;" class="list-button">
+      <i class="icon-pencil"></i>
+    </a>
+  </li>
   <% code = _code; ++i; %>
   <% if (i === items.length) { %>
     </ul>
