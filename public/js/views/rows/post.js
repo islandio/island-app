@@ -436,5 +436,13 @@ define([
       this.time.text(util.getRelativeTime(this.model.get('created')));
     },
 
+    // insert HTML to create anchor tags, strong @'s etc
+    styleBody: function(body) {
+      // Strong names
+      return body.replace(/([@#][^\s:]+)/g, '<strong>$1</strong>')
+          // Add anchors
+          .replace(/(http[^\s\)]+)/g, '<a href="$1">$1</a>')
+    }
+
   });
 });
