@@ -392,6 +392,7 @@ define([
       this.plotButton.show();
       this.plotSpin.target.show();
       this.plotSpin.start();
+      return false;
 
       // Now do the save.
       rest.post('/api/crags', payload, _.bind(function (err, data) {
