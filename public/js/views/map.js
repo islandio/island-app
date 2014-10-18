@@ -65,7 +65,13 @@ define([
         });
       }
       if (!this.plotSpin) {
-        this.plotSpin = new Spin(this.$('.plot-spin'));
+        this.plotSpin = new Spin(this.$('.plot-spin'), {
+          color: '#404040',
+          lines: 13,
+          length: 3,
+          width: 2,
+          radius: 6,
+        });
       }
       this.plotSpin.start();
 
@@ -356,6 +362,9 @@ define([
     },
 
     setPlotLocation: function (location) {
+      if (!this.plotForm.is(':visible')) {
+        return;
+      }
       var nameEl = $('input[name="name"]', this.plotForm);
       var latEl = $('input[name="latitude"]', this.plotForm);
       var lonEl = $('input[name="longitude"]', this.plotForm);
@@ -365,6 +374,7 @@ define([
       if (location && location.longitude) {
         lonEl.val(location.longitude).removeClass('input-warning');
       }
+      this.validateCrag();
       _.delay(function () { nameEl.focus(); }, 0);
     },
 
@@ -376,6 +386,24 @@ define([
       }
     },
 
+    reverseGeocode: function (lat, lng, cb) {
+      var latlng = new google.maps.LatLng(lat, lng);
+      this.geocoder.geocode({latLng: latlng}, function (res, stat) {
+        if (stat === google.maps.GeocoderStatus.OK) {
+          // Get the result that has country type.
+          var result = _.find(res, function (r) {
+            return _.find(r.types, function (t) {
+              return t === 'country';
+            });
+          });
+          cb(result.formatted_address);
+        } else {
+          console.error(stat);
+          cb();
+        }
+      });
+    },
+
     addCrag: function (e) {
       if (!this.plotting || this.saving) {
         return false;
@@ -384,40 +412,51 @@ define([
       if (!payload) {
         return false;
       }
-      this.saving = true;
-
-      // Update info bar.
-      this.plotForm.hide();
-      $('span', this.plotButton).hide();
-      this.plotButton.show();
-      this.plotSpin.target.show();
-      this.plotSpin.start();
-      return false;
-
-      // Now do the save.
-      rest.post('/api/crags', payload, _.bind(function (err, data) {
-
-        // Toggle plot button state.
-        finish.call(this);
-
-        if (err) {
-
-          // Publish error.
+      this.reverseGeocode(payload.latitude, payload.longitude,
+          _.bind(function (country) {
+        if (!country) {
           mps.publish('flash/new', [{
-            err: err,
+            err: {message: 'Hmm, are you sure there\'s a crag there?'},
             level: 'error'
           }, true]);
-          return;
+          return false;
         }
-      }, this));
+        payload.country = country;
+        this.saving = true;
 
-      function finish() {
-        this.listenForPlot();
-        $('span', this.plotButton).show();
-        this.plotSpin.target.hide();
-        this.plotSpin.stop();
-        this.saving = false;
-      }
+        // Update info bar.
+        this.plotForm.hide();
+        $('span', this.plotButton).hide();
+        this.plotButton.show();
+        this.plotSpin.target.show();
+        this.plotSpin.start();
+
+        // Now do the save.
+        rest.post('/api/crags', payload, _.bind(function (err, data) {
+          this.plotSpin.target.hide();
+          this.plotSpin.stop();
+          this.saving = false;
+
+          if (err) {
+            mps.publish('flash/new', [{
+              err: err,
+              level: 'error'
+            }, true]);
+            return;
+          }
+
+          // Show success.
+          mps.publish('flash/new', [{
+            message: 'You added a new crag in ' + country + '.',
+            level: 'alert'
+          }, true]);
+
+          // Close form.
+          this.listenForPlot();
+          $('span', this.plotButton).show();
+          this.submitButton.attr('disabled', true).addClass('disabled');
+        }, this));
+      }, this));
 
       return false;
     },
