@@ -435,7 +435,6 @@ define([
           flash.level = 'error';
           mps.publish('flash/new', [flash, true]);
         } else {
-          console.log(data)
           mps.publish('flash/new', [{
             message: 'You added a new crag in ' + data.country + '.',
             level: 'alert'
