@@ -13,8 +13,9 @@ define([
   'text!../../templates/crag.html',
   'text!../../templates/crag.title.html',
   'views/lists/events',
-  'views/lists/ascents'
-], function ($, _, Backbone, mps, rest, util, Crag, template, title, Events, Ascents) {
+  'views/lists/ascents',
+  'Skycons'
+], function ($, _, Backbone, mps, rest, util, Crag, template, title, Events, Ascents, skycons) {
   return Backbone.View.extend({
 
     el: '.main',
@@ -35,6 +36,14 @@ define([
 
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
+
+      var weather = this.app.profile.weather;
+      if (weather) {
+        this.skycons = new Skycons({'color': '#666666'});
+        var iconName = weather.icon.replace(/-/g, '_').toUpperCase();
+        this.skycons.add('crag-weather', weather.icon);
+        this.skycons.play();
+      }
 
       this.trigger('rendered');
       return this;
@@ -80,6 +89,8 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
+      if (this.skycons)
+        this.skycons.remove('crag-weather');
       this.ascents.destroy();
       this.undelegateEvents();
       this.stopListening();

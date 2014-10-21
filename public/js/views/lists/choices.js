@@ -52,10 +52,14 @@ define([
       this.choiceWrap = this.$('.search-choice');
       this.choiceContent = this.$('.search-choice-content');
 
-      // Handle searching.
-      this.autocomplete = new google.maps.places.AutocompleteService();
+      // Let us develop if google API wasn't downloaded
+      //
+      if (typeof google !== 'undefined') {
+        // Handle searching.
+        this.autocomplete = new google.maps.places.AutocompleteService();
+        this.places = new google.maps.places.PlacesService($('<div>').get(0));
+      }
       // this.geocoder = new google.maps.Geocoder();
-      this.places = new google.maps.places.PlacesService($('<div>').get(0));
       this.input.bind('focus', _.bind(this.searchFocus, this));
       this.input.bind('keyup', _.bind(this.search, this));
       this.input.bind('keydown', _.bind(this.searchBlur, this));
@@ -207,6 +211,7 @@ define([
             done();
           }, this));
         } else {
+          if (!this.autocomplete) done();
           this.autocomplete.getPlacePredictions({input: str},
               _.bind(function (preds, status) {
             if (status !== google.maps.places.PlacesServiceStatus.OK
