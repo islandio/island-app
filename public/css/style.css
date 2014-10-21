@@ -2425,6 +2425,9 @@ span.list-row-title span {
 .page-title a {
   background: none;
 }
+.page-title a span {
+  color: #b1dc36;
+}
 .page-title a .page-title-sub {
   font-size: 14px;
 }

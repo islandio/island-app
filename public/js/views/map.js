@@ -412,50 +412,40 @@ define([
       if (!payload) {
         return false;
       }
-      this.reverseGeocode(payload.latitude, payload.longitude,
-          _.bind(function (country) {
-        if (!country) {
+      
+      this.saving = true;
+
+      // Update info bar.
+      this.plotForm.hide();
+      $('span', this.plotButton).hide();
+      this.plotButton.show();
+      this.plotSpin.target.show();
+      this.plotSpin.start();
+
+      // Now do the save.
+      rest.post('/api/crags', payload, _.bind(function (err, data) {
+        this.plotSpin.target.hide();
+        this.plotSpin.stop();
+        this.saving = false;
+
+        if (err) {
+          var flash = err.message && err.message === 'no country code found' ?
+              {message: 'Hmm, are you sure there\'s a crag there?'}:
+              {err: err};
+          flash.level = 'error';
+          mps.publish('flash/new', [flash, true]);
+        } else {
+          console.log(data)
           mps.publish('flash/new', [{
-            err: {message: 'Hmm, are you sure there\'s a crag there?'},
-            level: 'error'
-          }, true]);
-          return false;
-        }
-        payload.country = country;
-        this.saving = true;
-
-        // Update info bar.
-        this.plotForm.hide();
-        $('span', this.plotButton).hide();
-        this.plotButton.show();
-        this.plotSpin.target.show();
-        this.plotSpin.start();
-
-        // Now do the save.
-        rest.post('/api/crags', payload, _.bind(function (err, data) {
-          this.plotSpin.target.hide();
-          this.plotSpin.stop();
-          this.saving = false;
-
-          if (err) {
-            mps.publish('flash/new', [{
-              err: err,
-              level: 'error'
-            }, true]);
-            return;
-          }
-
-          // Show success.
-          mps.publish('flash/new', [{
-            message: 'You added a new crag in ' + country + '.',
+            message: 'You added a new crag in ' + data.country + '.',
             level: 'alert'
           }, true]);
+        }
 
-          // Close form.
-          this.listenForPlot();
-          $('span', this.plotButton).show();
-          this.submitButton.attr('disabled', true).addClass('disabled');
-        }, this));
+        // Close form.
+        this.listenForPlot();
+        $('span', this.plotButton).show();
+        this.submitButton.attr('disabled', true).addClass('disabled');
       }, this));
 
       return false;
