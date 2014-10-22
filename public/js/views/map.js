@@ -354,7 +354,7 @@ define([
         return false;
       } else {
         return {
-          name: name,
+          name: util.sanitize(name),
           latitude: latitude,
           longitude: longitude
         };
@@ -412,7 +412,6 @@ define([
       if (!payload) {
         return false;
       }
-      
       this.saving = true;
 
       // Update info bar.

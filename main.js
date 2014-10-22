@@ -154,8 +154,6 @@ if (cluster.isMaster) {
       // Common utils init
       require('./lib/common').init(app.get('ROOT_URI'));
 
-
-
       // Mailer init
       app.set('mailer', new Mailer({
         user: app.get('GMAIL_USER'),
