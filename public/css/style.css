@@ -3625,6 +3625,10 @@ a.session-tick-button:hover {
 a.session-tick-button:active {
   background: #a7d22c;
 }
+.session-weather {
+  font-size: 14px;
+  color: #404040;
+}
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––ticks*/
 .tick-list {
   margin-top: 30px;
@@ -3876,12 +3880,32 @@ span.setting-error {
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––page info*/
 .page-info {
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   margin-bottom: 30px;
 }
-.page-description p {
-  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+.page-description-left {
+  width: 50%;
   font-size: 16px;
   line-height: 24px;
+  float: left;
+}
+.page-description-right {
+  margin-left: 50%;
+}
+.page-description-right a {
+  display: inline-block;
+  padding: 4px;
+  background-color: #fff;
+}
+.page-description-right a:hover {
+  background-color: rgba(75,184,215,0.25);
+}
+.page-description-right span {
+  font-size: 48px;
+  line-height: 72px;
+  height: 64px;
+  color: #404040;
+  vertical-align: top;
 }
 span.no-description {
   font-style: italic;

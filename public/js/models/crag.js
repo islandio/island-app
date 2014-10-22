@@ -14,7 +14,9 @@ define([
 
     count: function (n) {
       return n !== 0 ? '~' + util.addCommas(n): 0;
-    }
+    },
+
+    tempFtoC: function(n) { return Math.floor((n - 32) * 5/9); }
 
   });
 });

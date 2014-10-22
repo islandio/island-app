@@ -64,5 +64,25 @@ define([
       return parts.join(', ');
     },
 
+    tempFtoC: function(n) { return Math.floor((n - 32) * 5/9); },
+
+    formatWeatherIconName: function(str) {
+      switch (str) {
+        default:
+        case 'partly-cloudy-day':
+        case 'clear-day': return ''
+
+        case 'partly-cloudy-night':
+        case 'clear-night': return 'and night'
+
+        case 'cloudy': return 'and cloudy'
+        case 'rain': return 'and raining'
+        case 'sleet': return 'and sleeting'
+        case 'snow': return 'and snowing'
+        case 'wind': return 'and windy'
+        case 'fog': return 'and foggy'
+      }
+    }
+
   });
 });

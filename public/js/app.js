@@ -39,6 +39,7 @@ define([
     if (this.profile) {
       this.profile.content = profile.content;
       this.profile.sub = profile.sub;
+      this.profile.weather = profile.weather;
       if (profile.member && !this.profile.member) {
         this.profile.member = profile.member;
         this.profile.notes = profile.notes;

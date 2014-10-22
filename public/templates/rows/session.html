@@ -4,6 +4,8 @@
       + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
   var timeVerb = new Date(this.model.get('updated')).getTime()
       > new Date(this.model.get('created')).getTime() ? 'Updated' : 'Logged';
+
+  var weather = this.model.get('weather');
 %>
 
 <% if (!this.parentView) { %>
@@ -25,6 +27,11 @@
       <%= this.model.formatName() %>
     </a>
   </span>
+  <% if (weather) { %>
+  <p class="session-weather">
+    <%= this.model.tempFtoC(weather.temperature) %>&degC <%= this.model.formatWeatherIconName(weather.icon) %>
+  </p>
+  <% } %>
 <% } %>
 <% if (this.model.get('actions').length === 0) { %>
   <span class="session-empty">No activities</span>
