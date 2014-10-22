@@ -17,14 +17,14 @@
         Routes: <%= this.model.count(data.rcnt) %>
       </p>
     </div>
-    <% if (weather) { %>
     <div class="page-weather">
       <canvas id="crag-weather" width="64" height="64"></canvas>
+      <% if (weather) { %>
       <span>
         &nbsp<%= this.model.tempFtoC(weather.temperature) %>&degC
       </span>
+      <% } %>
     </div>
-    <% } %>
   </div>
   <div class="events"></div>
   <div class="list-spin">
