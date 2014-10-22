@@ -3,7 +3,11 @@
   // Save model attributes
   var data = this.model.attributes;
   var weather = this.app.profile.weather;
-
+  if (weather) {
+    var weatherURL = '//www.forecast.io/#/f/'
+        + this.model.get('location').latitude + ','
+        + this.model.get('location').longitude;
+  }
 %>
 
 <div class="leftside">
@@ -19,10 +23,14 @@
     </div>
     <div class="page-description-right">
       <% if (weather) { %>
-      <canvas id="crag-weather" width="64" height="64"></canvas>
-      <span>
-        &nbsp<%= this.model.tempFtoC(weather.temperature) %>&degC
-      </span>
+        <a href="<%= weatherURL %> ">
+          <canvas id="crag-weather" width="64" height="64"></canvas>
+          <span>
+            &nbsp<%= this.model.tempFtoC(weather.temperature) %>&degC
+          </span>
+        </a>
+      <% } else {%>
+        <p> No weather data available.
       <% } %>
     </div>
     <div class="clear"></div>

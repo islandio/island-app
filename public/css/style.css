@@ -3625,6 +3625,10 @@ a.session-tick-button:hover {
 a.session-tick-button:active {
   background: #a7d22c;
 }
+.session-weather {
+  font-size: 14px;
+  color: #404040;
+}
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––ticks*/
 .tick-list {
   margin-top: 30px;
@@ -3888,8 +3892,13 @@ span.setting-error {
 .page-description-right {
   margin-left: 50%;
 }
-.page-description-right canvas {
+.page-description-right a {
   display: inline-block;
+  padding: 4px;
+  background-color: #fff;
+}
+.page-description-right a:hover {
+  background-color: rgba(75,184,215,0.25);
 }
 .page-description-right span {
   font-size: 48px;
