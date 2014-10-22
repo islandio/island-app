@@ -1,4 +1,4 @@
-#crags{
+#crags {
   ba/marker-opacity: 0.4;
   ba/marker-fill: #008888;
   ba/marker-width: 0;
@@ -46,22 +46,36 @@
   ra/marker-width: 200;
 }
 
-#crags::top{
+#crags::top {
   marker-fill: #fff;
   marker-opacity: 0.9;
   marker-allow-overlap: true;
   marker-placement: point;
   marker-type: ellipse;
-  marker-width: 4;
   marker-line-width: 0.0;
   marker-comp-op: src-over;
-  [zoom > 6]{
-  marker-width: 6;
-  [zoom > 7]{
+  marker-width: 4;
+  [zoom > 6] {
+    marker-width: 6;
+  }
+  [zoom > 7] {
+    marker-width: 8;
+  }
+  [zoom > 8] {
+    marker-width: 10;
+  }
+}
+
+#crags::top [rcnt = 0][bcnt = 0] {
+  marker-fill: #e76533;
   marker-width: 8;
-  [zoom > 8]{
-  marker-width: 10;
+  [zoom > 6] {
+    marker-width: 12;
   }
+  [zoom > 7] {
+    marker-width: 16;
   }
+  [zoom > 8] {
+    marker-width: 20;
   }
 }

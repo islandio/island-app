@@ -355,8 +355,10 @@ define([
       } else {
         return {
           name: util.sanitize(name),
-          latitude: latitude,
-          longitude: longitude
+          location: {
+            latitude: latitude,
+            longitude: longitude
+          }
         };
       }
     },
@@ -384,24 +386,6 @@ define([
       } else {
         this.submitButton.attr('disabled', false).removeClass('disabled');
       }
-    },
-
-    reverseGeocode: function (lat, lng, cb) {
-      var latlng = new google.maps.LatLng(lat, lng);
-      this.geocoder.geocode({latLng: latlng}, function (res, stat) {
-        if (stat === google.maps.GeocoderStatus.OK) {
-          // Get the result that has country type.
-          var result = _.find(res, function (r) {
-            return _.find(r.types, function (t) {
-              return t === 'country';
-            });
-          });
-          cb(result.formatted_address);
-        } else {
-          console.error(stat);
-          cb();
-        }
-      });
     },
 
     addCrag: function (e) {
@@ -438,6 +422,9 @@ define([
             message: 'You added a new crag in ' + data.country + '.',
             level: 'alert'
           }, true]);
+
+          // Go to new crag page.
+          this.app.router.navigate('crags/' + data.key, {trigger: true});
         }
 
         // Close form.
