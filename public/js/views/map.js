@@ -109,6 +109,9 @@ define([
       } else {
         this.plotButton.css({visibility: 'hidden'});
       }
+      if (!this.$el.hasClass('closed')) {
+        this.plotButton.show();
+      }
 
       // Handle warning, and error displays.
       this.$('input[type="text"]').blur(function (e) {
