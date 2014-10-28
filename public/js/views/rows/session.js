@@ -199,7 +199,9 @@ define([
         // Delete the session.
         rest.delete('/api/sessions/' + this.model.id,
             {}, _.bind(function (err, data) {
-          if (err) return console.log(err);
+          if (err) {
+            return console.log(err);
+          }
 
           // close the modal.
           $.fancybox.close();

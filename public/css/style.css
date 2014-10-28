@@ -1669,6 +1669,13 @@ span.count {
   -moz-transition: -moz-box-shadow 0.15s ease-in;
   transition: box-shadow 0.15s ease-in;
 }
+.checkbox-styled input[type="checkbox"] + span img {
+  vertical-align: -3px;
+  margin-right: 5px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+}
 .checkbox-styled input[type="checkbox"] + span i {
   display: none;
   -webkit-animation-name: fadeIn;
@@ -2153,6 +2160,7 @@ button.activity-button i {
   border-radius: 0 0 2px 0;
 }
 a.button.plot-button {
+  display: none;
   visibility: hidden;
   position: absolute;
   z-index: 1;

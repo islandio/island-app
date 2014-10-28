@@ -47,7 +47,15 @@ define([
 
       // Listen for marker refresh.
       // this.subscriptions.push(mps.subscribe('map/refresh',
-      //     _.bind(this.getMediaMarkers, this, true)));
+      //     _.bind(this.something, this, true)));
+
+      this.subscriptions.push(mps.subscribe('map/add',
+          _.bind(function () {
+        if (this.$el.hasClass('closed')) {
+          this.hideShow();
+        }
+        this.listenForPlot();
+      }, this, true)));
 
       // Get a geocoder.
       if (!this.geocoder) {
@@ -295,6 +303,7 @@ define([
         this.resize(250);
         store.set('mapClosed', false);
       } else {
+        this.listenForPlot();
         this.$el.addClass('closed');
         this.hider.text('Show map');
         this.hider.removeClass('split-left');
@@ -338,8 +347,8 @@ define([
         this.map.fire('focus');
         this.plotButton.addClass('active');
         this.plotButton.hide();
-        this.setPlotLocation();
         this.plotForm.show();
+        this.setPlotLocation();
         this.$el.addClass('plotting');
         this.dataLayer.setInteraction(false);
         this.$('.cartodb-infowindow').css({opacity: 0});

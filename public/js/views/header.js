@@ -11,24 +11,19 @@ define([
   'util',
   'views/lists/flashes',
   'views/lists/choices',
-  'text!../../templates/box.html'
-], function ($, _, Backbone, mps, rest, util, Flashes, Choices, box) {
+  'text!../../templates/box.html',
+  'views/ascent.new'
+], function ($, _, Backbone, mps, rest, util, Flashes, Choices, box, NewAscent) {
   return Backbone.View.extend({
 
     el: '.header',
 
     initialize: function (app) {
-
-      // Save app reference.
       this.app = app;
-
-      // Client-wide subscriptions
       this.subscriptions = [];
     },
 
     render: function (login) {
-
-      // Kill listeners / subscriptions.
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
@@ -37,11 +32,9 @@ define([
 
       if (login && this.app.profile.member) {
         this.$('.signin-button').remove();
-
-        // UnderscoreJS rendering.
         $(_.template(box).call(this)).appendTo(this.$('.header-inner'));
 
-        // Open notes if user wants that.
+        // Open notification panel.
         if (store.get('notesOpen')) {
           var p = document.getElementById('panel');
           var w = document.getElementById('wrap');
@@ -50,36 +43,34 @@ define([
         }
       }
 
-      // Done rendering ... trigger setup.
       this.setup();
-
       return this;
     },
 
-    // Misc. setup.
     setup: function () {
 
       // Save refs.
       this.panel = $('.panel');
       this.wrap = $('.wrap');
 
-      // Shell event.
       this.delegateEvents();
-
-      // Shell listeners / subscriptions.
       if (this.app.profile && this.app.profile.member) {
-        
-        // Shell subscriptions.
         this.subscriptions.push(mps.subscribe('notification/change',
             _.bind(this.checkBeacon, this)));
+
+        this.subscriptions.push(mps.subscribe('ascent/add',
+            _.bind(function (opts) {
+          this.addAscent(null, opts);
+        }, this)));
       }
 
       // Start block messages.
-      if(!this.flashes)
+      if(!this.flashes) {
         this.flashes = new Flashes(this.app);
+      }
 
       // Start search choices.
-      if(!this.choices)
+      if(!this.choices) {
         this.choices = new Choices(this.app, {
           reverse: true, 
           el: '.header-search',
@@ -88,12 +79,14 @@ define([
           route: true,
           types: ['members', 'posts', 'crags']
         });
+      }
     },
 
-    // Bind mouse events.
     events: {
       'click .signin-button': 'signin',
       'click .header-avatar': 'avatar',
+      'click .header-add-crag-button': 'addCrag',
+      'click .header-add-ascent-button': 'addAscent',
       'click .globe-button': 'togglePanel',
       'click .navigate': 'navigate',
     },
@@ -123,17 +116,25 @@ define([
 
     signin: function (e) {
       e.preventDefault();
-
-      // Render the signin view.
       mps.publish('member/signin/open');
     },
 
     avatar: function (e) {
       e.preventDefault();
+      this.app.router.navigate('/' + this.app.profile.member.username,
+          {trigger: true});
+    },
 
-      // Route to profile.
-      this.app.router.navigate('/'
-          + this.app.profile.member.username, {trigger: true});
+    addCrag: function (e) {
+      e.preventDefault();
+      mps.publish('map/add');
+    },
+
+    addAscent: function (e, opts) {
+      if (e) {
+        e.preventDefault();
+      }
+      new NewAscent(this.app, opts).render();
     },
 
     navigate: function (e) {

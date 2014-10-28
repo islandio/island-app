@@ -18,12 +18,10 @@ define([
   return Backbone.View.extend({
 
     className: 'new-session',
-    crag: null,
-    tickChoices: {},
 
     initialize: function (app, options) {
       this.app = app;
-      this.options = options;
+      this.options = options || {};
       this.subscriptions = [];
       this.on('rendered', this.setup, this);
     },
@@ -63,7 +61,6 @@ define([
       var tick = this.options.tick;
 
       // Save refs.
-      this.errorMsg = this.$('.new-session-error');
       this.submitButton = this.$('.new-session-button');
       this.submitButtonSpin = new Spin($('.button-spin', this.el), {
         color: '#396400',
@@ -251,9 +248,7 @@ define([
       $('.new-session-tick-details', ctx).show();
     },
 
-    submit: function (e) {
-      e.preventDefault();
-      var oldTick = this.options.tick;
+    getPayload: function () {
 
       // Sanitize.
       this.$('input[type!="submit"]:visible, textarea:visible')
@@ -261,8 +256,10 @@ define([
         $(this).val(util.sanitize($(this).val()));
       });
 
-      var tickChoice = this.tickChoices.choice.model.attributes;
-      var cragChoice = this.cragChoices.choice.model.attributes;
+      var tickChoice = this.tickChoices.choice ?
+          this.tickChoices.choice.model.attributes: {};
+      var cragChoice = this.cragChoices.choice ? 
+          this.cragChoices.choice.model.attributes: {};
 
       // Build the payload.
       var payload = {
@@ -272,6 +269,9 @@ define([
       };
 
       // Get all actions.
+      // NOTE: the following rides on old functionality that allowed
+      // logging of multiple actions w/ multiple ticks. Keeping for now
+      // in case that proves to be what's wanted.
       var actions = [];
       var action = {
         index: 0,
@@ -304,7 +304,14 @@ define([
       actions.push(action);
       payload.actions = actions;
 
-      // All good, show spinner.
+      return payload;
+    },
+
+    submit: function (e) {
+      e.preventDefault();
+      var oldTick = this.options.tick;
+      var payload = this.getPayload();
+
       this.submitButtonSpin.start();
       this.submitButton.addClass('spinning').attr('disabled', true);
 
@@ -340,11 +347,6 @@ define([
       return false;
     },
 
-    cancel: function (e) {
-      e.preventDefault();
-      $.fancybox.close();
-    },
-
     addNewCrag: function (e) {
       e.preventDefault();
       
@@ -353,9 +355,24 @@ define([
 
     addNewAscent: function (e) {
       e.preventDefault();
-      
+      var p = this.save();
+      this.cancel();
+      mps.publish('ascent/add', [{crag_id: p.crag_id}]);
       return false;
     },
+
+    save: function () {
+      var payload = this.getPayload();
+      store.set('pendingTick', payload);
+      return payload;
+    },
+
+    cancel: function (e) {
+      if (e) {
+        e.preventDefault();
+      }
+      this.destroy();
+    }
 
   });
 });
