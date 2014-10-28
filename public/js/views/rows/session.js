@@ -17,8 +17,8 @@ define([
   'text!../../../templates/session.title.html',
   'views/lists/comments',
   'text!../../../templates/confirm.html'
-], function ($, _, Backbone, mps, rest, util, Model, NewSession, template, activityTemp,
-      tickTemp, title, Comments, confirm) {
+], function ($, _, Backbone, mps, rest, util, Model, NewSession, template,
+      activityTemp, tickTemp, title, Comments, confirm) {
   return Backbone.View.extend({
 
     attributes: function () {

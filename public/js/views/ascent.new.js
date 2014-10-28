@@ -11,8 +11,10 @@ define([
   'util',
   'Spin',
   'text!../../templates/ascent.new.html',
-  'views/lists/choices'
-], function ($, _, Backbone, mps, rest, util, Spin, template, Choices) {
+  'views/lists/choices',
+  'views/session.new'
+], function ($, _, Backbone, mps, rest, util, Spin, template, Choices,
+      NewSession) {
   return Backbone.View.extend({
 
     className: 'new-session',
@@ -49,6 +51,7 @@ define([
       'click .new-session-boulder': 'checkBoulder',
       'click .new-session-route': 'checkRoute',
       'click .modal-cancel': 'cancel',
+      'click .modal-back': 'back',
       'click .add-crag': 'addNewCrag'
     },
 
@@ -235,8 +238,12 @@ define([
 
         // Go to new ascent page.
         this.app.router.navigate('crags/' + data.key, {trigger: true});
-
         this.destroy();
+
+        if (this.options.back) {
+          new NewSession(this.app, {crag_id: data.crag_id,
+              ascent_id: data.ascent_id}).render();
+        }
       }, this));
 
       return false;
@@ -245,6 +252,14 @@ define([
     addNewCrag: function (e) {
       e.preventDefault();
       return false;
+    },
+
+    back: function (e) {
+      if (e) {
+        e.preventDefault();
+      }
+      this.destroy();
+      new NewSession(this.app, {crag_id: this.options.crag_id}).render();
     },
 
     cancel: function (e) {

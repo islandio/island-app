@@ -106,7 +106,11 @@
       </div>
     </div>
     <div class="modal-actions">
-      <button tabindex="14" class="modal-back modal-button button">Back</button>
+      <% if (this.options.back) { %>
+        <button tabindex="14" class="modal-back modal-button button">
+          <i class="icon-angle-left"></i> Back to log
+        </button>
+      <% } %>
       <button tabindex="15" class="modal-cancel modal-button button">Cancel</button>
       <button tabindex="16" class="modal-confirm modal-button button new-session-button disabled" disabled>
         <div class="button-spin"></div>

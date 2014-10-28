@@ -357,7 +357,7 @@ define([
       e.preventDefault();
       var p = this.save();
       this.cancel();
-      mps.publish('ascent/add', [{crag_id: p.crag_id}]);
+      mps.publish('ascent/add', [{crag_id: p.crag_id, back: true}]);
       return false;
     },
 

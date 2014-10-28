@@ -30,16 +30,37 @@ define([
       var str = '<span class="tick-verb">';
 
       if (t.sent) {
+        var v;
+        if (t.first) {
+          v = 'opened';
+        } else if (t.firstf) {
+          v = 'sent (FFA)';
+        }
         if (t.tries === 1) {
-          str += 'onsighted</span> *';
+          if (!v) {
+            v = 'onsighted';
+          }
+          str += v + '</span> *';
         } else if (t.tries === 2) {
-          str += 'flashed</span> *';
+          if (!v) {
+            v = 'flashed';
+          }
+          str += v + '</span> *';
         } else if (t.tries === 3) {
-          str += 'sent</span> * 2nd go';
+          if (!v) {
+            v = 'sent';
+          }
+          str += v + '</span> * 2nd go';
         } else if (t.tries === 4) {
-          str += 'sent</span> * 3rd go';
+          if (!v) {
+            v = 'sent';
+          }
+          str += v + '</span> * 3rd go';
         } else if (!t.tries || t.tries === 5) {
-          str += 'sent</span> *';
+          if (!v) {
+            v = 'sent';
+          }
+          str += v + '</span> *';
         }
       } else {
         str += 'tried</span> *';
@@ -57,11 +78,11 @@ define([
       var t = this.attributes;
       var str = '';
 
-      if (t.first) {
-        str = ' - FIRST ASCENT';
-      } else if (t.firstf) {
-        str = ' - FIRST FEMALE ASCENT';
-      }
+      // if (t.first) {
+      //   str = ' - FIRST ASCENT';
+      // } else if (t.firstf) {
+      //   str = ' - FIRST FEMALE ASCENT';
+      // }
 
       return str;
     },

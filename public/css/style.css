@@ -661,6 +661,12 @@ button.button.modal-button.continue {
   color: #fff;
   background: #b1dc36;
 }
+button.button.modal-button i {
+  margin-left: -5px;
+}
+button.button.modal-button i:before {
+  margin-left: 0;
+}
 button.button.table-button {
   width: 100%;
   margin: 0;
@@ -1670,14 +1676,15 @@ span.count {
   transition: box-shadow 0.15s ease-in;
 }
 .checkbox-styled input[type="checkbox"] + span img {
-  vertical-align: -3px;
-  margin-right: 5px;
+  vertical-align: -4px;
+  margin-right: 0;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
 }
 .checkbox-styled input[type="checkbox"] + span i {
   display: none;
+  margin-left: -5px;
   -webkit-animation-name: fadeIn;
   -moz-animation-name: fadeIn;
   -o-animation-name: fadeIn;
@@ -2431,7 +2438,11 @@ span.list-row-title span {
   height: 30px;
 }
 .page-title a {
+  color: #666;
   background: none;
+}
+.page-title a:hover {
+  color: #1a1a1a;
 }
 .page-title a span {
   color: #b1dc36;
