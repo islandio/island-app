@@ -303,7 +303,9 @@ define([
         this.resize(250);
         store.set('mapClosed', false);
       } else {
-        this.listenForPlot();
+        if (this.plotting) {
+          this.listenForPlot();
+        }
         this.$el.addClass('closed');
         this.hider.text('Show map');
         this.hider.removeClass('split-left');
