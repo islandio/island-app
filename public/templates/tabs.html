@@ -3,6 +3,9 @@
     <% if (this.params.html) { %>
       <%= this.params.html %>
     <% } else { %>
+      <a href="javascript:;" class="button title-green-button log-session">
+        <i class="icon-pencil"></i> Log climbing
+      </a>
       <h1 class="title-left"><%= this.params.title || '' %></h1>
       <% if (this.params.subtitle) { %>
         <h1 class="title-sub"><%= this.params.subtitle %></h1>
@@ -10,6 +13,9 @@
     <% } %>
   </div>
 <% } else { %>
+  <a href="javascript:;" class="button title-green-button log-session">
+    <i class="icon-pencil"></i> Log climbing
+  </a>
   <ul>
     <% _.each(this.params.tabs, function (tab) { 
       var klass = 'tab';

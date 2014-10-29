@@ -5,6 +5,14 @@
 %>
 
 <% if (this.app.profile.member) { %>
+  <a href="javascript:;" class="button title-green-button log-session"
+      data-cid="<%= this.model.id %>">
+    <i class="icon-pencil"></i> Log here
+  </a>
+  <a href="javascript:;" class="button title-button add-ascent"
+      data-cid="<%= this.model.id %>">
+    <i class="icon-plus"></i> Add climb
+  </a>
   <% if (sub && sub.subscribee_id === this.model.id) { %>
     <a href="javascript:;" class="button title-button unwatch-button"
         data-path="/api/crags/<%= this.model.id %>/unwatch"

@@ -11,9 +11,8 @@ define([
   'util',
   'views/lists/flashes',
   'views/lists/choices',
-  'text!../../templates/box.html',
-  'views/ascent.new'
-], function ($, _, Backbone, mps, rest, util, Flashes, Choices, box, NewAscent) {
+  'text!../../templates/box.html'
+], function ($, _, Backbone, mps, rest, util, Flashes, Choices, box) {
   return Backbone.View.extend({
 
     el: '.header',
@@ -57,11 +56,6 @@ define([
       if (this.app.profile && this.app.profile.member) {
         this.subscriptions.push(mps.subscribe('notification/change',
             _.bind(this.checkBeacon, this)));
-
-        this.subscriptions.push(mps.subscribe('ascent/add',
-            _.bind(function (opts) {
-          this.addAscent(null, opts);
-        }, this)));
       }
 
       // Start block messages.
@@ -88,7 +82,7 @@ define([
       'click .header-add-crag-button': 'addCrag',
       'click .header-add-ascent-button': 'addAscent',
       'click .globe-button': 'togglePanel',
-      'click .navigate': 'navigate',
+      'click .navigate': 'navigate'
     },
 
     togglePanel: function (e) {
@@ -128,13 +122,6 @@ define([
     addCrag: function (e) {
       e.preventDefault();
       mps.publish('map/add');
-    },
-
-    addAscent: function (e, opts) {
-      if (e) {
-        e.preventDefault();
-      }
-      new NewAscent(this.app, opts).render();
     },
 
     navigate: function (e) {

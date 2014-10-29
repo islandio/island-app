@@ -83,7 +83,7 @@ define([
       if (path) {
         this.app.router.navigate(path, {trigger: true});
       }
-    },
+    }
 
   });
 });

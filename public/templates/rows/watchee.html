@@ -3,7 +3,7 @@
 %>
 
 <% if (!this.app.profile.content.private) { %>
-  <a href="/crags/<%= this.model.get('subscribee').key %>">
+  <a href="/crags/<%= this.model.get('subscribee').key %>" class="navigate">
     <span class="list-row-title"><%= subscribee.name %><% if (subscribee.grades) { %>
         <%= ' ' + subscribee.grades.join(', ') %><% } %>, <span>
         <%= subscribee.crag || subscribee.country %>

@@ -1,5 +1,5 @@
 <div class="modal">
-  <span class="modal-title"><i class="icon-pencil"></i> Add new ascent</span>
+  <span class="modal-title"><i class="icon-pencil"></i> Add a new boulder or route</span>
   <form enctype="multipart/form-data" method="POST">
     <div class="modal-body">
       <div class="new-session-activities">
@@ -12,7 +12,7 @@
                     <td colspan="3" class="new-session-cell" style="width: 50%;">
                       <div class="new-session-search new-session-crag-search">
                         <input tabindex="10" id="new-session-crag" name="crag" type="text"
-                            class="new-session-crag-search-input required" placeholder="Crag name..."
+                            class="new-session-crag-search-input required" placeholder="Search existing crags or add new -->"
                             autocomplete="off" />
                         <button class="button input-add-button add-crag"><i class="icon-plus"></i></button>
                         <div class="search-choice">
@@ -32,7 +32,7 @@
                   </tr>
                   <tr class="new-session-row-nopad">
                     <td colspan="4" class="new-session-cell" style="width: 75%;">
-                      <input tabindex="12" name="name" type="text" class="required" placeholder="Ascent name" />
+                      <input tabindex="12" name="name" type="text" class="required" placeholder="Climb name (new or just missing from Island)" />
                     </td>
                     <td class="new-session-cell" style="width: 12.5%; padding-right: 0;">
                       <label class="checkbox-styled">
@@ -95,7 +95,7 @@
                   </tr>
                   <tr class="new-session-row-nopad">
                     <td colspan="6" class="new-session-cell">
-                      <textarea tabindex="13" name="note" placeholder="Notes..."></textarea>
+                      <textarea tabindex="13" name="note" placeholder="Beta or access notes..."></textarea>
                     </td>
                   </tr>
                 </tbody>
@@ -108,7 +108,7 @@
     <div class="modal-actions">
       <% if (this.options.back) { %>
         <button tabindex="14" class="modal-back modal-button button">
-          <i class="icon-angle-left"></i> Back to log
+          <i class="icon-angle-left"></i> Back to logging
         </button>
       <% } %>
       <button tabindex="15" class="modal-cancel modal-button button">Cancel</button>

@@ -46,8 +46,9 @@ define([
         this.profile.transloadit = profile.transloadit;
         return true;
       }
-    } else
+    } else {
       this.profile = profile;
+    }
 
     return false;
   }
@@ -68,7 +69,9 @@ define([
       Backbone.history.start({pushState: true});
 
       // For local dev.
-      if (window.__s === '') window._app = app;
+      if (window.__s === '') {
+        window._app = app;
+      }
     }
     
   };

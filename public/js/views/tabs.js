@@ -9,28 +9,27 @@ define([
   'util',
   'mps',
   'rest',
-  'text!../../templates/tabs.html'
-], function ($, _, Backbone, util, mps, rest, template) {
+  'text!../../templates/tabs.html',
+  'views/ascent.new',
+  'views/session.new'
+], function ($, _, Backbone, util, mps, rest, template, NewAscent, NewSession) {
 
   return Backbone.View.extend({
 
-    // The DOM target element for this page.
     el: '.tabs',
     working: false,
 
-    // Module entry point.
     initialize: function (app, params) {
       this.app = app;
       this.params = params || {};
-
-      // Shell events.
       this.on('rendered', this.setup, this);
-
-      // Client-wide subscriptions.
-      this.subscriptions = [];
+      this.subscriptions = [
+        mps.subscribe('ascent/add', _.bind(function (opts) {
+          this.add(null, opts);
+        }, this))
+      ];
     },
 
-    // Draw our template from the profile JSON.
     render: function () {
       if (!this.params.tabs) this.params.tabs = [];
 
@@ -51,34 +50,29 @@ define([
         this.$('.tab:eq(' + i + ')').addClass('active');
       }
 
-      // Done rendering ... trigger setup.
       this.trigger('rendered');
-
       return this;
     },
 
-    // Bind mouse events.
     events: {
       'click .navigate': 'navigate',
       'click .follow-button': 'follow',
       'click .unfollow-button': 'unfollow',
       'click .watch-button': 'watch',
-      'click .unwatch-button': 'unwatch'
+      'click .unwatch-button': 'unwatch',
+      'click .add-ascent': 'add',
+      'click .log-session': 'log'
     },
 
-    // Misc. setup.
     setup: function () {
       return this;
     },
 
-    // Similar to Backbone's remove method, but empties
-    // instead of removes the view's DOM element.
     empty: function () {
       this.$el.empty();
       return this;
     },
 
-    // Kill this view.
     destroy: function () {
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
@@ -90,11 +84,10 @@ define([
 
     navigate: function (e) {
       e.preventDefault();
-
-      // Route to wherever.
       var path = $(e.target).closest('a').attr('href');
-      if (path)
+      if (path) {
         this.app.router.navigate(path, {trigger: true});
+      }
     },
 
     follow: function (e) {
@@ -182,6 +175,22 @@ define([
 
       return false;
     },
+
+    add: function (e, opts) {
+      var opts = opts || {};
+      if (e) {
+        e.preventDefault();
+        opts.crag_id = $(e.target).closest('a').data('cid');
+      }
+      new NewAscent(this.app, opts).render();
+    },
+
+    log: function (e) {
+      e.preventDefault();
+      var aid = $(e.target).closest('a').data('aid');
+      var cid = $(e.target).closest('a').data('cid');
+      new NewSession(this.app, {crag_id: cid, ascent_id: aid}).render();
+    }
 
   });
 });

@@ -90,7 +90,9 @@ define([
       this.routes = this.$('.r-ascents');
 
       // Handle type changes.
-      if (this.data.bcnt > this.data.rcnt) {
+      this.data.ascents.bcnt = this.data.ascents.bcnt || 0;
+      this.data.ascents.rcnt = this.data.ascents.rcnt || 0;
+      if (this.data.ascents.bcnt > this.data.ascents.rcnt) {
         this.currentType = 'b';
         this.bouldersFilter.addClass('active');
         this.boulders.show();
@@ -103,10 +105,10 @@ define([
       this.routesFilter.click(_.bind(this.changeType, this, 'r'));
 
       // Disable types if nothing to show.
-      if (this.data.bcnt === 0) {
+      if (this.data.ascents.bcnt === 0) {
         this.bouldersFilter.addClass('disabled');
       }
-      if (this.data.rcnt === 0) {
+      if (this.data.ascents.rcnt === 0) {
         this.routesFilter.addClass('disabled');
       }
 

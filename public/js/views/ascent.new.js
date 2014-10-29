@@ -114,10 +114,38 @@ define([
       _.delay(_.bind(function () {
         if (!this.options.crag_id) {
           this.$('.new-session-crag-search-input').focus();
-        } else {
+        } else if (!this.options.ascent_id) {
           this.$('input[name="name"]').focus();
+        } else {
+          this.$('textarea[name="note"]').focus();
         }
       }, this), 1);
+
+      // Choose values if pending ascent present.
+      var pending = store.get('pendingAscent');
+      if (pending) {
+        store.set('pendingAscent', false);
+        if (pending.sector) {
+          this.$('input[name="sector"]').val(pending.sector);
+        }
+        if (pending.name) {
+          this.$('input[name="name"]').val(pending.name);
+        }
+        if (pending.type === 'b') {
+          this.checkBoulder();
+        } else {
+          this.checkRoute();
+        }
+        var grade = pending.grades[0];
+        if (grade) {
+          this.selectOption('grade', this.app.grades.length
+              - this.app.grades.indexOf(grade) - 1);
+        }
+        this.selectOption('rock', pending.rock);
+        if (pending.note) {
+          this.$('textarea[name="note"]').val(pending.note);
+        }
+      }
 
       return this;
     },
@@ -134,13 +162,14 @@ define([
     },
 
     destroy: function () {
+      $.fancybox.close();
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
+      _.defer(_.bind(this.cragChoices.destroy, this));
       this.cragChoices.destroy();
       this.undelegateEvents();
       this.stopListening();
-      $.fancybox.close();
     },
 
     navigate: function (e) {
@@ -251,6 +280,9 @@ define([
 
     addNewCrag: function (e) {
       e.preventDefault();
+      var p = this.save();
+      this.cancel();
+      mps.publish('map/add');
       return false;
     },
 
@@ -260,6 +292,12 @@ define([
       }
       this.destroy();
       new NewSession(this.app, {crag_id: this.options.crag_id}).render();
+    },
+
+    save: function () {
+      var payload = this.getPayload();
+      store.set('pendingAscent', payload);
+      return payload;
     },
 
     cancel: function (e) {

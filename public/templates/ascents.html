@@ -14,7 +14,7 @@
   </div>
 </div>
 <% _.each(this.data.ascents, _.bind(function (ascents, t) {
-  if (this.data[t + 'cnt'] === 0) return; %>
+  if (!this.data.ascents[t + 'cnt']) return; %>
   <div class="list-wrap <%= t %>-ascents">
     <span class="no-results">No results.</span>
     <% _.each(this.app.grades, _.bind(function (grade) {

@@ -13,8 +13,7 @@ define([
   'text!../../templates/session.new.html',
   'text!../../templates/tick.new.html',
   'views/lists/choices'
-], function ($, _, Backbone, mps, rest, util, Spin, template,
-    tickTemp, Choices) {
+], function ($, _, Backbone, mps, rest, util, Spin, template, tickTemp, Choices) {
   return Backbone.View.extend({
 
     className: 'new-session',
@@ -98,8 +97,21 @@ define([
             id: this.options.ascent_id}, !!tick);
       }
 
+      // Check for a pending session.
+      // - option's tick takes priority
+      // - pending session does not restrict crag choice
+      var date;
+      if (!tick) {
+        pending = store.get('pendingSession');
+        store.set('pendingSession', false);
+        if (pending) {
+          tick = pending.actions[0].ticks[0];
+          date = pending.date;
+        }
+      }
+
       // Handle date.
-      var date = this.options.tick ? this.options.tick.date: null;
+      var date = this.options.tick ? this.options.tick.date: date;
       date = date ? new Date(date): new Date();
       this.dateInput = this.$('.new-session-datepicker').pickadate({
         onStart: function () {
@@ -138,8 +150,10 @@ define([
 
       // Focus cursor initial.
       _.delay(_.bind(function () {
-        if (!this.options.ascent_id) {
-          this.$('.new-session-ascent-search-input').focus();
+        if (!this.options.crag_id) {
+          this.$('.new-session-crag-search-input').focus();
+        } else if (!this.options.ascent_id) {
+          this.$('.new-session-tick-search-input').focus();
         } else {
           this.$('textarea[name="note"]').focus();
         }
@@ -164,7 +178,7 @@ define([
           this.selectOption('first', tick.first);
         }
         if (tick.note) {
-          this.$('textarea[name="note"]').val(tick.note)
+          this.$('textarea[name="note"]').val(tick.note);
         }
         if (tick.sent) {
           this.checkSent();
@@ -186,14 +200,14 @@ define([
     },
 
     destroy: function () {
+      $.fancybox.close();
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      this.cragChoices.destroy();
-      this.tickChoices.destroy();
+      _.defer(_.bind(this.cragChoices.destroy, this));
+      _.defer(_.bind(this.tickChoices.destroy, this));
       this.undelegateEvents();
       this.stopListening();
-      $.fancybox.close();
     },
 
     navigate: function (e) {
@@ -349,7 +363,9 @@ define([
 
     addNewCrag: function (e) {
       e.preventDefault();
-      
+      var p = this.save();
+      this.cancel();
+      mps.publish('map/add');
       return false;
     },
 
@@ -363,7 +379,7 @@ define([
 
     save: function () {
       var payload = this.getPayload();
-      store.set('pendingTick', payload);
+      store.set('pendingSession', payload);
       return payload;
     },
 

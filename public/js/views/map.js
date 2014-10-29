@@ -437,6 +437,10 @@ define([
 
           // Go to new crag page.
           this.app.router.navigate('crags/' + data.key, {trigger: true});
+
+          if (store.get('pendingAscent')) {
+            mps.publish('ascent/add', [{crag_id: data._id}]);
+          }
         }
 
         // Close form.

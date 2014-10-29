@@ -832,7 +832,7 @@ a.button.signin-strategy-btn.from-login {
   -webkit-box-sizing: border-box;
 }
 a.button.title-button,
-a.button.title-buy-button {
+a.button.title-green-button {
   float: right;
   margin-top: -1px;
   line-height: 40px;
@@ -845,11 +845,11 @@ a.button.title-buy-button {
   padding: 0 20px;
 }
 a.button.title-button.disabled,
-a.button.title-buy-button.disabled {
+a.button.title-green-button.disabled {
   opacity: 0.8;
   cursor: default;
 }
-a.button.title-buy-button {
+a.button.title-green-button {
   color: #396400;
   background: #b1dc36;
   border: none;
@@ -861,8 +861,8 @@ a.button.title-button:focus:not(.disabled) {
   border: none;
   border-left: 2px solid #808080;
 }
-a.button.title-buy-button:hover:not(.disabled),
-a.button.title-buy-button:focus:not(.disabled) {
+a.button.title-green-button:hover:not(.disabled),
+a.button.title-green-button:focus:not(.disabled) {
   color: #2f5a00;
   border: none;
   border-left: 2px solid #396400;
@@ -1057,6 +1057,11 @@ li.tab.active a {
   border-top: 4px solid #4bb8d7;
   padding-top: 11px;
   top: 5px;
+}
+.tabs > a.button.title-green-button {
+  position: relative;
+  z-index: 2;
+  top: 1px;
 }
 .subtabs {
   position: relative;
@@ -1284,7 +1289,7 @@ ul.splash-features li img {
 .page-spin {
   position: absolute;
   z-index: 2;
-  right: 22px;
+  left: -24px;
   top: 21px;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––header*/
@@ -3369,7 +3374,7 @@ table.post-params label {
 }
 .event-timeline-label {
   position: absolute;
-  left: -41px;
+  left: -40px;
   top: 14px;
   width: 41px;
   border-bottom: 1px solid #f2f2f2;
@@ -3682,12 +3687,6 @@ a.session-tick-button:active {
   margin-left: 78px;
   padding-left: 40px;
   border-left: 1px solid #f2f2f2;
-}
-.tick .event-title {
-  font-size: 14px;
-}
-.tick .event-title a.title {
-  font-size: 14px;
 }
 .tick .event-timeline-label {
   border: none;
