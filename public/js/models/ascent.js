@@ -11,7 +11,19 @@ define([
 
     parentKey: function () {
       return this.get('key').split('/').slice(0, 2).join('/');
-    }
+    },
+
+    formatDescription: function () {
+      var t = this.attributes;
+      var type = t.type === 'b' ? 'boulder problem': 'route';
+      var str = '<span class="ascent-verb">added the ' + type + '</span> *';
+      var name = '<a href="/crags/' + t.key + '" class="title navigate">"';
+      name += t.name + '"</a>';
+      name += ' in <a href="/crags/' + t.crag.key + '" class="title navigate">';
+      name += '<i class="icon-location"></i> ' + t.crag.name + ', ' + t.country + '</a>';
+      str = str.replace('*', name);
+      return str;
+    },
 
   });
 });

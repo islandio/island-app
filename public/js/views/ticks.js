@@ -104,6 +104,7 @@ define([
     // Collect a tick.
     collect: function (data) {
       if (data.author.id === this.app.profile.member.id && data.sent) {
+        this._remove(data, true);
         var tick = this.renderTick(data);
         if (!data.grade) {
           data.grade = 'not graded by you';
@@ -117,15 +118,21 @@ define([
     },
 
     // Remove a tick.
-    _remove: function (data) {
+    _remove: function (data, noslide) {
       var t = this.$('li#' + data.id);
+      if (t.length === 0) {
+        return;
+      }
       var list = t.closest('.session-ticks');
-      t.slideUp('fast', _.bind(function () {
+
+      function _done() {
         t.remove();
         if (list.children('li').length === 0) {
           list.hide();
         }
-      }, this));
+      }
+
+      noslide ? t.slideUp('fast', _done): _done();
     },
 
     empty: function () {
@@ -192,7 +199,6 @@ define([
       var rx = new RegExp('^(.*?(' + txt + ')[^$]*)$', 'ig');
       var y = false;
       _.each(this.model.get('ticks')[ct], function (t) {
-        console.log(t.ascent.name)
         if (rx.test(t.ascent.name)) {
           y = true;
           var d = $('.' + ct + '-ticks .session-ticks li[id="' + t.id + '"]');

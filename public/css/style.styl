@@ -327,6 +327,9 @@ a.title
   background none
   font-size 12px
 
+a.title img
+  vertical-align -3px
+
 a.title i:before
   margin 0
 
@@ -3696,6 +3699,9 @@ ul.session-ticks li .session-tick-name a:hover
 .own .session-tick-grade
   margin-right 26px
 
+.list-wrap .session-tick-grade
+  display none
+
 .session-tick-detail
   font-family standard_thin
   font-size 11px
@@ -3784,14 +3790,18 @@ a.session-tick-button:active
 // .tick .event-title a.title
 //   font-size 14px
 
-.tick .event-timeline-label
+.tick .event-timeline-label,
+.crag .event-timeline-label,
+.ascent .event-timeline-label
   border none
   top 9px
 
 .tick .session-tick-stars
   float right
 
-.tick-verb
+.tick-verb,
+.crag-verb,
+.ascent-verb
   font-weight bold
 
 .tick .session-tick-grade
@@ -4054,6 +4064,20 @@ span.no-description
 .ticks-filter-input input
   font-size 16px
   width 100%
+
+.crag,
+.ascent
+  position relative
+  min-height 125px
+
+.crag .icon-plus:before,
+.ascent .icon-plus:before
+  margin-top 5px
+
+.crag .session-map,
+.ascent .session-map
+  top 0
+  right 0
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––ascent*/
 

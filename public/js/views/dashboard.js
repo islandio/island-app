@@ -42,7 +42,8 @@ define([
         parentView: this,
         reverse: true,
         input: true,
-        filters: ['session', 'post']
+        filters: ['session', 'post', 'crag', 'ascent'],
+        hide: ['crag', 'ascent']
       });
       this.followers = new Followers(this.app, {parentView: this, reverse: true});
       this.followees = new Followees(this.app, {parentView: this, reverse: true});

@@ -21,6 +21,7 @@ define([
     initialize: function (app, options) {
       this.template = _.template(template);
       this.collection = new Collection;
+      this.options = options;
       this.type = options.type;
       this.Row = Row;
 
@@ -30,15 +31,18 @@ define([
       // Client-wide subscriptions
       this.subscriptions = [];
 
-      // Socket subscriptions
-      this.app.rpc.socket.on('comment.new', _.bind(this.collect, this));
-      this.app.rpc.socket.on('comment.removed', _.bind(this._remove, this));
+      if (!this.options.hangtenOnly) {
 
-      // Reset the collection.
-      this.collection.older =
-          this.parentView.model.get('comments_cnt')
-          - this.parentView.model.get('comments').length
-      this.collection.reset(this.parentView.model.get('comments'));
+        // Socket subscriptions
+        this.app.rpc.socket.on('comment.new', _.bind(this.collect, this));
+        this.app.rpc.socket.on('comment.removed', _.bind(this._remove, this));
+      }
+
+        // Reset the collection.
+      var list = this.parentView.model.get('comments') || [];
+      var cnt = this.parentView.model.get('comments_cnt') || 0;
+      this.collection.older = cnt - list.length;
+      this.collection.reset(list);
     },
 
     setup: function () {
@@ -46,21 +50,25 @@ define([
       // Save refs.
       this.footer = this.$('.list-footer');
 
-      // Autogrow the write comment box.
-      this.$('textarea[name="body"]').autogrow();
-      this.$('textarea[name="body"]')
-          .bind('keyup', _.bind(function (e) {
-        if (!e.shiftKey && (e.keyCode === 13 || e.which === 13))
-          this.write();
-      }, this))
-          .bind('keydown', _.bind(function (e) {
-        if (!e.shiftKey && (e.keyCode === 13 || e.which === 13))
-          return false;
-      }, this));
+      if (!this.options.hangtenOnly) {
 
-      // Show other elements.
-      this.$('.comments-older.comment').show();
-      this.$('#comment_input .comment').show();
+        // Autogrow the write comment box.
+        this.$('textarea[name="body"]').autogrow();
+        this.$('textarea[name="body"]')
+            .bind('keyup', _.bind(function (e) {
+          if (!e.shiftKey && (e.keyCode === 13 || e.which === 13)) {
+            this.write();
+          }
+        }, this)).bind('keydown', _.bind(function (e) {
+          if (!e.shiftKey && (e.keyCode === 13 || e.which === 13)) {
+            return false;
+          }
+        }, this));
+
+        // Show other elements.
+        this.$('.comments-older.comment').show();
+        this.$('#comment_input .comment').show();
+      } 
 
       // Render hangtens.
       this.hangtens = new Hangtens(this.app, {parentView: this});
@@ -83,8 +91,9 @@ define([
     // Collect new data from socket events.
     collect: function (data) {
       if (data.parent_id === this.parentView.model.id
-        && !this.collection.get(-1))
+          && !this.collection.get(-1)) {
         this.collection.push(data);
+      }
     },
 
     // remove a model

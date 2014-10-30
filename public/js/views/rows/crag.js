@@ -1,5 +1,5 @@
 /*
- * Ascent event View
+ * Crag event View
  */
 
 define([
@@ -9,14 +9,14 @@ define([
   'mps',
   'rest',
   'util',
-  'models/ascent',
-  'text!../../../templates/rows/ascent.html',
+  'models/crag',
+  'text!../../../templates/rows/crag.html',
   'views/lists/comments'
 ], function ($, _, Backbone, mps, rest, util, Model, template, Comments) {
   return Backbone.View.extend({
 
     attributes: function () {
-      var attrs = {class: 'ascent'};
+      var attrs = {class: 'crag'};
       if (this.model) {
         attrs.id = this.model.id;
       }
@@ -46,10 +46,10 @@ define([
 
       // Render crag location map.
       this.$('.session-map').show();
-      var location = this.model.get('crag').location;
+      var location = this.model.get('location');
       if (location && location.latitude && location.longitude) {
         var table = 'crags' + (window.__s ? '': '_dev');
-        cartodb.createVis('crag_map_' + this.model.get('crag').id,
+        cartodb.createVis('crag_map_' + this.model.id,
             'https://island.cartodb.com/api/v1/viz/crags/viz.json', {
           zoom: 8,
           center_lat: location.latitude,
@@ -60,7 +60,7 @@ define([
           https: true
         }, _.bind(function (vis, layers) {}, this));
       } else {
-        $('#crag_map_' + this.model.get('crag').id).text('?');
+        $('#crag_map_' + this.model.id).text('?');
       }
 
       // Trigger setup.
@@ -74,7 +74,7 @@ define([
       // Render comments.
       this.comments = new Comments(this.app, {
         parentView: this,
-        type: 'ascent',
+        type: 'crag',
         hangtenOnly: true
       });
 

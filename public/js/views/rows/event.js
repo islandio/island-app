@@ -11,8 +11,11 @@ define([
   'text!../../../templates/rows/event.html',
   'views/rows/session',
   'views/rows/tick',
-  'views/rows/post'
-], function ($, _, Row, mps, rest, template, Session, Tick, Post) {
+  'views/rows/post',
+  'views/rows/crag',
+  'views/rows/ascent'
+], function ($, _, Row, mps, rest, template, Session, Tick, Post, Crag,
+      Ascent) {
   return Row.extend({
 
     attributes: function () {
@@ -36,6 +39,8 @@ define([
         case 'session': Action = Session; break;
         case 'tick': Action = Tick; break;
         case 'post': Action = Post; break;
+        case 'crag': Action = Crag; break;
+        case 'ascent': Action = Ascent; break;
       }
 
       // Render action as sub-view.
@@ -52,7 +57,9 @@ define([
     },
 
     destroy: function () {
-      this.action.destroy();
+      if (this.action) {
+        this.action.destroy();
+      }
       Row.prototype.destroy.call(this);
     },
 

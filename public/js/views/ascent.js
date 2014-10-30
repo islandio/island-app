@@ -56,7 +56,8 @@ define([
         parentType: 'ascent',
         reverse: true,
         input: true,
-        filters: ['tick', 'post']
+        filters: ['tick', 'post'],
+        hide: []
       });
 
       return this;

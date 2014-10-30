@@ -65,7 +65,8 @@ define([
         parentType: 'crag',
         reverse: true,
         input: true,
-        filters: ['session', 'post']
+        filters: ['session', 'post', 'ascent'],
+        hide: ['ascent']
       });
 
       // Render ascents.

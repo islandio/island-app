@@ -6,14 +6,14 @@
 
 %>
 
-<div class="session-map" id="crag_map_<%= this.model.get('crag').id %>"></div>
+<div class="session-map" id="crag_map_<%= this.model.id %>"></div>
 <div class="event-title">
   <a href="/<%= this.model.get('author').username %>" class="title navigate">
     <%= this.model.get('author').displayName %></a> <%= this.model.formatDescription() %>.
 </div>
 
 <span class="event-timeline-label">
-  <i class="icon-up"></i>
+  <i class="icon-location"></i>
 </span>
 
 <% if (this.model.get('note')) { %>
