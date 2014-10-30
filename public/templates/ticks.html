@@ -33,9 +33,14 @@
         <span class="no-results">No results.</span>
         <% for (var j = grades.length - 1; j > -1; --j) {
           var grade = grades[j];
-          if (!ticks[grade]) continue; %>
-          <ul class="session-ticks">
-            <div class="tick-list-group-heading">
+          var style = '';
+          if (!ticks[grade]) {
+            ticks[grade] = [];
+            style = 'display: none;';
+          }
+          %>
+          <ul class="session-ticks" style="<%= style %>">
+            <div class="tick-list-group-heading" data-grade="<%= grade %>">
               <span><%= grade %></span>
             </div>
             <% _.each(ticks[grade], _.bind(function (tick, i) { %>

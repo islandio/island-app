@@ -9,12 +9,13 @@ define([
   'mps',
   'util',
   'models/card',
+  'views/session.new',
   'text!../../templates/ticks.html',
   'text!../../templates/rows/session.tick.html',
   'views/lists/followers',
   'views/lists/followees',
   'views/lists/watchees'
-], function ($, _, Backbone, mps, util, Card, template, tickTemp,
+], function ($, _, Backbone, mps, util, Card, NewSession, template, tickTemp,
     Followers, Followees, Watchees) {
   return Backbone.View.extend({
 
@@ -23,7 +24,17 @@ define([
     initialize: function (app) {
       this.app = app;
       this.subscriptions = [];
+
+      // Socket subscriptions
+      this.app.rpc.socket.on('tick.new', _.bind(this.collect, this));
+      this.app.rpc.socket.on('tick.removed', _.bind(this._remove, this));
+
       this.on('rendered', this.setup, this);
+    },
+
+    events: {
+      'click .navigate': 'navigate',
+      'click .session-tick-button': 'edit',
     },
 
     render: function () {
@@ -90,6 +101,33 @@ define([
       return this;
     },
 
+    // Collect a tick.
+    collect: function (data) {
+      if (data.author.id === this.app.profile.member.id && data.sent) {
+        var tick = this.renderTick(data);
+        if (!data.grade) {
+          data.grade = 'not graded by you';
+        }
+        var grade = this.app.grades[this.app.grades.length - data.grade - 1];
+        var heading = this.$('.' + data.type + '-ticks .session-ticks '
+            + '[data-grade="' + grade + '"]');
+        $(tick).insertAfter(heading);
+        heading.parent().show();
+      }
+    },
+
+    // Remove a tick.
+    _remove: function (data) {
+      var t = this.$('li#' + data.id);
+      var list = t.closest('.session-ticks');
+      t.slideUp('fast', _.bind(function () {
+        t.remove();
+        if (list.children('li').length === 0) {
+          list.hide();
+        }
+      }, this));
+    },
+
     empty: function () {
       this.$el.empty();
       return this;
@@ -107,6 +145,14 @@ define([
       this.undelegateEvents();
       this.stopListening();
       this.empty();
+    },
+
+    navigate: function (e) {
+      e.preventDefault();
+      var path = $(e.target).closest('a').attr('href');
+      if (path) {
+        this.app.router.navigate(path, {trigger: true});
+      }
     },
 
     title: function () {
@@ -162,6 +208,19 @@ define([
 
     renderTick: function (t) {
       return this.tickTemp.call(this, {t: t});
+    },
+
+    edit: function (e) {
+      e.preventDefault();
+      var tid = $(e.target).closest('li').attr('id');
+      var aid = $(e.target).closest('li').data('aid');
+      var cid = $(e.target).closest('li').data('cid');
+      var type = $(e.target).closest('li').data('type');
+      var tick = _.find(this.model.get('ticks')[type], function (t) {
+        return t.id === tid;
+      });
+      new NewSession(this.app, {tick: tick, crag_id: cid, ascent_id: aid})
+          .render();
     }
 
   });

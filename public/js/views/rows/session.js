@@ -64,8 +64,8 @@ define([
       // Render title if single
       if (!this.parentView) {
         this.$el.addClass('single')
-        this.app.title('Island | ' + this.model.get('author').displayName + ' - '
-            + this.model.formatName());
+        this.app.title('Island | ' + this.model.get('author').displayName
+            + ' - ' + this.model.formatName());
 
         // Render title.
         this.title = _.template(title).call(this);
@@ -137,7 +137,6 @@ define([
           });
           action.ticks.push(data);
         }
-        console.log(this.model)
       }
     },
 
