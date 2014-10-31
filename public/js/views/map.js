@@ -21,15 +21,10 @@ define([
     plotting: false,
     saving: false,
     fliedTo: false,
-    api_key: '883965c96f62fd219721f59f2e7c20f08db0123b',
 
     initialize: function (app) {
       this.app = app;
       this.subscriptions = [];
-
-      this.table = window.__s ? 'crags': 'crags_dev';
-      this.pre = "select *, st_asgeojson(the_geom) as geometry from " + this.table
-          + " where forbidden is NULL";
     },
 
     render: function () {
@@ -157,8 +152,8 @@ define([
     map: function () {
 
       // Setup the base map.
-      this.sql = new cartodb.SQL({user: 'island', api_key: this.api_key,
-          protocol: 'https'});
+      this.sql = new cartodb.SQL({user: 'island',
+          api_key: this.app.cartodb.apiKey, protocol: 'https'});
       this.map = new L.Map('map_inner', {
         center: [40, -20],
         zoom: 3,
@@ -188,10 +183,10 @@ define([
         type: 'cartodb',
         cartodb_logo: false,
         extra_params: {
-          map_key: this.api_key
+          map_key: this.app.cartodb.apiKey
         },
         sublayers: [{
-          sql: this.pre,
+          sql: this.app.cartodb.sqlPre,
           cartocss: this.cssTemplate.call(this),
           interactivity: 'cartodb_id,geometry,id,key,name'
         }]

@@ -6,7 +6,7 @@
 
 %>
 
-<div class="session-map" id="crag_map_<%= this.model.get('crag').id %>"></div>
+<div class="mini-map" id="crag_map_<%= this.model.id %>"></div>
 <div class="event-title">
   <a href="/<%= this.model.get('author').username %>" class="title navigate">
     <%= this.model.get('author').displayName %></a> <%= this.model.formatDescription() %>.

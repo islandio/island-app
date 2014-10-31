@@ -16,9 +16,10 @@ define([
   'text!../../../templates/rows/session.tick.html',
   'text!../../../templates/session.title.html',
   'views/lists/comments',
-  'text!../../../templates/confirm.html'
+  'text!../../../templates/confirm.html',
+  'views/minimap'
 ], function ($, _, Backbone, mps, rest, util, Model, NewSession, template,
-      activityTemp, tickTemp, title, Comments, confirm) {
+      activityTemp, tickTemp, title, Comments, confirm, MiniMap) {
   return Backbone.View.extend({
 
     attributes: function () {
@@ -71,25 +72,6 @@ define([
         this.title = _.template(title).call(this);
       }
 
-      // Render crag location map.
-      this.$('.session-map').show();
-      var crag = this.model.get('crag');
-      if (crag.location && crag.location.latitude
-          && crag.location.longitude) {
-        cartodb.createVis('session_map_' + this.model.id,
-            'https://island.cartodb.com/api/v1/viz/crags/viz.json', {
-          zoom: 8,
-          center_lat: crag.location.latitude,
-          center_lon: crag.location.longitude,
-          zoomControl: false,
-          scrollwheel: false,
-          cartodb_logo: false,
-          https: true
-        }, _.bind(function (vis, layers) {}, this));
-      } else {
-        $('#session_map_' + this.model.id).text('?');
-      }
-
       // Trigger setup.
       this.trigger('rendered');
 
@@ -102,6 +84,12 @@ define([
       if (!this.parentView) {
         mps.publish('map/fly', [this.model.get('crag').location]);
       }
+
+      // Render map.
+      this.map = new MiniMap(this.app, {
+        el: this.$('.mini-map'),
+        location: this.model.get('crag').location
+      }).render();
 
       // Render comments.
       this.comments = new Comments(this.app, {
@@ -158,6 +146,7 @@ define([
         mps.unsubscribe(s);
       });
       this.comments.destroy();
+      this.map.destroy();
       this.undelegateEvents();
       this.stopListening();
       if (this.timer) {

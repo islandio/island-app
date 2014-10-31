@@ -13,7 +13,7 @@
 <% } %>
 
 <% if (this.parentView) { %>
-  <div class="session-map" id="session_map_<%= this.model.id %>"></div>
+  <div class="mini-map" id="crag_map_<%= this.model.id %>"></div>
   <div class="event-title">
     <a href="/<%= this.model.get('author').username %>" class="title navigate">
       <%= this.model.formatAuthorFor(this.app.profile.member) %></a> logged a 
@@ -68,7 +68,7 @@
 <% if (!this.parentView) { %>
   </div>
   <div class="rightside">
-    <div class="session-map" id="session_map_<%= this.model.id %>"></div>    
+    <div class="mini-map" id="session_map_<%= this.model.id %>"></div>    
   </div>
   <div class="clear"></div>
 <% } %>

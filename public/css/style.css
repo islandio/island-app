@@ -3449,7 +3449,7 @@ table.post-params label {
 .session-title {
   color: #b1dc36;
 }
-.session-map {
+.mini-map {
   display: none;
   position: absolute;
   top: 20px;
@@ -3477,12 +3477,10 @@ table.post-params label {
   -o-animation-fill-mode: both;
   animation-fill-mode: both;
 }
-.session-map .cartodb-logo,
-.session-map .cartodb-zoom,
-.session-map .leaflet-control-attribution {
+.mini-map .leaflet-control-attribution {
   display: none !important;
 }
-.session.single .session-map {
+.session.single .mini-map {
   position: relative;
   top: 0;
   right: 0;
@@ -3976,8 +3974,8 @@ span.no-description {
 .ascent .icon-plus:before {
   margin-top: 5px;
 }
-.crag .session-map,
-.ascent .session-map {
+.crag .mini-map,
+.ascent .mini-map {
   top: 0;
   right: 0;
 }

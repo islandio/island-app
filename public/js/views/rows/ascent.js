@@ -11,8 +11,9 @@ define([
   'util',
   'models/ascent',
   'text!../../../templates/rows/ascent.html',
-  'views/lists/comments'
-], function ($, _, Backbone, mps, rest, util, Model, template, Comments) {
+  'views/lists/comments',
+  'views/minimap'
+], function ($, _, Backbone, mps, rest, util, Model, template, Comments, MiniMap) {
   return Backbone.View.extend({
 
     attributes: function () {
@@ -44,25 +45,6 @@ define([
       this.$el.html(this.template.call(this));
       this.$el.prependTo(this.parentView.$('.event-right'));
 
-      // Render crag location map.
-      this.$('.session-map').show();
-      var location = this.model.get('crag').location;
-      if (location && location.latitude && location.longitude) {
-        var table = 'crags' + (window.__s ? '': '_dev');
-        cartodb.createVis('crag_map_' + this.model.get('crag').id,
-            'https://island.cartodb.com/api/v1/viz/crags/viz.json', {
-          zoom: 8,
-          center_lat: location.latitude,
-          center_lon: location.longitude,
-          zoomControl: false,
-          scrollwheel: false,
-          cartodb_logo: false,
-          https: true
-        }, _.bind(function (vis, layers) {}, this));
-      } else {
-        $('#crag_map_' + this.model.get('crag').id).text('?');
-      }
-
       // Trigger setup.
       this.trigger('rendered');
 
@@ -70,6 +52,12 @@ define([
     },
 
     setup: function () {
+
+      // Render map.
+      this.map = new MiniMap(this.app, {
+        el: this.$('.mini-map'),
+        location: this.model.get('crag').location
+      }).render();
 
       // Render comments.
       this.comments = new Comments(this.app, {
@@ -88,6 +76,7 @@ define([
         mps.unsubscribe(s);
       });
       this.comments.destroy();
+      this.map.destroy();
       this.undelegateEvents();
       this.stopListening();
       if (this.timer) {
