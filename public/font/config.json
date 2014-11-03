@@ -67,6 +67,12 @@
       "src": "fontawesome"
     },
     {
+      "uid": "f48ae54adfb27d8ada53d0fd9e34ee10",
+      "css": "trash",
+      "code": 59419,
+      "src": "fontawesome"
+    },
+    {
       "uid": "3a00327e61b997b58518bd43ed83c3df",
       "css": "login",
       "code": 59406,

@@ -272,6 +272,10 @@ define([
 
       if (view) {
         this.views.splice(index, 1);
+        var prev = view.$el.prev();
+        if (prev.hasClass('event-divider')) {
+          prev.remove();
+        }
         view._remove(_.bind(function () {
           this.collection.remove(view.model);
           this.$('.event-day-header').filter(function () {

@@ -12,9 +12,15 @@
     </div>
     <div class="modal-actions">
       <button tabindex="2" class="modal-cancel modal-button button">Cancel</button>
-      <button tabindex="3" class="modal-confirm modal-button button new-session-button disabled" disabled>
+      <% if (this.options.tick) { %>
+        <button tabindex="3" class="modal-delete modal-button button">
+          <div class="button-spin"></div>
+          <i class="icon-trash"></i> <span>Delete</span>
+        </button>
+      <% } %>
+      <button tabindex="4" class="modal-confirm modal-button button new-session-button disabled" disabled>
         <div class="button-spin"></div>
-        <i class="icon-ok"></i> <%= this.options.tick ? 'Update': 'Log' %> it
+        <i class="icon-pencil"></i> <%= this.options.tick ? 'Update': 'Log' %>
       </button>
       <div class="clear"></div>
     </div>

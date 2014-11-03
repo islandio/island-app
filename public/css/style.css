@@ -665,7 +665,7 @@ button.button.modal-button.continue {
   background: #b1dc36;
 }
 button.button.modal-button i {
-  margin-left: -5px;
+  margin-left: -3px;
 }
 button.button.modal-button i:before {
   margin-left: 0;
@@ -901,9 +901,11 @@ a.button.start-button {
   font-size: 14px;
   padding: 5px 0;
 }
+button.button.modal-button.modal-delete {
+  position: relative;
+}
 a.button.new-session-button:hover:not(.disabled),
 button.button.new-session-button:hover:not(.disabled),
-a.button.start-button:hover:not(.disabled),
 a.button.start-button:hover:not(.disabled) {
   color: #2f5a00;
   border: 1px solid transparent;
@@ -911,12 +913,12 @@ a.button.start-button:hover:not(.disabled) {
 }
 a.button.new-session-button:active:not(.disabled),
 button.button.new-session-button:active:not(.disabled),
-a.button.start-button:active:not(.disabled),
 a.button.start-button:active:not(.disabled) {
   background: #a7d22c;
 }
 a.button.new-session-button.disabled,
-button.button.new-session-button.disabled {
+button.button.new-session-button.disabled,
+button.button.modal-button.modal-delete.disabled {
   opacity: 0.25;
   cursor: default;
 }
@@ -924,11 +926,26 @@ a.button.new-session-button i,
 button.button.new-session-button i {
   color: #396400;
 }
+button.button.modal-button.modal-delete:hover,
+button.button.modal-button.modal-delete.armed {
+  color: #d04c38;
+  border-color: #d04c38;
+}
 a.button.new-session-button.spinning,
 button.button.new-session-button.spinning {
   color: #b1dc36 !important;
   border: 1px solid transparent !important;
   background: #b1dc36 !important;
+  cursor: default;
+}
+button.button.modal-button.modal-delete.spinning {
+  color: transparent !important;
+  border: 1px solid #ccc !important;
+  background: #f1f1f1;
+  cursor: default;
+}
+button.button.modal-button.modal-delete .button-spin {
+  top: 15px;
 }
 a.button.new-session-button.spinning i,
 button.button.new-session-button.spinning i {
@@ -2544,10 +2561,10 @@ p.modal-message {
   -moz-box-shadow: inset 0 1px 0 #fff;
   box-shadow: inset 0 1px 0 #fff;
 }
-.modal-actions span {
+.modal-actions > span {
   font-size: 10px;
   float: left;
-  margin: 20px 0 0 0;
+  margin: 14px 0 0 0;
 }
 button.button.modal-button.full {
   width: 100%;
@@ -3459,7 +3476,7 @@ table.post-params label {
   background: #fcfcfc;
   border: 1px solid #f2f2f2;
   overflow: hidden;
-  color: #f2f2f2;
+  color: #ccc;
   text-align: center;
   line-height: 125px;
   font-size: 36px;

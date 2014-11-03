@@ -40,7 +40,8 @@ define([
         closeEffect: 'fade',
         closeBtn: false,
         padding: 0,
-        minWidth: 680
+        minWidth: 680,
+        modal: true
       });
 
       this.trigger('rendered');
@@ -52,6 +53,7 @@ define([
       'click .new-session-tried': 'checkTried',
       'click .new-session-sent': 'checkSent',
       'click .modal-cancel': 'cancel',
+      'click .modal-delete': 'delete',
       'click .add-crag': 'addNewCrag',
       'click .add-ascent': 'addNewAscent'
     },
@@ -61,8 +63,16 @@ define([
 
       // Save refs.
       this.submitButton = this.$('.new-session-button');
-      this.submitButtonSpin = new Spin($('.button-spin', this.el), {
+      this.submitButtonSpin = new Spin($('.button-spin', this.submitButton), {
         color: '#396400',
+        lines: 13,
+        length: 3,
+        width: 2,
+        radius: 6,
+      });
+      this.deleteButton = this.$('.modal-delete');
+      this.deleteButtonSpin = new Spin($('.button-spin', this.deleteButton), {
+        color: '#808080',
         lines: 13,
         length: 3,
         width: 2,
@@ -350,8 +360,9 @@ define([
         }
 
         // Show success.
+        var verb = payload.sent ? 'ascent': 'attempt';
         mps.publish('flash/new', [{
-          message: 'You ' + (oldTick ? 'updated': 'logged') + ' an ascent.',
+          message: 'You ' + (oldTick ? 'updated': 'logged') + ' an ' + verb + '.',
           level: 'alert'
         }, true]);
 
@@ -388,6 +399,48 @@ define([
         e.preventDefault();
       }
       this.destroy();
+    },
+
+    delete: function (e) {
+      if (e) {
+        e.preventDefault();
+      }
+      if (!this.armedForDelete) {
+        this.armedForDelete = true;
+        this.deleteButton.addClass('armed');
+        $('span', this.deleteButton).text('Confirm delete');
+        return;
+      }
+      var oldTick = this.options.tick;
+
+      this.deleteButtonSpin.start();
+      this.deleteButton.addClass('spinning').attr('disabled', true);
+
+      rest.delete('/api/ticks/' + oldTick.id, {}, _.bind(function (err, data) {
+
+        // Stop spinner.
+        this.deleteButtonSpin.stop();
+        this.deleteButton.removeClass('spinning').attr('disabled', false);
+        
+        if (err) {
+
+          // Set the error display.
+          mps.publish('flash/new', [{
+            err: err,
+            level: 'error'
+          }, true]);
+          return;
+        }
+
+        // Show success.
+        var verb = oldTick.sent ? 'ascent': 'attempt';
+        mps.publish('flash/new', [{
+          message: 'You deleted an ' + verb + '.',
+          level: 'alert'
+        }, true]);
+
+        this.destroy();
+      }, this));
     }
 
   });

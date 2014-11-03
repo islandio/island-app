@@ -39,7 +39,8 @@ define([
         closeEffect: 'fade',
         closeBtn: false,
         padding: 0,
-        minWidth: 680
+        minWidth: 680,
+        modal: true
       });
 
       this.trigger('rendered');
