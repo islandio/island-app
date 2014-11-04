@@ -13,9 +13,10 @@ define([
   'text!../../../templates/rows/tick.html',
   'text!../../../templates/tick.title.html',
   'views/lists/comments',
-  'text!../../../templates/confirm.html'
+  'text!../../../templates/confirm.html',
+  'views/minimap'
 ], function ($, _, Backbone, mps, rest, util, Model, template, title, Comments,
-      confirm) {
+      confirm, MiniMap) {
   return Backbone.View.extend({
 
     attributes: function () {
@@ -36,49 +37,42 @@ define([
       this.wrap = options.wrap;
       this.template = _.template(template);
       this.subscriptions = [];
+
+      // Socket subscriptions
+      this.app.rpc.socket.on('tick.new', _.bind(function (data) {
+
+      }, this));
+      this.app.rpc.socket.on('tick.removed', _.bind(function (data) {
+
+      }, this));
+
       this.on('rendered', this.setup, this);
       return this;
     },
 
     events: {
-      'click a.navigate': 'navigate',
-      'click .tick-delete': 'delete',
+      'click .navigate': 'navigate',
+      // 'click .tick-delete': 'delete',
     },
 
     render: function () {
 
       // Render content
       this.$el.html(this.template.call(this));
-      if (this.parentView)
+      if (this.parentView) {
         this.$el.prependTo(this.parentView.$('.event-right'));
-      else this.$el.appendTo(this.wrap);
+      } else {
+        this.$el.appendTo(this.wrap);
+      }
 
       // Render title if single
       if (!this.parentView) {
         this.$el.addClass('single')
-        this.app.title(this.model.formatName() + ' | ' + 'Tick');
+        this.app.title('Island | ' + this.model.get('author').displayName
+            + ' - ' + this.model.get('ascent').name);
 
         // Render title.
         this.title = _.template(title).call(this);
-      }
-
-      // Render crag location map.
-      if (!this.parentView) {
-        var crag = this.model.get('crag');
-        if (crag.location && crag.location.latitude
-            && crag.location.longitude) {
-          this.$('.tick-map').show();
-          cartodb.createVis('tick_map_' + this.model.id,
-              'https://island.cartodb.com/api/v1/viz/crags/viz.json', {
-            zoom: 8,
-            center_lat: crag.location.latitude,
-            center_lon: crag.location.longitude,
-            zoomControl: false,
-            scrollwheel: false,
-            cartodb_logo: false,
-            https: true
-          }, _.bind(function (vis, layers) {}, this));
-        }
       }
 
       // Trigger setup.
@@ -92,6 +86,14 @@ define([
       // Set map view.
       if (!this.parentView) {
         mps.publish('map/fly', [this.model.get('crag').location]);
+      }
+
+      // Render map.
+      if (!this.parentView) {
+        this.map = new MiniMap(this.app, {
+          el: this.$('.mini-map'),
+          location: this.model.get('ascent').location
+        }).render();
       }
 
       // Render comments.
@@ -109,6 +111,9 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
+      if (this.map) {
+        this.map.destroy();
+      }
       this.comments.destroy();
       this.undelegateEvents();
       this.stopListening();
@@ -126,49 +131,12 @@ define([
       }
     },
 
-    delete: function (e) {
-      e.preventDefault();
-
-      // Render the confirm modal.
-      $.fancybox(_.template(confirm)({
-        message: 'Delete this tick forever?',
-      }), {
-        openEffect: 'fade',
-        closeEffect: 'fade',
-        closeBtn: false,
-        padding: 0
-      });
-
-      // Setup actions.
-      $('.modal-cancel').click(function (e) {
-        $.fancybox.close();
-      });
-      $('.modal-confirm').click(_.bind(function (e) {
-
-        // Delete the session.
-        rest.delete('/api/ticks/' + this.model.id,
-            {}, _.bind(function (err, data) {
-          if (err) return console.log(err);
-
-          // close the modal.
-          $.fancybox.close();
-
-          // Go home if single view.
-          if (!this.parentView) {
-            this.app.router.navigate('/', {trigger: true, replace: true});
-          }
-        }, this));
-      }, this));
-
-      return false;
-    },
-
     when: function () {
-      if (!this.model.get('created')) return;
+      if (!this.model.get('updated')) return;
       if (!this.time) {
         this.time = this.$('time.created:first');
       }
-      this.time.text(util.getRelativeTime(this.model.get('created')));
+      this.time.text(util.getRelativeTime(this.model.get('updated')));
     },
 
   });

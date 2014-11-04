@@ -16,8 +16,8 @@
   <div class="mini-map" id="crag_map_<%= this.model.id %>"></div>
   <div class="event-title">
     <a href="/<%= this.model.get('author').username %>" class="title navigate">
-      <%= this.model.formatAuthorFor(this.app.profile.member) %></a> logged a 
-      <a href="/sessions/<%= this.model.get('key') %>" class="title navigate">session</a>.
+      <%= this.model.formatAuthorFor(this.app.profile.member) %></a> logged 
+      <a href="/sessions/<%= this.model.get('key') %>" class="title navigate">climbing</a>.
     <a href="/crags/<%= this.model.get('crag').key %>" class="session-location title navigate">
       <i class="icon-location"></i> <%= this.model.get('crag').name %>, <%= this.model.get('crag').country %>
     </a>
@@ -47,10 +47,10 @@
   </p>
 <% } %>
 <div class="event-info">
-  <% if (this.app.profile.member) { %>
+  <!-- < if (this.app.profile.member) { >
     <a href="javascript:;" class="muted hangten">HangTen</a>
     <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-  <% } %>
+  < } > -->
   <!-- < if (this.app.profile.member &&
       this.model.get('author').id === this.app.profile.member.id) { >
     <span class="session-delete info-delete">Delete</span>
@@ -63,7 +63,7 @@
     <%= this.model.get('updated') %>
   </time></a>
 </div>
-<div class="comments"></div>
+<!-- <div class="comments"></div> -->
 
 <% if (!this.parentView) { %>
   </div>

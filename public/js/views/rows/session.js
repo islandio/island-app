@@ -15,11 +15,10 @@ define([
   'text!../../../templates/rows/session.activity.html',
   'text!../../../templates/rows/session.tick.html',
   'text!../../../templates/session.title.html',
-  'views/lists/comments',
   'text!../../../templates/confirm.html',
   'views/minimap'
 ], function ($, _, Backbone, mps, rest, util, Model, NewSession, template,
-      activityTemp, tickTemp, title, Comments, confirm, MiniMap) {
+      activityTemp, tickTemp, title, confirm, MiniMap) {
   return Backbone.View.extend({
 
     attributes: function () {
@@ -48,7 +47,7 @@ define([
 
     events: {
       'click .navigate': 'navigate',
-      'click .session-delete': 'delete',
+      // 'click .session-delete': 'delete',
       'click .session-tick-button': 'edit',
     },
 
@@ -91,11 +90,11 @@ define([
         location: this.model.get('crag').location
       }).render();
 
-      // Render comments.
-      this.comments = new Comments(this.app, {
-        parentView: this,
-        type: 'session'
-      });
+      // // Render comments.
+      // this.comments = new Comments(this.app, {
+      //   parentView: this,
+      //   type: 'session'
+      // });
 
       // Handle time.
       this.timer = setInterval(_.bind(this.when, this), 5000);
@@ -145,7 +144,7 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      this.comments.destroy();
+      // this.comments.destroy();
       this.map.destroy();
       this.undelegateEvents();
       this.stopListening();
@@ -163,48 +162,48 @@ define([
       }
     },
 
-    delete: function (e) {
-      e.preventDefault();
+    // delete: function (e) {
+    //   e.preventDefault();
 
-      // Render the confirm modal.
-      $.fancybox(_.template(confirm)({
-        message: 'Deleting a session also deletes all'
-            + ' associated bouldering and climbing.'
-            + ' Delete this session forever?',
-      }), {
-        openEffect: 'fade',
-        closeEffect: 'fade',
-        closeBtn: false,
-        padding: 0
-      });
+    //   // Render the confirm modal.
+    //   $.fancybox(_.template(confirm)({
+    //     message: 'Deleting a session also deletes all'
+    //         + ' associated bouldering and climbing.'
+    //         + ' Delete this session forever?',
+    //   }), {
+    //     openEffect: 'fade',
+    //     closeEffect: 'fade',
+    //     closeBtn: false,
+    //     padding: 0
+    //   });
 
-      // Setup actions.
-      $('.modal-cancel').click(function (e) {
-        $.fancybox.close();
-      });
-      $('.modal-confirm').click(_.bind(function (e) {
+    //   // Setup actions.
+    //   $('.modal-cancel').click(function (e) {
+    //     $.fancybox.close();
+    //   });
+    //   $('.modal-confirm').click(_.bind(function (e) {
 
-        // Delete the session.
-        rest.delete('/api/sessions/' + this.model.id,
-            {}, _.bind(function (err, data) {
-          if (err) {
-            return console.log(err);
-          }
+    //     // Delete the session.
+    //     rest.delete('/api/sessions/' + this.model.id,
+    //         {}, _.bind(function (err, data) {
+    //       if (err) {
+    //         return console.log(err);
+    //       }
 
-          // close the modal.
-          $.fancybox.close();
+    //       // close the modal.
+    //       $.fancybox.close();
 
-          // Go home if single view.
-          if (!this.parentView) {
-            this.app.router.navigate('/', {trigger: true, replace: true});
-          }
+    //       // Go home if single view.
+    //       if (!this.parentView) {
+    //         this.app.router.navigate('/', {trigger: true, replace: true});
+    //       }
 
-        }, this));
+    //     }, this));
 
-      }, this));
+    //   }, this));
 
-      return false;
-    },
+    //   return false;
+    // },
 
     edit: function (e) {
       e.preventDefault();

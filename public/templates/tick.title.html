@@ -14,6 +14,7 @@
     <img src="<%= gravatar %>" class="page-title-avatar" width="26" height="26" /></a>
   <a href="/<%= this.model.get('author').username %>" class="navigate">
     <%= this.model.get('author').displayName %></a> 
-  / <a href="/sessions/<%= this.model.get('key') %>" class="navigate">
-  <span class="session-title"><%= this.model.formatName() %></span></a>
+  / <a href="/ticks/<%= this.model.get('key') %>" class="navigate">
+  <span class="session-title"><%= this.model.get('session').name + ' - '
+      + this.model.get('ascent').name %></span></a>
 </div>

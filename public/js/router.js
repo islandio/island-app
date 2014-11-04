@@ -22,6 +22,7 @@ define([
   'views/profile',
   'views/rows/post',
   'views/rows/session',
+  'views/rows/tick',
   'views/crag',
   'views/ascent',
   'views/settings',
@@ -35,7 +36,7 @@ define([
   'views/sessions',
   'views/ticks'
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
-    Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Crag, Ascent,
+    Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Tick, Crag, Ascent,
     Settings, Reset, Films, About, Privacy, Crags, Dashboard, Splash, Sessions,
     Ticks) {
 
@@ -47,7 +48,7 @@ define([
       // Save app reference.
       this.app = app;
       
-      // Clear the shit that comes back from Zuckbook.
+      // Clear the hashtag that comes back from facebook.
       if (window.location.hash !== '') {
         try {
           window.history.replaceState('', '', window.location.pathname
@@ -59,6 +60,7 @@ define([
       this.route(':un', 'profile', this.profile);
       this.route(':un/:k', 'post', this.post);
       this.route('sessions/:k', 'session', this.session);
+      this.route('ticks/:k', 'tick', this.tick);
       this.route('crags/:y', 'crag', this.crags);
       this.route('crags/:y/:g', 'crag', this.crag);
       this.route('crags/:y/:g/:t/:a', 'ascent', this.ascent);
@@ -343,6 +345,18 @@ define([
       this.render('/service/session.profile/' + key, _.bind(function (err) {
         if (err) return;
         this.page = new Session({wrap: '.main'}, this.app).render(true);
+        this.renderTabs({html: this.page.title});
+        this.stop();
+      }, this));
+    },
+
+    tick: function (key) {
+      this.start();
+      this.folder.removeClass('landing').removeClass('initial');
+      this.renderTabs();
+      this.render('/service/tick.profile/' + key, _.bind(function (err) {
+        if (err) return;
+        this.page = new Tick({wrap: '.main'}, this.app).render(true);
         this.renderTabs({html: this.page.title});
         this.stop();
       }, this));
