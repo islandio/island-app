@@ -6,6 +6,12 @@
       > new Date(this.model.get('created')).getTime() ? 'Updated' : 'Logged';
 
   var weather = this.model.get('weather');
+
+  var video = _.find(this.media, function (m) {
+    return m.type === 'video';
+  });
+  var typeClass = video ? 'post-title-video': 'post-title-photos';
+
 %>
 
 <% if (!this.parentView) { %>
@@ -46,6 +52,15 @@
     &ldquo;<%= this.model.get('note') %>&rdquo;
   </p>
 <% } %>
+
+<!-- Borrowed from post.js -->
+<div class="post post-media">
+  <span class="event-timeline-label">
+    <i class="icon-<%= video ? 'youtube-play': 'picture' %>"></i>
+  </span>
+  <div class="post-mosaic"></div>
+</div>
+
 <div class="event-info">
   <!-- < if (this.app.profile.member) { >
     <a href="javascript:;" class="muted hangten">HangTen</a>
@@ -71,4 +86,6 @@
     <div class="mini-map" id="session_map_<%= this.model.id %>"></div>    
   </div>
   <div class="clear"></div>
+
 <% } %>
+

@@ -16,6 +16,7 @@ define([
 ], function ($, _, Backbone, mps, rest, util, Spin, template, tickTemp, Choices) {
   return Backbone.View.extend({
 
+    attachments: [],
     className: 'new-session',
 
     initialize: function (app, options) {
@@ -62,6 +63,11 @@ define([
       var tick = this.options.tick;
 
       // Save refs.
+      this.dropZone = this.$('.post-dnd');
+      this.postSelect = this.$('.post-select');
+      this.postFiles = this.$('.post-files');
+      this.postForm = this.$('.new-session-post-form');
+
       this.submitButton = this.$('.new-session-button');
       this.submitButtonSpin = new Spin($('.button-spin', this.submitButton), {
         color: '#396400',
@@ -78,6 +84,25 @@ define([
         width: 2,
         radius: 6,
       });
+
+      // Add mouse events for dummy file selector.
+      var dummy = this.$('.post-file-chooser-dummy');
+      this.$('.post-file-chooser').on('mouseover', function (e) {
+        dummy.addClass('hover');
+      })
+      .on('mouseout', function (e) { dummy.removeClass('hover'); })
+      .on('mousedown', function (e) { dummy.addClass('active'); })
+      .change(_.bind(this.drop, this));
+      $(document).on('mouseup', function (e) {
+        dummy.removeClass('active');
+      });
+
+      // Drag & drop events.
+      this.dropZone.on('dragover', _.bind(this.dragover, this))
+          .on('dragleave', _.bind(this.dragout, this))
+          .on('drop', _.bind(this.drop, this));
+
+
 
       // Init choices.
       this.cragChoices = new Choices(this.app, {
@@ -323,10 +348,30 @@ define([
           first: this.$('select[name="first"]').val()
         });
       }
+
+      // Gather uploaded image data
+      var results = {};
+      _.each(this.attachments, function (a) {
+        if (!a.assembly) return;
+        _.each(a.assembly.results, function (v, k) {
+          _.each(v, function (r) {
+            if (results[k]) {
+              results[k].push(r);
+            } else {
+              results[k] = [r];
+            }
+          });
+        });
+      });
+
+      this.attachments = [];
+      tick.media = results;
+
       ticks.push(tick);
       action.ticks = ticks;
       actions.push(action);
       payload.actions = actions;
+      console.log(payload);
 
       return payload;
     },
@@ -387,6 +432,121 @@ define([
       mps.publish('ascent/add', [{crag_id: p.crag_id, back: true}]);
       return false;
     },
+
+    dragover: function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+      e.originalEvent.dataTransfer.dropEffect = 'copy';
+      this.dropZone.addClass('dragging');
+    },
+
+    dragout: function (e) {
+      this.dropZone.removeClass('dragging');
+    },
+
+    drop: function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+
+      // Stop drag styles.
+      this.dropZone.removeClass('dragging');
+      console.log(this);
+
+      // Get the files, if any.
+      var files = e.target.files || e.originalEvent.dataTransfer.files;
+      if (files.length === 0) {
+        return false;
+      }
+
+      // We have files to upload.
+      var data = e.target.files ? null: new FormData(this.postForm.get(0));
+
+      // Loop over each file, adding it the the display
+      // and from data object, if present.
+      var set = $('<div class="upload-set">');
+      var parts = [];
+      _.each(files, function (file) {
+        parts.push('<div class="upload-progress-wrap"><div class="upload-remove">'
+            + '<i class="icon-cancel"></i></div><div '
+            + 'class="upload-progress">' + '<span class="upload-label">',
+            file.name, '</span><span class="upload-progress-txt">'
+            + 'Waiting...</span>', '</div></div>');
+        if (data && typeof file === 'object') {
+          data.append('file', file);
+        }
+      });
+      this.postFiles.append(set.html(parts.join('')));
+      var bar = $('.upload-progress', set);
+      var txt = $('.upload-progress-txt', set);
+      var attachment = {uploading: true};
+      this.attachments.push(attachment);
+
+      // Transloadit options
+      var opts = {
+        wait: true,
+        autoSubmit: false,
+        modal: false,
+        onProgress: function (br, be) {
+          if (be === 0) return;
+          var per = Math.ceil(br / be * 100);
+          txt.text(per === 100 ? 'Processing...':
+              'Uploading ' + per + '%');
+          bar.width((br / be * 100) + '%');
+        },
+        onError: function (assembly) {
+          mps.publish('flash/new', [{
+            message: assembly.error + ': ' + assembly.message,
+            level: 'error',
+            sticky: true
+          }, false]);
+          bar.parent().remove();
+          attachment.uploading = false;
+        },
+        onSuccess: _.bind(function (assembly) {
+          if (_.isEmpty(assembly.results)) {
+            mps.publish('flash/new', [{
+              message: 'Whoa, there. You tried to attach an invalid file type.',
+              level: 'alert'
+            }, true]);
+            bar.parent().remove();
+          } else {
+            attachment.assembly = assembly;
+            txt.text('');
+          }
+          attachment.uploading = false;
+          console.log(attachment);
+        }, this)
+      };
+
+      // Use formData object if exists (dnd only)
+      if (data) {
+        opts.formData = data;
+      }
+
+      // Setup the uploader.
+      var uploader = this.postForm.transloadit(opts);
+
+      // For canceling.
+      $('.upload-remove', set).click(function (e) {
+        uploader.cancelled = true;
+        if (uploader.instance) {
+          clearTimeout(uploader.timer);
+          uploader._poll('?method=delete');
+        }
+        bar.parent().remove();
+        attachment.uploading = false;
+        delete attachment.assembly;
+      });
+
+      // Send files to Transloadit.
+      this.postForm.submit();
+
+      // Clear form events.
+      this.postForm.unbind('submit.transloadit');
+
+      return false;
+    },
+
 
     save: function () {
       var payload = this.getPayload();
