@@ -3059,6 +3059,11 @@ a.post-input-avatar img {
   -moz-border-radius: 0 0 2px 2px;
   border-radius: 0 0 2px 2px;
 }
+.new-session-post-form .post-select {
+  display: block;
+  border: 1px solid #cdcdcd;
+  margin-bottom: 10px;
+}
 input.file-chooser {
   position: absolute;
   opacity: 0.0001;
@@ -3173,6 +3178,10 @@ table.post-params label {
   -moz-animation-fill-mode: both;
   -o-animation-fill-mode: both;
   animation-fill-mode: both;
+}
+.new-session-post-form .upload-progress-wrap {
+  width: 100%;
+  margin-bottom: 5px;
 }
 .upload-progress {
   height: 100%;

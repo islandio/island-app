@@ -205,6 +205,22 @@ var tick = this.options.tick;
           <textarea name="note" placeholder="Comments..."></textarea>
         </td>
       </tr>
+      <tr class="new-session-row-nopad">
+        <td colspan="6" class="new-session-cell">
+          <div class="post-select">
+            Attach a video or photos by
+            <% if (Modernizr.draganddrop) { %>
+              dragging &amp; dropping or 
+              <a class="post-file-chooser-dummy file-chooser-dummy important" href="javascript:;">selecting them</a>.
+              <input class="post-file-chooser file-chooser" type="file" name="post_file" multiple="multiple" />
+            <% } else { %>
+              <a class="post-file-chooser-dummy file-chooser-dummy important" href="javascript:;">selecting them</a>.
+              <input class="post-file-chooser file-chooser" type="file" name="post_file" multiple="multiple" style="left:78px;" />
+            <% } %>
+          </div>
+          <div class="post-files"></div>
+        </td>
+      </tr>
     </tbody>
   </table>
 </div>
