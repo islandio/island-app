@@ -3657,7 +3657,7 @@ ul.session-ticks
   font-size 14px
 
 .tick + .tick
-  margin-bottom 30px
+  margin-top 30px
 
 .tick-inner
   position relative
@@ -3667,14 +3667,15 @@ ul.session-ticks
   border-radius 2px
   padding 5px 10px
 
-.tick.sent .tick-inner
-  background #f9f9f9
-
   -webkit-transition all 0.15s ease-in-out
   -moz-transition all 0.15s ease-in-out
   transition all 0.15s ease-in-out
 
-.session:hover .tick.sent .tick-inner
+.tick.sent .tick-inner
+  background #f9f9f9
+
+.session:hover .tick .tick-inner,
+.event:hover .tick .tick-inner
   border-color #e6e6e6
 
 .tick .session-tick-name
