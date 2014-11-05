@@ -14,18 +14,18 @@ define([
   'text!../../../templates/tick.title.html',
   'views/lists/comments',
   'text!../../../templates/confirm.html',
-  'views/minimap'
+  'views/minimap',
+  'views/session.new'
 ], function ($, _, Backbone, mps, rest, util, Model, template, title, Comments,
-      confirm, MiniMap) {
+      confirm, MiniMap, NewSession) {
   return Backbone.View.extend({
+
+    tagName: 'li',
 
     attributes: function () {
       var attrs = {class: 'tick'};
       if (this.model) {
         attrs.id = this.model.id;
-        if (this.model.sent) {
-          attrs.class = 'tick sent';
-        }
       }
       return attrs;
     },
@@ -52,32 +52,41 @@ define([
 
     events: {
       'click .navigate': 'navigate',
-      // 'click .tick-delete': 'delete',
+      'click .session-tick-button': 'edit'
     },
 
     render: function () {
 
       // Render content
+      if (this.options.el) {
+        this.setElement(this.options.el);
+      }
       this.$el.html(this.template.call(this));
-      if (this.parentView) {
-        this.$el.prependTo(this.parentView.$('.event-right'));
-      } else {
-        this.$el.appendTo(this.wrap);
+      if (!this.options.el) {
+        if (this.parentView) {
+          this.$el.prependTo(this.parentView.$('.event-right'));
+        } else {
+          this.$el.attr('id', this.model.id);
+          this.$el.appendTo(this.wrap);
+        }
+      }
+      if (this.app.profile.member && this.model.get('author').id
+          === this.app.profile.member.id) {
+        this.$el.addClass('own');
+      }
+      if (this.model.get('sent')) {
+        this.$el.addClass('sent');
       }
 
       // Render title if single
       if (!this.parentView) {
-        this.$el.addClass('single')
+        this.$el.addClass('single');
         this.app.title('Island | ' + this.model.get('author').displayName
             + ' - ' + this.model.get('ascent').name);
-
-        // Render title.
         this.title = _.template(title).call(this);
       }
 
-      // Trigger setup.
       this.trigger('rendered');
-
       return this;
     },
 
@@ -99,7 +108,8 @@ define([
       // Render comments.
       this.comments = new Comments(this.app, {
         parentView: this,
-        type: 'tick'
+        type: 'tick',
+        hideInput: true
       });
 
       // Handle time.
@@ -134,9 +144,18 @@ define([
     when: function () {
       if (!this.model.get('updated')) return;
       if (!this.time) {
-        this.time = this.$('time.created:first');
+        this.time = $('#time_' + this.model.id);
       }
       this.time.text(util.getRelativeTime(this.model.get('updated')));
+    },
+
+    edit: function (e) {
+      e.preventDefault();
+      new NewSession(this.app, {
+        tick: this.model.attributes,
+        crag_id: this.model.get('crag_id'),
+        ascent_id: this.model.get('ascent').id
+      }).render();
     },
 
   });

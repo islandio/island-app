@@ -9,32 +9,32 @@ define([
   'mps',
   'util',
   'models/card',
-  'views/session.new',
+  'views/rows/tick',
   'text!../../templates/ticks.html',
   'text!../../templates/rows/session.tick.html',
   'views/lists/followers',
   'views/lists/followees',
   'views/lists/watchees'
-], function ($, _, Backbone, mps, util, Card, NewSession, template, tickTemp,
-    Followers, Followees, Watchees) {
+], function ($, _, Backbone, mps, util, Card, Tick, template,
+    tickTemp, Followers, Followees, Watchees) {
   return Backbone.View.extend({
 
     el: '.main',
+    ticks: [],
 
     initialize: function (app) {
       this.app = app;
       this.subscriptions = [];
 
       // Socket subscriptions
-      this.app.rpc.socket.on('tick.new', _.bind(this.collect, this));
-      this.app.rpc.socket.on('tick.removed', _.bind(this._remove, this));
+      // this.app.rpc.socket.on('tick.new', _.bind(this.collect, this));
+      // this.app.rpc.socket.on('tick.removed', _.bind(this._remove, this));
 
       this.on('rendered', this.setup, this);
     },
 
     events: {
-      'click .navigate': 'navigate',
-      'click .session-tick-button': 'edit',
+      'click .navigate': 'navigate'
     },
 
     render: function () {
@@ -45,6 +45,16 @@ define([
       this.template = _.template(template);
       this.tickTemp = _.template(tickTemp);
       this.$el.html(this.template.call(this));
+
+      // Render each tick as a view.
+      _.each(this.$('.tick'), _.bind(function (el) {
+        el = $(el);
+        var data = _.find(this.model.get('ticks')[el.data('type')], function (t) {
+          return t.id === el.attr('id');
+        });
+        this.ticks.push(new Tick({parentView: this, el: el, model: data},
+            this.app).render());
+      }, this));
 
       this.trigger('rendered');
       return this;
@@ -144,6 +154,9 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
+      _.each(this.ticks, function (t) {
+        t.destroy();
+      });
       this.followers.destroy();
       this.followees.destroy();
       this.crags.destroy();
@@ -211,23 +224,6 @@ define([
       }
       return false;
     },
-
-    renderTick: function (t) {
-      return this.tickTemp.call(this, {t: t});
-    },
-
-    edit: function (e) {
-      e.preventDefault();
-      var tid = $(e.target).closest('li').attr('id');
-      var aid = $(e.target).closest('li').data('aid');
-      var cid = $(e.target).closest('li').data('cid');
-      var type = $(e.target).closest('li').data('type');
-      var tick = _.find(this.model.get('ticks')[type], function (t) {
-        return t.id === tid;
-      });
-      new NewSession(this.app, {tick: tick, crag_id: cid, ascent_id: aid})
-          .render();
-    }
 
   });
 });

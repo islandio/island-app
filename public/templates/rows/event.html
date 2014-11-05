@@ -5,11 +5,13 @@
 %>
 
 <div class="event-left">
-  <span class="event-avatar">
-    <a href="/<%= this.model.get('action').author.username %>" class="image-anchor navigate">
-      <img src="<%= gravatar %>" width="48" height="48" />
-    </a>
-  </span>
+  <% if (this.model.get('action_type') !== 'tick') { %>
+    <span class="event-avatar">
+      <a href="/<%= this.model.get('action').author.username %>" class="image-anchor navigate">
+        <img src="<%= gravatar %>" width="48" height="48" />
+      </a>
+    </span>
+  <% } %>
 </div>
 <div class="event-right"></div>
 <div class="clear"></div>

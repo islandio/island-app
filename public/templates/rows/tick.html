@@ -1,62 +1,89 @@
 <%
-
+  var t = this.model.attributes;
+  var own = this.app.profile.member &&
+      this.model.get('author').id === this.app.profile.member.id;
   var gravatar = 'https://www.gravatar.com/avatar/'
-      + this.model.get('author').gravatar + '?s=48&d='
+      + t.author.gravatar + '?s=36&d='
       + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
-  var timeVerb = new Date(this.model.get('updated')).getTime()
-      > new Date(this.model.get('created')).getTime() ? 'Updated' : 'Logged';
-
 %>
 
 <% if (!this.parentView) { %>
   <div class="leftside">
 <% } %>
 
-<span class="session-tick-grade">
-  <%= this.model.formatGrade() + this.model.formatExtra() %>
-</span>
-<% if (this.model.get('sent')) { %>
-  <span class="session-tick-stars">
-    <% for (var i=0; i < this.model.get('rating')||0; ++i) { %>
-      <i class="icon-star"></i>
-    <% } %>
-    <% for (var i=0; i < 3 - this.model.get('rating')||0; ++i) { %>
-      <i class="icon-star empty"></i>
-    <% } %>
+<div class="tick-inner">
+  <% if (this.parentView && this.parentView.model.get('action')) { %>
+    <span class="tick-avatar">
+      <a href="/<%= t.author.username %>" class="image-anchor navigate">
+        <img src="<%= gravatar %>" width="36" height="36" />
+      </a>
+    </span>
+  <% } %>
+  
+    <span class="event-timeline-label">
+      <% if (t.sent) { %>
+        <i class="icon-ok"></i>
+
+      <% } %>
+    </span>
+  <% if (t.sent) { %>
+    <span class="event-timeline-label-text">
+      <%= this.model.formatTickDetails(t) %>
+    </span>
+  <% } %>
+  <span class="session-tick-grade">
+    <%= this.model.formatTickGrade(t.grade, t.feel) || t.ascent.grades.join(' / ') %>
   </span>
-<% } %>
-<div class="event-title">
-  <a href="/<%= this.model.get('author').username %>" class="title navigate">
-    <%= this.model.get('author').displayName %></a> <%= this.model.formatDescription() %>.
-</div>
-
-<% if (this.model.get('sent')) { %>
-  <span class="event-timeline-label">
-    <i class="icon-ok"></i>
+  <% if (t.sent) { %>
+    <span class="session-tick-stars">
+      <% for (var i=0; i < t.rating||0; ++i) { %>
+        <i class="icon-star"></i>
+      <% } %>
+      <% for (var i=0; i < 3 - t.rating||0; ++i) { %>
+        <i class="icon-star empty"></i>
+      <% } %>
+    </span>
+  <% } %>
+  <span class="session-tick-name">
+    <a href="/crags/<%= t.ascent.key %>" class="navigate">
+      <%= t.ascent.name %><%= t.ascent.sector ? ', ' + t.ascent.sector: '' %></a>
   </span>
-<% } %>
-
-<% if (this.model.get('note')) { %>
-  <p class="session-tick-note">
-    &ldquo;<%= this.model.get('note') %>&rdquo;
-  </p>
-<% } %>
-
-<div class="event-info">
+  <% if (t.duration || t.performance) { %>
+    <span class="session-tick-detail">
+      <% if (t.duration) { %>
+        <%= this.model.formatActivityDuration(t.duration) %>
+      <% } %>
+      <% if (t.performance) { %>
+        <% if (t.duration) { %>
+          <%= ' - ' %>
+        <% } %>
+        <%= this.model.formatActivityPerformance(t.performance) %>
+      <% } %>
+    </span>
+  <% } %>
+  <% if (t.note) { %>
+    <p class="session-tick-note">
+      &ldquo;<%= t.note %>&rdquo;
+    </p>
+  <% } %>
+  <% if (own) { %>
+    <a href="javascript:;" class="session-tick-button">
+      <i class="icon-pencil"></i>
+    </a>
+  <% } %>
+  <div class="clear"></div>
   <% if (this.app.profile.member) { %>
     <a href="javascript:;" class="muted hangten">HangTen</a>
     <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-  <% } %>
-  <!-- < if (this.app.profile.member &&
-      this.model.get('author').id === this.app.profile.member.id) { >
-    <span class="tick-delete info-delete">Delete</span>
+    <a href="javascript:;" class="muted toggle-comment-input">Comment</a>
     <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-  < } > -->
-  Logged <a href="/ticks/<%= this.model.get('key') %>"
+  <% } %>
+  <a href="/ticks/<%= this.model.get('key') %>"
         class="muted navigate"><time class="created" 
-        datetime="<%= this.model.get('created') %>" 
-        title="<%= this.model.get('created') %>">
-    <%= this.model.get('created') %>
+        datetime="<%= this.model.get('updated') %>" 
+        title="<%= this.model.get('updated') %>" 
+        id="time_<%= this.model.id %>">
+    <%= this.model.get('updated') %>
   </time></a>
 </div>
 <div class="comments"></div>

@@ -49,6 +49,7 @@ define([
 
       // Save refs.
       this.footer = this.$('.list-footer');
+      this.inputWrap = this.$('#comment_input .comment');
 
       if (!this.options.hangtenOnly) {
 
@@ -67,8 +68,20 @@ define([
 
         // Show other elements.
         this.$('.comments-older.comment').show();
-        this.$('#comment_input .comment').show();
-      } 
+        if (!this.options.hideInput) {
+          this.inputWrap.show();
+        } else {
+          this.parentView.$('.toggle-comment-input').click(_.bind(function (e) {
+            e.preventDefault();
+            if (this.inputWrap.is(':visible')) {
+              this.inputWrap.hide();
+            } else {
+              this.inputWrap.show();
+              this.$('textarea.comment-input').focus();
+            }
+          }, this));
+        }
+      }
 
       // Render hangtens.
       this.hangtens = new Hangtens(this.app, {parentView: this});
@@ -85,7 +98,7 @@ define([
     // Bind mouse events.
     events: {
       'click .comments-signin': 'signin',
-      'click .comments-older': 'older',
+      'click .comments-older': 'older'
     },
 
     // Collect new data from socket events.
@@ -162,6 +175,10 @@ define([
         var comment = this.collection.get(-1);
         comment.set('id', data.id);
         this.$('#-1').attr('id', data.id);
+
+        if (this.options.hideInput) {
+          this.inputWrap.hide();
+        }
 
       }, this));
 

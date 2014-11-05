@@ -56,6 +56,8 @@
   <% if (this.app.profile.member) { %>
     <a href="javascript:;" class="muted hangten">HangTen</a>
     <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+    <a href="javascript:;" class="muted toggle-comment-input">Comment</a>
+    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
   <% } %>
   <% if (this.app.profile.member &&
       this.model.get('author').id === this.app.profile.member.id) { %>
@@ -64,7 +66,8 @@
   <% } %>
   <a href="/<%= this.model.get('key') %>" class="muted navigate"><time class="created" 
         datetime="<%= this.model.get('created') %>" 
-        title="<%= this.model.get('created') %>">
+        title="<%= this.model.get('created') %>" 
+        id="time_<%= this.model.id %>">
     <%= this.model.get('created') %>
   </time></a>
 </div>

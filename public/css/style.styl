@@ -314,7 +314,7 @@ a.contact-link
   font-weight bold
 
 a.muted
-  color #999
+  color #ccc
   background none
 
 a.muted:hover
@@ -386,7 +386,7 @@ time.created
   display inline-block
 
 time.created.static
-  color #999
+  color #ccc
 
 .error
   margin 105px auto
@@ -478,7 +478,7 @@ span.empty-list
 .info-delete,
 .info-accept
   font-size 11px
-  color #999
+  color #ccc
   background none
   cursor pointer
 
@@ -488,7 +488,7 @@ span.empty-list
 
 .info-divider
   font-size 11px
-  color #999
+  color #ccc
   
 .info-item
   font-size 11px
@@ -2728,7 +2728,7 @@ h2.profile-section-title
   margin 10px 0 0 0
 
 .comment
-  width 484px
+  width 404px
   min-height 42px
   margin 0 0 2px 0
   position relative
@@ -2755,8 +2755,8 @@ h2.profile-section-title
 
 .comment-body p
   padding 0 40px
-  font-size 13px
-  line-height 17px
+  font-size 12px
+  line-height 16px
   font-weight normal
   color #4d4d4d
   margin 0
@@ -2805,14 +2805,9 @@ a.comment-avatar-small:hover span
 a.comment-author
   display inline-block
   white-space nowrap
-  text-overflow ellipsis
-  color #666
-  font-weight bold
+  font-family standard_thin
+  color #808080
   background none
-
-  -webkit-text-shadow 1px 1px 0 rgba(255,255,255,0.7)
-  -moz-text-shadow 1px 1px 0 rgba(255,255,255,0.7)
-  text-shadow 1px 1px 0 rgba(255,255,255,0.7)
 
 a.comment-author:hover
   color blue
@@ -2858,12 +2853,12 @@ textarea.comment-input
 .hangtens
   position relative
   width 394px
-  margin 4px 0 2px 0
+  margin 0 0 2px 0
   padding 6px 5px 4px
-  font-size 12px
+  font-size 11px
   line-height 18px
   color #666
-  background #f9f9f9
+  // background #f9f9f9
 
   border-radius 2px
 
@@ -3029,7 +3024,7 @@ textarea.comment-input
   margin 10px 0 0
   font-size 11px
   line-height 13px
-  color #999
+  color #ccc
 
 .post-input .post
   width 710px
@@ -3423,6 +3418,7 @@ table.post-params label
 .event .comments
   width 404px
 
+.single textarea.comment-input,
 .event textarea.comment-input
   width 337px
 
@@ -3452,14 +3448,14 @@ table.post-params label
 
 .event-title-text
   display block
-  margin 5px 0 11px 
+  margin 10px 0 11px 
 
 .event-info
   width 404px
   margin 10px 0 3px
   font-size 11px
   line-height 13px
-  color #999
+  color #ccc
 
 .single .event-info
   width 561px
@@ -3481,7 +3477,7 @@ table.post-params label
 
 .event-timeline-label
   position absolute
-  left -40px
+  left -41px
   top 14px
   width 41px
   border-bottom 1px solid #f2f2f2
@@ -3647,43 +3643,51 @@ ul.session-ticks
 .session.single ul.session-ticks
   width 561px
 
-ul.session-ticks li
+.tick
   position relative
-  padding 5px 10px
   font-size 14px
+
+.tick-inner
+  position relative
   background #fcfcfc
-  border 1px solid #f9f9f9
+  border 1px solid #f2f2f2
   margin-bottom 2px
   border-radius 2px
+  padding 5px 10px
 
-ul.session-ticks li.sent
+.tick.sent .tick-inner
   background #f9f9f9
 
   -webkit-transition all 0.15s ease-in-out
   -moz-transition all 0.15s ease-in-out
   transition all 0.15s ease-in-out
 
-.session:hover ul.session-ticks li.sent
+.session:hover .tick.sent .tick-inner
   border-color #e6e6e6
 
-ul.session-ticks li .session-tick-name
+.tick .session-tick-name
   display block
-  max-width 320px
+  margin-right 100px
 
-ul.session-ticks li.own .session-tick-name
-  max-width 296px
+.tick.own .session-tick-name
+  margin-right 126px
 
-ul.session-ticks li .session-tick-name a
+.tick .session-tick-name a
   font-size 14px
   font-family standard_thin
   color orange
   background none
 
-ul.session-ticks li.sent .session-tick-name a
+.tick.sent .session-tick-name a
   color blue
 
-ul.session-ticks li .session-tick-name a:hover
+.tick .session-tick-name a:hover
   text-decoration underline
+
+.tick .hangten,
+.tick .toggle-comment-input
+  font-size 11px
+  line-height 13px
 
 .session-tick-stars
   display inline-block
@@ -3709,7 +3713,7 @@ ul.session-ticks li .session-tick-name a:hover
   color #b3b3b3
 
 .sent .session-tick-grade
-  color inherit
+  color #666
 
 .own .session-tick-grade
   margin-right 26px
@@ -3720,7 +3724,7 @@ ul.session-ticks li .session-tick-name a:hover
 .session-tick-detail
   font-family standard_thin
   font-size 11px
-  color #b3b3b3
+  color #808080
 
 p.session-tick-note
   margin-top 5px
@@ -3753,15 +3757,18 @@ a.session-tick-button
   justify-content center
 
 a.session-tick-button:hover
-  color #2f5a00
-  background #a7d22c
+  color rgb(57, 100, 0)
+  background rgb(167, 210, 44)
 
 a.session-tick-button:active
-  background #a7d22c
+  background rgb(167, 210, 44)
+  -moz-box-shadow inset 0 2px 5px rgba(0, 0, 0, 0.3)
+  -webkit-box-shadow inset 0 2px 5px rgba(0, 0, 0, 0.3)
+  box-shadow inset 0 2px 5px rgba(0, 0, 0, 0.3)
 
 .session-weather
-  font-size 14px
-  color: darkgray
+  // font-size 14px
+  color #808080
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––ticks*/
 
@@ -3772,7 +3779,7 @@ a.session-tick-button:active
   margin 0 0 20px
   width auto
 
-.tick-list ul.session-ticks li
+.tick-list .tick
   margin 0 0 2px 108px
 
 .tick-list-group-heading
@@ -3790,9 +3797,6 @@ a.session-tick-button:active
   line-height 30px
   font-family standard_thin
 
-.tick
-  position relative
-
 .tick .leftside
   width 561px
   margin-left 78px
@@ -3802,32 +3806,33 @@ a.session-tick-button:active
 .tick.single .hangtens
   width 474px
 
-// .tick .event-title
-//   font-size 14px
-
-// .tick .event-title a.title
-//   font-size 14px
-
-.tick .event-timeline-label,
 .crag .event-timeline-label,
 .ascent .event-timeline-label
   border none
   top 9px
 
-.tick.single .event-timeline-label
-  top 38px
-  left 79px
-
 .tick .session-tick-stars
   float right
 
-.tick-verb,
+.tick-list .tick.own .session-tick-stars
+  margin-right 26px
+
 .crag-verb,
 .ascent-verb
   font-weight bold
 
 .tick .session-tick-grade
   margin-left 5px
+
+.tick-avatar
+  float left
+  margin-left -4px
+  padding-right 8px
+
+.tick-avatar img
+  width 36px
+  height 36px
+  border-radius 2px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––notifications*/
 

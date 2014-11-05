@@ -2,8 +2,6 @@
   var gravatar = 'https://www.gravatar.com/avatar/'
       + this.model.get('author').gravatar + '?s=48&d='
       + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
-  var timeVerb = new Date(this.model.get('updated')).getTime()
-      > new Date(this.model.get('created')).getTime() ? 'Updated' : 'Logged';
 
   var weather = this.model.get('weather');
 %>
@@ -26,12 +24,12 @@
     <a href="/sessions/<%= this.model.get('key') %>" class="title-large navigate">
       <%= this.model.formatName() %>
     </a>
+    <% if (weather) { %>
+      <span class="session-weather">
+        <%= this.model.tempFtoC(weather.temperature) %>&degC <%= this.model.formatWeatherIconName(weather.icon) %>
+      </span>
+    <% } %>
   </span>
-  <% if (weather) { %>
-  <p class="session-weather">
-    <%= this.model.tempFtoC(weather.temperature) %>&degC <%= this.model.formatWeatherIconName(weather.icon) %>
-  </p>
-  <% } %>
 <% } %>
 <% if (this.model.get('actions').length === 0) { %>
   <span class="session-empty">No activities</span>
@@ -46,29 +44,11 @@
     &ldquo;<%= this.model.get('note') %>&rdquo;
   </p>
 <% } %>
-<div class="event-info">
-  <!-- < if (this.app.profile.member) { >
-    <a href="javascript:;" class="muted hangten">HangTen</a>
-    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-  < } > -->
-  <!-- < if (this.app.profile.member &&
-      this.model.get('author').id === this.app.profile.member.id) { >
-    <span class="session-delete info-delete">Delete</span>
-    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-  < } > -->
-  <%= timeVerb %> <a href="/sessions/<%= this.model.get('key') %>"
-        class="muted navigate"><time class="created" 
-        datetime="<%= this.model.get('updated') %>" 
-        title="<%= this.model.get('updated') %>">
-    <%= this.model.get('updated') %>
-  </time></a>
-</div>
-<!-- <div class="comments"></div> -->
 
 <% if (!this.parentView) { %>
   </div>
   <div class="rightside">
-    <div class="mini-map" id="session_map_<%= this.model.id %>"></div>    
+    <div class="mini-map" id="session_map_<%= this.model.id %>"></div>
   </div>
   <div class="clear"></div>
 <% } %>

@@ -10,20 +10,23 @@ define([
   'rest',
   'util',
   'models/session',
-  'views/session.new',
+  'views/rows/tick',
   'text!../../../templates/rows/session.html',
   'text!../../../templates/rows/session.activity.html',
-  'text!../../../templates/rows/session.tick.html',
   'text!../../../templates/session.title.html',
   'text!../../../templates/confirm.html',
   'views/minimap'
-], function ($, _, Backbone, mps, rest, util, Model, NewSession, template,
-      activityTemp, tickTemp, title, confirm, MiniMap) {
+], function ($, _, Backbone, mps, rest, util, Model, Tick, template,
+      activityTemp, title, confirm, MiniMap) {
   return Backbone.View.extend({
+
+    ticks: [],
 
     attributes: function () {
       var attrs = {class: 'session'};
-      if (this.model) attrs.id = this.model.id;
+      if (this.model) {
+        attrs.id = this.model.id;
+      }
       return attrs;
     },
 
@@ -34,32 +37,41 @@ define([
       this.wrap = options.wrap;
       this.template = _.template(template);
       this.activityTemp = _.template(activityTemp);
-      this.tickTemp = _.template(tickTemp);
       this.subscriptions = [];
 
-      // Socket subscriptions
-      this.app.rpc.socket.on('tick.new', _.bind(this.collect, this));
-      this.app.rpc.socket.on('tick.removed', _.bind(this._remove, this));
+      // // Socket subscriptions
+      // this.app.rpc.socket.on('tick.new', _.bind(this.collect, this));
+      // this.app.rpc.socket.on('tick.removed', _.bind(this._remove, this));
 
       this.on('rendered', this.setup, this);
       return this;
     },
 
     events: {
-      'click .navigate': 'navigate',
-      // 'click .session-delete': 'delete',
-      'click .session-tick-button': 'edit',
+      'click .navigate': 'navigate'
     },
 
     render: function () {
-
-      // Render content
       this.$el.html(this.template.call(this));
       if (this.parentView) {
         this.$el.prependTo(this.parentView.$('.event-right'));
       } else {
         this.$el.appendTo(this.wrap);
+        this.$el.attr('id', this.model.id);
       }
+
+      // Render each tick as a view.
+      _.each(this.$('.tick'), _.bind(function (el) {
+        el = $(el);
+        var action = _.find(this.model.get('actions'), function (a) {
+          return a.id === el.data('aid');
+        });
+        var data = _.find(action.ticks, function (t) {
+          return t.id === el.attr('id');
+        });
+        this.ticks.push(new Tick({parentView: this, el: el, model: data},
+            this.app).render());
+      }, this));
 
       // Render title if single
       if (!this.parentView) {
@@ -71,9 +83,7 @@ define([
         this.title = _.template(title).call(this);
       }
 
-      // Trigger setup.
       this.trigger('rendered');
-
       return this;
     },
 
@@ -90,15 +100,9 @@ define([
         location: this.model.get('crag').location
       }).render();
 
-      // // Render comments.
-      // this.comments = new Comments(this.app, {
-      //   parentView: this,
-      //   type: 'session'
-      // });
-
       // Handle time.
-      this.timer = setInterval(_.bind(this.when, this), 5000);
-      this.when();
+      // this.timer = setInterval(_.bind(this.when, this), 5000);
+      // this.when();
     },
 
     // Collect a tick.
@@ -144,7 +148,9 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      // this.comments.destroy();
+      _.each(this.ticks, function (t) {
+        t.destroy();
+      });
       this.map.destroy();
       this.undelegateEvents();
       this.stopListening();
@@ -162,79 +168,16 @@ define([
       }
     },
 
-    // delete: function (e) {
-    //   e.preventDefault();
-
-    //   // Render the confirm modal.
-    //   $.fancybox(_.template(confirm)({
-    //     message: 'Deleting a session also deletes all'
-    //         + ' associated bouldering and climbing.'
-    //         + ' Delete this session forever?',
-    //   }), {
-    //     openEffect: 'fade',
-    //     closeEffect: 'fade',
-    //     closeBtn: false,
-    //     padding: 0
-    //   });
-
-    //   // Setup actions.
-    //   $('.modal-cancel').click(function (e) {
-    //     $.fancybox.close();
-    //   });
-    //   $('.modal-confirm').click(_.bind(function (e) {
-
-    //     // Delete the session.
-    //     rest.delete('/api/sessions/' + this.model.id,
-    //         {}, _.bind(function (err, data) {
-    //       if (err) {
-    //         return console.log(err);
-    //       }
-
-    //       // close the modal.
-    //       $.fancybox.close();
-
-    //       // Go home if single view.
-    //       if (!this.parentView) {
-    //         this.app.router.navigate('/', {trigger: true, replace: true});
-    //       }
-
-    //     }, this));
-
-    //   }, this));
-
-    //   return false;
-    // },
-
-    edit: function (e) {
-      e.preventDefault();
-      var tid = $(e.target).closest('li').attr('id');
-      var aid = $(e.target).closest('li').data('aid');
-      var cid = $(e.target).closest('li').data('cid');
-      var type = $(e.target).closest('li').data('type');
-      var action = _.find(this.model.get('actions'), function (a) {
-        return a.type === type;
-      });
-      var tick = _.find(action.ticks, function (t) {
-        return t.id === tid;
-      });
-      new NewSession(this.app, {tick: tick, crag_id: cid, ascent_id: aid})
-          .render();
-    },
-
     when: function () {
       if (!this.model.get('updated')) return;
       if (!this.time) {
-        this.time = this.$('time.created:first');
+        this.time = $('#time_' + this.model.id);
       }
       this.time.text(util.getRelativeTime(this.model.get('updated')));
     },
 
     renderActivity: function (a) {
       return this.activityTemp.call(this, {a: a});
-    },
-
-    renderTick: function (t) {
-      return this.tickTemp.call(this, {t: t});
     }
 
   });
