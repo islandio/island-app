@@ -19,18 +19,20 @@
       </a>
     </span>
   <% } %>
-  
-    <span class="event-timeline-label">
-      <% if (t.sent) { %>
-        <i class="icon-ok"></i>
-
-      <% } %>
-    </span>
-  <% if (t.sent) { %>
-    <span class="event-timeline-label-text">
+  <span class="event-timeline-label">
+    <% if (t.sent) { %>
+      <i class="icon-award"></i>
+    <% } else { %>
+      <i class="icon-hammer"></i>
+    <% } %>
+  </span>
+  <span class="event-timeline-label-text">
+    <% if (t.sent) { %>
       <%= this.model.formatTickDetails(t) %>
-    </span>
-  <% } %>
+    <% } else { %>
+      work
+    <% } %>
+  </span>
   <span class="session-tick-grade">
     <%= this.model.formatTickGrade(t.grade, t.feel) || t.ascent.grades.join(' / ') %>
   </span>

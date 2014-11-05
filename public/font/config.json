@@ -109,9 +109,21 @@
       "src": "fontawesome"
     },
     {
+      "uid": "ab656e280958018a7859eba9a1eabbc7",
+      "css": "award",
+      "code": 59421,
+      "src": "fontawesome"
+    },
+    {
       "uid": "197375a3cea8cb90b02d06e4ddf1433d",
       "css": "globe",
       "code": 59392,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "dec0ce0476433f7e49e096526cf89465",
+      "css": "hammer",
+      "code": 59420,
       "src": "fontawesome"
     },
     {
