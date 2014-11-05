@@ -3556,6 +3556,9 @@ ul.session-ticks {
   position: relative;
   font-size: 14px;
 }
+.tick + .tick {
+  margin-bottom: 30px;
+}
 .tick-inner {
   position: relative;
   background: #fcfcfc;
