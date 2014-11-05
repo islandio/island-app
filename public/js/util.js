@@ -513,7 +513,7 @@ define([
           top: 0
         },
         data: data,
-        video: video
+        video: _.isEmpty(video) ? false: video
       });
 
       var num = images.length;
