@@ -4,12 +4,6 @@
       + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
 
   var weather = this.model.get('weather');
-
-  var video = _.find(this.media, function (m) {
-    return m.type === 'video';
-  });
-  var typeClass = video ? 'post-title-video': 'post-title-photos';
-
 %>
 
 <% if (!this.parentView) { %>
@@ -50,14 +44,6 @@
     &ldquo;<%= this.model.get('note') %>&rdquo;
   </p>
 <% } %>
-
-<!-- Borrowed from post.js -->
-<div class="post post-media">
-  <span class="event-timeline-label">
-    <i class="icon-<%= video ? 'youtube-play': 'picture' %>"></i>
-  </span>
-  <div class="post-mosaic"></div>
-</div>
 
 <% if (!this.parentView) { %>
   </div>

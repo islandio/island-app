@@ -1,4 +1,4 @@
-<video src="<%= data.video.ssl_url %>" id="video-<%= data.id %>" 
+<video src="<%= data.video.ssl_url %>" id="video-<%= data.video.original_id %>" 
     poster="<%= data.poster.ssl_url %>" controls="controls" 
     preload="none" width="<%= width %>"
     height="<%= Math.ceil(width * data.video.meta.height / data.video.meta.width) %>" />

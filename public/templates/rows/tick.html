@@ -5,6 +5,8 @@
   var gravatar = 'https://www.gravatar.com/avatar/'
       + t.author.gravatar + '?s=36&d='
       + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
+
+  var mediaTypes = _.uniq(_.pluck(t.medias, 'type'));
 %>
 
 <% if (!this.parentView) { %>
@@ -68,25 +70,47 @@
       &ldquo;<%= t.note %>&rdquo;
     </p>
   <% } %>
-  <% if (own) { %>
-    <a href="javascript:;" class="session-tick-button">
-      <i class="icon-pencil"></i>
-    </a>
-  <% } %>
   <div class="clear"></div>
+  <% _.each(mediaTypes, function (mt) { %>
+    <% if (mt === 'image') { %>
+      <div class="tick-media">
+        <span class="event-timeline-label">
+          <i class="icon-picture"></i>
+        </span>
+        <div class="image-mosaic" data-type="image" data-id="<%= t.id %>"></div>
+      </div>
+    <% } else if (mt === 'video') {
+      var vids = _.filter(t.medias, function (m) { return m.type === 'video'; });
+      vids = _.uniq(vids, function (v) {
+        return v.video.original_id;
+      });
+      _.each(vids, function (v) { %>
+        <div class="tick-media">
+          <span class="event-timeline-label">
+            <i class="icon-youtube-play"></i>
+          </span>
+          <div class="image-mosaic" data-type="video" data-id="<%= v.video.original_id %>"></div>
+        </div>
+      <% }) %>
+    <% } %>
+  <% }) %>
   <% if (this.app.profile.member) { %>
     <a href="javascript:;" class="muted hangten">HangTen</a>
     <span class="info-divider">&nbsp;&middot;&nbsp;</span>
     <a href="javascript:;" class="muted toggle-comment-input">Comment</a>
     <span class="info-divider">&nbsp;&middot;&nbsp;</span>
   <% } %>
+  <% if (own) { %>
+    <a href="javascript:;" class="muted tick-edit">Edit</a>
+    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+  <% } %>
   <a href="/ticks/<%= this.model.get('key') %>"
-        class="muted navigate"><time class="created" 
-        datetime="<%= this.model.get('updated') %>" 
-        title="<%= this.model.get('updated') %>" 
-        id="time_<%= this.model.id %>">
+      class="muted navigate"><time class="created" 
+      datetime="<%= this.model.get('updated') %>" 
+      title="<%= this.model.get('updated') %>" 
+      id="time_<%= this.model.id %>">
     <%= this.model.get('updated') %>
-  </time></a>
+    </time></a>
 </div>
 <div class="comments"></div>
 

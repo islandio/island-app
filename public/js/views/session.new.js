@@ -102,8 +102,6 @@ define([
           .on('dragleave', _.bind(this.dragout, this))
           .on('drop', _.bind(this.drop, this));
 
-
-
       // Init choices.
       this.cragChoices = new Choices(this.app, {
         reverse: true, 
@@ -355,6 +353,7 @@ define([
         if (!a.assembly) return;
         _.each(a.assembly.results, function (v, k) {
           _.each(v, function (r) {
+            r.assembly_id = a.assembly.assembly_id;
             if (results[k]) {
               results[k].push(r);
             } else {
@@ -371,7 +370,6 @@ define([
       action.ticks = ticks;
       actions.push(action);
       payload.actions = actions;
-      console.log(payload);
 
       return payload;
     },
@@ -405,9 +403,9 @@ define([
         }
 
         // Show success.
-        var verb = payload.sent ? 'ascent': 'attempt';
+        var verb = payload.sent ? 'an ascent': 'some work';
         mps.publish('flash/new', [{
-          message: 'You ' + (oldTick ? 'updated': 'logged') + ' an ' + verb + '.',
+          message: 'You ' + (oldTick ? 'updated': 'logged') + ' ' + verb + '.',
           level: 'alert'
         }, true]);
 
@@ -450,7 +448,6 @@ define([
 
       // Stop drag styles.
       this.dropZone.removeClass('dragging');
-      console.log(this);
 
       // Get the files, if any.
       var files = e.target.files || e.originalEvent.dataTransfer.files;
@@ -514,7 +511,6 @@ define([
             txt.text('');
           }
           attachment.uploading = false;
-          console.log(attachment);
         }, this)
       };
 
@@ -593,7 +589,7 @@ define([
         }
 
         // Show success.
-        var verb = oldTick.sent ? 'ascent': 'attempt';
+        var verb = oldTick.sent ? 'an ascent': 'some work';
         mps.publish('flash/new', [{
           message: 'You deleted an ' + verb + '.',
           level: 'alert'

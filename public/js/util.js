@@ -439,31 +439,8 @@ define([
       });
     },
 
-    // pass a function to insert into the DOM, video should be null on
-    // first call and is modified by the function.
-    createImageMosaic: function (medias, width, height, video, insertFunction) {
-
-      // gather images
-      var images = [];
-      if (medias) {
-        _.each(medias, function (m) {
-          switch (m.type) {
-            case 'image':
-              images.push(m.image);
-              break;
-            case 'video':
-              if (_.isEmpty(video)) {
-                _.extend(video, m);
-                images.push(m.poster);
-                _.each(m.thumbs, function (t, i) {
-                  if (i !== 1) images.push(t);
-                });
-              }
-              break;
-          }
-        });
-      }
-
+    // pass a function to insert into the DOM
+    createImageMosaic: function (images, width, height, insertFunction, cb) {
       if (images.length === 0) {
         return;
       }
@@ -488,7 +465,8 @@ define([
             left: 0,
             top: 0
           },
-          data: data
+          data: data,
+          fist: true
         });
         return;
       }
@@ -513,7 +491,7 @@ define([
           top: 0
         },
         data: data,
-        video: _.isEmpty(video) ? false: video
+        first: true
       });
 
       var num = images.length;
@@ -586,6 +564,8 @@ define([
 
       });
 
+      // All done.
+      cb();
     }
 
   }

@@ -15,9 +15,11 @@ define([
   'views/lists/comments',
   'text!../../../templates/confirm.html',
   'views/minimap',
-  'views/session.new'
+  'views/session.new',
+  'text!../../../templates/video.html',
+  'device'
 ], function ($, _, Backbone, mps, rest, util, Model, template, title, Comments,
-      confirm, MiniMap, NewSession) {
+      confirm, MiniMap, NewSession, videoTemp) {
   return Backbone.View.extend({
 
     tagName: 'li',
@@ -36,6 +38,7 @@ define([
       this.parentView = options.parentView;
       this.wrap = options.wrap;
       this.template = _.template(template);
+      this.videoTemp = _.template(videoTemp);
       this.subscriptions = [];
 
       // Socket subscriptions
@@ -52,7 +55,7 @@ define([
 
     events: {
       'click .navigate': 'navigate',
-      'click .session-tick-button': 'edit'
+      'click .tick-edit': 'edit'
     },
 
     render: function () {
@@ -85,6 +88,170 @@ define([
             + ' - ' + this.model.get('ascent').name);
         this.title = _.template(title).call(this);
       }
+
+      // Group medias by type.
+      //   - images can all be in one mosaic
+      //   - each video set needs its own mosaic
+      //     - (set = three vids of diff quality for each uploaded vid)
+      var mosaics = [];
+      _.each(this.model.get('medias'), _.bind(function (m) {
+        switch (m.type) {
+          case 'image':
+            var o = _.find(mosaics, function (o) {
+              return o.type === 'image';
+            });
+            if (!o) {
+              o = {type: 'image', images: []};
+              mosaics.push(o);
+              o.id = this.model.id; // will be uniq cause only one photo mosaic
+            }
+            o.images.push(m.image);
+            break;
+          case 'video':
+            if (m.quality !== 'hd') {
+              return;
+            }
+            var o = {type: 'video', images: []};
+            o.images.push(m.poster);
+            _.each(m.thumbs, function (t, i) {
+              if (i !== 1) {
+                o.images.push(t);
+              }
+            });
+            o.id = m.video.original_id; // original_id is uniq for vid set
+            mosaics.push(o);
+            break;
+        }
+      }, this));
+
+      var fancyOpts = {
+        openEffect: 'fade',
+        closeEffect: 'fade',
+        closeBtn: false,
+        nextClick: true,
+        padding: 0
+      };
+
+      // Create a mosaic for each group.
+      _.each(mosaics, _.bind(function (o) {
+        util.createImageMosaic(o.images, 381, 210, _.bind(function (item) {
+          var src = item.data.ssl_url || item.data.url;
+          var anc = $('<a class="fancybox" data-type="' + o.type + '" rel="g-' + o.id
+              + '" href="' + src + '">');
+          var div = $('<div class="image-mosaic-wrap">').css(item.div).appendTo(anc);
+          var img = $('<img src="' + src + '" />').css(item.img).wrap(
+              $('<a class="fancybox" rel="g-' + o.id + '">')).appendTo(div);
+          if (o.type === 'video' && item.first) {
+            var play = $('<img src="' + __s + '/img/play.png" class="image-mosaic-play"'
+                + ' width="80" height="80" />');
+            play.appendTo(div);
+            if (item.data.trailer) {
+              var subtext = $('<span class="image-mosaic-play-text">(trailer)</span>');
+              subtext.appendTo(div);
+              play.addClass('trailer');
+            }
+          }
+          anc.appendTo(this.$('.image-mosaic[data-id="' + o.id + '"]'));
+        }, this),
+
+        // Mosaic is done and attached to dom.
+        _.bind(function () {
+
+          function getVideo(quality) {
+            return _.find(this.model.get('medias'), function (m) {
+              return m.type === 'video' && m.quality === quality
+                  && m.video.original_id === o.id;
+            });
+          }
+
+          // Setup click handler.
+          switch (o.type) {
+            case 'image':
+              this.$('.fancybox[data-type="image"]').fancybox(fancyOpts);
+              break;
+            case 'video':
+              this.$('.fancybox[data-type="video"][rel="g-' + o.id + '"]')
+                  .click(_.bind(function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+
+                var iphone = getVideo.call(this, 'iphone');
+                var ipad = getVideo.call(this, 'ipad');
+                var hd = getVideo.call(this, 'hd');
+
+                // Video params
+                var params = {
+                  width: '1024',
+                  height: '576',
+                  autostart: true,
+                  primary: 'flash',
+                  ga: {},
+                  sharing: {
+                    link: window.location.protocol + '//'
+                        + window.location.host + '/' + this.model.get('key'),
+                    code: "<iframe width='100%' height='100%' src='//"
+                        + window.location.host + "/embed/"
+                        + ipad.video.id + "' frameborder='0'></iframe>"
+                  }
+                };
+
+                // Desktops and mobile tablets.
+                if (!device.mobile() || (device.mobile() && device.tablet())) {
+                  _.extend(params, {
+                    playlist: [{
+                      image: hd.poster.ssl_url,
+                      sources: [{
+                        file: device.ios() ? ipad.video.ios_url: ipad.video.ssl_url,
+                        label: '1200k'
+                      },
+                      {
+                        file: device.ios() ? hd.video.ios_url: hd.video.ssl_url,
+                        label: '4000k'
+                      }]
+                    }]
+                  });
+
+                // Mobile phones, ipod, etc.
+                } else {
+                  _.extend(params, {
+                    playlist: [{
+                      image: iphone.poster.ssl_url,
+                      sources: [{
+                        file: device.ios() ? iphone.video.ios_url: iphone.video.ssl_url,
+                        label: '700k'
+                      },
+                      {
+                        file: device.ios() ? ipad.video.ios_url: ipad.video.ssl_url,
+                        label: '1200k'
+                      }]
+                    }]
+                  });
+                }
+
+                if (this.parentView) {
+                  // Place the video in the fancybox.
+                  $.fancybox(this.videoTemp.call(this, {
+                      data: hd, width: 1024, height: 576}), fancyOpts);
+                } else {
+                  // Lay the video over the mosaic.
+                  $(this.videoTemp.call(this, {data: hd, width: 1024, height: 576}))
+                      .appendTo(this.$('.image-mosaic[data-id="' + o.id + '"]'));
+                  _.extend(params, {
+                    width: '1024',
+                    height: '576'
+                  });
+                  this.$('span.image-mosaic-play-text').hide();
+                }
+                
+                // Finally, play the video.
+                jwplayer('video-' + o.id).setup(params);
+
+                return false;
+              }, this));
+              break;
+          }
+        }, this));
+      }, this));
 
       this.trigger('rendered');
       return this;

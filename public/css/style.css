@@ -2905,7 +2905,7 @@ textarea.comment-input {
 .event-title + .post-media + .post-link {
   margin-top: 6px;
 }
-.post .post-mosaic {
+.image-mosaic {
   position: relative;
   overflow: hidden;
   width: 561px;
@@ -2916,11 +2916,11 @@ textarea.comment-input {
   -moz-border-radius: 2px;
   border-radius: 2px;
 }
-.post.single .post-mosaic {
+.single .image-mosaic {
   width: 1024px;
   height: 576px;
 }
-.post-mosaic-wrap {
+.image-mosaic-wrap {
   position: absolute;
   overflow: hidden;
   background: #4d4d4d;
@@ -2928,29 +2928,34 @@ textarea.comment-input {
   -moz-border-radius: 2px;
   border-radius: 2px;
 }
-.post-mosaic-wrap img {
+.image-mosaic-wrap img {
   position: relative;
 }
-.post-mosaic-wrap:hover img {
+.image-mosaic-wrap:hover img {
   opacity: 0.98;
 }
-.post img.post-mosaic-play {
+img.image-mosaic-play {
   position: absolute !important;
   left: 78px;
   top: 78px;
   opacity: 0.9;
 }
-.post img.post-mosaic-play.trailer {
+img.image-mosaic-play.trailer {
   top: 53px;
 }
-.post.single img.post-mosaic-play {
+.single img.image-mosaic-play {
   left: 197px;
   top: 197px;
 }
-.post.single img.post-mosaic-play.trailer {
+.single img.image-mosaic-play.trailer {
   top: 172px;
 }
-.post span.post-mosaic-play-text {
+.tick img.image-mosaic-play,
+.tick.single img.image-mosaic-play {
+  left: 65px;
+  top: 65px;
+}
+span.image-mosaic-play-text {
   position: absolute;
   z-index: 2;
   color: #fff;
@@ -2963,7 +2968,7 @@ textarea.comment-input {
   -webkit-user-select: none;
   user-select: none;
 }
-.post.single span.post-mosaic-play-text {
+.single span.image-mosaic-play-text {
   top: 318px;
   left: 225px;
 }
@@ -3058,6 +3063,9 @@ a.post-input-avatar img {
   -webkit-border-radius: 0 0 2px 2px;
   -moz-border-radius: 0 0 2px 2px;
   border-radius: 0 0 2px 2px;
+}
+.post-files {
+  margin-bottom: 10px;
 }
 .new-session-post-form .post-select {
   display: block;
@@ -3340,7 +3348,8 @@ table.post-params label {
   width: 404px;
 }
 .single textarea.comment-input,
-.event textarea.comment-input {
+.event textarea.comment-input,
+.tick-list textarea.comment-input {
   width: 337px;
 }
 .event-left {
@@ -3592,9 +3601,6 @@ ul.session-ticks {
   display: block;
   margin-right: 100px;
 }
-.tick.own .session-tick-name {
-  margin-right: 126px;
-}
 .tick .session-tick-name a {
   font-size: 14px;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -3608,9 +3614,29 @@ ul.session-ticks {
   text-decoration: underline;
 }
 .tick .hangten,
-.tick .toggle-comment-input {
+.tick .toggle-comment-input,
+.tick .tick-edit {
   font-size: 11px;
   line-height: 13px;
+}
+.tick-media {
+  position: relative;
+  margin-top: 15px;
+}
+.tick-media + .tick-media {
+  margin-top: 0;
+}
+.tick-media .event-timeline-label {
+  left: -51px;
+}
+.tick-media .image-mosaic {
+  width: 381px;
+  height: 210px;
+  margin-bottom: 5px;
+}
+.single .tick-media .image-mosaic {
+  width: 381px;
+  height: 210px;
 }
 .session-tick-stars {
   display: inline-block;
@@ -3638,9 +3664,6 @@ ul.session-ticks {
 .sent .session-tick-grade {
   color: #666;
 }
-.own .session-tick-grade {
-  margin-right: 26px;
-}
 .list-wrap .session-tick-grade {
   display: none;
 }
@@ -3651,12 +3674,10 @@ ul.session-ticks {
 }
 p.session-tick-note {
   margin-top: 5px;
+  margin-right: 10px;
   font-size: 12px;
   line-height: 18px;
   color: #3d3d3d;
-}
-.own .session-tick-note {
-  margin-right: 26px;
 }
 a.session-tick-button {
   position: absolute;
@@ -3735,9 +3756,6 @@ a.session-tick-button:active {
 }
 .tick .session-tick-stars {
   float: right;
-}
-.tick-list .tick.own .session-tick-stars {
-  margin-right: 26px;
 }
 .crag-verb,
 .ascent-verb {
