@@ -13,6 +13,10 @@
   <div class="leftside">
 <% } %>
 
+<% if (!this.options.mapless && this.parentView) { %>
+  <div class="mini-map" id="tick_map_<%= this.model.id %>"></div>
+<% } %>
+
 <div class="tick-inner">
   <% if (this.parentView && this.parentView.model.get('action')) { %>
     <span class="tick-avatar">

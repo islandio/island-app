@@ -2923,7 +2923,6 @@ textarea.comment-input {
 .image-mosaic-wrap {
   position: absolute;
   overflow: hidden;
-  background: #4d4d4d;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
@@ -2951,9 +2950,14 @@ img.image-mosaic-play.trailer {
   top: 172px;
 }
 .tick img.image-mosaic-play,
-.tick.single img.image-mosaic-play {
+.session img.image-mosaic-play {
   left: 65px;
   top: 65px;
+}
+.tick.single img.image-mosaic-play,
+.session.single img.image-mosaic-play {
+  left: 92px;
+  top: 92px;
 }
 span.image-mosaic-play-text {
   position: absolute;
@@ -3064,7 +3068,7 @@ a.post-input-avatar img {
   -moz-border-radius: 0 0 2px 2px;
   border-radius: 0 0 2px 2px;
 }
-.post-files {
+.new-session .post-files {
   margin-bottom: 10px;
 }
 .new-session-post-form .post-select {
@@ -3520,6 +3524,11 @@ table.post-params label {
   line-height: 274px;
   font-size: 72px;
 }
+.event-right > .tick .mini-map,
+.tick-list .mini-map {
+  top: 0;
+  right: 0;
+}
 .session-empty {
   font-size: 12px;
   font-style: italic;
@@ -3597,6 +3606,10 @@ ul.session-ticks {
 .event:hover .tick .tick-inner {
   border-color: #e6e6e6;
 }
+.event-right > .tick .tick-inner,
+.tick-list .tick .tick-inner {
+  width: 381px;
+}
 .tick .session-tick-name {
   display: block;
   margin-right: 100px;
@@ -3624,7 +3637,7 @@ ul.session-ticks {
   margin-top: 15px;
 }
 .tick-media + .tick-media {
-  margin-top: 0;
+  margin-top: 9px;
 }
 .tick-media .event-timeline-label {
   left: -51px;
@@ -3635,8 +3648,8 @@ ul.session-ticks {
   margin-bottom: 5px;
 }
 .single .tick-media .image-mosaic {
-  width: 381px;
-  height: 210px;
+  width: 538px;
+  height: 303px;
 }
 .session-tick-stars {
   display: inline-block;
@@ -3723,7 +3736,11 @@ a.session-tick-button:active {
   width: auto;
 }
 .tick-list .tick {
-  margin: 0 0 2px 108px;
+  margin: 0 0 0 118px;
+  min-height: 127px;
+}
+.tick-list .tick + .tick {
+  margin-top: 15px;
 }
 .tick-list-group-heading {
   border-bottom: 1px solid #f2f2f2;

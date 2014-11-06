@@ -44,7 +44,7 @@
               <span><%= grade %></span>
             </div>
             <% _.each(ticks[grade], _.bind(function (tick) { %>
-              <li class="tick" id="<%= tick.id %>" data-type="<%= tick.type %>"></li>
+              <li class="tick tick-narrow" id="<%= tick.id %>" data-type="<%= tick.type %>"></li>
             <% }, this)); %>
           </ul>
         <% } %>

@@ -71,6 +71,7 @@ define([
         } else {
           this.$el.attr('id', this.model.id);
           this.$el.appendTo(this.wrap);
+          this.$el.addClass('single');
         }
       }
       if (this.app.profile.member && this.model.get('author').id
@@ -83,7 +84,6 @@ define([
 
       // Render title if single
       if (!this.parentView) {
-        this.$el.addClass('single');
         this.app.title('Island | ' + this.model.get('author').displayName
             + ' - ' + this.model.get('ascent').name);
         this.title = _.template(title).call(this);
@@ -134,7 +134,8 @@ define([
 
       // Create a mosaic for each group.
       _.each(mosaics, _.bind(function (o) {
-        util.createImageMosaic(o.images, 381, 210, _.bind(function (item) {
+        var el = this.$('.image-mosaic[data-id="' + o.id + '"]');
+        util.createImageMosaic(o.images, el.width(), el.height(), _.bind(function (item) {
           var src = item.data.ssl_url || item.data.url;
           var anc = $('<a class="fancybox" data-type="' + o.type + '" rel="g-' + o.id
               + '" href="' + src + '">');
@@ -142,8 +143,10 @@ define([
           var img = $('<img src="' + src + '" />').css(item.img).wrap(
               $('<a class="fancybox" rel="g-' + o.id + '">')).appendTo(div);
           if (o.type === 'video' && item.first) {
+            var s = (this.parentView && this.parentView.parentView)
+                || this.$el.hasClass('tick-narrow') ? 80: 120; // God help us.
             var play = $('<img src="' + __s + '/img/play.png" class="image-mosaic-play"'
-                + ' width="80" height="80" />');
+                + ' width="' + s + '" height="' + s + '" />');
             play.appendTo(div);
             if (item.data.trailer) {
               var subtext = $('<span class="image-mosaic-play-text">(trailer)</span>');
@@ -151,7 +154,7 @@ define([
               play.addClass('trailer');
             }
           }
-          anc.appendTo(this.$('.image-mosaic[data-id="' + o.id + '"]'));
+          anc.appendTo(el);
         }, this),
 
         // Mosaic is done and attached to dom.
@@ -228,20 +231,20 @@ define([
                   });
                 }
 
-                if (this.parentView) {
-                  // Place the video in the fancybox.
-                  $.fancybox(this.videoTemp.call(this, {
-                      data: hd, width: 1024, height: 576}), fancyOpts);
-                } else {
+                // if (this.parentView) {
+                //   // Place the video in the fancybox.
+                //   $.fancybox(this.videoTemp.call(this, {
+                //       data: hd, width: 1024, height: 576}), fancyOpts);
+                // } else {
                   // Lay the video over the mosaic.
-                  $(this.videoTemp.call(this, {data: hd, width: 1024, height: 576}))
+                  $(this.videoTemp.call(this, {data: hd, width: el.width(), height: el.height()}))
                       .appendTo(this.$('.image-mosaic[data-id="' + o.id + '"]'));
                   _.extend(params, {
-                    width: '1024',
-                    height: '576'
+                    width: el.width().toString(),
+                    height: el.height().toString()
                   });
                   this.$('span.image-mosaic-play-text').hide();
-                }
+                // }
                 
                 // Finally, play the video.
                 jwplayer('video-' + o.id).setup(params);
@@ -265,7 +268,7 @@ define([
       }
 
       // Render map.
-      if (!this.parentView) {
+      if (!this.options.mapless) {
         this.map = new MiniMap(this.app, {
           el: this.$('.mini-map'),
           location: this.model.get('ascent').location

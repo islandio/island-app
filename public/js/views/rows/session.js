@@ -70,8 +70,8 @@ define([
         var data = _.find(action.ticks, function (t) {
           return t.id === el.attr('id');
         });
-        this.ticks.push(new Tick({parentView: this, el: el, model: data},
-            this.app).render());
+        this.ticks.push(new Tick({parentView: this, el: el, model: data,
+            mapless: true}, this.app).render());
       }, this));
 
       // Render title if single
