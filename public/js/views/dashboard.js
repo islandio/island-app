@@ -26,7 +26,7 @@ define([
     },
 
     render: function () {
-      this.title();
+      this.setTitle();
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
 
@@ -77,7 +77,7 @@ define([
       this.empty();
     },
 
-    title: function () {
+    setTitle: function () {
       var name = this.app.profile.member.displayName;
       this.app.title('Island | ' + name + ' - Home');
     }

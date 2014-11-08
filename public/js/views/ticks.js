@@ -27,8 +27,11 @@ define([
       this.subscriptions = [];
 
       // Socket subscriptions
-      // this.app.rpc.socket.on('tick.new', _.bind(this.collect, this));
-      // this.app.rpc.socket.on('tick.removed', _.bind(this._remove, this));
+      this.app.rpc.socket.on('tick.new', _.bind(this.collect, this));
+      this.app.rpc.socket.on('tick.removed', _.bind(this._remove, this));
+
+      // this.app.rpc.socket.on('media.new', _.bind(this.collect, this));
+      // this.app.rpc.socket.on('media.removed', _.bind(this._remove, this));
 
       this.on('rendered', this.setup, this);
     },

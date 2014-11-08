@@ -26,11 +26,7 @@ define([
 
     render: function () {
       this.model = new Ascent(this.app.profile.content.page);
-
-      // Set page title.
-      this.app.title('Island | ' + this.model.get('name')
-          + ' - ' + [this.model.get('crag'),
-          this.model.get('country')].join(', '));
+      this.setTitle();
       this.title = _.template(title).call(this);
 
       this.template = _.template(template);
@@ -84,6 +80,12 @@ define([
       if (path) {
         this.app.router.navigate(path, {trigger: true});
       }
+    },
+
+    setTitle: function () {
+      this.app.title('Island | ' + this.model.get('name')
+          + ' - ' + [this.model.get('crag'),
+          this.model.get('country')].join(', '));
     }
 
   });

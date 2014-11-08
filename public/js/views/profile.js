@@ -41,15 +41,10 @@ define([
 
     render: function () {
       this.$el.html(this.template.call(this)).appendTo(this.wrap).show();
-
-      // Set page title
-      if (this.model.get('role') === 2)
+      if (this.model.get('role') === 2) {
         this.$el.addClass('company');
-      var doctitle = 'Island | ' + this.model.get('displayName');
-      doctitle += ' (@' + this.model.get('username') + ')';
-      this.app.title(doctitle);
-
-      // Render title.
+      }
+      this.setTitle();
       this.title = _.template(title).call(this);
 
       this.trigger('rendered');
@@ -102,12 +97,16 @@ define([
 
     navigate: function (e) {
       e.preventDefault();
-
-      // Route to wherever.
       var path = $(e.target).closest('a').attr('href');
-      if (path)
+      if (path) {
         this.app.router.navigate(path, {trigger: true});
+      }
     },
+
+    setTitle: function () {
+      this.app.title('Island | ' + this.model.get('displayName') + ' (@'
+          + this.model.get('username') + ')');
+    }
 
   });
 });

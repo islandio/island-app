@@ -442,6 +442,7 @@ define([
     // pass a function to insert into the DOM
     createImageMosaic: function (images, width, height, insertFunction, cb) {
       if (images.length === 0) {
+        cb();
         return;
       }
 
@@ -468,6 +469,7 @@ define([
           data: data,
           fist: true
         });
+        cb();
         return;
       }
 
@@ -501,12 +503,10 @@ define([
       var width = (W - H) / _.size(mosaic);
 
       _.each(mosaic, function (images, i) {
-
         var column = {y: 0, items: []};
 
         // create the columns
         _.each(images, function (data, j) {
-
           var height = Math.round(width * data.meta.height / data.meta.width);
           column.items.push({
             img: {
@@ -522,7 +522,6 @@ define([
             data: data
           });
           column.y += height + P;
-
         });
 
         // determine the item heights
@@ -531,30 +530,24 @@ define([
         while (Math.floor(column.y - pad) !== H && s < 1000) {
           ++s;
           _.each(column.items, function (item, i) {
-
             var delta = H - Math.floor(column.y - pad);
             var dir = Math.abs(delta) / (delta || 1);
             item.div.height += dir;
             for (var j=i+1; j < column.items.length; ++j)
               column.items[j].div.top += dir;
             column.y += dir; 
-
           });
         }
 
         // expand, shrink, center items
         _.each(column.items, function (item) {
-
           var ar = item.img.width / item.img.height;
-
           if (item.img.height < item.div.height) {
             item.img.height = item.div.height;
             item.img.width = ar * item.img.height;
           }
-
           item.img.top = - (item.img.height - item.div.height) / 2;
           item.img.left = - (item.img.width - item.div.width) / 2;
-
         });
 
         // finally, size and show the elements

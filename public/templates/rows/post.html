@@ -1,12 +1,10 @@
 <%
-  var video = _.find(this.model.get('medias'), function (m) {
-    return m.type === 'video';
-  });
-  var typeClass = video ? 'post-title-video': 'post-title-photos';
-
+  var p = this.model.attributes;
   var gravatar = 'https://www.gravatar.com/avatar/'
       + this.model.get('author').gravatar + '?s=26&d='
       + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
+
+  var mediaTypes = _.uniq(_.pluck(p.medias, 'type'));
 %>
 
 <% if (this.parentView) { %>
@@ -29,26 +27,46 @@
     </span>
   <% } %>
 <% } %>
-<div class="post-media">
-  <span class="event-timeline-label">
-    <i class="icon-<%= video ? 'youtube-play': 'picture' %>"></i>
-  </span>
-  <div class="post-mosaic"></div>
-</div>
-<% if (this.model.link()) { %>
+<% if (_.contains(mediaTypes, 'image')) { %>
+  <div class="post-media">
+    <span class="event-timeline-label">
+      <i class="icon-picture"></i>
+    </span>
+    <div class="image-mosaic" data-type="image" data-id="<%= p.id %>"></div>
+  </div>
+<% } %>
+<% if (_.contains(mediaTypes, 'video')) {
+  var vids = _.filter(p.medias, function (m) { return m.type === 'video'; });
+  vids = _.uniq(vids, function (v) {
+    return v.video.original_id;
+  });
+  vids = vids.sort(function (a, b) {
+    return a.video._index - b.video._index;
+  });
+  _.each(vids, function (v) { %>
+    <div class="post-media">
+      <span class="event-timeline-label">
+        <i class="icon-youtube-play"></i>
+      </span>
+      <div class="image-mosaic" data-type="video" data-id="<%= v.video.original_id %>"></div>
+    </div>
+  <% }) %>
+<% } %>
+
+<!-- < if (this.model.link()) { >
   <div class="post-link">
     <span class="event-timeline-label">
       <i class="icon-youtube-play"></i>
     </span>
-    <% if (this.parentView) { %>
-      <iframe src="<%= this.model.get('link') %>" width="561" height="316"
+    < if (this.parentView) { >
+      <iframe src="<= this.model.get('link') >" width="561" height="316"
           frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
-    <% } else { %>
-      <iframe src="<%= this.model.get('link') %>" width="1024" height="576"
+    < } else { >
+      <iframe src="<= this.model.get('link') >" width="1024" height="576"
           frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
-    <% } %>
+    < } >
   </div>
-<% } %>
+< } > -->
 <div class="post-body">
   <%= this.styleBody(this.model.body(!this.parentView)) %>
 </div>

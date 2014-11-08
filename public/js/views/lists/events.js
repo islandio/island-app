@@ -103,7 +103,6 @@ define([
       return this;
     },
 
-
     renderLast: function (pagination) {
       List.prototype.renderLast.call(this, pagination);
 
@@ -152,47 +151,6 @@ define([
       }, this), 20);
       return this;
     },
-
-
-    // render the latest model
-    // (could be newly arrived or older ones from pagination)
-    // renderLast: function (pagination) {
-    //   List.prototype.renderLast.call(this, pagination);
-
-    //   // Handle day headers.
-    //   var view = pagination !== true && this.collection.options
-    //       && this.collection.options.reverse ?
-    //       this.views[0]:
-    //       this.views[this.views.length - 1];  
-    //   var ms = new Date(view.model.get('date')).valueOf();
-    //   var header = this.$('.event-day-header').filter(function () {
-    //     return ms >= Number($(this).data('beg'))
-    //         && ms <= Number($(this).data('end'));
-    //   });
-    //   if (header.length > 0) {
-    //     if (pagination !== true) {
-    //       header.detach().insertBefore(view.$el);
-    //     }
-    //   } else {
-    //     var _date = new Date(view.model.get('date'));
-    //     var beg = new Date(_date.getFullYear(), _date.getMonth(),
-    //         _date.getDate());
-    //     var end = new Date(_date.getFullYear(), _date.getMonth(),
-    //         _date.getDate(), 23, 59, 59, 999);
-    //     header = $('<div class="event-day-header" data-beg="' + beg.valueOf()
-    //         + '" data-end="' + end.valueOf() + '">' + '<span>'
-    //         + end.format('mmmm dd, yyyy') + '</span></div>');
-    //     header.insertBefore(view.$el);
-    //   }
-
-    //   // Check for more.
-    //   _.delay(_.bind(function () {
-    //     if (pagination !== true) {
-    //       this.checkHeight();
-    //     }
-    //   }, this), 20);
-    //   return this;
-    // },
 
     events: {
       'focus textarea[name="body"].post-input': 'focus',
@@ -455,16 +413,16 @@ define([
               'Uploading ' + per + '%');
           bar.width((br / be * 100) + '%');
         },
-        onError: function (assembly) {
+        onError: _.bind(function (assembly) {
           mps.publish('flash/new', [{
             message: assembly.error + ': ' + assembly.message,
             level: 'error',
             sticky: true
           }, false]);
           bar.parent().remove();
-          this.parentView.title();
+          this.parentView.setTitle();
           attachment.uploading = false;
-        },
+        }, this),
         onSuccess: _.bind(function (assembly) {
           if (_.isEmpty(assembly.results)) {
             mps.publish('flash/new', [{
@@ -476,7 +434,7 @@ define([
             attachment.assembly = assembly;
             txt.text('');
           }
-          this.parentView.title();
+          this.parentView.setTitle();
           attachment.uploading = false;
         }, this)
       };
@@ -552,10 +510,12 @@ define([
       var payload = this.postForm.serializeObject();
       delete payload.params;
       var results = {};
-      _.each(this.attachments, function (a) {
+      _.each(this.attachments, function (a, i) {
         if (!a.assembly) return;
         _.each(a.assembly.results, function (v, k) {
           _.each(v, function (r) {
+            r._index = i;
+            r.assembly_id = a.assembly.assembly_id;
             if (results[k]) {
               results[k].push(r);
             } else {

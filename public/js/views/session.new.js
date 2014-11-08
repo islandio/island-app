@@ -353,6 +353,7 @@ define([
         if (!a.assembly) return;
         _.each(a.assembly.results, function (v, k) {
           _.each(v, function (r) {
+            r._index = i;
             r.assembly_id = a.assembly.assembly_id;
             if (results[k]) {
               results[k].push(r);

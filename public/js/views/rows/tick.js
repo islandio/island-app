@@ -184,8 +184,8 @@ define([
 
                 // Video params
                 var params = {
-                  width: '1024',
-                  height: '576',
+                  width: el.width().toString(),
+                  height: el.height().toString(),
                   autostart: true,
                   primary: 'flash',
                   ga: {},

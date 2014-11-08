@@ -75,29 +75,31 @@
     </p>
   <% } %>
   <div class="clear"></div>
-  <% _.each(mediaTypes, function (mt) { %>
-    <% if (mt === 'image') { %>
+  <% if (_.contains(mediaTypes, 'image')) { %>
+    <div class="tick-media">
+      <span class="event-timeline-label">
+        <i class="icon-picture"></i>
+      </span>
+      <div class="image-mosaic" data-type="image" data-id="<%= t.id %>"></div>
+    </div>
+  <% } %>
+  <% if (_.contains(mediaTypes, 'video')) {
+    var vids = _.filter(t.medias, function (m) { return m.type === 'video'; });
+    vids = _.uniq(vids, function (v) {
+      return v.video.original_id;
+    });
+    vids = vids.sort(function (a, b) {
+      return a.video._index - b.video._index;
+    });
+    _.each(vids, function (v) { %>
       <div class="tick-media">
         <span class="event-timeline-label">
-          <i class="icon-picture"></i>
+          <i class="icon-youtube-play"></i>
         </span>
-        <div class="image-mosaic" data-type="image" data-id="<%= t.id %>"></div>
+        <div class="image-mosaic" data-type="video" data-id="<%= v.video.original_id %>"></div>
       </div>
-    <% } else if (mt === 'video') {
-      var vids = _.filter(t.medias, function (m) { return m.type === 'video'; });
-      vids = _.uniq(vids, function (v) {
-        return v.video.original_id;
-      });
-      _.each(vids, function (v) { %>
-        <div class="tick-media">
-          <span class="event-timeline-label">
-            <i class="icon-youtube-play"></i>
-          </span>
-          <div class="image-mosaic" data-type="video" data-id="<%= v.video.original_id %>"></div>
-        </div>
-      <% }) %>
-    <% } %>
-  <% }) %>
+    <% }) %>
+  <% } %>
   <% if (this.app.profile.member) { %>
     <a href="javascript:;" class="muted hangten">HangTen</a>
     <span class="info-divider">&nbsp;&middot;&nbsp;</span>

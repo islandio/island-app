@@ -2891,19 +2891,8 @@ textarea.comment-input {
 .post.single .event-timeline-label {
   display: none;
 }
-.page-title span.post-title-photos {
-  color: #4bb8d7;
-}
-.page-title span.post-title-video {
+.page-title span.post-title {
   color: #d04c38;
-}
-.post-media,
-.post-link {
-  position: relative;
-}
-.event-title + .post-media,
-.event-title + .post-media + .post-link {
-  margin-top: 6px;
 }
 .image-mosaic {
   position: relative;
@@ -2935,16 +2924,10 @@ textarea.comment-input {
 }
 img.image-mosaic-play {
   position: absolute !important;
-  left: 78px;
-  top: 78px;
   opacity: 0.9;
 }
 img.image-mosaic-play.trailer {
   top: 53px;
-}
-.single img.image-mosaic-play {
-  left: 197px;
-  top: 197px;
 }
 .single img.image-mosaic-play.trailer {
   top: 172px;
@@ -2958,6 +2941,14 @@ img.image-mosaic-play.trailer {
 .session.single img.image-mosaic-play {
   left: 92px;
   top: 92px;
+}
+.post-media img.image-mosaic-play {
+  left: 98px;
+  top: 98px;
+}
+.single .post-media img.image-mosaic-play {
+  left: 228px;
+  top: 228px;
 }
 span.image-mosaic-play-text {
   position: absolute;
@@ -2977,7 +2968,7 @@ span.image-mosaic-play-text {
   left: 225px;
 }
 .post .post-body {
-  margin: 5px 0 0;
+  margin: 10px 0 0;
   font-size: 14px;
   line-height: 22px;
   color: #4d4d4d;
@@ -3632,20 +3623,25 @@ ul.session-ticks {
   font-size: 11px;
   line-height: 13px;
 }
+.post-media,
 .tick-media {
   position: relative;
   margin-top: 15px;
 }
+.post-media + .post-media,
 .tick-media + .tick-media {
   margin-top: 9px;
 }
 .tick-media .event-timeline-label {
   left: -51px;
 }
+.post-media .image-mosaic,
+.tick-media .image-mosaic {
+  margin-bottom: 5px;
+}
 .tick-media .image-mosaic {
   width: 381px;
   height: 210px;
-  margin-bottom: 5px;
 }
 .single .tick-media .image-mosaic {
   width: 538px;

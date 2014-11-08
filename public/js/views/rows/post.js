@@ -16,7 +16,7 @@ define([
   'views/lists/comments',
   'text!../../../templates/confirm.html',
   'device'
-], function ($, _, Backbone, mps, rest, util, Model, template, title, video,
+], function ($, _, Backbone, mps, rest, util, Model, template, title, videoTemp,
       Comments, confirm) {
   return Backbone.View.extend({
 
@@ -32,6 +32,7 @@ define([
       this.parentView = options.parentView;
       this.wrap = options.wrap;
       this.template = _.template(template);
+      this.videoTemp = _.template(videoTemp);
 
       // Shell events.
       this.on('rendered', this.setup, this);
@@ -49,33 +50,13 @@ define([
 
     render: function () {
 
-      function insert(item) {
-        var src = item.data.ssl_url || item.data.url;
-        var anc = $('<a class="fancybox" rel="g-' + this.model.id + '" href="'
-            + src + '">');
-        var div = $('<div class="post-mosaic-wrap">').css(item.div).appendTo(anc);
-        var img = $('<img src="' + src + '" />').css(item.img).wrap(
-            $('<a class="fancybox" rel="g-'
-            + this.model.id + '">')).appendTo(div);
-        if (item.video) {
-          var play = $('<img src="' + __s + '/img/play.png" class="post-mosaic-play"'
-              + ' width="160" height="160" />');  
-          play.appendTo(div);
-          if (this.model.get('product') && this.model.get('product').sku) {
-            var subtext =
-                $('<span class="post-mosaic-play-text">(trailer)</span>');
-            subtext.appendTo(div);
-            play.addClass('trailer');
-          }
-        }
-        anc.appendTo(this.$('.post-mosaic'));
-      }
-
       // Render content
       this.$el.html(this.template.call(this));
-      if (this.parentView)
+      if (this.parentView) {
         this.$el.prependTo(this.parentView.$('.event-right'));
-      else this.$el.appendTo(this.wrap);
+      } else {
+        this.$el.appendTo(this.wrap);
+      }
 
       // Render title if single
       if (!this.parentView) {
@@ -83,28 +64,176 @@ define([
         this.app.title('Island | ' + this.model.get('author').displayName
             + ' - ' + (this.model.get('title')
             || new Date(this.model.get('created')).format('mmm d, yyyy')));
-
-        // Render title.
         this.title = _.template(title).call(this);
       }
 
-      // Trigger setup.
+      // Group medias by type.
+      //   - images can all be in one mosaic
+      //   - each video set needs its own mosaic
+      //     - (set = three vids of diff quality for each uploaded vid)
+      var mosaics = [];
+      _.each(this.model.get('medias'), _.bind(function (m) {
+        switch (m.type) {
+          case 'image':
+            var o = _.find(mosaics, function (o) {
+              return o.type === 'image';
+            });
+            if (!o) {
+              o = {type: 'image', images: []};
+              mosaics.push(o);
+              o.id = this.model.id; // will be uniq cause only one photo mosaic
+            }
+            o.images.push(m.image);
+            break;
+          case 'video':
+            if (m.quality !== 'hd') {
+              return;
+            }
+            var o = {type: 'video', images: []};
+            o.images.push(m.poster);
+            _.each(m.thumbs, function (t, i) {
+              if (i !== 1) {
+                o.images.push(t);
+              }
+            });
+            o.id = m.video.original_id; // original_id is uniq for vid set
+            mosaics.push(o);
+            break;
+        }
+      }, this));
+
+      var fancyOpts = {
+        openEffect: 'fade',
+        closeEffect: 'fade',
+        closeBtn: false,
+        nextClick: true,
+        padding: 0
+      };
+
+      // Create a mosaic for each group.
+      _.each(mosaics, _.bind(function (o) {
+        var el = this.$('.image-mosaic[data-id="' + o.id + '"]');
+        util.createImageMosaic(o.images, el.width(), el.height(), _.bind(function (item) {
+          var src = item.data.ssl_url || item.data.url;
+          var anc = $('<a class="fancybox" data-type="' + o.type + '" rel="g-' + o.id
+              + '" href="' + src + '">');
+          var div = $('<div class="image-mosaic-wrap">').css(item.div).appendTo(anc);
+          var img = $('<img src="' + src + '" />').css(item.img).wrap(
+              $('<a class="fancybox" rel="g-' + o.id + '">')).appendTo(div);
+          if (o.type === 'video' && item.first) {
+            var s = 120;
+            var play = $('<img src="' + __s + '/img/play.png" class="image-mosaic-play"'
+                + ' width="' + s + '" height="' + s + '" />');
+            play.appendTo(div);
+            if (item.data.trailer) {
+              var subtext = $('<span class="image-mosaic-play-text">(trailer)</span>');
+              subtext.appendTo(div);
+              play.addClass('trailer');
+            }
+          }
+          anc.appendTo(el);
+        }, this),
+
+        // Mosaic is done and attached to dom.
+        _.bind(function () {
+
+          function getVideo(quality) {
+            return _.find(this.model.get('medias'), function (m) {
+              return m.type === 'video' && m.quality === quality
+                  && m.video.original_id === o.id;
+            });
+          }
+
+          // Setup click handler.
+          switch (o.type) {
+            case 'image':
+              this.$('.fancybox[data-type="image"]').fancybox(fancyOpts);
+              break;
+            case 'video':
+              this.$('.fancybox[data-type="video"][rel="g-' + o.id + '"]')
+                  .click(_.bind(function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+
+                var iphone = getVideo.call(this, 'iphone');
+                var ipad = getVideo.call(this, 'ipad');
+                var hd = getVideo.call(this, 'hd');
+
+                // Video params
+                var params = {
+                  width: el.width().toString(),
+                  height: el.height().toString(),
+                  autostart: true,
+                  primary: 'flash',
+                  ga: {},
+                  sharing: {
+                    link: window.location.protocol + '//'
+                        + window.location.host + '/' + this.model.get('key'),
+                    code: "<iframe width='100%' height='100%' src='//"
+                        + window.location.host + "/embed/"
+                        + ipad.video.id + "' frameborder='0'></iframe>"
+                  }
+                };
+
+                // Desktops and mobile tablets.
+                if (!device.mobile() || (device.mobile() && device.tablet())) {
+                  _.extend(params, {
+                    playlist: [{
+                      image: hd.poster.ssl_url,
+                      sources: [{
+                        file: device.ios() ? ipad.video.ios_url: ipad.video.ssl_url,
+                        label: '1200k'
+                      },
+                      {
+                        file: device.ios() ? hd.video.ios_url: hd.video.ssl_url,
+                        label: '4000k'
+                      }]
+                    }]
+                  });
+
+                // Mobile phones, ipod, etc.
+                } else {
+                  _.extend(params, {
+                    playlist: [{
+                      image: iphone.poster.ssl_url,
+                      sources: [{
+                        file: device.ios() ? iphone.video.ios_url: iphone.video.ssl_url,
+                        label: '700k'
+                      },
+                      {
+                        file: device.ios() ? ipad.video.ios_url: ipad.video.ssl_url,
+                        label: '1200k'
+                      }]
+                    }]
+                  });
+                }
+
+                // if (this.parentView) {
+                //   // Place the video in the fancybox.
+                //   $.fancybox(this.videoTemp.call(this, {
+                //       data: hd, width: 1024, height: 576}), fancyOpts);
+                // } else {
+                  // Lay the video over the mosaic.
+                  $(this.videoTemp.call(this, {data: hd, width: el.width(), height: el.height()}))
+                      .appendTo(this.$('.image-mosaic[data-id="' + o.id + '"]'));
+                  _.extend(params, {
+                    width: el.width().toString(),
+                    height: el.height().toString()
+                  });
+                  this.$('span.image-mosaic-play-text').hide();
+                // }
+                
+                // Finally, play the video.
+                jwplayer('video-' + o.id).setup(params);
+
+                return false;
+              }, this));
+              break;
+          }
+        }, this));
+      }, this));
+
       this.trigger('rendered');
-
-      this.video = {};
-
-      var media = this.model.get('medias');
-      util.createImageMosaic(media
-          , this.parentView ? 561 : 1024
-          , this.parentView ? 316 : 576
-          , this.video
-          , _.bind(insert, this));
-
-      if (media && media.length === 0) this.$('.post-media').hide();
-
-      // Handle fancybox.
-      this.fancybox();
-
       return this;
     },
 
@@ -150,105 +279,6 @@ define([
       }
     },
 
-    fancybox: function () {
-
-      // View options.
-      var opts = {
-        openEffect: 'fade',
-        closeEffect: 'fade',
-        closeBtn: false,
-        nextClick: true,
-        padding: 0
-      };
-
-      // Bind anchor clicks.
-      if (!_.isEmpty(this.video)) {
-        this.$('.fancybox').click(_.bind(function (e) {
-          e.stopPropagation();
-          e.preventDefault();
-
-          var iphone = this.videoFor('iphone');
-          var ipad = this.videoFor('ipad');
-          var hd = this.videoFor('hd');
-
-          // Video params
-          var params = {
-            width: '1024',
-            height: '576',
-            autostart: true,
-            primary: 'flash',
-            ga: {},
-            sharing: {
-              link: window.location.protocol + '//'
-                  + window.location.host + '/' + this.model.get('key'),
-              code: "<iframe width='100%' height='100%' src='//"
-                  + window.location.host + "/embed/"
-                  + ipad.video.id + "' frameborder='0'></iframe>"
-            }
-          };
-
-          // Desktops and mobile tablets.
-          if (!device.mobile() || (device.mobile() && device.tablet())) {
-            _.extend(params, {
-              playlist: [{
-                image: hd.poster.ssl_url,
-                sources: [{
-                  file: device.ios() ? ipad.video.ios_url: ipad.video.ssl_url,
-                  label: '1200k'
-                },
-                {
-                  file: device.ios() ? hd.video.ios_url: hd.video.ssl_url,
-                  label: '4000k'
-                }]
-              }]
-            });
-
-          // Mobile phones, ipod, etc.
-          } else {
-            _.extend(params, {
-              playlist: [{
-                image: iphone.poster.ssl_url,
-                sources: [{
-                  file: device.ios() ? iphone.video.ios_url: iphone.video.ssl_url,
-                  label: '700k'
-                },
-                {
-                  file: device.ios() ? ipad.video.ios_url: ipad.video.ssl_url,
-                  label: '1200k'
-                }]
-              }]
-            });
-          }
-
-          if (this.parentView) {
-
-            // Place the video in the fancybox.
-            $.fancybox(_.template(video)({
-                data: this.video, width: 1024, height: 576}), opts);
-
-          } else {
-
-            // Lay the video over the mosaic.
-            $(_.template(video)({data: this.video, width: 1024, height: 576}))
-                .appendTo(this.$('.post-mosaic'));
-            _.extend(params, {
-              width: '1024',
-              height: '576'
-            });
-            this.$('span.post-mosaic-play-text').hide();
-
-          }
-          
-          // Finally, play the video.
-          jwplayer('video-' + this.video.id).setup(params);
-
-          return false;
-        }, this));
-      } else {
-        this.$('.fancybox').fancybox(opts);
-      }
-    },
-
     delete: function (e) {
       e.preventDefault();
 
@@ -287,12 +317,6 @@ define([
       }, this));
 
       return false;
-    },
-
-    videoFor: function (quality) {
-      return _.find(this.model.get('medias'), function (m) {
-        return m.type === 'video' && m.quality === quality;
-      });
     },
 
     when: function () {
