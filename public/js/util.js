@@ -287,11 +287,19 @@ define([
 
     formatText: function (str) {
       var link = /(?!src=")(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-      str = str.replace(/\n+/g, '</p><p>');
-      str = str.replace(link, function (txt) {
-        return ('<a href="' + txt + '" target="_blank">' + txt + '</a>');
+      var parts = _.reject(str.split('\n'), function (s) {
+        return s.trim() === '';
       });
-      return str.length > 0 ? '<p>' + str + '</p>': '';
+      if (parts.length === 0) {
+        return '';
+      } else {
+        parts = _.map(parts, function (p) {
+          return p.replace(link, function (txt) {
+            return ('<a href="' + txt + '" target="_blank">' + txt + '</a>');
+          });
+        });
+        return '<p>' + parts.join('</p><p>') + '</p>';
+      }
     },
 
     addCommas: function (str) {
@@ -308,7 +316,6 @@ define([
     sanitize: function(str) {
       str = str.replace(/\<script\>/ig, '');
       str = str.replace(/\<\/script\>/ig, '');
-      str = str.replace(/\//ig, '');
       str = $('<p>').html(str).text().trim();
       return str;
     },
@@ -349,26 +356,63 @@ define([
       return str;
     },
 
-    parseVideoURL: function (url) {
-      if (!url) return false;
+    getVideoLinks: function (str) {
+      if (!str) return false;
 
-      // Try Vimeo.
-      var m = url.match(/vimeo.com\/(?:channels\/|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|)(\d+)(?:$|\/|\?)/);
-      if (m)
-        return {link: {
-          id: m[3],
-          type: 'vimeo'
-        }};
+      // Splitting on newlines makes matching easier.
+      var parts = _.reject(str.split('\n'), function (p) {
+        return p.trim() === '';
+      });
 
-      // Try Youtube.
-      m = url.match(/(youtu\.be\/|youtube\.com\/(watch\?(.*&)?v=|(embed|v)\/))([^\?&"'>]+)/);
-      if (m)
-        return {link: {
-          id: m[5],
-          type: 'youtube'
-        }};
-      else
-        return false;
+      // Get all links.
+      var linkRx = /(?!src=")(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+      var links = [];
+      _.each(parts, function (p) {
+        var m;
+        while (m = linkRx.exec(p)) {
+          links.push(m[1]);
+        }
+      });
+
+      // Type of videos to look for.
+      var tests = [
+        {
+          type: 'vimeo',
+          rx: /vimeo.com\/(?:channels\/|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|)(\d+)(?:$|\/|\?)/i,
+          id: 3
+        },
+        {
+          type: 'youtube',
+          rx: /(youtu\.be\/|youtube\.com\/(watch\?(.*&)?v=|(embed|v)\/))([^\?&"'>]+)/i,
+          id: 5
+        }
+      ];
+      var results = [];
+
+      // Run tests on each link.
+      _.each(links, function (l) {
+        _.each(tests, function (t) {
+          var m = l.match(t.rx);
+          if (m) {
+            results.push({id: m[t.id], type: t.type});
+          }
+        });
+      });
+
+      // Build embed links.
+      results = _.map(results, function (r) {
+        switch (r.type) {
+          case 'vimeo':
+            r.link = 'https://player.vimeo.com/video/' + r.id + '?api=1';
+            break;
+          case 'youtube':
+            r.link = '//www.youtube.com/embed/' + r.id;
+            break;
+        }
+        return r;
+      });
+
+      return results;
     },
 
     customSelects: function (ctx) {

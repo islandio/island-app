@@ -328,12 +328,12 @@ define([
     },
 
     // insert HTML to create anchor tags, strong @'s etc
-    styleBody: function(body) {
-      // Strong names
-      return body.replace(/([@#][^\s:]+)/g, '<strong>$1</strong>')
-          // Add anchors
-          .replace(/(http[^\s\)]+)/g, '<a href="$1">$1</a>')
-    }
+    // styleBody: function(body) {
+    //   // Strong names
+    //   return body.replace(/([@#][^\s:]+)/g, '<strong>$1</strong>')
+    //       // Add anchors
+    //       .replace(/(http[^\s\)]+)/g, '<a href="$1">$1</a>')
+    // }
 
   });
 });

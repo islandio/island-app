@@ -52,23 +52,22 @@
     </div>
   <% }) %>
 <% } %>
-
-<!-- < if (this.model.link()) { >
-  <div class="post-link">
+<% _.each(this.model.get('videoEmbeds'), _.bind(function (v) { %>
+  <div class="post-media">
     <span class="event-timeline-label">
       <i class="icon-youtube-play"></i>
     </span>
-    < if (this.parentView) { >
-      <iframe src="<= this.model.get('link') >" width="561" height="316"
+    <% if (this.parentView) { %>
+      <iframe src="<%= v.link %>" width="561" height="316"
           frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
-    < } else { >
-      <iframe src="<= this.model.get('link') >" width="1024" height="576"
+    <% } else { %>
+      <iframe src="<%= v.link %>" width="1024" height="576"
           frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
-    < } >
+    <% } %>
   </div>
-< } > -->
+<% }, this)); %>
 <div class="post-body">
-  <%= this.styleBody(this.model.body(!this.parentView)) %>
+  <%= this.model.body(!this.parentView) %>
 </div>
 <div class="event-info">
   <% if (this.app.profile.member) { %>

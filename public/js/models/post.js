@@ -9,6 +9,10 @@ define([
 ], function (_, Backbone, util) {
   return Backbone.Model.extend({
 
+    initialize: function () {
+      this.set('videoEmbeds', util.getVideoLinks(this.get('body')));
+    },
+
     formatAuthorFor: function (member) {
       if (member && member.id === this.get('author').id)
         return 'You';
@@ -43,24 +47,6 @@ define([
     body: function (full) {
       var txt = util.formatText(this.get('body'));
       return txt;
-    },
-
-    link: function () {
-      var vid = util.parseVideoURL(this.get('body'));
-      if (vid) {
-        switch (vid.link.type) {
-          case 'vimeo':
-            this.set('link', 'https://player.vimeo.com/video/' + vid.link.id + '?api=1');
-            break;
-          case 'youtube':
-            this.set('link', '//www.youtube.com/embed/' + vid.link.id);
-            break;
-        }
-        return true;
-      }
-      // TODO: add other link types.
-      // e.g. article, photo, etc.
-      else return false;
     },
 
     views: function () {

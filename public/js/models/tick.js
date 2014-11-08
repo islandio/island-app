@@ -9,6 +9,10 @@ define([
 ], function (_, Backbone, util) {
   return Backbone.Model.extend({
 
+    initialize: function () {
+      this.set('videoEmbeds', util.getVideoLinks(this.get('note')));
+    },
+
     grades: ['3', '4', '5a', '5b', '5c', '6a', '6a+', '6b', '6b+', '6c',
           '6c+', '7a', '7a+', '7b', '7b+', '7c', '7c+', '8a', '8a+', '8b',
           '8b+', '8c', '8c+', '9a', '9a+', '9b', '9b+', '9c', '9c+'],
@@ -71,19 +75,6 @@ define([
       name += ' at <a href="/crags/' + t.crag.key + '" class="title navigate">';
       name += t.crag.name + '</a>';
       str = str.replace('*', name);
-      return str;
-    },
-
-    formatExtra: function () {
-      var t = this.attributes;
-      var str = '';
-
-      // if (t.first) {
-      //   str = ' - FIRST ASCENT';
-      // } else if (t.firstf) {
-      //   str = ' - FIRST FEMALE ASCENT';
-      // }
-
       return str;
     },
 

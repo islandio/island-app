@@ -197,6 +197,18 @@ border-radius()
 
 /*––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– resets */
 
+/* make ancestors show fullscreen and cancel float */
+:-webkit-full-screen-ancestor:not(iframe)
+    float none !important
+    margin 0 !important
+    padding 0 !important
+    width 100% !important
+    height 100% !important
+
+/* hide fullscreen siblings */
+:-webkit-full-screen-ancestor > *:not(:-webkit-full-screen):not(:-webkit-full-screen-ancestor)
+    display none !important
+
 html
   color black
   background #f2f2f2
