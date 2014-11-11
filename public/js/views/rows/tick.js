@@ -42,10 +42,10 @@ define([
       this.subscriptions = [];
 
       // Socket subscriptions
-      this.app.rpc.socket.on('tick.new', _.bind(function (data) {
+      this.app.rpc.socket.on('media.new', _.bind(function (data) {
 
       }, this));
-      this.app.rpc.socket.on('tick.removed', _.bind(function (data) {
+      this.app.rpc.socket.on('media.removed', _.bind(function (data) {
 
       }, this));
 
@@ -314,7 +314,7 @@ define([
     when: function () {
       if (!this.model.get('updated')) return;
       if (!this.time) {
-        this.time = $('#time_' + this.model.id);
+        this.time = this.$('#time_' + this.model.id);
       }
       this.time.text(util.getRelativeTime(this.model.get('updated')));
     },

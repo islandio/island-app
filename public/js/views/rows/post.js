@@ -322,7 +322,7 @@ define([
     when: function () {
       if (!this.model.get('created')) return;
       if (!this.time) {
-        this.time = $('#time_' + this.model.id);
+        this.time = this.$('#time_' + this.model.id);
       }
       this.time.text(util.getRelativeTime(this.model.get('created')));
     },

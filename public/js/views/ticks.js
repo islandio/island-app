@@ -30,9 +30,6 @@ define([
       this.app.rpc.socket.on('tick.new', _.bind(this.collect, this));
       this.app.rpc.socket.on('tick.removed', _.bind(this._remove, this));
 
-      // this.app.rpc.socket.on('media.new', _.bind(this.collect, this));
-      // this.app.rpc.socket.on('media.removed', _.bind(this._remove, this));
-
       this.on('rendered', this.setup, this);
     },
 
@@ -118,34 +115,46 @@ define([
     collect: function (data) {
       if (data.author.id === this.app.profile.member.id && data.sent) {
         this._remove(data, true);
-        var tick = this.renderTick(data);
-        if (!data.grade) {
-          data.grade = 'not graded by you';
+        var el = $('<li class="tick tick-narrow" id="' + data.id + '" data-type="'
+            + data.type + '">');
+        var grade;
+        if (isNaN(Number(data.grade))) {
+          grade = 'not graded by you';
+        } else {
+          grade = this.app.grades[this.app.grades.length - data.grade - 1];
         }
-        var grade = this.app.grades[this.app.grades.length - data.grade - 1];
         var heading = this.$('.' + data.type + '-ticks .session-ticks '
             + '[data-grade="' + grade + '"]');
-        $(tick).insertAfter(heading);
+        el.insertAfter(heading);
         heading.parent().show();
+
+        // create new tick view
+        this.ticks.push(new Tick({parentView: this, el: el, model: data},
+            this.app).render());
       }
     },
 
-    // Remove a tick.
     _remove: function (data, noslide) {
-      var t = this.$('li#' + data.id);
-      if (t.length === 0) {
+      var t = _.find(this.ticks, function (t) {
+        return t.model.id === data.id;
+      });
+      if (!t) {
         return;
       }
-      var list = t.closest('.session-ticks');
+
+      this.ticks = _.reject(this.ticks, function (t) {
+        return t.model.id === data.id;
+      });
+      var list = t.$el.closest('.session-ticks');
 
       function _done() {
-        t.remove();
+        t.destroy();
         if (list.children('li').length === 0) {
           list.hide();
         }
       }
 
-      noslide ? t.slideUp('fast', _done): _done();
+      noslide ? _done(): t.slideUp('fast', _done);
     },
 
     empty: function () {

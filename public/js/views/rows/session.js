@@ -40,9 +40,9 @@ define([
       this.activityTemp = _.template(activityTemp);
       this.subscriptions = [];
 
-      // // Socket subscriptions
-      // this.app.rpc.socket.on('tick.new', _.bind(this.collect, this));
-      // this.app.rpc.socket.on('tick.removed', _.bind(this._remove, this));
+      // Socket subscriptions
+      this.app.rpc.socket.on('tick.new', _.bind(this.collect, this));
+      this.app.rpc.socket.on('tick.removed', _.bind(this._remove, this));
 
       this.on('rendered', this.setup, this);
       return this;
@@ -79,8 +79,6 @@ define([
         this.$el.addClass('single')
         this.app.title('Island | ' + this.model.get('author').displayName
             + ' - ' + this.model.formatName());
-
-        // Render title.
         this.title = _.template(title).call(this);
       }
 
@@ -105,15 +103,26 @@ define([
     // Collect a tick.
     collect: function (data) {
       if (data.session_id === this.model.id) {
-        var tick = this.renderTick(data);
-        var activity = this.$('.session-activity[data-type="' + data.type + '"]');
-        if (activity.length > 0) {
-          $(tick).appendTo($('.session-ticks', activity));
-        } else {
-          data.action.ticks = [data];
-          activity = this.renderActivity(data.action);
-          $(activity).insertAfter(this.$('.session-activity').last());
+        this._remove(data, true);
+        var el = $('<li class="tick" id="' + data.id + '" data-aid="'
+            + data.action_id + '">');
+        if (!this.parentView) {
+          el.addClass('single');
         }
+
+        // Add el to dom.
+        var activity = this.$('.session-activity[data-type="' + data.type + '"]');
+        if (activity.length === 0) {
+          activity = $(this.renderActivity({type: data.type}))
+              .insertAfter(this.$('.session-activity').last());  
+        }
+        el.appendTo($('.session-ticks', activity));
+
+        // create new tick view
+        this.ticks.push(new Tick({parentView: this, el: el, model: data,
+            mapless: true}, this.app).render());
+
+        // Update model data.
         var action = _.find(this.model.get('actions'), function (a) {
           return a.id === data.action.id;
         });
@@ -129,16 +138,28 @@ define([
     },
 
     // Remove a tick.
-    _remove: function (data) {
-      var t = this.$('li#' + data.id);
-      var a = t.closest('.session-activity');
+    _remove: function (data, noslide) {
+      var t = _.find(this.ticks, function (t) {
+        return t.model.id === data.id;
+      });
+      if (!t) {
+        return;
+      }
+
+      this.ticks = _.reject(this.ticks, function (t) {
+        return t.model.id === data.id;
+      });
+      var a = t.$el.closest('.session-activity');
       var list = $('.session-ticks', a);
-      t.slideUp('fast', _.bind(function () {
-        t.remove();
+
+      function _done() {
+        t.destroy();
         if (list.children().length === 0) {
           a.remove();
         }
-      }, this));
+      }
+
+      noslide ? _done(): t.slideUp('fast', _done);
     },
 
     destroy: function () {

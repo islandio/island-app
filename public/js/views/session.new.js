@@ -67,7 +67,6 @@ define([
       this.postSelect = this.$('.post-select');
       this.postFiles = this.$('.post-files');
       this.postForm = this.$('.new-session-post-form');
-
       this.submitButton = this.$('.new-session-button');
       this.submitButtonSpin = new Spin($('.button-spin', this.submitButton), {
         color: '#396400',
@@ -404,13 +403,14 @@ define([
         }
 
         // Show success.
-        var verb = payload.sent ? 'an ascent': 'some work';
+        var verb = payload.actions[0].ticks[0].sent ? 'an ascent': 'some work';
         mps.publish('flash/new', [{
           message: 'You ' + (oldTick ? 'updated': 'logged') + ' ' + verb + '.',
           level: 'alert'
         }, true]);
 
         this.destroy();
+        $(window).scrollTop(0);
       }, this));
 
       return false;
