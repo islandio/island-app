@@ -53,6 +53,7 @@ define([
         reverse: true,
         input: true,
         filters: ['tick', 'post'],
+        feedStore: 'ascentFeed',
         hide: []
       });
 

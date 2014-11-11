@@ -2911,7 +2911,7 @@ textarea.comment-input {
   overflow: hidden;
   width: 561px;
   height: 316px;
-  background: #f2f2f2;
+  background: #fff;
   margin-bottom: 10px;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
@@ -3639,6 +3639,7 @@ ul.session-ticks {
 .tick-media {
   position: relative;
   margin-top: 15px;
+  background: #f2f2f2;
 }
 .post-media + .post-media,
 .tick-media + .tick-media {

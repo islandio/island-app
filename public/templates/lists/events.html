@@ -7,7 +7,7 @@
       : null;
   
   var input = member && this.collection.options.input;
-  var feed = store.get('feed') || {};
+  var feed = store.get(this.collection.options.feedStore || 'feed') || {};
   var private = this.app.profile.content.private;
 
 %>

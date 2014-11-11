@@ -182,12 +182,13 @@ define([
       $(window).scrollTop(0);
     },
 
-    resetEventActions: function () {
-      store.set('feed', 'all');
-    },
-
     getEventActions: function () {
       var feed = store.get('feed') || {};
+      return feed.actions || 'all';
+    },
+
+    getAscentEventActions: function () {
+      var feed = store.get('ascentFeed') || {};
       return feed.actions || 'all';
     },
 
@@ -195,7 +196,6 @@ define([
 
     dashboard: function () {
       this.start();
-      this.resetEventActions();
       var query = {actions: this.getEventActions()};
       this.render('/service/dashboard.profile', query, _.bind(function (err) {
         if (err) return;
@@ -320,8 +320,7 @@ define([
       this.folder.removeClass('landing').removeClass('initial');
       this.renderTabs();
       var key = [country, crag, type, ascent].join('/');
-      this.resetEventActions();
-      var query = {actions: this.getEventActions()};
+      var query = {actions: this.getAscentEventActions()};
       this.render('/service/ascent.profile/' + key, query, _.bind(function (err) {
         if (err) return;
         this.page = new Ascent(this.app).render();
@@ -335,7 +334,6 @@ define([
       this.folder.removeClass('landing').removeClass('initial');
       this.renderTabs();
       var key = [country, crag].join('/');
-      this.resetEventActions();
       var query = {actions: this.getEventActions()};
       this.render('/service/crag.profile/' + key, query, _.bind(function (err) {
         if (err) return;
@@ -386,7 +384,6 @@ define([
       this.start();
       this.folder.removeClass('landing').removeClass('initial');
       this.renderTabs();
-      this.resetEventActions();
       var query = {actions: this.getEventActions()};
       this.render('/service/profile.profile/' + username, query,
           _.bind(function (err) {

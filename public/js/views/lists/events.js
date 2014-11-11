@@ -605,7 +605,8 @@ define([
       }
 
       // Set feed state.
-      store.set('feed', {actions: chosen.data('filter')});
+      store.set(this.collection.options.feedStore || 'feed',
+          {actions: chosen.data('filter')});
 
       // Reset the collection.
       this.nomore = false;
