@@ -17,6 +17,7 @@ define([
   return Backbone.View.extend({
 
     attachments: [],
+    mediaToDelete: [],
     className: 'new-session',
 
     initialize: function (app, options) {
@@ -57,7 +58,7 @@ define([
       'click .modal-delete': 'delete',
       'click .add-crag': 'addNewCrag',
       'click .add-ascent': 'addNewAscent',
-      'click .media-delete-existing': 'deleteMedia'
+      'click .media-delete-existing': 'markMediaForDelete'
     },
 
     setup: function () {
@@ -239,6 +240,7 @@ define([
       });
       _.defer(_.bind(this.cragChoices.destroy, this));
       _.defer(_.bind(this.tickChoices.destroy, this));
+      this.$('.upload-remove').click();
       this.undelegateEvents();
       this.stopListening();
     },
@@ -268,9 +270,12 @@ define([
         this.tickChoices.options.query = {};
       }
 
+      // Check for in-progress uploads.
+      var inProg = this.$('.upload-remove').length > 0;
+
       // Validate log button.
       var dateTxt = this.dateInput ? this.dateInput.val().trim(): '';
-      if (!crag || !tick || dateTxt === '') {
+      if (!crag || !tick || dateTxt === '' || inProg) {
         this.submitButton.attr('disabled', true).addClass('disabled');
       } else {
         this.submitButton.attr('disabled', false).removeClass('disabled');
@@ -389,6 +394,9 @@ define([
       var fn = oldTick ? rest.put: rest.post;
       var path = oldTick ? '/api/sessions/' + oldTick.id: '/api/sessions';
 
+      // Delete media.
+      this.deleteMedia();
+
       // Do the API request.
       fn.call(rest, path, payload, _.bind(function (err, data) {
 
@@ -483,6 +491,7 @@ define([
       var txt = $('.upload-progress-txt', set);
       var attachment = {uploading: true};
       this.attachments.push(attachment);
+      this.validate();
 
       // Transloadit options
       var opts = {
@@ -496,7 +505,7 @@ define([
               'Uploading ' + per + '%');
           bar.width((br / be * 100) + '%');
         },
-        onError: function (assembly) {
+        onError: _.bind(function (assembly) {
           mps.publish('flash/new', [{
             message: assembly.error + ': ' + assembly.message,
             level: 'error',
@@ -504,7 +513,8 @@ define([
           }, false]);
           set.remove();
           attachment.uploading = false;
-        },
+          this.validate();
+        }, this),
         onSuccess: _.bind(function (assembly) {
           if (_.isEmpty(assembly.results)) {
             mps.publish('flash/new', [{
@@ -562,11 +572,13 @@ define([
                     });
                   });
                   li.remove();
+                  this.arrangeMedia();
                 }, this));
               }, this));
             }, this));
           }
           attachment.uploading = false;
+          this.validate();
         }, this)
       };
 
@@ -588,6 +600,7 @@ define([
         set.remove();
         attachment.uploading = false;
         delete attachment.assembly;
+        this.validate();
       });
 
       // Send files to Transloadit.
@@ -654,20 +667,35 @@ define([
       }, this));
     },
 
-    deleteMedia: function (e) {
+    markMediaForDelete: function (e) {
       e.preventDefault();
       var li = $(e.target).closest('li');
+      this.mediaToDelete.push(li.data('mid'));
+      li.remove();
+      this.arrangeMedia();
+    },
 
-      rest.delete('/api/medias/' + li.data('mid'), {},
-          _.bind(function (err, data) {
-        if (err) {
-          console.log(err);
-          return;
-        }
-        li.remove();
-      }, this));
+    deleteMedia: function () {
+      _.each(this.mediaToDelete, function (mid) {
+        rest.delete('/api/medias/' + mid, {}, function (err, data) {
+          if (err) {
+            console.log(err);
+            return;
+          }
+        });
+      });
 
       return false;
+    },
+
+    arrangeMedia: function () {
+      this.$('.post-previews .clear').remove();
+      this.$('.post-previews').each(function (el, i) {
+        if (i % 6 === 0) {
+          $('<div class="clear">').insertBefore(this);
+        }
+      });
+      $('<div class="clear">').appendTo(this.$('.post-previews'));
     }
 
   });
