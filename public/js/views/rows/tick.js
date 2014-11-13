@@ -42,6 +42,11 @@ define([
       this.subscriptions = [];
 
       // Socket subscriptions
+      this.app.rpc.socket.on('tick.new', _.bind(function (data) {
+        if (!this.parentView && data.id === this.model.id) {
+          this.app.router.tick(this.model.get('key'));
+        }
+      }, this));
       this.app.rpc.socket.on('media.new', _.bind(function (data) {
 
       }, this));
@@ -326,7 +331,7 @@ define([
         crag_id: this.model.get('crag_id'),
         ascent_id: this.model.get('ascent').id
       }).render();
-    },
+    }
 
   });
 });

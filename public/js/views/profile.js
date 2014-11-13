@@ -32,6 +32,13 @@ define([
       this.subscriptions = [];
       this.on('rendered', this.setup, this);
 
+      // Socket subscriptions
+      this.app.rpc.socket.on('member.removed', _.bind(function (data) {
+        if (data.id === this.model.id) {
+          this.app.router.profile(this.model.get('username'));
+        }
+      }, this));
+
       return this;
     },
 

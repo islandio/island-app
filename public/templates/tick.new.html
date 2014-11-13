@@ -219,6 +219,33 @@ var tick = this.options.tick;
             <% } %>
           </div>
           <div class="post-files"></div>
+          <ul class="post-previews">
+            <% var i = 0; _.each((tick || {}).medias, function (m) {
+              if (m.type === 'video' && m.quality !== 'iphone') {
+                return;
+              }
+              var p = m.thumbs[0];
+              var w = 98;
+              var h = p.meta.height * w / p.meta.width;
+              var clear = '';
+              if (i === 6) {
+                i = 0;
+                clear = '<div class="clear"></div>';
+              }
+            %>
+              <%= clear %>
+              <li id="<%= p.original_id %>" data-mid="<%= m.id %>">
+                <% if (m.type === 'video') {
+                  var ih = (h / 2) - 12;
+                %>
+                  <i class="icon-youtube-play" style="top: <%= ih %>px;"></i>
+                <% } %>
+                <span class="media-delete media-delete-existing"><i class="icon-cancel"></i></span>
+                <img src="<%= p.ssl_url %>" width="<%= w %>" height="<%= h %>">
+              </li>
+            <% ++i; }) %>
+            <div class="clear"></div>
+          </ul>
         </td>
       </tr>
     </tbody>

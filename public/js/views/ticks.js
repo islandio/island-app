@@ -154,7 +154,7 @@ define([
         }
       }
 
-      noslide ? _done(): t.slideUp('fast', _done);
+      noslide ? _done(): t.$el.slideUp('fast', _done);
     },
 
     empty: function () {

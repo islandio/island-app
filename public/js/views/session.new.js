@@ -56,7 +56,8 @@ define([
       'click .modal-cancel': 'cancel',
       'click .modal-delete': 'delete',
       'click .add-crag': 'addNewCrag',
-      'click .add-ascent': 'addNewAscent'
+      'click .add-ascent': 'addNewAscent',
+      'click .media-delete-existing': 'deleteMedia'
     },
 
     setup: function () {
@@ -352,6 +353,9 @@ define([
         if (!a.assembly) return;
         _.each(a.assembly.results, function (v, k) {
           _.each(v, function (r) {
+            if (r.cancelled) {
+              return;
+            }
             r._index = i;
             r.assembly_id = a.assembly.assembly_id;
             if (results[k]) {
@@ -463,10 +467,11 @@ define([
       // and from data object, if present.
       var set = $('<div class="upload-set">');
       var parts = [];
-      _.each(files, function (file) {
-        parts.push('<div class="upload-progress-wrap"><div class="upload-remove">'
-            + '<i class="icon-cancel"></i></div><div '
-            + 'class="upload-progress">' + '<span class="upload-label">',
+      _.each(files, function (file, i) {
+        parts.push('<div class="upload-progress-wrap">'
+            + (i === 0 ? '<div class="upload-remove">'
+            + '<i class="icon-cancel"></i></div>': '')
+            + '<div class="upload-progress">' + '<span class="upload-label">',
             file.name, '</span><span class="upload-progress-txt">'
             + 'Waiting...</span>', '</div></div>');
         if (data && typeof file === 'object') {
@@ -497,7 +502,7 @@ define([
             level: 'error',
             sticky: true
           }, false]);
-          bar.parent().remove();
+          set.remove();
           attachment.uploading = false;
         },
         onSuccess: _.bind(function (assembly) {
@@ -506,10 +511,60 @@ define([
               message: 'Whoa, there. You tried to attach an invalid file type.',
               level: 'alert'
             }, true]);
-            bar.parent().remove();
+            set.remove();
           } else {
-            attachment.assembly = assembly;
             txt.text('');
+            set.remove();
+            attachment.assembly = assembly;
+            var files = assembly.results;
+            _.each(files, _.bind(function (v, k) {
+              _.each(v, _.bind(function (file) {
+                var preview;
+                switch (k) {
+                  case 'image_full':
+                  case 'image_full_gif':
+                    preview = _.find(files.image_thumb, function (img) {
+                      return img.original_id === file.original_id;
+                    });
+                    break;
+                  case 'video_encode_iphone':
+                    preview = _.find(files.video_thumbs, function (img) {
+                      return img.original_id === file.original_id;
+                    });
+                    break;
+                }
+                if (!preview) {
+                  return;
+                }
+                var w = 98;
+                var h = preview.meta.height * w / preview.meta.width;
+                var icon = '';
+                if (preview.type === 'video') {
+                  var ih = (h / 2) - 12;
+                  icon = '<i class="icon-youtube-play" style="top: '
+                      + ih + 'px;"></i>';
+                }
+                var li = $('<li id="' + preview.original_id + '">' + icon
+                    + '<span class="media-delete"><i class="icon-cancel">'
+                    + '</i></span><img src="' + preview.ssl_url
+                    + '" width="' + w + '" height="' + h + '"></li>');
+                li.insertBefore(this.$('.post-previews .clear:last'));
+                var n = this.$('.post-previews').children('li');
+                if (n-1 % 6 === 0) {
+                  $('<div class="clear">').insertBefore(li);
+                }
+                $('.media-delete', li).click(_.bind(function (e) {
+                  _.each(files, function (v, k) {
+                    _.each(v, function (file) {
+                      if (file.original_id === preview.original_id) {
+                        file.cancelled = true;
+                      }
+                    });
+                  });
+                  li.remove();
+                }, this));
+              }, this));
+            }, this));
           }
           attachment.uploading = false;
         }, this)
@@ -530,7 +585,7 @@ define([
           clearTimeout(uploader.timer);
           uploader._poll('?method=delete');
         }
-        bar.parent().remove();
+        set.remove();
         attachment.uploading = false;
         delete attachment.assembly;
       });
@@ -543,7 +598,6 @@ define([
 
       return false;
     },
-
 
     save: function () {
       var payload = this.getPayload();
@@ -598,6 +652,22 @@ define([
 
         this.destroy();
       }, this));
+    },
+
+    deleteMedia: function (e) {
+      e.preventDefault();
+      var li = $(e.target).closest('li');
+
+      rest.delete('/api/medias/' + li.data('mid'), {},
+          _.bind(function (err, data) {
+        if (err) {
+          console.log(err);
+          return;
+        }
+        li.remove();
+      }, this));
+
+      return false;
     }
 
   });

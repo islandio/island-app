@@ -33,13 +33,17 @@ define([
       this.wrap = options.wrap;
       this.template = _.template(template);
       this.videoTemp = _.template(videoTemp);
-
-      // Shell events.
-      this.on('rendered', this.setup, this);
-
-      // Client-wide subscriptions.
       this.subscriptions = [];
 
+      // Socket subscriptions
+      this.app.rpc.socket.on('post.removed', _.bind(function (data) {
+        if (!this.parentView && data.id === this.model.id) {
+          this.app.router.post(this.model.get('author').username,
+              this.model.get('key'));
+        }
+      }, this));
+      
+      this.on('rendered', this.setup, this);
       return this;
     },
 
@@ -325,15 +329,7 @@ define([
         this.time = this.$('#time_' + this.model.id);
       }
       this.time.text(util.getRelativeTime(this.model.get('created')));
-    },
-
-    // insert HTML to create anchor tags, strong @'s etc
-    // styleBody: function(body) {
-    //   // Strong names
-    //   return body.replace(/([@#][^\s:]+)/g, '<strong>$1</strong>')
-    //       // Add anchors
-    //       .replace(/(http[^\s\)]+)/g, '<a href="$1">$1</a>')
-    // }
+    }
 
   });
 });

@@ -2557,6 +2557,7 @@ img.page-title-avatar {
 }
 p.modal-message {
   font-size: 14px;
+  text-align: center;
 }
 .modal-body td {
   padding: 0 0 5px 0;
@@ -3074,6 +3075,29 @@ a.post-input-avatar img {
 }
 .new-session .post-files {
   margin-bottom: 10px;
+}
+.new-session .post-previews {
+  list-style: none;
+  font-size: 0;
+  margin-left: -2px;
+  margin-bottom: 8px;
+}
+.new-session .post-previews li {
+  float: left;
+  position: relative;
+  display: inline-block;
+  width: 98px;
+  margin: 0 0 2px 2px;
+}
+.new-session .post-previews li > i {
+  position: absolute;
+  left: 33px;
+  color: rgba(0,0,0,0.8);
+  font-size: 24px;
+}
+.new-session .post-previews li img {
+  display: inline;
+  vertical-align: top;
 }
 .new-session-post-form .post-select {
   display: block;
@@ -3661,6 +3685,23 @@ ul.session-ticks {
 .single .tick-media .image-mosaic {
   width: 538px;
   height: 303px;
+}
+.media-delete {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+  font-size: 10px;
+  color: #666;
+  background: #fcfcfc;
+  padding: 1px 3px;
+  -webkit-border-radius: 0 0 0 2px;
+  -moz-border-radius: 0 0 0 2px;
+  border-radius: 0 0 0 2px;
+}
+.media-delete:hover {
+  color: #d04c38;
 }
 .session-tick-stars {
   display: inline-block;

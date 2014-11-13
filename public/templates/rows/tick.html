@@ -76,7 +76,7 @@
   <% } %>
   <div class="clear"></div>
   <% if (_.contains(mediaTypes, 'image')) { %>
-    <div class="tick-media">
+    <div class="tick-media" data-type="image">
       <span class="event-timeline-label">
         <i class="icon-picture"></i>
       </span>
@@ -92,7 +92,7 @@
       return a.video._index - b.video._index;
     });
     _.each(vids, function (v) { %>
-      <div class="tick-media">
+      <div class="tick-media" data-type="video">
         <span class="event-timeline-label">
           <i class="icon-youtube-play"></i>
         </span>
@@ -101,7 +101,7 @@
     <% }) %>
   <% } %>
   <% _.each(this.model.get('videoEmbeds'), _.bind(function (v) { %>
-    <div class="tick-media">
+    <div class="tick-media" data-type="video">
       <span class="event-timeline-label">
         <i class="icon-youtube-play"></i>
       </span>
