@@ -30,8 +30,14 @@ define([
       this.wrap = options.wrap;
       this.template = _.template(template);
       this.subscriptions = [];
-      this.on('rendered', this.setup, this);
 
+      this.app.rpc.socket.on('member.removed', _.bind(function (data) {
+        if (data.id === this.model.id) {
+          this.app.router.profile(this.model.get('username'));
+        }
+      }, this));
+
+      this.on('rendered', this.setup, this);
       return this;
     },
 

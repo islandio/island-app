@@ -121,7 +121,12 @@ define([
         if (header.length > 0) {
           if (pagination !== true) {
             header.detach().insertBefore(view.$el);
-            $('<div class="event-divider">').insertAfter(view.$el).show();
+            var uniq = _.uniq(view.$el.parent().children('.event'), function (el) {
+              return $(el).attr('id');
+            });
+            if (uniq.length > 1) {
+              $('<div class="event-divider">').insertAfter(view.$el).show();
+            }
           } else {
             $('<div class="event-divider">').insertBefore(view.$el).show();
           }
@@ -146,8 +151,9 @@ define([
 
       // Check for more.
       _.delay(_.bind(function () {
-        if (pagination !== true)
+        if (pagination !== true) {
           this.checkHeight();
+        }
       }, this), 20);
       return this;
     },
@@ -229,13 +235,13 @@ define([
       });
 
       if (view) {
+        this.collection.remove(view.model);
         this.views.splice(index, 1);
         var prev = view.$el.prev();
         if (prev.hasClass('event-divider')) {
           prev.remove();
         }
         view._remove(_.bind(function () {
-          this.collection.remove(view.model);
           this.$('.event-day-header').filter(function () {
             return $(this).next('.event').length === 0;
           }).remove();

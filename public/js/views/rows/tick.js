@@ -42,7 +42,7 @@ define([
       this.subscriptions = [];
 
       // Socket subscriptions
-      this.app.rpc.socket.on('tick.new', _.bind(function (data) {
+      this.app.rpc.socket.on('tick.removed', _.bind(function (data) {
         if (!this.parentView && data.id === this.model.id) {
           this.app.router.tick(this.model.get('key'));
         }
