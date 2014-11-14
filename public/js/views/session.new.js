@@ -647,8 +647,6 @@ define([
         this.deleteButton.removeClass('spinning').attr('disabled', false);
         
         if (err) {
-
-          // Set the error display.
           mps.publish('flash/new', [{
             err: err,
             level: 'error'
@@ -656,7 +654,6 @@ define([
           return;
         }
 
-        // Show success.
         var verb = oldTick.sent ? 'an ascent': 'some work';
         mps.publish('flash/new', [{
           message: 'You deleted an ' + verb + '.',

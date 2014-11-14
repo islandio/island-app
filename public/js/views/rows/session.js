@@ -41,11 +41,11 @@ define([
       this.subscriptions = [];
 
       // Socket subscriptions
-      this.app.rpc.socket.on('session.removed', _.bind(function (data) {
-        if (!this.parentView && data.id === this.model.id) {
-          this.app.router.session(this.model.get('key'));
-        }
-      }, this));
+      // this.app.rpc.socket.on('session.removed', _.bind(function (data) {
+      //   if (!this.parentView && data.id === this.model.id) {
+      //     this.app.router.session(this.model.get('key'));
+      //   }
+      // }, this));
       this.app.rpc.socket.on('tick.new', _.bind(this.collect, this));
       this.app.rpc.socket.on('tick.removed', _.bind(this._remove, this));
 
