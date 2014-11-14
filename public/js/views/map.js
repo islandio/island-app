@@ -40,9 +40,14 @@ define([
       this.subscriptions.push(mps.subscribe('map/fly',
           _.bind(this.flyTo, this)));
 
-      // Listen for marker refresh.
-      // this.subscriptions.push(mps.subscribe('map/refresh',
-      //     _.bind(this.something, this, true)));
+      // Listen for crags layer refresh.
+      this.subscriptions.push(mps.subscribe('map/refresh/crags',
+          _.bind(function () {
+        if (this.map) {
+          this.map.removeLayer(this.cragsLayer);
+          this.addCragsLayer();
+        }
+      }, this)));
 
       this.subscriptions.push(mps.subscribe('map/add',
           _.bind(function () {
@@ -76,21 +81,17 @@ define([
           radius: 6,
         });
       }
-      this.plotSpin.start();
 
       // Create the map.
       if (!this.mapped) {
-        if (!this.$el.hasClass('closed')) {
-          this.spin.start();
-        }
-        this.map();
+        this.createMap();
+        this.addCragsLayer();
       }
 
       this.setup();
       return this;
     },
 
-    // Misc. setup.    
     setup: function () {
 
       // Save refs.
@@ -149,7 +150,10 @@ define([
       'click .new-session-button': 'addCrag',
     },
 
-    map: function () {
+    createMap: function () {
+      if (!this.$el.hasClass('closed')) {
+        this.spin.start();
+      }
 
       // Setup the base map.
       this.sql = new cartodb.SQL({user: 'island',
@@ -177,6 +181,26 @@ define([
         maxZoom: 20
       }).addTo(this.map);
 
+      this.map.on('click', _.bind(function (e) {
+        this.setPlotLocation({
+          latitude: e.latlng.lat,
+          longitude: e.latlng.lng
+        });
+      }, this));
+
+      // Check pending.
+      if (this.pendingLocation) {
+        this.flyTo(this.pendingLocation);
+      }
+
+      this.spin.stop();
+    },
+
+    addCragsLayer: function () {
+      if (!this.$el.hasClass('closed')) {
+        this.spin.start();
+      }
+
       // Create the data layer.
       cartodb.createLayer(this.map, {
         user_name: 'island',
@@ -193,6 +217,7 @@ define([
       }, {https: true})
       .addTo(this.map)
       .done(_.bind(function (layer) {
+        this.cragsLayer = layer;
         this.dataLayer = layer.getSubLayer(0);
 
         this.dataLayer.bind('featureOver', _.bind(this.featureOver, this));
@@ -200,20 +225,8 @@ define([
         this.dataLayer.bind('featureClick', _.bind(this.featureClick, this));
         this.dataLayer.setInteraction(true);
 
-        this.map.on('click', _.bind(function (e) {
-          this.setPlotLocation({
-            latitude: e.latlng.lat,
-            longitude: e.latlng.lng
-          });
-        }, this));
-
         this.mapped = true;
         this.spin.stop();
-
-        // Check pending.
-        if (this.pendingLocation) {
-          this.flyTo(this.pendingLocation);
-        }
       }, this));
     },
 

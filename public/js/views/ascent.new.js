@@ -268,6 +268,7 @@ define([
 
         // Go to new ascent page.
         this.app.router.navigate('crags/' + data.key, {trigger: true});
+        mps.publish('map/refresh/crags')
         this.destroy();
 
         if (this.options.back) {

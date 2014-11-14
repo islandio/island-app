@@ -47,35 +47,21 @@
 }
 
 #crags::top {
-  marker-fill: #fff;
+  marker-fill: #1a1a1a;
   marker-opacity: 0.9;
   marker-allow-overlap: true;
   marker-placement: point;
   marker-type: ellipse;
   marker-line-width: 0.0;
   marker-comp-op: src-over;
-  marker-width: 4;
+  marker-width: 2;
   [zoom > 6] {
+    marker-width: 4;
+  }
+  [zoom > 7] {
     marker-width: 6;
   }
-  [zoom > 7] {
+  [zoom > 8] {
     marker-width: 8;
-  }
-  [zoom > 8] {
-    marker-width: 10;
-  }
-}
-
-#crags::top [rcnt = 0][bcnt = 0] {
-  marker-fill: #e76533;
-  marker-width: 8;
-  [zoom > 6] {
-    marker-width: 12;
-  }
-  [zoom > 7] {
-    marker-width: 16;
-  }
-  [zoom > 8] {
-    marker-width: 20;
   }
 }
