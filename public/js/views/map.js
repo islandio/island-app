@@ -98,6 +98,7 @@ define([
       this.plotButton = this.$('.plot-button');
       this.plotForm = this.$('.plot-form');
       this.submitButton = this.$('.new-session-button');
+      this.infoBox = this.$('.map-infobox');
 
       // Changes to map display are animated.
       this.$el.addClass('animated');
@@ -212,7 +213,7 @@ define([
         sublayers: [{
           sql: this.app.cartodb.sqlPre,
           cartocss: this.cssTemplate.call(this),
-          interactivity: 'cartodb_id,geometry,id,key,name'
+          interactivity: 'cartodb_id,geometry,id,key,name,bcnt,rcnt'
         }]
       }, {https: true})
       .addTo(this.map)
@@ -239,17 +240,27 @@ define([
         this.map.removeLayer(this.point);
         this.point.cartodb_id = data.cartodb_id;
       }
-      // this.point = new L.GeoJSON(JSON.parse(data.geometry), {
-      //   pointToLayer: function (feature, latlng) {
-      //     return new L.CircleMarker(latlng, {
-      //       color: '#666',
-      //       weight: 1.5,
-      //       fillColor: '#4bb8d7',
-      //       fillOpacity: 0.3,
-      //       clickable: false
-      //     }).setRadius(12);
-      //   }
-      // }).addTo(this.map);
+      var geom = JSON.parse(data.geometry);
+      this.point = new L.GeoJSON(geom, {
+        pointToLayer: _.bind(function (feature, latlng) {
+          var c = new L.CircleMarker(latlng, {
+            color: 'rgba(0,0,0,0.9)',
+            weight: 1,
+            fillOpacity: 0,
+            clickable: false
+          }).setRadius(this.getCragRadius(data));
+          _.defer(_.bind(function () {
+            $('.map-infobox-title', this.infoBox).text(data.name);
+            $('.map-infobox-subtitle', this.infoBox).text(
+                util.addCommas(data.bcnt) + ' problems | '
+                + util.addCommas(data.rcnt) + ' routes');
+            var p = this.map.layerPointToContainerPoint(c._point);
+            this.infoBox.css({left: p.x + 9 + this.getCragRadius(data),
+                top: p.y - 28}).show();
+          }, this));
+          return c;
+        }, this)
+      }).addTo(this.map);
     },
 
     featureOut: function() {
@@ -257,11 +268,33 @@ define([
       if (this.point) {
         this.map.removeLayer(this.point);
         this.point.cartodb_id = null;
+        this.infoBox.hide();
       }
     },
 
     featureClick: function (e, pos, latlng, data) {
       this.app.router.navigate('crags/' + data.key, {trigger: true});
+    },
+
+    getCragRadius: function (info) {
+      var cnt = Math.max(info.bcnt, info.rcnt);
+      var d = 10;
+      if (cnt >= 50) {
+        d = 25;
+      }
+      if (cnt >= 200) {
+        d = 50;
+      }
+      if (cnt >= 500) {
+        d = 75;
+      }
+      if (cnt >= 1000) {
+        d = 100;
+      }
+      if (cnt >= 2000) {
+        d = 200;
+      }
+      return d / 2;
     },
 
     flyTo: function (location) {

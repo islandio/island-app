@@ -2286,21 +2286,15 @@ a.button.plot-button [class^="icon-"]:before, [class*=" icon-"]:before
   left 50%
   position absolute
 
-.plot-form
-  display none
+.plot-form,
+.map-infobox
   position absolute
   z-index 1
-  left 46px
-  top 10px
   background white
   padding 0 5px 5px 0
   border none
 
   border-radius 4px
-
-  -webkit-box-shadow 0 1px 5px rgba(0,0,0,0.65)
-  -moz-box-shadow 0 1px 5px rgba(0,0,0,0.65)
-  box-shadow 0 1px 5px rgba(0,0,0,0.65);
 
   -webkit-animation-name fadeIn
   -moz-animation-name fadeIn
@@ -2314,6 +2308,15 @@ a.button.plot-button [class^="icon-"]:before, [class*=" icon-"]:before
   -moz-animation-fill-mode both
   -o-animation-fill-mode both
   animation-fill-mode both
+
+.plot-form
+  display none
+  left 46px
+  top 10px
+  
+  -webkit-box-shadow 0 1px 5px rgba(0,0,0,0.65)
+  -moz-box-shadow 0 1px 5px rgba(0,0,0,0.65)
+  box-shadow 0 1px 5px rgba(0,0,0,0.65);
 
 .plot-form td
   padding 5px 0 0 5px
@@ -2340,6 +2343,37 @@ a.button.plot-button [class^="icon-"]:before, [class*=" icon-"]:before
   box-sizing border-box
   -moz-box-sizing border-box
   -webkit-box-sizing border-box
+
+.map-infobox
+  display none
+  padding 15px 20px 10px 20px
+  border 1px solid rgba(0, 0, 0, 0.5)
+  border-radius 4px
+  background rgba(255, 255, 255, 0.9)
+
+.map-infobox:after
+  right 100%
+  top 50%
+  border solid transparent
+  content " "
+  height 0
+  width 0
+  position absolute
+  pointer-events none
+  border-color rgba(0, 0, 0, 0)
+  border-right-color rgba(0, 0, 0, 0.9)
+  border-width 10px
+  margin-top -18px
+
+.map-infobox-title
+  font-family Title
+  text-transform uppercase
+  font-size 24px
+  line-height 26px
+
+.map-infobox-subtitle
+  font-size 12px
+  font-family standard_thin
 
 .leaflet-div-icon
   border 2px solid #f2f2f2
