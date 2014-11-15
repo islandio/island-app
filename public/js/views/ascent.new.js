@@ -266,11 +266,16 @@ define([
           level: 'alert'
         }, true]);
 
-        // Go to new ascent page.
-        this.app.router.navigate('crags/' + data.key, {trigger: true});
-        mps.publish('map/refresh/crags')
+        // Go to the ascent page.
+        // this.app.router.navigate('crags/' + data.key, {trigger: true});
+        
+        // Refresh the map.
+        mps.publish('map/refresh/crags');
+
+        // All done.
         this.destroy();
 
+        // Check if there's a pending session with this crag.
         if (this.options.back) {
           new NewSession(this.app, {crag_id: data.crag_id,
               ascent_id: data.ascent_id}).render();
