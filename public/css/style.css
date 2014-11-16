@@ -2315,6 +2315,7 @@ a.button.plot-button [class^="icon-"]:before,
 }
 .map-infobox {
   display: none;
+  z-index: 3;
   padding: 15px 20px 10px 20px;
   border: 1px solid rgba(0,0,0,0.5);
   -webkit-border-radius: 4px;

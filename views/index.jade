@@ -5,13 +5,8 @@ block content
     header.header
       include header
     #map.map.closed
-      .map-overlay
+      #map_inner.map-inner
       .map-spin
-      .map-infobox
-        .map-infobox-title
-          | Someplace Cool
-        .map-infobox-subtitle
-          | 24 problems | 45 routes
       a.button.plot-button(href="javascript:;")
         span
           | +
@@ -41,7 +36,11 @@ block content
         div
           a#hide_show.hide-show.button(href="javascript:;") Show map
           a#less_more.less-more.button.split-right(href="javascript:;", style="display:none;") More map
-      #map_inner.map-inner
+      .map-infobox
+        .map-infobox-title
+          | Someplace Cool
+        .map-infobox-subtitle
+          | 24 problems | 45 routes
     .folder.initial
       .page-spin
       .banner
