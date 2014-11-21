@@ -41,12 +41,10 @@ var wrench = require('wrench');
 var request = require('request');
 var Step = require('step');
 var boots = require(rel + 'boots');
-var db = require(rel + 'lib/db');
-var com = require(rel + 'lib/common');
 
 // Build vars.
 var dir = 'build';
-var pack = JSON.parse(fs.readFileSync(rel + 'package.json', 'utf8'));
+var pack = require('./package.json');
 var bv = _.strLeftBack(pack.version, '.');
 var lv = parseInt(_.strRightBack(pack.version, '.')) + 1;
 var nv = bv + '.' + String(lv);
@@ -71,12 +69,10 @@ Step(
     boots.error(err);
     fs.renameSync(rel + dir + '/js/main.js', rel + dir + '/min.js');
     fs.renameSync(rel + dir + '/js/lib/store/store.min.js', rel + dir + '/store.min.js');
-    fs.renameSync(rel + dir + '/js/lib/cartodb/cartodb.uncompressed.js', rel + dir + '/cartodb.uncompressed.js');
     wrench.rmdirSyncRecursive(rel + dir + '/js');
     fs.mkdirSync(rel + dir + '/js');
     fs.renameSync(rel + dir + '/min.js', rel + dir + '/js/min.js');
     fs.renameSync(rel + dir + '/store.min.js', rel + dir + '/js/store.min.js');
-    fs.renameSync(rel + dir + '/cartodb.uncompressed.js', rel + dir + '/js/cartodb.uncompressed.js');
     wrench.rmdirSyncRecursive(rel + dir + '/templates');
     
     var min = fs.readFileSync(rel + dir + '/js/min.js', 'utf8');
@@ -87,6 +83,7 @@ Step(
     this();
   },
   function (err) {
+    boots.error(err);
 
     // Walk the build dir.
     var walker = walk.walk(rel + dir, {
@@ -113,7 +110,6 @@ Step(
 
     });
     walker.on('end', this);
-
   },
   function (err) {
     boots.error(err);

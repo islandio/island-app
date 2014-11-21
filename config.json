@@ -1,31 +1,47 @@
 {
   "MONGO_URI": "mongodb://localhost:27017/island",
+
   "REDIS_SEARCH_HOST": "localhost",
   "REDIS_HOST": "localhost",
   "REDIS_PORT": 6379,
+
   "TRANSLOADIT_MEDIA_TEMPLATE_ID": "29c60cfc5b9f4e8b8c8bf7a9b1191147",
   "TRANSLOADIT_MEDIA_AUTH_KEY": "8a36aa56062f49c79976fa24a74db6cc",
   "TRANSLOADIT_PROFILE_TEMPLATE_ID": "396d7cb3a2a5437eb258c3e86000f3bf",
   "TRANSLOADIT_PROFILE_AUTH_KEY": "8a36aa56062f49c79976fa24a74db6cc",
+
   "CARTODB_USER": "island",
   "CARTODB_API_KEY": "883965c96f62fd219721f59f2e7c20f08db0123b",
   "CARTODB_CRAGS_TABLE": "crags_dev",
   "CARTODB_MEDIA_TABLE": "medias_dev",
   "CARTODB_INSTAGRAM_TABLE": "instagrams_dev",
+
   "FACEBOOK_NAME": "Island (dev)",
   "FACEBOOK_CLIENT_ID": 153015724883386,
   "FACEBOOK_CLIENT_SECRET": "8cba32f72580806cca22306a879052bd",
+
   "TWITTER_CONSUMER_KEY": "ithvzW8h1tEsUBewL3jxQ",
   "TWITTER_CONSUMER_SECRET": "HiGnwoc8BBgsURlKshWsb1pGH8IQWE2Ve8Mqzz8",
+
+  "GOOGLE_CLIENT_ID": "",
+  "GOOGLE_CLIENT_SECRET": "",
+
   "INSTAGRAM_CLIENT_ID": "8b0ad3eaed554a2f88def5884f0d43df",
   "INSTAGRAM_CLIENT_SECRET": "89876abf94ad4933ab677f221f46edf5",
   "INSTAGRAM_CALLBACK_URL": "/members/connect/instagram/callback",
   "INSTAGRAM_VERIFY_TOKEN": "doesthisworkyet",
   "INSTAGRAM_USER_ID": "island.io",
+
   "GMAIL_FROM": "Island <robot@island.io>",
   "GMAIL_USER": "robot@island.io",
   "GMAIL_HOST": "smtp.gmail.com",
   "GMAIL_PASSWORD": "I514nDr06ot",
   "GMAIL_SSL": true,
-  "FORECASTIO_API": "e5d575b80fc45a56a11e8580af773abe"
+
+  "FORECASTIO_API": "e5d575b80fc45a56a11e8580af773abe",
+
+  "PUB_SOCKET_PORT": "tcp://127.0.0.1:5556",
+  "SUB_SOCKET_PORT": "tcp://127.0.0.1:5555",
+
+  "GRADES": "9c+,9c,9b+,9b,9a+,9a,8c+,8c,8b+,8b,8a+,8a,7c+,7c,7b+,7b,7a+,7a,6c+,6c,6b+,6b,6a+,6a,5c,5b,5a,4,3"
 }

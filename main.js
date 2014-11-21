@@ -11,21 +11,22 @@ var ngrok = require('ngrok');
 if (cluster.isMaster) {
 
   var ngrokUrl = null;
-
   var createWorkers = function() {
+
     // Count the machine's CPUs
     var cpus = require('os').cpus().length;
 
     // Create a worker for each CPU
-    for (var i = 0; i < cpus; ++i)
-      cluster.fork({NGROKURL: ngrokUrl})
+    for (var i = 0; i < cpus; ++i) {
+      cluster.fork({NGROKURL: ngrokUrl});
+    }
 
     // Listen for dying workers
     cluster.on('exit', function (worker) {
 
       // Replace the dead worker.
       util.log('Worker ' + worker.id + ' died');
-      cluster.fork({NGROKURL: ngrokUrl})
+      cluster.fork({NGROKURL: ngrokUrl});
     });
   }
 
@@ -48,13 +49,8 @@ if (cluster.isMaster) {
   var optimist = require('optimist');
   var argv = optimist
       .describe('help', 'Get help')
-      .describe('port', 'Port to listen on')
-        .default('port', 8000)
       .describe('index', 'Ensure indexes on MongoDB collections')
         .boolean('index')
-      .describe('jobs', 'Schedule jobs'
-          + '(always `true` in production)')
-        .boolean('jobs')
       .argv;
 
   if (argv._.length || argv.help) {
@@ -63,53 +59,76 @@ if (cluster.isMaster) {
   }
 
   // Module Dependencies
-  var fs = require('fs');
   var http = require('http');
+  var https = require('https');
+  var connect = require('connect');
   var express = require('express');
   var slashes = require('connect-slashes');
-  var mongodb = require('mongodb');
+  var zmq = require('zmq');
   var socketio = require('socket.io');
   var redis = require('redis');
   var RedisStore = require('connect-redis')(express);
-  var request = require('request');
   var jade = require('jade');
-  var stylus = require('stylus');
   var passport = require('passport');
   var psio = require('passport.socketio');
   var fs = require('fs');
   var path = require('path');
   var url = require('url');
   var Step = require('step');
+  var iutil = require('island-util');
   var _ = require('underscore');
   _.mixin(require('underscore.string'));
-  var Connection = require('./lib/db').Connection;
+  var db = require('mongish');
+  var Search = require('island-search').Search;
+  var collections = require('island-collections').collections;
+  var Events = require('island-events').Events;
+  var Emailer = require('island-emailer').Emailer;
+  var resources = require('./lib/resources.js').resources;
   var Client = require('./lib/client').Client;
-  var Search = require('node-lexsearch').Search;
-  var resources = require('./lib/resources');
   var service = require('./lib/service');
-  var Mailer = require('./lib/mailer');
-  var PubSub = require('./lib/pubsub').PubSub;
-      // Add instagram routes and subscriptions
-  var Instagram = require('./lib/instagram');
 
   // Setup Environments
-  var app = express();
+  var app = require('./app').init();
 
   // Package info.
-  app.set('package', JSON.parse(fs.readFileSync('package.json', 'utf8')));
+  app.set('package', require('./package.json'));
 
-  // App port is env var in production
-  app.set('PORT', process.env.PORT || argv.port);
+  // App port is env var in production.
+  app.set('PORT', process.env.PORT || app.get('package').port);
+  app.set('SECURE_PORT', app.get('package').securePort);
 
   // Add connection config to app.
   _.each(require('./config.json'), function (v, k) {
     app.set(k, process.env[k] || v);
   });
 
-  // Grade map
-  app.set('GRADES', ['9c+', '9c', '9b+', '9b', '9a+', '9a', '8c+', '8c',
-      '8b+', '8b', '8a+', '8a', '7c+', '7c', '7b+', '7b', '7a+', '7a',
-      '6c+', '6c', '6b+', '6b', '6a+', '6a', '5c', '5b', '5a', '4', '3']);
+  /*
+   * Error wrap JSON request.
+   */
+  function errorHandler(err, req, res, data, estr) {
+    if (typeof data === 'string') {
+      estr = data;
+      data = null;
+    }
+    var fn = req.xhr ? res.send: res.render;
+    if (err || (!data && estr)) {
+      var profile = {
+        user: req.user,
+        content: {page: null},
+        root: app.get('ROOT_URI'),
+        embed: req._parsedUrl.path.indexOf('/embed') === 0
+      };
+      if (err) {
+        util.error(err);
+        profile.error = {stack: err.stack};
+        fn.call(res, 500, iutil.client(profile));
+      } else {
+        profile.error = {message: estr + ' not found'};
+        fn.call(res, 404, iutil.client(profile));
+      }
+      return true;
+    } else return false;
+  }
 
   Step(
     function () {
@@ -121,9 +140,6 @@ if (cluster.isMaster) {
         app.set('ROOT_URI', '');
         app.set('HOME_URI', 'http://localhost:' + app.get('PORT'));
         app.set('TUNNEL_URI', process.env['NGROKURL']);
-
-        // Job scheduling.
-        // app.set('SCHEDULE_JOBS', argv.jobs);
       }
 
       // Production only
@@ -132,39 +148,47 @@ if (cluster.isMaster) {
         // App params
         app.set('ROOT_URI', [app.get('package').builds.cloudfront,
             app.get('package').version].join('/'));
-        app.set('HOME_URI', [app.get('package').protocol,
+        app.set('HOME_URI', [app.get('package').protocol.name,
             app.get('package').domain].join('://'));
-
-        // Job scheduling.
-        // app.set('SCHEDULE_JOBS', true);
       }
 
       // Redis connect
       this.parallel()(null, redis.createClient(app.get('REDIS_PORT'),
-          app.get('REDIS_HOST')));
+          app.get('REDIS_HOST_SESSION')));
       this.parallel()(null, redis.createClient(app.get('REDIS_PORT'),
-          app.get('REDIS_HOST')));
+          app.get('REDIS_HOST_SESSION')));
       this.parallel()(null, redis.createClient(app.get('REDIS_PORT'),
-          app.get('REDIS_HOST')));
+          app.get('REDIS_HOST_SESSION')));
 
     },
     function (err, rc, rp, rs) {
-      if (err) return util.error(err);
+      if (err) {
+        console.error(err);
+        process.exit(1);
+        return;
+      }
 
-      // Common utils init
-      require('./lib/common').init(app.get('ROOT_URI'));
-
-      // Mailer init
-      app.set('mailer', new Mailer({
+      // App config.
+      app.set('db', db);
+      app.set('emailer', new Emailer({
+        db: db,
         user: app.get('GMAIL_USER'),
         password: app.get('GMAIL_PASSWORD'),
         from: app.get('GMAIL_FROM'),
         host: app.get('GMAIL_HOST'),
         ssl: app.get('GMAIL_SSL'),
-      }, app.get('HOME_URI')));
-
-      // PubSub init
-      app.set('pubsub', new PubSub({mailer: app.get('mailer')}));
+        baseURI: app.get('HOME_URI')
+      }));
+      app.set('events', new Events({
+        db: db,
+        sock: (function () {
+          var client = zmq.socket('pub');
+          client.connect(app.get('PUB_SOCKET_PORT'));
+          return client;
+        })(),
+        emailer: app.get('emailer')
+      }));
+      app.set('errorHandler', errorHandler);
 
       // Express config
       app.set('views', __dirname + '/views');
@@ -173,22 +197,18 @@ if (cluster.isMaster) {
       app.set('sessionSecret', 'weareisland');
       app.set('sessionKey', 'express.sid');
       app.set('cookieParser', express.cookieParser(app.get('sessionKey')));
-      app.use(express.favicon(__dirname + '/public/img/favicon.ico'));
       app.use(express.logger('dev'));
 
       // Get the raw body
       // http://stackoverflow.com/questions/18710225/node-js-get-raw-request-body-using-express
-      app.use(function(req, res, next) {
+      app.use(function (req, res, next) {
         req.rawBody = '';
         req.setEncoding('utf8');
-
-        req.on('data', function(chunk) { 
+        req.on('data', function (chunk) { 
           req.rawBody += chunk;
         });
-
         next();
       });
-
       app.use(express.bodyParser());
       app.use(app.get('cookieParser'));
       app.use(express.session({
@@ -218,63 +238,111 @@ if (cluster.isMaster) {
         app.use(app.router);
         app.use(function (err, req, res, next) {
           if (!err) return next();
+          console.error('Returning code 500', err);
+          console.error(err.stack);
           res.render('500', {root: app.get('ROOT_URI')});
         });
-
-        // Force HTTPS
-        if (app.get('package').protocol === 'https') {
-          app.all('*', function (req, res, next) {
-            if ((req.headers['x-forwarded-proto'] || '').toLowerCase()
-                === 'https') {
-              return next();
-            }
-            res.redirect('https://' + req.headers.host + req.url);
-          });
-        }
       }
 
-      Instagram.init(app);
+      app.all('*', function (req, res, next) {
+
+        // Check protocol.
+        if (process.env.NODE_ENV === 'production'
+            && app.get('package').protocol.name === 'https') {
+          if (req.secure || _.find(app.get('package').protocol.allow,
+              function (allow) {
+            return req.url === allow.url && req.method === allow.method;
+          })) {
+            return _next();
+          }
+          res.redirect(301, 'https://' + req.headers.host + req.url);
+        } else {
+          _next();
+        }
+
+        // Ensure Safari does not cache the response.
+        function _next() {
+          var agent;
+          agent = req.headers['user-agent'];
+          if (agent && agent.indexOf('Safari') > -1
+              && agent.indexOf('Chrome') === -1
+              && agent.indexOf('OPR') === -1) {
+            res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+            res.header('Pragma', 'no-cache');
+            res.header('Expires', 0);
+          }
+          next();
+        }
+      });
 
       if (!module.parent) {
 
         Step(
           function () {
-            new Connection(app.get('MONGO_URI'), {ensureIndexes: argv.index}, this);
+
+            // Open DB connection.
+            new db.Connection(app.get('MONGO_URI'), {ensureIndexes: 
+                argv.index && cluster.worker.id === 1},
+                this.parallel());
+
+            // Init search cache.
+            app.set('cache', new Search({
+              redisHost: app.get('REDIS_HOST_CACHE'),
+              redisPort: app.get('REDIS_PORT')
+            }, this.parallel()));
           },
           function (err, connection) {
+            if (err) return this(err);
+
+            // Init collections.
+            if (_.size(collections) === 0) {
+              return this();
+            }
+            _.each(collections, _.bind(function (c, name) {
+              connection.add(name, c, this.parallel());
+            }, this));
+          },
+          function (err) {
             if (err) {
-              util.error(err);
+              console.error(err);
               process.exit(1);
               return;
             }
 
-            // Attach a connection ref to app.
-            app.set('connection', connection);
-
-            app.set('cache', new Search({
-              redisHost: app.get('REDIS_SEARCH_HOST'),
-              redisPort: app.get('REDIS_PORT')
-            }, this.parallel()));
-
             // Init resources.
-            resources.init(app, this.parallel());
-          },
-          function (err) {
-            if (err) return console.error(err);
+            _.each(resources, function (r, name) {
+              r.init();
+            });
 
             // Init service.
             service.routes(app);
 
             // Catch all.
             app.use(function (req, res) {
-              res.render('base', {member: req.user, root: app.get('ROOT_URI')});
+              var embed = req._parsedUrl.path.indexOf('/embed') === 0;
+              res.render('index', {
+                user: req.user,
+                root: app.get('ROOT_URI'),
+                embed: embed
+              });
             });
 
-            // HTTP server.
-            var server = http.createServer(app);
+            // HTTP(S) server.
+            var server, _server;
+            if (process.env.NODE_ENV !== 'production') {
+              server = http.createServer(app);
+            } else {
+              server = https.createServer({
+                ca: fs.readFileSync('./ssl/ca-chain.crt'),
+                key: fs.readFileSync('./ssl/www_island_io.key'),
+                cert: fs.readFileSync('./ssl/www_island_io.crt')
+              }, app);
+              _server = http.createServer(app);
+            }
 
             // Socket handling
-            var sio = socketio.listen(server);
+            var sio = socketio.listen(server,
+                {secure: process.env.NODE_ENV === 'production'});
             sio.set('store', new socketio.RedisStore({
               redis: redis,
               redisPub: rp,
@@ -309,40 +377,31 @@ if (cluster.isMaster) {
               success: function(data, accept) { accept(null, true); }
             }));
 
-            // Socket connect
-            sio.sockets.on('connection', function (socket) {
-              socket.join('event');
-              socket.join('post');
-              socket.join('session');
-              socket.join('tick');
-              socket.join('comment');
-              socket.join('hangten');
-              socket.join('follow');
-              socket.join('request');
-              socket.join('accept');
-              socket.join('watch');
-              socket.join('map'); // tmp
-              socket.join('media'); // tmp
-              if (socket.handshake.user)
-                socket.join('mem-' + socket.handshake.user._id);
+            // Websocket connect
+            sio.sockets.on('connection', function (webSock) {
 
-              // FIXME: Use a key map instead of
-              // attaching this directly to the socket.
-              socket.client = new Client(socket, app.get('pubsub'));
+              // Back-end socket for talking to other Island services
+              var backSock = zmq.socket('sub');
+              backSock.connect(app.get('SUB_SOCKET_PORT'));
+
+              // Create new client.
+              webSock.client = new Client(webSock, backSock);
             });
 
-            // Set pubsub sio
-            app.get('pubsub').setSocketIO(sio);
-
             // Start server
-            server.listen(app.get('PORT'));
-            util.log('Web and API server listening on port ' + app.get('PORT'));
+            if (process.env.NODE_ENV !== 'production') {
+              server.listen(app.get('PORT'));
+            } else {
+              server.listen(app.get('SECURE_PORT'));
+              _server.listen(app.get('PORT'));
+            }
+            util.log('Worker ' + cluster.worker.id
+                + ': Web server listening on port '
+                + (process.env.NODE_ENV !== 'production' ?
+                app.get('PORT'): app.get('SECURE_PORT')));
           }
         );
-
       }
     }
-
   );
-
 }
