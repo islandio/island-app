@@ -1,40 +1,41 @@
-.block-messages
-  ul
-.header-inner
-  a.button.disabled.logo.navigate(href="/")
-    //- span.tagline Train &middot; Climb
-    span.tagline just climbing
-    img(src="#{root}/img/logo.png", width="127", height="30")
-  div.divider-vertical.pad-right
-  .header-search
-    input.header-search-input(type="search", tabindex="1", placeholder="Search...")
-    .search-display
-      .list-header
-  ul.header-links
-    li
-      a(class="navigate", href="/") Home
-    li
-      a(class="navigate", href="/crags") Crags
-    li
-      a(class="navigate", href="/films") Films
-    li
-      a(class="navigate", href="/about") About
-  - if (member)
-    div.member-box
-      div.divider-vertical
-      a.header-avatar(href="/" + member.username)
-        img(src="https://www.gravatar.com/avatar/" + member.gravatar + "?s=50&d=https%3A%2F%2Fd271mvlc6gc7bl.cloudfront.net%2Fmain%2Fimg%2Favatar_100.png", width="50", height="50")
-      a.button.header-action.header-add-button.header-add-crag-button(href="javascript:;", title="Add new crag")
-        i.icon-plus
-        i.icon-location
-      div.divider-vertical
-      a.button.globe-button.header-action(href="javascript:;", title="Notifications")
-        i.icon-globe
-        span.count
-      div.divider-vertical
-      a.button.header-action(href="/logout", title="Sign out")
-        i.icon-logout
-  - else
-    a.button.signin-button.header-action.navigate(href="/signin")
-      span Sign in 
-      i.icon-login
+header.header
+  .block-messages
+    ul
+  .header-inner
+    a.button.disabled.logo.navigate(href="/")
+      //- span.tagline Train &middot; Climb
+      span.tagline just climbing
+      img(src="#{root}/img/logo.png", width="127", height="30")
+    div.divider-vertical.pad-right
+    .header-search
+      input.header-search-input(type="search", tabindex="1", placeholder="Search...")
+      .search-display
+        .list-header
+    ul.header-links
+      li
+        a(class="navigate", href="/") Home
+      li
+        a(class="navigate", href="/crags") Crags
+      li
+        a(class="navigate", href="/films") Films
+      li
+        a(class="navigate", href="/about") About
+    - if (member)
+      div.member-box
+        div.divider-vertical
+        a.header-avatar(href="/" + member.username)
+          img(src="https://www.gravatar.com/avatar/" + member.gravatar + "?s=50&d=https%3A%2F%2Fd271mvlc6gc7bl.cloudfront.net%2Fmain%2Fimg%2Favatar_100.png", width="50", height="50")
+        a.button.header-action.header-add-button.header-add-crag-button(href="javascript:;", title="Add new crag")
+          i.icon-plus
+          i.icon-location
+        div.divider-vertical
+        a.button.globe-button.header-action(href="javascript:;", title="Notifications")
+          i.icon-globe
+          span.count
+        div.divider-vertical
+        a.button.header-action(href="/logout", title="Sign out")
+          i.icon-logout
+    - else
+      a.button.signin-button.header-action.navigate(href="/signin")
+        span Sign in 
+        i.icon-login

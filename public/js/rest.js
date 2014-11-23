@@ -15,7 +15,6 @@ define([
         data = null;
       }
       cb = cb || function(){};
-
       var params = {
         url: url,
         type: type,
@@ -25,7 +24,7 @@ define([
           try {
             err = JSON.parse(res.responseText);
             var data = err.data;
-            err = {
+            err = err.code ? err: {
               member: err.member,
               content: err.content,
               message: err.error.message,
@@ -43,11 +42,13 @@ define([
         contentType: 'application/json', 
         dataType: 'json'
       };
-      if (data)
-        if (type === 'POST')
+      if (data) {
+        if (type === 'POST') {
           params.data = JSON.stringify(data);
-        else params.url += '?' + $.param(data);
-
+        } else {
+          params.url += '?' + $.param(data);
+        }
+      }
       return $.ajax(params);
     },
 
@@ -64,7 +65,6 @@ define([
         cb = data;
         data = null;
       }
-
       data._method = 'PUT';
       this.exec('POST', url, data, cb);
     },
@@ -74,7 +74,6 @@ define([
         cb = data;
         data = null;
       }
-
       data._method = 'DELETE';
       this.exec('POST', url, data, cb);
     }
