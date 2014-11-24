@@ -6,19 +6,20 @@
 
 var cluster = require('cluster');
 var util = require('util');
-var ngrok = require('ngrok');
+// var ngrok = require('ngrok');
 
 if (cluster.isMaster) {
 
-  var ngrokUrl = null;
-  var createWorkers = function() {
+  // var ngrokUrl = null;
+  // var createWorkers = function() {
 
     // Count the machine's CPUs
     var cpus = require('os').cpus().length;
 
     // Create a worker for each CPU
     for (var i = 0; i < cpus; ++i) {
-      cluster.fork({NGROKURL: ngrokUrl});
+      // cluster.fork({NGROKURL: ngrokUrl});
+      cluster.fork();
     }
 
     // Listen for dying workers
@@ -26,23 +27,23 @@ if (cluster.isMaster) {
 
       // Replace the dead worker.
       util.log('Worker ' + worker.id + ' died');
-      cluster.fork({NGROKURL: ngrokUrl});
+      // cluster.fork({NGROKURL: ngrokUrl});
+      cluster.fork();
     });
-  }
+  // }
 
-  // Setup an outside tunnel to our localhost in development
-  // We will pass this to the workers
-  if (process.env.NODE_ENV !== 'production') {
-    ngrok.connect(8000, function (err, url) {
-      console.log('Setting up tunnel from this machine to ' + url);
-      ngrokUrl = url;
-      createWorkers();
-    });
-  }
-  else {
-    createWorkers();
-  }
-
+  // // Setup an outside tunnel to our localhost in development
+  // // We will pass this to the workers
+  // if (process.env.NODE_ENV !== 'production') {
+  //   ngrok.connect(8000, function (err, url) {
+  //     console.log('Setting up tunnel from this machine to ' + url);
+  //     ngrokUrl = url;
+  //     createWorkers();
+  //   });
+  // }
+  // else {
+  //   createWorkers();
+  // }
 } else {
 
   // Arguments
@@ -69,6 +70,7 @@ if (cluster.isMaster) {
   var redis = require('redis');
   var RedisStore = require('connect-redis')(express);
   var jade = require('jade');
+  var stylus = require('stylus');
   var passport = require('passport');
   var psio = require('passport.socketio');
   var fs = require('fs');
