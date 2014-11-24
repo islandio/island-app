@@ -6,20 +6,17 @@
 
 var cluster = require('cluster');
 var util = require('util');
-// var ngrok = require('ngrok');
+var cpus = require('os').cpus().length;
+var ngrok = require('ngrok');
 
 if (cluster.isMaster) {
 
-  // var ngrokUrl = null;
-  // var createWorkers = function() {
-
-    // Count the machine's CPUs
-    var cpus = require('os').cpus().length;
+  var ngrokUrl = null;
+  var createWorkers = function() {
 
     // Create a worker for each CPU
     for (var i = 0; i < cpus; ++i) {
-      // cluster.fork({NGROKURL: ngrokUrl});
-      cluster.fork();
+      cluster.fork({NGROKURL: ngrokUrl});
     }
 
     // Listen for dying workers
@@ -27,23 +24,21 @@ if (cluster.isMaster) {
 
       // Replace the dead worker.
       util.log('Worker ' + worker.id + ' died');
-      // cluster.fork({NGROKURL: ngrokUrl});
-      cluster.fork();
+      cluster.fork({NGROKURL: ngrokUrl});
     });
-  // }
+  }
 
-  // // Setup an outside tunnel to our localhost in development
-  // // We will pass this to the workers
-  // if (process.env.NODE_ENV !== 'production') {
-  //   ngrok.connect(8000, function (err, url) {
-  //     console.log('Setting up tunnel from this machine to ' + url);
-  //     ngrokUrl = url;
-  //     createWorkers();
-  //   });
-  // }
-  // else {
-  //   createWorkers();
-  // }
+  // Setup an outside tunnel to our localhost in development
+  // We will pass this to the workers
+  if (process.env.NODE_ENV !== 'production') {
+    ngrok.connect(8000, function (err, url) {
+      util.log('Setting up tunnel from this machine to ' + url);
+      ngrokUrl = url;
+      createWorkers();
+    });
+  } else {
+    createWorkers();
+  }
 } else {
 
   // Arguments
@@ -321,11 +316,9 @@ if (cluster.isMaster) {
 
             // Catch all.
             app.use(function (req, res) {
-              var embed = req._parsedUrl.path.indexOf('/embed') === 0;
               res.render('index', {
                 user: req.user,
-                root: app.get('ROOT_URI'),
-                embed: embed
+                root: app.get('ROOT_URI')
               });
             });
 
@@ -343,8 +336,8 @@ if (cluster.isMaster) {
             }
 
             // Socket handling
-            var sio = socketio.listen(server,
-                {secure: process.env.NODE_ENV === 'production'});
+            var sio = socketio.listen(server, {log: false,
+                secure: process.env.NODE_ENV === 'production'});
             sio.set('store', new socketio.RedisStore({
               redis: redis,
               redisPub: rp,
@@ -397,10 +390,12 @@ if (cluster.isMaster) {
               server.listen(app.get('SECURE_PORT'));
               _server.listen(app.get('PORT'));
             }
-            util.log('Worker ' + cluster.worker.id
-                + ': Web server listening on port '
-                + (process.env.NODE_ENV !== 'production' ?
-                app.get('PORT'): app.get('SECURE_PORT')));
+            if (cluster.worker.id === 1) {
+              util.log('Web server listening on port '
+                  + (process.env.NODE_ENV !== 'production' ?
+                  app.get('PORT'): app.get('SECURE_PORT'))
+                  + ' (' + cpus + ' workers)');
+            }
           }
         );
       }

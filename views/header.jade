@@ -20,7 +20,7 @@ header.header
         a(class="navigate", href="/films") Films
       li
         a(class="navigate", href="/about") About
-    - if (member)
+    - if (typeof member !== 'undefined')
       div.member-box
         div.divider-vertical
         a.header-avatar(href="/" + member.username)

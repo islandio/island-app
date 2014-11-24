@@ -1,8 +1,8 @@
 {
   "MONGO_URI": "mongodb://localhost:27017/island",
 
-  "REDIS_SEARCH_HOST": "localhost",
-  "REDIS_HOST": "localhost",
+  "REDIS_HOST_CACHE": "localhost",
+  "REDIS_HOST_SESSION": "localhost",
   "REDIS_PORT": 6379,
 
   "TRANSLOADIT_MEDIA_TEMPLATE_ID": "29c60cfc5b9f4e8b8c8bf7a9b1191147",
@@ -16,15 +16,16 @@
   "CARTODB_MEDIA_TABLE": "medias_dev",
   "CARTODB_INSTAGRAM_TABLE": "instagrams_dev",
 
-  "FACEBOOK_NAME": "Island (dev)",
+  "FACEBOOK_NAME": "The Island (dev)",
   "FACEBOOK_CLIENT_ID": 153015724883386,
   "FACEBOOK_CLIENT_SECRET": "8cba32f72580806cca22306a879052bd",
 
   "TWITTER_CONSUMER_KEY": "ithvzW8h1tEsUBewL3jxQ",
   "TWITTER_CONSUMER_SECRET": "HiGnwoc8BBgsURlKshWsb1pGH8IQWE2Ve8Mqzz8",
 
-  "GOOGLE_CLIENT_ID": "",
-  "GOOGLE_CLIENT_SECRET": "",
+  "GOOGLE_CLIENT_ID": "690996089003-vehmirjgtb88mnh99t9u3e532vof3scg.apps.googleusercontent.com",
+  "GOOGLE_CLIENT_SECRET": "BeCdaeQC_msZa3PaocKG-pXs",
+  "GOOGLE_EMAIL_ADDRESS": "690996089003-vehmirjgtb88mnh99t9u3e532vof3scg@developer.gserviceaccount.com",
 
   "INSTAGRAM_CLIENT_ID": "8b0ad3eaed554a2f88def5884f0d43df",
   "INSTAGRAM_CLIENT_SECRET": "89876abf94ad4933ab677f221f46edf5",
