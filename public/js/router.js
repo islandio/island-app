@@ -28,17 +28,18 @@ define([
   'views/settings',
   'views/reset',
   'views/films',
-  'views/about',
-  'views/privacy',
+  'views/static',
   'views/crags',
   'views/dashboard',
   'views/splash',
   'views/sessions',
-  'views/ticks'
+  'views/ticks',
+  'text!../templates/about.html',
+  'text!../templates/privacy.html',
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
     Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Tick, Crag, Ascent,
-    Settings, Reset, Films, About, Privacy, Crags, Dashboard, Splash, Sessions,
-    Ticks) {
+    Settings, Reset, Films, Static, Crags, Dashboard, Splash, Sessions,
+    Ticks, aboutTemp, privacyTemp) {
 
   /*
    * Determine if parent is iframe.

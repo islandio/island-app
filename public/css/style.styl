@@ -1008,23 +1008,56 @@ button.button.input-add-button:focus
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––structure*/
 
+.container
+  padding 0
+  overflow hidden
+
+.content
+  position relative
+  margin 0 auto 30px
+  width 1024px
+  min-height 336px
+  padding 0 30px
+  background #fff
+  border-radius 2px
+  border 1px solid #e6e6e6
+
+.container.wide .content
+  width 100%
+  min-height 100%
+  padding 0
+  margin 0
+  border-left none
+  border-right none
+  border-bottom none
+  border-top 1px solid #e6e6e6
+
+.container.landing .content
+  border none
+  background none
+
 .main
+  width 100%
+  height 100%
   margin 0
 
-.wrap
-  position relative
-  min-height 100%
-  height 100%
+.container.wide .main
+  margin-bottom 0
 
-.wrap.animated
-  -webkit-transition margin 0.3s
-  -moz-transition margin 0.3s
-  -ms-transition margin 0.3s
-  -o-transition margin 0.3s
-  transition margin 0.3s
+// .wrap
+//   position relative
+//   min-height 100%
+//   height 100%
 
-.wrap.panel-open
-  margin-right 220px
+// .wrap.animated
+//   -webkit-transition margin 0.3s
+//   -moz-transition margin 0.3s
+//   -ms-transition margin 0.3s
+//   -o-transition margin 0.3s
+//   transition margin 0.3s
+
+// .wrap.panel-open
+//   margin-right 220px
 
 .folder
   position relative
@@ -1032,12 +1065,11 @@ button.button.input-add-button:focus
   width 1086px
   background none
 
-.folder.initial
-  visibility hidden
+.container.wide .folder
+  margin: 0
+  width: 100%
 
-.folder.landing
-  width 100%
-  margin-top 0
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––tabs*/
 
 .tabs
   position relative
@@ -1047,7 +1079,10 @@ button.button.input-add-button:focus
   border-radius 2px 2px 0 0
   height 40px
 
-.folder.landing .tabs
+.container.wide .tabs
+  border none
+
+.container.landing .tabs
   display none
 
 .tabs ul,
@@ -1100,8 +1135,8 @@ li.tab ~ li.tab
 li.tab.active
   border-left none !important
 
-li.tab.active:last-child
-  border-right 2px solid #e6e6e6
+// li.tab.active:last-child
+//   border-right 2px solid #e6e6e6
 
 li.tab.active a
   background #fff
@@ -1109,6 +1144,41 @@ li.tab.active a
   border-top 4px solid blue
   padding-top 11px
   top 5px
+
+li.tab a .tab-count
+  display none
+  position absolute
+  right 7px
+  top 6px
+  width 12px
+  height 12px
+  text-align center
+  color #fff
+  background rgba(208,76,56,0.8)
+  font-size 9px
+  line-height 12px
+
+  border-radius 6px
+
+  box-shadow 1px 1px rgba(0,0,0,0.2)
+  -webkit-box-shadow 1px 1px rgba(0,0,0,0.2)
+  -moz-box-shadow 1px 1px rgba(0,0,0,0.2)
+
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration 0.2s
+  -moz-animation-duration 0.2s
+  -o-animation-duration 0.2s
+  animation-duration 0.2s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
+
+li.tab.active a .tab-count
+  top 8px
 
 .tabs > a.button.title-green-button
   position relative
@@ -1276,20 +1346,6 @@ ul.splash-features li p
 ul.splash-features li img
   border-radius 3px
   border 1px solid #e6e6e6
-
-.content
-  position relative
-  margin 0 auto 30px
-  width 1024px
-  min-height 336px
-  padding 0 30px
-  background #fff
-  border-radius 2px
-  border 1px solid #e6e6e6
-
-.folder.landing .content
-  background none
-  border none
 
 .footer
   width 100%
