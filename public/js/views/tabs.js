@@ -31,11 +31,14 @@ define([
     },
 
     render: function () {
-      if (!this.params.tabs) this.params.tabs = [];
+      if (!this.params.tabs) {
+        this.params.tabs = [];
+      }
 
       // Render or activate tabs.
-      if (!this.params.tabs || this.params.tabs.length === 0)
+      if (!this.params.tabs || this.params.tabs.length === 0) {
         this.empty();
+      }
       var tabs = this.$('.tab');
       if (tabs.length === 0) {
         this.template = _.template(template);
@@ -95,12 +98,13 @@ define([
       this.request.call(this, btn, function (data) {
 
         // Update button content.
-        if (data.following === 'request')
+        if (data.following === 'request') {
           btn.removeClass('follow-button').addClass('disabled')
               .html('<i class="icon-user"></i> Requested');
-        else
+        } else {
           btn.removeClass('follow-button').addClass('unfollow-button')
               .html('<i class="icon-user-delete"></i> Unfollow');
+        }
       });
 
       return false;
@@ -145,7 +149,9 @@ define([
     request: function (target, cb) {
 
       // Prevent multiple requests.
-      if (this.working || !this.app.profile.content.page) return false;
+      if (this.working || !this.app.profile.content.page) {
+        return false;
+      }
       this.working = true;
 
       // Make request.

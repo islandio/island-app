@@ -280,6 +280,9 @@ body.preload *
   -ms-transition none !important
   -o-transition none !important
 
+body.loading *
+  cursor wait !important
+
 a
   color darkgray
   background-color mattegray
@@ -1348,9 +1351,23 @@ ul.splash-features li img
   border 1px solid #e6e6e6
 
 .footer
+  display none
   width 100%
   height 40px
   background #f2f2f2
+
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration .2s
+  -moz-animation-duration .2s
+  -o-animation-duration .2s
+  animation-duration .2s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
 
 .footer > div
   margin 0 auto
@@ -1391,8 +1408,8 @@ ul.splash-features li img
 .page-spin
   position absolute
   z-index 2
-  left -24px
-  top 21px
+  left 30px
+  top 25px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––header*/
 
@@ -2810,6 +2827,22 @@ h2.profile-section-title
   overflow hidden
   width 1024px
   height 460px
+
+.profile .profile-picture img
+  display none
+
+  -webkit-animation-name fadeIn
+  -moz-animation-name fadeIn
+  -o-animation-name fadeIn
+  animation-name fadeIn
+  -webkit-animation-duration .2s
+  -moz-animation-duration .2s
+  -o-animation-duration .2s
+  animation-duration .2s
+  -webkit-animation-fill-mode both
+  -moz-animation-fill-mode both
+  -o-animation-fill-mode both
+  animation-fill-mode both
 
 .profile-description p
   font-family standard_thin

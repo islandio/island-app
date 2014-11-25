@@ -213,6 +213,7 @@ define([
       this.loading = true;
       $(window).scrollTop(0);
       $('body').addClass('loading');
+      $('footer').hide();
       this.spin.start();
     },
 
@@ -222,11 +223,12 @@ define([
         return;
       }
       this.loading = false;
-      _.delay(_.bind(function () {
+      // _.delay(_.bind(function () {
         this.spin.stop();
         $(window).scrollTop(0);
         $('body').removeClass('loading');
-      }, this), 500);
+        $('footer').show();
+      // }, this), 500);
     },
 
     getEventActions: function () {
@@ -258,7 +260,7 @@ define([
             {title: 'Activity', href: '/', active: true},
             {title: 'My Sessions', href: '/sessions'},
             {title: 'My Ticks', href: '/ticks'}
-          ]});
+          ], log: true});
         } else {
           $('.container').addClass('wide').addClass('landing');
           this.page = new Splash(this.app, {splash: true}).render();
@@ -277,7 +279,7 @@ define([
           {title: 'Activity', href: '/'},
           {title: 'My Sessions', href: '/sessions', active: true},
           {title: 'My Ticks', href: '/ticks'}
-        ]});
+        ], log: true});
         this.page = new Sessions(this.app).render();
         this.stop();
       }, this));
@@ -293,7 +295,7 @@ define([
           {title: 'Activity', href: '/'},
           {title: 'My Sessions', href: '/sessions'},
           {title: 'My Ticks', href: '/ticks', active: true}
-        ]});
+        ], log: true});
         this.page = new Ticks(this.app).render();
         this.stop();
       }, this));
@@ -301,6 +303,7 @@ define([
 
     crags: function (country) {
       this.start();
+      this.renderTabs();
       $('.container').removeClass('wide').removeClass('landing');
       var query = {};
       if (country) query.country = country;
@@ -309,44 +312,50 @@ define([
       this.render('/service/crags', query, _.bind(function (err) {
         if (err) return;
         this.page = new Crags(this.app).render();
+        this.renderTabs({title: 'Crags', log: true});
         this.stop();
       }, this));
-      this.renderTabs({title: 'Crags'});
     },
 
     films: function () {
       this.start();
+      this.renderTabs();
       $('.container').removeClass('wide').removeClass('landing');
       this.render('/service/films', _.bind(function (err) {
         if (err) return;
         this.page = new Films(this.app).render();
+        this.renderTabs({title: 'Films', subtitle: 'Original content by Island',
+            log: true});
         this.stop();
       }, this));
-      this.renderTabs({title: 'Films', subtitle: 'Original content by Island'});
     },
 
     about: function () {
       this.start();
+      this.renderTabs();
       $('.container').removeClass('wide').removeClass('landing');
       this.render('/service/static', _.bind(function (err) {
         if (err) return;
         this.page = new Static(this.app,
             {title: 'About', template: aboutTemp}).render();
+        this.renderTabs({title: 'About', subtitle: 'What\'s going on here?',
+            log: true});
         this.stop();
       }, this));
-      this.renderTabs({title: 'About', subtitle: 'What\'s going on here?'});
     },
 
     privacy: function () {
       this.start();
+      this.renderTabs();
       $('.container').removeClass('wide').removeClass('landing');
       this.render('/service/static', _.bind(function (err) {
         if (err) return;
         this.page = new Static(this.app,
             {title: 'Privacy', template: privacyTemp}).render();
+        this.renderTabs({title: 'Privacy Policy', subtitle: 'Last updated 7.27.2013',
+            log: true});
         this.stop();
       }, this));
-      this.renderTabs({title: 'Privacy Policy', subtitle: 'Last updated 7.27.2013'});
     },
 
     settings: function () {

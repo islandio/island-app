@@ -1,6 +1,7 @@
 <%
 
-  var own = !this.model || (this.app.profile.member && this.model.id === this.app.profile.member.id);
+  var own = !this.model || (this.app.profile.member
+      && this.model.id === this.app.profile.member.id);
   var owner = own ? 'You\'re': this.model.get('displayName').trim() + ' is ';
 
   // Save model attributes
@@ -8,9 +9,12 @@
 
   // Handle from
   var location = data.location && data.location.name ? data.location.name: null;
-  if (!location && data.hometown && data.hometown.name)
+  if (!location && data.hometown && data.hometown.name) {
     location = data.hometown.name;
-  if (location) location = location + ' / ';
+  }
+  if (location) {
+    location = location + ' / ';
+  }
 
   // Check image
   if (data.image) {
@@ -39,11 +43,17 @@
   if (data.website) {
     var websites = data.website.split('\n');
     _.each(websites, function(site, i) {
-      if (site === '') return;
+      if (site === '') {
+        return;
+      }
       var _site = site;
-      if (!site.match(/^http:\/\/|https:\/\//)) site = 'http://' + site;
+      if (!site.match(/^http:\/\/|https:\/\//)) {
+        site = 'http://' + site;
+      }
       links += '<a href="' + site + '" target="_blank">' + _site + '</a>';
-      if (i !== websites.length - 1) links += ', ';
+      if (i !== websites.length - 1) {
+        links += ', ';
+      }
     });
   }
 
@@ -54,9 +64,12 @@
   if (data.role !== 1) {
     var pcnt = data.pcnt !== undefined ? data.pcnt: 0;
     details = 'Contributor since ' + since + ' | ' + pcnt + ' post';
-    if (pcnt !== 1) details += 's';
-  } else
+    if (pcnt !== 1) {
+      details += 's';
+    }
+  } else {
     details = 'Member since ' + since;
+  }
 
   // Gravatar
   var gravatar = 'https://www.gravatar.com/avatar/'
@@ -64,63 +77,68 @@
       + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
 
 %>
-<% if (data.image) { %>
-  <div class="profile-upper">
-    <div class="profile-picture">
-      <img class="masked" src=<%= data.image.ssl_url || data.image.url %> width=<%= w %> height=<%= h %> style=<%= t + l %> />
+
+<div class="profile">
+  <% if (data.image) { %>
+    <div class="profile-upper">
+      <div class="profile-picture">
+        <img src="/img/banner_1024.png" width="1024" height="460" />
+        <img class="masked" width="<%= w %>" height="<%= h %>"
+            style="<%= t + l %>" />
+      </div>
     </div>
-  </div>
-<% } %>
-<div class="leftside">
-  <div class="profile-info">
-    <div class="profile-description">
-      <h2 class="profile-section-title">Bio</h2>
-      <%= this.model.description() %>
-      <% if (links) { %>
-        <span>More from <%= data.displayName %> at </span>
-        <span class="profile-links"><%= links %>.</span>
-      <% } %>
-    </div>
-  </div>
-  <% if (!this.app.profile.content.private) { %>
-    <h2 class="profile-section-title">Activity</h2>
   <% } %>
-  <div class="events"></div>
-  <div class="list-spin">
-    <div class="events-spin"></div>
-    <span class="empty-feed">Showing all.</span>
-  </div>
-</div>
-<div class="rightside">
-  <% if (this.model.get('role') === 2) { %>
-    <h2 class="profile-section-title">Team</h2>
-    <ul class="profile-team">
-      <% if (this.model.get('team').length === 0) { %>
-        <span class="empty-feed">No team athletes to show.</span>
-      <% } else { %>
-        <% _.each(this.model.get('team'), _.bind(function (m) {
-          var g = 'https://www.gravatar.com/avatar/'
-          + m.gravatar + '?s=274&d='
-          + encodeURIComponent(this.app.cfuri + '/avatars/avatar_274.png');
-        %>
-          <li>
-            <a href="/<%= m.username %>" class="navigate">
-              <img src="<%= g %>" class="profile-team-avatar" width="274" height="274" />
-            </a>
-          </li>  
-        <% }, this)); %>
-      <% } %>
-    </ul>
-  <% } %>
-  <div class="sidebar-items">
-    <div class="sidebar-watchees">
-      <span class="sidebar-heading"><%= owner %> watching</span>
-      <div class="sidebar-crags"></div>
-      <div class="sidebar-ascents-r"></div>
-      <div class="sidebar-ascents-b"></div>
+  <div class="leftside">
+    <div class="profile-info">
+      <div class="profile-description">
+        <h2 class="profile-section-title">Bio</h2>
+        <%= this.model.description() %>
+        <% if (links) { %>
+          <span>More from <%= data.displayName %> at </span>
+          <span class="profile-links"><%= links %>.</span>
+        <% } %>
+      </div>
     </div>
-    <div class="sidebar-followers"></div>
-    <div class="sidebar-followees"></div>
+    <% if (!this.app.profile.content.private) { %>
+      <h2 class="profile-section-title">Activity</h2>
+    <% } %>
+    <div class="events"></div>
+    <div class="list-spin">
+      <div class="events-spin"></div>
+      <span class="empty-feed">Showing all.</span>
+    </div>
   </div>
+  <div class="rightside">
+    <% if (this.model.get('role') === 2) { %>
+      <h2 class="profile-section-title">Team</h2>
+      <ul class="profile-team">
+        <% if (this.model.get('team').length === 0) { %>
+          <span class="empty-feed">No team athletes to show.</span>
+        <% } else { %>
+          <% _.each(this.model.get('team'), _.bind(function (m) {
+            var g = 'https://www.gravatar.com/avatar/'
+            + m.gravatar + '?s=274&d='
+            + encodeURIComponent(this.app.cfuri + '/avatars/avatar_274.png');
+          %>
+            <li>
+              <a href="/<%= m.username %>" class="navigate">
+                <img src="<%= g %>" class="profile-team-avatar" width="274" height="274" />
+              </a>
+            </li>  
+          <% }, this)); %>
+        <% } %>
+      </ul>
+    <% } %>
+    <div class="sidebar-items">
+      <div class="sidebar-watchees">
+        <span class="sidebar-heading"><%= owner %> watching:</span>
+        <div class="sidebar-crags"></div>
+        <div class="sidebar-ascents-r"></div>
+        <div class="sidebar-ascents-b"></div>
+      </div>
+      <div class="sidebar-followers"></div>
+      <div class="sidebar-followees"></div>
+    </div>
+  </div>
+  <div class="clear"></div>
 </div>
-<div class="clear"></div>

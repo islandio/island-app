@@ -31,11 +31,11 @@ if (cluster.isMaster) {
   // Setup an outside tunnel to our localhost in development
   // We will pass this to the workers
   if (process.env.NODE_ENV !== 'production') {
-    ngrok.connect(8000, function (err, url) {
-      util.log('Setting up tunnel from this machine to ' + url);
-      ngrokUrl = url;
+    // ngrok.connect(8000, function (err, url) {
+    //   util.log('Setting up tunnel from this machine to ' + url);
+    //   ngrokUrl = url;
       createWorkers();
-    });
+    // });
   } else {
     createWorkers();
   }

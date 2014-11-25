@@ -1,5 +1,5 @@
 /*
- * Settings view.
+ * Member settings view.
  */
 
 define([
@@ -10,58 +10,45 @@ define([
   'rest',
   'util',
   'Spin',
-  'models/profile',
+  'models/member',
   'text!../../templates/settings.html',
+  'text!../../templates/profile.title.html',
   'text!../../templates/confirm.html',
   'text!../../templates/tip.html'
-], function ($, _, Backbone, mps, rest, util, Spin, Profile,
-      template, confirm, tip) {
+], function ($, _, Backbone, mps, rest, util, Spin, Model,
+      template, title, confirm, tip) {
 
   return Backbone.View.extend({
-    
-    // The DOM target element for this page:
+
     el: '.main',
     uploading: false,
 
-    // Module entry point:
     initialize: function (app) {
-      
-      // Save app reference.
       this.app = app;
-      
-      // Shell events:
       this.on('rendered', this.setup, this);
     },
 
-    // Draw our template from the profile JSON.
     render: function () {
+      this.model = new Model(this.app.profile.content.page);
 
-      // Use a model for the main content.
-      this.model = new Profile(this.app.profile.content.page);
-
-      // Set page title
-      this.app.title('Settings');
-
-      // UnderscoreJS rendering.
+      this.app.title('The Island | ' + this.app.profile.member.displayName
+          + ' - Settings');
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
 
-      // Done rendering ... trigger setup.
-      this.trigger('rendered');
+      // Render title.
+      this.title = _.template(title).call(this, {settings: true});
 
+      this.trigger('rendered');
       return this;
     },
 
-    // Bind mouse events.
     events: {
-      'click a.navigate': 'navigate',
+      'click .navigate': 'navigate',
       'click .demolish': 'demolish'
     },
 
-    // Misc. setup.
     setup: function () {
-
-      // Save refs
       this.bannerForm = this.$('.settings-banner-form');
       this.dropZone = this.$('.settings-banner-dnd');
       this.banner = this.$('img.settings-banner');
@@ -82,8 +69,9 @@ define([
         var label = $('label[for="' + field.attr('name') + '"]');
         var saved = $('div.setting-saved', label.parent().next());
 
-        if (field.val().trim() !== field.data('saved'))
+        if (field.val().trim() !== field.data('saved')) {
           saved.hide();
+        }
 
         return false;
       });
@@ -121,8 +109,9 @@ define([
       // Handle error display.
       this.$('input[type="text"], input[type="password"]').blur(function (e) {
         var el = $(e.target);
-        if (el.hasClass('input-error'))
+        if (el.hasClass('input-error')) {
           el.removeClass('input-error');
+        }
       });
 
       // Show the tip modal.
@@ -143,14 +132,11 @@ define([
       return this;
     },
 
-    // Similar to Backbone's remove method, but empties
-    // instead of removes the view's DOM element.
     empty: function () {
       this.$el.empty();
       return this;
     },
 
-    // Kill this view.
     destroy: function () {
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
@@ -162,36 +148,41 @@ define([
 
     navigate: function (e) {
       e.preventDefault();
-
-      // Route to wherever.
       var path = $(e.target).closest('a').attr('href');
-      if (path)
+      if (path) {
         this.app.router.navigate(path, {trigger: true});
+      }
     },
 
-    // Save the field.
     save: function (e) {
       e.preventDefault();
       var field = $(e.target);
       var name = field.attr('name');
-      var label = $('label[for="' + name + '"]');
-      var saved = $('div.setting-saved', label.parent().next());
-      var errorMsg = $('span.setting-error', label.parent().next()).hide();
+      // var label = $('label[for="' + name + '"]');
+      // var saved = $('div.setting-saved', label.parent().next());
+      // var errorMsg = $('span.setting-error', label.parent().next()).hide();
       var val = util.sanitize(field.val());
 
       // Handle checkbox.
-      if (field.attr('type') === 'checkbox')
+      if (field.attr('type') === 'checkbox') {
         val = field.is(':checked');
+      }
 
       // Create the paylaod.
-      if (val === field.data('saved')) return false;
+      if (val === field.data('saved')) {
+        return false;
+      }
       var payload = {};
       payload[name] = val;
 
       // Check for email.
       if (payload.primaryEmail && !util.isEmail(payload.primaryEmail)) {
-        errorMsg.text('Please use a valid email address.').show();
-        return;
+        mps.publish('flash/new', [{
+          err: {message: 'Please use a valid email address.'},
+          level: 'error'}
+        ]);
+        field.addClass('input-error').val('').focus();
+        return false;
       }
 
       // Now do the save.
@@ -199,14 +190,13 @@ define([
           _.bind(function (err, data) {
         if (err) {
 
-          // Set the error display.
-          errorMsg.text(err.message).show();
+          // Show error.
+          mps.publish('flash/new', [{err: err, level: 'error'}]);
 
-          // Clear fields.
-          if (err === 'Username exists')
-            field.addClass('input-error').focus();
+          // Show error highlight.
+          field.addClass('input-error').val('').focus();
 
-          return;
+          return false;
         }
 
         // Update profile.
@@ -214,7 +204,12 @@ define([
 
         // Save the saved state and show indicator.
         field.data('saved', val);
-        saved.show();
+        // saved.show();
+
+        mps.publish('flash/new', [{
+          message: 'Saved.',
+          level: 'alert'
+        }, true]);
 
       }, this));
 
@@ -225,7 +220,9 @@ define([
       e.stopPropagation();
       e.preventDefault();
 
-      if (this.uploading) return false;
+      if (this.uploading) {
+        return false;
+      }
       this.uploading = true;
       var w = {x: this.banner.width(), y: this.banner.height()};
       var m = {x: e.pageX, y: e.pageY};
@@ -255,17 +252,20 @@ define([
         $(document).unbind('mouseup', arguments.callee);
 
         // Save.
-        if (!self.uploading) return false;
+        if (!self.uploading) {
+          return false;
+        }
         rest.put('/api/members/' + self.app.profile.member.username, {
           bannerLeft: self.bannerLeft,
           bannerTop: self.bannerTop
         }, function (err, data) {
-          if (err) return console.error(err);
+          if (err) {
+            return console.log(err);
+          }
           self.uploading = false;
         });
 
         return false;
-
       });
 
       return false;
@@ -286,11 +286,10 @@ define([
       e.stopPropagation();
       e.preventDefault();
 
-      // Stop drag styles.
       this.dropZone.removeClass('dragging');
-
-      // Don't do anything if already doing it.
-      if (this.uploading) return false;
+      if (this.uploading) {
+        return false;
+      }
       this.uploading = true;
       this.bannerSpin.start();
       this.dropZone.addClass('uploading');
@@ -346,9 +345,7 @@ define([
             this.dropZone.removeClass('uploading');
 
             if (err) {
-
-              // Oops, banner wasn't saved.
-              console.log('TODO: Retry, notify user, etc.');
+              console.log(err);
               return;
             }
 
@@ -372,16 +369,15 @@ define([
               });
               this.banner.fadeIn('slow');
             }, this), 0);
-
           }, this));
-
         }, this)
       };
 
       // Use formData object if exists (dnd only)
-      if (data) opts.formData = data;
+      if (data) {
+        opts.formData = data;
+      }
 
-      // Init Transloadit.
       this.bannerForm.transloadit(opts);
       this.bannerForm.submit();
 
@@ -419,7 +415,6 @@ define([
 
           // Route to home.
           window.location.href = '/';
-
         }, this));
       }, this));
 

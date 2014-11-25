@@ -253,6 +253,9 @@ body.preload * {
   -ms-transition: none !important;
   -o-transition: none !important;
 }
+body.loading * {
+  cursor: wait !important;
+}
 a {
   color: #404040;
   background-color: #f2f2f2;
@@ -1314,9 +1317,22 @@ ul.splash-features li img {
   border: 1px solid #e6e6e6;
 }
 .footer {
+  display: none;
   width: 100%;
   height: 40px;
   background: #f2f2f2;
+  -webkit-animation-name: fadeIn;
+  -moz-animation-name: fadeIn;
+  -o-animation-name: fadeIn;
+  animation-name: fadeIn;
+  -webkit-animation-duration: 0.2s;
+  -moz-animation-duration: 0.2s;
+  -o-animation-duration: 0.2s;
+  animation-duration: 0.2s;
+  -webkit-animation-fill-mode: both;
+  -moz-animation-fill-mode: both;
+  -o-animation-fill-mode: both;
+  animation-fill-mode: both;
 }
 .footer > div {
   margin: 0 auto;
@@ -1357,8 +1373,8 @@ ul.splash-features li img {
 .page-spin {
   position: absolute;
   z-index: 2;
-  left: -24px;
-  top: 21px;
+  left: 30px;
+  top: 25px;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––header*/
 .header {
@@ -2755,6 +2771,21 @@ h2.profile-section-title {
   overflow: hidden;
   width: 1024px;
   height: 460px;
+}
+.profile .profile-picture img {
+  display: none;
+  -webkit-animation-name: fadeIn;
+  -moz-animation-name: fadeIn;
+  -o-animation-name: fadeIn;
+  animation-name: fadeIn;
+  -webkit-animation-duration: 0.2s;
+  -moz-animation-duration: 0.2s;
+  -o-animation-duration: 0.2s;
+  animation-duration: 0.2s;
+  -webkit-animation-fill-mode: both;
+  -moz-animation-fill-mode: both;
+  -o-animation-fill-mode: both;
+  animation-fill-mode: both;
 }
 .profile-description p {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;

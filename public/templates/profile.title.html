@@ -5,9 +5,12 @@
 
   // Handle from
   var location = data.location && data.location.name ? data.location.name: null;
-  if (!location && data.hometown && data.hometown.name)
+  if (!location && data.hometown && data.hometown.name) {
     location = data.hometown.name;
-  if (location) location = location + ' / ';
+  }
+  if (location) {
+    location = location + ' / ';
+  }
 
   // Gravatar
   var gravatar = 'https://www.gravatar.com/avatar/'
@@ -17,8 +20,13 @@
 
 <% if (this.app.profile.member) { %>
   <% if (this.app.profile.member.id === data.id) { %>
-    <a href="/settings" class="button title-button navigate">
-      <i class="icon-params"></i> Settings</a>
+    <% if (!settings) { %>
+      <a href="/settings" class="button title-button navigate">
+        <i class="icon-params"></i> Settings</a>
+    <% } else { %>
+      <a href="/<%= this.model.get('username') %>" class="button title-button navigate">
+        <i class="icon-angle-left"></i> Done</a>
+    <% } %>
   <% } else { %>
     <% if (sub && sub.subscribee_id === data.id) { %>
       <% if (sub.meta.style === 'request') { %>

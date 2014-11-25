@@ -1,7 +1,10 @@
 <%
-  var author = !this.parentView.model ? null: (this.parentView.model.get('username') ? this.parentView.model.attributes: this.parentView.model.get('author'));
-  var own = !this.parentView.model || (this.app.profile.member && author.id === this.app.profile.member.id);
-  var owner = own ? 'You\'re': author.get('displayName').trim() + ' is ';
+  var author = !this.parentView.model ? null:
+      (this.parentView.model.get('username') ?
+      this.parentView.model.attributes: this.parentView.model.get('author'));
+  var own = !this.parentView.model || (this.app.profile.member
+      && author.id === this.app.profile.member.id);
+  var owner = own ? 'You\'re': author.displayName.trim() + ' is ';
 %>
 
 <span class="sidebar-heading">
