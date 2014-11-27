@@ -1,5 +1,5 @@
 /*
- * Profile model
+ * Member model
  */
 
 define([
@@ -11,8 +11,11 @@ define([
 
     description: function () {
       var str = this.get('description');
-      if (!str || str.trim() === '') return '<p>...</p>';
-      else return util.formatText(str);
+      if (!str || str.trim() === '') {
+        return '<p></p>';
+      } else {
+        return util.formatText(str);
+      }
     },
 
     anonName: function () {

@@ -28,42 +28,64 @@ define([
   'views/settings',
   'views/reset',
   'views/films',
-  'views/about',
-  'views/privacy',
+  'views/static',
   'views/crags',
   'views/dashboard',
   'views/splash',
   'views/sessions',
-  'views/ticks'
+  'views/ticks',
+  'text!../templates/about.html',
+  'text!../templates/privacy.html',
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
     Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Tick, Crag, Ascent,
-    Settings, Reset, Films, About, Privacy, Crags, Dashboard, Splash, Sessions,
-    Ticks) {
+    Settings, Reset, Films, Static, Crags, Dashboard, Splash, Sessions,
+    Ticks, aboutTemp, privacyTemp) {
 
-  // Our application URL router.
+  /*
+   * Determine if parent is iframe.
+   */
+  function inIframe () {
+    try {
+      return window.self !== window.top;
+    } catch (e) {
+      return true;
+    }
+  }
+
   var Router = Backbone.Router.extend({
 
-    initialize: function (app) {
+    loading: false,
+    loadingQueue: [],
 
-      // Save app reference.
+    initialize: function (app) {
       this.app = app;
       
       // Clear the hashtag that comes back from facebook.
-      if (window.location.hash !== '') {
-        try {
-          window.history.replaceState('', '', window.location.pathname
-              + window.location.search);
-        } catch (err) {}
+      if (window.location.hash !== '' || window.location.href.indexOf('#') !== -1) {
+        if (window.location.hash.length === 0 || window.location.hash === '#_=_') {
+          try {
+            window.history.replaceState('', '', window.location.pathname
+                + window.location.search);
+          } catch (err) {}
+        }
       }
+
+      // Init page spinner.
+      this.spin = new Spin($('.page-spin'), {color: '#808080'});
+      this.start();
 
       // Page routes.
       this.route(':un', 'profile', this.profile);
       this.route(':un/:k', 'post', this.post);
+      
       this.route('sessions/:k', 'session', this.session);
+     
       this.route('ticks/:k', 'tick', this.tick);
+      
       this.route('crags/:y', 'crag', this.crags);
       this.route('crags/:y/:g', 'crag', this.crag);
       this.route('crags/:y/:g/:t/:a', 'ascent', this.ascent);
+      
       this.route('reset', 'reset', this.reset);
       this.route('settings', 'settings', this.settings);
       this.route('privacy', 'privacy', this.privacy);
@@ -80,29 +102,28 @@ define([
       // Save dom refs.
       this.folder = $('.folder');
 
-      // Fullfill navigation request from mps.
-      mps.subscribe('navigate', _.bind(function (path) {
-        this.navigate(path, {trigger: true});
-      }, this));
-
       // Show the forgot modal.
       mps.subscribe('modal/forgot/open', _.bind(function () {
         this.modal = new Forgot(this.app).render();
       }, this));
 
-      // Init page spinner.
-      this.spin = new Spin($('.page-spin'), {color: '#808080'});
+      this.stop();
     },
 
     routes: {
-
-      // Catch all.
-      '*actions': 'default'
+      '*actions': 'default' // Catch all
     },
 
     render: function (service, data, secure, cb) {
 
       function _render(err, login) {
+        if (window.__s !== '') {
+          ga('send', 'pageview');
+          if (this.app.profile && this.app.profile.user) {
+            ga('set', '&uid', this.app.profile.user.id);
+          }
+        }
+        delete this.pageType;
 
         // Render page elements.
         if (!this.header) {
@@ -110,6 +131,7 @@ define([
         } else if (login) {
           this.header.render(true);
         }
+        this.header.highlight(window.location.pathname);
         if (!this.map) {
           this.map = new Map(this.app).render();
         }
@@ -119,6 +141,19 @@ define([
 
         // Callback to route.
         cb(err);
+      }
+
+      // Grab hash for comment.
+      this.app.requestedCommentId = null;
+      if (window.location.hash !== '' || window.location.href.indexOf('#') !== -1) {
+        var tmp = window.location.hash.match(/#c=([a-z0-9]{24})/i);
+        if (tmp) {
+          this.app.requestedCommentId = tmp[1];
+        }
+        tmp = window.location.hash.match(/#h=([a-z0-9]{24})/i);
+        if (tmp) {
+          this.app.requestedHangtenId = tmp[1];
+        }
       }
 
       // Kill the page view if it exists.
@@ -147,8 +182,9 @@ define([
       // Get a profile, if needed.
       rest.get(service, query, _.bind(function (err, pro) {
         if (err) {
-          this.page = new Error(this.app).render(err);
+          $('.container').removeClass('wide');
           this.stop();
+          this.page = new Error(this.app).render(err);
         }
         if (secure && !pro.member) {
           return this.navigate('/', true);
@@ -157,7 +193,6 @@ define([
         // Set the profile.
         var login = this.app.update(pro || err);
         _render.call(this, err, login);
-
       }, this));
     },
 
@@ -171,15 +206,29 @@ define([
     },
 
     start: function () {
+      this.loadingQueue.push(1);
+      if (this.loading) {
+        return;
+      }
+      this.loading = true;
       $(window).scrollTop(0);
-      this.spin.target.show();
+      $('body').addClass('loading');
+      $('footer').hide();
       this.spin.start();
     },
 
     stop: function () {
-      this.spin.target.hide();
-      this.spin.stop();
-      $(window).scrollTop(0);
+      this.loadingQueue.pop();
+      if (this.loadingQueue.length !== 0) {
+        return;
+      }
+      this.loading = false;
+      _.defer(_.bind(function () {
+        this.spin.stop();
+        $(window).scrollTop(0);
+        $('body').removeClass('loading');
+        $('footer').show();
+      }, this));
     },
 
     getEventActions: function () {
@@ -196,118 +245,135 @@ define([
 
     dashboard: function () {
       this.start();
+      if (!this.tabs || !this.tabs.params.tabs || !this.tabs.params.tabs[1]
+          || (this.tabs.params.tabs[1].href !== '/sessions'
+          && this.tabs.params.tabs[1].href !== '/ticks')) {
+        this.renderTabs();
+      }
       var query = {actions: this.getEventActions()};
-      this.render('/service/dashboard.profile', query, _.bind(function (err) {
+      this.render('/service/dashboard', query, _.bind(function (err) {
         if (err) return;
-        if (this.app.profile.content.events) {
+        if (this.app.profile.member) {
+          $('.container').removeClass('wide').removeClass('landing');
           this.page = new Dashboard(this.app).render();
           this.renderTabs({tabs: [
             {title: 'Activity', href: '/', active: true},
             {title: 'My Sessions', href: '/sessions'},
             {title: 'My Ticks', href: '/ticks'}
-          ]});
+          ], log: true});
         } else {
-          this.page = new Splash(this.app).render();
-          this.folder.addClass('landing');
+          $('.container').addClass('wide').addClass('landing');
+          this.page = new Splash(this.app, {splash: true}).render();
         }
         this.stop();
-        this.folder.removeClass('initial');
       }, this));
     },
 
     sessions: function () {
       this.start();
-      this.folder.removeClass('landing').removeClass('initial');
-      this.render('/service/sessions.profile', _.bind(function (err) {
+      $('.container').removeClass('wide').removeClass('landing');
+      this.render('/service/sessions', {}, true, _.bind(function (err) {
         if (err) return;
+        this.header.highlight('/');
+        this.renderTabs({tabs: [
+          {title: 'Activity', href: '/'},
+          {title: 'My Sessions', href: '/sessions', active: true},
+          {title: 'My Ticks', href: '/ticks'}
+        ], log: true});
         this.page = new Sessions(this.app).render();
         this.stop();
       }, this));
-      this.renderTabs({tabs: [
-        {title: 'Activity', href: '/'},
-        {title: 'My Sessions', href: '/sessions', active: true},
-        {title: 'My Ticks', href: '/ticks'}
-      ]});
     },
 
     ticks: function () {
       this.start();
-      this.folder.removeClass('landing').removeClass('initial');
-      this.render('/service/ticks.profile', _.bind(function (err) {
+      $('.container').removeClass('wide').removeClass('landing');
+      this.render('/service/ticks', {}, true, _.bind(function (err) {
         if (err) return;
+        this.header.highlight('/');
+        this.renderTabs({tabs: [
+          {title: 'Activity', href: '/'},
+          {title: 'My Sessions', href: '/sessions'},
+          {title: 'My Ticks', href: '/ticks', active: true}
+        ], log: true});
         this.page = new Ticks(this.app).render();
         this.stop();
       }, this));
-      this.renderTabs({tabs: [
-        {title: 'Activity', href: '/'},
-        {title: 'My Sessions', href: '/sessions'},
-        {title: 'My Ticks', href: '/ticks', active: true}
-      ]});
     },
 
     crags: function (country) {
       this.start();
-      this.folder.removeClass('landing').removeClass('initial');
+      this.renderTabs();
+      $('.container').removeClass('wide').removeClass('landing');
       var query = {};
       if (country) query.country = country;
       var q = util.getParameterByName('q');
       if (q) query.query = q;
-      this.render('/service/crags.profile', query, _.bind(function (err) {
+      this.render('/service/crags', query, _.bind(function (err) {
         if (err) return;
         this.page = new Crags(this.app).render();
+        this.renderTabs({title: 'Crags', log: true});
         this.stop();
       }, this));
-      this.renderTabs({title: 'Crags'});
     },
 
     films: function () {
       this.start();
-      this.folder.removeClass('landing').removeClass('initial');
-      this.render('/service/films.profile', _.bind(function (err) {
+      this.renderTabs();
+      $('.container').removeClass('wide').removeClass('landing');
+      this.render('/service/films', _.bind(function (err) {
         if (err) return;
         this.page = new Films(this.app).render();
+        this.renderTabs({title: 'Films', subtitle: 'Original content by Island',
+            log: true});
         this.stop();
       }, this));
-      this.renderTabs({title: 'Films', subtitle: 'Original content by Island'});
     },
 
     about: function () {
       this.start();
-      this.folder.removeClass('landing').removeClass('initial');
-      this.render('/service/static.profile', _.bind(function (err) {
+      this.renderTabs();
+      $('.container').removeClass('wide').removeClass('landing');
+      this.render('/service/static', _.bind(function (err) {
         if (err) return;
-        this.page = new About(this.app).render();
+        this.page = new Static(this.app,
+            {title: 'About', template: aboutTemp}).render();
+        this.renderTabs({title: 'About', subtitle: 'What\'s going on here?',
+            log: true});
         this.stop();
       }, this));
-      this.renderTabs({title: 'About', subtitle: 'What\'s going on here?'});
     },
 
     privacy: function () {
       this.start();
-      this.folder.removeClass('landing').removeClass('initial');
-      this.render('/service/static.profile', _.bind(function (err) {
+      this.renderTabs();
+      $('.container').removeClass('wide').removeClass('landing');
+      this.render('/service/static', _.bind(function (err) {
         if (err) return;
-        this.page = new Privacy(this.app).render();
+        this.page = new Static(this.app,
+            {title: 'Privacy', template: privacyTemp}).render();
+        this.renderTabs({title: 'Privacy Policy', subtitle: 'Last updated 7.27.2013',
+            log: true});
         this.stop();
       }, this));
-      this.renderTabs({title: 'Privacy Policy', subtitle: 'Last updated 7.27.2013'});
     },
 
     settings: function () {
       this.start();
-      this.folder.removeClass('landing').removeClass('initial');
-      this.render('/service/settings.profile', {}, true, _.bind(function (err) {
+      this.renderTabs();
+      $('.container').removeClass('wide').removeClass('landing');
+      this.render('/service/settings', {}, true, _.bind(function (err) {
         if (err) return;
         this.page = new Settings(this.app).render();
+        this.renderTabs({html: this.page.title});
         this.stop();
       }, this));
-      this.renderTabs({title: 'Account Settings'});
     },
 
     reset: function () {
       this.start();
-      this.folder.removeClass('landing').removeClass('initial');
-      this.render('/service/static.profile', _.bind(function (err) {
+      $('.container').removeClass('wide').removeClass('landing');
+      this.render('/service/static', _.bind(function (err) {
         if (err) return;
         this.page = new Reset(this.app).render();
         this.stop();
@@ -317,11 +383,11 @@ define([
 
     ascent: function (country, crag, type, ascent) {
       this.start();
-      this.folder.removeClass('landing').removeClass('initial');
+      $('.container').removeClass('wide').removeClass('landing');
       this.renderTabs();
       var key = [country, crag, type, ascent].join('/');
       var query = {actions: this.getAscentEventActions()};
-      this.render('/service/ascent.profile/' + key, query, _.bind(function (err) {
+      this.render('/service/ascent/' + key, query, _.bind(function (err) {
         if (err) return;
         this.page = new Ascent(this.app).render();
         this.renderTabs({html: this.page.title});
@@ -331,11 +397,11 @@ define([
 
     crag: function (country, crag) {
       this.start();
-      this.folder.removeClass('landing').removeClass('initial');
+      $('.container').removeClass('wide').removeClass('landing');
       this.renderTabs();
       var key = [country, crag].join('/');
       var query = {actions: this.getEventActions()};
-      this.render('/service/crag.profile/' + key, query, _.bind(function (err) {
+      this.render('/service/crag/' + key, query, _.bind(function (err) {
         if (err) return;
         this.page = new Crag(this.app).render();
         this.renderTabs({html: this.page.title});
@@ -345,9 +411,9 @@ define([
 
     session: function (key) {
       this.start();
-      this.folder.removeClass('landing').removeClass('initial');
+      $('.container').removeClass('wide').removeClass('landing');
       this.renderTabs();
-      this.render('/service/session.profile/' + key, _.bind(function (err) {
+      this.render('/service/session/' + key, _.bind(function (err) {
         if (err) return;
         this.page = new Session({wrap: '.main'}, this.app).render(true);
         this.renderTabs({html: this.page.title});
@@ -357,9 +423,9 @@ define([
 
     tick: function (key) {
       this.start();
-      this.folder.removeClass('landing').removeClass('initial');
+      $('.container').removeClass('wide').removeClass('landing');
       this.renderTabs();
-      this.render('/service/tick.profile/' + key, _.bind(function (err) {
+      this.render('/service/tick/' + key, _.bind(function (err) {
         if (err) return;
         this.page = new Tick({wrap: '.main'}, this.app).render(true);
         this.renderTabs({html: this.page.title});
@@ -369,10 +435,10 @@ define([
 
     post: function (username, key) {
       this.start();
-      this.folder.removeClass('landing').removeClass('initial');
+      $('.container').removeClass('wide').removeClass('landing');
       var key = [username, key].join('/');
       this.renderTabs();
-      this.render('/service/post.profile/' + key, _.bind(function (err) {
+      this.render('/service/post/' + key, _.bind(function (err) {
         if (err) return;
         this.page = new Post({wrap: '.main'}, this.app).render(true);
         this.renderTabs({html: this.page.title});
@@ -382,13 +448,13 @@ define([
 
     profile: function (username) {
       this.start();
-      this.folder.removeClass('landing').removeClass('initial');
       this.renderTabs();
+      $('.container').removeClass('wide').removeClass('landing');
       var query = {actions: this.getEventActions()};
-      this.render('/service/profile.profile/' + username, query,
+      this.render('/service/member/' + username, query,
           _.bind(function (err) {
         if (err) return;
-        this.page = new Profile({wrap: '.main'}, this.app).render(true);
+        this.page = new Profile(this.app).render();
         this.renderTabs({html: this.page.title});
         this.stop();
       }, this));
@@ -396,7 +462,7 @@ define([
 
     signin: function () {
       this.start();
-      this.folder.removeClass('landing').removeClass('initial');
+      $('.container').removeClass('wide').removeClass('landing');
       this.render(_.bind(function (err) {
         if (err) return;
         this.page = new Signin(this.app).render();
@@ -407,7 +473,7 @@ define([
 
     signup: function () {
       this.start();
-      this.folder.removeClass('landing').removeClass('initial');
+      $('.container').removeClass('wide').removeClass('landing');
       this.render(_.bind(function (err) {
         if (err) return;
         this.page = new Signup(this.app).render();
@@ -417,15 +483,16 @@ define([
     },
 
     default: function () {
-      this.folder.removeClass('landing').removeClass('initial');
+      this.renderTabs();
+      $('.container').removeClass('wide').removeClass('landing');
       this.render(_.bind(function (err) {
         if (err) return;
+        this.stop();
         this.page = new Error(this.app).render({
           code: 404,
           message: 'Sorry, this page isn\'t available'
         });
       }, this));
-      this.renderTabs();
     }
   
   });

@@ -41,6 +41,7 @@ define([
   }
 
   App.prototype.update = function (profile) {
+    var login = false;
 
     // Set the app profile.
     if (this.profile) {
@@ -51,33 +52,35 @@ define([
         this.profile.member = profile.member;
         this.profile.notes = profile.notes;
         this.profile.transloadit = profile.transloadit;
-        return true;
+        login = true;
       }
     } else {
       this.profile = profile;
     }
-
-    return false;
+    return login;
   }
 
   App.prototype.title = function (str) {
-
-    // Set the document title.
+    if (!str) {
+      return;
+    }
     document.title = str;
   }
 
   return {
 
-    // Creates the instance.
     init: function () {
+      var app = new App();
       $('body').removeClass('preload');
-      var app = new App;
       app.router = new Router(app);
       Backbone.history.start({pushState: true});
 
       // For local dev.
       if (window.__s === '') {
         window._app = app;
+        console.log('island dev');
+      } else {
+        console.log('island ' + _.str.strRightBack(window.__s, '/'));
       }
     }
     

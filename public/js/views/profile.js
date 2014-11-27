@@ -9,7 +9,7 @@ define([
   'mps',
   'rest',
   'util',
-  'models/profile',
+  'models/member',
   'text!../../templates/profile.html',
   'text!../../templates/profile.title.html',
   'views/lists/events',
@@ -20,15 +20,11 @@ define([
     Followers, Followees, Watchees) {
   return Backbone.View.extend({
 
-    attributes: function () {
-      return {class: 'profile'};
-    },
+    el: '.main',
 
-    initialize: function (options, app) {
+    initialize: function (app, options) {
       this.app = app;
-      this.model = new Model(this.app.profile.content.page);
-      this.wrap = options.wrap;
-      this.template = _.template(template);
+      this.on('rendered', this.setup, this);
       this.subscriptions = [];
 
       this.app.rpc.socket.on('member.removed', _.bind(function (data) {
@@ -37,31 +33,53 @@ define([
         }
       }, this));
 
-      this.on('rendered', this.setup, this);
       return this;
     },
 
-    events: {
-      'click .navigate': 'navigate',
-    },
-
     render: function () {
-      this.$el.html(this.template.call(this)).appendTo(this.wrap).show();
+      this.model = new Model(this.app.profile.content.page);
+
+      this.setTitle();
+      this.template = _.template(template);
+      this.$el.html(this.template.call(this));
+
+      // Render title.
+      this.title = _.template(title).call(this, {settings: false});
+
+      // Check if role is company.
       if (this.model.get('role') === 2) {
         this.$el.addClass('company');
       }
-      this.setTitle();
-      this.title = _.template(title).call(this);
 
       this.trigger('rendered');
       return this;
     },
+
+    events: {},
 
     setup: function () {
 
       // Set map view.
       mps.publish('map/fly', [this.model.get('location') 
           || this.model.get('hometown')]);
+
+      // Load profile image.
+      if (this.model.get('image')) {
+        var bannerImg = this.$('.profile-picture img.masked');
+        var bannerURL = this.model.get('image').ssl_url
+            || this.model.get('image').cf_url
+            || this.model.get('image').url;
+
+        var tmp = new Image;
+        tmp.onload = function () {
+          bannerImg.get(0).src = this.src;
+          bannerImg.show();
+        }
+        tmp.onerror = function (err) {}
+        tmp.src = bannerURL;
+      } else {
+        this.$('.profile-picture img:not(.masked)').show();
+      }
 
       // Render lists.
       this.events = new Events(this.app, {
@@ -86,6 +104,11 @@ define([
       return this;
     },
 
+    empty: function () {
+      this.$el.empty();
+      return this;
+    },
+
     destroy: function () {
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
@@ -98,20 +121,12 @@ define([
       this.boulders.destroy();
       this.undelegateEvents();
       this.stopListening();
-      this.remove();
-    },
-
-    navigate: function (e) {
-      e.preventDefault();
-      var path = $(e.target).closest('a').attr('href');
-      if (path) {
-        this.app.router.navigate(path, {trigger: true});
-      }
+      this.empty();
     },
 
     setTitle: function () {
-      this.app.title('Island | ' + this.model.get('displayName') + ' (@'
-          + this.model.get('username') + ')');
+      this.app.title('The Island | ' + this.model.get('displayName')
+          + ' (@' + this.model.get('username') + ')');
     }
 
   });

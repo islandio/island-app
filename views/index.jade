@@ -1,57 +1,10 @@
 extends layout
 
 block content
-  #wrap.wrap
-    header.header
-      include header
-    #map.map.closed
-      #map_inner.map-inner
-      .map-spin
-      a.button.plot-button(href="javascript:;")
-        span
-          | +
-          i.icon-location
-        .plot-spin
-      .plot-form
-        table
-          tr
-            td(colspan="2")
-              input.required(type="text", name="name", placeholder="Crag name (new or just missing from Island)")
-          tr
-            td
-              input.required(type="text", name="latitude", placeholder="° latitude")
-            td
-              input.required(type="text", name="longitude", placeholder="° longitude")
-          tr
-            td
-              a.button.plot-cancel(href="javascript:;") Cancel
-            td
-              a.button.new-session-button.disabled(href="javascript:;", disabled="disabled")
-                i.icon-plus 
-                | Add it
-          tr
-            td(colspan="2")
-              span Click on the map to grab the crag's coordinates.
-      .map-control
-        div
-          a#hide_show.hide-show.button(href="javascript:;") Show map
-          a#less_more.less-more.button.split-right(href="javascript:;", style="display:none;") More map
-      .map-infobox
-        .map-infobox-title
-          | Someplace Cool
-        .map-infobox-subtitle
-          | 24 problems | 45 routes
-    .folder.initial
-      .page-spin
-      .banner
-      .tabs
-      .content
-        .main
-          block main
-    #panel.panel
-      .panel-content
-      .list-spin
-        .notifications-spin
-        span.empty-feed Showing all.
-    footer.footer
-      include footer
+  .container.wide.landing
+    .page-spin
+    include header
+    include map
+    block main
+    include panel
+    include footer

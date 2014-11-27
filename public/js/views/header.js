@@ -16,6 +16,7 @@ define([
   return Backbone.View.extend({
 
     el: '.header',
+    working: false,
 
     initialize: function (app) {
       this.app = app;
@@ -50,7 +51,7 @@ define([
 
       // Save refs.
       this.panel = $('.panel');
-      this.wrap = $('.wrap');
+      this.wrap = $('.container');
 
       this.delegateEvents();
       if (this.app.profile && this.app.profile.member) {
@@ -69,7 +70,7 @@ define([
           reverse: true, 
           el: '.header-search',
           collapse: true,
-          placeholder: 'Search for something...',
+          placeholder: 'Search for members, posts and crags...',
           route: true,
           types: ['members', 'posts', 'crags']
         });
@@ -122,6 +123,11 @@ define([
     addCrag: function (e) {
       e.preventDefault();
       mps.publish('map/add');
+    },
+
+    highlight: function (href) {
+      this.$('.header-links a').removeClass('active');
+      this.$('.header-links a[href="' + href + '"]').addClass('active');
     },
 
     navigate: function (e) {

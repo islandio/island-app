@@ -7,6 +7,6 @@ define([
   'lib/jquery/jquery.scrollTo-min',
   'lib/jquery/jquery.transloadit2',
   'lib/jquery/jquery.fancybox',
-  'lib/jquery/jquery.placeholder',
+  'lib/jquery/jquery.tooltipster.min',
   'Pickadate'
 ], function () { return true; });
