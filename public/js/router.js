@@ -223,12 +223,12 @@ define([
         return;
       }
       this.loading = false;
-      // _.delay(_.bind(function () {
+      _.defer(_.bind(function () {
         this.spin.stop();
         $(window).scrollTop(0);
         $('body').removeClass('loading');
         $('footer').show();
-      // }, this), 500);
+      }, this));
     },
 
     getEventActions: function () {
