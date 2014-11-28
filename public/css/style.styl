@@ -31,6 +31,11 @@ border-radius()
   -moz-border-radius arguments
   border-radius arguments
 
+mask-image()
+  -webkit-mask-image arguments
+  -moz-mask-image arguments
+  mask-image arguments
+
 /*––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– fonts */  
 
 @font-face
@@ -2048,6 +2053,9 @@ p.sidebar-tip span
   height 32px
   font-size 0
 
+.sidebar-follow img
+  border-radius 50%
+
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––new session*/
 
 .new-session
@@ -2614,9 +2622,8 @@ span.list-row-title span
 
 .page-title
   margin 0 0 10px 0
-  font-family title
-  font-size 18px
-  text-transform uppercase
+  font-family standard_thin
+  font-size 22px
   color #666
   line-height normal
   height 30px
@@ -2632,15 +2639,14 @@ span.list-row-title span
   color green
 
 .page-title a .page-title-sub
-  font-size 14px
+  font-size 18px
 
 .folder-title .page-title
   margin 0 0 0 30px
-  font-family title
-  font-size 18px
-  text-transform uppercase
+  font-family standard_thin
+  font-size 22px
   color #666
-  line-height 40px
+  line-height 38px
   height auto
 
 img.page-title-avatar
@@ -2649,7 +2655,7 @@ img.page-title-avatar
   width 26px
   height 26px
   margin-right 5px
-  border-radius 2px
+  border-radius 50%
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––modal*/
 
@@ -2924,7 +2930,7 @@ a.comment-avatar:hover
 
 span.comment-avatar img,
 a.comment-avatar img
-  border-radius 2px
+  border-radius 50%
 
 a.comment-avatar-small
   display block
@@ -2935,7 +2941,7 @@ a.comment-avatar-small
   padding-bottom 10px
 
 a.comment-avatar-small img
-  border-radius 2px 0 5px 0
+  border-radius 50%
 
 a.comment-avatar-small:hover
   text-decoration none
@@ -3180,7 +3186,7 @@ a.post-input-avatar
   display inline-block
   width 50px
   height 50px
-  margin 0 8px 0 -50px
+  margin 0 8px 0 -58px
   background none
 
 a.post-input-avatar:hover
@@ -3188,7 +3194,7 @@ a.post-input-avatar:hover
 
 span.post-input-avatar img,
 a.post-input-avatar img
-  border-radius 2px 0 0 2px
+  border-radius 50%
 
 .post-input-wrap
   background #f9f9f9
@@ -3622,7 +3628,8 @@ table.post-params label
 .event-avatar img
   width 48px
   height 48px
-  border-radius 2px
+  border-radius 50%
+  // mask-image url(../img/clip_48.svg)
 
 .event-title
   width 404px
@@ -4064,7 +4071,7 @@ a.session-tick-button:active
 .tick-avatar img
   width 36px
   height 36px
-  border-radius 2px
+  border-radius 50%
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––notifications*/
 
@@ -4253,7 +4260,7 @@ span.setting-error
 
 .settings-gravatar img
   display inline
-  border-radius 2px
+  border-radius 50%
   vertical-align -7px
 
 .settings-gravatar a

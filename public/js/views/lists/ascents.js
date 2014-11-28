@@ -30,7 +30,6 @@ define([
     },
 
     render: function (options) {
-      this.app.router.start();
 
       function _render() {
 
@@ -52,10 +51,9 @@ define([
 
       // Fetch or use options data.
       if (options.cragId) {
+        this.app.router.start();
         rest.post('/api/ascents/list/' + options.cragId, {},
             _.bind(function (err, data) {
-
-          // Stop spinner.
           this.app.router.stop();
 
           if (err) {

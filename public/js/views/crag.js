@@ -87,8 +87,9 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      if (this.skycons)
+      if (this.skycons) {
         this.skycons.remove('crag-weather');
+      }
       this.ascents.destroy();
       this.undelegateEvents();
       this.stopListening();

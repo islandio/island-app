@@ -72,7 +72,7 @@ define([
 
       // Init page spinner.
       this.spin = new Spin($('.page-spin'), {color: '#808080'});
-      this.start();
+      this.start(true);
 
       // Page routes.
       this.route(':un', 'profile', this.profile);
@@ -106,8 +106,6 @@ define([
       mps.subscribe('modal/forgot/open', _.bind(function () {
         this.modal = new Forgot(this.app).render();
       }, this));
-
-      this.stop();
     },
 
     routes: {
@@ -205,8 +203,10 @@ define([
       }
     },
 
-    start: function () {
-      this.loadingQueue.push(1);
+    start: function (skipQueue) {
+      if (!skipQueue) {
+        this.loadingQueue.push(1);
+      }
       if (this.loading) {
         return;
       }
