@@ -1027,6 +1027,16 @@ button.button.input-add-button:focus {
 .container.wide .main {
   margin-bottom: 0;
 }
+.container.animated {
+  -webkit-transition: margin 0.3s;
+  -moz-transition: margin 0.3s;
+  -ms-transition: margin 0.3s;
+  -o-transition: margin 0.3s;
+  transition: margin 0.3s;
+}
+.container.panel-open {
+  margin-right: 220px;
+}
 .folder {
   position: relative;
   margin: 40px auto 0;

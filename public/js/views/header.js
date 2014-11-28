@@ -37,7 +37,7 @@ define([
         // Open notification panel.
         if (store.get('notesOpen')) {
           var p = document.getElementById('panel');
-          var w = document.getElementById('wrap');
+          var w = document.getElementById('container');
           p.className = p.className + ' open';
           w.className = w.className + ' panel-open';
         }
