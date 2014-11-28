@@ -312,7 +312,7 @@ define([
       this.render('/service/crags', query, _.bind(function (err) {
         if (err) return;
         this.page = new Crags(this.app).render();
-        this.renderTabs({title: 'Crags', log: true});
+        this.renderTabs({title: 'Crags', subtitle: 'Climbing locations on Earth', log: true});
         this.stop();
       }, this));
     },

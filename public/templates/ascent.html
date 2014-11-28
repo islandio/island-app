@@ -6,24 +6,6 @@
 %>
 
 <div class="leftside">
-  <div class="page-info">
-    <div class="page-description-left">
-      <p>
-        Crag: <a href="/crags/<%= this.model.parentKey() %>" class="navigate"><%= data.crag %></a>
-        <br />
-        <% if (data.sector) { %>
-          Sector: <%= data.sector %>
-          <br />
-        <% } %>
-        Country: <%= data.country %>
-        <br />
-        Grade: <%= data.grades.sort().join(', ') %>
-      </p>
-    </div>
-    <div class="page-description-right">
-    </div>
-    <div class="clear"></div>
-  </div>
   <div class="events"></div>
   <div class="list-spin">
     <div class="events-spin"></div>

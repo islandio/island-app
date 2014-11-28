@@ -54,7 +54,8 @@
   <% } %>
   <span class="session-tick-name">
     <a href="/crags/<%= t.ascent.key %>" class="navigate">
-      <%= t.ascent.name %><%= t.ascent.sector ? ', ' + t.ascent.sector: '' %></a>
+      <%= t.ascent.name %><%= t.ascent.sector ? ' <span style="font-size:90%;">('
+          + t.ascent.sector + ')</span>': '' %></a>
   </span>
   <% if (t.duration || t.performance) { %>
     <span class="session-tick-detail">

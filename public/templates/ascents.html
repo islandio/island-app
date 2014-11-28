@@ -28,7 +28,7 @@
           <li style="background:<%= back %>;" id="<%= a.id %>" data-cid="<%= a.crag_id %>">
             <a href="/crags/<%= a.key %>" class="navigate">
               <% if (a.sector) { %>
-                <span class="list-row-title"><%= a.name %>, <span><%= a.sector %></span></span>
+                <span class="list-row-title"><%= a.name %> <span style="font-size:90%;">(<%= a.sector %>)</span></span>
               <% } else { %>
                 <span class="list-row-title"><%= a.name %></span>
               <% } %>

@@ -2,39 +2,10 @@
 
   // Save model attributes
   var data = this.model.attributes;
-  var weather = this.app.profile.weather;
-  if (weather) {
-    var weatherURL = '//www.forecast.io/#/f/'
-        + this.model.get('location').latitude + ','
-        + this.model.get('location').longitude;
-  }
+
 %>
 
 <div class="leftside">
-  <div class="page-info">
-    <div class="page-description-left">
-      <p>
-        Country: <%= data.country %>
-        <br />
-        Boulders: <%= this.model.count(data.bcnt) %>
-        <br />
-        Routes: <%= this.model.count(data.rcnt) %>
-      </p>
-    </div>
-    <div class="page-description-right">
-      <% if (weather) { %>
-        <a href="<%= weatherURL %> ">
-          <canvas id="crag-weather" width="64" height="64"></canvas>
-          <span>
-            &nbsp<%= this.model.tempFtoC(weather.temperature) %>&degC
-          </span>
-        </a>
-      <% } else {%>
-        <p> No weather data available.
-      <% } %>
-    </div>
-    <div class="clear"></div>
-  </div>
   <div class="events"></div>
   <div class="list-spin">
     <div class="events-spin"></div>

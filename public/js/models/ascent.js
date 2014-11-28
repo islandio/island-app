@@ -13,6 +13,8 @@ define([
       return this.get('key').split('/').slice(0, 2).join('/');
     },
 
+    tempFtoC: function(n) { return Math.floor((n - 32) * 5/9); },
+
     formatDescription: function () {
       var t = this.attributes;
       var type = t.type === 'b' ? 'boulder problem': 'route';

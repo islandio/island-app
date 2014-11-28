@@ -2,6 +2,17 @@
   // Save model attributes
   var data = this.model.attributes;
   var sub = this.app.profile.sub;
+
+  var weather = this.app.profile.weather;
+  if (weather) {
+    var weatherURL = '//www.forecast.io/#/f/'
+        + this.model.get('location').latitude + ','
+        + this.model.get('location').longitude;
+  }
+  var sector = '';
+  if (data.sector && data.sector !== '') {
+    sector = ', <span>' + data.sector + '</span>';
+  }
 %>
 
 <% if (this.app.profile.member) { %>
@@ -22,6 +33,19 @@
   <% } %>
 <% } %>
 <div class="page-title">
+  <img class="crag-flag" src="/img/flags/<%= this.model.parentKey().substr(0,3) %>.png" height="26" />
   <a href="/crags/<%= this.model.parentKey() %>" class="navigate"><%= data.crag %></a> / 
-  <a href="/crags/<%= data.key %>" class="navigate"><span><%= data.name %></span></a>
+  <% if (data.sector && data.sector !== '') { %>
+    <%= data.sector %> / 
+  <% } %>
+  <a href="/crags/<%= data.key %>" class="navigate"><span><%= data.name %></span></a> - 
+  <img class="ascent-type" src="/img/<%= data.type === 'b' ? 'boulder': 'route' %>_16.png"
+      width="16" height="16"> - 
+  <span class="ascent-grade"><%= data.grades.join(', ') %></span>
+  <% if (weather) { %>
+    <a href="<%= weatherURL %>" class="crag-weather">
+      <%= this.model.tempFtoC(weather.temperature) %>&degC&nbsp
+      <canvas id="crag_weather" width="26" height="26"></canvas>
+    </a>
+  <% } %>
 </div>
