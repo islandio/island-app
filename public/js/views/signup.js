@@ -120,15 +120,14 @@ define([
 
       // Grab the form data.
       var payload = {
-        newusername: this.$('.signup-username').val().trim(),
-        newemail: this.$('.signup-email').val().trim(),
-        newpassword: this.$('.signup-password').val().trim()
+        username: this.$('.signup-username').val().trim(),
+        email: this.$('.signup-email').val().trim(),
+        password: this.$('.signup-password').val().trim()
       };
 
       // Client-side form check.
       var spin = this.$('.button-spin').data().spin;
-      var check = util.ensure(payload, ['newusername', 'newemail',
-          'newpassword']);
+      var check = util.ensure(payload, ['username', 'email', 'password']);
       
       // Add alerts.
       _.each(check.missing, _.bind(function (m, i) {
@@ -149,7 +148,7 @@ define([
 
         return false;
       }
-      if (!util.isEmail(payload.newemail)) {
+      if (!util.isEmail(payload.email)) {
 
         // Set the error display.
         this.$('.signup-email').val('').addClass('input-error').focus();
@@ -159,7 +158,7 @@ define([
 
         return false;
       }
-      if (payload.newusername.length < 4) {
+      if (payload.username.length < 4) {
 
         // Set the error display.
         this.$('.signup-username').val('').addClass('input-error').focus();
@@ -169,7 +168,7 @@ define([
 
         return false;
       }
-      if (payload.newpassword.length < 7) {
+      if (payload.password.length < 7) {
 
         // Set the error display.
         $('.signup-password').val('').addClass('input-error').focus();
