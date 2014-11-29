@@ -90,8 +90,8 @@ define([
     },
 
     destroy: function () {
-      this.app.rpc.socket.removeAllListeners('comment.new');
-      this.app.rpc.socket.removeAllListeners('comment.removed');
+      // this.app.rpc.socket.removeAllListeners('comment.new');
+      // this.app.rpc.socket.removeAllListeners('comment.removed');
       return List.prototype.destroy.call(this);
     },
 

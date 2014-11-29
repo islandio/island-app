@@ -75,8 +75,8 @@ define([
     },
 
     destroy: function () {
-      this.app.rpc.socket.removeAllListeners('hangten.new');
-      this.app.rpc.socket.removeAllListeners('hangten.removed');
+      // this.app.rpc.socket.removeAllListeners('hangten.new');
+      // this.app.rpc.socket.removeAllListeners('hangten.removed');
       return List.prototype.destroy.call(this);
     },
 

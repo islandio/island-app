@@ -221,8 +221,8 @@ define([
 
     destroy: function () {
       this.unpaginate();
-      this.app.rpc.socket.removeAllListeners('event.new');
-      this.app.rpc.socket.removeAllListeners('event.removed');
+      // this.app.rpc.socket.removeAllListeners('event.new');
+      // this.app.rpc.socket.removeAllListeners('event.removed');
       return List.prototype.destroy.call(this);
     },
 

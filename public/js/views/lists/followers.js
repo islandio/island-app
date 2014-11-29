@@ -44,25 +44,21 @@ define([
     events: {},
 
     destroy: function () {
-      this.app.rpc.socket.removeAllListeners('follow.new');
-      this.app.rpc.socket.removeAllListeners('follow.removed');
+      // this.app.rpc.socket.removeAllListeners('follow.new');
+      // this.app.rpc.socket.removeAllListeners('follow.removed');
       return List.prototype.destroy.call(this);
     },
 
     collect: function (data) {
-      if (data.subscribee.id === this.app.profile.member.id) {
-        if (!this.app.profile.content.private) {
-          this.collection.unshift(data);
-        }
+      var id = this.parentView.model ? this.parentView.model.id:
+          this.app.profile.member.id;
+      if (data.subscribee.id === id) {
+        this.collection.unshift(data);
         this.updateCount();
       }
     },
 
     _remove: function (data) {
-      if (this.app.profile.content.private) {
-        this.updateCount();
-        return;
-      }
       var index = -1;
       var view = _.find(this.views, function (v) {
         ++index;
@@ -71,10 +67,16 @@ define([
 
       if (view) {
         this.views.splice(index, 1);
-        view._remove(_.bind(function () {
+        if (this.app.profile.content.private) {
+          view.destroy();
           this.collection.remove(view.model);
           this.updateCount();
-        }, this));
+        } else {
+          view._remove(_.bind(function () {
+            this.collection.remove(view.model);
+            this.updateCount();
+          }, this));
+        }
       }
     },
 

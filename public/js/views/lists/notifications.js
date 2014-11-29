@@ -99,9 +99,9 @@ define([
 
     destroy: function () {
       this.unpaginate();
-      this.app.rpc.socket.removeAllListeners('notification.new');
-      this.app.rpc.socket.removeAllListeners('notification.read');
-      this.app.rpc.socket.removeAllListeners('notification.removed');
+      // this.app.rpc.socket.removeAllListeners('notification.new');
+      // this.app.rpc.socket.removeAllListeners('notification.read');
+      // this.app.rpc.socket.removeAllListeners('notification.removed');
       return List.prototype.destroy.call(this);
     },
 

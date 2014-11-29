@@ -16,7 +16,8 @@ define([
     tagName: 'li',
 
     attributes: function () {
-      var back = this.model.collection.indexOf(this.model) % 2 === 0 ? '#f2f2f2': '#f9f9f9';
+      var back = this.model.collection.indexOf(this.model) % 2 === 0 ?
+          '#f2f2f2': '#f9f9f9';
       return _.defaults({
         class: 'sidebar-watch',
         style: 'background:' + back + ';'

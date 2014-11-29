@@ -4,10 +4,12 @@
 
 <% if (!this.app.profile.content.private) { %>
   <a href="/crags/<%= this.model.get('subscribee').key %>" class="navigate">
-    <span class="list-row-title"><%= subscribee.name %><% if (subscribee.grades) { %>
-        <%= ' ' + subscribee.grades.join(', ') %><% } %>, <span>
+    <span class="list-row-title"><%= subscribee.name %>, <span>
         <%= subscribee.crag || subscribee.country %>
       </span>
+      <% if (subscribee.grades) { %>
+        <%= ' ' %><span style="font-size:90%;">(<%= subscribee.grades.join(', ') %>)</span>
+      <% } %>
     </span>
   </a>
   <a href="javascript:;" class="list-button">
