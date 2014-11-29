@@ -112,6 +112,15 @@ define([
 
         return false;
       }
+      if (payload.newpassword.length < 7) {
+        mps.publish('flash/new', [{
+          err: {message: 'Password must be > 6 characters'},
+          level: 'error'}
+        ]);
+        this.$('input[name="cnewpassword"]').val('').addClass('input-error');
+        this.$('input[name="newpassword"]').val('').addClass('input-error').focus();
+        return false;
+      }
 
       // Add token.
       if (this.token) {
@@ -123,7 +132,7 @@ define([
         if (err) {
 
           // Set the error display.
-          mps.publish('flash/new', [{err: err, level: 'error', sticky: true}, true]);
+          mps.publish('flash/new', [{err: err, level: 'error'}, true]);
 
           // Clear fields.
           this.$('input[type="password"]').val('').addClass('input-error');

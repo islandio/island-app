@@ -73,11 +73,13 @@ define([
 
       // Handle username.
       this.$('.signup-username').bind('keydown', function (e) {
-        if (e.which === 32) {
+        if (_.contains([32], e.which)) {
           return false;
         }
       }).bind('keyup', function (e) {
-        $(this).val(_.str.slugify($(this).val()).substr(0, 30));
+        if (!_.contains([37,38,39,40,9,91,16], e.which)) {
+          $(this).val(util.toUsername($(this).val()));
+        }
       });
 
       // Focus cursor initial.
@@ -142,7 +144,7 @@ define([
       if (!check.valid) {
 
         // Set the error display.
-        var msg = 'All fields are required.';
+        var msg = 'All fields are required';
         mps.publish('flash/new', [{err: {message: msg},
             level: 'error', sticky: true}, true]);
 
@@ -152,7 +154,7 @@ define([
 
         // Set the error display.
         this.$('.signup-email').val('').addClass('input-error').focus();
-        var msg = 'Use a valid email address.';
+        var msg = 'Use a valid email address';
         mps.publish('flash/new', [{err: {message: msg},
             level: 'error', sticky: true}, true]);
 
@@ -162,7 +164,7 @@ define([
 
         // Set the error display.
         this.$('.signup-username').val('').addClass('input-error').focus();
-        var msg = 'Username must be > 3 chars.';
+        var msg = 'Username must be > 3 characters';
         mps.publish('flash/new', [{err: {message: msg},
             level: 'error', sticky: true}, true]);
 
@@ -172,7 +174,7 @@ define([
 
         // Set the error display.
         $('.signup-password').val('').addClass('input-error').focus();
-        var msg = 'Password must be > 6 chars.';
+        var msg = 'Password must be > 6 characters';
         mps.publish('flash/new', [{err: {message: msg},
             level: 'error', sticky: true}, true]);
 

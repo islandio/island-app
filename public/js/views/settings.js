@@ -63,19 +63,9 @@ define([
 
       // Save field contents on blur.
       this.$('textarea, input[type="text"], input[type="checkbox"], input[type="radio"]')
-          .change(_.bind(this.save, this))
-          .keyup(function (e) {
-        var field = $(e.target);
-        var label = $('label[for="' + field.attr('name') + '"]');
-        var saved = $('div.setting-saved', label.parent().next());
+          .change(_.bind(this.save, this));
 
-        if (field.val().trim() !== field.data('saved')) {
-          saved.hide();
-        }
-
-        return false;
-      });
-
+      // Handle banner positioning.
       this.banner.bind('mousedown', _.bind(this.position, this));
 
       // Add mouse events for dummy file selector.
@@ -162,9 +152,6 @@ define([
       e.preventDefault();
       var field = $(e.target);
       var name = field.attr('name');
-      // var label = $('label[for="' + name + '"]');
-      // var saved = $('div.setting-saved', label.parent().next());
-      // var errorMsg = $('span.setting-error', label.parent().next()).hide();
       var val = util.sanitize(field.val());
 
       // Handle checkbox.
@@ -182,7 +169,15 @@ define([
       // Check for email.
       if (payload.primaryEmail && !util.isEmail(payload.primaryEmail)) {
         mps.publish('flash/new', [{
-          err: {message: 'Please use a valid email address.'},
+          err: {message: 'Please use a valid email address'},
+          level: 'error'}
+        ]);
+        field.addClass('input-error').val('').focus();
+        return false;
+      }
+      if (payload.username && payload.username.length < 4) {
+        mps.publish('flash/new', [{
+          err: {message: 'Username must be > 3 characters'},
           level: 'error'}
         ]);
         field.addClass('input-error').val('').focus();
@@ -208,8 +203,8 @@ define([
 
         // Save the saved state and show indicator.
         field.data('saved', val);
-        // saved.show();
 
+        // Show saved status.
         mps.publish('flash/new', [{
           message: 'Saved.',
           level: 'alert'
@@ -264,7 +259,9 @@ define([
           bannerTop: self.bannerTop
         }, function (err, data) {
           if (err) {
-            return console.log(err);
+
+            // Show error.
+            mps.publish('flash/new', [{err: err, level: 'error'}]);
           }
           self.uploading = false;
         });
@@ -322,7 +319,10 @@ define([
           this.uploading = false;
           this.bannerSpin.stop();
           this.dropZone.removeClass('uploading');
-          alert(assembly.error + ': ' + assembly.message);
+
+          // Show error.
+          mps.publish('flash/new', [{err: assembly.error + ': '
+              + assembly.message, level: 'error'}]);
         }, this),
         onSuccess: _.bind(function (assembly) {
           this.uploading = false;
@@ -332,11 +332,15 @@ define([
             if (assembly.ok !== 'ASSEMBLY_COMPLETED') {
               this.bannerSpin.stop();
               this.dropZone.removeClass('uploading');
-              return alert('Upload failed. Please try again.');
+              mps.publish('flash/new', [{err: 'Upload failed. Please try again.',
+                  level: 'error'}]);
+              return;
             } if (_.isEmpty(assembly.results)) {
               this.bannerSpin.stop();
               this.dropZone.removeClass('uploading');
-              return alert('You must choose a file.');
+              mps.publish('flash/new', [{err: 'You must choose a file.',
+                  level: 'error'}]);
+              return;
             }
           }
 
@@ -400,9 +404,6 @@ define([
         closeBtn: false,
         padding: 0
       });
-      
-      // Refs.
-      var overlay = $('.modal-overlay');
 
       // Setup actions.
       $('.modal-cancel').click(function (e) {
@@ -414,7 +415,8 @@ define([
         rest.delete('/api/members/' + this.app.profile.member.username,
             {}, _.bind(function (err, data) {
           if (err) {
-            return console.log(err);
+            mps.publish('flash/new', [{err: err, level: 'error'}]);
+            return;
           }
 
           // Route to home.
@@ -431,12 +433,13 @@ define([
       // Render the confirm modal.
       $.fancybox(_.template(tip)({
         message: '<strong>You are connected to Instagram.</strong> Now help us'
-            + ' map the world of climbing!'
-            + ' When you add the #island hashtag to your initial photo'
-            + ' caption, we\'ll add it to the Island Map.'
+            + ' visualize the world of climbing!'
+            + ' We\'ll post photos of yours with the #weareisland hashtag'
+            + ' to your Island Profile.'
             + '<br /><br />'
-            + 'Note: For this to work, location services (GPS) must be enabled'
-            + ' for Instagram on your phone and "Add to Photo Map" must be set'
+            + 'Tip: Want us to guess which crag you were at? Make sure location services'
+            + ' (GPS) are enabled'
+            + ' for Instagram on your phone and "Add to Photo Map" is set'
             + ' to "on" when posting.<br /><br />'
             + '&bull; <em>Directions for all iOS devices:</em> Select the '
             + 'Settings icon on the device. Go to Settings > Privacy > Location'
