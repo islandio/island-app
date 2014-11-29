@@ -74,7 +74,9 @@
   // Gravatar
   var gravatar = 'https://www.gravatar.com/avatar/'
       + data.gravatar + '?s=24&d='
-      + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
+      + encodeURIComponent(this.app.images.avatar);
+
+  var description = this.model.description();
 
 %>
 
@@ -89,18 +91,20 @@
     </div>
   <% } %>
   <div class="leftside">
-    <div class="profile-info">
-      <div class="profile-description">
-        <h2 class="profile-section-title">Bio</h2>
-        <%= this.model.description() %>
-        <% if (links) { %>
-          <span>More from <%= data.displayName %> at </span>
-          <span class="profile-links"><%= links %>.</span>
-        <% } %>
+    <% if (description || links) { %>
+      <div class="profile-info">
+        <div class="profile-description">
+          <!-- <h2 class="profile-section-title">Bio</h2> -->
+          <%= description %>
+          <% if (links) { %>
+            <span>More from @<%= data.username %> at </span>
+            <span class="profile-links"><%= links %>.</span>
+          <% } %>
+        </div>
       </div>
-    </div>
+    <% } %>
     <% if (!this.app.profile.content.private) { %>
-      <h2 class="profile-section-title">Activity</h2>
+      <!-- <h2 class="profile-section-title">Activity</h2> -->
     <% } %>
     <div class="events"></div>
     <div class="list-spin">
@@ -118,7 +122,7 @@
           <% _.each(this.model.get('team'), _.bind(function (m) {
             var g = 'https://www.gravatar.com/avatar/'
             + m.gravatar + '?s=274&d='
-            + encodeURIComponent(this.app.cfuri + '/avatars/avatar_274.png');
+            + encodeURIComponent(this.app.images.avatar_big);
           %>
             <li>
               <a href="/<%= m.username %>" class="navigate">

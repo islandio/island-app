@@ -2,7 +2,7 @@
   var member = this.app.profile.member;
   var gravatar = member ? 'https://www.gravatar.com/avatar/'
       + member.gravatar + '?s=34&d='
-      + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png')
+      + encodeURIComponent(this.app.images.avatar)
       : null;
 %>
 

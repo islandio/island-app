@@ -7,10 +7,7 @@
   var banner = data.image || null;
   if (!banner) {
     banner = {meta: {width: 680, height: 306}};
-    if (!data.gender || 'male' === data.gender)
-      banner.ssl_url = 'https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-blnk-pic-m.jpg';
-    else
-      banner.ssl_url = 'https://d271mvlc6gc7bl.cloudfront.net/main/gfx/is-blnk-pic-f.jpg';
+    banner.ssl_url = '/img/banner_680.png';
   }
   var _w = 680;
   var _h = 306;
@@ -32,7 +29,7 @@
   // Gravatar
   var gravatar = 'https://www.gravatar.com/avatar/'
       + data.gravatar + '?s=24&d='
-      + encodeURIComponent(this.app.cfuri + '/avatars/avatar_100.png');
+      + encodeURIComponent(this.app.images.avatar);
 
   // Notifications config
   var notes = data.config.notifications;

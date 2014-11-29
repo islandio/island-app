@@ -65,12 +65,17 @@ define([
     navigate: function (e) {
       e.preventDefault();
       if ($(e.target).hasClass('info-delete')
-          || $(e.target).hasClass('info-accept')) return;
+          || $(e.target).hasClass('info-accept')) {
+        return;
+      }
       var type = this.model.get('event').data.action.t;
-      var path = type === 'request' || type === 'accept' || type === 'follow' ?
-          this.model.get('event').data.action.s:
-          this.model.get('event').data.target.s;
-      if (path) mps.publish('navigate', [path]);
+      var path = $(e.target).closest('a').attr('href');
+      // var path = type === 'request' || type === 'accept' || type === 'follow' ?
+      //     this.model.get('event').data.action.s:
+      //     this.model.get('event').data.target.s;
+      if (path) {
+        this.app.router.navigate(path, {trigger: true});
+      }
       return false;
     },
 

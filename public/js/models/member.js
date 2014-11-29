@@ -12,7 +12,7 @@ define([
     description: function () {
       var str = this.get('description');
       if (!str || str.trim() === '') {
-        return '<p></p>';
+        return null;
       } else {
         return util.formatText(str);
       }

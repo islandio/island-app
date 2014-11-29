@@ -17,8 +17,11 @@ define([
     // Save connection to server.
     this.rpc = rpc.init();
 
-    // Location of static assets
-    this.cfuri = 'https://d10fiv677oa856.cloudfront.net';
+    // Location of images that must remain remote.
+    this.images = {
+      avatar: 'https://s3.amazonaws.com/island.io/avatar_48.png',
+      avatar_big: 'https://s3.amazonaws.com/island.io/avatar_274.png'
+    };
 
     // Grades.
     this.grades = ['9c+', '9c', '9b+', '9b', '9a+', '9a', '8c+', '8c',
