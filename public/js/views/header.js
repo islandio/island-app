@@ -10,9 +10,8 @@ define([
   'rest',
   'util',
   'views/lists/flashes',
-  'views/lists/choices',
-  'text!../../templates/box.html'
-], function ($, _, Backbone, mps, rest, util, Flashes, Choices, box) {
+  'views/lists/choices'
+], function ($, _, Backbone, mps, rest, util, Flashes, Choices) {
   return Backbone.View.extend({
 
     el: '.header',
@@ -29,20 +28,6 @@ define([
       });
       this.undelegateEvents();
       this.stopListening();
-
-      if (login && this.app.profile.member) {
-        this.$('.signin-button').remove();
-        $(_.template(box).call(this)).appendTo(this.$('.header-inner'));
-
-        // Open notification panel.
-        if (store.get('notesOpen')) {
-          var p = document.getElementById('panel');
-          var w = document.getElementById('container');
-          p.className = p.className + ' open';
-          w.className = w.className + ' panel-open';
-        }
-      }
-
       this.setup();
       return this;
     },
