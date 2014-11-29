@@ -209,9 +209,9 @@
         <tr>
           <td colspan="6">
             <ul class="settings-detail-txt settings-detail-list">
-              <li>Anyone can view your full name.</li>
+              <!-- <li>Anyone can view your full name.</li> -->
               <li>Logged-in Island athletes can follow you.</li>
-              <li>Anyone can see your Posts.</li>
+              <li>Anyone can see your sessions and posts.</li>
               <li>Logged-in Island athletes can see your activities on your Island Profile.</li>
             </ul>
           </td>
@@ -231,11 +231,52 @@
         <tr>
           <td colspan="6">
             <ul class="settings-detail-txt settings-detail-list">
-              <li>Your name will be anonymized (e.g. <%= this.model.anonName() %>) to all logged out athletes.</li>
+              <!-- <li>Your name will be anonymized (e.g. <= this.model.anonName() >) to all logged out athletes.</li> -->
               <li>Only Island athletes that you approve can follow you.</li>
-              <li>Only Island athletes that you approve can see your Posts.</li>
+              <li>Only Island athletes that you approve can see your sessions and posts.</li>
               <li>Only approved followers can see your activities on your Island Profile.</li>
             </ul>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6" style="padding-top: 15px;">
+            <span class="settings-detail-txt">"My Ticks" are visible to...</span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6" style="padding-top: 5px;">
+            <% if (!privacy.ticks || privacy.ticks === 0 || privacy.ticks === '0') { %>
+              <input tabindex="11" type="radio" name="config.privacy.ticks"
+                  value="0" checked="checked" id="config.privacy.ticks.0" />
+            <% } else { %>
+              <input tabindex="11" type="radio" name="config.privacy.ticks"
+                  value="0" id="config.privacy.ticks.0" />
+            <% } %>
+            <label for="config.privacy.ticks.0" style="vertical-align:-1px;">Anyone</label>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6" style="padding-top: 5px;">
+            <% if (privacy.ticks === 1 || privacy.ticks === '1') { %>
+              <input tabindex="12" type="radio" name="config.privacy.ticks"
+                  value="1" checked="checked" id="config.privacy.ticks.1" />
+            <% } else { %>
+              <input tabindex="12" type="radio" name="config.privacy.ticks"
+                  value="1" id="config.privacy.ticks.1" />
+            <% } %>
+            <label for="config.privacy.ticks.1" style="vertical-align:-1px;">Only followers</label>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6" style="padding-top: 5px;">
+            <% if (privacy.ticks === 2 || privacy.ticks === '2') { %>
+              <input tabindex="13" type="radio" name="config.privacy.ticks"
+                  value="2" checked="checked" id="config.privacy.ticks.2" />
+            <% } else { %>
+              <input tabindex="13" type="radio" name="config.privacy.ticks"
+                  value="2" id="config.privacy.ticks.2" />
+            <% } %>
+            <label for="config.privacy.ticks.2" style="vertical-align:-1px;">Only me</label>
           </td>
         </tr>
         <tr>
@@ -245,7 +286,7 @@
         </tr>
         <tr>
           <td colspan="6">
-            <a tabindex="12" class="button" href="/api/ticks?csv=true">
+            <a tabindex="14" class="button" href="/api/ticks?csv=true">
               Download
             </a>
           </td>
@@ -262,10 +303,10 @@
           <td colspan="2" class="text-right">
             <% if (notes.comment.email === true || notes.comment.email === 'true') { %>
               <input type="checkbox" name="config.notifications.comment.email"
-                  tabindex="13" checked="checked" />
+                  tabindex="15" checked="checked" />
             <% } else { %>
               <input type="checkbox" name="config.notifications.comment.email"
-                  tabindex="13" />
+                  tabindex="15" />
             <% } %>
             <label for="config.notifications.comment.email"
                 style="vertical-align:-1px;">Email (requires address above)</label>
@@ -280,7 +321,7 @@
           <td colspan="6">
             <div class="settings-services-spin"></div>
             <% if (!data.facebookId) { %>
-              <a tabindex="14" class="button signin-strategy-btn facebook-btn"
+              <a tabindex="16" class="button signin-strategy-btn facebook-btn"
                   href="/connect/facebook">
                 Connect with Facebook
               </a>
@@ -292,7 +333,7 @@
             <% } %>
             <br />
             <% if (!data.twitterId) { %>
-              <a tabindex="15" class="button signin-strategy-btn twitter-btn"
+              <a tabindex="17" class="button signin-strategy-btn twitter-btn"
                   href="/connect/twitter">
                 Connect with Twitter
               </a>
@@ -304,21 +345,19 @@
             <% } %>
             <br />
             <% if (!data.instagramId) { %>
-              <a tabindex="16" class="button signin-strategy-btn instagram-btn"
+              <a tabindex="18" class="button signin-strategy-btn instagram-btn"
                   href="/connect/instagram">
                 Connect with Instagram
               </a>
             <% } else { %>
-              <a tabindex="16" class="button signin-strategy-btn instagram-btn"
+              <a tabindex="18" class="button signin-strategy-btn instagram-btn"
                   href="/connect/instagram">
                 Re-connect with Instagram
               </a>
               <p class="settings-instructions">
-                Help us map the world of climbing by adding #island to your photos.
+                Help us visualize the world of climbing by adding #weareisland to your photos.
                 <br />
-                Note: For this to work, location services (GPS) must be enabled for Instagram on your phone and "Add to Photo Map" must be set to "on" when
-                <br />
-                posting. <strong>Not seeing your photos on the map? Try re-connecting.</strong>
+                posting. <strong>Not seeing your photos on The Island? Try re-connecting.</strong>
               </p>
             <% } %>
           </td>
@@ -331,7 +370,7 @@
           </tr>
           <tr>
             <td colspan="6">
-              <a tabindex="15" href="/reset" class="button signin-strategy-btn navigate">
+              <a tabindex="19" href="/reset" class="button signin-strategy-btn navigate">
                 Change your password
               </a>
             </td>
@@ -344,7 +383,7 @@
         </tr>
         <tr>
           <td colspan="6">
-            <a tabindex="16" href="javascript:;"
+            <a tabindex="20" href="javascript:;"
                 class="demolish button signin-strategy-btn delete-btn">
               Delete profile
             </a>

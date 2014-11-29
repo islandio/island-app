@@ -493,6 +493,7 @@ label {
   color: #666;
   font-size: 13px;
   font-weight: bold;
+  padding-left: 1px;
 }
 td {
   white-space: nowrap;
@@ -3415,9 +3416,6 @@ table.post-params label {
   width: 750px;
   margin-left: -30px;
 }
-.profile .events > .post-input {
-  margin-top: 20px;
-}
 .events > .events-filter:first-child {
   margin-top: -30px;
 }
@@ -4098,11 +4096,12 @@ a.session-tick-button:active {
 }
 .settings-detail-txt {
   display: block;
-  font-size: 12px;
+  font-size: 13px;
   color: #666;
 }
 ul.settings-detail-list {
   margin: 0 0 0 30px;
+  font-style: italic;
 }
 ul.settings-detail-list li {
   list-style-type: disc;

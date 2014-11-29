@@ -124,9 +124,13 @@ define([
 
       // Handle username.
       this.$('input[name="username"]').bind('keydown', function (e) {
-        if (e.which === 32) return false;
+        if (_.contains([32], e.which)) {
+          return false;
+        }
       }).bind('keyup', function (e) {
-        $(this).val(_.str.slugify($(this).val()).substr(0, 30));
+        if (!_.contains([37,38,39,40,9,91,16], e.which)) {
+          $(this).val(util.toUsername($(this).val()));
+        }
       });
 
       return this;

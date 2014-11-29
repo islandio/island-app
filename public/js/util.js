@@ -483,6 +483,23 @@ define([
       });
     },
 
+    toUsername: function(str) {
+      if (str == null) {
+        return '';
+      }
+
+      var from  = "ąàáäâãåæăćęèéëêìíïîłńòóöôõøśșțùúüûñçżźĄÀÁÄÂÃÅÆĂĆĘÈÉËÊÌÍÏÎŁŃÒÓÖÔÕØŚȘȚÙÚÜÛÑÇŻŹ",
+          to    = "aaaaaaaaaceeeeeiiiilnoooooosstuuuunczzAAAAAAAAACEEEEEIIIILNOOOOOOSSTUUUUNCZZ",
+          regex = new RegExp('[' + from + ']', 'g');
+
+      str = String(str).replace(regex, function (c) {
+        var index = from.indexOf(c);
+        return to.charAt(index) || '_';
+      });
+
+      return str.replace(/[^\w^\.\s]/g, '_').substr(0, 30);
+    },
+
     // pass a function to insert into the DOM
     createImageMosaic: function (images, width, height, insertFunction, cb) {
       if (images.length === 0) {
