@@ -14,9 +14,10 @@ define([
   'text!../../templates/crag.title.html',
   'views/lists/events',
   'views/lists/ascents',
+  'views/lists/watchers',
   'Skycons'
 ], function ($, _, Backbone, mps, rest, util, Crag, template, title,
-      Events, Ascents, skycons) {
+      Events, Ascents, Watchers, skycons) {
   return Backbone.View.extend({
 
     el: '.main',
@@ -68,6 +69,9 @@ define([
         hide: ['ascent']
       });
 
+      // Render lists.
+      this.watchers = new Watchers(this.app, {parentView: this, reverse: true});
+
       // Render ascents.
       this.ascents = new Ascents(this.app).render({
         data: {
@@ -92,6 +96,7 @@ define([
       if (this.skycons) {
         this.skycons.remove('crag-weather');
       }
+      this.watchers.destroy();
       this.ascents.destroy();
       this.undelegateEvents();
       this.stopListening();

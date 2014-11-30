@@ -1,0 +1,8 @@
+<span class="sidebar-heading">
+  Watchers <span class="sidebar-heading-cnt">(<%= this.collection.length %>)</span>
+</span>
+
+<div class="list-header"></div>
+<% _.each(this.collection.models, _.bind(function (row) { %>
+  <%= this.row(row) %>
+<% }, this)); %>

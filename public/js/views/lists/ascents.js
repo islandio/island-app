@@ -14,7 +14,7 @@ define([
 ], function ($, _, Backbone, mps, rest, util, Session, template) {
   return Backbone.View.extend({
 
-    el: '.rightside',
+    el: '.crag-ascents',
 
     initialize: function (app, options) {
       this.app = app;
@@ -120,7 +120,7 @@ define([
       });
       this.undelegateEvents();
       this.stopListening();
-      this.empty();
+      this.remove();
     },
 
     navigate: function (e) {
