@@ -93,7 +93,7 @@ define([
       this.route('films', 'films', this.films);
       this.route('crags', 'crags', this.crags);
       this.route('ascents', 'ticks', this.ticks);
-      this.route('sessions', 'sessions', this.sessions);
+      // this.route('sessions', 'sessions', this.sessions);
       this.route('signin', 'signin', this.signin);
       this.route('signup', 'signup', this.signup);
       this.route('', 'dashboard', this.dashboard);
@@ -258,7 +258,7 @@ define([
           this.page = new Dashboard(this.app).render();
           this.renderTabs({tabs: [
             {title: 'Activity', href: '/', active: true},
-            {title: 'My Sessions', href: '/sessions'},
+            // {title: 'My Sessions', href: '/sessions'},
             {title: 'My Ascents', href: '/ascents'}
           ], log: true});
         } else {
@@ -269,21 +269,21 @@ define([
       }, this));
     },
 
-    sessions: function () {
-      this.start();
-      $('.container').removeClass('wide').removeClass('landing');
-      this.render('/service/sessions', {}, true, _.bind(function (err) {
-        if (err) return;
-        this.header.highlight('/');
-        this.renderTabs({tabs: [
-          {title: 'Activity', href: '/'},
-          {title: 'My Sessions', href: '/sessions', active: true},
-          {title: 'My Ascents', href: '/ascents'}
-        ], log: true});
-        this.page = new Sessions(this.app).render();
-        this.stop();
-      }, this));
-    },
+    // sessions: function () {
+    //   this.start();
+    //   $('.container').removeClass('wide').removeClass('landing');
+    //   this.render('/service/sessions', {}, true, _.bind(function (err) {
+    //     if (err) return;
+    //     this.header.highlight('/');
+    //     this.renderTabs({tabs: [
+    //       {title: 'Activity', href: '/'},
+    //       {title: 'My Sessions', href: '/sessions', active: true},
+    //       {title: 'My Ascents', href: '/ascents'}
+    //     ], log: true});
+    //     this.page = new Sessions(this.app).render();
+    //     this.stop();
+    //   }, this));
+    // },
 
     ticks: function () {
       this.start();
@@ -293,7 +293,7 @@ define([
         this.header.highlight('/');
         this.renderTabs({tabs: [
           {title: 'Activity', href: '/'},
-          {title: 'My Sessions', href: '/sessions'},
+          // {title: 'My Sessions', href: '/sessions'},
           {title: 'My Ascents', href: '/ascents', active: true}
         ], log: true});
         this.page = new Ticks(this.app).render();
