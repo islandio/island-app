@@ -2751,8 +2751,10 @@ button.button.modal-button.full {
   animation-fill-mode: both;
 }
 ul.profile-team {
-  margin: 20px 0 30px;
+  margin: 5px -30px 30px;
   font-size: 0;
+  border-bottom: 1px solid #f2f2f2;
+  padding: 0 30px;
 }
 ul.profile-team li {
   width: 274px;

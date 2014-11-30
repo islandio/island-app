@@ -114,7 +114,7 @@
   </div>
   <div class="rightside">
     <% if (this.model.get('role') === 2) { %>
-      <h2 class="profile-section-title">Team</h2>
+      <h2 class="sidebar-heading">Team</h2>
       <ul class="profile-team">
         <% if (this.model.get('team').length === 0) { %>
           <span class="empty-feed">No team athletes to show.</span>
@@ -135,7 +135,7 @@
     <% } %>
     <div class="sidebar-items">
       <% if (this.app.profile.member.username !== 'island'
-          && this.model.get('username') !== 'island') { %>
+          && this.model.get('username') !== 'island' && this.model.get('role') !== 2) { %>
         <div class="sidebar-watchees">
           <span class="sidebar-heading"><%= owner %> watching:</span>
           <div class="sidebar-crags"></div>

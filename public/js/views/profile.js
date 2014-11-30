@@ -65,6 +65,7 @@ define([
 
       // Load profile image.
       if (this.model.get('image')) {
+        var defaultImg = this.$('.profile-picture img:not(.masked)').show();
         var bannerImg = this.$('.profile-picture img.masked');
         var bannerURL = this.model.get('image').ssl_url
             || this.model.get('image').cf_url
@@ -74,11 +75,12 @@ define([
         tmp.onload = function () {
           bannerImg.get(0).src = this.src;
           bannerImg.show();
+          defaultImg.hide();
         }
-        tmp.onerror = function (err) {}
+        tmp.onerror = function (err) {
+          // defaultImg.show();
+        }
         tmp.src = bannerURL;
-      } else {
-        this.$('.profile-picture img:not(.masked)').show();
       }
 
       // Render lists.
