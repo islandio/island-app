@@ -64,6 +64,7 @@ define([
 
       // Save refs.
       this.filterBox = this.$('.ticks-filter-input input');
+      this.emptyTxt = this.$('.ticks-filter-input span');
       this.bouldersFilter = this.$('.b-filter').parent();
       this.routesFilter = this.$('.r-filter').parent();
       this.boulders = this.$('.b-ticks');
@@ -79,16 +80,9 @@ define([
         this.routesFilter.addClass('active');
         this.routes.show();
       }
+      this.checkCurrentCount();
       this.bouldersFilter.click(_.bind(this.changeType, this, 'b'));
       this.routesFilter.click(_.bind(this.changeType, this, 'r'));
-
-      // Disable types if nothing to show.
-      if (this.model.get('ticks').b.length === 0) {
-        this.bouldersFilter.addClass('disabled');
-      }
-      if (this.model.get('ticks').r.length === 0) {
-        this.routesFilter.addClass('disabled');
-      }
 
       // Handle filtering.
       this.filterBox.bind('keyup search', _.bind(this.filter, this));
@@ -131,6 +125,7 @@ define([
         // create new tick view
         this.ticks.push(new Tick({parentView: this, el: el, model: data},
             this.app).render());
+        this.checkCurrentCount();
       }
     },
 
@@ -152,9 +147,10 @@ define([
         if (list.children('li').length === 0) {
           list.hide();
         }
+        this.checkCurrentCount();
       }
 
-      noslide ? _done(): t.$el.slideUp('fast', _done);
+      noslide ? _done.call(this): t.$el.slideUp('fast', _.bind(_done, this));
     },
 
     empty: function () {
@@ -192,6 +188,20 @@ define([
           + ' - Ticks');
     },
 
+    checkCurrentCount: function () {
+      var ticks = _.filter(this.ticks, _.bind(function (t) {
+        return t.model.get('type') === this.currentType;
+      }, this));
+      if (ticks.length === 0) {
+        this.filterBox.hide();
+        this.$('.' + this.currentType + '-ticks .empty-feed').show()
+            .css('display', 'block');
+      } else {
+        this.filterBox.show();
+        this.$('.' + this.currentType + '-ticks .empty-feed').hide();
+      }
+    },
+
     changeType: function (type, e) {
 
       // Update buttons.
@@ -207,6 +217,7 @@ define([
       this.currentType = type;
       this.$('.list-wrap').hide();
       this.$('.' + this.currentType + '-ticks').show();
+      this.checkCurrentCount();
       this.filterBox.keyup();
     },
 

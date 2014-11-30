@@ -80,7 +80,7 @@ define([
       
       this.route('sessions/:k', 'session', this.session);
      
-      this.route('ticks/:k', 'tick', this.tick);
+      this.route('efforts/:k', 'tick', this.tick);
       
       this.route('crags/:y', 'crag', this.crags);
       this.route('crags/:y/:g', 'crag', this.crag);
@@ -92,7 +92,7 @@ define([
       this.route('about', 'about', this.about);
       this.route('films', 'films', this.films);
       this.route('crags', 'crags', this.crags);
-      this.route('ticks', 'ticks', this.ticks);
+      this.route('ascents', 'ticks', this.ticks);
       this.route('sessions', 'sessions', this.sessions);
       this.route('signin', 'signin', this.signin);
       this.route('signup', 'signup', this.signup);
@@ -247,7 +247,7 @@ define([
       this.start();
       if (!this.tabs || !this.tabs.params.tabs || !this.tabs.params.tabs[1]
           || (this.tabs.params.tabs[1].href !== '/sessions'
-          && this.tabs.params.tabs[1].href !== '/ticks')) {
+          && this.tabs.params.tabs[1].href !== '/ascents')) {
         this.renderTabs();
       }
       var query = {actions: this.getEventActions()};
@@ -259,7 +259,7 @@ define([
           this.renderTabs({tabs: [
             {title: 'Activity', href: '/', active: true},
             {title: 'My Sessions', href: '/sessions'},
-            {title: 'My Ticks', href: '/ticks'}
+            {title: 'My Ascents', href: '/ascents'}
           ], log: true});
         } else {
           $('.container').addClass('wide').addClass('landing');
@@ -278,7 +278,7 @@ define([
         this.renderTabs({tabs: [
           {title: 'Activity', href: '/'},
           {title: 'My Sessions', href: '/sessions', active: true},
-          {title: 'My Ticks', href: '/ticks'}
+          {title: 'My Ascents', href: '/ascents'}
         ], log: true});
         this.page = new Sessions(this.app).render();
         this.stop();
@@ -294,7 +294,7 @@ define([
         this.renderTabs({tabs: [
           {title: 'Activity', href: '/'},
           {title: 'My Sessions', href: '/sessions'},
-          {title: 'My Ticks', href: '/ticks', active: true}
+          {title: 'My Ascents', href: '/ascents', active: true}
         ], log: true});
         this.page = new Ticks(this.app).render();
         this.stop();
@@ -487,11 +487,11 @@ define([
       $('.container').removeClass('wide').removeClass('landing');
       this.render(_.bind(function (err) {
         if (err) return;
-        this.stop();
         this.page = new Error(this.app).render({
           code: 404,
           message: 'Sorry, this page isn\'t available'
         });
+        this.stop();
       }, this));
     }
   

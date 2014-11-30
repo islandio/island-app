@@ -7,7 +7,7 @@
       <% } %>
     </li>
   </ul>
-  <% if (a.ticks.length !== 0) { %>
+  <% a.ticks = a.ticks || []; if (a.ticks.length !== 0) { %>
     <ul class="session-ticks">
       <% _.each(a.ticks, _.bind(function (tick) {
         var klass = 'tick';

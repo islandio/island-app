@@ -22,14 +22,14 @@
       </ul>
     </div>
     <div class="ticks-filter-input">
-      <input class="filter-box" type="search" tabindex="2" placeholder="filter ticks..." />
+      <input class="filter-box" type="search" tabindex="2" placeholder="filter ascents..." />
     </div>
   </div>
   <div class="tick-list">
     <% _.each(data.ticks, _.bind(function (ticks, type) {
-      if (ticks.length === 0) return;
       ticks = this.model.ticksByGrade(type); %>
       <div class="list-wrap <%= type %>-ticks">
+        <span class="empty-feed">You haven't ticked any <%= type === 'b' ? 'boulder problems': 'routes' %> yet.</span>
         <span class="no-results">No results.</span>
         <% for (var j = grades.length - 1; j > -1; --j) {
           var grade = grades[j];

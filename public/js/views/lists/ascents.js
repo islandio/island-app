@@ -99,16 +99,9 @@ define([
         this.routesFilter.addClass('active');
         this.routes.show();
       }
+      this.checkCurrentCount();
       this.bouldersFilter.click(_.bind(this.changeType, this, 'b'));
       this.routesFilter.click(_.bind(this.changeType, this, 'r'));
-
-      // Disable types if nothing to show.
-      if (this.data.ascents.bcnt === 0) {
-        this.bouldersFilter.addClass('disabled');
-      }
-      if (this.data.ascents.rcnt === 0) {
-        this.routesFilter.addClass('disabled');
-      }
 
       // Handle filtering.
       this.filterBox.bind('keyup search', _.bind(this.filter, this));
@@ -138,6 +131,18 @@ define([
       }
     },
 
+    checkCurrentCount: function () {
+      var ticks = this.flattened[this.currentType] || [];
+      if (ticks.length === 0) {
+        this.filterBox.hide();
+        this.$('.' + this.currentType + '-ascents .empty-feed').show()
+            .css('display', 'block');
+      } else {
+        this.filterBox.show();
+        this.$('.' + this.currentType + '-ascents .empty-feed').hide();
+      }
+    },
+
     changeType: function (type, e) {
 
       // Update buttons.
@@ -153,6 +158,7 @@ define([
       this.currentType = type;
       this.$('.list-wrap').hide();
       this.$('.' + this.currentType + '-ascents').show();
+      this.checkCurrentCount();
       this.filterBox.keyup();
     },
 

@@ -316,8 +316,8 @@ if (cluster.isMaster) {
 
             // Catch all.
             app.use(function (req, res) {
-              res.render('index', {
-                user: req.user,
+              res.render('folder', {
+                member: req.user,
                 root: app.get('ROOT_URI')
               });
             });

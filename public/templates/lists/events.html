@@ -74,10 +74,11 @@
         <li data-filter="all" class="subtab<%= !feed.actions || feed.actions === 'all' ? ' active': '' %>">
           <a href="javascript:;">All</a>
         </li>
-        <% _.each(_.difference(this.collection.options.filters,
-              this.collection.options.hide), function (f) { %>
+        <% var titles = this.collection.options.filterTitles; 
+          _.each(_.difference(this.collection.options.filters,
+              this.collection.options.hide), function (f, i) { %>
           <li data-filter="<%= f %>" class="subtab<%= feed.actions && feed.actions === f ? ' active': '' %>">
-            <a href="javascript:;"><%= f.substr(0,1).toUpperCase() + f.substr(1) %>s</a>
+            <a href="javascript:;"><%= titles ? titles[i]: f.substr(0,1).toUpperCase() + f.substr(1) + 's' %></a>
           </li>
         <% }) %>
       </ul>
