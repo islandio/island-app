@@ -312,6 +312,25 @@
                 style="vertical-align:-1px;">Email (requires address above)</label>
           </td>
         </tr>
+
+        <tr>
+          <td colspan="4">
+            <span class="settings-detail-txt">Receive "nod" notifications?</span>
+          </td>
+          <td colspan="2" class="text-right">
+            <% if (notes.hangten.email === true || notes.hangten.email === 'true') { %>
+              <input type="checkbox" name="config.notifications.hangten.email"
+                  tabindex="15" checked="checked" />
+            <% } else { %>
+              <input type="checkbox" name="config.notifications.hangten.email"
+                  tabindex="15" />
+            <% } %>
+            <label for="config.notifications.hangten.email"
+                style="vertical-align:-1px;">Email (requires address above)</label>
+          </td>
+        </tr>
+
+
         <tr>
           <td colspan="6">
             <h1 class="title-static">Services</h1>
