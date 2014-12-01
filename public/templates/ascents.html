@@ -34,9 +34,13 @@
                 <span class="list-row-title"><%= a.name %></span>
               <% } %>
             </a>
-            <a href="javascript:;" class="list-button">
-              <i class="icon-pencil"></i>
-            </a>
+            <% if (this.app.profile.member
+                && this.app.profile.member.username !== 'island'
+                && this.app.profile.member.role !== 2) { %>
+              <a href="javascript:;" class="list-button">
+                <i class="icon-pencil"></i>
+              </a>
+            <% } %>
           </li>
           <% ++i; %>
         <% }, this)); %>

@@ -4,18 +4,20 @@
   if (this.hangtened) {
     --count;
     str = 'You';
-    if (count === 1)
-      str += ' and ' + count + ' other person thinks';
-    else if (count > 1)
-      str += ' and ' + count + ' other people think';
-    else
-      str += ' think';
-  } else if (count === 1)
-    str = count + ' person thinks';
-  else if (count > 1)
-    str = count + ' people think';
+    if (count === 1) {
+      str += ' and ' + count + ' other person';
+    } else if (count > 1) {
+      str += ' and ' + count + ' other people';
+    } else {
+      str += '';
+    }
+  } else if (count === 1) {
+    str = count + ' person';
+  } else if (count > 1) {
+    str = count + ' people';
+  }
 %>
 
 <% if (str) { %>
-  <p><%= str %> this is pretty hang ten.</p>
+  <p><%= str %> gave this a nod.</p>
 <% } %>

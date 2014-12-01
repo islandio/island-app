@@ -136,6 +136,9 @@ define([
         if (!this.notifications && this.app.profile && this.app.profile.member) {
           this.notifications = new Notifications(this.app, {reverse: true});
         }
+        if (!this.footer) {
+          this.footer = new Footer(this.app).render();
+        }
 
         // Callback to route.
         cb(err);

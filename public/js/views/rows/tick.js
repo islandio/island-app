@@ -273,7 +273,7 @@ define([
       }
 
       // Render map.
-      if (!this.options.mapless) {
+      if (!this.options.mapless && this.$('.mini-map').length !== 0) {
         this.map = new MiniMap(this.app, {
           el: this.$('.mini-map'),
           location: this.model.get('ascent').location

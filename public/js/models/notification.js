@@ -23,22 +23,35 @@ define([
           owner = att.event.data.target.a + '\'s';
           verb = 'also ' + verb;
         }
-        return '<strong>' + att.event.data.action.a + '</strong> '
+        var str = '<strong>' + att.event.data.action.a + '</strong> '
             + verb + ' <strong>'
-            + owner + '</strong> '
-            + att.event.data.target.t
-            + (att.event.data.target.n !== '' ? ' <strong>'
-            + att.event.data.target.n + '</strong>': '')
-            + ': "' + att.event.data.action.b
-            + '".';
-        
+            + owner + '</strong> ';
+        if (att.event.data.target.t === 'post') {
+          str += 'post';
+        } else if (att.event.data.target.t === 'tick') {
+          str += 'effort on';
+        }
+        return str + (att.event.data.target.n !== '' ? ' <strong>'
+          + att.event.data.target.n + '</strong>': '')
+          + ': "' + att.event.data.action.b
+          + '".';
       } else if (att.event.data.action.t === 'hangten') {
-        return '<strong>' + att.event.data.action.a + '</strong> '
-            + 'thinks your '
-            + att.event.data.target.t
-            + (att.event.data.target.n !== '' ? ' <strong>'
-            + att.event.data.target.n + '</strong>': '')
-            + ' is hang ten.';
+        var str = '<strong>' + att.event.data.action.a + '</strong> '
+              + 'gave you a nod for ';
+        if (att.event.data.target.t === 'post') {
+          str += 'your post';
+        } else if (att.event.data.target.t === 'tick') {
+          str += 'your effort on';
+        } else if (att.event.data.target.t === 'crag') {
+          str += 'adding the crag';
+        } else if (att.event.data.target.t === 'ascent') {
+          str += 'adding the ' + (att.event.data.target.pt === 'b' ?
+              'boulder problem': 'route');
+        }
+        return str + (att.event.data.target.n !== '' ? ' <strong>'
+              + att.event.data.target.n + '</strong>': '')
+              + (att.event.data.target.l ? ' in ' + att.event.data.target.l: '')
+              + '.';
       } else if (att.event.data.action.t === 'request') {
         return '<strong>' + att.event.data.action.a + '</strong> '
             + 'wants to follow you.';

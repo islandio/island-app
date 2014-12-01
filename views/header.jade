@@ -25,10 +25,11 @@ header.header
         div.divider-vertical
         a.header-avatar(href="/" + member.username)
           img(src="https://www.gravatar.com/avatar/" + member.gravatar + "?s=50&d=https%3A%2F%2Fd271mvlc6gc7bl.cloudfront.net%2Fmain%2Fimg%2Favatar_100.png", width="50", height="50")
-        a.button.header-action.header-add-button.header-add-crag-button(href="javascript:;", title="Add new crag")
-          i.icon-plus
-          i.icon-location
-        div.divider-vertical
+        - if (member.role !== 2)
+          a.button.header-action.header-add-button.header-add-crag-button(href="javascript:;", title="Add new crag")
+            i.icon-plus
+            i.icon-location
+          div.divider-vertical
         a.button.globe-button.header-action(href="javascript:;", title="Notifications")
           i.icon-globe
           span.count

@@ -4,7 +4,9 @@
       <%= this.params.html %>
     <% } else { %>
       <% if (this.params.log) { %>
-        <% if (this.app.profile && this.app.profile.member) { %>
+        <% if (this.app.profile && this.app.profile.member
+            && this.app.profile.member.username !== 'island'
+            && this.app.profile.member.role !== 2) { %>
           <a href="javascript:;" class="button title-green-button log-session">
             <i class="icon-pencil"></i> Log
           </a>
@@ -17,7 +19,9 @@
     <% } %>
   </div>
 <% } else { %>
-  <% if (this.params.log) { %>
+  <% if (this.params.log
+      && this.app.profile.member.username !== 'island'
+      && this.app.profile.member.role !== 2) { %>
     <a href="javascript:;" class="button title-green-button log-session">
       <i class="icon-pencil"></i> Log
     </a>

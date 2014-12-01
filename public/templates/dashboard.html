@@ -7,12 +7,15 @@
 </div>
 <div class="rightside">
   <div class="sidebar-items">
-    <div class="sidebar-watchees">
-      <span class="sidebar-heading">You're watching</span>
-      <div class="sidebar-crags"></div>
-      <div class="sidebar-ascents-r"></div>
-      <div class="sidebar-ascents-b"></div>
-    </div>
+    <% if (this.app.profile.member.username !== 'island'
+        && this.app.profile.member.role !== 2) { %>
+      <div class="sidebar-watchees">
+        <span class="sidebar-heading">You're watching</span>
+        <div class="sidebar-crags"></div>
+        <div class="sidebar-ascents-r"></div>
+        <div class="sidebar-ascents-b"></div>
+      </div>
+    <% } %>
     <div class="sidebar-followers"></div>
     <div class="sidebar-followees"></div>
   </div>

@@ -134,8 +134,8 @@
       </ul>
     <% } %>
     <div class="sidebar-items">
-      <% if (this.app.profile.member.username !== 'island'
-          && this.model.get('username') !== 'island' && this.model.get('role') !== 2) { %>
+      <% if (this.model.get('username') !== 'island'
+          && this.model.get('role') !== 2) { %>
         <div class="sidebar-watchees">
           <span class="sidebar-heading"><%= owner %> watching:</span>
           <div class="sidebar-crags"></div>
@@ -144,10 +144,7 @@
         </div>
       <% } %>
       <div class="sidebar-followers"></div>
-      <% if (this.app.profile.member.username !== 'island'
-          && this.model.get('username') !== 'island') { %>
-        <div class="sidebar-followees"></div>
-      <% } %>
+      <div class="sidebar-followees"></div>
     </div>
   </div>
   <div class="clear"></div>

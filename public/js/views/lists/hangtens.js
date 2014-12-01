@@ -50,8 +50,11 @@ define([
       List.prototype.render.call(this, options);
 
       // Hide if empty.
-      if (this.collection.length > 0) this.$el.show();
-      else this.$el.hide();
+      if (this.collection.length > 0) {
+        this.$el.show();
+      } else {
+        this.$el.hide();
+      }
 
       return this;
     },
@@ -88,8 +91,9 @@ define([
     // Collect new data from socket events.
     collect: function (data) {
       if (data.parent_id === this.parentView.parentView.model.id
-        && !this.collection.get(-1))
+          && !this.collection.get(-1)) {
         this.collection.push(data);
+      }
     },
 
     // remove a model
@@ -99,17 +103,25 @@ define([
     },
 
     setButtonText: function () {
-      if (this.hangtened) this.button.text('UnhangTen');
-      else this.button.text('HangTen');
+      if (this.hangtened) {
+        this.button.text('Unnod');
+      } else {
+        this.button.text('Nod');
+      }
     },
 
     // Add or remove hangten
     toggle: function (e) {
       e.preventDefault();
-      if (this.working) return false;
+      if (this.working) {
+        return false;
+      }
       this.working = true;
-      if (this.hangtened) this.unhangten();
-      else this.hangten();
+      if (this.hangtened) {
+        this.unhangten();
+      } else {
+        this.hangten();
+      }
       return false;
     },
 

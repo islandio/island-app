@@ -199,7 +199,7 @@ define([
         }
 
         // Add the items.
-        updateUI.call(this, data.posts);
+        updateUI.call(this, data.notes);
 
       }, this));
 
