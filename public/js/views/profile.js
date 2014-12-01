@@ -38,7 +38,6 @@ define([
 
     render: function () {
       this.model = new Model(this.app.profile.content.page);
-
       this.setTitle();
       this.template = _.template(template);
       this.$el.html(this.template.call(this));

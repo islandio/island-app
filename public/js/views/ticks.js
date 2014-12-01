@@ -12,11 +12,12 @@ define([
   'views/rows/tick',
   'text!../../templates/ticks.html',
   'text!../../templates/rows/session.tick.html',
+  'text!../../templates/ticks.title.html',
   'views/lists/followers',
   'views/lists/followees',
   'views/lists/watchees'
 ], function ($, _, Backbone, mps, util, Card, Tick, template,
-    tickTemp, Followers, Followees, Watchees) {
+    tickTemp, title, Followers, Followees, Watchees) {
   return Backbone.View.extend({
 
     el: '.main',
@@ -39,12 +40,13 @@ define([
 
     render: function () {
       this.model = new Card(this.app.profile.content.page);
-
-      this.title();
-
+      this.setTitle();
       this.template = _.template(template);
       this.tickTemp = _.template(tickTemp);
       this.$el.html(this.template.call(this));
+
+      // Render title.
+      this.title = _.template(title).call(this);
 
       // Render each tick as a view.
       _.each(this.$('.tick'), _.bind(function (el) {
@@ -107,7 +109,7 @@ define([
 
     // Collect a tick.
     collect: function (data) {
-      if (data.author.id === this.app.profile.member.id && data.sent) {
+      if (data.author.id === this.model.get('author').id && data.sent) {
         this._remove(data, true);
         var el = $('<li class="tick tick-narrow" id="' + data.id + '" data-type="'
             + data.type + '">');
@@ -183,9 +185,9 @@ define([
       }
     },
 
-    title: function () {
-      this.app.title('Island | ' + this.app.profile.member.displayName
-          + ' - Ticks');
+    setTitle: function () {
+      this.app.title('The Island | ' + this.model.get('author').displayName
+          + ' - Ascents');
     },
 
     checkCurrentCount: function () {

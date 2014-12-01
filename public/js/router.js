@@ -32,13 +32,12 @@ define([
   'views/crags',
   'views/dashboard',
   'views/splash',
-  'views/sessions',
   'views/ticks',
   'text!../templates/about.html',
   'text!../templates/privacy.html',
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
     Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Tick, Crag, Ascent,
-    Settings, Reset, Films, Static, Crags, Dashboard, Splash, Sessions,
+    Settings, Reset, Films, Static, Crags, Dashboard, Splash,
     Ticks, aboutTemp, privacyTemp) {
 
   /*
@@ -77,9 +76,9 @@ define([
       // Page routes.
       this.route(':un', 'profile', this.profile);
       this.route(':un/:k', 'post', this.post);
-      
+      this.route(':un/ascents', 'ticks', this.ticks);
+
       this.route('sessions/:k', 'session', this.session);
-     
       this.route('efforts/:k', 'tick', this.tick);
       
       this.route('crags/:y', 'crag', this.crags);
@@ -92,8 +91,6 @@ define([
       this.route('about', 'about', this.about);
       this.route('films', 'films', this.films);
       this.route('crags', 'crags', this.crags);
-      this.route('ascents', 'ticks', this.ticks);
-      // this.route('sessions', 'sessions', this.sessions);
       this.route('signin', 'signin', this.signin);
       this.route('signup', 'signup', this.signup);
       this.route('', 'dashboard', this.dashboard);
@@ -249,8 +246,7 @@ define([
     dashboard: function () {
       this.start();
       if (!this.tabs || !this.tabs.params.tabs || !this.tabs.params.tabs[1]
-          || (this.tabs.params.tabs[1].href !== '/sessions'
-          && this.tabs.params.tabs[1].href !== '/ascents')) {
+          || (this.tabs.params.tabs[1].href !== '/ascents')) {
         this.renderTabs();
       }
       var query = {actions: this.getEventActions()};
@@ -261,8 +257,8 @@ define([
           this.page = new Dashboard(this.app).render();
           this.renderTabs({tabs: [
             {title: 'Activity', href: '/', active: true},
-            // {title: 'My Sessions', href: '/sessions'},
-            {title: 'My Ascents', href: '/ascents'}
+            {title: 'My Ascents', href: '/' + this.app.profile.member.username
+                + '/ascents'}
           ], log: true});
         } else {
           $('.container').addClass('wide').addClass('landing');
@@ -272,34 +268,23 @@ define([
       }, this));
     },
 
-    // sessions: function () {
-    //   this.start();
-    //   $('.container').removeClass('wide').removeClass('landing');
-    //   this.render('/service/sessions', {}, true, _.bind(function (err) {
-    //     if (err) return;
-    //     this.header.highlight('/');
-    //     this.renderTabs({tabs: [
-    //       {title: 'Activity', href: '/'},
-    //       {title: 'My Sessions', href: '/sessions', active: true},
-    //       {title: 'My Ascents', href: '/ascents'}
-    //     ], log: true});
-    //     this.page = new Sessions(this.app).render();
-    //     this.stop();
-    //   }, this));
-    // },
-
-    ticks: function () {
+    ticks: function (username) {
       this.start();
       $('.container').removeClass('wide').removeClass('landing');
-      this.render('/service/ticks', {}, true, _.bind(function (err) {
+      this.render('/service/ticks/' + username, _.bind(function (err) {
         if (err) return;
-        this.header.highlight('/');
-        this.renderTabs({tabs: [
-          {title: 'Activity', href: '/'},
-          // {title: 'My Sessions', href: '/sessions'},
-          {title: 'My Ascents', href: '/ascents', active: true}
-        ], log: true});
         this.page = new Ticks(this.app).render();
+        if (this.app.profile.member
+            && this.app.profile.member.username === username) {
+          this.header.highlight('/');
+          this.renderTabs({tabs: [
+            {title: 'Activity', href: '/'},
+            {title: 'My Ascents', href: '/' + username + '/ascents',
+                active: true}
+          ], log: true});          
+        } else {
+          this.renderTabs({html: this.page.title});
+        }
         this.stop();
       }, this));
     },

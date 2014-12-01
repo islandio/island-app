@@ -4,53 +4,58 @@
   var data = this.model.attributes;
   var grades = ['not graded by you'].concat(this.model.grades);
 
-  var own = !this.model || (this.app.profile.member && this.model.get('author').id === this.app.profile.member.id);
-  var owner = own ? 'You\'re': this.model.get('author').displayName.trim() + ' is ';
-
+  var own = !this.model || (this.app.profile.member && data.author.id === this.app.profile.member.id);
+  var owner = own ? 'You\'re': data.author.displayName.trim() + ' is ';
+  var owner2 = own ? 'You haven\'t': 'This athlete hasn\'t';
+  var privacy = data.author.config.privacy.ticks ? data.author.config.privacy.ticks.toString(): '0';
 %>
 
 <div class="leftside">
-  <div class="ticks-filter">
-    <div class="subtabs">
-      <ul>
-        <li class="subtab">
-          <a href="javascript:;" class="b-filter">Boulders</a>
-        </li>
-        <li data-filter="r" class="subtab">
-          <a href="javascript:;" class="r-filter">Routes</a>
-        </li>
-      </ul>
-    </div>
-    <div class="ticks-filter-input">
-      <input class="filter-box" type="search" tabindex="2" placeholder="filter ascents..." />
-    </div>
-  </div>
-  <div class="tick-list">
-    <% _.each(data.ticks, _.bind(function (ticks, type) {
-      ticks = this.model.ticksByGrade(type); %>
-      <div class="list-wrap <%= type %>-ticks">
-        <span class="empty-feed">You haven't ticked any <%= type === 'b' ? 'boulder problems': 'routes' %> yet.</span>
-        <span class="no-results">No results.</span>
-        <% for (var j = grades.length - 1; j > -1; --j) {
-          var grade = grades[j];
-          var style = '';
-          if (!ticks[grade]) {
-            ticks[grade] = [];
-            style = 'display: none;';
-          }
-          %>
-          <ul class="session-ticks" style="<%= style %>">
-            <div class="tick-list-group-heading" data-grade="<%= grade %>">
-              <span><%= grade %></span>
-            </div>
-            <% _.each(ticks[grade], _.bind(function (tick) { %>
-              <li class="tick tick-narrow" id="<%= tick.id %>" data-type="<%= tick.type %>"></li>
-            <% }, this)); %>
-          </ul>
-        <% } %>
+  <% if (this.app.profile.content.page.private && !own) { %>
+    <span class="empty-feed">This athlete's ascents are <%= privacy === '1' ? 'only visible to followers': 'private' %>.</span>
+  <% } else { %>
+    <div class="ticks-filter">
+      <div class="subtabs">
+        <ul>
+          <li class="subtab">
+            <a href="javascript:;" class="b-filter">Boulders</a>
+          </li>
+          <li data-filter="r" class="subtab">
+            <a href="javascript:;" class="r-filter">Routes</a>
+          </li>
+        </ul>
       </div>
-    <% }, this)) %>
-  </div>
+      <div class="ticks-filter-input">
+        <input class="filter-box" type="search" tabindex="2" placeholder="filter ascents..." />
+      </div>
+    </div>
+    <div class="tick-list">
+      <% _.each(data.ticks, _.bind(function (ticks, type) {
+        ticks = this.model.ticksByGrade(type); %>
+        <div class="list-wrap <%= type %>-ticks">
+          <span class="empty-feed"><%= owner2 %> logged any <%= type === 'b' ? 'boulder problems': 'routes' %> yet.</span>
+          <span class="no-results">No results.</span>
+          <% for (var j = grades.length - 1; j > -1; --j) {
+            var grade = grades[j];
+            var style = '';
+            if (!ticks[grade]) {
+              ticks[grade] = [];
+              style = 'display: none;';
+            }
+            %>
+            <ul class="session-ticks" style="<%= style %>">
+              <div class="tick-list-group-heading" data-grade="<%= grade %>">
+                <span><%= grade %></span>
+              </div>
+              <% _.each(ticks[grade], _.bind(function (tick) { %>
+                <li class="tick tick-narrow" id="<%= tick.id %>" data-type="<%= tick.type %>"></li>
+              <% }, this)); %>
+            </ul>
+          <% } %>
+        </div>
+      <% }, this)) %>
+    </div>
+  <% } %>
 </div>
 <div class="rightside">
   <div class="sidebar-items">

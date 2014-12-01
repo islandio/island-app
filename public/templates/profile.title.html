@@ -24,7 +24,7 @@
       <a href="/settings" class="button title-button navigate">
         <i class="icon-params"></i> Settings</a>
     <% } else { %>
-      <a href="/<%= this.model.get('username') %>" class="button title-button navigate">
+      <a href="/<%= data.username %>" class="button title-button navigate">
         <i class="icon-angle-left"></i> Done</a>
     <% } %>
   <% } else { %>
@@ -34,20 +34,25 @@
           <i class="icon-user"></i> Requested</a>
       <% } else { %>
         <a href="javascript:;" class="button title-button unfollow-button"
-            data-path="/api/members/<%= this.model.get('username') %>/unfollow"
-            data-_path="/api/members/<%= this.model.get('username') %>/follow">
+            data-path="/api/members/<%= data.username %>/unfollow"
+            data-_path="/api/members/<%= data.username %>/follow">
           <i class="icon-user-delete"></i> Unfollow</a>
       <% } %>
     <% } else { %>
       <a href="javascript:;" class="button title-button follow-button"
-          data-path="/api/members/<%= this.model.get('username') %>/follow"
-          data-_path="/api/members/<%= this.model.get('username') %>/unfollow">
+          data-path="/api/members/<%= data.username %>/follow"
+          data-_path="/api/members/<%= data.username %>/unfollow">
         <i class="icon-user-add"></i> Follow</a>
     <% } %>
+  <a href="/<%= data.username %>/ascents" class="button title-button navigate">
+      <i class="icon-award"></i> Ascents</a>
   <% } %>
+<% } else { %>
+  <a href="/<%= data.username %>/ascents" class="button title-button navigate">
+      <i class="icon-award"></i> Ascents</a>
 <% } %>
 <div class="page-title">
   <img src="<%= gravatar %>" class="page-title-avatar" width="26" height="26" />
-  <a href="<%= data.username %>" class="navigate">@<%= data.username %>
+  <a href="/<%= data.username %>" class="navigate">@<%= data.username %>
       <span class="page-title-sub">(<%= data.displayName %>)</span></a>
 </div>
