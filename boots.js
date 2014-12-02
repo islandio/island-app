@@ -21,7 +21,7 @@ _.each(config, function (v, k) {
 
 var error = exports.error = function(err) {
   if (!err) return;
-  util.error(err.stack);
+  util.error(err.stack || err);
   process.exit(1);
 }
 
