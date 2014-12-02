@@ -656,7 +656,7 @@ define([
 
         var verb = oldTick.sent ? 'an ascent': 'some work';
         mps.publish('flash/new', [{
-          message: 'You deleted an ' + verb + '.',
+          message: 'You deleted ' + verb + '.',
           level: 'alert'
         }, true]);
 

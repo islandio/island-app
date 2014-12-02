@@ -25,7 +25,8 @@ define([
     render: function () {
       this.$el.show();
       var location = this.options.location;
-      if (location && location.latitude && location.longitude) {
+      if (location && location.latitude && location.longitude
+          && $('#' + this.$el.attr('id')).length !== 0) {
 
         // Setup the base map.
         this.sql = new cartodb.SQL({user: 'island',

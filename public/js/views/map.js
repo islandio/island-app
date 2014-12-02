@@ -395,6 +395,7 @@ define([
         this.$el.addClass('plotting');
         this.dataLayer.setInteraction(false);
         this.$('.cartodb-infowindow').css({opacity: 0});
+        this.featureOut();
       }
     },
 
