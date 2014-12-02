@@ -1,9 +1,24 @@
 <div class="splash-top">
   <div class="splash-top-inner">
-    <div class="banner-roll" id="roll"></div>
+    <div class="banner-roll">
+      <video autoplay muted="true" loop>
+        <!-- MP4 must be first for iPad! -->
+        <source src="/vid/roll.mp4" type="video/mp4" /><!-- WebKit video    -->
+        <!-- <source src="__VIDEO__.webm" type="video/webm" /> --><!-- Chrome / Newest versions of Firefox and Opera --> 
+        <!-- <source src="__VIDEO__.OGV" type="video/ogg" /> --><!-- Firefox / Opera -->
+        <!-- fallback to Flash: -->
+        <object width="640" height="384" type="application/x-shockwave-flash" data="/swf/roll.swf">
+            <!-- Firefox uses the `data` attribute above, IE/Safari uses the param below -->
+            <param name="movie" value="/swf/roll.swf" />
+            <!-- <param name="flashvars" value="image=__POSTER__.JPG&amp;file=__VIDEO__.MP4" /> -->
+            <!-- fallback image. note the title field below, put the title of the video there -->
+        </object>
+      </video>
+    </div>
+
     <form class="splash-form" method="post">
       <h2> Push yourself harder in 2015.</h2>
-      <input class="splash-signup" placeholder="Enter your Email" type="email" ></input>
+      <input class="splash-signup" placeholder="Enter your email" type="email" ></input>
       <button class="start-button button"> Request Invitation
         <div class="button-spin"></div>
       </button>
@@ -43,18 +58,5 @@
   </ul>
 </div>
 <div class="splash-bottom">
-  <div class="leftside">
-    <h2 class="divider">Trending content on <span class="brand-emphasis">Island</span>:</h2>
-    <div class="events"></div>
-    <div class="list-spin">
-      <div class="events-spin"></div>
-      <span class="empty-feed">Showing all.</span>
-    </div>
-  </div>
-  <div class="rightside">
-    <h2 class="divider">Latest ascents</h2>
-    <div class="sidebar-ascents></div>
-  </div>
-  <div class="clearfix"></div>
 </div>
 

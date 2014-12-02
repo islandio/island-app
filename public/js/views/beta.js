@@ -55,27 +55,9 @@ define([
         radius: 6,
       });
 
-      // Embed the background video.
-      swfobject.embedSWF(
-          __s + '/swf/roll.swf', 'roll', '100%', '100%', '10',
-          false, {}, {menu: 'false', wmode: 'opaque'});
-      _.delay(_.bind(function () {
-        this.$('.banner-roll').css({opacity: 1});
-      }, this), 300);
-
       // Handle resizing.
       $(window).resize(_.debounce(_.bind(this.resize, this), 20));
       this.resize();
-
-      // Render lists.
-      /*
-      this.events = new Events(this.app, {
-        parentView: this,
-        reverse: true,
-        filters: false,
-        headers: false
-      });
-      */
 
       return this;
     },
@@ -125,7 +107,7 @@ define([
 
         // Set the error display.
         this.signupInput.val('').addClass('input-error')
-            .attr('placeholder', 'Hey friend! We need a valid Email address')
+            .attr('placeholder', 'Hey friend! We need a valid email address')
             .focus();
         this.working = false;
 
