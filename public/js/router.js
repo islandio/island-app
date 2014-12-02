@@ -32,13 +32,14 @@ define([
   'views/crags',
   'views/dashboard',
   'views/splash',
+  'views/beta',
   'views/ticks',
   'text!../templates/about.html',
   'text!../templates/privacy.html',
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
-    Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Tick, Crag, Ascent,
-    Settings, Reset, Films, Static, Crags, Dashboard, Splash,
-    Ticks, aboutTemp, privacyTemp) {
+    Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Tick,
+    Crag, Ascent, Settings, Reset, Films, Static, Crags, Dashboard, Splash,
+    Beta, Ticks, aboutTemp, privacyTemp) {
 
   /*
    * Determine if parent is iframe.
@@ -262,7 +263,7 @@ define([
           ], log: true});
         } else {
           $('.container').addClass('wide').addClass('landing');
-          this.page = new Splash(this.app, {splash: true}).render();
+          this.page = new Beta(this.app, {splash: true}).render();
         }
         this.stop();
       }, this));
