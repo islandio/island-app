@@ -78,6 +78,13 @@ define([
       app.router = new Router(app);
       Backbone.history.start({pushState: true});
 
+      // Kill app on logout. Useful when
+      // - a member has more than one active session,
+      // - we want to logout everyone remotely (ninja).
+      app.rpc.socket.on('logout', function () {
+        window.location.href = '/';
+      });
+
       // For local dev.
       if (window.__s === '') {
         window._app = app;
