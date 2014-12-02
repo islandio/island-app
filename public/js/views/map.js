@@ -28,6 +28,9 @@ define([
     },
 
     render: function () {
+
+      this.$el.show();
+
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });

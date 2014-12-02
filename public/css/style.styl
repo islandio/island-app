@@ -932,18 +932,18 @@ a.button.buy-button:hover:not(.disabled)
 
 a.button.new-session-button,
 button.button.new-session-button,
-a.button.start-button
+button.button.start-button
   position relative
   color rgb(57, 100, 0)
   border 1px solid transparent
   background #b1dc36
 
-a.button.start-button
-  width 300px
-  margin 90px auto 0
-  display block
+button.button.start-button
+  width 260px
+  display inline-block
   font-size 14px
   padding 5px 0
+  top 1px
 
 button.button.modal-button.modal-delete
   position relative
@@ -1269,16 +1269,22 @@ li.subtab.disabled a
   margin 40px auto 40px
 
 .banner-roll
+  position absolute
   overflow hidden
   width 100%
-  height 480px
+  height 100%
 
-  opacity 0
+  opacity 1
   -webkit-transition opacity 1s
   -moz-transition opacity 1s
   -ms-transition opacity 1s
   -o-transition opacity 1s
   transition opacity 1s
+
+.banner-roll video
+  min-height 100%
+  min-width 100%
+
 
 .banner-roll-object
   width 100%
@@ -1412,6 +1418,87 @@ ul.splash-features li img
   left 30px
   top 25px
 
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––splash */
+
+.splash-top
+  position relative
+
+.splash-top-inner
+  width 100%
+  min-width 100%
+
+.splash-top-bottom
+  background-color darkgray
+  height 40px
+
+.splash-scroll
+  position absolute
+  bottom 0
+  color #404040
+  text-align center
+  left 50%
+  font-size 14px
+  border-bottom none
+  border-radius 2px 2px 0 0
+  padding 5px 10px 0
+  background #b1dc36
+  background #fff
+  margin-left -28px
+
+.splash-form
+  margin 0 auto
+  position relative
+  top 200px
+  width 660px
+  line-height: 80px
+
+.splash-form h2
+  color white
+  font-size 40px
+
+.splash-features
+  padding 40px 100px
+
+.splash-bottom
+  padding 40px 100px
+
+.splash-signup
+  height 40px
+  width 300px
+  padding-left 16px
+  margin-right 40px
+  display inline-block
+  border-radius 2px
+
+span.brand-emphasis
+  font-family 'Dosis', sans-serif
+  font-weight 600
+  font-size 1.15em
+  text-transform lowercase
+  color #1c9da3
+
+h2.divider
+  margin 0 -40px 30px
+  border-bottom 1px solid #f2f2f2
+  padding 0 80px 3px 40px
+  font-family 'adelle-sans', sans-serif
+  font-size 18px
+  font-weight 900
+  line-height 40px
+
+
+.beta input[type="submit"].beta-submit
+  color rgb(57, 100, 0)
+  background-color #b1dc36
+
+.beta input[type="submit"].beta-submit
+  color rgb(57, 100, 0)
+  background-color #b1dc36
+
+
+.beta input[type="submit"].beta-submit:hover
+  color rgb(47, 90, 0)
+  background rgb(167, 210, 44)
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––header*/
 
 .header
@@ -2228,6 +2315,7 @@ button.activity-button i
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––map*/
 
 .map
+  display none
   position relative
   width 100%
   height 250px
