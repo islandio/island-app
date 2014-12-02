@@ -1393,9 +1393,6 @@ ul.splash-features li img {
   top: 25px;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––splash */
-#roll {
-  position: absolute;
-}
 .splash-top {
   position: relative;
 }
@@ -3079,14 +3076,14 @@ textarea.comment-input {
   content: "";
   position: absolute;
   display: block;
-  background: url("../img/nod.png") no-repeat top right;
+  background: url("../img/nod_r.png") no-repeat top right;
   width: 20px;
   height: 20px;
   left: 5px;
   top: 4px;
-  -moz-transform: rotate(-20deg);
-  -webkit-transform: rotate(-20deg);
-  transform: rotate(-20deg);
+  -moz-transform: rotate(20deg);
+  -webkit-transform: rotate(20deg);
+  transform: rotate(20deg);
 }
 .hangtens:before {
   content: "";
