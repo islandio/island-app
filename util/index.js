@@ -45,8 +45,8 @@ boots.start(function (client) {
       var _this = _.after(docs.length * 2, this);
       _.each(docs, function (d, idx) {
         // Add new.
-        membersIndexed += client.cache.index('members', d, ['displayName', 'userName'],
-            _this);
+        membersIndexed += client.cache.index('members', d,
+            ['displayName', 'userName'], _this);
         membersIndexed += client.cache.index('members', d, ['displayName'],
             _this, {strategy: 'noTokens'});
       });
@@ -67,8 +67,8 @@ boots.start(function (client) {
       _.each(docs, function (d, idx) {
         // Add new.
         cragsIndexed += client.cache.index('crags', d, ['name'], _this);
-        cragsIndexed += client.cache.index('crags', d, ['name'], {strategy: 'noTokens'},
-            _this);
+        cragsIndexed += client.cache.index('crags', d, ['name'],
+            {strategy: 'noTokens'}, _this);
       });
     },
     function (err) {
@@ -91,43 +91,42 @@ boots.start(function (client) {
             {strategy: 'noTokens'}, _this);
       });
     },
-    // function (err) {
-    //   boots.error(err);
-    //   console.log('Indexing ascents');
+    function (err) {
+      boots.error(err);
+      console.log('Indexing ascents');
 
-    //   // Get all ascents.
-    //   client.db.Ascents.list({}, this.parallel());
-    //   client.cache.del('ascents-search', this.parallel());
-    // },
-    // function (err, docs) {
-    //   boots.error(err);
+      // Get all ascents.
+      client.db.Ascents.list({}, this.parallel());
+      client.cache.del('ascents-search', this.parallel());
+    },
+    function (err, docs) {
+      boots.error(err);
 
-    //   var next = this;
+      var next = this;
 
-    //   if (docs.length === 0) return this();
-    //   var iter = 0;
+      if (docs.length === 0) return this();
+      var iter = 0;
 
-    //   var run100 = function () {
-    //     for (var i = iter;i < (iter + 100) && i < docs.length; i++) {
-    //       ascentsIndexed += client.cache.index('ascents', docs[i], ['name'], function(err) { step(err, i) });
-    //     }
-    //   };
+      var run100 = function () {
+        for (var i = iter;i < (iter + 100) && i < docs.length; i++) {
+          ascentsIndexed += client.cache.index('ascents', docs[i], ['name'],
+              function (err) { step(err, i) });
+        }
+      };
 
-    //   var step = function(err, i) {
-    //     if (err) { boots.error(err); process.exit(0) }
-    //     else if (i === docs.length) { next(); }
-    //     else if (i === iter + 100) { 
-    //       if (i % 30000 === 0) console.log(iter/docs.length * 100 + '%');
-    //       iter = i;
-    //       run100();
-    //     }
-    //     else {}
-    //   };
+      var step = function(err, i) {
+        if (err) { boots.error(err); process.exit(0) }
+        else if (i === docs.length) { next(); }
+        else if (i === iter + 100) {
+          if (i % 30000 === 0) console.log(iter/docs.length * 100 + '%');
+          iter = i;
+          run100();
+        }
+        else {}
+      };
 
-    //   run100();
-
-    // },
-
+      run100();
+    },
     function (err) {
       boots.error(err);
       util.log('Redis: Indexed members, ascents, crags, and posts');
