@@ -147,7 +147,7 @@ Lastly, ```git push``` the version bump auto-commit to avoid conflicts in ```pac
 
 That's it!
 
-### Archicture Notes
+### Architecture Notes
 
 ##### Search
 

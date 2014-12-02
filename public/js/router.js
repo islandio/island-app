@@ -128,7 +128,7 @@ define([
           this.header.render(true);
         }
         this.header.highlight(window.location.pathname);
-        if (!this.map) {
+        if (!this.map && this.showMap) {
           this.map = new Map(this.app).render();
         }
         if (!this.notifications && this.app.profile && this.app.profile.member) {
@@ -188,6 +188,9 @@ define([
         if (secure && !pro.member) {
           return this.navigate('/', true);
         }
+
+        if (pro.member)
+          this.showMap = true;
 
         // Set the profile.
         var login = this.app.update(pro || err);
