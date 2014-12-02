@@ -107,8 +107,8 @@ define([
 
     // Collect a tick.
     collect: function (data) {
-      if (data.session_id === this.model.id) {
-        this._remove(data, true);
+
+      function _collect () {
         var el = $('<li class="tick" id="' + data.id + '" data-aid="'
             + data.action_id + '">');
         if (!this.parentView) {
@@ -139,6 +139,11 @@ define([
           });
           action.ticks.push(data);
         }
+      }
+
+      if (data.session_id === this.model.id) {
+        this._remove(data, true);
+        _.delay(_.bind(_collect, this), 100);
       }
     },
 

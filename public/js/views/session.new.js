@@ -314,10 +314,34 @@ define([
           this.cragChoices.choice.model.attributes: {};
 
       // Build the payload.
+      var pick = this.datePicker.get('select').pick;
+      var pickDate = new Date(pick);
+      var todayDate = new Date();
+      var ts;
+
+      // If it's from today, we want to include the hours and seconds.
+      if (pickDate.toDateString() === todayDate.toDateString()) {
+        ts = todayDate.valueOf();
+
+      // Otherwise, we make the date min or max on that day.
+      } else {
+
+        // pick date is in the future - use min on that day
+        if (pickDate.valueOf() > todayDate.valueOf()) {
+          ts = new Date(pickDate.getFullYear(), pickDate.getMonth(),
+              pickDate.getDate()).valueOf();
+
+        // pick date is in the past - use max on that day
+        } else {
+          ts = new Date(pickDate.getFullYear(), pickDate.getMonth(),
+              pickDate.getDate(), 23, 59, 59, 999).valueOf();
+        }
+      }
+
       var payload = {
         crag_id: cragChoice.id,
-        date: this.datePicker.get('select').pick,
-        name: (new Date(this.datePicker.get('select').pick)).format('mm.dd.yy')
+        date: ts,
+        name: pickDate.format('mm.dd.yy')
       };
 
       // Get all actions.
