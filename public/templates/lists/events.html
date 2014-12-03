@@ -87,26 +87,35 @@
 <% } %>
 <% if (!private) { %>
   <div class="list-header"></div>
-  <% if (this.collection.models.length > 0) {
-    var day, month, year;
-    _.each(this.collection.models, _.bind(function (m) { %>
-      <% var _date = new Date(m.get('date')) %>
-      <% var _day = _date.getDate() %>
-      <% var _month = _date.getMonth() %>
-      <% var _year = _date.getFullYear() %>
-      <% if (_day !== day || _month !== month || _year !== year) { %>
-        <% var beg = new Date(_date.getFullYear(), _date.getMonth(), _date.getDate()); %>
-        <% var end = new Date(_date.getFullYear(), _date.getMonth(), _date.getDate(), 23, 59, 59, 999); %>
-        <div class="event-day-header" data-beg="<%= beg.valueOf() %>" data-end="<%= end.valueOf() %>">
-          <span><%= (end.format('mmmm dd, yyyy')) %></span>
-        </div>
-      <% } else { %>
-        <div class="event-divider"></div>
-      <% } %>
-      <%= this.row(m) %>
-      <% day = _day %>
-      <% month = _month %>
-      <% year = _year %>
-    <% }, this)); %>
+  <% if (this.collection.models.length > 0) { %>
+    <% if (this.collection.options.headers !== false) {
+      var day, month, year;
+      _.each(this.collection.models, _.bind(function (m) { %>
+        <% var _date = new Date(m.get('date')) %>
+        <% var _day = _date.getDate() %>
+        <% var _month = _date.getMonth() %>
+        <% var _year = _date.getFullYear() %>
+        <% if (_day !== day || _month !== month || _year !== year) { %>
+          <% var beg = new Date(_date.getFullYear(), _date.getMonth(), _date.getDate()); %>
+          <% var end = new Date(_date.getFullYear(), _date.getMonth(), _date.getDate(), 23, 59, 59, 999); %>
+          <div class="event-day-header" data-beg="<%= beg.valueOf() %>" data-end="<%= end.valueOf() %>">
+            <span><%= (end.format('mmmm dd, yyyy')) %></span>
+          </div>
+        <% } else { %>
+          <div class="event-divider"></div>
+        <% } %>
+        <%= this.row(m) %>
+        <% day = _day %>
+        <% month = _month %>
+        <% year = _year %>
+      <% }, this)); %>
+    <% } else { %>
+      <% _.each(this.collection.models, _.bind(function (m, i) { %>
+        <% if (i !== 0) { %>
+          <div class="event-divider"></div>
+        <% } %>
+        <%= this.row(m) %>
+      <% }, this)); %>
+    <% } %>
   <% } %>
 <% } %>

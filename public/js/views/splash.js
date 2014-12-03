@@ -7,13 +7,15 @@ define([
   'Underscore',
   'Backbone',
   'mps',
+  'rest',
   'util',
-  'text!../../templates/banner.html',
+  'Spin',
+  'views/lists/events',
   'text!../../templates/splash.html'
-], function ($, _, Backbone, mps, util, banner, template) {
+], function ($, _, Backbone, mps, rest, util, Spin, Events, template) {
   return Backbone.View.extend({
 
-    el: '.folder',
+    el: '.main',
 
     initialize: function (app) {
       this.app = app;
@@ -22,31 +24,75 @@ define([
     },
 
     render: function () {
-      this.app.title('Island | Train · Climb');
-      this.$('.main').html(_.template(template).call(this));
-
+      this.app.title('The Island | Beta');
       this.template = _.template(template);
-      this.$('.banner').html(_.template(banner).call(this));
-
+      this.$el.html(this.template.call(this));
       this.trigger('rendered');
-
       return this;
     },
 
     events: {
-      'click .navigate': 'navigate',
+      'click .start-button': 'submit',
     },
 
     setup: function () {
+      this.top = this.$('.splash-top');
+      this.topInner = this.$('.splash-top-inner');
+      this.topBottom = this.$('.splash-top-bottom');
+      this.bottom = this.$('.splash-bottom');
+      this.header = $('.header');
+      this.signupSubmit = this.$('.start-button');
+      this.signupInput = this.$('.splash-signup');
+      this.signupButtonSpin = new Spin(this.$('.button-spin'), {
+        color: '#396400',
+        lines: 13,
+        length: 3,
+        width: 2,
+        radius: 6,
+      });
 
-      // Embed the background video.
-      swfobject.embedSWF(
-          __s + '/swf/roll.swf', 'roll', '100%', '100%', '10',
-          false, {}, {menu: 'false', wmode: 'opaque'});
-      _.delay(_.bind(function () {
-        this.$('.banner-roll').css({opacity: 1});
-      }, this), 300);
+      // Handle the background video.
+      if (!document.createElement('video').play) {
+        swfobject.embedSWF(__s + '/swf/roll.swf', 'splash-video', '100%',
+            '100%', '9.0.0', false, {src: (__s === '' ? '..': '')
+            + '/vid/roll.mp4'}, {menu: 'false', wmode: 'opaque',
+            allowscriptaccess: 'always', allowfullscreen: 'true'});
+      } else {
 
+        // Fix for firefox not looping
+        var vid = this.$('video').get(0);
+        if (!(typeof vid.loop === 'boolean')) {
+          vid.addEventListener('ended', function () {
+            this.currentTime = 0;
+            this.play();
+          }, false);
+        }
+      }
+
+      // Handle resizing.
+      $(window).resize(_.debounce(_.bind(this.resize, this), 20));
+      this.resize();
+
+      // Render lists.
+      this.events = new Events(this.app, {
+        parentView: this,
+        reverse: true,
+        filters: false,
+        headers: false
+      });
+
+      return this;
+    },
+
+    resize: function (e) {
+      if (this.top.length) {
+        var h = Math.max($(window).height() - this.header.height(), 0);
+        this.topInner.height(h);
+      }
+    },
+
+    empty: function () {
+      this.$el.empty();
       return this;
     },
 
@@ -54,20 +100,98 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
+      this.events.destroy();
       this.undelegateEvents();
       this.stopListening();
-      this.$('.banner').empty();
-      this.$('.main').empty();
+      this.empty();
     },
 
-    navigate: function (e) {
+    submit: function (e) {
       e.preventDefault();
 
-      // Route to wherever.
-      var path = $(e.target).closest('a').attr('href');
-      if (path) {
-        this.app.router.navigate(path, {trigger: true});
+      // Prevent multiple uploads at the same time.
+      if (this.working) {
+        return false;
       }
+      this.working = true;
+
+      // Grab the form data.
+      var payload = {email: this.signupInput.val().trim()};
+
+      // Client-side form check.
+      var check = util.ensure(payload, ['email']);
+
+      // Add alerts.
+      _.each(check.missing, _.bind(function (m, i) {
+        var field = this.$('input[type="' + m + '"]');
+        field.val('');
+        if (i === 0) {
+          field.focus();
+        }
+      }, this));
+
+      if (!util.isEmail(payload.email) || !check.valid) {
+
+        // Set the error display.
+        this.signupInput.val('')
+            .attr('placeholder', 'Hey friend! We need a valid email address.')
+            .focus();
+        this.working = false;
+
+        return false;
+      }
+
+      // Start load indicator.
+      this.signupButtonSpin.start();
+      this.signupSubmit.addClass('spinning').attr('disabled', true);
+
+      // Do the API request.
+      rest.post('/api/signups', payload, _.bind(function (err, data) {
+        
+        // Start load indicator.
+        this.signupButtonSpin.stop();
+        this.signupSubmit.removeClass('spinning').attr('disabled', false);
+        this.signupInput.val('');
+        this.working = false;
+
+        if (err) {
+
+          // Set the error display.
+          if (err.message && err.message === 'Exists') {
+            this.signupInput.attr('placeholder',
+                'Excited, huh? We\'ll be in touch soon.');
+          } else {
+            this.signupInput.attr('placeholder', 'Oops! Try again.').focus();
+          }
+
+          // In case of spammers
+          if (!this.failedAttempts) {
+            this.failedAttempts = 0;
+          }
+          ++this.failedAttempts;
+          console.log(this.failedAttempts)
+          if (this.failedAttempts >= 10) {
+            delete this.failedAttempts;
+            this.signupInput.attr('placeholder', 'Whoa there, partner.')
+                .attr('disabled', true);
+            this.signupSubmit.attr('disabled', true);
+            _.delay(_.bind(function () {
+              this.signupInput.attr('placeholder', 'Enter your email')
+                  .attr('disabled', false);
+              this.signupSubmit.attr('disabled', false);
+            }, this), 2000);
+          }
+
+          return;
+        }
+
+        // this.signupSubmit.hide();
+        this.signupInput
+          .attr('placeholder', 'Thanks! We\'ll get in touch soon.');
+
+      }, this));
+
+      return false;
     },
 
   });

@@ -401,6 +401,15 @@ h1.title-sub
   color #666
   font-weight bold
 
+h2.divider
+  margin 0 -40px 30px
+  border-bottom 1px solid #f2f2f2
+  padding 0 80px 3px 40px
+  font-family title
+  font-size 20px
+  line-height 40px
+  color #404040
+
 time.created
   font-size 11px
   display inline-block
@@ -560,6 +569,7 @@ input[type=checkbox], input[type=radio]
 
 input[type=text]:not(.text),
 input[type=search],
+input[type=email],
 input[type=password]
   -moz-appearance none
   -moz-font-smoothing antialiased
@@ -939,35 +949,37 @@ button.button.start-button
   background #b1dc36
 
 button.button.start-button
-  width 260px
+  width 342px
   display inline-block
   font-size 14px
   padding 5px 0
-  top 1px
+  border-radius 0 0 2px 2px
 
 button.button.modal-button.modal-delete
   position relative
 
 a.button.new-session-button:hover:not(.disabled),
 button.button.new-session-button:hover:not(.disabled),
-a.button.start-button:hover:not(.disabled)
+button.button.start-button:hover:not(.disabled)
   color rgb(47, 90, 0)
   border 1px solid transparent
   background rgb(167, 210, 44)
 
 a.button.new-session-button:active:not(.disabled),
 button.button.new-session-button:active:not(.disabled),
-a.button.start-button:active:not(.disabled)
+button.button.start-button:active:not(.disabled)
   background rgb(167, 210, 44)
 
 a.button.new-session-button.disabled,
 button.button.new-session-button.disabled,
-button.button.modal-button.modal-delete.disabled
+button.button.modal-button.modal-delete.disabled,
+button.button.start-button.disabled
   opacity 0.25
   cursor default
 
 a.button.new-session-button i,
-button.button.new-session-button i
+button.button.new-session-button i,
+button.button.start-button
   color #396400
 
 button.button.modal-button.modal-delete:hover,
@@ -976,7 +988,8 @@ button.button.modal-button.modal-delete.armed
   border-color red
 
 a.button.new-session-button.spinning,
-button.button.new-session-button.spinning
+button.button.new-session-button.spinning,
+button.button.start-button.spinning
   color #b1dc36 !important
   border 1px solid transparent !important
   background #b1dc36 !important
@@ -992,7 +1005,8 @@ button.button.modal-button.modal-delete .button-spin
   top 15px
 
 a.button.new-session-button.spinning i,
-button.button.new-session-button.spinning i
+button.button.new-session-button.spinning i,
+button.button.start-button.spinning i
   color #b1dc36
 
 a.button.loading,
@@ -1260,103 +1274,6 @@ li.subtab.disabled a
   color #666
   cursor default
 
-.banner
-  display none
-  overflow hidden
-  position relative
-  width 100%
-  height 480px
-  margin 40px auto 40px
-
-.banner-roll
-  position absolute
-  overflow hidden
-  width 100%
-  height 100%
-
-  opacity 1
-  -webkit-transition opacity 1s
-  -moz-transition opacity 1s
-  -ms-transition opacity 1s
-  -o-transition opacity 1s
-  transition opacity 1s
-
-.banner-roll video
-  min-height 100%
-  min-width 100%
-
-
-.banner-roll-object
-  width 100%
-  height 480px
-
-.banner-text
-  position absolute
-  top 144px
-  z-index 101
-  width 100%
-  text-align center
-  color #fff
-
-h2.banner-text-heading
-  font-size 56px
-  line-height 88px
-  text-transform uppercase
-  font-family title
-  
-h2.banner-text-subheading
-  font-size 36px
-  font-family standard_thin
-
-.folder.landing .banner
-  display block
-
-h2.splash-heading
-  font-size 21px
-  font-weight normal
-  line-height normal
-  color #404040
-  font-family title
-  text-transform uppercase
-  margin-bottom 15px
-
-ul.splash-features
-  list-style none
-  font-size 0
-  margin-left -30px
-
-ul.splash-features li
-  display inline-block
-  width 33.333%
-  padding-left 30px
-  vertical-align top
-
-  box-sizing border-box
-  -moz-box-sizing border-box
-  -webkit-box-sizing border-box
-
-ul.splash-features li > div
-  border 1px solid #f2f2f2
-  border-radius 5px
-  background #f9f9f9
-  padding 20px 30px
-
-h2.feature-title
-  font-size 21px
-  line-height 25px
-  font-family standard_thin
-  margin-bottom 10px
-  
-ul.splash-features li p
-  font-size 16px
-  line-height 24px
-  font-family standard_thin
-  color #4d4d4d
-
-ul.splash-features li img
-  border-radius 3px
-  border 1px solid #e6e6e6
-
 .footer
   display none
   width 100%
@@ -1428,8 +1345,73 @@ ul.splash-features li img
   min-width 100%
 
 .splash-top-bottom
-  background-color darkgray
-  height 40px
+  height 0
+
+.splash-beta-request
+  position absolute
+  width 100%
+  height 100%
+  
+  display flex
+  align-items center
+  justify-content center
+ 
+.splash-beta-request > div
+  max-width 100%
+  min-width 342px
+
+.splash-beta-request form
+  width 342px
+  margin 0 auto
+  white-space nowrap
+  text-align center
+
+.splash-beta-request form input[type="email"] 
+  padding 13px
+  border none
+  font-size 14px
+  width 316px
+  display block
+  text-align center
+  border-radius 2px 2px 0 0
+
+.splash-middle
+  margin 0 auto
+  width 1086px
+
+.splash-bottom
+  position relative
+  margin 0 auto 30px
+  width 1086px
+  min-height 336px
+  padding 0 30px
+  background #fff
+  border 1px solid #e6e6e6
+  border-top none
+  border-radius 0 0 2px 2px
+
+  box-sizing border-box
+  -moz-box-sizing border-box
+  -webkit-box-sizing border-box
+
+.splash-bottom .leftside h2.divider
+  margin-bottom 0
+
+h1.splash-heading-one
+  text-align center
+  font-size 44px
+  line-height 48px
+  font-family title
+  color #fff
+  white-space nowrap
+
+h2.splash-heading-two
+  margin 10px 0 30px 0
+  text-align center
+  font-size 22px
+  font-family standard_thin
+  color #fff
+  white-space nowrap
 
 .splash-scroll
   position absolute
@@ -1437,68 +1419,67 @@ ul.splash-features li img
   color #404040
   text-align center
   left 50%
-  font-size 14px
+  font-size 26px
   border-bottom none
-  border-radius 2px 2px 0 0
+  border-radius 28px 28px 0 0
   padding 5px 10px 0
-  background #b1dc36
-  background #fff
+  background #f2f2f2
   margin-left -28px
 
-.splash-form
-  margin 0 auto
-  position relative
-  top 200px
-  width 660px
-  line-height: 80px
+.splash-video
+  overflow hidden
+  width 100%
+  height 100%
 
-.splash-form h2
-  color white
-  font-size 40px
+  opacity 1
+  -webkit-transition opacity 1s
+  -moz-transition opacity 1s
+  -ms-transition opacity 1s
+  -o-transition opacity 1s
+  transition opacity 1s
 
-.splash-features
-  padding 40px 100px
+.splash-video video
+  min-width 100%
+  min-height 100%
+  object-fit cover
 
-.splash-bottom
-  padding 40px 100px
+ul.splash-features
+  list-style none
+  font-size 0
+  margin 30px 0 30px -30px
 
-.splash-signup
-  height 40px
-  width 300px
-  padding-left 16px
-  margin-right 40px
+ul.splash-features li
   display inline-block
-  border-radius 2px
+  width 33.333%
+  padding-left 30px
+  vertical-align top
 
-span.brand-emphasis
-  font-family 'Dosis', sans-serif
-  font-weight 600
-  font-size 1.15em
-  text-transform lowercase
-  color #1c9da3
+  box-sizing border-box
+  -moz-box-sizing border-box
+  -webkit-box-sizing border-box
 
-h2.divider
-  margin 0 -40px 30px
-  border-bottom 1px solid #f2f2f2
-  padding 0 80px 3px 40px
-  font-family 'adelle-sans', sans-serif
-  font-size 18px
-  font-weight 900
-  line-height 40px
+ul.splash-features li > div
+  border 1px solid #f2f2f2
+  border-radius 5px
+  background #f9f9f9
+  padding 20px 30px
 
+h2.feature-title
+  font-size 21px
+  line-height 25px
+  font-family standard_thin
+  margin-bottom 10px
 
-.beta input[type="submit"].beta-submit
-  color rgb(57, 100, 0)
-  background-color #b1dc36
+ul.splash-features li p
+  font-size 16px
+  line-height 24px
+  font-family standard_thin
+  color #4d4d4d
 
-.beta input[type="submit"].beta-submit
-  color rgb(57, 100, 0)
-  background-color #b1dc36
+ul.splash-features li img
+  border-radius 3px
+  border 1px solid #e6e6e6
 
-
-.beta input[type="submit"].beta-submit:hover
-  color rgb(47, 90, 0)
-  background rgb(167, 210, 44)
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––header*/
 
 .header
@@ -1602,7 +1583,7 @@ a.button.header-action.header-add-button i.icon-plus
 div.header-search
   float left
   position relative
-  margin 8px 15px 0 0
+  margin 8px 5px 0 0
 
 input.header-search-input
   width 198px
@@ -1714,7 +1695,7 @@ span.choice-name i
 
 ul.header-links
   float left
-  margin 17px 10px 0 0
+  margin 17px 10px 0 10px
 
 ul.header-links li
   display inline-block
@@ -2703,7 +2684,9 @@ span.list-row-title span
 
 .new-session-button .button-spin
   top 15px
-  left 50%
+
+.start-button .button-spin
+  top 20px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––page titles*/
 
