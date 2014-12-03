@@ -24,6 +24,7 @@ define([
   'views/rows/session',
   'views/rows/tick',
   'views/crag',
+  'views/admin',
   'views/ascent',
   'views/settings',
   'views/reset',
@@ -37,7 +38,7 @@ define([
   'text!../templates/privacy.html',
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
     Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Tick,
-    Crag, Ascent, Settings, Reset, Films, Static, Crags, Dashboard, Splash,
+    Crag, Admin, Ascent, Settings, Reset, Films, Static, Crags, Dashboard, Splash,
     Ticks, aboutTemp, privacyTemp) {
 
   /*
@@ -86,6 +87,7 @@ define([
       this.route('crags/:y/:g/:t/:a', 'ascent', this.ascent);
       
       this.route('reset', 'reset', this.reset);
+      this.route('admin', 'admin', this.admin);
       this.route('settings', 'settings', this.settings);
       this.route('privacy', 'privacy', this.privacy);
       this.route('about', 'about', this.about);
@@ -357,6 +359,21 @@ define([
         if (err) return;
         this.page = new Settings(this.app).render();
         this.renderTabs({html: this.page.title});
+        this.stop();
+      }, this));
+    },
+
+    admin: function () {
+      this.start();
+      this.renderTabs();
+      $('.container').removeClass('wide').removeClass('landing');
+      this.render('/service/admin', {}, true, _.bind(function (err) {
+        if (err) return;
+        this.page = new Admin(this.app).render();
+        this.renderTabs({tabs: [
+            {title: 'Beta', active: true},
+            {title: 'Something Else'}
+            ]})
         this.stop();
       }, this));
     },

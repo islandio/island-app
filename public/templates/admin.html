@@ -1,0 +1,37 @@
+<div class="leftside">
+  <div class="admin">
+    <h2> Invite someone </h2>
+    <input type="email" placeholder="Enter email address"></input>
+    <button class="signup-new"> Invite </button>
+    <h2> Existing signups </h2>
+    <p> Total signups: <%= _.size(this.app.profile.content.signups) %> </p>
+    <div class="signup-table">
+      <table>
+        <thead>
+          <th> Email </th> <th> Signup Date </th> <th> Invited </th>
+        </thead>
+        <tbody>
+          <% _.each(this.app.profile.content.signups, function (s) { %>
+            <tr>
+              <td> <%= s.email %> </td>
+              <td> <%= util.getRelativeTime(s.created) %> </td>
+              <td>
+                <% if (s.invited && s.signed) { %>
+                  Signed up
+                <% } else if (s.invited) { %>
+                  Invited <%= util.getRelativeTime(s.invited) %>
+                <% } else { %>
+                  <button> Invite </button>
+                <% } %>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="rightside">
+
+</div>
+<div class="clear"></div>

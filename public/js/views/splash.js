@@ -160,6 +160,8 @@ define([
           if (err.message && err.message === 'Exists') {
             this.signupInput.attr('placeholder',
                 'Excited, huh? We\'ll be in touch soon.');
+          } else if (err.message && err.message === 'Member') {
+            this.signupInput.attr('placeholder', "You're already a member!");
           } else {
             this.signupInput.attr('placeholder', 'Oops! Try again.').focus();
           }
