@@ -220,7 +220,6 @@ define([
     },
 
     addCragsLayer: function () {
-      return;
       if (!this.$el.hasClass('closed')) {
         this.spin.start();
       }
