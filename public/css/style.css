@@ -1357,6 +1357,7 @@ li.subtab.disabled a {
 .splash-beta-request > div {
   max-width: 100%;
   min-width: 342px;
+  z-index: 100;
 }
 .splash-beta-request form {
   width: 342px;
@@ -1377,7 +1378,7 @@ li.subtab.disabled a {
 }
 .splash-form-divider {
   background: #404040;
-  height: 2px;
+  height: 1px;
   width: 100%;
 }
 .splash-middle {
