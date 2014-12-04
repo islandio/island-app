@@ -2416,12 +2416,11 @@ button.activity-button i
   left -72px
   border-radius 0 0 2px 0
 
-a.button.plot-button
+a.button.map-button
   display none
   visibility hidden
   position absolute
   z-index 1
-  left 46px
   top 10px
   color #404040
   background white
@@ -2451,17 +2450,23 @@ a.button.plot-button
   -o-animation-fill-mode both
   animation-fill-mode both
 
-a.button.plot-button:hover,
-a.button.plot-button:active
+.map-button.map-plot
+  left 100px
+
+.map-button.map-weather
+  left 46px
+
+a.button.map-button:hover,
+a.button.map-button:active
   background-color #f4f4f4
   -webkit-box-shadow 0 1px 5px rgba(0,0,0,0.65)
   -moz-box-shadow 0 1px 5px rgba(0,0,0,0.65)
   box-shadow 0 1px 5px rgba(0,0,0,0.65);
 
-a.button.plot-button i
+a.button.map-button i
   font-size 20px
 
-a.button.plot-button [class^="icon-"]:before, [class*=" icon-"]:before
+a.button.map-button [class^="icon-"]:before, [class*=" icon-"]:before
   margin 0
 
 .plot-spin

@@ -98,7 +98,8 @@ define([
     setup: function () {
 
       // Save refs.
-      this.plotButton = this.$('.plot-button');
+      this.plotButton = this.$('.map-plot');
+      this.weatherButton = this.$('.map-weather');
       this.plotForm = this.$('.plot-form');
       this.submitButton = this.$('.new-session-button');
       this.infoBox = this.$('.map-infobox');
@@ -119,7 +120,10 @@ define([
       }
       if (!this.$el.hasClass('closed')) {
         this.plotButton.show();
+        this.weatherButton.show();
       }
+
+      this.weatherButton.css({visibility: 'visible'})
 
       // Handle warning, and error displays.
       this.$('input[type="text"]').blur(function (e) {
@@ -149,7 +153,8 @@ define([
     events: {
       'click .hide-show': 'hideShow',
       'click .less-more': 'lessMore',
-      'click .plot-button': 'listenForPlot',
+      'click .map-plot': 'listenForPlot',
+      'click .map-weather': 'weather',
       'click .plot-cancel': 'listenForPlot',
       'click .new-session-button': 'addCrag',
     },
@@ -185,6 +190,20 @@ define([
         maxZoom: 20
       }).addTo(this.map);
 
+      this.temperature = L.tileLayer('http://{s}.tile.openweathermap.org/map/temp/{z}/{x}/{y}.png', {
+          attribution: 'Map data © OpenWeatherMap',
+          maxZoom: 18
+      }).addTo(this.map);
+
+      this.precipitation = L.tileLayer('http://{s}.tile.openweathermap.org/map/precipitation/{z}/{x}/{y}.png', {
+          attribution: 'Map data © OpenWeatherMap',
+          maxZoom: 18
+      }).addTo(this.map);
+
+
+      this.temperature.setOpacity(0);
+      this.precipitation.setOpacity(0);
+
       this.map.on('click', _.bind(function (e) {
         this.setPlotLocation({
           latitude: e.latlng.lat,
@@ -201,6 +220,7 @@ define([
     },
 
     addCragsLayer: function () {
+      return;
       if (!this.$el.hasClass('closed')) {
         this.spin.start();
       }
@@ -509,6 +529,12 @@ define([
           clearInterval(sizer);
         }
       }, this), 20);
+    },
+
+    weather: function (e) {
+      this.temperature.setOpacity(this.weather ? 0.4 : 0);
+      this.precipitation.setOpacity(this.weather ? 0.7 : 0);
+      this.weather = this.weather ? false : true;
     },
 
     navigate: function (e) {
