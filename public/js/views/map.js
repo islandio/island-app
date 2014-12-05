@@ -193,16 +193,14 @@ define([
       this.temperature = L.tileLayer('http://{s}.tile.openweathermap.org/map/temp/{z}/{x}/{y}.png', {
           attribution: 'Map data © OpenWeatherMap',
           maxZoom: 18
-      }).addTo(this.map);
+      }).setOpacity(.25);
 
-      this.precipitation = L.tileLayer('http://{s}.tile.openweathermap.org/map/precipitation/{z}/{x}/{y}.png', {
+      this.precipitation = L.tileLayer('http://{s}.tile.openweathermap.org/map/rain/{z}/{x}/{y}.png', {
           attribution: 'Map data © OpenWeatherMap',
           maxZoom: 18
-      }).addTo(this.map);
+      }).setOpacity(.5);
 
-
-      this.temperature.setOpacity(0);
-      this.precipitation.setOpacity(0);
+      this.weatherLayers = L.layerGroup().addTo(this.map);
 
       this.map.on('click', _.bind(function (e) {
         this.setPlotLocation({
@@ -531,9 +529,15 @@ define([
     },
 
     weather: function (e) {
-      this.temperature.setOpacity(this.weather ? 0.4 : 0);
-      this.precipitation.setOpacity(this.weather ? 0.7 : 0);
-      this.weather = this.weather ? false : true;
+      if (!this.weatherOn) {
+        this.weatherLayers.addLayer(this.temperature);
+        this.weatherLayers.addLayer(this.precipitation);
+        this.cragsLayer.setOpacity(.25);
+      } else {
+        this.weatherLayers.clearLayers();
+        this.cragsLayer.setOpacity(1);
+      }
+      this.weatherOn = !this.weatherOn;
     },
 
     navigate: function (e) {
