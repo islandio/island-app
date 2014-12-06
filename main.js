@@ -110,7 +110,7 @@ if (cluster.isMaster) {
     var fn = req.xhr ? res.send: res.render;
     if (err || (!data && estr)) {
       var profile = {
-        user: req.user,
+        member: req.user,
         content: {page: null},
         root: app.get('ROOT_URI'),
         embed: req._parsedUrl.path.indexOf('/embed') === 0

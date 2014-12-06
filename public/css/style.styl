@@ -374,7 +374,12 @@ h1.title-left
   line-height 40px
   color #404040
   font-family title
-  text-transform uppercase
+  // text-transform uppercase
+
+.container.narrow h1.title-left
+  text-align center
+  display block
+  margin 0
 
 h1.title-right
   font-size 14px
@@ -383,7 +388,7 @@ h1.title-right
   color #404040
   padding 10px 0 0 0
   font-family title
-  text-transform uppercase
+  // text-transform uppercase
   
 h1.title-static
   font-size 16px
@@ -391,7 +396,7 @@ h1.title-static
   line-height normal
   color #404040
   font-family title
-  text-transform uppercase
+  // text-transform uppercase
 
 h1.title-sub
   display inline-block
@@ -464,11 +469,24 @@ time.created.static
   padding 30px 40px 30px 0
   border-right 1px solid #f2f2f2
 
+.leftside.equal
+  width 259px
+  padding-left 0
+  padding-bottom 0
+
+.leftside.equal .settings
+  width auto
+
 .rightside
   margin 0 0 0 720px
   padding 30px
   width 274px
   border-left 1px solid #f2f2f2
+
+.rightside.equal
+  margin 0 0 0 299px
+  width 259px
+  padding-left 40px
 
 .center
   margin 0 -30px
@@ -663,10 +681,6 @@ input[type=submit]:not(.submit)
   -moz-transition all 0.1s ease-in-out 0
   transition all 0.1s ease-in-out
 
-input[type=submit].from-login
-  color black
-  border 1px solid black
-
 a.button:hover:not(.disabled),
 button.button:hover:not(.disabled),
 div[role=button]:hover:not(.disabled),
@@ -696,20 +710,6 @@ button.button.spinning,
 div[role=button].spinning,
 input[type=submit].spinning:not(.submit)
   color #f1f1f1
-
-input[type=submit].from-login:hover
-  -moz-box-shadow 0 0 2px #1a1a1a
-  -webkit-box-shadow 0 0 2px #1a1a1a
-  box-shadow 0 0 2px #1a1a1a
-  color black
-  border 1px solid black
-
-input[type=submit].from-login:active
-  -moz-box-shadow none
-  -webkit-box-shadow none
-  box-shadow none
-  color black
-  border 1px solid black
 
 button.button.modal-button,
 input[type=submit].modal-button
@@ -806,16 +806,24 @@ a.button.button-right.disabled
 
 a.button.signin-strategy-btn,
 a.button.signin-strategy-btn-disabled
-  width 200px
+  width 100%
   font-size 12px
   font-weight bold
   padding 0 0
   display block
   background rgba(51, 51, 51, 0.65)
-  
   color #fcfcfc
   border 1px solid black
   border-radius 2px
+
+  box-sizing border-box
+  -moz-box-sizing border-box
+  -webkit-box-sizing border-box
+
+a.button.google-btn,
+a.button.google-btn-disabled,
+a.button.google-btn-disabled:hover
+ background rgba(221, 67, 55, 0.65)
 
 a.button.facebook-btn,
 a.button.facebook-btn-disabled,
@@ -848,17 +856,14 @@ a.button.signin-strategy-btn:hover
   border 1px solid black
   color white
 
+a.button.google-btn:hover
+  background rgba(221, 67, 55, 0.75)
+
 a.button.facebook-btn:hover
   background rgba(59, 89, 152, 0.75)
 
-a.button.facebook-btn.from-login:hover
-  background rgba(59, 89, 152, 1)
-
 a.button.twitter-btn:hover
   background rgba(60, 143, 201, 0.75)
-
-a.button.twitter-btn.from-login:hover
-  background rgba(60, 143, 201, 1)
 
 a.button.instagram-btn:hover
   background rgba(69, 63, 56, 0.75)
@@ -870,10 +875,13 @@ button.button.danger:hover
 a.button.signin-strategy-btn:active
   background rgba(51, 51, 51, 0.55)
 
+a.button.google-btn:active
+  background rgba(221, 67, 55, 0.55)
+
 a.button.facebook-btn:active
   background rgba(59, 89, 152, 0.55)
 
-a.twitter-btn:active
+a.button.twitter-btn:active
   background rgba(60, 143, 201, 0.55)
 
 a.button.instagram-btn:active
@@ -882,13 +890,6 @@ a.button.instagram-btn:active
 a.button.delete-btn:active,
 button.button.danger:active
   background rgba(208, 76, 56, 0.8)
-
-a.button.signin-strategy-btn.from-login
-  width 100%
-
-  box-sizing border-box
-  -moz-box-sizing border-box
-  -webkit-box-sizing border-box
 
 a.button.title-button,
 a.button.title-green-button
@@ -1059,6 +1060,10 @@ button.button.input-add-button:focus
   border none
   background none
 
+.container.narrow .content
+  width 599px
+  min-height 0
+
 .main
   width 100%
   height 100%
@@ -1084,8 +1089,12 @@ button.button.input-add-button:focus
   background none
 
 .container.wide .folder
-  margin: 0
-  width: 100%
+  margin 0
+  width 100%
+
+.container.narrow .folder
+  width 661px
+  margin-top 160px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––tabs*/
 
@@ -1299,6 +1308,9 @@ li.subtab.disabled a
   text-align right
   position relative
 
+.container.narrow .footer > div
+  width 660px
+
 .footer small
   line-height 25px
 
@@ -1349,7 +1361,6 @@ li.subtab.disabled a
   margin-right 30px
 
 .admin .signup-table
-  height 400px
   width 600px
   overflow auto
   border-collapse collapse
@@ -1369,6 +1380,7 @@ li.subtab.disabled a
 .splash-top-inner
   width 100%
   min-width 100%
+  background #333
 
 .splash-top-bottom
   height 0
@@ -1463,17 +1475,18 @@ h2.splash-heading-two
   width 100%
   height 100%
 
-  opacity 1
-  -webkit-transition opacity 1s
-  -moz-transition opacity 1s
-  -ms-transition opacity 1s
-  -o-transition opacity 1s
-  transition opacity 1s
+  opacity 0
+  -webkit-transition opacity 0.3s
+  -moz-transition opacity 0.3s
+  -ms-transition opacity 0.3s
+  -o-transition opacity 0.3s
+  transition opacity 0.3s
 
 .splash-video video
   min-width 100%
   min-height 100%
   object-fit cover
+  background none
 
 ul.splash-features
   list-style none
@@ -2103,6 +2116,16 @@ a.privacy-link:hover
   margin-bottom -8px
   margin-top 23px
 
+.signin-or
+  position absolute
+  font-family standard_thin
+  font-size 12px
+  color #808080
+  left 323px
+  top 45%
+  background #fff
+  padding 5px 0
+
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––sidebar*/
 
 .sidebar-items > div
@@ -2386,7 +2409,7 @@ button.activity-button i
 .map-control div
   position relative
   left 50%
-  width 145px
+  width 146px
 
 .map-control a.button
   position relative
@@ -2778,7 +2801,7 @@ img.page-title-avatar
   padding 20px 0
   font-size 15px
   font-family Title
-  text-transform uppercase
+  // text-transform uppercase
   text-align center
   border-bottom 1px solid #ccc
   border-radius 2px 2px 0 0
@@ -2931,7 +2954,7 @@ h2.profile-section-title
   line-height normal
   color #404040
   font-family title
-  text-transform uppercase
+  // text-transform uppercase
   margin-bottom 15px
 
 .profile-info
@@ -4502,7 +4525,7 @@ a.popup-link
   width 100%
   display inline-block
   font-family Title
-  text-transform uppercase
+  // text-transform uppercase
   line-height 36px
   padding 2px 0 0 10px
 

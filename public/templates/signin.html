@@ -1,4 +1,4 @@
-<div class="leftside">
+<div class="leftside equal">
   <div class="settings">
     <form class="signin-form" enctype="multipart/form-data">
       <table>
@@ -25,7 +25,7 @@
           </tr>
           <tr>
             <td>
-              <input tabindex="3" class="signin-submit" type="submit" value="Log in" />
+              <input tabindex="3" class="signin-submit" type="submit" value="Sign in" />
               <div class="button-spin"></div>
             </td>
           </tr>
@@ -39,15 +39,22 @@
     </form>
   </div>
 </div>
-<div class="rightside">
+<div class="signin-or">Or</div>
+<div class="rightside equal">
   <div class="signin-strategy">
-    <a tabindex="4" class="button signin-strategy-btn facebook-btn from-login" href="/auth/facebook">
+    <a tabindex="4" class="button signin-strategy-btn google-btn" href="/auth/google">
+      Connect with Google
+    </a>
+    <div class="button-spin button-spin-white"></div>
+  </div>
+  <div class="signin-strategy">
+    <a tabindex="5" class="button signin-strategy-btn facebook-btn" href="/auth/facebook">
       Connect with Facebook
     </a>
     <div class="button-spin button-spin-white"></div>
   </div>
   <div class="signin-strategy">
-    <a tabindex="5" class="button signin-strategy-btn twitter-btn from-login" href="/auth/twitter">
+    <a tabindex="6" class="button signin-strategy-btn twitter-btn" href="/auth/twitter">
       Connect with Twitter
     </a>
     <div class="button-spin button-spin-white"></div>

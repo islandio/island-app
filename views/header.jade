@@ -20,13 +20,13 @@ header.header
           a(class="navigate", href="/crags") Crags
       li
         a(class="navigate", href="/films") Films
-      li
-        a(class="navigate", href="/about") About
+      //- li
+      //-   a(class="navigate", href="/about") About
     - if (typeof member !== 'undefined')
       div.member-box
         div.divider-vertical
         a.header-avatar(href="/" + member.username)
-          img(src="https://www.gravatar.com/avatar/" + member.gravatar + "?s=50&d=https%3A%2F%2Fd271mvlc6gc7bl.cloudfront.net%2Fmain%2Fimg%2Favatar_100.png", width="50", height="50")
+          img(src="https://www.gravatar.com/avatar/" + member.gravatar + "?s=50&d=https%3A%2F%2Fs3.amazonaws.com%2Fisland.io%2Favatar_48.png", width="50", height="50")
         - if (member.role !== 2)
           a.button.header-action.header-add-button.header-add-crag-button(href="javascript:;", title="Add new crag")
             i.icon-plus

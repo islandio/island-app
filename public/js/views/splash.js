@@ -61,6 +61,10 @@ define([
 
         // Fix for firefox not looping
         var vid = this.$('video').get(0);
+        vid.addEventListener('loadeddata', function () {
+          $(this).parent().css('opacity', 1);
+        }, false);
+        vid.addEventListener('progress', function () {}, false);
         if (!(typeof vid.loop === 'boolean')) {
           vid.addEventListener('ended', function () {
             this.currentTime = 0;
@@ -134,7 +138,7 @@ define([
 
         // Set the error display.
         this.signupInput.val('')
-            .attr('placeholder', 'Hey friend! We need a valid email address.')
+            .attr('placeholder', 'Hey, comrade! We need a valid email address.')
             .focus();
         this.working = false;
 
@@ -160,8 +164,8 @@ define([
           if (err.message && err.message === 'Exists') {
             this.signupInput.attr('placeholder',
                 'Excited, huh? We\'ll be in touch soon.');
-          } else if (err.message && err.message === 'Member') {
-            this.signupInput.attr('placeholder', "You're already a member!");
+          } else if (err.message && err.message === 'Invited') {
+            this.signupInput.attr('placeholder', 'You\'ve already been invited.');
           } else {
             this.signupInput.attr('placeholder', 'Oops! Try again.').focus();
           }
@@ -171,7 +175,6 @@ define([
             this.failedAttempts = 0;
           }
           ++this.failedAttempts;
-          console.log(this.failedAttempts)
           if (this.failedAttempts >= 10) {
             delete this.failedAttempts;
             this.signupInput.attr('placeholder', 'Whoa there, partner.')
@@ -187,10 +190,8 @@ define([
           return;
         }
 
-        // this.signupSubmit.hide();
         this.signupInput
-          .attr('placeholder', 'Thanks! We\'ll get in touch soon.');
-
+          .attr('placeholder', 'Thank you! We\'ll send an invite soon.');
       }, this));
 
       return false;

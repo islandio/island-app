@@ -29,6 +29,7 @@ define([
               content: err.content,
               message: err.error.message,
               stack: err.error.stack,
+              level: err.error.level,
               code: res.status
             };
             if (data) {

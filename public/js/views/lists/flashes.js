@@ -39,6 +39,12 @@ define([
 
       // Call super init.
       List.prototype.initialize.call(this, app, options);
+
+      // Check for existing messages.
+      var messages = this.app.profile ? this.app.profile.messages || []: [];
+      _.each(messages, _.bind(function (msg) {
+        this.collection.push(msg);
+      }, this));
     },
 
     collect: function (data) {

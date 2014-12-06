@@ -148,7 +148,8 @@ define([
           // Stop spinner.
           spin.stop();
           this.signinButton.removeClass('loading');
-          mps.publish('flash/new', [{err: err, level: 'error', sticky: true}, true]);
+          mps.publish('flash/new', [{message: err.message, err: err,
+              level: err.level || 'error', sticky: true}, true]);
 
           // Clear fields.
           this.$('input[type="text"], input[type="password"]').val('')

@@ -181,22 +181,28 @@ define([
 
       // Get a profile, if needed.
       rest.get(service, query, _.bind(function (err, pro) {
+        var mem = (pro || err).member;
         if (err) {
-          $('.container').removeClass('wide');
+          this.clearContainer();
           this.stop();
           this.page = new Error(this.app).render(err);
         }
-        if (secure && !pro.member) {
+        if (secure && !mem) {
           return this.navigate('/', true);
         }
-
-        if (pro.member)
+        if (mem) {
           this.showMap = true;
+        }
 
         // Set the profile.
         var login = this.app.update(pro || err);
         _render.call(this, err, login);
       }, this));
+    },
+
+    clearContainer: function () {
+      $('.container').removeClass('narrow').removeClass('wide')
+          .removeClass('landing');
     },
 
     renderTabs: function (params) {
@@ -250,15 +256,17 @@ define([
 
     dashboard: function () {
       this.start();
+      $('.container').removeClass('narrow').addClass('landing');
       if (!this.tabs || !this.tabs.params.tabs || !this.tabs.params.tabs[1]
-          || (this.tabs.params.tabs[1].href !== '/ascents')) {
+          || (_.str.strRightBack(this.tabs.params.tabs[1].href, '/')
+          !== 'ascents')) {
         this.renderTabs();
       }
       var query = {actions: this.getEventActions()};
       this.render('/service/dashboard', query, _.bind(function (err) {
         if (err) return;
         if (this.app.profile.member) {
-          $('.container').removeClass('wide').removeClass('landing');
+          this.clearContainer();
           this.page = new Dashboard(this.app).render();
           this.renderTabs({tabs: [
             {title: 'Activity', href: '/', active: true},
@@ -275,7 +283,7 @@ define([
 
     ticks: function (username) {
       this.start();
-      $('.container').removeClass('wide').removeClass('landing');
+      this.clearContainer();
       this.render('/service/ticks/' + username, _.bind(function (err) {
         if (err) return;
         this.page = new Ticks(this.app).render();
@@ -297,7 +305,7 @@ define([
     crags: function (country) {
       this.start();
       this.renderTabs();
-      $('.container').removeClass('wide').removeClass('landing');
+      this.clearContainer();
       var query = {};
       if (country) query.country = country;
       var q = util.getParameterByName('q');
@@ -313,7 +321,7 @@ define([
     films: function () {
       this.start();
       this.renderTabs();
-      $('.container').removeClass('wide').removeClass('landing');
+      this.clearContainer();
       this.render('/service/films', _.bind(function (err) {
         if (err) return;
         this.page = new Films(this.app).render();
@@ -326,7 +334,7 @@ define([
     about: function () {
       this.start();
       this.renderTabs();
-      $('.container').removeClass('wide').removeClass('landing');
+      this.clearContainer();
       this.render('/service/static', _.bind(function (err) {
         if (err) return;
         this.page = new Static(this.app,
@@ -340,7 +348,7 @@ define([
     privacy: function () {
       this.start();
       this.renderTabs();
-      $('.container').removeClass('wide').removeClass('landing');
+      this.clearContainer();
       this.render('/service/static', _.bind(function (err) {
         if (err) return;
         this.page = new Static(this.app,
@@ -354,7 +362,7 @@ define([
     settings: function () {
       this.start();
       this.renderTabs();
-      $('.container').removeClass('wide').removeClass('landing');
+      this.clearContainer();
       this.render('/service/settings', {}, true, _.bind(function (err) {
         if (err) return;
         this.page = new Settings(this.app).render();
@@ -366,21 +374,18 @@ define([
     admin: function () {
       this.start();
       this.renderTabs();
-      $('.container').removeClass('wide').removeClass('landing');
+      this.clearContainer();
       this.render('/service/admin', {}, true, _.bind(function (err) {
         if (err) return;
         this.page = new Admin(this.app).render();
-        this.renderTabs({tabs: [
-            {title: 'Beta', active: true},
-            {title: 'Something Else'}
-            ]})
+        this.renderTabs({tabs: [{title: 'Beta', active: true}]});
         this.stop();
       }, this));
     },
 
     reset: function () {
       this.start();
-      $('.container').removeClass('wide').removeClass('landing');
+      this.clearContainer();
       this.render('/service/static', _.bind(function (err) {
         if (err) return;
         this.page = new Reset(this.app).render();
@@ -391,7 +396,7 @@ define([
 
     ascent: function (country, crag, type, ascent) {
       this.start();
-      $('.container').removeClass('wide').removeClass('landing');
+      this.clearContainer();
       this.renderTabs();
       var key = [country, crag, type, ascent].join('/');
       var query = {actions: this.getAscentEventActions()};
@@ -405,7 +410,7 @@ define([
 
     crag: function (country, crag) {
       this.start();
-      $('.container').removeClass('wide').removeClass('landing');
+      this.clearContainer();
       this.renderTabs();
       var key = [country, crag].join('/');
       var query = {actions: this.getEventActions()};
@@ -419,7 +424,7 @@ define([
 
     session: function (key) {
       this.start();
-      $('.container').removeClass('wide').removeClass('landing');
+      this.clearContainer();
       this.renderTabs();
       this.render('/service/session/' + key, _.bind(function (err) {
         if (err) return;
@@ -431,7 +436,7 @@ define([
 
     tick: function (key) {
       this.start();
-      $('.container').removeClass('wide').removeClass('landing');
+      this.clearContainer();
       this.renderTabs();
       this.render('/service/tick/' + key, _.bind(function (err) {
         if (err) return;
@@ -443,7 +448,7 @@ define([
 
     post: function (username, key) {
       this.start();
-      $('.container').removeClass('wide').removeClass('landing');
+      this.clearContainer();
       var key = [username, key].join('/');
       this.renderTabs();
       this.render('/service/post/' + key, _.bind(function (err) {
@@ -457,7 +462,7 @@ define([
     profile: function (username) {
       this.start();
       this.renderTabs();
-      $('.container').removeClass('wide').removeClass('landing');
+      this.clearContainer();
       var query = {actions: this.getEventActions()};
       this.render('/service/member/' + username, query,
           _.bind(function (err) {
@@ -470,29 +475,31 @@ define([
 
     signin: function () {
       this.start();
-      $('.container').removeClass('wide').removeClass('landing');
+      this.clearContainer();
       this.render(_.bind(function (err) {
         if (err) return;
+        $('.container').addClass('narrow');
         this.page = new Signin(this.app).render();
         this.stop();
       }, this));
-      this.renderTabs({title: 'Log In', subtitle: 'Welcome back'});
+      this.renderTabs({title: 'Sign in to The Island'});
     },
 
     signup: function () {
       this.start();
-      $('.container').removeClass('wide').removeClass('landing');
+      this.clearContainer();
       this.render(_.bind(function (err) {
         if (err) return;
+        $('.container').addClass('narrow');
         this.page = new Signup(this.app).render();
         this.stop();
       }, this));
-      this.renderTabs({title: 'Sign Up', subtitle: 'It\'s free'});
+      this.renderTabs({title: 'Sign up for The Island'});
     },
 
     default: function () {
       this.renderTabs();
-      $('.container').removeClass('wide').removeClass('landing');
+      this.clearContainer();
       this.render(_.bind(function (err) {
         if (err) return;
         this.page = new Error(this.app).render({
