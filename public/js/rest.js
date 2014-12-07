@@ -31,7 +31,8 @@ define([
               stack: err.error.stack,
               explain: err.error.explain,
               level: err.error.level,
-              code: res.status
+              code: res.status,
+              transloadit: err.transloadit
             };
             if (data) {
               err.data = data;
