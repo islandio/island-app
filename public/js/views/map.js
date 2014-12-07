@@ -99,7 +99,7 @@ define([
 
       // Save refs.
       this.plotButton = this.$('.map-plot');
-      this.weatherButton = this.$('.map-weather');
+      // this.weatherButton = this.$('.map-weather');
       this.plotForm = this.$('.plot-form');
       this.submitButton = this.$('.new-session-button');
       this.infoBox = this.$('.map-infobox');
@@ -120,10 +120,10 @@ define([
       }
       if (!this.$el.hasClass('closed')) {
         this.plotButton.show();
-        this.weatherButton.show();
+        // this.weatherButton.show();
       }
 
-      this.weatherButton.css({visibility: 'visible'})
+      // this.weatherButton.css({visibility: 'visible'})
 
       // Handle warning, and error displays.
       this.$('input[type="text"]').blur(function (e) {
@@ -154,7 +154,7 @@ define([
       'click .hide-show': 'hideShow',
       'click .less-more': 'lessMore',
       'click .map-plot': 'listenForPlot',
-      'click .map-weather': 'weather',
+      // 'click .map-weather': 'weather',
       'click .plot-cancel': 'listenForPlot',
       'click .new-session-button': 'addCrag',
     },
@@ -190,17 +190,17 @@ define([
         maxZoom: 20
       }).addTo(this.map);
 
-      this.temperature = L.tileLayer('http://{s}.tile.openweathermap.org/map/temp/{z}/{x}/{y}.png', {
-          attribution: 'Map data © OpenWeatherMap',
-          maxZoom: 18
-      }).setOpacity(.25);
+      // this.temperature = L.tileLayer('http://{s}.tile.openweathermap.org/map/temp/{z}/{x}/{y}.png', {
+      //     attribution: 'Map data © OpenWeatherMap',
+      //     maxZoom: 18
+      // }).setOpacity(.25);
 
-      this.precipitation = L.tileLayer('http://{s}.tile.openweathermap.org/map/rain/{z}/{x}/{y}.png', {
-          attribution: 'Map data © OpenWeatherMap',
-          maxZoom: 18
-      }).setOpacity(.5);
+      // this.precipitation = L.tileLayer('http://{s}.tile.openweathermap.org/map/rain/{z}/{x}/{y}.png', {
+      //     attribution: 'Map data © OpenWeatherMap',
+      //     maxZoom: 18
+      // }).setOpacity(.5);
 
-      this.weatherLayers = L.layerGroup().addTo(this.map);
+      // this.weatherLayers = L.layerGroup().addTo(this.map);
 
       this.map.on('click', _.bind(function (e) {
         this.setPlotLocation({
@@ -528,17 +528,17 @@ define([
       }, this), 20);
     },
 
-    weather: function (e) {
-      if (!this.weatherOn) {
-        this.weatherLayers.addLayer(this.temperature);
-        this.weatherLayers.addLayer(this.precipitation);
-        this.cragsLayer.setOpacity(.25);
-      } else {
-        this.weatherLayers.clearLayers();
-        this.cragsLayer.setOpacity(1);
-      }
-      this.weatherOn = !this.weatherOn;
-    },
+    // weather: function (e) {
+    //   if (!this.weatherOn) {
+    //     this.weatherLayers.addLayer(this.temperature);
+    //     this.weatherLayers.addLayer(this.precipitation);
+    //     this.cragsLayer.setOpacity(.25);
+    //   } else {
+    //     this.weatherLayers.clearLayers();
+    //     this.cragsLayer.setOpacity(1);
+    //   }
+    //   this.weatherOn = !this.weatherOn;
+    // },
 
     navigate: function (e) {
       e.preventDefault();
