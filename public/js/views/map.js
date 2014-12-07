@@ -374,6 +374,7 @@ define([
         this.lesser.hide();
         store.set('mapClosed', true);
       }
+      this.featureOut();
     },
 
     lessMore: function (e) {
@@ -392,6 +393,7 @@ define([
         this.resize(600);
         store.set('mapTall', true);
       }
+      this.featureOut();
     },
 
     listenForPlot: function (e) {
