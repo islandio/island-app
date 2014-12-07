@@ -182,8 +182,8 @@ define([
       }
 
       // All good, show spinner.
-      spin.start();
       this.signupButton.addClass('loading');
+      spin.start();
 
       // Do the API request.
       rest.post('/api/members', payload, _.bind(function (err, data) {

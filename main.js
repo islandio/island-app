@@ -113,7 +113,7 @@ if (cluster.isMaster) {
         member: req.user,
         content: {page: null},
         root: app.get('ROOT_URI'),
-        embed: req._parsedUrl.path.indexOf('/embed') === 0
+        transloadit: service.transloadit(req)
       };
       if (err) {
         util.error(err);

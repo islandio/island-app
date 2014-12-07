@@ -137,9 +137,8 @@ define([
       if (!util.isEmail(payload.email) || !check.valid) {
 
         // Set the error display.
-        this.signupInput.val('')
-            .attr('placeholder', 'Hey, comrade! We need a valid email address.')
-            .focus();
+        this.signupInput.val('').attr('placeholder',
+            'Hey, comrade! We need a valid email address.').focus();
         this.working = false;
 
         return false;
@@ -190,8 +189,8 @@ define([
           return;
         }
 
-        this.signupInput
-          .attr('placeholder', 'Thank you! We\'ll send an invite soon.');
+        this.signupInput.attr('placeholder',
+            'Thank you! We\'ll send an invite soon.');
       }, this));
 
       return false;

@@ -388,11 +388,27 @@ time.created.static {
   color: #ccc;
 }
 .error {
-  margin: 105px auto;
-  width: 786px;
+  min-height: 336px;
+  margin: 0 auto;
+  -webkit-display: flex;
+  -webkit-align-items: center;
+  -webkit-justify-content: center;
+  -webkit-flex-direction: column;
+  -moz-display: flex;
+  -moz-align-items: center;
+  -moz-justify-content: center;
+  -moz-flex-direction: column;
+  -ms-display: flex;
+  -ms-align-items: center;
+  -ms-justify-content: center;
+  -ms-flex-direction: column;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 .http-error {
-  display: block;
+  display: -webkit-box;
   font-weight: bold;
   font-size: 20px;
   color: #4d4d4d;
@@ -400,6 +416,7 @@ time.created.static {
   text-align: center;
 }
 .http-notice {
+  display: -webkit-box;
   font-size: 14px;
   color: #666;
   text-align: center;
@@ -1360,6 +1377,15 @@ li.subtab.disabled a {
   position: absolute;
   width: 100%;
   height: 100%;
+  -webkit-display: flex;
+  -webkit-align-items: center;
+  -webkit-justify-content: center;
+  -moz-display: flex;
+  -moz-align-items: center;
+  -moz-justify-content: center;
+  -ms-display: flex;
+  -ms-align-items: center;
+  -ms-justify-content: center;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2651,6 +2677,9 @@ ul.list li a.list-button {
   -moz-display: flex;
   -moz-align-items: center;
   -moz-justify-content: center;
+  -ms-display: flex;
+  -ms-align-items: center;
+  -ms-justify-content: center;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4026,6 +4055,9 @@ a.session-tick-button {
   -moz-display: flex;
   -moz-align-items: center;
   -moz-justify-content: center;
+  -ms-display: flex;
+  -ms-align-items: center;
+  -ms-justify-content: center;
   display: flex;
   align-items: center;
   justify-content: center;

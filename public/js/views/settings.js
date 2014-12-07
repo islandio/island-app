@@ -105,7 +105,7 @@ define([
       });
 
       // Show the tip modal.
-      if (util.getParameterByName('tip') === 'insta') {
+      if (util.getParameterByName('tip') === 'instagram') {
         try {
           window.history.replaceState('', '', window.location.pathname);
         } catch (err) {}
@@ -447,7 +447,7 @@ define([
             + '&bull; <em>Directions for Android phones:</em> Open the camera app.'
             + ' Select the Settings icon on the device. Scroll through the options'
             +' and find GPS tag. Toggle the setting to “on”.',
-        title: 'Island &hearts;\'s <img src="' + window.__s + '/img/instagram.png"'
+        title: 'The Island &hearts;\'s &nbsp;<img src="' + window.__s + '/img/instagram.png"'
             + ' width="24" height="24" />'
       }), {
         openEffect: 'fade',

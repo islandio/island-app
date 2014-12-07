@@ -138,8 +138,8 @@ define([
       }
 
       // All good, show spinner.
-      spin.start();
       this.signinButton.addClass('loading');
+      spin.start();
 
       // Do the API request.
       rest.post('/api/members/auth', payload, _.bind(function (err, data) {
@@ -169,7 +169,7 @@ define([
     refresh: function () {
       var frag = Backbone.history.fragment;
       Backbone.history.fragment = null;
-      window.location.href = '/';
+      window.location.href = '/' + util.getParameterByName('post_signin');
     },
 
     forgot: function (e) {

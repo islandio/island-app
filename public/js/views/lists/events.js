@@ -93,7 +93,7 @@ define([
           $('<span class="empty-feed">This athlete is private.</span>')
             .appendTo(this.$el);
         } else {
-          $('<span class="empty-feed">Nothing to see here!</span>')
+          $('<span class="empty-feed">Nothing to see here yet.</span>')
               .appendTo(this.$el);
         }
         this.spin.stop();
@@ -278,7 +278,7 @@ define([
             this.showingAll.hide();
             this.listSpin.hide();
             if (this.$('.empty-feed').length === 0) {
-              $('<span class="empty-feed">Nothing to see here!</span>')
+              $('<span class="empty-feed">Nothing to see here yet.</span>')
                   .appendTo(this.$el);
             }
           }
