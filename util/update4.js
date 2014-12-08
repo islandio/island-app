@@ -44,7 +44,7 @@ boots.start(function (client) {
           boots.error(err);
           if (e) return _this();
 
-          pubsub.publish('post', 'post.new', {
+          events.publish('post', 'post.new', {
             data: doc,
             event: {
               actor_id: doc.author._id,
