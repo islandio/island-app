@@ -7,7 +7,7 @@
     "name": "https",
     "allow": []
   },
-  "domain": "island.io",
+  "domain": "www.island.io",
   "port": 8080,
   "securePort": 8443,
   "outsideTunnel": true,
