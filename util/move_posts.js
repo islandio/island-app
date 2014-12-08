@@ -13,7 +13,9 @@ var argv = optimist
     .describe('to', 'Member username to move posts to')
       .demand('to')
     .describe('type', 'Type of posts to move')
-      .demand('type')
+      .default('type', false)
+    .describe('key', 'The key of the post to move')
+      .default('key', false)
     .argv;
 
 if (argv._.length || argv.help) {
@@ -48,7 +50,14 @@ boots.start(function (client) {
       }
       from = _from;
       to = _to;
-      client.db.Posts.list({author_id: from._id, type: argv.type}, this);
+      var query = {author_id: from._id};
+      if (argv.type) {
+        query.type = argv.type;
+      }
+      if (argv.key) {
+        query.key = argv.key;
+      }
+      client.db.Posts.list(query, this);
     },
     function (err, docs) {
       boots.error(err);
@@ -80,7 +89,7 @@ boots.start(function (client) {
     },
     function (err) {
       boots.error(err);
-      console.log('moved ' + cnt + ' ' + argv.type + ' post(s)');
+      console.log('moved ' + cnt + ' post(s)');
       console.log('bye');
       process.exit(0);
     }
