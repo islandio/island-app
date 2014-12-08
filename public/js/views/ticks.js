@@ -11,13 +11,12 @@ define([
   'models/card',
   'views/rows/tick',
   'text!../../templates/ticks.html',
-  'text!../../templates/rows/session.tick.html',
   'text!../../templates/ticks.title.html',
   'views/lists/followers',
   'views/lists/followees',
   'views/lists/watchees'
 ], function ($, _, Backbone, mps, util, Card, Tick, template,
-    tickTemp, title, Followers, Followees, Watchees) {
+    title, Followers, Followees, Watchees) {
   return Backbone.View.extend({
 
     el: '.main',
@@ -42,7 +41,6 @@ define([
       this.model = new Card(this.app.profile.content.page);
       this.setTitle();
       this.template = _.template(template);
-      this.tickTemp = _.template(tickTemp);
       this.$el.html(this.template.call(this));
 
       // Render title.
