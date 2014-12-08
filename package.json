@@ -4,7 +4,7 @@
   "version": "3.0.1",
   "beta": true,
   "protocol": {
-    "name": "https",
+    "name": "http",
     "allow": []
   },
   "domain": "island-env.elasticbeanstalk.com",
@@ -12,7 +12,7 @@
   "securePort": 8443,
   "builds": {
     "bucket": "builds-island",
-    "cloudfront": "https://d10fiv677oa856.cloudfront.net"
+    "cloudfront": "https://d3h49x19rmb9a2.cloudfront.net"
   },
   "repository": {
     "type": "git",

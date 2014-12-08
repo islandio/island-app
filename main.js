@@ -324,16 +324,16 @@ if (cluster.isMaster) {
 
             // HTTP(S) server.
             var server, _server;
-            if (process.env.NODE_ENV !== 'production') {
+            // if (process.env.NODE_ENV !== 'production') {
               server = http.createServer(app);
-            } else {
-              server = https.createServer({
-                ca: fs.readFileSync('./ssl/ca-chain.crt'),
-                key: fs.readFileSync('./ssl/www_island_io.key'),
-                cert: fs.readFileSync('./ssl/www_island_io.crt')
-              }, app);
-              _server = http.createServer(app);
-            }
+            // } else {
+            //   server = https.createServer({
+            //     ca: fs.readFileSync('./ssl/ca-chain.crt'),
+            //     key: fs.readFileSync('./ssl/www_island_io.key'),
+            //     cert: fs.readFileSync('./ssl/www_island_io.crt')
+            //   }, app);
+            //   _server = http.createServer(app);
+            // }
 
             // Socket handling
             var sio = socketio.listen(server, {log: false,
@@ -384,17 +384,17 @@ if (cluster.isMaster) {
             });
 
             // Start server
-            if (process.env.NODE_ENV !== 'production') {
+            // if (process.env.NODE_ENV !== 'production') {
               server.listen(app.get('PORT'));
-            } else {
-              server.listen(app.get('SECURE_PORT'));
-              _server.listen(app.get('PORT'));
-            }
+            // } else {
+            //   server.listen(app.get('SECURE_PORT'));
+            //   _server.listen(app.get('PORT'));
+            // }
             if (cluster.worker.id === 1) {
               util.log('Web server listening on port '
                   + (process.env.NODE_ENV !== 'production' ?
                   app.get('PORT'): app.get('SECURE_PORT'))
-                  + ' (' + cpus + ' workers)');
+                  + ' with ' + cpus + ' worker(s)');
             }
           }
         );
