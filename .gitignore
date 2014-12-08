@@ -6,3 +6,8 @@ build/
 .aws/
 aws.config.json
 dump.rdb
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
