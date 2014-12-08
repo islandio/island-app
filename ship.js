@@ -131,7 +131,7 @@ Step(
     // Push to eb.
     if (argv.push) {
       util.log(clc.blackBright('Pushing to AWS Elastic Beanstalk ...'));
-      exec('eb push', this);
+      exec('eb deploy', this);
     } else this();
   },
   function (err) {
