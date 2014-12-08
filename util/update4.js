@@ -8,8 +8,6 @@
 var optimist = require('optimist');
 var argv = optimist
     .describe('help', 'Get help')
-    .describe('muri', 'MongoDB URI')
-      .default('muri')
     .argv;
 
 if (argv._.length || argv.help) {
@@ -19,22 +17,22 @@ if (argv._.length || argv.help) {
 
 // Module Dependencies
 var util = require('util');
+var iutil = require('island-util');
 var Step = require('step');
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
 var boots = require('../boots');
-var db = require('../lib/db');
-var com = require('../lib/common');
-var profiles = require('../lib/resources').profiles;
-var PubSub = require('../lib/pubsub').PubSub;
+var collections = require('island-collections');
+var profiles = collections.profiles;
+var Events = require('island-events').Events;
 
-boots.start({muri: argv.muri}, function (client) {
-  var pubsub = new PubSub();
+boots.start(function (client) {
+  var events = new Events({db: client.db});
 
   Step(
 
     function () {
-      db.Posts.list({}, {inflate: {author: profiles.member}}, this);
+      client.db.Posts.list({}, {inflate: {author: profiles.member}}, this);
     },
     function (err, docs) {
       boots.error(err);
@@ -42,7 +40,7 @@ boots.start({muri: argv.muri}, function (client) {
       if (docs.length === 0) return this();
       var _this = _.after(docs.length, this);
       _.each(docs, function (doc) {
-        db.Events.read({action_id: doc._id}, function (err, e) {
+        client.db.Events.read({action_id: doc._id}, function (err, e) {
           boots.error(err);
           if (e) return _this();
 
@@ -57,7 +55,7 @@ boots.start({muri: argv.muri}, function (client) {
                 action: {
                   i: doc.author._id.toString(),
                   a: doc.author.displayName,
-                  g: com.hash(doc.author.primaryEmail || 'foo@bar.baz'),
+                  g: iutil.hash(doc.author.primaryEmail || 'foo@bar.baz'),
                   t: 'post',
                   b: _.prune(doc.body, 40),
                   n: doc.title,
@@ -72,7 +70,7 @@ boots.start({muri: argv.muri}, function (client) {
     },
     function (err) {
       boots.error(err);
-      console.log('Good to go.');
+      console.log('bye');
       process.exit(0);
     }
   );

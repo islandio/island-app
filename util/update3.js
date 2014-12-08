@@ -8,8 +8,6 @@
 var optimist = require('optimist');
 var argv = optimist
     .describe('help', 'Get help')
-    .describe('muri', 'MongoDB URI')
-      .default('muri')
     .demand('limit')
     .default('cursor', 0)
     .argv;
@@ -21,28 +19,28 @@ if (argv._.length || argv.help) {
 
 // Module Dependencies
 var util = require('util');
+var iutil = require('island-util');
 var Step = require('step');
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
 var boots = require('../boots');
-var db = require('../lib/db');
-var com = require('../lib/common');
-var profiles = require('../lib/resources').profiles;
-var PubSub = require('../lib/pubsub').PubSub;
+var collections = require('island-collections');
+var profiles = collections.profiles;
+var Events = require('island-events').Events;
 
-boots.start({muri: argv.muri}, function (client) {
-  var pubsub = new PubSub();
+boots.start(function (client) {
+  var events = new Events({db: client.db});
 
   Step(
     function () {
       var limit = Number(argv.limit);
       var cursor = Number(argv.cursor);
-      db.Ascents.list({}, {limit: limit, skip: limit * cursor}, this);
+      client.db.Ascents.list({}, {limit: limit, skip: limit * cursor}, this);
     },
     function (err, docs) {
       boots.error(err);
       if (docs.length === 0) return this();
-      db.fill(docs, 'Medias', 'parent_id', {inflate: {author: profiles.member}},
+      client.db.fill(docs, 'Medias', 'parent_id', {inflate: {author: profiles.member}},
           _.bind(function (err) {
         boots.error(err);
 
@@ -63,14 +61,14 @@ boots.start({muri: argv.muri}, function (client) {
                 type: null,
                 subtype: null,
               },
-              key: [m.author.username, com.createId_32()].join('/'),
+              key: [m.author.username, iutil.createId_32()].join('/'),
               author_id: m.author._id,
               parent_id: doc._id,
               created: m.created
             };
 
             // Create the post.
-            db.Posts.create(props, {inflate: {author: profiles.member},
+            client.db.Posts.create(props, {inflate: {author: profiles.member},
                 force: {key: 1}}, function (err, post) {
               boots.error(err);
 
@@ -78,13 +76,13 @@ boots.start({muri: argv.muri}, function (client) {
                 function () {
 
                   // Remove existing event.
-                  db.Events.remove({action_id: m._id}, this);
+                  client.db.Events.remove({action_id: m._id}, this);
 
                 },
                 function () {
 
                   // Create event for post.
-                  pubsub.publish('post', 'post.new', {
+                  events.publish('post', 'post.new', {
                     data: post,
                     event: {
                       actor_id: post.author._id,
@@ -95,7 +93,7 @@ boots.start({muri: argv.muri}, function (client) {
                         action: {
                           i: post.author._id.toString(),
                           a: post.author.displayName,
-                          g: com.hash(post.author.primaryEmail || 'foo@bar.baz'),
+                          g: iutil.hash(post.author.primaryEmail || 'foo@bar.baz'),
                           t: 'post',
                           b: _.prune(post.body, 40),
                           n: post.title,
@@ -115,8 +113,7 @@ boots.start({muri: argv.muri}, function (client) {
                   boots.error(err);
 
                   // Set media parent to post.
-                  console.log(m._id, post._id, '..........................');
-                  db.Medias._update({_id: m._id},
+                  client.db.Medias._update({_id: m._id},
                       {$set: {parent_id_old: doc._id, parent_id: post._id}}, __this);
                 }
               );
@@ -130,7 +127,7 @@ boots.start({muri: argv.muri}, function (client) {
 
     function (err) {
       boots.error(err);
-      console.log('Good to go.');
+      console.log('bye');
       process.exit(0);
     }
   );

@@ -8,8 +8,6 @@
 var optimist = require('optimist');
 var argv = optimist
     .describe('help', 'Get help')
-    .describe('muri', 'MongoDB URI')
-      .default('muri')
     .argv;
 
 if (argv._.length || argv.help) {
@@ -19,17 +17,16 @@ if (argv._.length || argv.help) {
 
 // Module Dependencies
 var util = require('util');
+var iutil = require('island-util');
 var Step = require('step');
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
 var boots = require('../boots');
-var db = require('../lib/db');
-var com = require('../lib/common');
 
-boots.start({muri: argv.muri}, function (client) {
+boots.start(function (client) {
   Step(
     function () {
-      db.Ticks.list({}, {inflate: {session: {collection: 'session', '*': 1}}}, this);
+      client.db.Ticks.list({}, {inflate: {session: {collection: 'session', '*': 1}}}, this);
     },
     function (err, docs) {
       boots.error(err);
@@ -38,13 +35,13 @@ boots.start({muri: argv.muri}, function (client) {
       var _this = _.after(docs.length, this);
       _.each(docs, function (d) {
         if (d.author_id) return _this();
-        db.Ticks._update({_id: d._id}, {$set: {author_id: d.session.author_id}}, _this);
+        client.db.Ticks._update({_id: d._id}, {$set: {author_id: d.session.author_id}}, _this);
       });
     },
 
     function (err) {
       boots.error(err);
-      db.Actions.list({}, {inflate: {session: {collection: 'session', '*': 1}}}, this);
+      client.db.Actions.list({}, {inflate: {session: {collection: 'session', '*': 1}}}, this);
     },
     function (err, docs) {
       boots.error(err);
@@ -53,13 +50,13 @@ boots.start({muri: argv.muri}, function (client) {
       var _this = _.after(docs.length, this);
       _.each(docs, function (d) {
         if (d.author_id) return _this();
-        db.Actions._update({_id: d._id}, {$set: {author_id: d.session.author_id}}, _this);
+        client.db.Actions._update({_id: d._id}, {$set: {author_id: d.session.author_id}}, _this);
       });
     },
 
     function (err) {
       boots.error(err);
-      console.log('Good to go.');
+      console.log('bye');
       process.exit(0);
     }
   );

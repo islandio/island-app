@@ -8,8 +8,6 @@
 var optimist = require('optimist');
 var argv = optimist
     .describe('help', 'Get help')
-    .describe('muri', 'MongoDB URI')
-      .default('muri')
     .argv;
 
 if (argv._.length || argv.help) {
@@ -19,18 +17,17 @@ if (argv._.length || argv.help) {
 
 // Module Dependencies
 var util = require('util');
+var iutil = require('island-util');
 var Step = require('step');
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
 var boots = require('../boots');
-var db = require('../lib/db');
-var com = require('../lib/common');
 
-boots.start({muri: argv.muri}, function (client) {
+boots.start(function (client) {
   Step(
 
     function () {
-      db.Members.list({}, this);
+      client.db.Members.list({}, this);
     },
     function (err, docs) {
       boots.error(err);
@@ -38,8 +35,8 @@ boots.start({muri: argv.muri}, function (client) {
       if (docs.length === 0) return this();
       var _this = _.after(docs.length, this);
       _.each(docs, function (d) {
-        db.Members._update({_id: d._id}, {$set: {
-          'config.privacy': {mode: 0},
+        client.db.Members._update({_id: d._id}, {$set: {
+          'config.privacy': {mode: 0, ticks: 1},
           'config.notifications.hangten.email': true,
           'config.notifications.follow.email': true,
           'config.notifications.request.email': true,
@@ -49,7 +46,7 @@ boots.start({muri: argv.muri}, function (client) {
     },
     function (err) {
       boots.error(err);
-      console.log('Good to go.');
+      console.log('bye');
       process.exit(0);
     }
   );
