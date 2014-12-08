@@ -8,7 +8,7 @@
 var fork = require('child_process').fork;
 
 // Runs utils...
-fork('util/index.js');
+// fork('util/index.js');
 
 // Start application...
-fork('main.js', ['--index']);
+fork('main.js');
