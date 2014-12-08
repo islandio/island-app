@@ -7,7 +7,7 @@
     "name": "https",
     "allow": []
   },
-  "domain": "island-env.elasticbeanstalk.com",
+  "domain": "island.io",
   "port": 8080,
   "securePort": 8443,
   "outsideTunnel": false,
