@@ -4,6 +4,7 @@
  *
  */
 
+var _package_ = require('./package.json');
 var cluster = require('cluster');
 var util = require('util');
 var cpus = require('os').cpus().length;
@@ -14,7 +15,7 @@ if (cluster.isMaster) {
   var ngrokUrl = null;
   var createWorkers = function() {
 
-    // Create a worker for each CPU
+    // Create a worker for each CPU.
     for (var i = 0; i < cpus; ++i) {
       cluster.fork({NGROKURL: ngrokUrl});
     }
@@ -28,14 +29,14 @@ if (cluster.isMaster) {
     });
   }
 
-  // Setup an outside tunnel to our localhost in development
-  // We will pass this to the workers
-  if (process.env.NODE_ENV !== 'production') {
-    // ngrok.connect(8000, function (err, url) {
-    //   util.log('Setting up tunnel from this machine to ' + url);
-    //   ngrokUrl = url;
+  // Setup an outside tunnel to our localhost in development.
+  // We will pass this to the workers.
+  if (process.env.NODE_ENV !== 'production' && _package_.outsideTunnel) {
+    ngrok.connect(8000, function (err, url) {
+      util.log('Setting up tunnel from this machine to ' + url);
+      ngrokUrl = url;
       createWorkers();
-    // });
+    });
   } else {
     createWorkers();
   }
@@ -88,7 +89,7 @@ if (cluster.isMaster) {
   var app = require('./app').init();
 
   // Package info.
-  app.set('package', require('./package.json'));
+  app.set('package', _package_);
 
   // App port is env var in production.
   app.set('PORT', process.env.PORT || app.get('package').port);
@@ -324,16 +325,16 @@ if (cluster.isMaster) {
 
             // HTTP(S) server.
             var server, _server;
-            // if (process.env.NODE_ENV !== 'production') {
+            if (process.env.NODE_ENV !== 'production') {
               server = http.createServer(app);
-            // } else {
-            //   server = https.createServer({
-            //     ca: fs.readFileSync('./ssl/ca-chain.crt'),
-            //     key: fs.readFileSync('./ssl/www_island_io.key'),
-            //     cert: fs.readFileSync('./ssl/www_island_io.crt')
-            //   }, app);
-            //   _server = http.createServer(app);
-            // }
+            } else {
+              server = https.createServer({
+                ca: fs.readFileSync('./ssl/ca-chain.crt'),
+                key: fs.readFileSync('./ssl/www_island_io.key'),
+                cert: fs.readFileSync('./ssl/www_island_io.crt')
+              }, app);
+              _server = http.createServer(app);
+            }
 
             // Socket handling
             var sio = socketio.listen(server, {log: false,
@@ -384,12 +385,12 @@ if (cluster.isMaster) {
             });
 
             // Start server
-            // if (process.env.NODE_ENV !== 'production') {
+            if (process.env.NODE_ENV !== 'production') {
               server.listen(app.get('PORT'));
-            // } else {
-            //   server.listen(app.get('SECURE_PORT'));
-            //   _server.listen(app.get('PORT'));
-            // }
+            } else {
+              server.listen(app.get('SECURE_PORT'));
+              _server.listen(app.get('PORT'));
+            }
             if (cluster.worker.id === 1) {
               util.log('Web server listening on port '
                   + (process.env.NODE_ENV !== 'production' ?

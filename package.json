@@ -4,12 +4,13 @@
   "version": "3.0.2",
   "beta": true,
   "protocol": {
-    "name": "http",
+    "name": "https",
     "allow": []
   },
   "domain": "island-env.elasticbeanstalk.com",
   "port": 8080,
   "securePort": 8443,
+  "outsideTunnel": false,
   "builds": {
     "bucket": "builds-island",
     "cloudfront": "https://d3h49x19rmb9a2.cloudfront.net"
