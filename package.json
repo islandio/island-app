@@ -10,7 +10,7 @@
   "domain": "island.io",
   "port": 8080,
   "securePort": 8443,
-  "outsideTunnel": false,
+  "outsideTunnel": true,
   "builds": {
     "bucket": "builds-island",
     "cloudfront": "https://d3h49x19rmb9a2.cloudfront.net"

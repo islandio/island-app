@@ -32,7 +32,7 @@ if (cluster.isMaster) {
   // Setup an outside tunnel to our localhost in development.
   // We will pass this to the workers.
   if (process.env.NODE_ENV !== 'production' && _package_.outsideTunnel) {
-    ngrok.connect(8000, function (err, url) {
+    ngrok.connect(_package_.port, function (err, url) {
       util.log('Setting up tunnel from this machine to ' + url);
       ngrokUrl = url;
       createWorkers();
