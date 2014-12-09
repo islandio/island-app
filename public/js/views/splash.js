@@ -62,12 +62,8 @@ define([
 
         // Fix for firefox not looping
         var vid = this.$('video').get(0);
-        if (device.mobile()) {
-          this.$('video').parent().css('opacity', 1);
-        } else {
-          vid.addEventListener('loadeddata', function () {
-            $(this).parent().css('opacity', 1);
-          }, false);
+        if (!device.mobile()) {
+          vid.addEventListener('loadeddata', function () {}, false);
           vid.addEventListener('progress', function () {}, false);
           if (!(typeof vid.loop === 'boolean')) {
             vid.addEventListener('ended', function () {
