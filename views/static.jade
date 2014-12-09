@@ -79,3 +79,6 @@ html(lang="en")
     meta(charset="UTF-8")
     link(rel="shortcut icon", href="#{root}/img/favicon.ico", type="image/x-icon")
   body
+    - if (typeof body !== 'undefined')
+      !{body}
+
