@@ -1514,6 +1514,7 @@ ul.splash-features li > div {
   border-radius: 5px;
   background: #f9f9f9;
   padding: 20px 30px;
+  height: 511px;
 }
 h2.feature-title {
   font-size: 21px;

@@ -90,6 +90,15 @@ define([
         headers: false
       });
 
+      // Handle the screenshots.
+      this.$('.fancybox').fancybox({
+        openEffect: 'fade',
+        closeEffect: 'fade',
+        closeBtn: false,
+        nextClick: true,
+        padding: 0
+      });
+
       return this;
     },
 
