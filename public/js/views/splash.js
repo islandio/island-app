@@ -60,7 +60,7 @@ define([
             allowscriptaccess: 'always', allowfullscreen: 'true'});
       } else {
 
-        // Fix for firefox not looping
+        // Fix for firefox not looping.
         var vid = this.$('video').get(0);
         if (!device.mobile()) {
           vid.addEventListener('loadeddata', function () {}, false);
