@@ -28,7 +28,7 @@ block content
                 - _cat = _cat || (typeof post !== 'undefined' ? post.category: false);
                 li(style="background: #{back};", class=cat === _cat ? 'active': '')
                   i.icon-folder
-                  a(href="/blog#{categoryURL(cat)}")
+                  a(href="#{categoryURL(cat)}")
                     span.list-row-title
                       =cat
           .clear

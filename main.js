@@ -308,7 +308,13 @@ if (cluster.isMaster) {
             var poet = Poet(app, {
               posts: './blog/',
               postsPerPage: 5,
-              metaFormat: 'json'
+              metaFormat: 'json',
+              routes: {
+                '/blog/:post': 'post',
+                '/blog/page/:page': 'page',
+                '/blog/tag/:tag': '404',
+                '/blog/category/:category': 'category'
+              }
             });
             poet.init().then(_.bind(function () {
               app.set('poet', poet);
