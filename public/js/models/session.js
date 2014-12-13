@@ -24,16 +24,39 @@ define([
       return this.get('name') || new Date(this.get('date')).format('mm/dd/yy');
     },
 
-    tempFtoC: function(n) { return Math.floor((n - 32) * 5/9); },
+    tempRange: function () {
+      var w = this.get('weather');
+      if (w.temperature) { // legacy
+        return this.tempFtoC(w.temperature);
+      } else if (w.temperatureMin && w.temperatureMax) {
+        return this.tempFtoC(w.temperatureMin)
+            + '-' + this.tempFtoC(w.temperatureMax);
+      } else {
+        return '?';
+      }
+    },
 
-    formatWeatherIconName: function(str) {
-      switch (str) {
+    weatherDetail: function () {
+      var w = this.get('weather');
+      var str = '';
+      str += Math.round(w.humidity * 100) + '% humidity, ';
+      str += Math.round(w.cloudCover * 100) + '% cloud cover, ';
+      str += 'wind speed ' + (w.windSpeed) + ' m/s';
+      return str;
+    },
+
+    tempFtoC: function (n) {
+      return Math.floor((n - 32) * 5/9);
+    },
+
+    formatWeatherIconName: function () {
+      switch (this.get('weather').icon) {
         default:
-        case 'partly-cloudy-day':
-        case 'clear-day': return ''
+        case 'partly-cloudy-day': return 'and partly cloudy'
+        case 'clear-day': return 'and clear'
 
-        case 'partly-cloudy-night':
-        case 'clear-night': return 'and night'
+        case 'partly-cloudy-night': return 'and partly cloudy night'
+        case 'clear-night': return 'and clear night'
 
         case 'cloudy': return 'and cloudy'
         case 'rain': return 'and raining'

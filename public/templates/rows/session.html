@@ -21,12 +21,11 @@
     </a>
   </div>
   <span class="event-title-text">
-    <a href="/sessions/<%= this.model.get('key') %>" class="title-large navigate">
-      <%= this.model.formatName() %>
-    </a>
+    
     <% if (weather) { %>
       <span class="session-weather">
-        <%= this.model.tempFtoC(weather.temperature) %>&degC <%= this.model.formatWeatherIconName(weather.icon) %>
+        <%= this.model.tempRange() %>&degC <%= this.model.formatWeatherIconName() %>,
+        <%= this.model.weatherDetail() %>
       </span>
     <% } %>
   </span>
