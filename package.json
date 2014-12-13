@@ -57,7 +57,8 @@
     "mobile-detect": "~0.1.1",
     "ngrok": "^0.1.97",
     "passport-instagram": "~0.1.1",
-    "stylus": "~0.32.0"
+    "stylus": "~0.32.0",
+    "poet": "^1.0.2"
   },
   "devDependencies": {
     "grunt": "0.4.x",

@@ -8,7 +8,7 @@
     <div class="signup-table">
       <table>
         <thead>
-          <th> Email </th> <th> Signup Date </th> <th> Invited </th>
+          <th> Email </th> <th> Signup Date </th> <th> Invited </th> <th> Used </th> <th> Member </th>
         </thead>
         <tbody>
           <% _.each(this.app.profile.content.signups, function (s) { %>
@@ -22,6 +22,14 @@
                   Invited <%= util.getRelativeTime(s.invited) %>
                 <% } else { %>
                   <button> Invite </button>
+                <% } %>
+              </td>
+              <td> <%= !!s.used %> </td>
+              <td>
+                <% if (s.member) { %>
+                  <a href="/<%= s.member.username %>" class="navigate">
+                    <%= s.member.username %>
+                  </a>
                 <% } %>
               </td>
             </tr>

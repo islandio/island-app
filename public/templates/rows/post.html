@@ -66,9 +66,11 @@
     <% } %>
   </div>
 <% }, this)); %>
-<div class="post-body">
-  <%= this.model.body(!this.parentView) %>
-</div>
+<% if (this.parentView || p.body.trim() !== '') { %>
+  <div class="post-body">
+    <%= this.model.body(!this.parentView) %>
+  </div>
+<% } %>
 <div class="event-info">
   <% if (this.app.profile.member) { %>
     <a href="javascript:;" class="muted hangten">Nod</a>

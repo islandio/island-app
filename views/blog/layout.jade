@@ -1,0 +1,36 @@
+extends ../layout
+
+block content
+  #container.container.blog
+    .page-spin
+    include ../header
+    include ../map
+    .folder
+      .tabs
+        .folder-title
+          h1.title-left
+            a(href="/blog") The Island Blog
+          a.blog-rss(href="/blog/rss")
+            i.icon-rss
+      .content
+        .main(role="main")
+          .leftside.post.blog
+            block blog
+          .rightside
+            span.sidebar-heading-small
+              | Categories 
+              span.sidebar-heading-cnt (#{getCategories().length})
+            ul.list
+              li.list-header
+              - each cat, i in getCategories()
+                - var back = i % 2 === 0 ? '#f2f2f2': '#f9f9f9';
+                - var _cat = typeof category !== 'undefined' ? category: false;
+                - _cat = _cat || (typeof post !== 'undefined' ? post.category: false);
+                li(style="background: #{back};", class=cat === _cat ? 'active': '')
+                  i.icon-folder
+                  a(href="/blog#{categoryURL(cat)}")
+                    span.list-row-title
+                      =cat
+          .clear
+    include ../panel
+    include ../footer

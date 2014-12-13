@@ -20,8 +20,8 @@ header.header
           a(class="navigate", href="/crags") Crags
       li
         a(class="navigate", href="/films") Films
-      //- li
-      //-   a(class="navigate", href="/about") About
+      li
+        a(class="navigate #{typeof blog !== 'undefined' && blog == true ? 'active':''}", href="/blog") Blog
     - if (typeof member !== 'undefined')
       div.member-box
         div.divider-vertical

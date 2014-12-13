@@ -1,8 +1,9 @@
-footer.footer
+- var klass = typeof static !== 'undefined' && static === true ? 'footer nohide': 'footer';
+footer(class=klass)
   div
     div.footer-logo
       img(src="#{root}/img/footer_logo.png", width="100", height="34")
-    small Island LLC
+    small The Island, LLC
       | | 
       a.muted.navigate(href="/privacy") Privacy Policy
     div.clear

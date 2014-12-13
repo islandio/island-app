@@ -1,0 +1,29 @@
+<%
+  var p = this.model.attributes;
+%>
+
+<div class="leftside blog post">
+    <div class="post-body">
+      <%= p.content %>
+    </div>
+    <div class="event-info">
+      <% if (this.app.profile.member) { %>
+        <a href="javascript:;" class="muted hangten">Nod</a>
+        <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+        <a href="javascript:;" class="muted toggle-comment-input">Comment</a>
+        <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+      <% } %>
+      <a href="/<%= p.url %>" class="muted navigate"><time class="created" 
+            datetime="<%= p.created %>" 
+            title="<%= p.created %>" 
+            id="time_<%= this.model.id %>">
+        <%= p.created %>
+      </time></a>
+    </div>
+    <div class="comments"></div>
+  </div>
+</div>
+<div class="rightside">
+
+</div>
+<div class="clear"></div>

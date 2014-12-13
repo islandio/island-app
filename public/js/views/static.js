@@ -15,16 +15,20 @@ define([
 
     initialize: function (app, options) {
       this.app = app;
-      this.options = options;
+      this.options = options || {};
       this.subscriptions = [];
       this.on('rendered', this.setup, this);
     },
 
     render: function () {
-      this.app.title('The Island | ' + this.options.title);
+      if (this.options.title) {
+        this.app.title('The Island | ' + this.options.title);
+      }
 
-      this.template = _.template(this.options.template);
-      this.$el.html(this.template.call(this));
+      if (this.options.template) {
+        this.template = _.template(this.options.template);
+        this.$el.html(this.template.call(this));
+      }
 
       this.trigger('rendered');
       return this;

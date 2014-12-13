@@ -7,6 +7,12 @@
   "ascent": 850,
   "glyphs": [
     {
+      "uid": "ccc2329632396dc096bb638d4b46fb98",
+      "css": "mail-alt",
+      "code": 59427,
+      "src": "fontawesome"
+    },
+    {
       "uid": "381da2c2f7fd51f8de877c044d7f439d",
       "css": "picture",
       "code": 59402,
@@ -70,6 +76,24 @@
       "uid": "f48ae54adfb27d8ada53d0fd9e34ee10",
       "css": "trash",
       "code": 59419,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "f8aa663c489bcbd6e68ec8147dca841e",
+      "css": "folder",
+      "code": 59428,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "72b1277834cba5b7944b0a6cac7ddb0d",
+      "css": "rss",
+      "code": 59426,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "531bc468eecbb8867d822f1c11f1e039",
+      "css": "calendar",
+      "code": 59424,
       "src": "fontawesome"
     },
     {
@@ -139,6 +163,12 @@
       "src": "fontawesome"
     },
     {
+      "uid": "627abcdb627cb1789e009c08e2678ef9",
+      "css": "twitter",
+      "code": 59425,
+      "src": "fontawesome"
+    },
+    {
       "uid": "47a1f80457068fbeab69fdb83d7d0817",
       "css": "youtube-play",
       "code": 59401,
@@ -157,6 +187,12 @@
       "src": "entypo"
     },
     {
+      "uid": "bcb868184ff9c35f8aef564f50c0d649",
+      "css": "feather",
+      "code": 59429,
+      "src": "entypo"
+    },
+    {
       "uid": "bczb7qup4axmc490xmuuv8qdhcnbgeyf",
       "css": "user",
       "code": 59407,
@@ -172,12 +208,6 @@
       "uid": "d139ce97a43aedd333fa40f776328c3c",
       "css": "user-delete",
       "code": 59409,
-      "src": "typicons"
-    },
-    {
-      "uid": "5c49851100aa021825b346d16d7f3abf",
-      "css": "temperatire",
-      "code": 59424,
       "src": "typicons"
     },
     {

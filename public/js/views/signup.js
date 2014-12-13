@@ -23,7 +23,7 @@ define([
     },
 
     render: function () {
-      this.app.title('Island | Sign Up');
+      this.app.title('The Island | Sign up');
 
       this.template = _.template(template);
       this.$el.html(this.template.call(this));

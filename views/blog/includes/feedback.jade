@@ -1,0 +1,14 @@
+.feedback
+  - var url = typeof post !== 'undefined' ? '&url=https://www.island.io/blog/' + post.slug: '';
+  i.icon-twitter 
+  - if (typeof post !== 'undefined')
+    | Have feedback on this post? Let 
+  - else
+    | Have feedback? Let 
+  a(href="https://twitter.com/intent/tweet?text=@island_io&related=The%20Island" + url, target="blank") @island_io
+  |  know on Twitter.
+  br
+  i.icon-mail-alt 
+  | Need help or found a bug? 
+  a(href="mailto:support@island.io") Contact
+  |  us.

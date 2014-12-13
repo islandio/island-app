@@ -70,6 +70,10 @@ define([
         }
       }
 
+      // Determine if this is a blog page.
+      var rx = new RegExp([window.location.host, 'blog'].join('/'), 'i');
+      this.app.blog = rx.test(window.location.href);
+
       // Init page spinner.
       this.spin = new Spin($('.page-spin'), {color: '#808080'});
       this.start(true);
@@ -81,11 +85,16 @@ define([
 
       this.route('sessions/:k', 'session', this.session);
       this.route('efforts/:k', 'tick', this.tick);
-      
+
       this.route('crags/:y', 'crag', this.crags);
       this.route('crags/:y/:g', 'crag', this.crag);
       this.route('crags/:y/:g/:t/:a', 'ascent', this.ascent);
-      
+
+      this.route('blog/:p', 'blog', this.blog);
+      this.route('blog/category/:c', 'blog', this.blog);
+      this.route('blog/page/:c', 'blog', this.blog);
+      this.route('blog', 'blog', this.blog);
+
       this.route('reset', 'reset', this.reset);
       this.route('admin', 'admin', this.admin);
       this.route('settings', 'settings', this.settings);
@@ -128,7 +137,11 @@ define([
         } else if (login) {
           this.header.render(true);
         }
-        this.header.highlight(window.location.pathname);
+        if (!this.app.blog) {
+          this.header.highlight(window.location.pathname);
+        } else {
+          this.app.blog = false;
+        }
         if (!this.map && this.showMap) {
           this.map = new Map(this.app).render();
         }
@@ -173,6 +186,7 @@ define([
         cb = secure;
         secure = false;
       }
+      cb = cb || function(){};
 
       // Check if a profile exists already.
       var query = this.app.profile
@@ -224,7 +238,9 @@ define([
       this.loading = true;
       $(window).scrollTop(0);
       $('body').addClass('loading');
-      $('footer').hide();
+      if (!$('footer').hasClass('nohide')) {
+        $('footer').hide();
+      }
       this.spin.start();
     },
 
@@ -240,6 +256,12 @@ define([
         $('body').removeClass('loading');
         $('footer').show();
       }, this));
+    },
+
+    refresh: function () {
+      var frag = Backbone.history.fragment;
+      Backbone.history.fragment = null;
+      window.location.href = '/' + frag;
     },
 
     getEventActions: function () {
@@ -313,7 +335,7 @@ define([
       this.render('/service/crags', query, _.bind(function (err) {
         if (err) return;
         this.page = new Crags(this.app).render();
-        this.renderTabs({title: 'Crags', subtitle: 'Climbing locations on Earth', log: true});
+        this.renderTabs({title: 'Rock climbing crags on Earth', log: true});
         this.stop();
       }, this));
     },
@@ -325,8 +347,7 @@ define([
       this.render('/service/films', _.bind(function (err) {
         if (err) return;
         this.page = new Films(this.app).render();
-        this.renderTabs({title: 'Films', subtitle: 'Original content by Island',
-            log: true});
+        this.renderTabs({title: 'Original films by The Island', log: true});
         this.stop();
       }, this));
     },
@@ -339,8 +360,7 @@ define([
         if (err) return;
         this.page = new Static(this.app,
             {title: 'About', template: aboutTemp}).render();
-        this.renderTabs({title: 'About', subtitle: 'What\'s going on here?',
-            log: true});
+        this.renderTabs({title: 'What\'s going on here?', log: true});
         this.stop();
       }, this));
     },
@@ -353,7 +373,7 @@ define([
         if (err) return;
         this.page = new Static(this.app,
             {title: 'Privacy', template: privacyTemp}).render();
-        this.renderTabs({title: 'Privacy Policy', subtitle: 'Last updated 7.27.2013',
+        this.renderTabs({title: 'The Island\'s Privacy Policy',
             log: true});
         this.stop();
       }, this));
@@ -497,6 +517,18 @@ define([
       this.renderTabs({title: 'Sign up for The Island'});
     },
 
+    blog: function (slug) {
+      if (this.app.profile) {
+        return this.refresh();
+      }
+      this.start();
+      this.render('/service/static', _.bind(function (err) {
+        if (err) return;
+        this.page = new Static(this.app).render();
+        this.stop();
+      }, this));
+    },
+
     default: function () {
       this.renderTabs();
       this.clearContainer();
@@ -509,9 +541,7 @@ define([
         this.stop();
       }, this));
     }
-  
   });
-  
-  return Router;
 
+  return Router;
 });

@@ -208,6 +208,7 @@ define([
           longitude: e.latlng.lng
         });
       }, this));
+      this.map.on('mouseout', _.bind(this.featureOut, this));
 
       // Check pending.
       if (this.pendingLocation) {

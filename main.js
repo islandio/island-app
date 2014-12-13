@@ -83,6 +83,7 @@ if (cluster.isMaster) {
   var Emailer = require('island-emailer').Emailer;
   var resources = require('./lib/resources.js').resources;
   var Client = require('./lib/client').Client;
+  var Poet = require('poet');
   var service = require('./lib/service');
 
   // Setup Environments
@@ -301,6 +302,20 @@ if (cluster.isMaster) {
             }, this));
           },
           function (err) {
+            if (err) return this(err);
+
+            // Init the blog.
+            var poet = Poet(app, {
+              posts: './blog/',
+              postsPerPage: 3,
+              metaFormat: 'json'
+            });
+            poet.watch().init().then(_.bind(function () {
+              app.set('poet', poet);
+              this();
+            }, this));
+          },
+          function (err) {
             if (err) {
               console.error(err);
               process.exit(1);
@@ -313,7 +328,7 @@ if (cluster.isMaster) {
             });
 
             // Init service.
-            service.routes(app);
+            service.routes();
 
             // Catch all.
             app.use(function (req, res) {
