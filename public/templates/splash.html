@@ -84,7 +84,22 @@
     </div>
   </div>
   <div class="rightside">
-
+    <div class="sidebar-items">
+      <div class="sidebar-broadcasts">
+        <% _.each(this.app.profile.content.broadcasts.items, _.bind(function (b, i) { %>
+          <div class="sidebar-broadcast">
+            <h1>
+              <a href="/blog/<%= b.slug %>">
+                <i class="icon-signal"></i> <%= b.title %>
+              </a>
+            </h1>
+            <p><%= b.content %></p>
+            <p>
+          </div>
+        <% }, this)); %>
+      </div>
+      <div class="sidebar-ticks"></div>
+    </div>
   </div>
   <div class="clear"></div>
 </div>
