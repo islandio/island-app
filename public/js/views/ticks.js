@@ -52,8 +52,14 @@ define([
         var data = _.find(this.model.get('ticks')[el.data('type')], function (t) {
           return t.id === el.attr('id');
         });
-        this.ticks.push(new Tick({parentView: this, el: el, model: data},
-            this.app).render());
+        this.ticks.push(new Tick({
+          parentView: this,
+          el: el,
+          model: data,
+          mapless: true,
+          medialess: true,
+          commentless: true
+        }, this.app).render());
       }, this));
 
       this.trigger('rendered');

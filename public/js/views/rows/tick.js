@@ -105,6 +105,11 @@ define([
         }, this));
       }
 
+      if (this.options.medialess) {
+        this.trigger('rendered');
+        return this;
+      }
+
       // Group medias by type.
       //   - images can all be in one mosaic
       //   - each video set needs its own mosaic
@@ -292,11 +297,13 @@ define([
       }
 
       // Render comments.
-      this.comments = new Comments(this.app, {
-        parentView: this,
-        type: 'tick',
-        hideInput: true
-      });
+      if (!this.options.commentless) {
+        this.comments = new Comments(this.app, {
+          parentView: this,
+          type: 'tick',
+          hideInput: true
+        });
+      }
 
       // Handle time.
       this.timer = setInterval(_.bind(this.when, this), 5000);
@@ -310,7 +317,9 @@ define([
       if (this.map) {
         this.map.destroy();
       }
-      this.comments.destroy();
+      if (this.comments) {
+        this.comments.destroy();
+      }
       this.undelegateEvents();
       this.stopListening();
       if (this.timer) {

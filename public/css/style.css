@@ -529,6 +529,7 @@ span.empty-list {
 }
 .info-item {
   font-size: 11px;
+  color: #ccc;
 }
 p.page {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -3249,6 +3250,25 @@ textarea.comment-input {
   border-right: 3px solid transparent;
   border-bottom: 3px solid #f9f9f9;
 }
+.small-hangten {
+  display: inline-block;
+  position: relative;
+  width: 12px;
+  height: 12px;
+}
+.small-hangten:before {
+  content: "";
+  position: absolute;
+  display: block;
+  background: url("../img/nod_r_s.png") no-repeat top right;
+  width: 12px;
+  height: 12px;
+  left: 0px;
+  top: 2px;
+  -moz-transform: rotate(20deg);
+  -webkit-transform: rotate(20deg);
+  transform: rotate(20deg);
+}
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––posts*/
 .post {
   position: relative;
@@ -4162,7 +4182,7 @@ ul.session-ticks {
 }
 .event-right > .tick .tick-inner,
 .tick-list .tick .tick-inner {
-  width: 381px;
+  width: auto;
 }
 .tick .session-tick-name {
   display: block;
@@ -4270,6 +4290,9 @@ p.session-tick-note {
   color: #3d3d3d;
   max-width: 404px;
 }
+.tick-list p.session-tick-note {
+  max-width: initial;
+}
 a.session-tick-button {
   position: absolute;
   right: 0;
@@ -4336,7 +4359,6 @@ table.session-weather th {
 }
 .tick-list .tick {
   margin: 0 0 0 118px;
-  min-height: 127px;
 }
 .tick-list .tick + .tick {
   margin-top: 15px;

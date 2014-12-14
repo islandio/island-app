@@ -47,10 +47,14 @@ define([
       if (Action) {
         var model = this.model.get('action');
         model.event = this.model.get('data');
-        this.action = new Action({
+        var params = {
           parentView: this,
           model: model
-        }, this.app).render(true);
+        };
+        if (this.model.get('action_type') === 'tick') {
+          params.mapless = true;
+        }
+        this.action = new Action(params, this.app).render(true);
       }
 
       return this;
