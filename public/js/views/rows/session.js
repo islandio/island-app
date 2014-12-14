@@ -15,9 +15,10 @@ define([
   'text!../../../templates/rows/session.activity.html',
   'text!../../../templates/session.title.html',
   'text!../../../templates/confirm.html',
-  'views/minimap'
+  'views/minimap',
+  'Skycons'
 ], function ($, _, Backbone, mps, rest, util, Model, Tick, template,
-      activityTemp, title, confirm, MiniMap) {
+      activityTemp, title, confirm, MiniMap, skycons) {
   return Backbone.View.extend({
 
     ticks: [],
@@ -86,6 +87,16 @@ define([
             + ' - ' + this.model.formatName());
         this.title = _.template(title).call(this);
       }
+
+      _.defer(_.bind(function () {
+        var weather = this.model.get('weather').attributes;
+        if (weather) {
+          this.skycons = new Skycons({'color': '#666'});
+          var iconName = weather.icon.replace(/-/g, '_').toUpperCase();
+          this.skycons.add('crag_weather', weather.icon);
+          this.skycons.play();
+        }
+      }, this));
 
       this.trigger('rendered');
       return this;

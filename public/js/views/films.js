@@ -24,8 +24,7 @@ define([
     },
 
     render: function () {
-
-      this.app.title('Island | Films');
+      this.app.title('The Island | Films');
 
       this.template = _.template(template);
       this.$el.html(this.template.call(this));

@@ -112,7 +112,7 @@ define([
     },
 
     setTitle: function () {
-      this.app.title('Island | ' + [this.model.get('name'),
+      this.app.title('The Island | ' + [this.model.get('name'),
           this.model.get('country')].join(', '));
     }
 

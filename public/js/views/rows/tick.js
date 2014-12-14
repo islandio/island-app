@@ -17,9 +17,10 @@ define([
   'views/minimap',
   'views/session.new',
   'text!../../../templates/video.html',
+  'Skycons',
   'device'
 ], function ($, _, Backbone, mps, rest, util, Model, template, title, Comments,
-      confirm, MiniMap, NewSession, videoTemp) {
+      confirm, MiniMap, NewSession, videoTemp, skycons) {
   return Backbone.View.extend({
 
     tagName: 'li',
@@ -92,6 +93,16 @@ define([
         this.app.title('Island | ' + this.model.get('author').displayName
             + ' - ' + this.model.get('ascent').name);
         this.title = _.template(title).call(this);
+
+        _.defer(_.bind(function () {
+          var weather = this.model.get('weather').attributes;
+          if (weather) {
+            this.skycons = new Skycons({'color': '#666'});
+            var iconName = weather.icon.replace(/-/g, '_').toUpperCase();
+            this.skycons.add('crag_weather', weather.icon);
+            this.skycons.play();
+          }
+        }, this));
       }
 
       // Group medias by type.

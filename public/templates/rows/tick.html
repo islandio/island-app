@@ -5,7 +5,7 @@
   var gravatar = 'https://www.gravatar.com/avatar/'
       + t.author.gravatar + '?s=36&d='
       + encodeURIComponent(this.app.images.avatar);
-
+  var weather = t.weather ? t.weather.attributes : false;
   var mediaTypes = _.uniq(_.pluck(t.medias, 'type'));
 %>
 
@@ -139,6 +139,43 @@
   </div>
   <div class="rightside">
     <div class="mini-map" id="tick_map_<%= this.model.id %>"></div>
+    <% if (weather && weather.temperatureMin) { %>
+      <table class="session-weather">
+        <tr>
+          <th colspan="2"><i class="icon-temperatire"></i> <%= weather.summary %></th>
+        </tr>
+        <tr>
+          <td>low temp.</td>
+          <td><%= this.model.get('weather').tempFtoC(weather.temperatureMin) %>&degC @ <%= new Date(weather.temperatureMinTime * 1000).format('h:MM TT') %></td>
+        </tr>
+        <tr>
+          <td>high temp.</td>
+          <td><%= this.model.get('weather').tempFtoC(weather.temperatureMax) %>&degC @ <%= new Date(weather.temperatureMaxTime * 1000).format('h:MM TT') %></td>
+        </tr>
+        <tr>
+          <td>dew point</td>
+          <td><%= this.model.get('weather').tempFtoC(weather.dewPoint) %>&degC</td>
+        </tr>
+        <tr>
+          <td>humidity</td>
+          <td><%= Math.round(weather.humidity * 100) %>%</td>
+        </tr>
+        <tr>
+          <td>cloud cover</td>
+          <td><%= Math.round(weather.cloudCover * 100) %>%</td>
+        </tr>
+        <tr>
+          <td>wind speed</td>
+          <td><%= (weather.windSpeed * 3.6).toFixed(1) %> km/hr</td>
+        </tr>
+        <% if (weather.precipIntensity > 0) { %>
+          <tr>
+            <td>precip. intensity</td>
+            <td><%= weather.precipIntensity %> (<%= weather.precipType %>)</td>
+          </tr>
+        <% } %>
+      </table>
+    <% } %>
   </div>
   <div class="clear"></div>
 <% } %>

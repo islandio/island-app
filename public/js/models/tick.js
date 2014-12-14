@@ -5,12 +5,16 @@
 define([
   'Underscore',
   'Backbone',
-  'util'
-], function (_, Backbone, util) {
+  'util',
+  'models/weather'
+], function (_, Backbone, util, Weather) {
   return Backbone.Model.extend({
 
     initialize: function () {
       this.set('videoEmbeds', util.getVideoLinks(this.get('note')));
+      if (this.get('session') && this.get('session').weather) {
+        this.set('weather', new Weather(this.get('session').weather));
+      }
     },
 
     grades: ['3', '4', '5a', '5b', '5c', '6a', '6a+', '6b', '6b+', '6c',

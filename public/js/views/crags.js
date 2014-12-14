@@ -29,7 +29,7 @@ define([
     },
 
     render: function () {
-      this.app.title('Island | Crags');
+      this.app.title('The Island | Crags');
 
       this.template = _.template(template);
       $(this.template.call(this)).appendTo('.main');
