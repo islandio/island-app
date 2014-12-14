@@ -3,11 +3,14 @@
       + this.model.get('author').gravatar + '?s=26&d='
       + encodeURIComponent(this.app.images.avatar);
   var sub = this.app.profile.sub;
-  var weather = this.model.get('weather').attributes;
-  var weatherURL = '//www.forecast.io/#/f/'
-      + this.model.get('crag').location.latitude + ','
-      + this.model.get('crag').location.longitude + '/'
-      + Math.round(new Date(this.model.get('date')).valueOf() / 1000);
+  var weather = this.model.get('weather') ? this.model.get('weather').attributes: false;
+  var weatherURL;
+  if (weather && this.model.get('crag').location) {
+    weatherURL = '//www.forecast.io/#/f/'
+        + this.model.get('crag').location.latitude + ','
+        + this.model.get('crag').location.longitude + '/'
+        + Math.round(new Date(this.model.get('date')).valueOf() / 1000);
+  }
 %>
 
 <% if (this.app.profile.member) { %>
@@ -33,7 +36,7 @@
     <%= this.model.get('author').displayName %></a> 
   / <a href="/sessions/<%= this.model.get('key') %>" class="navigate">
   <span class="session-title"><%= this.model.formatName() %></span></a>
-  <% if (weather) { %>
+  <% if (weather && weatherURL) { %>
     <a href="<%= weatherURL %>" class="crag-weather">
       <%= this.model.get('weather').tempRange() %>&nbsp
       <canvas id="crag_weather" width="26" height="26"></canvas>
