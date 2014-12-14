@@ -89,8 +89,9 @@ define([
       }
 
       _.defer(_.bind(function () {
-        var weather = this.model.get('weather').attributes;
-        if (weather) {
+        var weather = this.model.get('weather') ?
+            this.model.get('weather').attributes: false;
+        if (weather && weather.icon) {
           this.skycons = new Skycons({'color': '#666'});
           var iconName = weather.icon.replace(/-/g, '_').toUpperCase();
           this.skycons.add('crag_weather', weather.icon);

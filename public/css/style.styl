@@ -3389,15 +3389,18 @@ img.image-mosaic-play.trailer
 .single img.image-mosaic-play.trailer
   top 172px
 
-.tick img.image-mosaic-play,
 .session img.image-mosaic-play
   left 65px
   top 65px
 
-.tick.single img.image-mosaic-play,
+.tick img.image-mosaic-play,
 .session.single img.image-mosaic-play
   left 92px
   top 92px
+
+.session:not(.single) .tick img.image-mosaic-play
+  left 65px
+  top 65px
 
 .post-media img.image-mosaic-play
   left 98px
@@ -4323,7 +4326,8 @@ ul.session-ticks
   width 381px
   height 210px
 
-.single .tick-media .image-mosaic
+.single .tick-media .image-mosaic,
+.event-right > .tick .image-mosaic
   width 538px
   height 303px
 

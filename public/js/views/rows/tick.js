@@ -95,8 +95,9 @@ define([
         this.title = _.template(title).call(this);
 
         _.defer(_.bind(function () {
-          var weather = this.model.get('weather').attributes;
-          if (weather) {
+          var weather = this.model.get('weather') ?
+            this.model.get('weather').attributes: false;
+        if (weather && weather.icon) {
             this.skycons = new Skycons({'color': '#666'});
             var iconName = weather.icon.replace(/-/g, '_').toUpperCase();
             this.skycons.add('crag_weather', weather.icon);
@@ -164,8 +165,11 @@ define([
           var img = $('<img src="' + src + '" />').css(item.img).wrap(
               $('<a class="fancybox" rel="g-' + o.id + '">')).appendTo(div);
           if (o.type === 'video' && item.first) {
-            var s = (this.parentView && this.parentView.parentView)
-                || this.$el.hasClass('tick-narrow') ? 80: 120; // God help us.
+            var s = 120;
+            if (this.parentView && this.parentView.parentView
+                && this.parentView.$('.session-ticks').length > 0) {
+              s = 80;
+            }
             var play = $('<img src="' + __s + '/img/play.png" class="image-mosaic-play"'
                 + ' width="' + s + '" height="' + s + '" />');
             play.appendTo(div);
