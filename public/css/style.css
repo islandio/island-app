@@ -460,6 +460,7 @@ time.created.static {
 }
 .leftside.equal {
   width: 259px;
+  min-height: 0;
   padding-left: 0;
   padding-bottom: 0;
 }
