@@ -117,22 +117,25 @@
       </div>
     <% }, this)); %>
   <% } %>
-  <% if (this.app.profile.member) { %>
-    <% if (this.options.commentless) { %>
-      <% if (t.hangtens.length > 0) { %>
-        <span class="info-item"><span class="small-hangten"></span> x <%= t.hangtens.length %></a></span>
-        <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-      <% } %>
-      <% if (t.comments.length > 0) { %>
-        <span class="info-item"><i class="icon-comment"></i> x <%= t.comments.length %></a></span>
-        <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-      <% } %>
-    <% } else { %>
-      <a href="javascript:;" class="muted hangten">Nod</a>
-      <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-      <a href="javascript:;" class="muted toggle-comment-input">Comment</a>
+  <% if (this.app.profile.member && !this.options.commentless) { %>
+    <a href="javascript:;" class="muted hangten">Nod</a>
+    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+    <a href="javascript:;" class="muted toggle-comment-input">Comment</a>
+    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+  <% } %>
+  <% if (this.options.commentless) { %>
+    <% if (t.hangtens.length > 0) { %>
+      <span class="info-item"><span class="small-hangten"></span> x <%= t.hangtens.length %></a></span>
       <span class="info-divider">&nbsp;&middot;&nbsp;</span>
     <% } %>
+    <% if (t.comments.length > 0) { %>
+      <span class="info-item"><i class="icon-comment"></i> x <%= t.comments.length %></a></span>
+      <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+    <% } %>
+  <% } %>
+  <% if (this.options.medialess && t.medias.length > 0) { %>
+    <span class="info-item"><i class="icon-picture"></i> x <%= t.medias.length %></a></span>
+    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
   <% } %>
   <% if (own) { %>
     <a href="javascript:;" class="muted tick-edit">Edit</a>
