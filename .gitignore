@@ -2,7 +2,6 @@
 bin/
 node_modules/
 build/
-.elasticbeanstalk/
 .aws/
 aws.config.json
 dump.rdb
