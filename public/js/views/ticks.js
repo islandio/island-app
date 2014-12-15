@@ -138,8 +138,15 @@ define([
         heading.parent().show();
 
         // create new tick view
-        this.ticks.push(new Tick({parentView: this, el: el, model: data},
-            this.app).render());
+        this.ticks.push(new Tick({
+          parentView: this,
+          el: el,
+          model: data,
+          mapless: true,
+          medialess: true,
+          commentless: true,
+          inlineWeather: true
+        }, this.app).render());
         this.checkCurrentCount();
       }
     },

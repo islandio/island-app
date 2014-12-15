@@ -41,7 +41,6 @@ define([
     choose: function (e) {
       if (e) {
         e.preventDefault();
-        console.log(e.target)
         if ($(e.target).hasClass('list-button')
             || $(e.target).hasClass('icon-pencil')) {
           return false;
