@@ -17,7 +17,7 @@
   <div class="mini-map" id="tick_map_<%= this.model.id %>"></div>
 <% } %>
 
-<div class="tick-inner">
+<div class="tick-inner" data-key="<%= this.model.get('key') %>">
   <% if (this.parentView && this.parentView.model.get('action')) { %>
     <span class="tick-avatar">
       <a href="/<%= t.author.username %>" class="image-anchor navigate">
@@ -107,7 +107,8 @@
         <span class="event-timeline-label">
           <i class="icon-youtube-play"></i>
         </span>
-        <% if (this.parentView) { %>
+        <% if (this.parentView && this.parentView.parentView
+                && this.parentView.$('.session-ticks').length > 0) { %>
           <iframe src="<%= v.link %>" width="381" height="210"
               frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
         <% } else { %>

@@ -4075,7 +4075,8 @@ table.post-params label
   border none
 
 .event:hover .event-timeline-label,
-.single:hover .event-timeline-label
+.single:hover .event-timeline-label,
+.tick-list .tick-inner:hover .event-timeline-label
   border-color #e6e6e6
 
 .event-timeline-label i
@@ -4095,7 +4096,8 @@ table.post-params label
   transition all 0.15s ease-in-out
 
 .event:hover .event-timeline-label i,
-.single:hover .event-timeline-label i
+.single:hover .event-timeline-label i,
+.tick-list .tick-inner:hover .event-timeline-label i
   color #4d4d4d
   border-color #e6e6e6
 
@@ -4114,7 +4116,8 @@ table.post-params label
   transition all 0.15s ease-in-out
 
 .event:hover .event-timeline-label-text,
-.single:hover .event-timeline-label-text
+.single:hover .event-timeline-label-text,
+.tick-list .tick-inner:hover .event-timeline-label-text
   color #4d4d4d
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––sessions*/
@@ -4283,6 +4286,13 @@ ul.session-ticks
 .tick-list .tick .tick-inner
   width auto
 
+.tick-list .tick .tick-inner
+  cursor pointer
+
+.tick-list .tick .tick-inner:hover
+  border-color #e6e6e6
+  background #f2f2f2
+
 .tick .session-tick-name
   display block
   margin-right 100px
@@ -4309,7 +4319,7 @@ ul.session-ticks
 .tick-media
   position relative
   margin-top 15px
-  background #f2f2f2
+  // background #f2f2f2
 
 .post-media + .post-media,
 .tick-media + .tick-media
@@ -4513,6 +4523,23 @@ table.session-weather th
   width 36px
   height 36px
   border-radius 50%
+
+.tick-nav
+  display none
+  position absolute
+  top -1px
+  right -20px
+  width 20px
+  height 100%
+  background #e6e6e6
+  border-top 1px solid #e6e6e6
+  border-bottom 1px solid #e6e6e6
+  border-radius 0 2px 2px 0
+
+.tick-nav i
+  position absolute
+  left 1px
+  color #666
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––notifications*/
 

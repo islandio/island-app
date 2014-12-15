@@ -34,6 +34,14 @@ define([
     },
 
     events: {
+      'click .tick-inner': function (e) {
+        var t = $(e.target);
+        if (t.is('a') || t.is('time')) {
+          return false;
+        }
+        var key = t.closest('.tick-inner').data('key');
+        this.app.router.navigate('/efforts/' + key, {trigger: true});
+      },
       'click .navigate': 'navigate'
     },
 
@@ -115,7 +123,7 @@ define([
     collect: function (data) {
       if (data.author.id === this.model.get('author').id && data.sent) {
         this._remove(data, true);
-        var el = $('<li class="tick tick-narrow" id="' + data.id + '" data-type="'
+        var el = $('<li class="tick" id="' + data.id + '" data-type="'
             + data.type + '">');
         var grade;
         if (isNaN(Number(data.grade))) {
