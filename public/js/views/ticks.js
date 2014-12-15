@@ -66,7 +66,8 @@ define([
           model: data,
           mapless: true,
           medialess: true,
-          commentless: true
+          commentless: true,
+          inlineWeather: true
         }, this.app).render());
       }, this));
 

@@ -57,14 +57,20 @@
       <%= t.ascent.name %><%= t.ascent.sector ? ' <span style="font-size:90%;">('
           + t.ascent.sector + ')</span>': '' %></a>
   </span>
-  <% if (t.duration || t.performance) { %>
+  <% if (t.duration || t.performance || (weather && weather.temperatureMin && this.options.inlineWeather)) { %>
     <span class="session-tick-detail">
+      <% if (weather && weather.temperatureMin && this.options.inlineWeather) { %>
+        <%= this.model.get('weather').tempRange() %> <%= this.model.get('weather').getWeatherIconName() %>
+      <% } %>
       <% if (t.duration) { %>
+        <% if (weather && weather.temperatureMin && this.options.inlineWeather) { %>
+          <%= ' &middot; ' %>
+        <% } %>
         <%= this.model.formatActivityDuration(t.duration) %>
       <% } %>
       <% if (t.performance) { %>
-        <% if (t.duration) { %>
-          <%= ' - ' %>
+        <% if (t.duration || (weather && weather.temperatureMin && this.options.inlineWeather)) { %>
+          <%= ' &middot; ' %>
         <% } %>
         <%= this.model.formatActivityPerformance(t.performance) %>
       <% } %>
