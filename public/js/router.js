@@ -216,7 +216,7 @@ define([
 
     clearContainer: function () {
       $('.container').removeClass('narrow').removeClass('wide')
-          .removeClass('landing');
+          .removeClass('landing').removeClass('blog');
     },
 
     renderTabs: function (params) {
@@ -278,7 +278,8 @@ define([
 
     dashboard: function () {
       this.start();
-      $('.container').removeClass('narrow').addClass('landing');
+      $('.container').removeClass('narrow').removeClass('blog')
+          .addClass('landing');
       if (!this.tabs || !this.tabs.params.tabs || !this.tabs.params.tabs[1]
           || (_.str.strRightBack(this.tabs.params.tabs[1].href, '/')
           !== 'ascents')) {
