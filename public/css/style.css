@@ -2274,7 +2274,7 @@ p.sidebar-tip span {
   margin-bottom: 10px;
 }
 .new-session td.new-session-cell input,
-.new-session td.new-session-cell select {
+.new-session td.new-session-cell select:not(.picker__select--month):not(.picker__select--year) {
   width: 100%;
   margin-bottom: 10px;
   font-size: 12px;

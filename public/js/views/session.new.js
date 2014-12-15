@@ -134,13 +134,14 @@ define([
       // Check for a pending session.
       // - option's tick takes priority
       // - pending session does not restrict crag choice
-      var date;
+      var date;//, time;
       if (!tick) {
         pending = store.get('pendingSession');
         store.set('pendingSession', false);
         if (pending) {
           tick = pending.actions[0].ticks[0];
           date = pending.date;
+          // time = pending.time;
         }
       }
 
@@ -148,6 +149,9 @@ define([
       var date = this.options.tick ? this.options.tick.date: date;
       date = date ? new Date(date): new Date();
       this.dateInput = this.$('.new-session-datepicker').pickadate({
+        max: new Date(),
+        selectYears: 20,
+        selectMonths: true,
         onStart: function () {
           this.set('select', [date.getFullYear(), date.getMonth(),
               date.getDate()]);
@@ -155,6 +159,12 @@ define([
         onSet: _.bind(this.validate, this)
       });
       this.datePicker = this.dateInput.pickadate('picker');
+
+      // Handle time.
+      // var time = this.options.tick ? this.options.tick.time: time;
+      // time = time ? new Date(date): new Date();
+      // this.timeInput = this.$('.new-session-timepicker').pickatime();
+      // this.timePicker = this.timeInput.pickatime('picker');
 
       // Restric numeric inputs.
       util.numbersOnly(this.$('.numeric'));
