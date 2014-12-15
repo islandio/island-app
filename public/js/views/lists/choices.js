@@ -27,23 +27,17 @@ define([
         this.options.query = {};
       }
       this.setElement(options.el);
-
-      // Call super init.
-      List.prototype.initialize.call(this, app, options);
-
-      // Client-wide subscriptions
       this.subscriptions = [];
 
-      // Reset the collection.
+      List.prototype.initialize.call(this, app, options);
+
       this.collection.reset([]);
     },
 
-    // Mouse events.
     events: {
       'click .search-choice-clear': 'clearChoice',
     },
 
-    // Misc. setup
     setup: function () {
 
       // Save refs.

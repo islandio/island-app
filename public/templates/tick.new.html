@@ -6,7 +6,7 @@ var tick = this.options.tick;
 
 <div class="new-session-tick">
   <% if (typeof closable === 'undefined' || closable) { %>
-    <a href="javascript:;" class="new-session-tick-clear" tabindex="-1">
+    <a href="javascript:;" class="new-session-tick-clear">
       <i class="icon-cancel"></i>
     </a>
   <% } %>
@@ -17,11 +17,11 @@ var tick = this.options.tick;
           <div class="new-session-search new-session-crag-search">
             <input id="new-session-crag" name="crag" type="text"
                 class="new-session-crag-search-input required" placeholder="Search existing crags or add new -->"
-                autocomplete="off" />
+                autocomplete="off" tabindex="10" />
             <button class="button input-add-button add-crag"><i class="icon-plus"></i></button>
             <div class="search-choice">
               <div class="search-choice-content"></div>
-              <a href="javascript:;" class="search-choice-clear" tabindex="-1">
+              <a href="javascript:;" class="search-choice-clear">
                 <i class="icon-cancel"></i>
               </a>
             </div>
@@ -40,11 +40,11 @@ var tick = this.options.tick;
           <div class="new-session-search new-session-ascent-search">
             <input name="tick" type="text"
                 class="new-session-tick-search-input required" placeholder="Search existing climbs or add new -->"
-                autocomplete="off" />
+                autocomplete="off" tabindex="11" />
             <button class="button input-add-button add-ascent"><i class="icon-plus"></i></button>
             <div class="search-choice">
               <div class="search-choice-content"></div>
-              <a href="javascript:;" class="search-choice-clear" tabindex="-1">
+              <a href="javascript:;" class="search-choice-clear">
                 <i class="icon-cancel"></i>
               </a>
             </div>
@@ -202,7 +202,7 @@ var tick = this.options.tick;
       </tr>
       <tr class="new-session-row-nopad">
         <td colspan="6" class="new-session-cell">
-          <textarea name="note" placeholder="Comments..."></textarea>
+          <textarea name="note" placeholder="Comments..." tabindex="12"></textarea>
         </td>
       </tr>
       <tr class="new-session-row-nopad">

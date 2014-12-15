@@ -1767,8 +1767,8 @@ a.choice.hover
 a.choice:hover
   background-color #d0ecf2
 
-a.choice:active
-  background-color #adc9d0
+// a.choice:active
+//   background-color #adc9d0
 
 a.choice.active
   background-color green
@@ -1780,11 +1780,25 @@ span.choice-prefix
 span.choice-prefix img
   border-radius 2px
 
-span.choice-name i
+span.choice-name > i
   margin-right 5px
   margin-left -3px
   font-size 14px
   vertical-align -1px
+
+span.choice-name .list-button
+  background none
+  position absolute
+  right 0
+  top 0
+  padding 8px
+  color #e6e6e6
+
+a.choice:hover .list-button
+  color #4d4d4d
+
+span.choice-name .list-button:hover
+  color blue
 
 ul.header-links
   float left

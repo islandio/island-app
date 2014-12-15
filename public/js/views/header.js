@@ -57,7 +57,8 @@ define([
           collapse: true,
           placeholder: 'Search for members, posts and crags...',
           route: true,
-          types: ['members', 'posts', 'crags']
+          types: ['members', 'posts', 'crags'],
+          log: true
         });
       }
     },

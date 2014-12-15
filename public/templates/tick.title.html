@@ -6,7 +6,7 @@
   var sub = this.app.profile.sub;
   var weather = this.model.get('weather') ? this.model.get('weather').attributes: false;
   var weatherURL;
-  if (weather && this.model.get('crag').location) {
+  if (weather && weather.temperatureMin && this.model.get('crag').location) {
     weatherURL = '//www.forecast.io/#/f/'
         + this.model.get('crag').location.latitude + ','
         + this.model.get('crag').location.longitude + '/'

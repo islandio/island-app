@@ -10,7 +10,7 @@ define([
   'views/boiler/row',
   'text!../../../templates/rows/watchee.html',
   'views/session.new'
-], function ($, _, mps, rest, Row, template, Session) {
+], function ($, _, mps, rest, Row, template, NewSession) {
   return Row.extend({
 
     tagName: 'li',
@@ -63,7 +63,7 @@ define([
       } else {
         opts.crag_id = subscribee.id;
       }
-      new Session(this.app, opts).render();
+      new NewSession(this.app, opts).render();
     }
 
   });

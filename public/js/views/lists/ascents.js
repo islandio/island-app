@@ -11,7 +11,7 @@ define([
   'util',
   'views/session.new',
   'text!../../../templates/ascents.html',
-], function ($, _, Backbone, mps, rest, util, Session, template) {
+], function ($, _, Backbone, mps, rest, util, NewSession, template) {
   return Backbone.View.extend({
 
     el: '.crag-ascents',
@@ -193,7 +193,7 @@ define([
       e.preventDefault();
       var aid = $(e.target).closest('li').attr('id');
       var cid = $(e.target).closest('li').data('cid');
-      new Session(this.app, {crag_id: cid, ascent_id: aid}).render();
+      new NewSession(this.app, {crag_id: cid, ascent_id: aid}).render();
     }
 
   });

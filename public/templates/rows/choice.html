@@ -1,5 +1,4 @@
 <%
-
   var image;
   if (this.model.get('gravatar')) {
     image = 'https://www.gravatar.com/avatar/'
@@ -9,7 +8,6 @@
     image = this.model.get('type') === 'b' ?
         __s + '/img/boulder_16.png': __s + '/img/route_16.png';
   }
-
 %>
 
 <% if (image) { %>
@@ -19,4 +17,13 @@
 <% } %>
 <span class="choice-name">
   <%= this.model.title() %>
+  <% if (this.options.parentView.options.log
+      && this.model.get('_type') === 'crags'
+      && this.app.profile.member
+      && this.app.profile.member.username !== 'island'
+      && this.app.profile.member.role !== 2) { %>
+    <a href="javascript:;" class="list-button">
+      <i class="icon-pencil"></i>
+    </a>
+  <% } %>
 </span>

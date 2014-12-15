@@ -36,10 +36,11 @@ define([
   'views/ticks',
   'text!../templates/about.html',
   'text!../templates/privacy.html',
+  'views/session.new'
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
     Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Tick,
     Crag, Admin, Ascent, Settings, Reset, Films, Static, Crags, Dashboard, Splash,
-    Ticks, aboutTemp, privacyTemp) {
+    Ticks, aboutTemp, privacyTemp, NewSession) {
 
   /*
    * Determine if parent is iframe.
@@ -113,6 +114,11 @@ define([
       // Show the forgot modal.
       mps.subscribe('modal/forgot/open', _.bind(function () {
         this.modal = new Forgot(this.app).render();
+      }, this));
+
+      // Log new session.
+      mps.subscribe('session/new', _.bind(function (opts) {
+        this.modal = new NewSession(this.app, opts).render();
       }, this));
     },
 

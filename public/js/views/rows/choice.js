@@ -35,10 +35,18 @@ define([
 
     events: {
       'click': 'choose',
+      'click .list-button': 'log'
     },
 
     choose: function (e) {
-      if (e) e.preventDefault();
+      if (e) {
+        e.preventDefault();
+        console.log(e.target)
+        if ($(e.target).hasClass('list-button')
+            || $(e.target).hasClass('icon-pencil')) {
+          return false;
+        }
+      }
 
       // Show selection.
       this.parentView.choose(this);
@@ -59,6 +67,11 @@ define([
       // Go to page.
       this.app.router.navigate(this.$el.attr('href'), {trigger: true});
     },
+
+    log: function (e) {
+      e.preventDefault();
+      mps.publish('session/new', [{crag_id: this.model.id}]);
+    }
 
   });
 });
