@@ -110,7 +110,7 @@ boots.start(function (client) {
       var run100 = function () {
         for (var i = iter;i < (iter + 100) && i < docs.length; i++) {
           ascentsIndexed += client.cache.index('ascents', docs[i], ['name'],
-              function (err) { step(err, i) });
+              {strategy: 'noTokens'}, function (err) { step(err, i) });
         }
       };
 
