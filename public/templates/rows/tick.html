@@ -39,6 +39,11 @@
       work
     <% } %>
   </span>
+  <% if (this.options.inlineDate) { %>
+    <span class="session-tick-date">
+      <%= this.model.formatDate() %>
+    </span>
+  <% } %>
   <span class="session-tick-grade">
     <%= this.model.formatTickGrade(t.grade, t.feel) || t.ascent.grades.join(' / ') %>
   </span>

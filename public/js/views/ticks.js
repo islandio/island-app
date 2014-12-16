@@ -67,7 +67,8 @@ define([
           mapless: true,
           medialess: true,
           commentless: true,
-          inlineWeather: true
+          inlineWeather: true,
+          inlineDate: true
         }, this.app).render());
       }, this));
 
@@ -145,7 +146,8 @@ define([
           mapless: true,
           medialess: true,
           commentless: true,
-          inlineWeather: true
+          inlineWeather: true,
+          inlineDate: true
         }, this.app).render());
         this.checkCurrentCount();
       }

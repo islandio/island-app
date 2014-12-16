@@ -3458,6 +3458,9 @@ span.image-mosaic-play-text
   font-size 16px
   line-height 24px
 
+.post.single .post-media + .post-body
+  margin-top 10px
+
 .post.blog .post-body
   margin-bottom 80px
 
@@ -4306,6 +4309,24 @@ ul.session-ticks
 .tick-list .tick .tick-inner:hover
   border-color #e6e6e6
   background #f2f2f2
+
+.session-tick-date
+  font-size 11px
+  // font-family standard_thin
+  color #b3b3b3
+  display block
+  position absolute
+  right 617px
+  top 26px
+  text-align right
+  white-space nowrap
+  
+  -webkit-transition all 0.15s ease-in-out
+  -moz-transition all 0.15s ease-in-out
+  transition all 0.15s ease-in-out
+
+.tick-list .tick-inner:hover .session-tick-date
+  color #4d4d4d
 
 .tick .session-tick-name
   display block
