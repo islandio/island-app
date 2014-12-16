@@ -8,6 +8,5 @@ define([
   'lib/jquery/jquery.transloadit2',
   'lib/jquery/jquery.fancybox',
   'lib/jquery/jquery.tooltipster.min',
-  'Pickadate',
-  // 'Pickatime'
+  'Pickadate'
 ], function () { return true; });

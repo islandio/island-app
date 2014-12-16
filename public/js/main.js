@@ -18,7 +18,6 @@ require.config({
     Spin: 'lib/spin/spin',
     Picker: 'lib/pickadate/picker',
     Pickadate: 'lib/pickadate/picker.date',
-    Pickatime: 'lib/pickadate/picker.time',
     Skycons: 'lib/skycons/skycons',
     plugins: 'lib/jquery/plugins'
   },

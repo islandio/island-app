@@ -115,6 +115,11 @@ define([
         el: this.$('.mini-map'),
         location: this.model.get('crag').location
       }).render();
+
+      // Handle sizing.
+      if (!this.parentView) {
+        this.$('.leftside').height(this.$el.height() - 60);
+      }
     },
 
     // Collect a tick.

@@ -446,10 +446,15 @@ define([
 
         $styledSelect.click(function(e) {
           e.stopPropagation();
-          $('div.select-styled.active').each(function(){
-            $(this).removeClass('active').next('ul.select-options').hide();
-          });
-          $(this).toggleClass('active').next('ul.select-options').toggle();
+          if ($styledSelect.hasClass('active')) {
+            $styledSelect.removeClass('active');
+            $list.hide();
+          } else {
+            $('div.select-styled.active').each(function(){
+              $(this).removeClass('active').next('ul.select-options').hide();
+            });
+            $(this).toggleClass('active').next('ul.select-options').toggle();
+          }
         });
 
         $listItems.click(function(e) {

@@ -454,7 +454,7 @@ time.created.static {
 .leftside {
   float: left;
   width: 680px;
-  min-height: 619px;
+  min-height: 600px;
   padding: 30px 40px 30px 0;
   border-right: 1px solid #f2f2f2;
 }
@@ -2884,8 +2884,8 @@ img.page-title-avatar {
   display: block;
   background: #f2f2f2;
   padding: 20px 0;
-  font-size: 15px;
-  font-family: Title;
+  font-size: 16px;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   text-align: center;
   border-bottom: 1px solid #ccc;
   -webkit-border-radius: 2px 2px 0 0;
@@ -3994,6 +3994,11 @@ table.post-params label {
   top: 8px;
   border: none;
 }
+.event:hover .event-timeline-dot,
+.single:hover .event-timeline-dot,
+.tick-list .tick-inner:hover .event-timeline-dot {
+  color: #4d4d4d;
+}
 .event:hover .event-timeline-label,
 .single:hover .event-timeline-label,
 .tick-list .tick-inner:hover .event-timeline-label {
@@ -4378,6 +4383,7 @@ table.session-weather {
   background: #fcfcfc;
   width: 272px;
   margin-top: 30px;
+  line-height: 20px;
 }
 table.session-weather td,
 table.session-weather th {
@@ -4385,6 +4391,7 @@ table.session-weather th {
   font-size: 14px;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   border: 1px solid #f2f2f2;
+  white-space: normal;
 }
 table.session-weather th {
   font-weight: bold;

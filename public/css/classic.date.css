@@ -57,7 +57,8 @@
 }
 .picker__select--month:focus,
 .picker__select--year:focus {
-  border-color: #0089ec;
+  /*border-color: #4bb8d7;*/
+  background: rgba(75, 184, 215, 0.35);
 }
 /**
  * The month navigation buttons.
@@ -113,7 +114,7 @@
 .picker__nav--next:hover {
   cursor: pointer;
   color: #000000;
-  background: #b1dcfb;
+  background: rgba(75, 184, 215, 0.25);
 }
 .picker__nav--disabled,
 .picker__nav--disabled:hover,
@@ -172,7 +173,7 @@
   border: 1px solid transparent;
 }
 .picker__day--today {
-  color: #0089ec;
+  color: #4bb8d7;
   position: relative;
 }
 .picker__day--today:before {
@@ -187,10 +188,11 @@
 }
 .picker__day--selected,
 .picker__day--selected:hover {
-  border-color: #0089ec;
+  background: rgba(75, 184, 215, 0.35);
+  /*border-color: #4bb8d7;*/
 }
 .picker__day--highlighted {
-  background: #b1dcfb;
+  background: rgba(75, 184, 215, 0.35);
 }
 .picker__day--disabled:before {
   border-top-color: #aaaaaa;
@@ -202,11 +204,11 @@
 .picker__day--outfocus:hover {
   cursor: pointer;
   color: #000000;
-  background: #b1dcfb;
+  background: rgba(75, 184, 215, 0.25);
 }
 .picker__day--highlighted:hover,
 .picker--focused .picker__day--highlighted {
-  background: #0089ec;
+  background: #4bb8d7;
   color: #ffffff;
 }
 .picker__day--disabled,
@@ -228,7 +230,7 @@
 }
 .picker__button--today,
 .picker__button--clear {
-  border: 1px solid #ffffff;
+  border: none;
   background: #ffffff;
   font-size: .8em;
   padding: .66em 0;
@@ -241,13 +243,13 @@
 .picker__button--clear:hover {
   cursor: pointer;
   color: #000000;
-  background: #b1dcfb;
-  border-bottom-color: #b1dcfb;
+  background: rgba(75, 184, 215, 0.25);
+  /*border-bottom-color: rgba(75, 184, 215, 0.25);*/
 }
 .picker__button--today:focus,
 .picker__button--clear:focus {
-  background: #b1dcfb;
-  border-color: #0089ec;
+  background: rgba(75, 184, 215, 0.35);
+  /*border-color: #4bb8d7;*/
   outline: none;
 }
 .picker__button--today:before,

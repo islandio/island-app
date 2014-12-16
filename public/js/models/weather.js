@@ -10,7 +10,7 @@ define([
   return Backbone.Model.extend({
 
     initialize: function () {
-      this.set('summary', _.str.strLeft(this.get('summary'), '.'));
+      // this.set('summary', _.str.strLeft(this.get('summary'), '.'));
     },
 
     tempRange: function () {

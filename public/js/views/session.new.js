@@ -134,14 +134,13 @@ define([
       // Check for a pending session.
       // - option's tick takes priority
       // - pending session does not restrict crag choice
-      var date;//, time;
+      var date;
       if (!tick) {
         pending = store.get('pendingSession');
         store.set('pendingSession', false);
         if (pending) {
           tick = pending.actions[0].ticks[0];
           date = pending.date;
-          // time = pending.time;
         }
       }
 
@@ -159,12 +158,6 @@ define([
         onSet: _.bind(this.validate, this)
       });
       this.datePicker = this.dateInput.pickadate('picker');
-
-      // Handle time.
-      // var time = this.options.tick ? this.options.tick.time: time;
-      // time = time ? new Date(date): new Date();
-      // this.timeInput = this.$('.new-session-timepicker').pickatime();
-      // this.timePicker = this.timeInput.pickatime('picker');
 
       // Restric numeric inputs.
       util.numbersOnly(this.$('.numeric'));
@@ -205,6 +198,7 @@ define([
 
       // Choose values if tick present.
       if (tick) {
+        this.selectOption('time', tick.time);
         this.selectOption('duration', tick.duration);
         this.selectOption('performance', tick.performance);
         this.selectOption('grade', tick.grade);
@@ -370,6 +364,7 @@ define([
         index: 0,
         type: tickChoice.type,
         ascent_id: tickChoice.id,
+        time: this.$('select[name="time"]').val(),
         duration: this.$('select[name="duration"]').val(),
         performance: this.$('select[name="performance"]').val(),
         note: this.$('textarea[name="note"]').val().trim()

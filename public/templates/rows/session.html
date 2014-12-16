@@ -45,9 +45,15 @@
   <div class="rightside">
     <div class="mini-map" id="session_map_<%= this.model.id %>"></div>
     <% if (weather && weather.temperatureMin) { %>
+
+
+
       <table class="session-weather">
         <tr>
-          <th colspan="2"><i class="icon-temperatire"></i> <%= weather.summary %></th>
+          <th colspan="2"><i class="icon-temperatire"></i> Weather from the day:</th>
+        </tr>
+        <tr>
+          <td colspan="2"><%= weather.summary %></td>
         </tr>
         <tr>
           <td>low temp.</td>

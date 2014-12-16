@@ -45,8 +45,13 @@
  * Note: the root picker element should *NOT* be styled more than what’s here.
  */
 .picker {
-  width: 48.4%;
   margin-top: -10px;
+}
+.datepicker .picker {
+  width: 290px;
+}
+.timepicker .picker {
+  width: 300px;
 }
 /**
  * The holder is the base of the picker.
@@ -91,6 +96,7 @@
  * When the picker opens...
  */
 .picker--opened .picker__holder {
+  padding-top: 5px;
   max-height: 25em;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
   filter: alpha(opacity=100);

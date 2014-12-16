@@ -24,7 +24,7 @@
                   <button> Invite </button>
                 <% } %>
               </td>
-              <td> <%= !!s.used %> </td>
+              <td> <%= s.used ? util.getRelativeTime(s.used): '' %> </td>
               <td>
                 <% if (s.member) { %>
                   <a href="/<%= s.member.username %>" class="navigate">

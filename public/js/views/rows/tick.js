@@ -312,6 +312,11 @@ define([
       // Handle time.
       this.timer = setInterval(_.bind(this.when, this), 5000);
       this.when();
+
+      // Handle sizing.
+      if (!this.parentView) {
+        this.$('.leftside').height(this.$el.height() - 60);
+      }
     },
 
     destroy: function () {
