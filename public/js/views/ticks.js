@@ -36,11 +36,10 @@ define([
     events: {
       'click .tick-inner': function (e) {
         var t = $(e.target);
-        if (t.is('a') || t.is('time')) {
-          return false;
+        if (!t.is('a') && !t.is('time')) {
+          var key = t.closest('.tick-inner').data('key');
+          this.app.router.navigate('/efforts/' + key, {trigger: true});
         }
-        var key = t.closest('.tick-inner').data('key');
-        this.app.router.navigate('/efforts/' + key, {trigger: true});
       },
       'click .navigate': 'navigate'
     },

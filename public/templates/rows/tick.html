@@ -83,7 +83,7 @@
   <% } %>
   <% if (t.note) { %>
     <p class="session-tick-note">
-      &ldquo;<%= t.note %>&rdquo;
+      &ldquo;<%= this.model.formatNote() %>&rdquo;
     </p>
   <% } %>
   <div class="clear"></div>

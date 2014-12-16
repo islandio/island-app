@@ -285,7 +285,7 @@ define([
       return blurb.substr(0, blurb.length - 1) + end;
     },
 
-    formatText: function (str) {
+    formatText: function (str, breaks) {
       var link = /(?!src=")(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
       var parts = _.reject(str.split('\n'), function (s) {
         return s.trim() === '';
@@ -298,7 +298,11 @@ define([
             return ('<a href="' + txt + '" target="_blank">' + txt + '</a>');
           });
         });
-        return '<p>' + parts.join('</p><p>') + '</p>';
+        if (breaks) {
+          return parts.join('<br /><br />');
+        } else {
+          return '<p>' + parts.join('</p><p>') + '</p>';
+        }
       }
     },
 
