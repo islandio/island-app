@@ -139,7 +139,7 @@ define([
         this.input.width(198).attr({placeholder: 'Search...'});
       }
       this.results.hide();
-      this.resetHighlight();
+      //this.resetHighlight();
       this.active = false;
     },
 
@@ -189,6 +189,8 @@ define([
 
         // Show results display.
         this.results.show();
+        this.selecting.i++;
+        this.highlight();
       }, this));
 
       // Perform searches.
