@@ -42,11 +42,9 @@ boots.start(function (client) {
 
       if (docs.length === 0) return this();
 
-      var _this = _.after(docs.length * 2, this);
+      var _this = _.after(docs.length, this);
       _.each(docs, function (d, idx) {
         // Add new.
-        membersIndexed += client.cache.index('members', d,
-            ['displayName', 'userName'], _this);
         membersIndexed += client.cache.index('members', d, ['displayName'],
             _this, {strategy: 'noTokens'});
       });
@@ -63,10 +61,9 @@ boots.start(function (client) {
       boots.error(err);
 
       if (docs.length === 0) return this();
-      var _this = _.after(docs.length * 2, this);
+      var _this = _.after(docs.length, this);
       _.each(docs, function (d, idx) {
         // Add new.
-        cragsIndexed += client.cache.index('crags', d, ['name'], _this);
         cragsIndexed += client.cache.index('crags', d, ['name'],
             {strategy: 'noTokens'}, _this);
       });
@@ -83,12 +80,10 @@ boots.start(function (client) {
       boots.error(err);
 
       if (docs.length === 0) return this();
-      var _this = _.after(docs.length * 2, this);
+      var _this = _.after(docs.length, this);
       _.each(docs, function (d) {
         // Add new.
         postsIndexed += client.cache.index('posts', d, ['title'], _this);
-        postsIndexed += client.cache.index('posts', d, ['title'],
-            {strategy: 'noTokens'}, _this);
       });
     },
     function (err) {
@@ -118,7 +113,6 @@ boots.start(function (client) {
         if (err) { boots.error(err); process.exit(0) }
         else if (i === docs.length) { next(); }
         else if (i === iter + 100) {
-          if (i % 30000 === 0) console.log(iter/docs.length * 100 + '%');
           iter = i;
           run100();
         }
