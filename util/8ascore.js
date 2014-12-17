@@ -24,6 +24,7 @@ _.mixin(require('underscore.string'));
 var boots = require('../boots');
 var log = function (s) {console.log(clc.bold(s));};
 var clc = require('cli-color');
+var cheerio = require('cheerio');
 clc.orange = clc.xterm(202);
 
 // Default request headers:
@@ -33,32 +34,9 @@ var headers = {
                 + 'Chrome/24.0.1312.57 Safari/537.17',
 };
 
-// Form for searching for members
 
-function get(userid, cb) {
-
-  log(clc.blackBright('Getting scorecard...'));
-
-  request.get({
-    uri: 'http://www.8a.nu/scorecard/AscentList.aspx',
-    qs: {
-      UserId: 55531,
-      AscentType: 0,
-      AscentClass: 0,
-      AscentListTimeInterval: 1,
-      AscentListViewType: 0,
-      GID: '4e7f2433aee783248e8e0a4c17024a9f'
-    },
-    headers: headers,
-    encoding: 'binary'
-  }, function(err, res) {
-    console.log(res.body);
-    cb(null);
-  })
-
-}
-
-var member = 'Winterleitner';
+var member = 'Lucas Marques';
+//var member = 'Sander Pick';
 
 var member_rx = new RegExp(/Profile\.aspx\?UserId=([0-9]+)\'>(.*?)<.*?<nobr>(.+?)<.*?<td>(.*?)</g);
 
@@ -66,7 +44,7 @@ var searchResults = [];
 
 boots.start(function (client) {
 
-  log(clc.blackBright('Searching ...'));
+  log(clc.blackBright('Searching for member ' + member + '...'));
 
   Step(
     function getPostHeaders() {
@@ -79,7 +57,6 @@ boots.start(function (client) {
     },
 
     function searchMember(err, res, body) {
-      console.log('searchMember');
       viewState_rx = new RegExp(/id=\"__VIEWSTATE\" value=\"([A-Za-z0-9+/=]+)/);
       eventValidation_rx = new RegExp(/id=\"__EVENTVALIDATION\" value=\"([A-Za-z0-9+/=]+)/);
 
@@ -99,8 +76,6 @@ boots.start(function (client) {
         ButtonSearchMember: 'Search',
         TextboxAscentSector: undefined
       };
-
-      console.log(form);
 
       request.post({
         uri: 'http://www.8a.nu/scorecard/Search.aspx',
@@ -158,26 +133,56 @@ boots.start(function (client) {
     },
   function (err, boulders, routes) {
 
-    // Only try to figure this out if you want your eyes to bleach
-    console.log('**BEGIN BOULDERS**');
-    console.log(boulders.body)
-    console.log('**END BOULDERS**');
-    console.log('**BEGIN ROUTES**');
-    console.log(routes.body)
-    console.log('**END ROUTEs**');
+    // filter for ascents
+    var ascents_rx = new RegExp(/<!-- Ascents -->([\s\S]+?)<!-- List Options -->/);
+    var boulders_html = ascents_rx.exec(boulders.body)[1];
+    var routes_html = ascents_rx.exec(routes.body)[1];
 
-    var ascent_rx = new RegExp(/<tr[\s\S]*?<td valign[\s\S]*?<nobr>([0-9\-]*?)<\/nobr>[\s\S]*?<img src="images\/(.*?).gif[\s\S]*?=1'>(.*?)<\/a>[\s\S]*?\)">(.*?)<\/a>[\s\S]*?<\/td>[\s\S]*?<\/td>[\s\S]*?<\/span>(.*?)<\/td>[\s\S]*?>([*]*)[\s\S]*?<\/tr>/g);
+    // parse HTML into a DOM structure
+    var $ = cheerio.load(boulders_html);
 
-    var results;
-    console.log('boulders');
-    console.log(boulders.body);
-    while (results = ascent_rx.exec(boulders.body)) {
-      console.log(results[1], results[2], results[3], results[4], results[5], results[6]);
-    }
-    console.log('routes');
-    while (results = ascent_rx.exec(routes.body)) {
-      console.log(results[1], results[2], results[3], results[4], results[5], results[6]);
-    }
+    var boulders_ascents = [];
+    $('.AscentListHeadRow').each(function() {
+      $(this).parent().nextUntil('tr:has(td:only-child)')
+          .each(function() {
+        var els = $(this).children();
+        var obj =  ({
+          date: $(els.get(0)).find('nobr').text(),
+          ascent: $(els.get(2)).find('a').text(),
+          crag: $(els.get(4)).find('span').text(),
+          comment: $(els.get(6)).contents().filter(function() {
+            return this.nodeType == 3
+          }).text()
+        });
+        boulders_ascents.push(obj);
+      });
+    });
+
+    console.log('boulder ascent list');
+    console.log(boulders_ascents);
+
+    // parse HTML into a DOM structure
+    var $ = cheerio.load(routes_html);
+
+    var routes_ascents = [];
+    $('.AscentListHeadRow').each(function() {
+      $(this).parent().nextUntil('tr:has(td:only-child)')
+          .each(function() {
+        var els = $(this).children();
+        var obj =  ({
+          date: $(els.get(0)).find('nobr').text(),
+          ascent: $(els.get(2)).find('a').text(),
+          crag: $(els.get(4)).find('span').text(),
+          comment: $(els.get(6)).contents().filter(function() {
+            return this.nodeType == 3
+          }).text()
+        });
+        routes_ascents.push(obj);
+      });
+    });
+
+    console.log('routes ascent list');
+    console.log(routes_ascents);
     process.exit(0);
   }
 
