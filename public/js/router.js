@@ -14,6 +14,7 @@ define([
   'views/header',
   'views/tabs',
   'views/footer',
+  'views/lists/flashes',
   'views/signin',
   'views/signup',
   'views/forgot',
@@ -38,7 +39,7 @@ define([
   'text!../templates/privacy.html',
   'views/session.new'
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
-    Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Tick,
+    Flashes, Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Tick,
     Crag, Admin, Ascent, Settings, Reset, Films, Static, Crags, Dashboard, Splash,
     Ticks, aboutTemp, privacyTemp, NewSession) {
 
@@ -156,6 +157,12 @@ define([
         }
         if (!this.footer) {
           this.footer = new Footer(this.app).render();
+        }
+        if(!this.flashes) {
+          this.flashes = new Flashes(this.app, {
+            el: $('.popup-messages > ul'),
+            type: 'popup'
+          });
         }
 
         // Callback to route.

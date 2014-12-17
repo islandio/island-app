@@ -43,17 +43,10 @@ define([
       this.subscriptions = [];
 
       // Socket subscriptions
-      this.app.rpc.socket.on('tick.removed', _.bind(function (data) {
-        if (!this.parentView && data.id === this.model.id) {
-          this.app.router.tick(this.model.get('key'));
-        }
-      }, this));
-      this.app.rpc.socket.on('media.new', _.bind(function (data) {
-
-      }, this));
-      this.app.rpc.socket.on('media.removed', _.bind(function (data) {
-
-      }, this));
+      _.bindAll(this, 'onRemoved');
+      this.app.rpc.socket.on('tick.removed', this.onRemoved);
+      // this.app.rpc.socket.on('media.new', _.bind(function (data) {}, this));
+      // this.app.rpc.socket.on('media.removed', _.bind(function (data) {}, this));
 
       this.on('rendered', this.setup, this);
       return this;
@@ -317,12 +310,20 @@ define([
       this.when();
 
       // Handle sizing.
-      if (!this.parentView) {
+      if (!this.parentView && this.$('.leftside').height()
+          < this.$('.rightside').height()) {
         this.$('.leftside').height(this.$el.height() - 60);
       }
     },
 
+    onRemoved: function (data) {
+      if (!this.parentView && data.id === this.model.id) {
+        this.app.router.tick(this.model.get('key'));
+      }
+    },
+
     destroy: function () {
+      this.app.rpc.socket.removeListener('tick.removed', this.onRemoved);
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });

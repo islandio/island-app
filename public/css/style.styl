@@ -1875,27 +1875,51 @@ span.count
   width 1084px
   white-space nowrap
 
-.block-remove
+.popup-messages
+  position fixed
+  z-index 1001
+  left 40px
+  bottom 40px
+  width auto
+  white-space nowrap
+  min-width 300px
+
+.block-messages .flash-remove,
+.popup-messages .flash-remove
   float right
   cursor pointer
   padding 0 5px
   line-height 30px
-  color #666
+  color #4d4d4d
 
   -moz-user-select none
   -webkit-user-select none
   user-select none
 
-.block-remove:hover
+.popup-messages .flash-remove
+  line-height 40px
+  font-size 10px
+  padding 0 15px
+  color #d0d0d0
+
+.block-messages .flash-remove:hover
   background rgba(0,0,0,0.1)
 
-.block-remove:active
+.popup-messages .flash-remove:hover
+  color #4d4d4d
+
+.block-messages .flash-remove:active
   background rgba(0,0,0,0.15)
 
-.block-messages li
+.popup-messages .flash-remove:active
+  background rgba(0,0,0,0.05)
+
+.block-messages li,
+.popup-messages li
   position relative
   list-style-type none
 
+.block-messages li
   -webkit-animation-name fadeIn
   -moz-animation-name fadeIn
   -o-animation-name fadeIn
@@ -1909,36 +1933,59 @@ span.count
   -o-animation-fill-mode both
   animation-fill-mode both
 
-.block-error
+.popup-messages li
+  margin-top 5px
+  border-radius 2px
+
+.block-messages .flash-error
   background #e6e6e6
   border 1px solid #d0d0d0
   border-top none
 
-.block-alert
+.block-messages .flash-alert
   background lightgreen
   border 1px solid rgba(177, 220, 54, 0.2)
   border-top none
 
-.block-error-txt,
-.block-alert-txt
+.block-messages .flash-error-txt,
+.block-messages .flash-alert-txt
   font-size 11px
   padding 0 10px
   color #4d4d4d
   font-weight bold
   line-height 30px
 
-.block-error-txt
+.popup-messages .flash-error,
+.popup-messages .flash-alert
+  background rgba(255,255,255,0.9)
+
+.popup-messages .flash-error
+  border 1px solid red
+
+.popup-messages .flash-alert
+  border 1px solid #d0d0d0
+
+.popup-messages .flash-error-txt,
+.popup-messages .flash-alert-txt
+  font-size 11px
+  padding 0 15px
+  color #4d4d4d
+  font-weight bold
+  line-height 40px
+
+.block-messages .flash-error-txt,
+.popup-messages .flash-error-txt
   color red
 
-.block-error-txt a
-  color white
-  background rgba(208, 76, 56, 0.8)
+.flash-error-txt a,
+.flash-alert-txt a
+  color #1a1a1a
+  background none
 
-.block-error-txt a:hover
-  background rgba(208, 76, 56, 0.6)
-
-.block-error-txt a:active
-  background red
+.flash-error-txt a:hover,
+.flash-alert-txt a:hover
+  background none
+  text-decoration underline
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––checkboxes*/
 

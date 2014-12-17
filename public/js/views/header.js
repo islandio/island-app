@@ -46,7 +46,10 @@ define([
 
       // Start block messages.
       if(!this.flashes) {
-        this.flashes = new Flashes(this.app);
+        this.flashes = new Flashes(this.app, {
+          el: this.$('.block-messages > ul'),
+          type: 'block'
+        });
       }
 
       // Start search choices.

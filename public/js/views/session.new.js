@@ -438,7 +438,8 @@ define([
           // Set the error display.
           mps.publish('flash/new', [{
             err: err,
-            level: 'error'
+            level: 'error',
+            type: 'popup'
           }, true]);
           return;
         }
@@ -447,11 +448,11 @@ define([
         var verb = payload.actions[0].ticks[0].sent ? 'an ascent': 'some work';
         mps.publish('flash/new', [{
           message: 'You ' + (oldTick ? 'updated': 'logged') + ' ' + verb + '.',
-          level: 'alert'
+          level: 'alert',
+          type: 'popup'
         }, true]);
 
         this.destroy();
-        $(window).scrollTop(0);
       }, this));
 
       return false;
@@ -538,6 +539,7 @@ define([
           mps.publish('flash/new', [{
             message: assembly.error + ': ' + assembly.message,
             level: 'error',
+            type: 'popup',
             sticky: true
           }, false]);
           set.remove();
@@ -548,7 +550,8 @@ define([
           if (_.isEmpty(assembly.results)) {
             mps.publish('flash/new', [{
               message: 'Whoa, there. You tried to attach an invalid file type.',
-              level: 'alert'
+              level: 'alert',
+              type: 'popup'
             }, true]);
             set.remove();
           } else {
@@ -678,7 +681,8 @@ define([
         if (err) {
           mps.publish('flash/new', [{
             err: err,
-            level: 'error'
+            level: 'error',
+            type: 'popup'
           }, true]);
           return;
         }
@@ -686,7 +690,8 @@ define([
         var verb = oldTick.sent ? 'an ascent': 'some work';
         mps.publish('flash/new', [{
           message: 'You deleted ' + verb + '.',
-          level: 'alert'
+          level: 'alert',
+          type: 'popup'
         }, true]);
 
         this.destroy();

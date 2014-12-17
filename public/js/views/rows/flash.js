@@ -15,7 +15,7 @@ define([
 
     attributes: function () {
       return this.model ?
-          _.defaults({class: 'block-' + this.model.get('level')},
+          _.defaults({class: 'flash-' + this.model.get('level')},
           Row.prototype.attributes.call(this)): {};
     },
 
@@ -26,13 +26,15 @@ define([
     },
 
     events: {
-      'click .block-remove': 'delete',
+      'click .flash-remove': 'delete'
     },
 
     render: function (single) {
       Row.prototype.render.call(this, single);
       if (!this.model.get('sticky')) {
-        _.delay(_.bind(this.delete, this), 8000);
+        var wait = this.model.collection.options.type === 'block' ?
+          8000: 3000;
+        _.delay(_.bind(this.delete, this), wait);
       }
     },
 
@@ -42,7 +44,9 @@ define([
     },
 
     _remove: function (cb) {
-      this.$el.slideUp('fast', _.bind(function () {
+      var fn = this.model.collection.options.type === 'block' ?
+          'slideUp': 'fadeOut';
+      this.$el[fn]('fast', _.bind(function () {
         this.destroy();
         cb();
       }, this));

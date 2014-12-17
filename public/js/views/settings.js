@@ -170,16 +170,18 @@ define([
       if (payload.primaryEmail && !util.isEmail(payload.primaryEmail)) {
         mps.publish('flash/new', [{
           err: {message: 'Please use a valid email address'},
-          level: 'error'}
-        ]);
+          level: 'error',
+          type: 'popup'
+        }]);
         field.addClass('input-error').val('').focus();
         return false;
       }
       if (payload.username && payload.username.length < 4) {
         mps.publish('flash/new', [{
           err: {message: 'Username must be > 3 characters'},
-          level: 'error'}
-        ]);
+          level: 'error',
+          type: 'popup'
+        }]);
         field.addClass('input-error').val('').focus();
         return false;
       }
@@ -190,7 +192,7 @@ define([
         if (err) {
 
           // Show error.
-          mps.publish('flash/new', [{err: err, level: 'error'}]);
+          mps.publish('flash/new', [{err: err, level: 'error', type: 'popup'}]);
 
           // Show error highlight.
           field.addClass('input-error').val('').focus();
@@ -207,7 +209,8 @@ define([
         // Show saved status.
         mps.publish('flash/new', [{
           message: 'Saved.',
-          level: 'alert'
+          level: 'alert',
+          type: 'popup'
         }, true]);
 
       }, this));
@@ -261,7 +264,7 @@ define([
           if (err) {
 
             // Show error.
-            mps.publish('flash/new', [{err: err, level: 'error'}]);
+            mps.publish('flash/new', [{err: err, level: 'error', type: 'popup'}]);
           }
           self.uploading = false;
         });
@@ -322,7 +325,7 @@ define([
 
           // Show error.
           mps.publish('flash/new', [{err: assembly.error + ': '
-              + assembly.message, level: 'error'}]);
+              + assembly.message, level: 'error', type: 'popup'}]);
         }, this),
         onSuccess: _.bind(function (assembly) {
           this.uploading = false;
@@ -333,13 +336,13 @@ define([
               this.bannerSpin.stop();
               this.dropZone.removeClass('uploading');
               mps.publish('flash/new', [{err: 'Upload failed. Please try again.',
-                  level: 'error'}]);
+                  level: 'error', type: 'popup'}]);
               return;
             } if (_.isEmpty(assembly.results)) {
               this.bannerSpin.stop();
               this.dropZone.removeClass('uploading');
               mps.publish('flash/new', [{err: 'You must choose a file.',
-                  level: 'error'}]);
+                  level: 'error', type: 'popup'}]);
               return;
             }
           }
@@ -415,7 +418,7 @@ define([
         rest.delete('/api/members/' + this.app.profile.member.username,
             {}, _.bind(function (err, data) {
           if (err) {
-            mps.publish('flash/new', [{err: err, level: 'error'}]);
+            mps.publish('flash/new', [{err: err, level: 'error', type: 'popup'}]);
             return;
           }
 

@@ -76,7 +76,6 @@ define([
         var data = _.find(action.ticks, function (t) {
           return t.id === el.attr('id');
         });
-        data.weather = this.model.get('weather');
         this.ticks.push(new Tick({
           parentView: this,
           el: el,
@@ -125,7 +124,8 @@ define([
       }).render();
 
       // Handle sizing.
-      if (!this.parentView) {
+      if (!this.parentView && this.$('.leftside').height()
+          < this.$('.rightside').height()) {
         this.$('.leftside').height(this.$el.height() - 60);
       }
     },
@@ -143,13 +143,16 @@ define([
         // Add el to dom.
         var activity = this.$('.session-activity[data-type="' + data.type + '"]');
         if (activity.length === 0) {
-          activity = $(this.renderActivity({type: data.type}))
-              .insertAfter(this.$('.session-activity').last());  
+          activity = $(this.renderActivity({type: data.type}));
+          if (this.parentView) {
+            activity.appendTo(this.$el);
+          } else {
+            activity.appendTo(this.$('.leftside'));
+          }
         }
         el.appendTo($('.session-ticks', activity));
 
         // create new tick view
-        data.weather = this.model.get('weather');
         this.ticks.push(new Tick({
           parentView: this,
           el: el,
@@ -173,7 +176,7 @@ define([
         }
       }
 
-      if (data.session_id === this.model.id) {
+      if (data.session.id === this.model.id) {
         this._remove(data, true);
         _.delay(_.bind(_collect, this), 100);
       }
@@ -196,7 +199,7 @@ define([
 
       function _done() {
         t.destroy();
-        if (list.children().length === 0) {
+        if (!noslide && list.children().length === 0) {
           a.remove();
         }
       }

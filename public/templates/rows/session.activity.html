@@ -7,16 +7,16 @@
       <% } %>
     </li>
   </ul>
-  <% a.ticks = a.ticks || []; if (a.ticks.length !== 0) { %>
-    <ul class="session-ticks">
-      <% _.each(a.ticks, _.bind(function (tick) {
-        var klass = 'tick';
-        if (!this.parentView) {
-          klass += ' single';
-        }
-      %>
-        <li class="<%= klass %>" id="<%= tick.id %>" data-aid="<%= a.id %>"></li>
-      <% }, this)); %>
-    </ul>
-  <% } %>
+  <ul class="session-ticks">
+    <% a.ticks = a.ticks || []; if (a.ticks.length !== 0) { %>
+        <% _.each(a.ticks, _.bind(function (tick) {
+          var klass = 'tick';
+          if (!this.parentView) {
+            klass += ' single';
+          }
+        %>
+          <li class="<%= klass %>" id="<%= tick.id %>" data-aid="<%= a.id %>"></li>
+        <% }, this)); %>
+    <% } %>
+  </ul>
 </div>
