@@ -54,6 +54,7 @@ define([
         if (this.model.get('action_type') === 'tick') {
           params.mapless = true;
           params.inlineWeather = true;
+          params.inlineTime = true;
         }
         this.action = new Action(params, this.app).render(true);
       }

@@ -9,30 +9,52 @@ define([
 ], function (_, Backbone, util) {
   return Backbone.Model.extend({
 
-    initialize: function () {
-      // this.set('summary', _.str.strLeft(this.get('summary'), '.'));
+    initialize: function () {},
+
+    daily: function () {
+      var d = this.get('daily');
+      if (!d || !d.data || d.data.length === 0) {
+        return;
+      }
+      return d.data[0];
     },
 
-    tempRange: function () {
-      var w = this.attributes;
-      var str = '';
-      if (w.temperature) { // legacy
-        str = this.tempFtoC(w.temperature);
-      } else if (w.temperatureMin && w.temperatureMax) {
-        str = this.tempFtoC(w.temperatureMin)
-            + ' to ' + this.tempFtoC(w.temperatureMax);
-      } else {
-        str = '?';
+    hourly: function (hr) {
+      if (!this.get('hourly')) {
+        return;
       }
-      return str + '&degC';
+      if (hr * 10 % 10 === 0) {
+        return this.get('hourly').data[hr];
+      } else {
+        var l = this.get('hourly').data[hr - 0.5];
+        var h = this.get('hourly').data[hr + 0.5];
+        var a = {};
+        _.each(l, function (v, k) {
+          if (_.isNumber(v)) {
+            a[k] = (v + h[k]) / 2;
+          } else {
+            a[k] = v;
+          }
+        });
+        return a;
+      }
+    },
+
+    dailyTempRange: function () {
+      var d = this.daily();
+      if (!d) {
+        return '?';
+      }
+      return this.tempFtoC(d.temperatureMin) + ' to '
+          + this.tempFtoC(d.temperatureMax);
     },
 
     tempFtoC: function (n) {
       return Math.floor((n - 32) * 5/9);
     },
 
-    getWeatherIconName: function () {
-      switch (this.get('icon')) {
+    getWeatherIconName: function (str) {
+      switch (str) {
         default:
         case 'partly-cloudy-day': return 'and partly cloudy'
         case 'clear-day': return 'and clear'

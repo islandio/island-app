@@ -5,7 +5,10 @@
   var gravatar = 'https://www.gravatar.com/avatar/'
       + t.author.gravatar + '?s=36&d='
       + encodeURIComponent(this.app.images.avatar);
-  var weather = this.model.get('weather') ? this.model.get('weather').attributes: false;
+  var weather = this.model.get('weather');
+  var hourly = t.time !== undefined ? weather.hourly(t.time / 60): null;
+  var w = hourly || weather.daily();
+  var inlineWeather = w && this.options.inlineWeather;
   var mediaTypes = _.uniq(_.pluck(t.medias, 'type'));
 %>
 
@@ -44,6 +47,11 @@
       <%= this.model.formatDate() %>
     </span>
   <% } %>
+  <% if (this.options.inlineTime) { %>
+    <span class="session-tick-date">
+      <%= this.model.formatTime() %>
+    </span>
+  <% } %>
   <span class="session-tick-grade">
     <%= this.model.formatTickGrade(t.grade, t.feel) || t.ascent.grades.join(' / ') %>
   </span>
@@ -62,19 +70,19 @@
       <%= t.ascent.name %><%= t.ascent.sector ? ' <span style="font-size:90%;">('
           + t.ascent.sector + ')</span>': '' %></a>
   </span>
-  <% if (t.duration || t.performance || (weather && weather.temperatureMin && this.options.inlineWeather)) { %>
+  <% if (t.duration || t.performance || w) { %>
     <span class="session-tick-detail">
-      <% if (weather && weather.temperatureMin && this.options.inlineWeather) { %>
-        <%= this.model.get('weather').tempRange() %> <%= this.model.get('weather').getWeatherIconName() %>
+      <% if (inlineWeather) { %>
+        <%= w.temperature ? weather.tempFtoC(w.temperature): weather.dailyTempRange() %>&degC <%= weather.getWeatherIconName(w.icon) %>
       <% } %>
       <% if (t.duration) { %>
-        <% if (weather && weather.temperatureMin && this.options.inlineWeather) { %>
+        <% if (inlineWeather) { %>
           <%= ' &middot; ' %>
         <% } %>
         <%= this.model.formatActivityDuration(t.duration) %>
       <% } %>
       <% if (t.performance) { %>
-        <% if (t.duration || (weather && weather.temperatureMin && this.options.inlineWeather)) { %>
+        <% if (t.duration || inlineWeather) { %>
           <%= ' &middot; ' %>
         <% } %>
         <%= this.model.formatActivityPerformance(t.performance) %>
@@ -169,39 +177,55 @@
   </div>
   <div class="rightside">
     <div class="mini-map" id="tick_map_<%= this.model.id %>"></div>
-    <% if (weather && weather.temperatureMin) { %>
+    <% if (w) { %>
       <table class="session-weather">
         <tr>
-          <th colspan="2"><i class="icon-temperatire"></i> <%= weather.summary %></th>
+          <% if (w.temperature) {
+            var d = new Date(this.model.get('ts') * 1000);
+          %>
+            <th colspan="2"><i class="icon-temperatire"></i> <%= d.format('h:MM TT') %>, <%= d.format('dddd, mmm d, yyyy') %></th>
+          <% } else { %>
+            <th colspan="2"><i class="icon-temperatire"></i> <%= new Date(this.model.get('date')).format('dddd, mmm d, yyyy') %></th>
+          <% } %>
         </tr>
         <tr>
-          <td>low temp.</td>
-          <td><%= this.model.get('weather').tempFtoC(weather.temperatureMin) %>&degC @ <%= new Date(weather.temperatureMinTime * 1000).format('h:MM TT') %></td>
+          <td colspan="2"><%= w.summary %></td>
         </tr>
-        <tr>
-          <td>high temp.</td>
-          <td><%= this.model.get('weather').tempFtoC(weather.temperatureMax) %>&degC @ <%= new Date(weather.temperatureMaxTime * 1000).format('h:MM TT') %></td>
-        </tr>
+        <% if (w.temperature) { %>
+          <tr>
+            <td>temperature</td>
+            <td><%= weather.tempFtoC(w.temperature) %>&degC</td>
+          </tr>
+        <% } else { %>
+          <tr>
+            <td>low temp.</td>
+            <td><%= weather.tempFtoC(w.temperatureMin) %>&degC @ <%= new Date(w.temperatureMinTime * 1000).format('h:MM TT') %></td>
+          </tr>
+          <tr>
+            <td>high temp.</td>
+            <td><%= weather.tempFtoC(w.temperatureMax) %>&degC @ <%= new Date(w.temperatureMaxTime * 1000).format('h:MM TT') %></td>
+          </tr>
+        <% } %>
         <tr>
           <td>dew point</td>
-          <td><%= this.model.get('weather').tempFtoC(weather.dewPoint) %>&degC</td>
+          <td><%= weather.tempFtoC(w.dewPoint) %>&degC</td>
         </tr>
         <tr>
           <td>humidity</td>
-          <td><%= Math.round(weather.humidity * 100) %>%</td>
+          <td><%= Math.round(w.humidity * 100) %>%</td>
         </tr>
         <tr>
           <td>cloud cover</td>
-          <td><%= Math.round(weather.cloudCover * 100) %>%</td>
+          <td><%= Math.round(w.cloudCover * 100) %>%</td>
         </tr>
         <tr>
           <td>wind speed</td>
-          <td><%= (weather.windSpeed * 3.6).toFixed(1) %> km/hr</td>
+          <td><%= (w.windSpeed * 3.6).toFixed(1) %> km/hr</td>
         </tr>
-        <% if (weather.precipIntensity > 0) { %>
+        <% if (w.precipIntensity > 0) { %>
           <tr>
             <td>precip. intensity</td>
-            <td><%= weather.precipIntensity %> (<%= weather.precipType %>)</td>
+            <td><%= w.precipIntensity %> (<%= w.precipType %>)</td>
           </tr>
         <% } %>
       </table>

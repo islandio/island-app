@@ -76,8 +76,15 @@ define([
         var data = _.find(action.ticks, function (t) {
           return t.id === el.attr('id');
         });
-        this.ticks.push(new Tick({parentView: this, el: el, model: data,
-            mapless: true}, this.app).render());
+        data.weather = this.model.get('weather');
+        this.ticks.push(new Tick({
+          parentView: this,
+          el: el,
+          model: data,
+          mapless: true,
+          inlineTime: true,
+          inlineWeather: true
+        }, this.app).render());
       }, this));
 
       // Render title if single
@@ -88,13 +95,14 @@ define([
         this.title = _.template(title).call(this);
       }
 
+      // Handle weather icon.
       _.defer(_.bind(function () {
-        var weather = this.model.get('weather') ?
-            this.model.get('weather').attributes: false;
-        if (weather && weather.icon) {
+        var weather = this.model.get('weather');
+        var daily = weather.daily();
+        if (daily && daily.icon) {
           this.skycons = new Skycons({'color': '#666'});
-          var iconName = weather.icon.replace(/-/g, '_').toUpperCase();
-          this.skycons.add('crag_weather', weather.icon);
+          var iconName = daily.icon.replace(/-/g, '_').toUpperCase();
+          this.skycons.add('crag_weather', daily.icon);
           this.skycons.play();
         }
       }, this));
@@ -141,8 +149,15 @@ define([
         el.appendTo($('.session-ticks', activity));
 
         // create new tick view
-        this.ticks.push(new Tick({parentView: this, el: el, model: data,
-            mapless: true}, this.app).render());
+        data.weather = this.model.get('weather');
+        this.ticks.push(new Tick({
+          parentView: this,
+          el: el,
+          model: data,
+          mapless: true,
+          inlineTime: true,
+          inlineWeather: true
+        }, this.app).render());
 
         // Update model data.
         var action = _.find(this.model.get('actions'), function (a) {

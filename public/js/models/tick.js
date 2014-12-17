@@ -12,8 +12,18 @@ define([
 
     initialize: function () {
       this.set('videoEmbeds', util.getVideoLinks(this.get('note')));
-      if (this.get('session') && this.get('session').weather) {
-        this.set('weather', new Weather(this.get('session').weather));
+
+      var time = this.get('time');
+      if (time) {
+        var d = new Date(this.get('date'));
+        d = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        var secs = (d.valueOf() / 1000) + time * 60;
+        this.set('ts', secs);
+      }
+
+      if (!this.get('weather')) {
+        var w = this.get('session') ? this.get('session').weather || {}: {};
+        this.set('weather', new Weather(w));
       }
     },
 
@@ -26,11 +36,20 @@ define([
     },
 
     formatDate: function () {
-      var s = this.get('session');
-      if (!s) {
+      if (this.get('ts')) {
+        var d = new Date(this.get('ts') * 1000);
+        return d.format('h:MM TT') + '<br />' + d.format('mmm d, yyyy');
+      } else {
+        return new Date(this.get('date')).format('mediumDate');
+      }
+    },
+
+    formatTime: function () {
+      if (this.get('ts')) {
+        return new Date(this.get('ts') * 1000).format('h:MM TT');
+      } else {
         return '';
       }
-      return new Date(s.date).format('mediumDate');
     },
 
     formatGrade: function () {

@@ -11,7 +11,7 @@ define([
   return Backbone.Model.extend({
 
     initialize: function () {
-      this.set('weather', new Weather(this.get('weather')));
+      this.set('weather', new Weather(this.get('weather') || {}));
     },
 
     grades: ['3', '4', '5a', '5b', '5c', '6a', '6a+', '6b', '6b+', '6c',
@@ -27,7 +27,7 @@ define([
     },
 
     formatName: function () {
-      return new Date(this.get('date')).format('mediumDate');
+      return new Date(this.get('date')).format('ddd, mmm d, yyyy');
     }
 
   });

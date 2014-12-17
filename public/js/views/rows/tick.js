@@ -94,13 +94,16 @@ define([
             + ' - ' + this.model.get('ascent').name);
         this.title = _.template(title).call(this);
 
+        // Handle weather icon.
         _.defer(_.bind(function () {
-          var weather = this.model.get('weather') ?
-            this.model.get('weather').attributes: false;
-        if (weather && weather.icon) {
+          var weather = this.model.get('weather');
+          var hourly = this.model.get('time') !== undefined ?
+              weather.hourly(this.model.get('time') / 60): null;
+          var w = hourly || weather.daily();
+          if (w && w.icon) {
             this.skycons = new Skycons({'color': '#666'});
-            var iconName = weather.icon.replace(/-/g, '_').toUpperCase();
-            this.skycons.add('crag_weather', weather.icon);
+            var iconName = w.icon.replace(/-/g, '_').toUpperCase();
+            this.skycons.add('crag_weather', w.icon);
             this.skycons.play();
           }
         }, this));

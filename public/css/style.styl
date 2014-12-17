@@ -353,10 +353,14 @@ a.title img
 a.title i:before
   margin 0
 
-a.title-large
+a.title-large,
+a.title-medium
   background none
   font-size 18px
   font-family standard_thin
+
+a.title-medium
+  font-size 14px
 
 small
   font-size 11px
@@ -4246,6 +4250,7 @@ ul.session-activity-title li
   display inline
   padding 0
   font-size 14px
+  color #666
 
 ul.session-activity-title li span
   color #666
@@ -4317,12 +4322,12 @@ ul.session-ticks
 
 .session-tick-date
   font-size 11px
-  // font-family standard_thin
   color #b3b3b3
   display block
   position absolute
-  right 617px
+  left -150px
   top 26px
+  width 93px
   text-align right
   white-space nowrap
   
@@ -4330,6 +4335,8 @@ ul.session-ticks
   -moz-transition all 0.15s ease-in-out
   transition all 0.15s ease-in-out
 
+.event:hover .session-tick-date,
+.single:hover .session-tick-date,
 .tick-list .tick-inner:hover .session-tick-date
   color #4d4d4d
 
@@ -4497,6 +4504,7 @@ table.session-weather th
   text-align left
   padding-left 9px
   background #f9f9f9
+  font-size 13px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––ticks*/
 

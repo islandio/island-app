@@ -467,7 +467,11 @@ define([
       this.renderTabs();
       this.render('/service/tick/' + key, _.bind(function (err) {
         if (err) return;
-        this.page = new Tick({wrap: '.main'}, this.app).render(true);
+        this.page = new Tick({
+          wrap: '.main',
+          inlineTime: true,
+          inlineWeather: true
+        }, this.app).render(true);
         this.renderTabs({html: this.page.title});
         this.stop();
       }, this));
