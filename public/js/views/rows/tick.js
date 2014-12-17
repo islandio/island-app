@@ -94,10 +94,9 @@ define([
               weather.hourly(this.model.get('time') / 60): null;
           var w = hourly || weather.daily();
           if (w && w.icon) {
-            this.skycons = new Skycons({'color': '#666'});
+            this.skycons = new Skycons({'color': '#666', static: true});
             var iconName = w.icon.replace(/-/g, '_').toUpperCase();
             this.skycons.add('crag_weather', w.icon);
-            this.skycons.play();
           }
         }, this));
       }

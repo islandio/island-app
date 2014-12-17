@@ -37,10 +37,9 @@ define([
       _.defer(_.bind(function () {
         var weather = this.app.profile.weather;
         if (weather) {
-          this.skycons = new Skycons({'color': '#666'});
+          this.skycons = new Skycons({'color': '#666', static: true});
           var iconName = weather.icon.replace(/-/g, '_').toUpperCase();
           this.skycons.add('crag_weather', weather.icon);
-          this.skycons.play();
         }
       }, this));
 
