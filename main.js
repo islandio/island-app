@@ -74,6 +74,7 @@ if (cluster.isMaster) {
   var url = require('url');
   var Step = require('step');
   var iutil = require('island-util');
+  var loggly = require('loggly');
   var _ = require('underscore');
   _.mixin(require('underscore.string'));
   var db = require('mongish');
@@ -135,6 +136,9 @@ if (cluster.isMaster) {
       // Development only
       if (process.env.NODE_ENV !== 'production') {
 
+        // Use console for logging in dev
+        app.set('log', console.log);
+
         // App params
         app.set('ROOT_URI', '');
         app.set('HOME_URI', 'http://localhost:' + app.get('PORT'));
@@ -143,6 +147,14 @@ if (cluster.isMaster) {
 
       // Production only
       else {
+
+        // Use loggly for logging in pro
+        app.set('log', loggly.createClient({
+          token: '3c1c11ae-fc39-4e80-b81c-310aaa7a955c',
+          subdomain: 'theisland',
+          tags: ['NodeJS'],
+          json: true
+        }));
 
         // App params
         app.set('ROOT_URI', [app.get('package').builds.cloudfront,

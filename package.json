@@ -58,7 +58,8 @@
     "ngrok": "^0.1.97",
     "passport-instagram": "~0.1.1",
     "stylus": "~0.32.0",
-    "poet": "^1.0.2"
+    "poet": "^1.0.2",
+    "loggly": "^1.0.8"
   },
   "devDependencies": {
     "grunt": "0.4.x",

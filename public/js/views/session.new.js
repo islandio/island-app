@@ -25,6 +25,7 @@ define([
       this.options = options || {};
       this.subscriptions = [];
       this.on('rendered', this.setup, this);
+      this.attachments = [];
     },
 
     render: function () {
