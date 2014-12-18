@@ -133,56 +133,80 @@ boots.start(function (client) {
     },
   function (err, boulders, routes) {
 
+    // image hashes map to Island's 'tries'
+    var triesMap = {
+      // redpoints
+      '979607b133a6622a1fc3443e564d9577': 3,
+      // flashes
+      '56f871c6548ae32aaa78672c1996df7f': 2,
+      // onsights
+      'e9aec9aee0951ec9abfe204498bf95f9': 1,
+      'e37046f07ac72e84f91d7f29f8455b58': 1,
+    }
+
+    var userRecommend = function(str) {
+      return str.indexOf('images/UserRecommended_1') !== -1;
+    };
+
     // filter for ascents
     var ascents_rx = new RegExp(/<!-- Ascents -->([\s\S]+?)<!-- List Options -->/);
-    var boulders_html = ascents_rx.exec(boulders.body)[1];
-    var routes_html = ascents_rx.exec(routes.body)[1];
+    var bouldersHtml = ascents_rx.exec(boulders.body)[1];
+    var routesHtml = ascents_rx.exec(routes.body)[1];
 
     // parse HTML into a DOM structure
-    var $ = cheerio.load(boulders_html);
+    var $ = cheerio.load(bouldersHtml);
 
-    var boulders_ascents = [];
+    var createTickObj = function(els) {
+      // Parse rows for Island tick props
+      var obj =  ({
+        type: 'b',
+        date: new Date('20' + $(els.get(0)).find('nobr').text()),
+        sent: true,
+        tries: triesMap[$(els.get(1)).find('img').attr('src')
+            .split('/')[1].split('.')[0]],
+        ascent: $(els.get(2)).find('a').text(),
+        recommended: userRecommend($(els.get(3)).find('img').attr('src')),
+        crag: $(els.get(4)).find('span').text(),
+        first: $(els.get(5)).text().indexOf('FA') ? true : false,
+        feel: $(els.get(5)).text().indexOf('Soft') ? -1 :
+            $(els.get(5)).text().indexOf('Hard') ? 1 : 0,
+        note: $(els.get(6)).contents().filter(function() {
+          return this.nodeType == 3
+        }).text(),
+        rating: ($(els.get(7)).text().match(/\*/g) || []).length
+      });
+      return obj;
+    }
+
+    var bouldersTicks = [];
     $('.AscentListHeadRow').each(function() {
       $(this).parent().nextUntil('tr:has(td:only-child)')
           .each(function() {
         var els = $(this).children();
-        var obj =  ({
-          date: $(els.get(0)).find('nobr').text(),
-          ascent: $(els.get(2)).find('a').text(),
-          crag: $(els.get(4)).find('span').text(),
-          comment: $(els.get(6)).contents().filter(function() {
-            return this.nodeType == 3
-          }).text()
-        });
-        boulders_ascents.push(obj);
+        var tick = createTickObj(els);
+        tick.type = 'b';
+        bouldersTicks.push(tick);
       });
     });
 
-    console.log('boulder ascent list');
-    console.log(boulders_ascents);
+    console.log('boulder tick list');
+    console.log(bouldersTicks);
 
-    // parse HTML into a DOM structure
-    var $ = cheerio.load(routes_html);
-
-    var routes_ascents = [];
+    var $ = cheerio.load(routesHtml);
+    var routeTicks = [];
     $('.AscentListHeadRow').each(function() {
       $(this).parent().nextUntil('tr:has(td:only-child)')
           .each(function() {
         var els = $(this).children();
-        var obj =  ({
-          date: $(els.get(0)).find('nobr').text(),
-          ascent: $(els.get(2)).find('a').text(),
-          crag: $(els.get(4)).find('span').text(),
-          comment: $(els.get(6)).contents().filter(function() {
-            return this.nodeType == 3
-          }).text()
-        });
-        routes_ascents.push(obj);
+        var tick = createTickObj(els);
+        tick.type = 'r';
+        routeTicks.push(tick);
       });
     });
 
-    console.log('routes ascent list');
-    console.log(routes_ascents);
+    console.log('Route tick list');
+    console.log(routeTicks);
+
     process.exit(0);
   }
 
