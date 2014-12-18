@@ -26,6 +26,7 @@ define([
   'views/rows/tick',
   'views/crag',
   'views/admin',
+  'views/import',
   'views/ascent',
   'views/settings',
   'views/reset',
@@ -40,8 +41,8 @@ define([
   'views/session.new'
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
     Flashes, Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Tick,
-    Crag, Admin, Ascent, Settings, Reset, Films, Static, Crags, Dashboard, Splash,
-    Ticks, aboutTemp, privacyTemp, NewSession) {
+    Crag, Admin, Import, Ascent, Settings, Reset, Films, Static, Crags, 
+    Dashboard, Splash, Ticks, aboutTemp, privacyTemp, NewSession) {
 
   /*
    * Determine if parent is iframe.
@@ -97,8 +98,10 @@ define([
       this.route('blog/page/:c', 'blog', this.blog);
       this.route('blog', 'blog', this.blog);
 
+
       this.route('reset', 'reset', this.reset);
       this.route('admin', 'admin', this.admin);
+      this.route('import', 'import', this.import);
       this.route('settings', 'settings', this.settings);
       this.route('privacy', 'privacy', this.privacy);
       this.route('about', 'about', this.about);
@@ -415,6 +418,18 @@ define([
         if (err) return;
         this.page = new Admin(this.app).render();
         this.renderTabs({tabs: [{title: 'Beta', active: true}]});
+        this.stop();
+      }, this));
+    },
+
+    import: function () {
+      this.start();
+      this.renderTabs();
+      this.clearContainer();
+      this.render('/service/static', _.bind(function (err) {
+        if (err) return;
+        this.page = new Import(this.app).render();
+        this.renderTabs({html: this.page.title});
         this.stop();
       }, this));
     },
