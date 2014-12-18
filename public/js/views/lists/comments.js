@@ -177,7 +177,7 @@ define([
         this.$('#-1').attr('id', data.id);
 
         if (this.options.hideInput) {
-          this.inputWrap.hide();
+          // this.inputWrap.hide();
         }
 
       }, this));
