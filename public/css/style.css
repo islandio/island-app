@@ -3506,6 +3506,14 @@ span.image-mosaic-play-text {
 .post.blog .post-body p {
   margin-bottom: 15px;
 }
+.post.blog .post-body img {
+  max-width: 670px;
+  border: 1px solid #e6e6e6;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  margin: 15px 0 5px 0;
+}
 a.blog-rss {
   position: absolute;
   top: 10px;
@@ -3517,6 +3525,18 @@ a.blog-rss {
 a.blog-rss:hover {
   background: none;
   color: #4bb8d7;
+}
+.blog pre {
+  margin-bottom: 15px;
+  border: 1px solid #f2f2f2;
+  background: #fcfcfc;
+  padding: 5px 15px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+}
+.blog pre code {
+  font-size: 12px;
 }
 h1.blog-title {
   margin-bottom: 10px;
@@ -4892,7 +4912,8 @@ a.popup-link i {
 }
 p.habla_conversation_p_item,
 #habla_offline_message_span,
-#habla_offline_message_sent_div {
+#habla_offline_message_sent_div,
+#hbl_body_message {
   color: #404040 !important;
   font-size: 12px !important;
   line-height: 16px !important;
