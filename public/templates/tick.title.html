@@ -5,16 +5,15 @@
       + encodeURIComponent(this.app.images.avatar);
   var sub = this.app.profile.sub;
   var weather = this.model.get('weather');
-  var w;
-  //var hourly = this.model.get('time') !== undefined ? weather.hourly(this.model.get('time') / 60): null;
-  //var w = hourly || weather.daily();
-  //var weatherURL;
-  //if (w && this.model.get('crag').location) {
-    //weatherURL = '//www.forecast.io/#/f/'
-        //+ this.model.get('crag').location.latitude + ','
-        //+ this.model.get('crag').location.longitude + '/'
-        //+ (this.model.get('ts') || w.time);
-  //}
+  var hourly = this.model.get('time') !== undefined ? weather.hourly(this.model.get('time') / 60): null;
+  var w = hourly || weather.daily();
+  var weatherURL;
+  if (w && this.model.get('crag').location) {
+    weatherURL = '//www.forecast.io/#/f/'
+        + this.model.get('crag').location.latitude + ','
+        + this.model.get('crag').location.longitude + '/'
+        + (this.model.get('ts') || w.time);
+  }
 %>
 
 <% if (this.app.profile.member) { %>
