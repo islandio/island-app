@@ -90,9 +90,7 @@ define([
         // Handle weather icon.
         _.defer(_.bind(function () {
           var weather = this.model.get('weather');
-          var hourly = this.model.get('time') !== undefined ?
-              weather.hourly(this.model.get('time') / 60): null;
-          var w = hourly || weather.daily();
+          var w = weather.get('hourly') || weather.get('daily');
           if (w && w.icon) {
             this.skycons = new Skycons({'color': '#666', static: true});
             var iconName = w.icon.replace(/-/g, '_').toUpperCase();

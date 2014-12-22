@@ -549,6 +549,7 @@ define([
         }, this),
         onSuccess: _.bind(function (assembly) {
           if (_.isEmpty(assembly.results)) {
+            console.log(assembly);
             mps.publish('flash/new', [{
               message: 'Whoa, there. You tried to attach an invalid file type.',
               level: 'alert',

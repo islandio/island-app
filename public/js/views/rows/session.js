@@ -97,7 +97,7 @@ define([
       // Handle weather icon.
       _.defer(_.bind(function () {
         var weather = this.model.get('weather');
-        var daily = weather.daily();
+        var daily = weather.get('daily');
         if (daily && daily.icon) {
           this.skycons = new Skycons({'color': '#666', static: true});
           var iconName = daily.icon.replace(/-/g, '_').toUpperCase();

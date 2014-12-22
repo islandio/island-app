@@ -52,7 +52,7 @@
     "moment": "^2.6.0",
     "porter-stemmer": "^0.9.1",
     "underscore.deep": "^0.3.0",
-    "mongish": "^1.0.3",
+    "mongish": "^1.0.4",
     "zmq": "^2.8.0",
     "mobile-detect": "~0.1.1",
     "ngrok": "^0.1.97",

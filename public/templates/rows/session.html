@@ -3,7 +3,7 @@
       + this.model.get('author').gravatar + '?s=48&d='
       + encodeURIComponent(this.app.images.avatar);
   var weather = this.model.get('weather');
-  var daily = weather.daily();
+  var daily = weather.get('daily');
 %>
 
 <% if (!this.parentView) { %>
