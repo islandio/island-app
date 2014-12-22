@@ -293,11 +293,12 @@ define([
       this.start();
       $('.container').removeClass('narrow').removeClass('blog')
           .addClass('landing');
-      if (!this.tabs || !this.tabs.params.tabs || !this.tabs.params.tabs[1]
-          || (_.str.strRightBack(this.tabs.params.tabs[1].href, '/')
-          !== 'ascents')) {
-        this.renderTabs();
-      }
+      this.renderTabs();
+      // if (!this.tabs || !this.tabs.params.tabs || !this.tabs.params.tabs[1]
+      //     || (_.str.strRightBack(this.tabs.params.tabs[1].href, '/')
+      //     !== 'ascents')) {
+      //   this.renderTabs();
+      // }
       var query = {actions: this.getEventActions()};
       this.render('/service/dashboard', query, _.bind(function (err) {
         if (err) return;
@@ -319,6 +320,7 @@ define([
 
     ticks: function (username) {
       this.start();
+      this.renderTabs();
       this.clearContainer();
       this.render('/service/ticks/' + username, _.bind(function (err) {
         if (err) return;
