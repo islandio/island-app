@@ -42,13 +42,10 @@ define([
       this.subscriptions = [];
 
       // Socket subscriptions
-      this.app.rpc.socket.on('session.removed', _.bind(function (data) {
-        if (!this.parentView && data.id === this.model.id) {
-          this.app.router.session(this.model.get('key'));
-        }
-      }, this));
-      this.app.rpc.socket.on('tick.new', _.bind(this.collect, this));
-      this.app.rpc.socket.on('tick.removed', _.bind(this._remove, this));
+      _.bindAll(this, 'onRemoved', 'collect', '_remove');
+      this.app.rpc.socket.on('session.removed', this.onRemoved);
+      this.app.rpc.socket.on('tick.new', this.collect);
+      this.app.rpc.socket.on('tick.removed', this._remove);
 
       this.on('rendered', this.setup, this);
       return this;
@@ -206,7 +203,16 @@ define([
       noslide ? _done(): t.$el.slideUp('fast', _done);
     },
 
+    onRemoved: function (data) {
+      if (!this.parentView && data.id === this.model.id) {
+        this.app.router.session(this.model.get('key'));
+      }
+    },
+
     destroy: function () {
+      this.app.rpc.socket.removeListener('session.removed', this.onRemoved);
+      this.app.rpc.socket.removeListener('tick.new', this.collect);
+      this.app.rpc.socket.removeListener('tick.removed', this._remove);
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });

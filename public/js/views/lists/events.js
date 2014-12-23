@@ -38,8 +38,9 @@ define([
       this.subscriptions = [];
 
       // Socket subscriptions
-      this.app.rpc.socket.on('event.new', _.bind(this.collect, this));
-      this.app.rpc.socket.on('event.removed', _.bind(this._remove, this));
+      _.bindAll(this, 'collect', '_remove');
+      this.app.rpc.socket.on('event.new', this.collect);
+      this.app.rpc.socket.on('event.removed', this._remove);
 
       // Reset the collection.
       this.latestList = this.app.profile.content.events;
@@ -221,8 +222,8 @@ define([
 
     destroy: function () {
       this.unpaginate();
-      // this.app.rpc.socket.removeAllListeners('event.new');
-      // this.app.rpc.socket.removeAllListeners('event.removed');
+      this.app.rpc.socket.removeListener('event.new', this.collect);
+      this.app.rpc.socket.removeListener('event.removed', this._remove);
       return List.prototype.destroy.call(this);
     },
 

@@ -24,8 +24,9 @@ define([
       List.prototype.initialize.call(this, app, options);
 
       // Socket subscriptions
-      this.app.rpc.socket.on('follow.new', _.bind(this.collect, this));
-      this.app.rpc.socket.on('follow.removed', _.bind(this._remove, this));
+      _.bindAll(this, 'collect', '_remove');
+      this.app.rpc.socket.on('follow.new', this.collect);
+      this.app.rpc.socket.on('follow.removed', this._remove);
 
       // Reset the collection.
       this.collection.reset(this.app.profile.content.followees.items);
@@ -44,8 +45,8 @@ define([
     events: {},
 
     destroy: function () {
-      // this.app.rpc.socket.removeAllListeners('follow.new');
-      // this.app.rpc.socket.removeAllListeners('follow.removed');
+      this.app.rpc.socket.removeListener('follow.new', this.collect);
+      this.app.rpc.socket.removeListener('follow.removed', this._remove);
       return List.prototype.destroy.call(this);
     },
 

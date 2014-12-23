@@ -34,8 +34,9 @@ define([
       if (!this.options.hangtenOnly) {
 
         // Socket subscriptions
-        this.app.rpc.socket.on('comment.new', _.bind(this.collect, this));
-        this.app.rpc.socket.on('comment.removed', _.bind(this._remove, this));
+        _.bindAll(this, 'collect', '_remove');
+        this.app.rpc.socket.on('comment.new', this.collect);
+        this.app.rpc.socket.on('comment.removed', this._remove);
       }
 
         // Reset the collection.
@@ -90,8 +91,8 @@ define([
     },
 
     destroy: function () {
-      // this.app.rpc.socket.removeAllListeners('comment.new');
-      // this.app.rpc.socket.removeAllListeners('comment.removed');
+      this.app.rpc.socket.removeListener('comment.new', this.collect);
+      this.app.rpc.socket.removeListener('comment.removed', this._remove);
       return List.prototype.destroy.call(this);
     },
 

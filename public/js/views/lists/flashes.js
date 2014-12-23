@@ -30,22 +30,26 @@ define([
       List.prototype.initialize.call(this, app, options);
 
       if (this.app.profile && this.app.profile.member) {
+        _.bindAll(this, 'collect');
         this.app.rpc.socket.on(this.app.profile.member.id + '.flash.new',
-            _.bind(this.collect, this));
+            this.collect);
       }
 
-      mps.subscribe('flash/new', _.bind(function (data, clear) {
-        if (data.type === this.collection.options.type) {
-          if (clear) {
-            this.collection.reset([]);
-            _.each(this.views, function (v) {
-              v.destroy();
-            });
-            this.views = [];
+      // Client-wide subscriptions
+      this.subscriptions = [
+        mps.subscribe('flash/new', _.bind(function (data, clear) {
+          if (data.type === this.collection.options.type) {
+            if (clear) {
+              this.collection.reset([]);
+              _.each(this.views, function (v) {
+                v.destroy();
+              });
+              this.views = [];
+            }
+            this.collection.push(data);
           }
-          this.collection.push(data);
-        }
-      }, this));
+        }, this))
+      ];
 
       // Check for existing messages.
       if (this.collection.options.type === 'block') {
@@ -75,6 +79,14 @@ define([
           this.collection.remove(view.model);
         }, this));
       }
+    },
+
+    destroy: function () {
+      if (this.app.profile && this.app.profile.member) {
+        this.app.rpc.socket.removeListener(this.app.profile.member.id
+            + '.flash.new', this.collect);
+      }
+      return List.prototype.destroy.call(this);
     },
 
   });

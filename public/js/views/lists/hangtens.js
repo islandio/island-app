@@ -29,8 +29,9 @@ define([
       this.subscriptions = [];
 
       // Socket subscriptions
-      this.app.rpc.socket.on('hangten.new', _.bind(this.collect, this));
-      this.app.rpc.socket.on('hangten.removed', _.bind(this._remove, this));
+      _.bindAll(this, 'collect', '_remove');
+      this.app.rpc.socket.on('hangten.new', this.collect);
+      this.app.rpc.socket.on('hangten.removed', this._remove);
 
       // Reset the collection.
       this.collection.reset(this.parentView.parentView.model.get('hangtens'));
@@ -78,8 +79,8 @@ define([
     },
 
     destroy: function () {
-      // this.app.rpc.socket.removeAllListeners('hangten.new');
-      // this.app.rpc.socket.removeAllListeners('hangten.removed');
+      this.app.rpc.socket.removeListener('hangten.new', this.collect);
+      this.app.rpc.socket.removeListener('hangten.removed', this._remove);
       return List.prototype.destroy.call(this);
     },
 

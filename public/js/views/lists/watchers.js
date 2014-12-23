@@ -24,8 +24,9 @@ define([
       List.prototype.initialize.call(this, app, options);
 
       // Socket subscriptions
-      this.app.rpc.socket.on('watch.new', _.bind(this.collect, this));
-      this.app.rpc.socket.on('watch.removed', _.bind(this._remove, this));
+      _.bindAll(this, 'collect', '_remove');
+      this.app.rpc.socket.on('watch.new', this.collect);
+      this.app.rpc.socket.on('watch.removed', this._remove);
 
       // Reset the collection.
       this.collection.reset(this.app.profile.content.watchers.items);
@@ -44,8 +45,8 @@ define([
     events: {},
 
     destroy: function () {
-      // this.app.rpc.socket.removeAllListeners('watch.new');
-      // this.app.rpc.socket.removeAllListeners('watch.removed');
+      this.app.rpc.socket.removeListener('watch.new', this.collect);
+      this.app.rpc.socket.removeListener('watch.removed', this._remove);
       return List.prototype.destroy.call(this);
     },
 

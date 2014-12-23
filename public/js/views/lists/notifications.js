@@ -31,9 +31,10 @@ define([
 
       this.subscriptions = [];
 
-      this.app.rpc.socket.on('notification.new', _.bind(this.collect, this));
-      this.app.rpc.socket.on('notification.read', _.bind(this.read, this));
-      this.app.rpc.socket.on('notification.removed', _.bind(this._remove, this));
+      _.bindAll(this, 'collect', 'read', '_remove');
+      this.app.rpc.socket.on('notification.new', this.collect);
+      this.app.rpc.socket.on('notification.read', this.read);
+      this.app.rpc.socket.on('notification.removed', this._remove);
 
       $(window).resize(_.debounce(_.bind(this.resize, this), 50));
 
@@ -99,9 +100,9 @@ define([
 
     destroy: function () {
       this.unpaginate();
-      // this.app.rpc.socket.removeAllListeners('notification.new');
-      // this.app.rpc.socket.removeAllListeners('notification.read');
-      // this.app.rpc.socket.removeAllListeners('notification.removed');
+      this.app.rpc.socket.removeListener('notification.new', this.collect);
+      this.app.rpc.socket.removeListener('notification.read', this.read);
+      this.app.rpc.socket.removeListener('notification.removed', this._remove);
       return List.prototype.destroy.call(this);
     },
 

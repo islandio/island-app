@@ -27,11 +27,8 @@ define([
       this.on('rendered', this.setup, this);
       this.subscriptions = [];
 
-      this.app.rpc.socket.on('member.removed', _.bind(function (data) {
-        if (data.id === this.model.id) {
-          this.app.router.profile(this.model.get('username'));
-        }
-      }, this));
+      _.bindAll(this, 'onRemoved');
+      this.app.rpc.socket.on('member.removed', this.onRemoved);
 
       return this;
     },
@@ -41,8 +38,6 @@ define([
       this.setTitle();
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
-
-      // Render title.
       this.title = _.template(title).call(this, {settings: false});
 
       // Check if role is company.
@@ -111,6 +106,7 @@ define([
     },
 
     destroy: function () {
+      this.app.rpc.socket.removeListener('member.removed', this.onRemoved);
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
@@ -123,6 +119,12 @@ define([
       this.undelegateEvents();
       this.stopListening();
       this.empty();
+    },
+
+    onRemoved: function (data) {
+      if (data.id === this.model.id) {
+        this.app.router.profile(this.model.get('username'));
+      }
     },
 
     setTitle: function () {

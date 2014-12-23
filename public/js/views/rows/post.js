@@ -36,12 +36,8 @@ define([
       this.subscriptions = [];
 
       // Socket subscriptions
-      this.app.rpc.socket.on('post.removed', _.bind(function (data) {
-        if (!this.parentView && data.id === this.model.id) {
-          this.app.router.post(this.model.get('author').username,
-              this.model.get('key'));
-        }
-      }, this));
+      _.bindAll(this, 'onRemoved');
+      this.app.rpc.socket.on('post.removed', this.onRemoved);
       
       this.on('rendered', this.setup, this);
       return this;
@@ -261,6 +257,7 @@ define([
     },
 
     destroy: function () {
+      this.app.rpc.socket.removeListener('post.removed', this.onRemoved);
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
@@ -271,6 +268,13 @@ define([
         clearInterval(this.timer);
       }
       this.remove();
+    },
+
+    onRemoved: function (data) {
+      if (!this.parentView && data.id === this.model.id) {
+        this.app.router.post(this.model.get('author').username,
+            this.model.get('key'));
+      }
     },
 
     navigate: function (e) {

@@ -27,8 +27,9 @@ define([
       this.subscriptions = [];
 
       // Socket subscriptions
-      this.app.rpc.socket.on('tick.new', _.bind(this.collect, this));
-      this.app.rpc.socket.on('tick.removed', _.bind(this._remove, this));
+      _.bindAll(this, 'collect', '_remove');
+      this.app.rpc.socket.on('tick.new', this.collect);
+      this.app.rpc.socket.on('tick.removed', this._remove);
 
       this.on('rendered', this.setup, this);
     },
@@ -182,6 +183,8 @@ define([
     },
 
     destroy: function () {
+      this.app.rpc.socket.removeListener('tick.new', this.collect);
+      this.app.rpc.socket.removeListener('tick.removed', this._remove);
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
