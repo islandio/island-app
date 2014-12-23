@@ -28,11 +28,16 @@ define([
         '8b+', '8b', '8a+', '8a', '7c+', '7c', '7b+', '7b', '7a+', '7a',
         '6c+', '6c', '6b+', '6b', '6a+', '6a', '5c', '5b', '5a', '4', '3'];
 
+    // Client services.
     this.cartodb = {
       apiKey: '883965c96f62fd219721f59f2e7c20f08db0123b',
       sqlPre: "select *, st_asgeojson(the_geom) as geometry from "
           + (window.__s ? 'crags': 'crags_dev')
           + " where forbidden is NULL",
+    };
+    this.instagram = {
+      clientId: window.__s ? 'a3003554a308427d8131cef13ef2619f':
+          'b6e0d7d608a14a578cf94763f70f1b49'
     };
 
     // For local dev.

@@ -492,9 +492,12 @@ define([
       });
     },
 
-    toUsername: function(str) {
-      if (str == null) {
+    toUsername: function(str, b) {
+      if (str === null) {
         return '';
+      }
+      if (!b && b !== '') {
+        b = '_';
       }
 
       var from  = "ąàáäâãåæăćęèéëêìíïîłńòóöôõøśșțùúüûñçżźĄÀÁÄÂÃÅÆĂĆĘÈÉËÊÌÍÏÎŁŃÒÓÖÔÕØŚȘȚÙÚÜÛÑÇŻŹ",
@@ -503,10 +506,10 @@ define([
 
       str = String(str).replace(regex, function (c) {
         var index = from.indexOf(c);
-        return to.charAt(index) || '_';
+        return to.charAt(index) || b;
       });
 
-      return str.replace(/[^\w^\.\s]/g, '_').substr(0, 30);
+      return str.replace(/[^\w^\.]/g, b).substr(0, 30);
     },
 
     // pass a function to insert into the DOM

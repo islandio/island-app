@@ -19,6 +19,7 @@ require.config({
     Picker: 'lib/pickadate/picker',
     Pickadate: 'lib/pickadate/picker.date',
     Skycons: 'lib/skycons/skycons',
+    Instafeed: 'lib/instafeed/instafeed.min',
     plugins: 'lib/jquery/plugins'
   },
 
@@ -52,6 +53,9 @@ require.config({
     },
     Skycons: {
       exports: 'Skycons'
+    },
+    Instafeed: {
+      exports: 'Instafeed'
     },
     plugins: {
       deps: ['jQuery']

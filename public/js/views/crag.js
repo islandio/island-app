@@ -15,9 +15,10 @@ define([
   'views/lists/events',
   'views/lists/ascents',
   'views/lists/watchers',
+  'Instafeed',
   'Skycons'
 ], function ($, _, Backbone, mps, rest, util, Crag, template, title,
-      Events, Ascents, Watchers, skycons) {
+      Events, Ascents, Watchers, Instafeed) {
   return Backbone.View.extend({
 
     el: '.main',
@@ -35,6 +36,7 @@ define([
       this.setTitle();
       this.title = _.template(title).call(this);
 
+      // Init weather icon.
       _.defer(_.bind(function () {
         var weather = this.app.profile.weather;
         if (weather) {
@@ -79,6 +81,20 @@ define([
           rcnt: this.model.get('rcnt')
         }
       });
+
+      // Grab an Instsgram feed.
+      this.instagramsByTag = new Instafeed({
+        target: 'ig_tagged',
+        get: 'tagged',
+        tagName: this.model.instagramTags(),
+        clientId: this.app.instagram.clientId,
+        template: '<a href="{{link}}" target="blank">'
+            + '<img class="ig-img" src="{{image}}" width="66" height="66"/></a>',
+        limit: 10,
+        after: function () {
+          $('.ig-img').show();
+        }
+      }).run();
 
       return this;
     },
