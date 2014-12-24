@@ -15,7 +15,7 @@ define([
   'views/lists/events',
   'views/lists/ascents',
   'views/lists/watchers',
-  'Instafeed',
+  'views/instafeed',
   'Skycons'
 ], function ($, _, Backbone, mps, rest, util, Crag, template, title,
       Events, Ascents, Watchers, Instafeed) {
@@ -83,18 +83,10 @@ define([
       });
 
       // Grab an Instsgram feed.
-      this.instagramsByTag = new Instafeed({
-        target: 'ig_tagged',
-        get: 'tagged',
-        tagName: this.model.instagramTags(),
-        clientId: this.app.instagram.clientId,
-        template: '<a href="{{link}}" target="blank">'
-            + '<img class="ig-img" src="{{image}}" width="66" height="66"/></a>',
-        limit: 10,
-        after: function () {
-          $('.ig-img').show();
-        }
-      }).run();
+      this.instafeed = new Instafeed(this.app, {
+        el: this.$('#ig_tagged'),
+        tags: this.model.instagramTags(),
+      }).render();
 
       return this;
     },

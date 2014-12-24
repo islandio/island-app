@@ -14,9 +14,9 @@ define([
   'text!../../templates/ascent.title.html',
   'views/lists/events',
   'views/lists/watchers',
-  'Skycons'
+  'views/instafeed'
 ], function ($, _, Backbone, mps, rest, util, Ascent, template, title, Events,
-      Watchers, skycons) {
+      Watchers, Instafeed) {
   return Backbone.View.extend({
 
     el: '.main',
@@ -71,6 +71,12 @@ define([
 
       // Render lists.
       this.watchers = new Watchers(this.app, {parentView: this, reverse: true});
+
+      // Grab an Instsgram feed.
+      this.instafeed = new Instafeed(this.app, {
+        el: this.$('#ig_tagged'),
+        tags: this.model.instagramTags(),
+      }).render();
 
       return this;
     },

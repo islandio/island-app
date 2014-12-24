@@ -27,5 +27,9 @@ define([
       return str;
     },
 
+    instagramTags: function () {
+      return util.toUsername(this.get('name'), '').toLowerCase();
+    }
+
   });
 });

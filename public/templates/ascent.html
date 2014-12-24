@@ -6,6 +6,17 @@
 %>
 
 <div class="leftside">
+  <div class="instagrams">
+    <div id="ig_tagged">
+      <span class="sidebar-heading-small">
+        Recent instagrams tagged <span class="sidebar-heading-cnt">
+        #<%= this.model.instagramTags() %></span>
+      </span>
+      <span class="instagrams-all">
+        <i class="icon-angle-down"></i>&nbsp;<i class="icon-angle-down"></i>
+      </span>
+    </div>
+  </div>
   <div class="events"></div>
   <div class="list-spin">
     <div class="events-spin"></div>
@@ -13,6 +24,8 @@
   </div>
 </div>
 <div class="rightside">
-  <div class="sidebar-watchers"></div>  
+  <div class="sidebar-items">
+    <div class="sidebar-watchers"></div>
+  </div>
 </div>
 <div class="clear"></div>

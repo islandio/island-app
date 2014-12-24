@@ -2304,12 +2304,35 @@ p.sidebar-tip span {
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––instagrams*/
 .instagrams > div {
+  position: relative;
   margin-bottom: 30px;
-  height: 100px;
+  height: 96px;
+  margin-left: 2px;
+  width: 682px;
+  -webkit-transition: height 0.15s;
+  -webkit-transition-timing-function: height 0.15s;
+  -moz-transition: height 0.15s;
+  -moz-transition-timing-function: height 0.15s;
+  transition: height 0.15s;
+  transition-timing-function: height 0.15s;
 }
 .instagrams a {
   display: inline-block;
   background: none;
+  height: 63px;
+  opacity: 0;
+  pointer-events: none;
+}
+.instagrams a:nth-child(-n+22) {
+  opacity: 0.05;
+}
+.instagrams a:nth-child(-n+12) {
+  opacity: 1;
+  pointer-events: auto;
+}
+.instagrams > div.open a {
+  opacity: 1;
+  pointer-events: auto;
 }
 .instagrams a img {
   display: none;
@@ -2338,6 +2361,27 @@ p.sidebar-tip span {
 }
 .instagrams .sidebar-heading-cnt {
   font-size: 14px;
+}
+.instagrams-all {
+  display: none;
+  position: absolute;
+  cursor: pointer;
+  top: 99px;
+  left: 323px;
+  color: #666;
+  font-size: 12px;
+}
+.instagrams-all i:last-child {
+  margin-left: 5px;
+}
+.instagrams-all i:before {
+  margin: 0;
+}
+.instagrams > div.open .instagrams-all {
+  visibility: hidden;
+}
+.instagrams-all:hover {
+  color: #4bb8d7;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––new session*/
 .new-session {
@@ -3939,6 +3983,7 @@ table.post-params label {
 .events {
   position: relative;
   margin-left: -30px;
+  background: #fff;
 }
 .events + .list-spin {
   margin-top: 30px;
