@@ -27,6 +27,7 @@ define([
   'views/crag',
   'views/admin',
   'views/import',
+  'views/import-select',
   'views/ascent',
   'views/settings',
   'views/reset',
@@ -41,8 +42,8 @@ define([
   'views/session.new'
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
     Flashes, Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Tick,
-    Crag, Admin, Import, Ascent, Settings, Reset, Films, Static, Crags, 
-    Dashboard, Splash, Ticks, aboutTemp, privacyTemp, NewSession) {
+    Crag, Admin, Import, ImportSelect, Ascent, Settings, Reset, Films, Static,
+    Crags, Dashboard, Splash, Ticks, aboutTemp, privacyTemp, NewSession) {
 
   /*
    * Determine if parent is iframe.
@@ -102,6 +103,7 @@ define([
       this.route('reset', 'reset', this.reset);
       this.route('admin', 'admin', this.admin);
       this.route('import', 'import', this.import);
+      this.route('import/:userId', 'import', this.import);
       this.route('settings', 'settings', this.settings);
       this.route('privacy', 'privacy', this.privacy);
       this.route('about', 'about', this.about);
@@ -422,13 +424,17 @@ define([
       }, this));
     },
 
-    import: function () {
+    import: function (userId) {
       this.start();
       this.renderTabs();
       this.clearContainer();
       this.render('/service/static', _.bind(function (err) {
         if (err) return;
-        this.page = new Import(this.app).render();
+        if (userId) {
+          this.page = new ImportSelect(this.app, {userId: userId}).render();
+        } else {
+          this.page = new Import(this.app).render();
+        }
         this.renderTabs({html: this.page.title});
         this.stop();
       }, this));

@@ -11,15 +11,16 @@ define([
   'rest',
   'util',
   'Spin',
-  'text!../../templates/import.html'
+  'text!../../templates/import.search.html',
 ], function ($, _, Backbone, mps, rpc, rest, util, Spin, template) {
 
   return Backbone.View.extend({
 
     el: '.main',
 
-    initialize: function (app) {
+    initialize: function (app, options) {
       this.app = app;
+      this.options = options || {};
       this.subscriptions = [];
 
       this.on('rendered', this.setup, this);
@@ -41,6 +42,7 @@ define([
     },
 
     setup: function () {
+      this.spin = new Spin(this.$('.button-spin'));
 
       return this;
     },
@@ -68,11 +70,25 @@ define([
     },
 
     submit: function (e) {
+      $('.list-wrap').empty().hide();
+      $('.no-results').hide();
+
       var member = $('.import-input').val();
-      console.log(member);
-      this.app.rpc.do('get8aUser', $('.import-input').val(), function (err, res) {
-        console.log(err, res);
-      });
+      this.spin.start();
+      this.app.rpc.do('get8aUser', member, _.bind(function (err, res) {
+        if (err) return console.log(err);
+        this.spin.stop();
+
+        if (!res.length) return $('.no-results').show();
+
+        $('.list-wrap').append('<ul class="list">')
+        _.each(res, function(member) {
+          $('.list-wrap').append('<li> <a href="/import/' + member.userId + '">' + member.name
+              + ' ' + member.city + ',' + member.country + '</a></li>')
+        });
+        $('.list-wrap').append('</ul').show();
+
+      }, this));
     }
 
 /*

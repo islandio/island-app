@@ -73,7 +73,9 @@ define([
           this.$el.addClass('single');
         }
       }
-      if (this.app.profile.member && this.model.get('author').id
+      if (this.app.profile.member 
+          && this.model.get('author')
+          && this.model.get('author').id
           === this.app.profile.member.id) {
         this.$el.addClass('own');
       }
