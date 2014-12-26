@@ -130,15 +130,15 @@ define([
       return str ? 'felt ' + str: '';
     },
 
-    formatTickGrade: function (num, feel) {
-      if (num === undefined) return;
+    formatTickGrade: function (grade, feel) {
+      if (grade === undefined) return;
       var str = '';
       switch (feel) {
         case -1: str = ' (soft)'; break;
         case 0: str = ''; break;
         case 1: str = ' (hard)'; break;
       }
-      return this.grades[num] + str;
+      return ((grade === +grade) ? this.grades[grade] : grade) + str;
     },
 
     formatTickDetails: function (t) {

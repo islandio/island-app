@@ -436,6 +436,8 @@ define([
           this.page = new Import(this.app).render();
         }
         this.renderTabs({html: this.page.title});
+        console.log('hello');
+
         this.stop();
       }, this));
     },
