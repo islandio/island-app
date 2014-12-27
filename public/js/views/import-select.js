@@ -10,10 +10,15 @@ define([
   'rpc',
   'rest',
   'util',
+  'models/card',
   'Spin',
   'views/rows/tick',
-  'text!../../templates/import.select.html'
-], function ($, _, Backbone, mps, rpc, rest, util, Spin, Tick, template) {
+  'text!../../templates/import.select.html',
+  'views/lists/followers',
+  'views/lists/followees',
+  'views/lists/watchees'
+], function ($, _, Backbone, mps, rpc, rest, util, Card, Spin, Tick, template,
+    Followers, Followees, Watchees) {
 
   return Backbone.View.extend({
 
@@ -31,6 +36,8 @@ define([
     render: function () {
       this.app.title('The Island | Import');
 
+      this.model = new Card(this.app.profile.content.page);
+
       this.template = _.template(template);
       $(this.template.call(this)).appendTo('.main');
 
@@ -44,48 +51,75 @@ define([
     },
 
     setup: function () {
-      this.spin = new Spin(this.$('.import-spin'));
-      this.spin.start();
 
-      this.app.rpc.do('get8aTicks', this.options.userId, _.bind(function (err, ticks) {
-        if (err) return console.log(err);
-        this.spin.stop();
-        this.ticks = ticks;
-        ticks = _.sortBy(ticks, 'grade').reverse();
-        console.log(ticks);
+      // Save refs.
+      this.filterBox = this.$('.ticks-filter-input input');
+      this.emptyTxt = this.$('.ticks-filter-input span');
+      this.bouldersFilter = this.$('.b-filter').parent();
+      this.routesFilter = this.$('.r-filter').parent();
+      this.boulders = this.$('.b-ticks');
+      this.routes = this.$('.r-ticks');
 
-        _.each(ticks, _.bind(function (tick, i) {
+      // Handle type changes.
+      if (this.model.get('ticks').b.length > this.model.get('ticks').r.length) {
+        this.currentType = 'b';
+        this.bouldersFilter.addClass('active');
+        this.boulders.show();
+      } else {
+        this.currentType = 'r';
+        this.routesFilter.addClass('active');
+        this.routes.show();
+      }
 
-          $('.session-ticks').append('<li class="tick" id="import-tick-'+i+'"></li>');
+      this.bouldersFilter.click(_.bind(this.changeType, this, 'b'));
+      this.routesFilter.click(_.bind(this.changeType, this, 'r'));
 
-          new Tick({
-            parentView: this,
-            el: $('#import-tick-'+i),
-            model: tick,
-            mapless: true,
-            medialess: true,
-            commentless: true,
-            inlineWeather: false,
-            inlineDate: true
-          }, this.app).render();
+      // Handle filtering.
+      this.filterBox.bind('keyup search', _.bind(this.filter, this));
 
-          var row = '<tr><td>'
-            + new Date(tick.date).toLocaleDateString({}, {timeZone: 'UTC'}) + '</td><td>'
-            + tick.type + '</td><td>'
-            + tick.crag.name + '</td><td>'
-            + tick.ascent.name + '</td><td>'
-            + tick.grade + '</td><td>'
-            + tick.tries + '</td><td>'
-            + tick.first + '</td><td>'
-            + tick.feel + '</td><td>'
-            + tick.rating + '</td><td>'
-            + tick.recommended + '</td><td>'
-            + tick.note + '</td></tr>';
-          $('.import-table').append(row);
-        }, this));
+      // Focus.
+      if (!$('.header-search .search-display').is(':visible')) {
+        this.filterBox.focus();
+      }
+
+      // Render each tick as a view.
+      _.each(this.$('.tick'), _.bind(function (el) {
+        el = $(el);
+        var data = _.find(this.model.get('ticks')[el.data('type')], function (t) {
+          return t.id === el.attr('id');
+        });
+        new Tick({
+          parentView: this,
+          el: el,
+          model: data,
+          mapless: true,
+          medialess: true,
+          commentless: true,
+          inlineWeather: false,
+          showCragName: true,
+          inlineDate: true
+        }, this.app).render();
       }, this));
 
       return this;
+
+    },
+
+    changeType: function (type, e) {
+
+      // Update buttons.
+      var chosen = $(e.target).closest('li');
+      if (chosen.hasClass('active') || chosen.hasClass('disabled')) {
+        return;
+      }
+      var active = $('.active', chosen.parent());
+      chosen.addClass('active');
+      active.removeClass('active');
+
+      // Set new type.
+      this.currentType = type;
+      this.$('.list-wrap').hide();
+      this.$('.' + this.currentType + '-ticks').show();
     },
 
     empty: function () {
@@ -140,59 +174,35 @@ define([
         rest.post('/api/sessions/', p, next);
       });
 
+    },
+
+    filter: function (e) {
+      var txt = this.filterBox.val().trim().toLowerCase();
+      var ct = this.currentType;
+      $('.' + ct + '-ticks .no-results').hide();
+      if (txt === '') {
+        $('.' + ct + '-ticks .session-ticks li').show();
+        $('.' + ct + '-ticks .tick-list-group-heading').show();
+        return false;
+      }
+      $('.' + ct + '-ticks .session-ticks li').hide();
+      $('.' + ct + '-ticks .tick-list-group-heading').hide();
+      var rx = new RegExp('^(.*?(' + txt + ')[^$]*)$', 'ig');
+      var y = false;
+      _.each(this.model.get('ticks')[ct], function (t) {
+        if (rx.test(t.ascent.name)) {
+          y = true;
+          var d = $('.' + ct + '-ticks .session-ticks li[id="' + t.id + '"]');
+          d.show();
+          $('.tick-list-group-heading', d.parent()).show();
+        }
+      });
+      if (!y) {
+        $('.list-wrap .no-results').show();
+      }
+      return false;
     }
 
-/*
-    search: function (e) {
-      this.noresults.hide();
-
-      // Clean search string.
-      var str = util.sanitize(this.input.val());
-
-      // Handle interaction.
-      if (str === this.str) {
-        if (this.num === 0 && str !== '') {
-          this.noresults.show();
-        }
-        return false;
-      }
-      this.str = str;
-      $('.list', this.results).remove();
-
-      if (str === '') {
-        this.app.router.navigate('crags', {trigger: false, replace: true});
-        return false;
-      }
-
-      // Call server.
-      this.spin.start();
-      rest.post('/api/crags/search/' + str, {}, _.bind(function (err, data) {
-        if (err) {
-          return console.log(err);
-        }
-        this.spin.stop();
-
-        // Update URL.
-        var c = !data.params.country || data.params.country === '' ?
-            '': '/' + data.params.country;
-        var q = !data.params.query || data.params.query === '' ?
-            '': '?q=' + data.params.query;
-        this.app.router.navigate('crags' + c + q,
-            {trigger: false, replace: true});
-
-        // Save count.
-        this.num = data.items.length;
-        if (data.items.length === 0) {
-          return this.noresults.show();
-        }
-
-        // Render results.
-        $(this.list.call(this, data)).appendTo(this.results);
-      }, this));
-
-      return false;
-    },
-    */
 
   });
 });

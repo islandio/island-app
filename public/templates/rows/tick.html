@@ -66,9 +66,17 @@
     </span>
   <% } %>
   <span class="session-tick-name">
-    <a href="/crags/<%= t.ascent.key %>" class="navigate">
+    <% if (t.ascent.key) { %>
+      <a href="/crags/<%= t.ascent.key %>" class="navigate">
+    <% } %>
+      <% if (this.options.showCragName) { %>
+        <%= t.crag.name %> |
+      <% } %>
       <%= t.ascent.name %><%= t.ascent.sector ? ' <span style="font-size:90%;">('
-          + t.ascent.sector + ')</span>': '' %></a>
+          + t.ascent.sector + ')</span>': '' %>
+    <% if (t.ascent.key) { %>
+      </a>
+    <% } %>
   </span>
   <% if (t.duration || t.performance || w) { %>
     <span class="session-tick-detail">

@@ -428,7 +428,7 @@ define([
       this.start();
       this.renderTabs();
       this.clearContainer();
-      this.render('/service/static', _.bind(function (err) {
+      this.render('/service/import/' + userId, _.bind(function (err) {
         if (err) return;
         if (userId) {
           this.page = new ImportSelect(this.app, {userId: userId}).render();
