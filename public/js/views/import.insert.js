@@ -61,7 +61,7 @@ define([
       this.routes = this.$('.r-ticks');
 
       // Init the load indicator.
-      this.spin = new Spin(this.$('.import-spin'));
+      this.spin = new Spin(this.$('.button-spin'));
 
       // Handle type changes.
       if (this.model.get('ticks').b.length > this.model.get('ticks').r.length) {
