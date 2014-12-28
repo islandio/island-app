@@ -120,7 +120,7 @@ if (cluster.isMaster) {
       };
       if (err) {
         util.error(err);
-        profile.error = {stack: err.stack};
+        profile.error = err.stack ? {stack: err.stack} : err;
         fn.call(res, 500, iutil.client(profile));
       } else {
         profile.error = {message: estr + ' not found'};

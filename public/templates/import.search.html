@@ -1,12 +1,17 @@
 <div class="leftside">
-  <h1> <a href="http://www.8a.nu"> 8a.nu </a> Import Tool </h1>
-  <input class='import-input' type="text" placeholder="Full name"></input>
-  <button class="button"> Submit
+  <h1> Import your scorecard from <span><a href="http://www.8a.nu">8a.nu</a></span>
+  <p> We'll search 8a.nu for all your ascents and add them to Island. Search
+  for your name below and click Submit to verify your scorecard.
+  <div class="import-spin"></div>
+  <input class='import-input' type="search" placeholder="Full name"></input>
+  <button class="button"> Search
     <div class="button-spin"></div>
   </button>
 
-  <div class="list-wrap"> </div>
-  <span class="no-results">No results.</span>
+  <div class="list-wrap" style="display: block">
+    <span class="no-results">No results.</span>
+    <ul class="list"></ul>
+  </div>
 </div>
 
 <div class="rightside">

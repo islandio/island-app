@@ -60,6 +60,9 @@ define([
       this.boulders = this.$('.b-ticks');
       this.routes = this.$('.r-ticks');
 
+      // Init the load indicator.
+      this.spin = new Spin(this.$('.import-spin'));
+
       // Handle type changes.
       if (this.model.get('ticks').b.length > this.model.get('ticks').r.length) {
         this.currentType = 'b';
@@ -88,7 +91,7 @@ define([
         var data = _.find(this.model.get('ticks')[el.data('type')], function (t) {
           return t.id === el.attr('id');
         });
-        new Tick({
+        this.ticks.push(new Tick({
           parentView: this,
           el: el,
           model: data,
@@ -98,7 +101,7 @@ define([
           inlineWeather: false,
           showCragName: true,
           inlineDate: true
-        }, this.app).render();
+        }, this.app).render());
       }, this));
 
       return this;
@@ -145,35 +148,63 @@ define([
     },
 
     submit: function (e) {
-      if (!this.ticks.length === 0) return;
-
-      var payloads = _.map(this.ticks, function(t) {
-        var payload = {
-          cragName: t.crag,
-          date: t.date
-        };
-        delete t.crag;
-
-        t.index = 0;
-        t.ascentName = t.ascent;
-        delete t.ascent;
-
-        // some legacy stuff going on here
-        var action = {ticks: [t]};
-        var actions = [action];
-        payload.actions = actions;
-        return payload;
-      });
-
+      if (this.ticks.length === 0 || this.submitting) return;
+      this.submitting = true;
       this.spin.start();
-      var next = _.after(payloads.length, _.bind(function() {
-        this.spin.stop();
+
+      // Add missing ascents
+      var ascents = _.compact(_.map(this.ticks, function (tick) {
+        var t = tick.model.attributes;
+        if (!t.ascent.id) {
+          return {
+            crag_id: t.crag.id,
+            sector: t.ascentSector,
+            name: t.ascent.name,
+            type: t.type,
+            grades: [t.grade],
+            noPublish: true
+          };
+        } else {
+          return null;
+        }
+      }));
+      var fn = ascents.length > 0 ? rest.post :
+          function(arg1, arg2, cb) { cb() };
+      fn.call(rest, '/api/ascents/', ascents, _.bind(function (err, res) {
+        if (err) return this.submitError();
+
+        var sessions = _.map(this.ticks, function(tick) {
+          var t = tick.model.attributes;
+          t.index = 0;
+
+          var payload = {
+            crag_id: t.crag.id,
+            date: t.date
+          };
+          console.log(payload);
+          delete t.crag;
+
+          var name = t.ascent.name;
+          delete t.ascent;
+          t.ascent = {name: name};
+
+          // some legacy stuff going on here
+          var action = {ticks: [t]};
+          var actions = [action];
+          payload.actions = actions;
+          return payload;
+        });
+        rest.post('/api/sessions/', sessions, _.bind(function (err, res) {
+          if (err) return this.submitError();
+          this.spin.stop();
+          this.submitting = false;
+        }, this));
       }, this));
+    },
 
-      _.each(payloads, function(p) {
-        rest.post('/api/sessions/', p, next);
-      });
-
+    submitError: function () {
+      this.spin.stop();
+      this.submitting = false;
     },
 
     filter: function (e) {

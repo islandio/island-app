@@ -6,7 +6,10 @@
       + t.author.gravatar + '?s=36&d=' 
       + encodeURIComponent(this.app.images.avatar)) : null;
   var weather = this.model.get('weather');
-  var w = weather.get('hourly') || weather.get('daily');
+  var w;
+  if (!_.isEmpty(weather)) {
+    w = weather.get('hourly') || weather.get('daily');
+  }
   var inlineWeather = w && this.options.inlineWeather;
   var mediaTypes = _.uniq(_.pluck(t.medias, 'type'));
 %>

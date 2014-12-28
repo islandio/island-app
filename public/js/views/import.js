@@ -43,6 +43,9 @@ define([
 
     setup: function () {
       this.spin = new Spin(this.$('.button-spin'));
+      this.noResults = $('.no-results');
+      this.list = $('.list-wrap .list');
+      this.input = $('.import-input');
 
       return this;
     },
@@ -70,78 +73,33 @@ define([
     },
 
     submit: function (e) {
-      $('.list-wrap').empty().hide();
-      $('.no-results').hide();
+      if (this.searching) return;
+      this.list.empty();
+      this.noResults.hide();
+      this.input.removeClass('input-error');
 
-      var member = $('.import-input').val();
+      var member = this.input.val();
       this.spin.start();
+      this.searching = true;
       this.app.rpc.do('get8aUser', member, _.bind(function (err, res) {
-        if (err) return console.log(err);
+
+        this.searching = false;
         this.spin.stop();
 
-        if (!res.length) return $('.no-results').show();
+        if (err) {
+          this.input.addClass('input-error');
+          return console.log(err);
+        }
 
-        $('.list-wrap').append('<ul class="list">')
-        _.each(res, function(member) {
-          $('.list-wrap').append('<li> <a href="/import/' + member.userId + '">' + member.name
+        if (!res || res.length === 0) return this.noResults.show();
+
+        _.each(res, _.bind(function(member) {
+          this.list.append('<li> <a href="/import/' + member.userId + '">' + member.name
               + ' ' + member.city + ',' + member.country + '</a></li>')
-        });
-        $('.list-wrap').append('</ul').show();
+        }, this));
 
       }, this));
     }
-
-/*
-    search: function (e) {
-      this.noresults.hide();
-
-      // Clean search string.
-      var str = util.sanitize(this.input.val());
-
-      // Handle interaction.
-      if (str === this.str) {
-        if (this.num === 0 && str !== '') {
-          this.noresults.show();
-        }
-        return false;
-      }
-      this.str = str;
-      $('.list', this.results).remove();
-
-      if (str === '') {
-        this.app.router.navigate('crags', {trigger: false, replace: true});
-        return false;
-      }
-
-      // Call server.
-      this.spin.start();
-      rest.post('/api/crags/search/' + str, {}, _.bind(function (err, data) {
-        if (err) {
-          return console.log(err);
-        }
-        this.spin.stop();
-
-        // Update URL.
-        var c = !data.params.country || data.params.country === '' ?
-            '': '/' + data.params.country;
-        var q = !data.params.query || data.params.query === '' ?
-            '': '?q=' + data.params.query;
-        this.app.router.navigate('crags' + c + q,
-            {trigger: false, replace: true});
-
-        // Save count.
-        this.num = data.items.length;
-        if (data.items.length === 0) {
-          return this.noresults.show();
-        }
-
-        // Render results.
-        $(this.list.call(this, data)).appendTo(this.results);
-      }, this));
-
-      return false;
-    },
-    */
 
   });
 });
