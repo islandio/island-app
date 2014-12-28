@@ -103,7 +103,7 @@ define([
       this.route('reset', 'reset', this.reset);
       this.route('admin', 'admin', this.admin);
       this.route('import', 'import', this.import);
-      this.route('import/:userId', 'import', this.import);
+      this.route('import/:slug', 'import', this.import);
       this.route('settings', 'settings', this.settings);
       this.route('privacy', 'privacy', this.privacy);
       this.route('about', 'about', this.about);
@@ -424,14 +424,14 @@ define([
       }, this));
     },
 
-    import: function (userId) {
+    import: function (slug) {
       this.start();
       this.renderTabs();
       this.clearContainer();
-      this.render('/service/import/' + userId, _.bind(function (err) {
+      this.render('/service/import/' + slug, _.bind(function (err) {
         if (err) return;
-        if (userId) {
-          this.page = new ImportInsert(this.app, {userId: userId}).render();
+        if (slug) {
+          this.page = new ImportInsert(this.app, {slug: slug}).render();
         } else {
           this.page = new ImportSearch(this.app).render();
         }

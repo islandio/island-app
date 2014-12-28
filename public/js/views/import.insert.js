@@ -30,6 +30,10 @@ define([
       this.subscriptions = [];
       this.ticks = [];
 
+      var name = options.slug.split('-');
+      name.pop();
+      this.name = name.join(' ');
+
       this.on('rendered', this.setup, this);
     },
 

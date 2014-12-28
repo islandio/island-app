@@ -92,11 +92,15 @@ define([
         if (!res || res.length === 0) return this.noResults.show();
 
         _.each(res, _.bind(function(member) {
-          this.list.append('<li> <a href="/import/' + member.userId + '">'
+          var slug = (member.name + ' ' + member.userId)
+              .toLowerCase()
+              .replace(/[^\w ]+/g,'')
+              .replace(/ +/g,'-');
+          this.list.append('<li> <a href="/import/' + slug + '">'
               + '<i class="icon-user"></i>'
               + '<b>' + member.name + '</b>&nbsp'
               + '<span>' + member.city + ', ' + member.country + '</span>'
-              + '</a></li>')
+              + '</a></li>');
         }, this));
 
       }, this));
