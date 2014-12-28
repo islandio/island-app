@@ -4,21 +4,22 @@
 %>
 
 
-<div class="leftside">
-  <h1> Import your scorecard from <span><a href="http://www.8a.nu">8a.nu</a></span>
-  <p> We'll search 8a.nu for all your ascents and add them to Island. Search
-  for your name below and click Submit to verify your scorecard.
-  <div class="import-spin"></div>
-  <button class="button"> Import </button>
+<div class="leftside import">
+  <button class="button"> Import
+    <div class="import-spin"></div>
+  </button>
+
+  <p class="note">We'll add all the below boulders and routes to your Island tick
+  list. We'll also add any missing ascents to Island's ascent list.</p>
 
   <div class="ticks-filter">
     <div class="subtabs">
       <ul>
         <li class="subtab">
-          <a href="javascript:;" class="b-filter">Boulders</a>
+          <a href="javascript:;" class="b-filter"><%= data.ticks.b.length %> Boulders</a>
         </li>
         <li data-filter="r" class="subtab">
-          <a href="javascript:;" class="r-filter">Routes</a>
+          <a href="javascript:;" class="r-filter"><%= data.ticks.r.length %> Routes</a>
         </li>
       </ul>
     </div>

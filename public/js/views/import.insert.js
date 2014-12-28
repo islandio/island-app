@@ -13,7 +13,7 @@ define([
   'models/card',
   'Spin',
   'views/rows/tick',
-  'text!../../templates/import.select.html',
+  'text!../../templates/import.insert.html',
   'views/lists/followers',
   'views/lists/followees',
   'views/lists/watchees'
@@ -139,14 +139,6 @@ define([
       this.empty();
     },
 
-    navigate: function (e) {
-      e.preventDefault();
-      var path = $(e.target).closest('a').attr('href');
-      if (path) {
-        this.app.router.navigate(path, {trigger: true});
-      }
-    },
-
     submit: function (e) {
       if (this.ticks.length === 0 || this.submitting) return;
       this.submitting = true;
@@ -181,7 +173,6 @@ define([
             crag_id: t.crag.id,
             date: t.date
           };
-          console.log(payload);
           delete t.crag;
 
           var name = t.ascent.name;
@@ -198,6 +189,17 @@ define([
           if (err) return this.submitError();
           this.spin.stop();
           this.submitting = false;
+
+          // Show success.
+          var ticks = this.ticks.length;
+          mps.publish('flash/new', [{
+            message: 'You successfully imported your 8a scorecard and added '
+                + ticks + ' new ticks',
+            level: 'alert'
+          }, true]);
+
+          this.app.router.navigate('/', {trigger: true});
+
         }, this));
       }, this));
     },

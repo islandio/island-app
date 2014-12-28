@@ -39,6 +39,7 @@ define([
 
     events: {
       'click .button': 'submit',
+      'keydown .import-input': 'keydown'
     },
 
     setup: function () {
@@ -64,12 +65,9 @@ define([
       this.empty();
     },
 
-    navigate: function (e) {
-      e.preventDefault();
-      var path = $(e.target).closest('a').attr('href');
-      if (path) {
-        this.app.router.navigate(path, {trigger: true});
-      }
+    keydown: function (e) {
+      if (e.keyCode === 13) this.submit();
+      return true;
     },
 
     submit: function (e) {
@@ -94,8 +92,11 @@ define([
         if (!res || res.length === 0) return this.noResults.show();
 
         _.each(res, _.bind(function(member) {
-          this.list.append('<li> <a href="/import/' + member.userId + '">' + member.name
-              + ' ' + member.city + ',' + member.country + '</a></li>')
+          this.list.append('<li> <a href="/import/' + member.userId + '">'
+              + '<i class="icon-user"></i>'
+              + '<b>' + member.name + '</b>&nbsp'
+              + '<span>' + member.city + ', ' + member.country + '</span>'
+              + '</a></li>')
         }, this));
 
       }, this));

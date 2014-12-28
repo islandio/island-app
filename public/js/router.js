@@ -26,8 +26,8 @@ define([
   'views/rows/tick',
   'views/crag',
   'views/admin',
-  'views/import',
-  'views/import-select',
+  'views/import.search',
+  'views/import.insert',
   'views/ascent',
   'views/settings',
   'views/reset',
@@ -42,7 +42,7 @@ define([
   'views/session.new'
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
     Flashes, Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Tick,
-    Crag, Admin, Import, ImportSelect, Ascent, Settings, Reset, Films, Static,
+    Crag, Admin, ImportSearch, ImportInsert, Ascent, Settings, Reset, Films, Static,
     Crags, Dashboard, Splash, Ticks, aboutTemp, privacyTemp, NewSession) {
 
   /*
@@ -431,13 +431,11 @@ define([
       this.render('/service/import/' + userId, _.bind(function (err) {
         if (err) return;
         if (userId) {
-          this.page = new ImportSelect(this.app, {userId: userId}).render();
+          this.page = new ImportInsert(this.app, {userId: userId}).render();
         } else {
-          this.page = new Import(this.app).render();
+          this.page = new ImportSearch(this.app).render();
         }
-        this.renderTabs({html: this.page.title});
-        console.log('hello');
-
+        this.renderTabs({title: 'Import your 8a Scorecard', log: true});
         this.stop();
       }, this));
     },

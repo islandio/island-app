@@ -4877,6 +4877,20 @@ span.setting-error {
 span.no-description {
   font-style: italic;
 }
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––import*/
+input.import-input {
+  width: 320px;
+  margin-right: 20px;
+}
+.import button {
+  width: 120px;
+}
+.import .list a:hover span {
+  color: inherit;
+}
+.import .list span {
+  color: #888;
+}
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crags*/
 .crag-flag {
   position: relative;
