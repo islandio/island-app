@@ -158,7 +158,7 @@ define([
             name: t.ascent.name,
             type: t.type,
             grades: [t.grade],
-            noPublish: true
+            silent: true // doesn't post to event feed
           };
         } else {
           return null;
@@ -175,7 +175,8 @@ define([
 
           var payload = {
             crag_id: t.crag.id,
-            date: t.date
+            date: t.date,
+            silent: true // doesn't post to event feed
           };
           delete t.crag;
 

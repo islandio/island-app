@@ -4891,13 +4891,17 @@ input.import-input {
 .import .list span {
   color: #888;
 }
+.import subtatabs {
+  float: clear;
+}
 .import-scorecard-title {
   text-transform: capitalize;
   font-size: 20px;
   font-weight: 500;
   color: #333;
+  float: left;
 }
-.import button {
+.import .import-insert-button {
   background-color: #b1dc36;
 }
 .import .ticks-filter {
