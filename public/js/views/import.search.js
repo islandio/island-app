@@ -38,6 +38,7 @@ define([
     },
 
     events: {
+      'click .navigate': 'navigate',
       'click .button': 'submit',
       'keydown .import-input': 'keydown'
     },
@@ -70,6 +71,14 @@ define([
       return true;
     },
 
+    navigate: function (e) {
+      e.preventDefault();
+      var path = $(e.target).closest('a').attr('href');
+      if (path) {
+        this.app.router.navigate(path, {trigger: true});
+      }
+    },
+
     submit: function (e) {
       if (this.searching) return;
       this.list.empty();
@@ -96,7 +105,8 @@ define([
               .toLowerCase()
               .replace(/[^\w ]+/g,'')
               .replace(/ +/g,'-');
-          this.list.append('<li> <a href="/import/' + slug + '">'
+          this.list.append('<li>'
+              + '<a class="navigate" href="/import/' + slug + '">'
               + '<i class="icon-user"></i>'
               + '<b>' + member.name + '</b>&nbsp'
               + '<span>' + member.city + ', ' + member.country + '</span>'
