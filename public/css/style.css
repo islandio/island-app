@@ -456,7 +456,6 @@ time.created.static {
   text-align: right;
 }
 .leftside {
-  float: left;
   width: 680px;
   min-height: 600px;
   padding: 30px 40px 30px 0;
@@ -470,15 +469,16 @@ time.created.static {
 }
 .leftside.equal .settings {
   width: auto;
+  padding-bottom: 30px;
 }
 .rightside {
-  margin: 0 0 0 720px;
-  padding: 30px;
+  position: absolute;
+  right: 0;
+  padding: 30px 30px 30px 29px;
   width: 274px;
   border-left: 1px solid #f2f2f2;
 }
 .rightside.equal {
-  margin: 0 0 0 299px;
   width: 259px;
   padding-left: 40px;
 }
@@ -3123,7 +3123,6 @@ button.button.modal-button.full {
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––profiles*/
 .profile {
-  position: relative;
   width: 680px;
   padding: 0;
   -webkit-animation-name: fadeIn;
@@ -3440,8 +3439,7 @@ textarea.comment-input {
 }
 .post.blog {
   width: 680px;
-  margin-top: 30px;
-  padding: 0 40px 0 0;
+  padding: 30px 40px 0 0;
   min-height: 306px;
 }
 .post.single .event-timeline-label {
@@ -4600,6 +4598,12 @@ table.session-weather th {
   padding-left: 40px;
   border-left: 1px solid #f2f2f2;
 }
+.tick .rightside {
+  right: -30px;
+}
+.tick.single {
+  height: 100%;
+}
 .tick.single .hangtens {
   width: 474px;
 }
@@ -4705,7 +4709,6 @@ table.session-weather th {
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––settings & reset*/
 .settings {
   width: 680px;
-  margin: 0 0 30px 0;
 }
 .settings table {
   width: 100%;
@@ -5019,6 +5022,69 @@ p.habla_conversation_p_item,
 }
 #habla_offline_body_input {
   line-height: 16px !important;
+}
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––*/
+@media (max-width: 1200px) {
+  span.post-input-avatar {
+    display: none;
+  }
+}
+@media (max-width: 1146px) {
+  .header-inner {
+    width: auto;
+    padding-left: 15px;
+  }
+  .footer > div {
+    width: auto;
+    padding: 0 30px;
+  }
+  .footer-logo {
+    left: 25px;
+  }
+  .page-spin {
+    visibility: hidden;
+  }
+  .splash-middle {
+    width: auto;
+    padding: 0 30px;
+  }
+  ul.splash-features li > div {
+    height: auto;
+  }
+  .splash-bottom {
+    margin: 0 30px;
+    padding: 0 0 0 30px;
+    width: auto;
+  }
+  .container:not(.landing):not(.narrow) .folder {
+    margin: 40px 30px 0;
+    width: auto;
+  }
+  .content {
+    width: auto;
+  }
+  .leftside:not(.equal) {
+    border-right: none;
+    width: auto;
+    padding-top: 0;
+    padding-right: 0;
+    margin-top: 40px;
+  }
+  .rightside:not(.equal) {
+    position: static;
+    width: 100%;
+    margin: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    border: none;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+  }
+  .landing .rightside {
+    padding-right: 30px;
+  }
 }
 @-moz-keyframes fadeIn {
   0% {

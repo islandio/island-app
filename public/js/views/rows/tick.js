@@ -309,7 +309,7 @@ define([
       // Handle sizing.
       if (!this.parentView && this.$('.leftside').height()
           < this.$('.rightside').height()) {
-        this.$('.leftside').height(this.$el.height() - 60);
+        // this.$('.leftside').height(this.$el.height() - 60);
       }
     },
 

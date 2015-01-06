@@ -12,6 +12,64 @@
 %>
 
 <% if (!this.parentView) { %>
+  <div class="rightside">
+    <div class="mini-map" id="tick_map_<%= this.model.id %>"></div>
+    <% if (w) { %>
+      <table class="session-weather">
+        <tr>
+          <% if (w.temperature) {
+            var d = new Date(this.model.get('ts') * 1000);
+          %>
+            <th colspan="2"><i class="icon-temperatire"></i> <%= d.format('h:MM TT') %>, <%= d.format('dddd, mmm d, yyyy') %></th>
+          <% } else { %>
+            <th colspan="2"><i class="icon-temperatire"></i> <%= new Date(this.model.get('date')).format('dddd, mmm d, yyyy') %></th>
+          <% } %>
+        </tr>
+        <tr>
+          <td colspan="2"><%= w.summary %></td>
+        </tr>
+        <% if (w.temperature) { %>
+          <tr>
+            <td>temperature</td>
+            <td><%= weather.tempFtoC(w.temperature) %>&degC</td>
+          </tr>
+        <% } else { %>
+          <tr>
+            <td>low temp.</td>
+            <td><%= weather.tempFtoC(w.temperatureMin) %>&degC @ <%= new Date(w.temperatureMinTime * 1000).format('h:MM TT') %></td>
+          </tr>
+          <tr>
+            <td>high temp.</td>
+            <td><%= weather.tempFtoC(w.temperatureMax) %>&degC @ <%= new Date(w.temperatureMaxTime * 1000).format('h:MM TT') %></td>
+          </tr>
+        <% } %>
+        <tr>
+          <td>dew point</td>
+          <td><%= weather.tempFtoC(w.dewPoint) %>&degC</td>
+        </tr>
+        <tr>
+          <td>humidity</td>
+          <td><%= Math.round(w.humidity * 100) %>%</td>
+        </tr>
+        <tr>
+          <td>cloud cover</td>
+          <td><%= Math.round(w.cloudCover * 100) %>%</td>
+        </tr>
+        <tr>
+          <td>wind speed</td>
+          <td><%= (w.windSpeed * 3.6).toFixed(1) %> km/hr</td>
+        </tr>
+        <% if (w.precipIntensity > 0) { %>
+          <tr>
+            <td>precip. intensity</td>
+            <td><%= w.precipIntensity %> (<%= w.precipType %>)</td>
+          </tr>
+        <% } %>
+      </table>
+    <% } %>
+  </div>
+<% } %>
+<% if (!this.parentView) { %>
   <div class="leftside">
 <% } %>
 
@@ -173,62 +231,6 @@
 <% } %>
 
 <% if (!this.parentView) { %>
-  </div>
-  <div class="rightside">
-    <div class="mini-map" id="tick_map_<%= this.model.id %>"></div>
-    <% if (w) { %>
-      <table class="session-weather">
-        <tr>
-          <% if (w.temperature) {
-            var d = new Date(this.model.get('ts') * 1000);
-          %>
-            <th colspan="2"><i class="icon-temperatire"></i> <%= d.format('h:MM TT') %>, <%= d.format('dddd, mmm d, yyyy') %></th>
-          <% } else { %>
-            <th colspan="2"><i class="icon-temperatire"></i> <%= new Date(this.model.get('date')).format('dddd, mmm d, yyyy') %></th>
-          <% } %>
-        </tr>
-        <tr>
-          <td colspan="2"><%= w.summary %></td>
-        </tr>
-        <% if (w.temperature) { %>
-          <tr>
-            <td>temperature</td>
-            <td><%= weather.tempFtoC(w.temperature) %>&degC</td>
-          </tr>
-        <% } else { %>
-          <tr>
-            <td>low temp.</td>
-            <td><%= weather.tempFtoC(w.temperatureMin) %>&degC @ <%= new Date(w.temperatureMinTime * 1000).format('h:MM TT') %></td>
-          </tr>
-          <tr>
-            <td>high temp.</td>
-            <td><%= weather.tempFtoC(w.temperatureMax) %>&degC @ <%= new Date(w.temperatureMaxTime * 1000).format('h:MM TT') %></td>
-          </tr>
-        <% } %>
-        <tr>
-          <td>dew point</td>
-          <td><%= weather.tempFtoC(w.dewPoint) %>&degC</td>
-        </tr>
-        <tr>
-          <td>humidity</td>
-          <td><%= Math.round(w.humidity * 100) %>%</td>
-        </tr>
-        <tr>
-          <td>cloud cover</td>
-          <td><%= Math.round(w.cloudCover * 100) %>%</td>
-        </tr>
-        <tr>
-          <td>wind speed</td>
-          <td><%= (w.windSpeed * 3.6).toFixed(1) %> km/hr</td>
-        </tr>
-        <% if (w.precipIntensity > 0) { %>
-          <tr>
-            <td>precip. intensity</td>
-            <td><%= w.precipIntensity %> (<%= w.precipType %>)</td>
-          </tr>
-        <% } %>
-      </table>
-    <% } %>
   </div>
   <div class="clear"></div>
 <% } %>

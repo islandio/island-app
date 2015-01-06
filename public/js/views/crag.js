@@ -88,6 +88,10 @@ define([
         tags: this.model.instagramTags(),
       }).render();
 
+      // Adjust height.
+      
+      // this.$el.height(this.$('.rightside').outerHeight());
+
       return this;
     },
 

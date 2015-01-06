@@ -46,11 +46,32 @@ define([
   /*
    * Determine if parent is iframe.
    */
-  function inIframe () {
+  function inIframe() {
     try {
       return window.self !== window.top;
     } catch (e) {
       return true;
+    }
+  }
+
+  /*
+   * Handle sizing.
+   */
+  function fitSides() {
+    var win = $(window);
+    var m = $('.main');
+    var ls = $('.leftside');
+    var rs = $('.rightside');
+    var lh = ls.outerHeight();
+    var rh = rs.outerHeight();
+    if (win.width() < 1146) {
+      m.height('100%');
+    } else {
+      if (rs.height() > ls.height()) {
+        m.height(rh);
+      } else {
+        m.height('100%');
+      }
     }
   }
 
@@ -121,6 +142,9 @@ define([
       mps.subscribe('session/new', _.bind(function (opts) {
         this.modal = new NewSession(this.app, opts).render();
       }, this));
+
+      // Fit on window resize.
+      $(window).resize(_.debounce(fitSides, 100));
     },
 
     routes: {
@@ -268,6 +292,7 @@ define([
         $(window).scrollTop(0);
         $('body').removeClass('loading');
         $('footer').show();
+        fitSides();
       }, this));
     },
 

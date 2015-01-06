@@ -7,42 +7,6 @@
 %>
 
 <% if (!this.parentView) { %>
-  <div class="leftside">
-<% } %>
-
-<% if (this.parentView) { %>
-  <a href="/sessions/<%= this.model.get('key') %>" class="navigate">
-    <div class="mini-map" id="crag_map_<%= this.model.id %>"><div class="mini-map-cover"></div></div>
-  </a>
-  <div class="event-title">
-    <a href="/<%= this.model.get('author').username %>" class="title navigate">
-      <%= this.model.formatAuthorFor(this.app.profile.member) %></a> logged 
-      <a href="/sessions/<%= this.model.get('key') %>" class="title navigate">climbing</a>.
-    <a href="/crags/<%= this.model.get('crag').key %>" class="session-location title navigate">
-      <i class="icon-location"></i> <%= this.model.get('crag').name %>, <%= this.model.get('crag').country %>
-    </a>
-  </div>
-  <% if (daily) { %>
-    <span class="event-title-text">
-      <span class="event-timeline-label">
-        <i class="icon-temperatire"></i>
-      </span>
-      <a href="/sessions/<%= this.model.get('key') %>" class="title-medium navigate">
-        <%= weather.dailyTempRange() %>&degC <%= weather.getWeatherIconName(daily.icon) %>
-      </a>
-    </span>
-  <% } %>
-<% } %>
-<% if (this.model.get('actions').length === 0) { %>
-  <span class="session-empty">No activities</span>
-<% } %>
-<% _.each(this.model.get('actions'), _.bind(function (a) { %>
-  <% if (a.ticks.length > 0) { %>
-    <%= this.renderActivity(a) %>
-  <% } %>
-<% }, this)); %>
-<% if (!this.parentView) { %>
-  </div>
   <div class="rightside">
     <div class="mini-map" id="session_map_<%= this.model.id %>"></div>
     <% if (daily) { %>
@@ -85,6 +49,44 @@
         <% } %>
       </table>
     <% } %>
+  </div>
+<% } %>
+<% if (!this.parentView) { %>
+  <div class="leftside">
+<% } %>
+
+<% if (this.parentView) { %>
+  <a href="/sessions/<%= this.model.get('key') %>" class="navigate">
+    <div class="mini-map" id="crag_map_<%= this.model.id %>"><div class="mini-map-cover"></div></div>
+  </a>
+  <div class="event-title">
+    <a href="/<%= this.model.get('author').username %>" class="title navigate">
+      <%= this.model.formatAuthorFor(this.app.profile.member) %></a> logged 
+      <a href="/sessions/<%= this.model.get('key') %>" class="title navigate">climbing</a>.
+    <a href="/crags/<%= this.model.get('crag').key %>" class="session-location title navigate">
+      <i class="icon-location"></i> <%= this.model.get('crag').name %>, <%= this.model.get('crag').country %>
+    </a>
+  </div>
+  <% if (daily) { %>
+    <span class="event-title-text">
+      <span class="event-timeline-label">
+        <i class="icon-temperatire"></i>
+      </span>
+      <a href="/sessions/<%= this.model.get('key') %>" class="title-medium navigate">
+        <%= weather.dailyTempRange() %>&degC <%= weather.getWeatherIconName(daily.icon) %>
+      </a>
+    </span>
+  <% } %>
+<% } %>
+<% if (this.model.get('actions').length === 0) { %>
+  <span class="session-empty">No activities</span>
+<% } %>
+<% _.each(this.model.get('actions'), _.bind(function (a) { %>
+  <% if (a.ticks.length > 0) { %>
+    <%= this.renderActivity(a) %>
+  <% } %>
+<% }, this)); %>
+<% if (!this.parentView) { %>
   </div>
   <div class="clear"></div>
 <% } %>

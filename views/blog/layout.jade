@@ -14,8 +14,6 @@ block content
             i.icon-rss
       .content
         .main(role="main")
-          .leftside.post.blog
-            block blog
           .rightside
             span.sidebar-heading-small
               | Categories 
@@ -31,6 +29,8 @@ block content
                   a(href="#{categoryURL(cat)}")
                     span.list-row-title
                       =cat
+          .leftside.post.blog
+            block blog
           .clear
     include ../panel
     include ../footer

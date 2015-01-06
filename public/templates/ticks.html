@@ -10,6 +10,18 @@
   var privacy = data.author.config.privacy.ticks ? data.author.config.privacy.ticks.toString(): '0';
 %>
 
+<div class="rightside">
+  <div class="sidebar-items">
+    <div class="sidebar-watchees">
+      <span class="sidebar-heading"><%= owner %> watching:</span>
+      <div class="sidebar-crags"></div>
+      <div class="sidebar-ascents-r"></div>
+      <div class="sidebar-ascents-b"></div>
+    </div>
+    <div class="sidebar-followers"></div>
+    <div class="sidebar-followees"></div>
+  </div>
+</div>
 <div class="leftside">
   <% if (this.app.profile.content.page.private && !own) { %>
     <span class="empty-feed">This athlete's ascents are <%= privacy === '1' ? 'only visible to followers': 'private' %>.</span>
@@ -56,17 +68,5 @@
       <% }, this)) %>
     </div>
   <% } %>
-</div>
-<div class="rightside">
-  <div class="sidebar-items">
-    <div class="sidebar-watchees">
-      <span class="sidebar-heading"><%= owner %> watching:</span>
-      <div class="sidebar-crags"></div>
-      <div class="sidebar-ascents-r"></div>
-      <div class="sidebar-ascents-b"></div>
-    </div>
-    <div class="sidebar-followers"></div>
-    <div class="sidebar-followees"></div>
-  </div>
 </div>
 <div class="clear"></div>
