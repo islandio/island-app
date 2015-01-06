@@ -4901,8 +4901,11 @@ input.import-input {
   color: #333;
   float: left;
 }
-.import .import-insert-button {
+.import button.import-insert-button {
   background-color: #b1dc36;
+}
+.import button.import-insert-button:hover {
+  background-color: #a7d22c;
 }
 .import .ticks-filter {
   margin-top: 40px;
