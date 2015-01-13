@@ -1,0 +1,63 @@
+<%
+  var data = this.model.attributes;
+  var grades = [ 'not graded by you'].concat(this.model.grades);
+%>
+
+
+<div class="leftside import">
+
+  <button class="button import-insert-button"> Import
+    <div class="button-spin"></div>
+  </button>
+  <p class="note">We'll add all the below boulders and routes to your Island tick
+  list. We'll also add any missing ascents to Island's ascent list.</p>
+  <p class="note">Note: Importing can take up to a minute for large scorecards.</p>
+
+  <div class="ticks-filter">
+    <span class="import-scorecard-title"> <%= this.name %>'s Scorecard </span>
+    <div class="subtabs">
+      <ul>
+        <li class="subtab">
+          <a href="javascript:;" class="b-filter"><%= data.ticks.b.length %> Boulders</a>
+        </li>
+        <li data-filter="r" class="subtab">
+          <a href="javascript:;" class="r-filter"><%= data.ticks.r.length %> Routes</a>
+        </li>
+      </ul>
+    </div>
+    <div class="ticks-filter-input">
+      <input class="filter-box" type="search" tabindex="2" placeholder="filter ascents..." />
+    </div>
+  </div>
+
+  <div class="tick-list">
+    <% _.each(data.ticks, _.bind(function (ticks, type) {
+      ticks = this.model.ticksByGrade(type); %>
+      <div class="list-wrap <%= type %>-ticks">
+        <span class="empty-feed">You have not logged any <%= type === 'b' ? 'boulder problems': 'routes' %> yet.</span>
+        <span class="no-results">No results.</span>
+        <% for (var j = grades.length - 1; j > -1; --j) {
+          var grade = grades[j];
+          var style = '';
+          if (!ticks[grade]) {
+            ticks[grade] = [];
+            style = 'display: none;';
+          }
+          %>
+          <ul class="session-ticks" style="<%= style %>">
+            <div class="tick-list-group-heading" data-grade="<%= grade %>">
+              <span><%= grade %></span>
+            </div>
+            <% _.each(ticks[grade], _.bind(function (tick) { %>
+              <li class="tick" id="<%= tick.id %>" data-type="<%= tick.type %>"></li>
+            <% }, this)); %>
+          </ul>
+        <% } %>
+      </div>
+    <% }, this)) %>
+  </div>
+</div>
+<div class="rightside">
+</div>
+
+<div class="clear"></div>

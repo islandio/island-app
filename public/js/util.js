@@ -268,6 +268,10 @@ define([
       return age;
     },
 
+    rid32: function () {
+      return parseInt(Math.random() * 0x7fffffff);
+    },
+
     blurb: function (str, max) {
       if (typeof str === 'number')
         str = String(str);

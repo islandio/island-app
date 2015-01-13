@@ -1,12 +1,15 @@
 <%
   var t = this.model.attributes;
-  var own = this.app.profile.member &&
+  var own = this.app.profile.member && this.model.get('author') &&
       this.model.get('author').id === this.app.profile.member.id;
-  var gravatar = 'https://www.gravatar.com/avatar/'
-      + t.author.gravatar + '?s=36&d='
-      + encodeURIComponent(this.app.images.avatar);
+  var gravatar = t.author ? ('https://www.gravatar.com/avatar/'
+      + t.author.gravatar + '?s=36&d=' 
+      + encodeURIComponent(this.app.images.avatar)) : null;
   var weather = this.model.get('weather');
-  var w = weather.get('hourly') || weather.get('daily');
+  var w;
+  if (!_.isEmpty(weather)) {
+    w = weather.get('hourly') || weather.get('daily');
+  }
   var inlineWeather = w && this.options.inlineWeather;
   var mediaTypes = _.uniq(_.pluck(t.medias, 'type'));
 %>
@@ -78,7 +81,8 @@
 <% } %>
 
 <div class="tick-inner" data-key="<%= this.model.get('key') %>">
-  <% if (this.parentView && this.parentView.model.get('action')) { %>
+  <% if (this.parentView && this.parentView.model 
+      && this.parentView.model.get('action')) { %>
     <span class="tick-avatar">
       <a href="/<%= t.author.username %>" class="image-anchor navigate">
         <img src="<%= gravatar %>" width="36" height="36" />
@@ -123,9 +127,17 @@
     </span>
   <% } %>
   <span class="session-tick-name">
-    <a href="/crags/<%= t.ascent.key %>" class="navigate">
+    <% if (t.ascent.key) { %>
+      <a href="/crags/<%= t.ascent.key %>" class="navigate">
+    <% } %>
+      <% if (this.options.showCragName) { %>
+        <%= t.crag.name %> |
+      <% } %>
       <%= t.ascent.name %><%= t.ascent.sector ? ' <span style="font-size:90%;">('
-          + t.ascent.sector + ')</span>': '' %></a>
+          + t.ascent.sector + ')</span>': '' %>
+    <% if (t.ascent.key) { %>
+      </a>
+    <% } %>
   </span>
   <% if (t.duration || t.performance || w) { %>
     <span class="session-tick-detail">
@@ -201,16 +213,16 @@
     <span class="info-divider">&nbsp;&middot;&nbsp;</span>
   <% } %>
   <% if (this.options.commentless) { %>
-    <% if (t.hangtens.length > 0) { %>
+    <% if (t.hangtens && t.hangtens.length > 0) { %>
       <span class="info-item"><span class="small-hangten"></span> x <%= t.hangtens.length %></a></span>
       <span class="info-divider">&nbsp;&middot;&nbsp;</span>
     <% } %>
-    <% if (t.comments.length > 0) { %>
+    <% if (t.comments && t.comments.length > 0) { %>
       <span class="info-item"><i class="icon-comment"></i> x <%= t.comments.length %></a></span>
       <span class="info-divider">&nbsp;&middot;&nbsp;</span>
     <% } %>
   <% } %>
-  <% if (this.options.medialess && t.medias.length > 0) { %>
+  <% if (this.options.medialess && t.medias && t.medias.length > 0) { %>
     <span class="info-item"><i class="icon-picture"></i> x <%= t.medias.length %></a></span>
     <span class="info-divider">&nbsp;&middot;&nbsp;</span>
   <% } %>
