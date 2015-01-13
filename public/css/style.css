@@ -4925,8 +4925,7 @@ input.import-input {
 .import-scorecard-title {
   text-transform: capitalize;
   font-size: 20px;
-  font-weight: 500;
-  color: #333;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   float: left;
 }
 .import .new-session-button {
