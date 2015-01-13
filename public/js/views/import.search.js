@@ -1,5 +1,5 @@
 /*
- * Page view for crags.
+ * Page view for import search.
  */
 
 define([
@@ -27,7 +27,7 @@ define([
     },
 
     render: function () {
-      this.app.title('The Island | Import');
+      this.app.title('The Island | 8a.nu Import');
 
       this.template = _.template(template);
       $(this.template.call(this)).appendTo('.main');
@@ -46,8 +46,9 @@ define([
     setup: function () {
       this.spin = new Spin(this.$('.button-spin'));
       this.noResults = $('.no-results');
-      this.list = $('.list-wrap .list');
-      this.input = $('.import-input');
+      this.list = this.$('.list-wrap .list');
+      this.input = this.$('.import-input');
+      this.button = this.$('.button');
 
       return this;
     },
@@ -87,11 +88,13 @@ define([
 
       var member = this.input.val();
       this.spin.start();
+      this.button.addClass('spinning').addClass('disabled').attr('disabled', true);
       this.searching = true;
       this.app.rpc.do('get8aUser', member, _.bind(function (err, res) {
 
         this.searching = false;
         this.spin.stop();
+        this.button.removeClass('spinning').removeClass('disabled').attr('disabled', false);
 
         if (err) {
           this.input.addClass('input-error');

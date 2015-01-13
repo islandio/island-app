@@ -1,20 +1,20 @@
 <%
   var data = this.model.attributes;
-  var grades = [ 'not graded by you'].concat(this.model.grades);
+  var grades = ['not graded by you'].concat(this.model.grades);
 %>
 
-
+<div class="rightside"></div>
 <div class="leftside import">
+  <p class="note">
+    <span class="em">Step 2)</span> We'll add all the below boulder problems and routes to your Island ascent list. We'll also add any missing climbs to The Island if we recognize the crag. Note: Importing can take up to a minute for large scorecards.
+  </p>
 
-  <button class="button import-insert-button"> Import
+  <button class="button new-session-button"><i class="icon-up"></i> Import
     <div class="button-spin"></div>
   </button>
-  <p class="note">We'll add all the below boulders and routes to your Island tick
-  list. We'll also add any missing ascents to Island's ascent list.</p>
-  <p class="note">Note: Importing can take up to a minute for large scorecards.</p>
 
   <div class="ticks-filter">
-    <span class="import-scorecard-title"> <%= this.name %>'s Scorecard </span>
+    <span class="import-scorecard-title"> <%= this.name %>'s Scorecard</span>
     <div class="subtabs">
       <ul>
         <li class="subtab">
@@ -57,7 +57,4 @@
     <% }, this)) %>
   </div>
 </div>
-<div class="rightside">
-</div>
-
 <div class="clear"></div>

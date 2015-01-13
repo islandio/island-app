@@ -540,6 +540,10 @@ span.empty-list
 .no-results
   font-style italic
   color gray
+  font-size 12px
+
+.em
+  font-style italic
 
 .note
   font-size 11px
@@ -740,7 +744,7 @@ a.button.spinning,
 button.button.spinning,
 div[role=button].spinning,
 input[type=submit].spinning:not(.submit)
-  color #f1f1f1
+  color transparent !important
 
 button.button.modal-button,
 input[type=submit].modal-button
@@ -4968,20 +4972,41 @@ span.no-description
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––import*/
 
+.import
+  font-size 0  
+
+.import .note
+  font-size 14px
+  color #666
+  margin-bottom 15px
+  line-height 20px
+
 input.import-input
-  width 320px
-  margin-right 20px
+  width 480px
+  margin-right 10px
+  font-size 16px
 
-.import button
-  width 120px
+.import button.button.import-search-button
+  position relative
+  width 190px
+  line-height 36px
+  height 36px
 
-.import .list a:hover span
+.import ul.list
+  font-size 14px
+
+.import ul.list li a
+  padding 8px 7px 7px 0
+  margin-left -5px
+  max-width 100%
+
+.import ul.list li a:hover span
   color inherit
 
-.import .list span
+.import ul.list span
   color #888
 
-.import subtatabs
+.import .subtabs
   float clear
 
 .import-scorecard-title
@@ -4991,11 +5016,8 @@ input.import-input
   color #333
   float left
 
-.import button.import-insert-button
-  background-color green
-
-.import button.import-insert-button:hover
-  background-color #a7d22c
+.import .new-session-button
+  width 100%
 
 .import .ticks-filter
   margin-top 40px

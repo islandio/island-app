@@ -1,5 +1,5 @@
 /*
- * Page view for crags.
+ * Page view for import insert.
  */
 
 define([
@@ -38,7 +38,7 @@ define([
     },
 
     render: function () {
-      this.app.title('The Island | Import');
+      this.app.title('The Island | 8a.nu Import');
 
       this.model = new Card(this.app.profile.content.page);
 
@@ -63,9 +63,16 @@ define([
       this.routesFilter = this.$('.r-filter').parent();
       this.boulders = this.$('.b-ticks');
       this.routes = this.$('.r-ticks');
+      this.button = this.$('.button');
 
       // Init the load indicator.
-      this.spin = new Spin(this.$('.button-spin'));
+      this.spin = new Spin(this.$('.button-spin'), {
+        color: '#396400',
+        lines: 13,
+        length: 3,
+        width: 2,
+        radius: 6,
+      });
 
       // Handle type changes.
       if (this.model.get('ticks').b.length > this.model.get('ticks').r.length) {
@@ -147,6 +154,7 @@ define([
       if (this.ticks.length === 0 || this.submitting) return;
       this.submitting = true;
       this.spin.start();
+      this.button.addClass('spinning').addClass('disabled').attr('disabled', true);
 
       // Add missing ascents
       var ascents = _.compact(_.map(this.ticks, function (tick) {
@@ -193,6 +201,7 @@ define([
         rest.post('/api/sessions/', sessions, _.bind(function (err, res) {
           if (err) return this.submitError();
           this.spin.stop();
+          this.button.removeClass('spinning').removeClass('disabled').attr('disabled', false);
           this.submitting = false;
 
           // Show success.
@@ -211,6 +220,7 @@ define([
 
     submitError: function () {
       this.spin.stop();
+      this.button.removeClass('spinning').removeClass('disabled').attr('disabled', false);
       this.submitting = false;
     },
 

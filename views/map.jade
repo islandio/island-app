@@ -4,31 +4,32 @@
   a.button.map-button.map-weather(href="javascript:;")
     span
       i.icon-temperatire
-  a.button.map-button.map-plot(href="javascript:;")
-    span
-      | +
-      i.icon-location
-    .plot-spin
-  .plot-form
-    table
-      tr
-        td(colspan="2")
-          input.required(type="text", name="name", placeholder="Crag name (new or just missing from Island)")
-      tr
-        td
-          input.required(type="text", name="latitude", placeholder="° latitude")
-        td
-          input.required(type="text", name="longitude", placeholder="° longitude")
-      tr
-        td
-          a.button.plot-cancel(href="javascript:;") Cancel
-        td
-          a.button.new-session-button.disabled(href="javascript:;", disabled="disabled")
-            i.icon-plus 
-            | Add it
-      tr
-        td(colspan="2")
-          span Click on the map to grab the crag's coordinates.
+  - if (member.role !== 2)
+    a.button.map-button.map-plot(href="javascript:;")
+      span
+        | +
+        i.icon-location
+      .plot-spin
+    .plot-form
+      table
+        tr
+          td(colspan="2")
+            input.required(type="text", name="name", placeholder="Crag name (new or just missing from Island)")
+        tr
+          td
+            input.required(type="text", name="latitude", placeholder="° latitude")
+          td
+            input.required(type="text", name="longitude", placeholder="° longitude")
+        tr
+          td
+            a.button.plot-cancel(href="javascript:;") Cancel
+          td
+            a.button.new-session-button.disabled(href="javascript:;", disabled="disabled")
+              i.icon-plus 
+              | Add it
+        tr
+          td(colspan="2")
+            span Click on the map to grab the crag's coordinates.
   .map-control
     div
       a#hide_show.hide-show.button(href="javascript:;") Show map
