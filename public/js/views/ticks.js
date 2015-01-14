@@ -55,6 +55,7 @@ define([
       this.title = _.template(title).call(this);
 
       // Render each tick as a view.
+      console.time('render');
       _.each(this.$('.tick'), _.bind(function (el) {
         el = $(el);
         var data = _.find(this.model.get('ticks')[el.data('type')], function (t) {
@@ -67,10 +68,11 @@ define([
           mapless: true,
           medialess: true,
           commentless: true,
-          inlineWeather: true,
+          showCragName: true,
           inlineDate: true
         }, this.app).render());
       }, this));
+      console.timeEnd('render');
 
       this.trigger('rendered');
       return this;
@@ -146,7 +148,7 @@ define([
           mapless: true,
           medialess: true,
           commentless: true,
-          inlineWeather: true,
+          showCragName: true,
           inlineDate: true
         }, this.app).render());
         this.checkCurrentCount();

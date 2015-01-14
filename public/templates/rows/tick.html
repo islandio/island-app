@@ -213,18 +213,20 @@
     <span class="info-divider">&nbsp;&middot;&nbsp;</span>
   <% } %>
   <% if (this.options.commentless) { %>
-    <% if (t.hangtens && t.hangtens.length > 0) { %>
-      <span class="info-item"><span class="small-hangten"></span> x <%= t.hangtens.length %></a></span>
+    <% if (t.hangtens_cnt !== undefined || (t.hangtens && t.hangtens.length > 0)) { %>
+      <span class="info-item"><span class="small-hangten"></span> x <%= t.hangtens ? t.hangtens.length: t.hangtens_cnt %></a></span>
       <span class="info-divider">&nbsp;&middot;&nbsp;</span>
     <% } %>
-    <% if (t.comments && t.comments.length > 0) { %>
-      <span class="info-item"><i class="icon-comment"></i> x <%= t.comments.length %></a></span>
+    <% if (t.comments_cnt !== undefined || (t.comments && t.comments.length > 0)) { %>
+      <span class="info-item"><i class="icon-comment"></i> x <%= t.comments ? t.comments.length: t.comments_cnt %></a></span>
       <span class="info-divider">&nbsp;&middot;&nbsp;</span>
     <% } %>
   <% } %>
-  <% if (this.options.medialess && t.medias && t.medias.length > 0) { %>
-    <span class="info-item"><i class="icon-picture"></i> x <%= t.medias.length %></a></span>
-    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+  <% if (this.options.medialess) { %>
+    <% if (t.medias_cnt !== undefined || (t.medias && t.medias.length > 0)) { %>
+      <span class="info-item"><i class="icon-picture"></i> x <%= t.medias ? t.medias.length: t.medias_cnt %></a></span>
+      <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+    <% } %>
   <% } %>
   <% if (own) { %>
     <a href="javascript:;" class="muted tick-edit">Edit</a>

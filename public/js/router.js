@@ -352,7 +352,9 @@ define([
       this.start();
       this.renderTabs();
       this.clearContainer();
+      console.time('service/ticks');
       this.render('/service/ticks/' + username, _.bind(function (err) {
+        console.timeEnd('service/ticks');
         if (err) return;
         this.page = new Ticks(this.app).render();
         if (this.app.profile.member
