@@ -55,24 +55,22 @@ define([
       this.title = _.template(title).call(this);
 
       // Render each tick as a view.
-      console.time('render');
-      _.each(this.$('.tick'), _.bind(function (el) {
-        el = $(el);
-        var data = _.find(this.model.get('ticks')[el.data('type')], function (t) {
-          return t.id === el.attr('id');
-        });
-        this.ticks.push(new Tick({
-          parentView: this,
-          el: el,
-          model: data,
-          mapless: true,
-          medialess: true,
-          commentless: true,
-          showCragName: true,
-          inlineDate: true
-        }, this.app).render());
-      }, this));
-      console.timeEnd('render');
+      // _.each(this.$('.tick'), _.bind(function (el) {
+      //   el = $(el);
+      //   // var data = _.find(this.model.get('ticks')[el.data('type')], function (t) {
+      //   //   return t.id === el.attr('id');
+      //   // });
+      //   // this.ticks.push(new Tick({
+      //   //   parentView: this,
+      //   //   el: el,
+      //   //   model: data,
+      //   //   mapless: true,
+      //   //   medialess: true,
+      //   //   commentless: true,
+      //   //   showCragName: true,
+      //   //   inlineDate: true
+      //   // }, this.app).render());
+      // }, this));
 
       this.trigger('rendered');
       return this;
@@ -111,14 +109,14 @@ define([
       }
 
       // Render lists.
-      this.followers = new Followers(this.app, {parentView: this, reverse: true});
-      this.followees = new Followees(this.app, {parentView: this, reverse: true});
-      this.crags = new Watchees(this.app, {parentView: this, reverse: true,
-          type: 'crag', heading: 'Crags'});
-      this.sroutes = new Watchees(this.app, {parentView: this, reverse: true,
-          type: 'ascent', subtype: 'r', heading: 'Routes'});
-      this.sboulders = new Watchees(this.app, {parentView: this, reverse: true,
-          type: 'ascent', subtype: 'b', heading: 'Boulders'});
+      // this.followers = new Followers(this.app, {parentView: this, reverse: true});
+      // this.followees = new Followees(this.app, {parentView: this, reverse: true});
+      // this.crags = new Watchees(this.app, {parentView: this, reverse: true,
+      //     type: 'crag', heading: 'Crags'});
+      // this.sroutes = new Watchees(this.app, {parentView: this, reverse: true,
+      //     type: 'ascent', subtype: 'r', heading: 'Routes'});
+      // this.sboulders = new Watchees(this.app, {parentView: this, reverse: true,
+      //     type: 'ascent', subtype: 'b', heading: 'Boulders'});
 
       return this;
     },
