@@ -38,6 +38,7 @@ define([
       // Client-wide subscriptions
       this.subscriptions = [
         mps.subscribe('flash/new', _.bind(function (data, clear) {
+          data.type = data.type || 'block';
           if (data.type === this.collection.options.type) {
             if (clear) {
               this.collection.reset([]);
@@ -61,6 +62,7 @@ define([
     },
 
     collect: function (data) {
+      data.type = data.type || 'block';
       if (data.type === this.collection.options.type) {
         this.collection.push(data);
       }
