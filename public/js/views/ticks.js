@@ -55,7 +55,9 @@ define([
       this.title = _.template(title).call(this);
 
       // Render each tick as a view.
-      _.each(this.$('.tick'), _.bind(function (el) {
+      var ticks = this.$('.tick');
+      var win = $(window);
+      _.each(ticks, _.bind(function (el, i) {
         _.defer(_.bind(function () {
           el = $(el);
           var data = _.find(this.model.get('ticks')[el.data('type')], function (t) {
@@ -71,6 +73,7 @@ define([
             showCragName: true,
             inlineDate: true
           }, this.app).render());
+          win.trigger('resize');
         }, this));
       }, this));
 
