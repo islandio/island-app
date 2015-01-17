@@ -23,7 +23,8 @@ header.header
       li
         a(class="navigate #{typeof blog !== 'undefined' && blog == true ? 'active':''}", href="/blog") Blog
     - if (typeof member !== 'undefined')
-      div.member-box
+      - var w = member.role !== 2 ? 183: 132;
+      div.member-box(style="width:" + w + "px;")
         div.divider-vertical
         a.header-avatar(href="/" + member.username)
           img(src="https://www.gravatar.com/avatar/" + member.gravatar + "?s=50&d=https%3A%2F%2Fs3.amazonaws.com%2Fisland.io%2Favatar_48.png", width="50", height="50")

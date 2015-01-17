@@ -39,14 +39,35 @@ define([
 
     render: function () {
       this.app.title('The Island | 8a.nu Import');
-
       this.model = new Card(this.app.profile.content.page);
-
       this.template = _.template(template);
       $(this.template.call(this)).appendTo('.main');
 
-      this.trigger('rendered');
+      // Render each tick as a view.
+      var ticks = this.$('.tick');
+      var win = $(window);
+      _.each(ticks, _.bind(function (el, i) {
+        _.defer(_.bind(function () {
+          el = $(el);
+          var data = _.find(this.model.get('ticks')[el.data('type')], function (t) {
+            return t.id === el.attr('id');
+          });
+          this.ticks.push(new Tick({
+            parentView: this,
+            el: el,
+            model: data,
+            mapless: true,
+            medialess: true,
+            commentless: true,
+            inlineWeather: false,
+            showCragName: true,
+            inlineDate: true
+          }, this.app).render());
+          win.trigger('resize');
+        }, this));
+      }, this));
 
+      this.trigger('rendered');
       return this;
     },
 
@@ -79,14 +100,17 @@ define([
         this.currentType = 'b';
         this.bouldersFilter.addClass('active');
         this.boulders.show();
+        this.routes.hide();
       } else {
         this.currentType = 'r';
         this.routesFilter.addClass('active');
         this.routes.show();
+        this.boulders.hide();
       }
-
-      this.bouldersFilter.click(_.bind(this.changeType, this, 'b'));
-      this.routesFilter.click(_.bind(this.changeType, this, 'r'));
+      _.defer(_.bind(function () {
+        this.bouldersFilter.click(_.bind(this.changeType, this, 'b'));
+        this.routesFilter.click(_.bind(this.changeType, this, 'r'));
+      }, this));
 
       // Handle filtering.
       this.filterBox.bind('keyup search', _.bind(this.filter, this));
@@ -96,27 +120,7 @@ define([
         this.filterBox.focus();
       }
 
-      // Render each tick as a view.
-      _.each(this.$('.tick'), _.bind(function (el) {
-        el = $(el);
-        var data = _.find(this.model.get('ticks')[el.data('type')], function (t) {
-          return t.id === el.attr('id');
-        });
-        this.ticks.push(new Tick({
-          parentView: this,
-          el: el,
-          model: data,
-          mapless: true,
-          medialess: true,
-          commentless: true,
-          inlineWeather: false,
-          showCragName: true,
-          inlineDate: true
-        }, this.app).render());
-      }, this));
-
       return this;
-
     },
 
     changeType: function (type, e) {
@@ -207,9 +211,10 @@ define([
           // Show success.
           var ticks = this.ticks.length;
           mps.publish('flash/new', [{
-            message: 'You successfully imported your 8a scorecard and added '
-                + ticks + ' new ticks',
-            level: 'alert'
+            message: 'You successfully imported your 8a.nu scorecard and added '
+                + ticks + ' new ascents.',
+            level: 'alert',
+            sticky: true
           }, true]);
 
           this.app.router.navigate('/', {trigger: true});
@@ -250,7 +255,6 @@ define([
       }
       return false;
     }
-
 
   });
 });
