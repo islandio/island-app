@@ -70,6 +70,10 @@ define([
       m.height('100%');
     } else {
       if (rs.height() > ls.height()) {
+        var pu = $('.profile-upper');
+        if (pu.length > 0) {
+          rh += pu.outerHeight();
+        }
         m.height(rh);
       } else {
         m.height('100%');
