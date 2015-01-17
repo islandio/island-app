@@ -124,7 +124,6 @@ define([
       this.route('blog/page/:c', 'blog', this.blog);
       this.route('blog', 'blog', this.blog);
 
-
       this.route('reset', 'reset', this.reset);
       this.route('admin', 'admin', this.admin);
       this.route('import', 'import', this.import);
