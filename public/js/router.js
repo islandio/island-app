@@ -150,6 +150,7 @@ define([
 
       // Fit on window resize.
       $(window).resize(_.debounce(fitSides, 100));
+      $(window).resize(_.debounce(fitSides, 1000));
     },
 
     routes: {
