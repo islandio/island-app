@@ -39,11 +39,12 @@ define([
   'views/ticks',
   'text!../templates/about.html',
   'text!../templates/privacy.html',
+  'text!../templates/tip.html',
   'views/session.new'
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
     Flashes, Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Tick,
     Crag, Admin, ImportSearch, ImportInsert, Ascent, Settings, Reset, Films, Static,
-    Crags, Dashboard, Splash, Ticks, aboutTemp, privacyTemp, NewSession) {
+    Crags, Dashboard, Splash, Ticks, aboutTemp, privacyTemp, tipTemp, NewSession) {
 
   /*
    * Determine if parent is iframe.
@@ -200,6 +201,24 @@ define([
 
         // Callback to route.
         cb(err);
+
+        // Render the confirm modal.
+        // $.fancybox(_.template(tipTemp)({
+        //   message: '<strong>Hello! Thank you for signing up. Please take a look around and make sure to...</strong>'
+        //       + '<br /><br />'
+        //       + '&bull; <em>Check out your sidebar for some people</em>'
+        //   title: 'Welcome to The Island'
+        // }), {
+        //   openEffect: 'fade',
+        //   closeEffect: 'fade',
+        //   closeBtn: false,
+        //   padding: 0
+        // });
+
+        // // Setup actions.
+        // $('#tip_close').click(function (e) {
+        //   $.fancybox.close();
+        // });
       }
 
       // Grab hash for comment.
