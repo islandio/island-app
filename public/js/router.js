@@ -284,10 +284,11 @@ define([
             + '<li>Check out your sidebar for some suggested athletes to follow.</li>'
             + '<li>The big green "Log" button is your starting place for tracking your rock climbing. The pencil icons are a shortcut for starting a log and are often next to crag and climb names - use \'em! </li>'
             + '<li>In addition to logging a completed climb as an "ascent", log attempts as "work" - remember all your efforts!</li>'
-            + '<li>Don\'t want to broadcast your efforts to the entire world? Check out the privacy options in <a href="/settings" target="blank">settings</a>.</li>'
+            + '<li>Don\'t want to broadcast your efforts to the entire world? Check out the privacy options in your user <a href="/settings" target="blank">settings</a>.</li>'
             + '</ol>'
             + '<span style="font-size:14px;"><strong>Do you use 8a.nu?</strong>'
-            + ' <a href="/import" target="blank" class="alt">Import your 8a scorecard</a>.</span>'
+            + ' <a href="/import" target="blank" class="alt">Import your 8a scorecard</a>.'
+            + ' You can do this later in your user <a href="/settings" target="blank">settings</a>.</span>'
         , title: 'Thanks for signing up for our private beta!'
       }), {
         openEffect: 'fade',
