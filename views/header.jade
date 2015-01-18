@@ -23,19 +23,17 @@ header.header
       li
         a(class="navigate #{typeof blog !== 'undefined' && blog == true ? 'active':''}", href="/blog") Blog
     - if (typeof member !== 'undefined')
-      - var w = member.role !== 2 ? 183: 132;
-      div.member-box(style="width:" + w + "px;")
+      div.member-box
         div.divider-vertical
         a.header-avatar(href="/" + member.username)
           img(src="https://www.gravatar.com/avatar/" + member.gravatar + "?s=50&d=https%3A%2F%2Fs3.amazonaws.com%2Fisland.io%2Favatar_48.png", width="50", height="50")
-        - if (member.role !== 2)
-          a.button.header-action.header-add-button.header-add-crag-button(href="javascript:;", title="Add new crag")
-            i.icon-plus
-            i.icon-location
-          div.divider-vertical
+        div.divider-vertical
         a.button.globe-button.header-action(href="javascript:;", title="Notifications")
           i.icon-globe
           span.count
+        div.divider-vertical
+        a.button.header-action.navigate(href="/settings", title="Settings")
+          i.icon-params
         div.divider-vertical
         a.button.header-action(href="/logout", title="Sign out")
           i.icon-logout
