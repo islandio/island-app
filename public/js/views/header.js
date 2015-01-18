@@ -72,7 +72,10 @@ define([
       'click .header-add-crag-button': 'addCrag',
       'click .header-add-ascent-button': 'addAscent',
       'click .globe-button': 'togglePanel',
-      'click .navigate': 'navigate'
+      'click .navigate': 'navigate',
+      'click .header-tips': function () {
+        mps.publish('modal/welcome/open', ['Tips', true]);
+      }
     },
 
     togglePanel: function (e) {

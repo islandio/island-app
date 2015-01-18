@@ -147,6 +147,11 @@ define([
         this.modal = new Forgot(this.app).render();
       }, this));
 
+      // Render welcome modal.
+      mps.subscribe('modal/welcome/open', _.bind(function (title, skipUpdate) {
+        this.renderWelcome(title, skipUpdate);
+      }, this));
+
       // Log new session.
       mps.subscribe('session/new', _.bind(function (opts) {
         this.modal = new NewSession(this.app, opts).render();
@@ -154,6 +159,7 @@ define([
 
       // Fit on window resize.
       $(window).resize(_.debounce(fitSides, 100));
+      $(window).resize(_.debounce(fitSides, 500));
       $(window).resize(_.debounce(fitSides, 1000));
     },
 
@@ -262,7 +268,7 @@ define([
         // Handle welcome modal.
         if (this.app.profile && this.app.profile.member
             && !this.app.profile.member.welcomed) {
-          this.renderWelcome();
+          this.renderWelcome('Thanks for signing up for our private beta!');
         }
       }, this));
     },
@@ -272,10 +278,13 @@ define([
           .removeClass('landing').removeClass('blog');
     },
 
-    renderWelcome: function () {
+    renderWelcome: function (title, skipUpdate) {
       var mem = this.app.profile.member;
+      if (!mem) {
+        return;
+      }
       $.fancybox(_.template(tipTemp)({
-        message: '<span style="font-size:14px;"><strong>The Island &hearts;\'s you.</strong>'
+        message: '<span style="font-size:14px;"><strong>The Island welcomes you.</strong>'
             + ' Here are a few tips to get you started:</span>'
             + '<br /><br />'
             + '<ol>'
@@ -284,12 +293,12 @@ define([
             + '<li>Check out your sidebar for some suggested athletes to follow.</li>'
             + '<li>The big green "Log" button is your starting place for tracking your rock climbing. The pencil icons are a shortcut for starting a log and are often next to crag and climb names - use \'em! </li>'
             + '<li>In addition to logging a completed climb as an "ascent", log attempts as "work" - remember all your efforts!</li>'
-            + '<li>Don\'t want to broadcast your efforts to the entire world? Check out the privacy options in your user <a href="/settings" target="blank">settings</a>.</li>'
+            + '<li>Don\'t want to broadcast your efforts to the entire world? Check out the privacy options in your profile <a class="alt" href="/settings" target="blank">settings</a>.</li>'
+            + '<li>Send us your questions, bug reports, and problems with the blue tab below or at <a class="alt" href="mailto:support@island.io">support@island.io</a>.</li>'
             + '</ol>'
             + '<span style="font-size:14px;"><strong>Do you use 8a.nu?</strong>'
-            + ' <a href="/import" target="blank" class="alt">Import your 8a scorecard</a>.'
-            + ' You can do this later in your user <a href="/settings" target="blank">settings</a>.</span>'
-        , title: 'Thanks for signing up for our private beta!'
+            + ' You can <a href="/import" target="blank" class="alt">import your 8a scorecard</a> from your profile <a class="alt" href="/settings" target="blank">settings</a>.</span>'
+        , title: title
       }), {
         openEffect: 'fade',
         closeEffect: 'fade',
@@ -299,12 +308,14 @@ define([
 
       $('#tip_close').click(function (e) {
         $.fancybox.close();
-        rest.put('/api/members/' + mem.username + '/welcome', {},
-            function (err, data) {
-          if (err) {
-            return console.log(err);
-          }
-        });
+        if (!skipUpdate) {
+          rest.put('/api/members/' + mem.username + '/welcome', {},
+              function (err, data) {
+            if (err) {
+              return console.log(err);
+            }
+          });
+        }
       });
     },
 
