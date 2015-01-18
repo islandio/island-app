@@ -5,36 +5,35 @@ var GradeConverter = function(type) {
   if (type === 'routes') {
 
     this.gradeMap = [
-      { yds: '5.3'   , brit: '3'  , french: '3'   , aus: '8'}  ,
-      { yds: '5.6'   , brit: '4b' , french: '4'   , aus: '13'} ,
-      { yds: '5.7'   , brit: '4c' , french: '5a'  , aus: '14'} ,
-      { yds: '5.8'   , brit: '4c' , french: '5b'  , aus: '15'} ,
-      { yds: '5.9'   , brit: '5a' , french: '5c'  , aus: '17'} ,
-      { yds: '5.10a' , brit: '5a' , french: '6a'  , aus: '18'} ,
-      { yds: '5.10b' , brit: '5b' , french: '6a+' , aus: '19'} ,
-      { yds: '5.10c' , brit: '5b' , french: '6b'  , aus: '20'} ,
-      { yds: '5.10d' , brit: '5c' , french: '6b+' , aus: '20'} ,
-      { yds: '5.11a' , brit: '5c' , french: '6b+' , aus: '21'} ,
-      { yds: '5.11b' , brit: '5c' , french: '6c'  , aus: '22'} ,
-      { yds: '5.11c' , brit: '6a' , french: '6c+' , aus: '23'} ,
-      { yds: '5.11d' , brit: '6a' , french: '7a'  , aus: '24'} ,
-      { yds: '5.12a' , brit: '6a' , french: '7a+' , aus: '25'} ,
-      { yds: '5.12b' , brit: '6a' , french: '7b'  , aus: '26'} ,
-      { yds: '5.12c' , brit: '6b' , french: '7b+' , aus: '27'} ,
-      { yds: '5.12d' , brit: '6b' , french: '7c'  , aus: '28'} ,
-      { yds: '5.13a' , brit: '6b' , french: '7c+' , aus: '29'} ,
-      { yds: '5.13b' , brit: '6c' , french: '8a'  , aus: '29'} ,
-      { yds: '5.13c' , brit: '6c' , french: '8a+' , aus: '30'} ,
-      { yds: '5.13d' , brit: '6c' , french: '8b'  , aus: '31'} ,
-      { yds: '5.14a' , brit: '7a' , french: '8b+' , aus: '32'} ,
-      { yds: '5.14b' , brit: '7a' , french: '8c'  , aus: '33'} ,
-      { yds: '5.14c' , brit: '7b' , french: '8c+' , aus: '34'} ,
-      { yds: '5.14d' , brit: '7b' , french: '9a'  , aus: '35'} ,
-      { yds: '5.15a' , brit: '7b' , french: '9a+' , aus: '36'} ,
-      { yds: '5.15b' , brit: '7b' , french: '9b'  , aus: '37'} ,
-      { yds: '5.15c' , brit: '7b' , french: '9b+' , aus: '38'} ,
-      { yds: '5.15d' , brit: '7b' , french: '9c'  , aus: '39'} ,
-      { yds: '5.16a' , brit: '7b' , french: '9c+' , aus: '40'}
+      { french: '3'   , yds: '5.6'   , brit: '4b' , aus: '13'} ,
+      { french: '4'   , yds: '5.7'   , brit: '4c' , aus: '14'} ,
+      { french: '5a'  , yds: '5.8'   , brit: '4c' , aus: '15'} ,
+      { french: '5b'  , yds: '5.9'   , brit: '5a' , aus: '17'} ,
+      { french: '5c'  , yds: '5.10a' , brit: '5a' , aus: '18'} ,
+      { french: '6a'  , yds: '5.10b' , brit: '5b' , aus: '19'} ,
+      { french: '6a+' , yds: '5.10c' , brit: '5b' , aus: '20'} ,
+      { french: '6b'  , yds: '5.10d' , brit: '5c' , aus: '20'} ,
+      { french: '6b+' , yds: '5.11a' , brit: '5c' , aus: '21'} ,
+      { french: '6c'  , yds: '5.11b' , brit: '5c' , aus: '22'} ,
+      { french: '6c+' , yds: '5.11c' , brit: '6a' , aus: '23'} ,
+      { french: '7a'  , yds: '5.11d' , brit: '6a' , aus: '24'} ,
+      { french: '7a+' , yds: '5.12a' , brit: '6a' , aus: '25'} ,
+      { french: '7b'  , yds: '5.12b' , brit: '6a' , aus: '26'} ,
+      { french: '7b+' , yds: '5.12c' , brit: '6b' , aus: '27'} ,
+      { french: '7c'  , yds: '5.12d' , brit: '6b' , aus: '28'} ,
+      { french: '7c+' , yds: '5.13a' , brit: '6b' , aus: '29'} ,
+      { french: '8a'  , yds: '5.13b' , brit: '6c' , aus: '29'} ,
+      { french: '8a+' , yds: '5.13c' , brit: '6c' , aus: '30'} ,
+      { french: '8b'  , yds: '5.13d' , brit: '6c' , aus: '31'} ,
+      { french: '8b+' , yds: '5.14a' , brit: '7a' , aus: '32'} ,
+      { french: '8c'  , yds: '5.14b' , brit: '7a' , aus: '33'} ,
+      { french: '8c+' , yds: '5.14c' , brit: '7b' , aus: '34'} ,
+      { french: '9a'  , yds: '5.14d' , brit: '7b' , aus: '35'} ,
+      { french: '9a+' , yds: '5.15a' , brit: '7b' , aus: '36'} ,
+      { french: '9b'  , yds: '5.15b' , brit: '7b' , aus: '37'} ,
+      { french: '9b+' , yds: '5.15c' , brit: '7b' , aus: '38'} ,
+      { french: '9c'  , yds: '5.15d' , brit: '7b' , aus: '39'} ,
+      { french: '9c+' , yds: '5.16a' , brit: '7b' , aus: '40'}
     ];
   } else {
     this.gradeMap = [
@@ -76,11 +75,42 @@ var GradeConverter = function(type) {
 
 }
 
-GradeConverter.prototype.grade = function(grades) {
+GradeConverter.prototype.compare = function(a, b) {
+  var list = _.pluck(this.gradeMap, this.toSystem);
+  return list.indexOf(a) - list.indexOf(b);
+}
+
+// Direct lookup into the grade map
+GradeConverter.prototype.indexes = function(indexes) {
+
+  // Make into array and then lower case;
+  indexes = (indexes instanceof Array ? indexes : [indexes]);
+
+  if (!indexes || indexes.length === 0 || !this.fromSystem || !this.toSystem)
+    return undefined;
+
+  var results = [];
+
+  var self = this;
+  indexes.forEach(function (i) {
+    results.push(self.gradeMap[i][self.toSystem]);
+  });
+
+  return results;
+}
+
+GradeConverter.prototype.grades = function(grades) {
+
+  if (this.fromSystem !== null && this.fromSystem === this.toSystem)
+    return grades;
+
   // Make into array and then lower case;
   grades = (grades instanceof Array ? grades : [grades]) .map(function (g) {
     return g.toLowerCase(); 
   });
+
+  if (!grades || grades.length === 0 || !this.fromSystem || !this.toSystem)
+    return undefined;
 
   var results = [];
 
@@ -111,3 +141,4 @@ GradeConverter.prototype.to = function(system) {
 
 return GradeConverter;
 });
+

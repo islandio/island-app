@@ -9,27 +9,25 @@ define([
 ], function (_, Backbone, util) {
   return Backbone.Model.extend({
 
-    initialize: function () {
+    initialize: function (attributes, options) {
       if (!this.get('ticks').b) {
         this.get('ticks').b = [];
       }
       if (!this.get('ticks').r) {
         this.get('ticks').r = [];
       }
+      this.gradeConverter = options.gradeConverter;
     },
-
-    grades: ['3', '4', '5a', '5b', '5c', '6a', '6a+', '6b', '6b+', '6c', '6c+',
-        '7a', '7a+', '7b', '7b+', '7c', '7c+', '8a', '8a+', '8b', '8b+', '8c',
-        '8c+', '9a', '9a+', '9b', '9b+', '9c', '9c+'],
 
     ticksByGrade: function (type) {
       var ticks = {};
       _.each(this.get('ticks')[type], _.bind(function (t) {
         if (t.grade) {
-          if (!ticks[this.grades[t.grade]]) {
-            ticks[this.grades[t.grade]] = [];
+          var grade = this.gradeConverter[type].indexes(t.grade);
+          if (!ticks[grade]) {
+            ticks[grade] = [];
           }
-          ticks[this.grades[t.grade]].push(t);
+          ticks[grade].push(t);
         } else {
           var k = 'not graded by you';
           if (!ticks[k]) {
@@ -56,17 +54,6 @@ define([
         case 1: str = 'strong'; break;
       }
       return str ? 'felt ' + str: '';
-    },
-
-    formatTickGrade: function (num, feel) {
-      if (num === undefined) return;
-      var str = '';
-      switch (feel) {
-        case -1: str = ' (soft)'; break;
-        case 0: str = ''; break;
-        case 1: str = ' (hard)'; break;
-      }
-      return this.grades[num] + str;
     },
 
     formatTickDetails: function (t) {

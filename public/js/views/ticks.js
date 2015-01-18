@@ -46,7 +46,9 @@ define([
     },
 
     render: function () {
-      this.model = new Card(this.app.profile.content.page);
+      this.model = new Card(this.app.profile.content.page, {
+        gradeConverter: this.app.gradeConverter
+      });
       this.setTitle();
       this.template = _.template(template);
       this.$el.html(this.template.call(this));

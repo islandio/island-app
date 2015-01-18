@@ -10,7 +10,7 @@ define([
 ], function (_, Backbone, util, Weather) {
   return Backbone.Model.extend({
 
-    initialize: function () {
+    initialize: function (attributes, options) {
       this.set('videoEmbeds', util.getVideoLinks(this.get('note')));
 
       var time = this.get('time');
@@ -25,11 +25,9 @@ define([
         var w = this.get('session') ? this.get('session').weather || {}: {};
         this.set('weather', new Weather(w));
       }
-    },
 
-    grades: ['3', '4', '5a', '5b', '5c', '6a', '6a+', '6b', '6b+', '6c',
-          '6c+', '7a', '7a+', '7b', '7b+', '7c', '7c+', '8a', '8a+', '8b',
-          '8b+', '8c', '8c+', '9a', '9a+', '9b', '9b+', '9c', '9c+'],
+      this.gradeConverter = options.gradeConverter;
+    },
 
     formatNote: function () {
       return util.formatText(this.get('note'), true);
@@ -61,7 +59,8 @@ define([
         case 0: str = ''; break;
         case 1: str = ' (hard)'; break;
       }
-      return this.grades[num] + str;
+      var type = this.get('type');
+      return this.gradeConverter[type].indexes(num) + str;
     },
 
     formatDescription: function () {
@@ -138,7 +137,8 @@ define([
         case 0: str = ''; break;
         case 1: str = ' (hard)'; break;
       }
-      return ((grade === +grade) ? this.grades[grade] : grade) + str;
+      var type = this.get('type');
+      return ((grade === +grade) ? this.gradeConverter[type].indexes(grade) : grade) + str;
     },
 
     formatTickDetails: function (t) {

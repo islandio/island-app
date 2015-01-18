@@ -18,7 +18,7 @@
   <div class="list-wrap <%= t %>-ascents">
     <span class="empty-feed">No <%= t === 'b' ? 'boulder problems': 'routes' %> have been added here yet.</span>
     <span class="no-results">No results.</span>
-    <% _.each(this.app.grades, _.bind(function (grade) {
+    <% _.each(this.grades[t], _.bind(function (grade) {
       var buck = ascents[grade];
       if (!buck) return;
       var i = 0; %>

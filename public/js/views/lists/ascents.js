@@ -22,6 +22,10 @@ define([
       this.subscriptions = [];
       this.options = options || {};
       this.on('rendered', this.setup, this);
+      this.grades = {
+        'r': [],
+        'b': []
+      };
     },
 
     events: {
@@ -33,10 +37,28 @@ define([
 
       function _render() {
 
-        // Save ref to flattened lists for filtering.
+        // Save ref to flattened lists for filtering and convert the grade
         this.flattened = {};
         _.each(this.data.ascents, _.bind(function (ascents, t) {
           this.flattened[t] = _.flatten(ascents);
+
+          var a = {};
+
+          var self = this;
+          _.each(ascents, _.bind(function (ascent, grade) { 
+            var key = self.app.gradeConverter[t].grades(grade);
+            if (!a[key]) a[key] = [];
+            a[key] = a[key].concat(ascent);
+            delete ascents[grade];
+          }), this)
+
+          // sorted grades
+          this.grades[t] = _.keys(a).sort(function(a, b) {
+            return self.app.gradeConverter[t].compare(b, a);
+          });
+
+          this.data.ascents[t] = a;
+
         }, this));
 
         // Render template.

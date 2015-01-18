@@ -5,7 +5,8 @@
       + encodeURIComponent(this.app.images.avatar);
   var sub = this.app.profile.sub;
   var weather = this.model.get('weather');
-  var w = weather.get('hourly') || weather.get('daily');
+  if (!_.isEmpty(weather))
+    var w = weather.get('hourly') || weather.get('daily');
   var weatherURL;
   if (w && this.model.get('crag').location) {
     weatherURL = '//www.forecast.io/#/f/'
