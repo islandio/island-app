@@ -39,11 +39,12 @@ define([
 
         // Save ref to flattened lists for filtering and convert the grade
         this.flattened = {};
+        console.log(this.data.ascents);
         _.each(this.data.ascents, _.bind(function (ascents, t) {
           this.flattened[t] = _.flatten(ascents);
 
+          // convert grades
           var a = {};
-
           var self = this;
           _.each(ascents, _.bind(function (ascent, grade) { 
             var key = self.app.gradeConverter[t].grades(grade);
@@ -52,12 +53,14 @@ define([
             delete ascents[grade];
           }), this)
 
-          // sorted grades
+          _.each(a, function (_a, grade) {
+            ascents[grade] = _a;
+          });
+
+          // sort grades
           this.grades[t] = _.keys(a).sort(function(a, b) {
             return self.app.gradeConverter[t].compare(b, a);
           });
-
-          this.data.ascents[t] = a;
 
         }, this));
 
