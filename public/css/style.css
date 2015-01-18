@@ -281,6 +281,14 @@ a::-moz-focus-inner,
 button::-moz-focus-inner {
   border: none;
 }
+a.alt {
+  color: #4bb8d7;
+  background: none;
+}
+a.alt:hover {
+  text-decoration: underline;
+  background: none;
+}
 a.important {
   background-color: rgba(75,184,215,0.25);
 }
@@ -3064,6 +3072,12 @@ p.modal-message {
 }
 .modal-body td {
   padding: 0 0 5px 0;
+}
+.modal-body ol {
+  padding: 0 15px 15px;
+}
+.modal-body ol li {
+  list-style: inherit;
 }
 .modal-actions {
   border-top: 1px solid #ddd;

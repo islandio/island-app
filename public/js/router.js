@@ -203,22 +203,32 @@ define([
         cb(err);
 
         // Render the confirm modal.
-        // $.fancybox(_.template(tipTemp)({
-        //   message: '<strong>Hello! Thank you for signing up. Please take a look around and make sure to...</strong>'
-        //       + '<br /><br />'
-        //       + '&bull; <em>Check out your sidebar for some people</em>'
-        //   title: 'Welcome to The Island'
-        // }), {
-        //   openEffect: 'fade',
-        //   closeEffect: 'fade',
-        //   closeBtn: false,
-        //   padding: 0
-        // });
+        $.fancybox(_.template(tipTemp)({
+          message: '<span style="font-size:14px;"><strong>The Island &hearts;\'s you.</strong>'
+              + ' Here are a few tips to get you started:</span>'
+              + '<br /><br />'
+              + '<ol>'
+              + '<li>Use the search bar at the top of the page to find some crags and friends you want to watch or follow. You can find boulder problems and routes to watch on crag pages.</li>'
+              + '<li>Your activity feed shows logged climbing activity and posts from the crags and climbs you watch and the people you follow.</li>'
+              + '<li>Check out your sidebar for some suggested athletes to follow.</li>'
+              + '<li>The big green "Log" button is your starting place for tracking your rock climbing. The pencil icons are a shortcut for starting a log and are often next to crag and climb names - use \'em! </li>'
+              + '<li>In addition to logging a completed climb as an "ascent", log attempts as "work" - remember all your efforts!</li>'
+              + '<li>Don\'t want to broadcast your efforts to the entire world? Check out the privacy options in <a href="/settings" target="blank">settings</a>.</li>'
+              + '</ol>'
+              + '<span style="font-size:14px;"><strong>Do you use 8a.nu?</strong>'
+              + ' <a href="/import" target="blank" class="alt">Import your 8a scorecard</a>.</span>'
+          , title: 'Thanks for signing up for our private beta!'
+        }), {
+          openEffect: 'fade',
+          closeEffect: 'fade',
+          closeBtn: false,
+          padding: 0
+        });
 
-        // // Setup actions.
-        // $('#tip_close').click(function (e) {
-        //   $.fancybox.close();
-        // });
+        // Setup actions.
+        $('#tip_close').click(function (e) {
+          $.fancybox.close();
+        });
       }
 
       // Grab hash for comment.
