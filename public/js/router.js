@@ -268,6 +268,7 @@ define([
         // Handle welcome modal.
         if (this.app.profile && this.app.profile.member
             && !this.app.profile.member.welcomed) {
+          this.app.profile.member.welcomed = true;
           this.renderWelcome('Thanks for signing up for our private beta!');
         }
       }, this));
