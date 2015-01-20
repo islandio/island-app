@@ -84,7 +84,8 @@ GradeConverter.prototype.compare = function(a, b) {
 GradeConverter.prototype.indexes = function(indexes) {
 
   // Make into array and then lower case;
-  indexes = (indexes instanceof Array ? indexes : [indexes]);
+  var wasArray = indexes instanceof Array;
+  indexes = wasArray ? indexes : [indexes];
 
   if (!indexes || indexes.length === 0 || !this.fromSystem || !this.toSystem)
     return undefined;
@@ -96,6 +97,7 @@ GradeConverter.prototype.indexes = function(indexes) {
     results.push(self.gradeMap[i][self.toSystem]);
   });
 
+  if (!wasArray) results = results[0];
   return results;
 }
 
@@ -105,7 +107,8 @@ GradeConverter.prototype.grades = function(grades) {
     return grades;
 
   // Make into array and then lower case;
-  grades = (grades instanceof Array ? grades : [grades]) .map(function (g) {
+  var wasArray = grades instanceof Array;
+  grades = (wasArray ? grades : [grades]) .map(function (g) {
     return g.toLowerCase(); 
   });
 
@@ -124,7 +127,7 @@ GradeConverter.prototype.grades = function(grades) {
     });
   });
 
-  if (results.length < 2) results = results[0];
+  if (!wasArray) results = results[0];
   return results;
 
 }

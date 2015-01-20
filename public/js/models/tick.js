@@ -138,7 +138,9 @@ define([
         case 1: str = ' (hard)'; break;
       }
       var type = this.get('type');
-      return ((grade === +grade) ? this.gradeConverter[type].indexes(grade) : grade) + str;
+      var fn = this.gradeConverter[type];
+      var g = ((grade === +grade) ? fn.indexes(grade) : fn.grades(grade));
+      return (str !== '' && !_.isArray(grades)) ? g + str : g;
     },
 
     formatTickDetails: function (t) {
