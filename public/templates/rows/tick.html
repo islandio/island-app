@@ -114,7 +114,8 @@
     </span>
   <% } %>
   <span class="session-tick-grade">
-    <%= this.model.formatTickGrade(t.grade, t.feel) || this.model.formatTickGrade(t.ascent.grades).join(' / ') %>
+    <%= this.model.formatTickGrades(t.grade, t.feel, t.crag.country)
+        || this.model.formatTickGrades(t.ascent.grades, t.crag.country).join(' / ') %>
   </span>
   <% if (t.sent) { %>
     <span class="session-tick-stars">

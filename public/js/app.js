@@ -30,8 +30,8 @@ define([
         '6c+', '6c', '6b+', '6b', '6a+', '6a', '5c', '5b', '5a', '4', '3'];
     
     this.gradeConverter = {
-      'b': new GradeConverter('boulders').from('font').to('hueco'),
-      'r': new GradeConverter('routes').from('french').to('yds')
+      'b': new GradeConverter('boulders').from('font').to('default'),
+      'r': new GradeConverter('routes').from('french').to('default')
     };
 
     // Client services.

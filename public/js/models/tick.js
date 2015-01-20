@@ -129,9 +129,9 @@ define([
       return str ? 'felt ' + str: '';
     },
 
-    formatTickGrade: function (grade, feel) {
+    formatTickGrades: function (grade, feel, country) {
       if (grade === undefined) return;
-      var str = '';
+      var str = 'bo';
       switch (feel) {
         case -1: str = ' (soft)'; break;
         case 0: str = ''; break;
@@ -139,8 +139,10 @@ define([
       }
       var type = this.get('type');
       var fn = this.gradeConverter[type];
-      var g = ((grade === +grade) ? fn.indexes(grade) : fn.grades(grade));
-      return (str !== '' && !_.isArray(grades)) ? g + str : g;
+      // Deals with indexes vs string grades
+      var g = ((grade === +grade) ? fn.indexes(grade, country) : fn.grades(grade, country));
+      // Add feel only if its not an array
+      return (str !== '' && !_.isArray(g)) ? g + str : g;
     },
 
     formatTickDetails: function (t) {

@@ -39,8 +39,9 @@ var GradeConverter = function(type) {
     this.gradeMap = [
       { font: '3'   , hueco: 'VB' }  ,
       { font: '4'   , hueco: 'V0' }  ,
-      { font: '5'   , hueco: 'V1' }  ,
-      { font: '5+'  , hueco: 'V2' }  ,
+      { font: '5a'  , hueco: 'V1' }  ,
+      { font: '5b'  , hueco: 'V2' }  ,
+      { font: '5c'  , hueco: 'V2' }  ,
       { font: '6a'  , hueco: 'V3' }  ,
       { font: '6a+' , hueco: 'V3' }  ,
       { font: '6b'  , hueco: 'V4' }  ,
@@ -68,6 +69,7 @@ var GradeConverter = function(type) {
     ];
   }
 
+  this.type = type;
   this.fromSystem = null;
   this.toSystem = null;
 
@@ -75,35 +77,57 @@ var GradeConverter = function(type) {
 
 }
 
-GradeConverter.prototype.compare = function(a, b) {
-  var list = _.pluck(this.gradeMap, this.toSystem);
+GradeConverter.prototype.compare = function(a, b, country) {
+  var system = this.getSystem(country);
+  var list = _.pluck(this.gradeMap, system);
   return list.indexOf(a) - list.indexOf(b);
 }
 
+GradeConverter.prototype.getSystem = function(country) {
+  if (this.toSystem === 'default') {
+    switch (country) {
+      case 'United States':
+      case 'Canada':
+        return (this.type === 'routes') ? 'yds' : 'hueco';
+      case 'Australia':
+      case 'New Zealand':
+        return (this.type === 'routes') ? 'aus' : 'font';
+      default:
+        return (this.type === 'routes') ? 'french' : 'font';
+    }
+  } else {
+    return this.toSystem;
+  }
+}
+
 // Direct lookup into the grade map
-GradeConverter.prototype.indexes = function(indexes) {
+GradeConverter.prototype.indexes = function(indexes, country) {
 
   // Make into array and then lower case;
   var wasArray = indexes instanceof Array;
   indexes = wasArray ? indexes : [indexes];
 
-  if (!indexes || indexes.length === 0 || !this.fromSystem || !this.toSystem)
+  var toSystem = this.getSystem(country);
+
+  if (!indexes || indexes.length === 0 || !this.fromSystem || !toSystem)
     return undefined;
 
   var results = [];
 
   var self = this;
   indexes.forEach(function (i) {
-    results.push(self.gradeMap[i][self.toSystem]);
+    results.push(self.gradeMap[i][toSystem]);
   });
 
   if (!wasArray) results = results[0];
   return results;
 }
 
-GradeConverter.prototype.grades = function(grades) {
+GradeConverter.prototype.grades = function(grades, country) {
 
-  if (this.fromSystem !== null && this.fromSystem === this.toSystem)
+  var toSystem = this.getSystem(country);
+
+  if (this.fromSystem !== null && this.fromSystem === toSystem)
     return grades;
 
   // Make into array and then lower case;
@@ -112,7 +136,7 @@ GradeConverter.prototype.grades = function(grades) {
     return g.toLowerCase(); 
   });
 
-  if (!grades || grades.length === 0 || !this.fromSystem || !this.toSystem)
+  if (!grades || grades.length === 0 || !this.fromSystem || !toSystem)
     return undefined;
 
   var results = [];
@@ -121,7 +145,7 @@ GradeConverter.prototype.grades = function(grades) {
   grades.forEach(function (g) {
     self.gradeMap.some(function (e) {
       if (e[self.fromSystem] === g) {
-        results.push(e[self.toSystem]);
+        results.push(e[toSystem]);
         return true;
       } else return false;
     });

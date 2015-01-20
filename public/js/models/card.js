@@ -23,7 +23,6 @@ define([
       var ticks = {};
       _.each(this.get('ticks')[type], _.bind(function (t) {
         if (t.grade) {
-          console.log(t);
           var grade = this.gradeConverter[type].indexes(t.grade);
           if (!ticks[grade]) {
             ticks[grade] = [];
