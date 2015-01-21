@@ -76,6 +76,7 @@ define([
       // Render ascents.
       this.ascents = new Ascents(this.app).render({
         data: {
+          country: this.model.get('country'),
           ascents: this.model.get('ascents'),
           bcnt: this.model.get('bcnt'),
           rcnt: this.model.get('rcnt')

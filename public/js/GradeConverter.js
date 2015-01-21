@@ -44,7 +44,7 @@ var GradeConverter = function(type) {
       { font: '5c'  , hueco: 'V2' }  ,
       { font: '6a'  , hueco: 'V3' }  ,
       { font: '6a+' , hueco: 'V3' }  ,
-      { font: '6b'  , hueco: 'V4' }  ,
+      { font: '6b'  , hueco: 'V3' }  ,
       { font: '6b+' , hueco: 'V4' }  ,
       { font: '6c'  , hueco: 'V5' }  ,
       { font: '6c+' , hueco: 'V5' }  ,
@@ -101,13 +101,13 @@ GradeConverter.prototype.getSystem = function(country) {
 }
 
 // Direct lookup into the grade map
-GradeConverter.prototype.indexes = function(indexes, country) {
+GradeConverter.prototype.indexes = function(indexes, country, system) {
 
   // Make into array and then lower case;
   var wasArray = indexes instanceof Array;
   indexes = wasArray ? indexes : [indexes];
 
-  var toSystem = this.getSystem(country);
+  var toSystem = system || this.getSystem(country);
 
   if (!indexes || indexes.length === 0 || !this.fromSystem || !toSystem)
     return undefined;
@@ -123,9 +123,9 @@ GradeConverter.prototype.indexes = function(indexes, country) {
   return results;
 }
 
-GradeConverter.prototype.grades = function(grades, country) {
+GradeConverter.prototype.grades = function(grades, country, system) {
 
-  var toSystem = this.getSystem(country);
+  var toSystem = system || this.getSystem(country);
 
   if (this.fromSystem !== null && this.fromSystem === toSystem)
     return grades;

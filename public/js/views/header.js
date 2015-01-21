@@ -58,9 +58,9 @@ define([
           reverse: true, 
           el: '.header-search',
           collapse: true,
-          placeholder: 'Search for members, posts and crags...',
+          placeholder: 'Search for members, ascents and crags...',
           route: true,
-          types: ['members', 'posts', 'crags'],
+          types: ['members', 'ascents', 'crags'],
           log: true
         });
       }
