@@ -1,3 +1,7 @@
+// Converts grades between various climbing systems
+// The 'default' system is french (routes) and font (boulders), however, if
+// a country is supplied it will try to convert the grades for that country
+
 define([ ], function () {
 
 var GradeConverter = function(type) {
@@ -77,12 +81,15 @@ var GradeConverter = function(type) {
 
 }
 
+/* For sorting - will be slow because of the indexOf commands so use 
+ * intelligently */
 GradeConverter.prototype.compare = function(a, b, country) {
   var system = this.getSystem(country);
   var list = _.pluck(this.gradeMap, system);
   return list.indexOf(a) - list.indexOf(b);
 }
 
+/* Determine the appropriate conversion system for a given country */
 GradeConverter.prototype.getSystem = function(country) {
   if (this.toSystem === 'default') {
     switch (country) {
@@ -100,7 +107,8 @@ GradeConverter.prototype.getSystem = function(country) {
   }
 }
 
-// Direct lookup into the grade map
+/* Direct lookup into the grade maps by index or array of indexes, optionally
+ * supplying country or preferred conversion system */
 GradeConverter.prototype.indexes = function(indexes, country, system) {
 
   // Make into array and then lower case;
@@ -123,6 +131,8 @@ GradeConverter.prototype.indexes = function(indexes, country, system) {
   return results;
 }
 
+/* Convert a grade or array of grades directly, optionally supplying
+ * country or preferred conversion system */
 GradeConverter.prototype.grades = function(grades, country, system) {
 
   var toSystem = system || this.getSystem(country);
@@ -156,11 +166,13 @@ GradeConverter.prototype.grades = function(grades, country, system) {
 
 }
 
+/* Set origin grading system */
 GradeConverter.prototype.from = function(system) {
   this.fromSystem  = system.toLowerCase();
   return this;
 }
 
+/* Set target grading system */
 GradeConverter.prototype.to = function(system) {
   this.toSystem  = system.toLowerCase();
   return this;
