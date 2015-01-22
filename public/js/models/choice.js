@@ -9,6 +9,10 @@ define([
 ], function (_, Backbone, util) {
   return Backbone.Model.extend({
 
+    initialize: function(attr, opts) {
+      this.gradeConverter = opts.gradeConverter;
+    },
+
     href: function () {
       var href;
       switch (this.get('_type')) {
@@ -54,9 +58,13 @@ define([
               + this.get('country');
           break;
         case 'ascents':
+          var t = this.get('type');
+          var g = this.get('grades');
+          var c = this.get('country');
+          var g_ = this.gradeConverter[t].grades(g, c);
           title += '<strong>' + this.get('name') + '</strong>, '
               + this.get('crag') + ' ('
-              + this.get('grades').join(', ') + ')';
+              + g_.join(', ') + ')';
           break;
       }
       return title;

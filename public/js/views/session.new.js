@@ -224,6 +224,9 @@ define([
         }
       }
 
+      // Store grades list elements
+      this.grades = this.$('select[name="grade"]').parent().find('li');
+
       return this;
     },
 
@@ -273,6 +276,10 @@ define([
           this.cragChoices.preChoose({type: 'crags', id: tick.model.get('crag_id')});
         }
         this.tickChoices.options.query = {};
+      }
+
+      if (tick) {
+        this.updateGrades(tick.model.get('type'), tick.model.get('country'));
       }
 
       // Check for in-progress uploads.
@@ -729,6 +736,23 @@ define([
         }
       });
       $('<div class="clear">').appendTo(this.$('.post-previews'));
+    },
+
+    updateGrades: function (type, country) {
+      var added = [];
+      this.grades.each(_.bind(function (index, el) {
+        var $e = $(el);
+        var from = Number($e.attr('rel'));
+        if (!_.isNaN(from)) {
+          var grade = this.app.gradeConverter[type].indexes(from, country);
+          if (added.indexOf(grade) !== -1) {
+            $e.hide();
+          } else {
+            added.push(grade);
+            $e.text(this.app.gradeConverter[type].indexes(from, country));
+          }
+        }
+      }, this));
     }
 
   });

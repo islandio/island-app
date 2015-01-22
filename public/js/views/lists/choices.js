@@ -179,10 +179,11 @@ define([
         }
         
         // Add to collection.
+        var opts = { gradeConverter: this.app.gradeConverter };
         _.each(types, _.bind(function (t) {
           if (items[t]) {
             _.each(items[t], _.bind(function (i) {
-              this.collection.unshift(i);
+              this.collection.unshift(i, opts);
             }, this));
           }
         }, this));
@@ -263,7 +264,7 @@ define([
         }
 
         data._type = opts.type;
-        this.collection.unshift(data);
+        this.collection.unshift(data, { gradeConverter: this.app.gradeConverter });
         this.choose(this.views[0], fixed);
       }, this));
     },

@@ -68,8 +68,10 @@ define([
     },
 
     log: function (e) {
-      e.preventDefault();
-      mps.publish('session/new', [{crag_id: this.model.id}]);
+      if (this.model.get('_type') === 'crag')
+        mps.publish('session/new', [{crag_id: this.model.id}]);
+      else
+        mps.publish('session/new', [{ascent_id: this.model.id}]);
     }
 
   });

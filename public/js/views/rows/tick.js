@@ -35,7 +35,8 @@ define([
 
     initialize: function (options, app) {
       this.app = app;
-      this.model = new Model(options.model || this.app.profile.content.page);
+      this.model = new Model(options.model || this.app.profile.content.page,
+        { gradeConverter: this.app.gradeConverter} );
       this.parentView = options.parentView;
       this.wrap = options.wrap;
       this.template = _.template(template);
@@ -92,7 +93,9 @@ define([
         // Handle weather icon.
         _.defer(_.bind(function () {
           var weather = this.model.get('weather');
-          var w = weather.get('hourly') || weather.get('daily');
+          var w;
+          if (!_.isEmpty(weather))
+            w = weather.get('hourly') || weather.get('daily');
           if (w && w.icon) {
             this.skycons = new Skycons({'color': '#666', static: true});
             var iconName = w.icon.replace(/-/g, '_').toUpperCase();
