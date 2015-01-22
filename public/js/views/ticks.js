@@ -142,7 +142,7 @@ define([
         if (isNaN(Number(data.grade))) {
           grade = 'not graded by you';
         } else {
-          grade = this.app.grades[this.app.grades.length - data.grade - 1];
+          grade = this.app.gradeConverter[data.type].indexes(data.grade);
         }
         var heading = this.$('.' + data.type + '-ticks .session-ticks '
             + '[data-grade="' + grade + '"]');

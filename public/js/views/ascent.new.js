@@ -137,16 +137,21 @@ define([
         } else {
           this.checkRoute();
         }
+        /*
         var grade = pending.grades[0];
         if (grade) {
           this.selectOption('grade', this.app.grades.length
               - this.app.grades.indexOf(grade) - 1);
         }
+        */
         this.selectOption('rock', pending.rock);
         if (pending.note) {
           this.$('textarea[name="note"]').val(pending.note);
         }
       }
+
+      // Store grades list elements
+      this.grades = this.$('select[name="grade"]').parent().find('li');
 
       return this;
     },
@@ -193,6 +198,10 @@ define([
       } else {
         this.submitButton.attr('disabled', false).removeClass('disabled');
       }
+      if (crag) {
+        var type = this.$('.new-session-boulder').is(':checked') ? 'b': 'r';
+        this.updateGrades(type, crag.model.get('country'));
+      }
     },
 
     checkBoulder: function (e) {
@@ -223,12 +232,14 @@ define([
       // Build the payload.
       var type = this.$('.new-session-boulder').is(':checked') ? 'b': 'r';
       var grade = Number(this.$('select[name="grade"]').val());
+      grades = isNaN(grade) ? [] :
+          [this.app.gradeConverter[type].indexes(grade, 'France')];
       var payload = {
         crag_id: cragChoice.id,
         sector: this.$('input[name="sector"]').val().trim(),
         name: this.$('input[name="name"]').val().trim(),
         type: type,
-        grades: isNaN(grade) ? []: [this.app.grades[this.app.grades.length - grade - 1]],
+        grades: grades,
         rock: this.$('select[name="rock"]').val(),
         note: this.$('textarea[name="note"]').val().trim()
       };
@@ -312,6 +323,23 @@ define([
         e.preventDefault();
       }
       this.destroy();
+    },
+
+    updateGrades: function (type, country) {
+      var added = [];
+      this.grades.each(_.bind(function (index, el) {
+        var $e = $(el);
+        var from = Number($e.attr('rel'));
+        if (!_.isNaN(from)) {
+          var grade = this.app.gradeConverter[type].indexes(from, country);
+          if (added.indexOf(grade) !== -1) {
+            $e.hide();
+          } else {
+            added.push(grade);
+            $e.text(this.app.gradeConverter[type].indexes(from, country));
+          }
+        }
+      }, this));
     }
 
   });

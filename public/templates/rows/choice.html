@@ -18,7 +18,8 @@
 <span class="choice-name">
   <%= this.model.title() %>
   <% if (this.options.parentView.options.log
-      && this.model.get('_type') === 'crags'
+      && (this.model.get('_type') === 'crags'
+      || this.model.get('_type') === 'ascents')
       && this.app.profile.member
       && this.app.profile.member.username !== 'island'
       && this.app.profile.member.role !== 2) { %>

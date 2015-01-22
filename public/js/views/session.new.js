@@ -224,7 +224,7 @@ define([
         }
       }
 
-      // Store grades list
+      // Store grades list elements
       this.grades = this.$('select[name="grade"]').parent().find('li');
 
       return this;
