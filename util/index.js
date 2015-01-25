@@ -45,8 +45,8 @@ boots.start(function (client) {
       var _this = _.after(docs.length, this);
       _.each(docs, function (d, idx) {
         // Add new.
-        membersIndexed += client.cache.index('members', d, ['displayName'],
-            _this, {strategy: 'noTokens'});
+        membersIndexed += client.cache.index('members', d, ['username',
+            'displayName'], {strategy: 'noTokens'}, _this);
       });
     },
     function (err) {
@@ -83,7 +83,8 @@ boots.start(function (client) {
       var _this = _.after(docs.length, this);
       _.each(docs, function (d) {
         // Add new.
-        postsIndexed += client.cache.index('posts', d, ['title'], _this);
+        postsIndexed += client.cache.index('posts', d, ['title'],
+            {strategy: 'noTokens'}, _this);
       });
     },
     function (err) {
