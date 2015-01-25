@@ -421,11 +421,13 @@ define([
             {title: 'My Ascents', href: '/' + username + '/ascents',
                 active: true}
           ], log: true});          
-        } else {
-          this.renderTabs({html: this.page.title});
         }
         _.defer(_.bind(function () {
           this.page = new Ticks(this.app).render();
+          if (!this.app.profile.member
+              || this.app.profile.member.username !== username) {
+            this.renderTabs({html: this.page.title});
+          }
         }, this));
         this.stop();
       }, this));
