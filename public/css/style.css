@@ -1184,8 +1184,8 @@ li.tab.active a {
   background: #fff;
   color: #333;
   border-top: 4px solid #4bb8d7;
-  padding-top: 11px;
-  top: 5px;
+  padding-top: 13px;
+  top: 6px;
 }
 li.tab a .tab-count {
   display: none;
