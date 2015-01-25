@@ -24,7 +24,7 @@ header.header
         a(class="navigate #{typeof blog !== 'undefined' && blog == true ? 'active':''}", href="/blog") Blog
       - if (typeof member !== 'undefined')
         li
-          a.header-tips(href="javascript:;") Tips
+          a.header-tips(href="javascript:;", style="font-weight:bold;") Tips
     - if (typeof member !== 'undefined')
       div.member-box
         div.divider-vertical
