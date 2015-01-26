@@ -69,8 +69,8 @@ define([
     events: {
       'click .signin-button': 'signin',
       'click .header-avatar': 'avatar',
-      'click .header-add-crag-button': 'addCrag',
-      'click .header-add-ascent-button': 'addAscent',
+      // 'click .header-add-crag-button': 'addCrag',
+      // 'click .header-add-ascent-button': 'addAscent',
       'click .globe-button': 'togglePanel',
       'click .navigate': 'navigate',
       'click .header-tips': function () {
