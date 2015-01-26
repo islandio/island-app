@@ -12,9 +12,10 @@ define([
   'views/lists/events',
   'views/lists/followers',
   'views/lists/followees',
-  'views/lists/watchees'
+  'views/lists/watchees',
+  'views/lists/members'
 ], function ($, _, Backbone, mps, util, template, Events,
-    Followers, Followees, Watchees) {
+    Followers, Followees, Watchees, Members) {
   return Backbone.View.extend({
 
     el: '.main',
@@ -53,6 +54,7 @@ define([
           type: 'ascent', subtype: 'r', heading: 'Routes'});
       this.boulders = new Watchees(this.app, {parentView: this, reverse: true,
           type: 'ascent', subtype: 'b', heading: 'Boulders'});
+      this.recs = new Members(this.app, {parentView: this, reverse: true});
 
       return this;
     },
@@ -72,6 +74,7 @@ define([
       this.crags.destroy();
       this.routes.destroy();
       this.boulders.destroy();
+      this.recs.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

@@ -357,6 +357,9 @@ define([
         $('body').removeClass('loading');
         $('footer').show();
         fitSides();
+        _.delay(fitSides, 100);
+        _.delay(fitSides, 500);
+        _.delay(fitSides, 1000);
       }, this));
     },
 
