@@ -311,7 +311,7 @@
         </tr>
         <tr>
           <td colspan="4">
-            <span class="settings-detail-txt">Receive comment thread notifications?</span>
+            <span class="settings-detail-txt">Comment threads</span>
           </td>
           <td colspan="2" class="text-right">
             <% if (notes.comment.email === true || notes.comment.email === 'true') { %>
@@ -328,7 +328,7 @@
 
         <tr>
           <td colspan="4">
-            <span class="settings-detail-txt">Receive "nod" notifications?</span>
+            <span class="settings-detail-txt">When someone gives you a "nod"</span>
           </td>
           <td colspan="2" class="text-right">
             <% if (notes.hangten.email === true || notes.hangten.email === 'true') { %>
@@ -339,7 +339,58 @@
                   tabindex="15" />
             <% } %>
             <label for="config.notifications.hangten.email"
-                style="vertical-align:-1px;">Email (requires address above)</label>
+                style="vertical-align:-1px;">Email</label>
+          </td>
+        </tr>
+
+        <tr>
+          <td colspan="4">
+            <span class="settings-detail-txt">When someone follows you</span>
+          </td>
+          <td colspan="2" class="text-right">
+            <% if (notes.follow.email === true || notes.follow.email === 'true') { %>
+              <input type="checkbox" name="config.notifications.follow.email"
+                  tabindex="15" checked="checked" />
+            <% } else { %>
+              <input type="checkbox" name="config.notifications.follow.email"
+                  tabindex="15" />
+            <% } %>
+            <label for="config.notifications.follow.email"
+                style="vertical-align:-1px;">Email</label>
+          </td>
+        </tr>
+
+        <tr>
+          <td colspan="4">
+            <span class="settings-detail-txt">When someone requests to follow you</span>
+          </td>
+          <td colspan="2" class="text-right">
+            <% if (notes.request.email === true || notes.request.email === 'true') { %>
+              <input type="checkbox" name="config.notifications.request.email"
+                  tabindex="15" checked="checked" />
+            <% } else { %>
+              <input type="checkbox" name="config.notifications.request.email"
+                  tabindex="15" />
+            <% } %>
+            <label for="config.notifications.request.email"
+                style="vertical-align:-1px;">Email</label>
+          </td>
+        </tr>
+
+        <tr>
+          <td colspan="4">
+            <span class="settings-detail-txt">When someone accepts your follow request</span>
+          </td>
+          <td colspan="2" class="text-right">
+            <% if (notes.accept.email === true || notes.accept.email === 'true') { %>
+              <input type="checkbox" name="config.notifications.accept.email"
+                  tabindex="15" checked="checked" />
+            <% } else { %>
+              <input type="checkbox" name="config.notifications.accept.email"
+                  tabindex="15" />
+            <% } %>
+            <label for="config.notifications.accept.email"
+                style="vertical-align:-1px;">Email</label>
           </td>
         </tr>
 
