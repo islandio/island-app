@@ -198,10 +198,8 @@ define([
       } else {
         this.submitButton.attr('disabled', false).removeClass('disabled');
       }
-      if (crag) {
-        var type = this.$('.new-session-boulder').is(':checked') ? 'b': 'r';
-        this.updateGrades(type, crag.model.get('country'));
-      }
+      var type = this.$('.new-session-boulder').is(':checked') ? 'b': 'r';
+      this.updateGrades(type, crag ? crag.model.get('country') : 'default');
     },
 
     checkBoulder: function (e) {
@@ -209,6 +207,8 @@ define([
       var r = this.$('.new-session-route');
       b.attr('checked', true);
       r.attr('checked', false);
+      var crag = this.cragChoices.choice;
+      this.updateGrades('b', crag ? crag.model.get('country') : 'default');
     },
 
     checkRoute: function (e) {
@@ -216,6 +216,8 @@ define([
       var r = this.$('.new-session-route');
       b.attr('checked', false);
       r.attr('checked', true);
+      var crag = this.cragChoices.choice;
+      this.updateGrades('r', crag ? crag.model.get('country') : 'default');
     },
 
     getPayload: function () {
