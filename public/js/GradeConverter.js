@@ -64,12 +64,12 @@ var GradeConverter = function(type) {
       { font: '8b+' , hueco: 'V14' } ,
       { font: '8c'  , hueco: 'V15' } ,
       { font: '8c+' , hueco: 'V16' } ,
-      { font: '9a'  , hueco: 'V17' } ,
-      { font: '9a+' , hueco: 'V18' } ,
-      { font: '9b'  , hueco: 'V19' } ,
-      { font: '9b+' , hueco: 'V20' } ,
-      { font: '9c'  , hueco: 'V21' } ,
-      { font: '9c+' , hueco: 'V22' }
+      { font: '9a'  , hueco: 'V16' } ,
+      { font: '9a+' , hueco: 'V16' } ,
+      { font: '9b'  , hueco: 'V16' } ,
+      { font: '9b+' , hueco: 'V16' } ,
+      { font: '9c'  , hueco: 'V16' } ,
+      { font: '9c+' , hueco: 'V16' }
     ];
   }
 
