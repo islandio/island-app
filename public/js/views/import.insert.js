@@ -39,7 +39,9 @@ define([
 
     render: function () {
       this.app.title('The Island | 8a.nu Import');
-      this.model = new Card(this.app.profile.content.page);
+      this.model = new Card(this.app.profile.content.page, {
+        gradeConverter: this.app.gradeConverter
+      });
       this.template = _.template(template);
       $(this.template.call(this)).appendTo('.main');
 

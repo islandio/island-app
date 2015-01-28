@@ -38,7 +38,7 @@
       });
     %>
       <div class="list-wrap <%= type %>-ticks">
-        <span class="empty-feed"><%= owner2 %> logged any <%= type === 'b' ? 'boulder problems': 'routes' %> yet.</span>
+        <span class="empty-feed"><%= this.name %> hasn't logged any <%= type === 'b' ? 'boulder problems': 'routes' %> yet.</span>
         <span class="no-results">No results.</span>
         <% _.each(grades, function (grade) { %>
           <ul class="session-ticks">
