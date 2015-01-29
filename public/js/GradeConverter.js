@@ -117,7 +117,9 @@ GradeConverter.prototype.indexes = function(indexes, country, system) {
 
   var toSystem = system || this.getSystem(country);
 
-  if (!indexes || indexes.length === 0 || !this.fromSystem || !toSystem)
+  if (!indexes || indexes.length === 0
+      || !this.fromSystem || !toSystem || _.min(indexes) < 0
+      || _.max(indexes) > this.gradeMap.length)
     return undefined;
 
   var results = [];
