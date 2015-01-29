@@ -32,7 +32,7 @@ define([
 
       var name = options.slug.split('-');
       name.pop();
-      this.name = name.join(' ');
+      this.name = util.titleize(name.join(' '));
 
       this.on('rendered', this.setup, this);
     },
@@ -109,6 +109,20 @@ define([
         this.routes.show();
         this.boulders.hide();
       }
+
+      if (this.model.get('ticks').b.length === 0) {
+        this.$('.b-ticks .empty-feed').show();
+      }
+
+      if (this.model.get('ticks').r.length === 0) {
+        this.$('.r-ticks .empty-feed').show();
+      }
+
+      if (this.model.get('ticks').b.length === 0 &&
+          this.model.get('ticks').r.length === 0) {
+        this.button.addClass('disabled');
+      }
+
       _.defer(_.bind(function () {
         this.bouldersFilter.click(_.bind(this.changeType, this, 'b'));
         this.routesFilter.click(_.bind(this.changeType, this, 'r'));

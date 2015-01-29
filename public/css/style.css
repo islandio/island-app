@@ -4940,7 +4940,6 @@ input.import-input {
   float: clear;
 }
 .import-scorecard-title {
-  text-transform: capitalize;
   font-size: 20px;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   float: left;
