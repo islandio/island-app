@@ -130,7 +130,7 @@ define([
       // Client-side form check.
       var spin = this.$('.button-spin').data().spin;
       var check = util.ensure(payload, ['username', 'email', 'password']);
-      
+
       // Add alerts.
       _.each(check.missing, _.bind(function (m, i) {
         var field = this.$('input[name="' + m + '"]');
