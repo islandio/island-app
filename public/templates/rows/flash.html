@@ -12,7 +12,8 @@
     <% } else if (window.__s === '') { %>
       <%= this.model.get('err').message %>
     <% } else { %>
-      Error 500: Looks like something went wrong! We track these errors automatically, but if the problem persists feel free to <a href="mailto:support@island.io">contact us</a>. In the meantime, try refreshing.
+      <%= this.model.get('err').message %>
+      <!-- Error 500: Looks like something went wrong! We track these errors automatically, but if the problem persists feel free to <a href="mailto:support@island.io">contact us</a>. In the meantime, try refreshing. -->
     <% } %>
   <% } %>
 </span>
