@@ -1,12 +1,12 @@
 /* This is the default Tooltipster theme (feel free to modify or duplicate and create multiple themes!): */
 .tooltipster-default {
-  background: #4c4c4c;
+  background: #333;
   color: #fff;
   white-space: pre-line;
 
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
 
   /*background-image: -webkit-linear-gradient(top,#4d4d4d,#404040,#4d4d4d);
   background-image: -moz-linear-gradient(top,#4d4d4d,#404040,#4d4d4d);
@@ -17,10 +17,11 @@
 
 /* Use this next selector to style things like font-size and line-height: */
 .tooltipster-default .tooltipster-content {
-  font-weight: 600;
-  font-size: 10px;
+  /*font-weight: 600;*/
+  font-size: 12px;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   line-height: 30px;
-  text-transform: lowercase;
+  /*text-transform: lowercase;*/
   padding: 0 10px;
   overflow: hidden;
 }

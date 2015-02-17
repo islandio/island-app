@@ -8,7 +8,8 @@
   <% if (this.model.get('action_type') !== 'tick') { %>
     <span class="event-avatar">
       <a href="/<%= this.model.get('action').author.username %>" class="image-anchor navigate">
-        <img src="<%= gravatar %>" width="48" height="48" />
+        <img src="<%= gravatar %>" width="48" height="48" class="tooltip"
+        title="<%= this.model.get('action').author.displayName %>" /></a>
       </a>
     </span>
   <% } %>

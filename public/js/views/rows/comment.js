@@ -23,6 +23,14 @@ define([
       Row.prototype.initialize.call(this, options);
     },
 
+    setup: function () {
+
+      // For rendering tooltips
+      this.$('.tooltip').tooltipster({delay: 300, multiple: true});
+
+      Row.prototype.setup.call(this);
+    },
+
     events: {
       'click a.navigate': 'navigate',
       'click .info-delete': 'delete',

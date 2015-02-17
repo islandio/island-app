@@ -62,6 +62,13 @@ define([
       return this;
     },
 
+    setup: function () {
+
+      // For rendering tooltips
+      this.$('.tooltip').tooltipster({delay: 300, multiple: true});
+      Row.prototype.setup.call(this);
+    },
+
     destroy: function () {
       if (this.action) {
         this.action.destroy();

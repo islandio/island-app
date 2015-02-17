@@ -28,7 +28,7 @@ define([
     setup: function () {
 
       // For rendering tooltips
-      this.$('.tooltip').tooltipster({delay: 600, multiple: true});
+      this.$('.tooltip').tooltipster({delay: 300, multiple: true});
 
       return Row.prototype.setup.call(this);
     },
