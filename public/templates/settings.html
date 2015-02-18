@@ -7,7 +7,7 @@
   var banner = data.image || null;
   if (!banner) {
     banner = {meta: {width: 680, height: 306}};
-    banner.ssl_url = '/img/banner_680.png';
+    banner.ssl_url = this.app.images.banner;
   }
   var _w = 680;
   var _h = 306;
@@ -24,6 +24,29 @@
     h = _h;
     l = 'left:' + (banner.meta.left !== undefined
         ? banner.meta.left * 680 / 1024: (-(w - _w) / 2)) + 'px;';
+  }
+
+  // Avatar sizing
+  var avatar = data.avatar_full || null;
+  if (!avatar) {
+    avatar = {meta: {width: 325, height: 325}};
+    avatar.ssl_url = this.app.images.avatar_big;
+  }
+  var _aw = 325;
+  var _ah = 325;
+  var aw, ah
+  var al = 'left:0;';
+  var at = 'top:0;';
+  aw = _aw;
+  ah = (avatar.meta.height / avatar.meta.width) * _aw;
+  if (ah - _ah >= 0) {
+    at = 'top:' + (avatar.meta.top !== undefined
+        ? avatar.meta.top: (-(ah - _ah) / 2)) + 'px;';
+  } else {
+    aw = (avatar.meta.width / avatar.meta.height) * _ah;
+    ah = _ah;
+    al = 'left:' + (avatar.meta.left !== undefined
+        ? avatar.meta.left: (-(aw - _aw) / 2)) + 'px;';
   }
 
   // Gravatar
@@ -43,48 +66,75 @@
     <table>
       <tbody>
         <tr>
-          <td>
-            <label for="displayName">Full name</label>
+          <td colspan="3">
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <label for="avatar_img">Profile Picture</label>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="335" style="vertical-align:top;padding:0;">
+                    <form class="settings-avatar-form" enctype="multipart/form-data" method="POST">
+                      <input type="hidden" name="params"
+                          value='<%= JSON.stringify(this.app.profile.transloadit.avatar_full) %>' />
+                      <div class="settings-avatar-dnd settings-avatar-wrap">
+                        <img class="masked settings-avatar" src=<%= avatar.ssl_url || avatar.url %>
+                            width=<%= aw %> height=<%= ah %> style=<%= at + al %> />
+                        <div class="settings-avatar-spin" style="height:100%;"></div>
+                        <a class="avatar-file-chooser-dummy file-chooser-dummy important"
+                            href="javascript:;">Drag &amp; drop or select an image.</a>
+                        <input class="avatar-file-chooser file-chooser" type="file"
+                            name="avatar_img" accept="image/gif, image/jpeg, image/png" />
+                      </div>
+                    </form>
+                    <form class="settings-avatar-form2" enctype="multipart/form-data" method="POST">
+                      <input type="hidden" name="params"
+                          value='<%= JSON.stringify(this.app.profile.transloadit.avatar) %>' />
+                    </form>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </td>
-          <td class="text-right">
-            <div class="setting-saved">
-              <span class="icon-ok"></span>
-              <span>Saved</span>
-            </div>
-            <span class="setting-error"></span>
-          </td>
-          <td>
-            <label for="username">Username</label>
-          </td>
-          <td class="text-right">
-            <div class="setting-saved">
-              <span class="icon-ok"></span>
-              <span>Saved</span>
-            </div>
-            <span class="setting-error"></span>
-          </td>
-          <td>
-            <label for="primaryEmail">Email address (private)</label>
-          </td>
-          <td class="text-right">
-            <div class="setting-saved">
-              <span class="icon-ok"></span>
-              <span>Saved</span>
-            </div>
-            <span class="setting-error"></span>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="2" style="width:250px;">
-            <input tabindex="1" name="displayName" type="text" placeholder="How your name appears..."
-                value="<%= data.displayName %>" />
-          </td>
-          <td colspan="2" style="width:250px;">
-            <input tabindex="2" name="username" type="text" placeholder="(required)" value="<%= data.username %>" />
-          </td>
-          <td colspan="2" style="width:250px;">
-            <input tabindex="3" name="primaryEmail" type="text" placeholder="Used for notifications..."
-                value="<%= data.primaryEmail %>" />
+          <td colspan="3" style="vertical-align:top;">
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <label for="displayName">Full name</label>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="width:335px;">
+                    <input tabindex="1" name="displayName" type="text" placeholder="How your name appears..."
+                        value="<%= data.displayName %>" />
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label for="username">Username</label>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="width:335px;">
+                    <input tabindex="2" name="username" type="text" placeholder="(required)" value="<%= data.username %>" />
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label for="primaryEmail">Email address (private)</label>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="width:335px;">
+                    <input tabindex="3" name="primaryEmail" type="text" placeholder="Used for notifications..."
+                        value="<%= data.primaryEmail %>" />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </td>
         </tr>
         <tr>
@@ -102,7 +152,7 @@
                     width=<%= w %> height=<%= h %> style=<%= t + l %> />
                 <div class="settings-banner-spin" style="height:100%;"></div>
                 <a class="banner-file-chooser-dummy file-chooser-dummy important"
-                    href="javascript:;">Update by dragging &amp; dropping or selecting an image.</a>
+                    href="javascript:;">Drag &amp; drop or select an image.</a>
                 <input class="banner-file-chooser file-chooser" type="file"
                     name="banner_img" accept="image/gif, image/jpeg, image/png" />
               </div>
@@ -113,40 +163,19 @@
           <td colspan="6">
             <label for="description">Bio</label>
           </td>
-          <td colspan="6" class="text-right">
-            <div class="setting-saved">
-              <span class="icon-ok"></span>
-              <span>Saved</span>
-            </div>
-            <span class="setting-error"></span>
-          </td>
         </tr>
         <tr>
           <td colspan="6">
             <textarea tabindex="4" name="description"
-                placeholder="Say something about yourself..."><%= data.description %></textarea>
+                placeholder="Something about yourself..."><%= data.description %></textarea>
           </td>
         </tr>
         <tr>
-          <td>
+          <td colspan="3" style="width:335px;">
             <label for="location.name">Current City</label>
           </td>
-          <td colspan="2" class="text-right">
-            <div class="setting-saved">
-              <span class="icon-ok"></span>
-              <span>Saved</span>
-            </div>
-            <span class="setting-error"></span>
-          </td>
-          <td>
+          <td colspan="3" style="width:335px;">
             <label for="hometown.name">Hometown</label>
-          </td>
-          <td colspan="2" class="text-right">
-            <div class="setting-saved">
-              <span class="icon-ok"></span>
-              <span>Saved</span>
-            </div>
-            <span class="setting-error"></span>
           </td>
         </tr>
         <tr>
@@ -165,13 +194,6 @@
           <td colspan="5">
             <label for="website">Websites (one per line)</label>
           </td>
-          <td class="text-right">
-            <div class="setting-saved">
-              <span class="icon-ok"></span>
-              <span>Saved</span>
-            </div>
-            <span class="setting-error"></span>
-          </td>
         </tr>
         <tr>
           <td colspan="6">
@@ -179,12 +201,12 @@
                 placeholder="One URL per line..."><%= data.website %></textarea>
           </td>
         </tr>
-        <tr>
+        <!-- <tr>
           <td colspan="6" class="settings-gravatar">
-            <img src=<%= gravatar %> width="24" height="24" />
+            <img src=<= gravatar > width="24" height="24" />
             <a tabindex="8" href="http://gravatar.com" class="important" target="_blank">Change your avatar at Gravatar.com</a>.
           </td>
-        </tr>
+        </tr> -->
         <tr>
           <td colspan="6">
             <h1 class="title-static">Privacy</h1>

@@ -77,14 +77,13 @@
       + encodeURIComponent(this.app.images.avatar);
 
   var description = this.model.description();
-
 %>
 
 <div class="profile">
   <% if (data.image) { %>
     <div class="profile-upper">
       <div class="profile-picture">
-        <img src="/img/banner_1024.png" width="1024" height="460" />
+        <img src="<%= this.app.images.banner_big %>" width="1024" height="460" />
         <img class="masked" width="<%= w %>" height="<%= h %>"
             style="<%= t + l %>" />
       </div>

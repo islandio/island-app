@@ -3828,21 +3828,23 @@ input.file-chooser {
 input.post-file-chooser {
   left: 192px;
 }
-input.banner-file-chooser {
+input.banner-file-chooser,
+input.avatar-file-chooser {
   z-index: 2;
   right: 0;
   bottom: 0;
-  width: 269px;
+  width: 183px;
   height: 28px;
 }
-a.banner-file-chooser-dummy {
+a.banner-file-chooser-dummy,
+a.avatar-file-chooser-dummy {
   position: absolute;
   z-index: 1;
   right: 0;
   bottom: 0;
   color: #fcfcfc;
-  padding: 5px;
-  font-size: 11px;
+  padding: 5px 7px;
+  font-size: 12px;
 }
 textarea.post-input {
   display: block;
@@ -4785,16 +4787,34 @@ table.session-weather th {
   -moz-border-radius: 2px;
   border-radius: 2px;
 }
-.settings-banner-wrap.dragging {
-  background: #4bb8d7;
+.settings-avatar-wrap {
+  position: relative;
+  width: 325px;
+  height: 325px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  cursor: move;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
 }
-.settings-banner-wrap.dragging img.settings-banner {
+.settings-avatar-form2 {
+  display: none;
+}
+.settings-banner-wrap.dragging,
+.settings-avatar-wrap.dragging {
+  background: rgba(75,184,215,0.25);
+}
+.settings-banner-wrap.dragging img.settings-banner,
+.settings-avatar-wrap.dragging img.settings-avatar {
   opacity: 0.5;
 }
-.settings-banner-wrap.uploading img.settings-banner {
+.settings-banner-wrap.uploading img.settings-banner,
+.settings-avatar-wrap.uploading img.settings-avatar {
   opacity: 0.25;
 }
-.settings-banner {
+.settings-banner,
+.settings-avatar {
   left: 0;
   top: 0;
 }
@@ -4932,9 +4952,6 @@ input.import-input {
 }
 .import ul.list li a:hover span {
   color: inherit;
-}
-.import ul.list span {
-  color: #888;
 }
 .import .subtabs {
   float: clear;

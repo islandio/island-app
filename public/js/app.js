@@ -21,7 +21,9 @@ define([
     // Location of images that must remain remote.
     this.images = {
       avatar: 'https://s3.amazonaws.com/island.io/avatar_48.png',
-      avatar_big: 'https://s3.amazonaws.com/island.io/avatar_274.png'
+      avatar_big: 'https://s3.amazonaws.com/island.io/avatar_325.png',
+      banner: 'https://s3.amazonaws.com/island.io/banner_680.png',
+      banner_big: 'https://s3.amazonaws.com/island.io/banner_1024.png'
     };
 
     this.gradeConverter = {
