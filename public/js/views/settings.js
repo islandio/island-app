@@ -694,8 +694,6 @@ define([
         crop = {x1: 0, x2: side, y1: y1, y2: y1 + side};
       }
 
-      console.log(crop)
-
       // Transloadit options.
       var opts = {
         wait: true,
