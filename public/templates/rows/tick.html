@@ -85,7 +85,7 @@
       && this.parentView.model.get('action')) { %>
     <span class="tick-avatar">
       <a href="/<%= t.author.username %>" class="image-anchor navigate">
-        <img src="<%= gravatar %>" width="36" height="36" />
+        <img src="<%= t.author.avatar || gravatar %>" width="36" height="36" class="tooltip" />
       </a>
     </span>
   <% } %>

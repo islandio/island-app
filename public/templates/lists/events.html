@@ -16,7 +16,7 @@
   <div class="post-input">
     <div class="post">
       <span class="post-input-avatar">
-        <img src="<%= gravatar %>" width="50" height="50" />
+        <img src="<%= member.avatar || gravatar %>" width="50" height="50" />
       </span>
       <div class="post-input-wrap">
         <form action="/api/posts" enctype="multipart/form-data" method="POST"

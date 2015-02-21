@@ -71,11 +71,6 @@
     details = 'Member since ' + since;
   }
 
-  // Gravatar
-  var gravatar = 'https://www.gravatar.com/avatar/'
-      + data.gravatar + '?s=24&d='
-      + encodeURIComponent(this.app.images.avatar);
-
   var description = this.model.description();
 %>
 
@@ -103,7 +98,8 @@
           %>
             <li>
               <a href="/<%= m.username %>" class="navigate">
-                <img src="<%= g %>" class="profile-team-avatar" width="274" height="274" />
+                <img src="<%= m.avatar_big || g %>" class="profile-team-avatar"
+                    width="274" height="274" />
               </a>
             </li>  
           <% }, this)); %>

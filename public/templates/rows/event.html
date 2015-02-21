@@ -2,14 +2,15 @@
   var gravatar = 'https://www.gravatar.com/avatar/'
       + this.model.get('action').author.gravatar + '?s=48&d='
       + encodeURIComponent(this.app.images.avatar);
+  console.log(this.model.get('action').author)
 %>
 
 <div class="event-left">
   <% if (this.model.get('action_type') !== 'tick') { %>
     <span class="event-avatar">
       <a href="/<%= this.model.get('action').author.username %>" class="image-anchor navigate">
-        <img src="<%= gravatar %>" width="48" height="48" class="tooltip"
-        title="<%= this.model.get('action').author.displayName %>" /></a>
+        <img src="<%= this.model.get('action').author.avatar || gravatar %>" width="48"
+            height="48" class="tooltip" title="<%= this.model.get('action').author.displayName %>" /></a>
       </a>
     </span>
   <% } %>

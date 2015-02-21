@@ -1,9 +1,5 @@
 <%
   var p = this.model.attributes;
-  var gravatar = 'https://www.gravatar.com/avatar/'
-      + this.model.get('author').gravatar + '?s=26&d='
-      + encodeURIComponent(this.app.images.avatar);
-
   var mediaTypes = _.uniq(_.pluck(p.medias, 'type'));
 %>
 

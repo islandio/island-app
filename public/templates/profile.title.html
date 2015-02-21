@@ -49,7 +49,7 @@
 <a href="/<%= data.username %>/ascents" class="button title-button navigate">
     <i class="icon-award"></i> Ascents</a>
 <div class="page-title">
-  <img src="<%= gravatar %>" class="page-title-avatar" width="26" height="26" />
+  <img src="<%= data.avatar || gravatar %>" class="page-title-avatar" width="26" height="26" />
   <a href="/<%= data.username %>" class="navigate">@<%= data.username %>
       <span class="page-title-sub">(<%= data.displayName %>)</span></a>
 </div>

@@ -44,7 +44,7 @@
 <a href="/<%= data.author.username %>" class="button title-button navigate">
     <i class="icon-angle-left"></i> Profile</a>
 <div class="page-title">
-  <img src="<%= gravatar %>" class="page-title-avatar" width="26" height="26" />
+  <img src="<%= data.author.avatar || gravatar %>" class="page-title-avatar" width="26" height="26" />
   <a href="/<%= data.author.username %>" class="navigate">@<%= data.author.username %>
       <span class="page-title-sub">(<%= data.author.displayName %>)</span></a>'s ascents
 </div>

@@ -8,6 +8,6 @@
 
 <% if (!this.app.profile.content.private) { %>
   <a href="/<%= subscribee.username %>" class="image-anchor navigate">
-    <img src="<%= gravatar %>" width="32" height="32" class="tooltip"
+    <img src="<%= subscribee.avatar || gravatar %>" width="32" height="32" class="tooltip"
         title="<%= subscribee.displayName %>" /></a>
 <% } %>

@@ -1,7 +1,4 @@
 <%
-  var gravatar = 'https://www.gravatar.com/avatar/'
-      + this.model.get('author').gravatar + '?s=48&d='
-      + encodeURIComponent(this.app.images.avatar);
   var weather = this.model.get('weather');
   var daily = weather.get('daily');
 %>

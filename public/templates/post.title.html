@@ -29,7 +29,7 @@
 
 <div class="page-title">
   <a href="/<%= this.model.get('author').username %>" class="image-anchor navigate">
-    <img src="<%= gravatar %>" class="page-title-avatar" width="26" height="26" /></a><a 
+    <img src="<%= this.model.get('author').avatar || gravatar %>" class="page-title-avatar" width="26" height="26" /></a><a 
       href="/<%= this.model.get('author').username %>" class="navigate">
     @<%= this.model.get('author').username %></a> 
     / <a href="/<%= this.model.get('key') %>" class="navigate">

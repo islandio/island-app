@@ -15,7 +15,7 @@
 
 <a href="/<%= href %>">
   <div class="notification-inner">
-    <img src=<%= gravatar %> width="32" height="32" />
+    <img src="<%= this.model.get('event').data.action.v || gravatar %>" width="32" height="32" />
     <p>
       <%= this.model.body() %>
     </p>
