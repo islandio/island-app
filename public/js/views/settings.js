@@ -298,7 +298,8 @@ define([
         }, function (err, data) {
           self.bannerUploading = false;
           if (err) {
-            return mps.publish('flash/new', [{err: err, level: 'error', type: 'popup'}]);
+            return mps.publish('flash/new', [{err: err, level: 'error',
+                type: 'popup'}]);
           }
 
           // Show saved status.
@@ -736,9 +737,12 @@ define([
             }
 
             // Save new avatar.
-            var result = assembly.results.avatar[0];
-            this.model.set('avatar', result);
-            this.app.profile.member.avatar = result;
+            var avatar = assembly.results.avatar[0];
+            var avatar_big = assembly.results.avatar_big[0];
+            this.model.set('avatar', avatar);
+            this.model.set('avatar_big', avatar_big);
+            this.app.profile.member.avatar = avatar.ssl_url;
+            this.app.profile.member.avatar_big = avatar_big.ssl_url;
           }, this));
         }, this)
       };
