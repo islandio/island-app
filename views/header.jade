@@ -29,7 +29,7 @@ header.header
       div.member-box
         div.divider-vertical
         a.header-avatar(href="/" + member.username)
-          - g = 'https://www.gravatar.com/avatar/" + member.gravatar + "?s=50&d=https%3A%2F%2Fs3.amazonaws.com%2Fisland.io%2Favatar_48.png'
+          - g = 'https://www.gravatar.com/avatar/' + member.gravatar + '?s=50&d=https%3A%2F%2Fs3.amazonaws.com%2Fisland.io%2Favatar_48.png'
           img(src="#{member.avatar || g}", width="50", height="50")
         div.divider-vertical
         a.button.globe-button.header-action(href="javascript:;", title="Notifications")
