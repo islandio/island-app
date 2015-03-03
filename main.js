@@ -268,6 +268,7 @@ if (cluster.isMaster) {
                 console.log(req.method, allow.method)
             return req.url === allow.url && req.method === allow.method;
           })) {
+            console.log('ALLOW')
             return _next();
           }
           res.redirect(301, 'https://' + req.headers.host + req.url);
