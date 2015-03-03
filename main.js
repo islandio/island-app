@@ -264,6 +264,8 @@ if (cluster.isMaster) {
             && app.get('package').protocol.name === 'https') {
           if (req.secure || _.find(app.get('package').protocol.allow,
               function (allow) {
+                console.log(req.url, allow.url)
+                console.log(req.method, allow.method)
             return req.url === allow.url && req.method === allow.method;
           })) {
             return _next();
