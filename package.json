@@ -5,7 +5,16 @@
   "beta": true,
   "protocol": {
     "name": "https",
-    "allow": []
+    "allow": [
+      {
+        "url": "/api/instagrams/users",
+        "method": "POST"
+      },
+      {
+        "url": "/api/instagrams/tags",
+        "method": "POST"
+      }
+    ]
   },
   "domain": "www.island.io",
   "port": 8080,
