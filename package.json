@@ -10,7 +10,10 @@
   "domain": "www.island.io",
   "port": 8080,
   "securePort": 8443,
-  "outsideTunnel": false,
+  "tunnel": {
+    "subdomain": "island",
+    "authtoken": "ndUsFsVgmCOiv9rJ/1s9"
+  },
   "builds": {
     "bucket": "builds-island",
     "cloudfront": "https://d3h49x19rmb9a2.cloudfront.net"

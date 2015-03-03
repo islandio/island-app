@@ -33,7 +33,8 @@
   "INSTAGRAM_CLIENT_SECRET": "a3937ee32072457d92eaa2165bd7dd37",
   "INSTAGRAM_CALLBACK_URL": "/connect/instagram/callback",
   "INSTAGRAM_VERIFY_TOKEN": "weareinstaisland",
-  "INSTAGRAM_USER_ID": "island.io",
+  "INSTAGRAM_TAGS": "weareisland:islandio",
+  "INSTAGRAM_USER": "island_io",
 
   "GMAIL_FROM": "The Island <robot@island.io>",
   "GMAIL_USER": "robot@island.io",

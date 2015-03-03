@@ -793,10 +793,9 @@ define([
 
       // Render the confirm modal.
       $.fancybox(_.template(tip)({
-        message: '<strong>You are connected to Instagram.</strong> Now help us'
-            + ' visualize the world of climbing!'
-            + ' We\'ll post photos of yours with the #weareisland hashtag'
-            + ' to your Island Profile.'
+        message: '<strong>You are connected to Instagram.</strong>'
+            + ' We\'ll post photos of yours tagged @island_io, #islandio, or #weareisland'
+            + ' to your feed.'
             + '<br /><br />'
             + 'Tip: Want us to guess which crag you were at? Make sure location services'
             + ' (GPS) are enabled'

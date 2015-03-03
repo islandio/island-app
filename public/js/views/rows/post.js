@@ -208,20 +208,14 @@ define([
                   });
                 }
 
-                // if (this.parentView) {
-                //   // Place the video in the fancybox.
-                //   $.fancybox(this.videoTemp.call(this, {
-                //       data: hd, width: 1024, height: 576}), fancyOpts);
-                // } else {
-                  // Lay the video over the mosaic.
-                  $(this.videoTemp.call(this, {data: hd, width: el.width(), height: el.height()}))
-                      .appendTo(this.$('.image-mosaic[data-id="' + o.id + '"]'));
-                  _.extend(params, {
-                    width: el.width().toString(),
-                    height: el.height().toString()
-                  });
-                  this.$('span.image-mosaic-play-text').hide();
-                // }
+                // Lay the video over the mosaic.
+                $(this.videoTemp.call(this, {data: hd, width: el.width(), height: el.height()}))
+                    .appendTo(this.$('.image-mosaic[data-id="' + o.id + '"]'));
+                _.extend(params, {
+                  width: el.width().toString(),
+                  height: el.height().toString()
+                });
+                this.$('span.image-mosaic-play-text').hide();
                 
                 // Finally, play the video.
                 jwplayer('video-' + o.id).setup(params);
@@ -231,6 +225,20 @@ define([
               break;
           }
         }, this));
+      }, this));
+
+      // Video params
+      _.each($('video.post-instagram'), _.bind(function (el) {
+        var el = $(el);
+        jwplayer(el.attr('id')).setup({
+          width: el.width().toString(),
+          height: el.height().toString(),
+          autostart: false,
+          primary: 'flash',
+          file: el.attr('src'),
+          image: el.attr('poster'),
+          ga: {}
+        });
       }, this));
 
       this.trigger('rendered');

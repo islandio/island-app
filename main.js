@@ -9,6 +9,14 @@ var cluster = require('cluster');
 var util = require('util');
 var cpus = require('os').cpus().length;
 var ngrok = require('ngrok');
+var optimist = require('optimist');
+var argv = optimist
+    .describe('help', 'Get help')
+    .describe('index', 'Ensure indexes on MongoDB collections')
+      .boolean('index')
+    .describe('tunnel', 'Setup an introspected tunnel')
+      .boolean('tunnel')
+    .argv;
 
 if (cluster.isMaster) {
 
@@ -31,8 +39,10 @@ if (cluster.isMaster) {
 
   // Setup an outside tunnel to our localhost in development.
   // We will pass this to the workers.
-  if (process.env.NODE_ENV !== 'production' && _package_.outsideTunnel) {
-    ngrok.connect(_package_.port, function (err, url) {
+  if (process.env.NODE_ENV !== 'production' && argv.tunnel) {
+    var tunnel = _package_.tunnel;
+    tunnel.port = _package_.port;
+    ngrok.connect(tunnel, function (err, url) {
       util.log('Setting up tunnel from this machine to ' + url);
       ngrokUrl = url;
       createWorkers();
@@ -41,14 +51,6 @@ if (cluster.isMaster) {
     createWorkers();
   }
 } else {
-
-  // Arguments
-  var optimist = require('optimist');
-  var argv = optimist
-      .describe('help', 'Get help')
-      .describe('index', 'Ensure indexes on MongoDB collections')
-        .boolean('index')
-      .argv;
 
   if (argv._.length || argv.help) {
     optimist.showHelp();

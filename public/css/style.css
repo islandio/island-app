@@ -3546,6 +3546,14 @@ span.image-mosaic-play-text {
   top: 318px;
   left: 225px;
 }
+.post-instagram {
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+}
+.post-instagram:hover {
+  opacity: 0.98;
+}
 .post .post-body {
   margin: 10px 0 0;
   font-size: 14px;

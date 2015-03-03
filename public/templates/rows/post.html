@@ -28,11 +28,11 @@
     <span class="event-timeline-label">
       <i class="icon-picture"></i>
     </span>
-    <div class="image-mosaic" data-type="image" data-id="<%= p.id %>"></div>
+    <div class="image-mosaic" data-type="image" data-id="<%= this.model.id %>"></div>
   </div>
 <% } %>
 <% if (_.contains(mediaTypes, 'video')) {
-  var vids = _.filter(p.medias, function (m) { return m.type === 'video'; });
+  var vids = _.filter(this.model.get('medias'), function (m) { return m.type === 'video'; });
   vids = _.uniq(vids, function (v) {
     return v.video.original_id;
   });
@@ -62,7 +62,35 @@
     <% } %>
   </div>
 <% }, this)); %>
-<% if (this.parentView || p.body.trim() !== '') { %>
+<% if (this.model.get('type') === 'instagram') {
+  var rm = this.model.get('remote_media');
+%>
+  <% if (rm) { %>
+    <div class="post-media">
+      <% if (rm.type === 'video') {
+        var img = rm.images.standard_resolution;
+        var vid = rm.videos.standard_resolution;
+      %>
+        <span class="event-timeline-label">
+          <i class="icon-youtube-play"></i>
+        </span>
+        <video src="<%= vid.url %>" id="video-<%= rm.id %>" class="post-instagram" 
+            poster="<%= img.url %>" controls="controls" width="561" height="561" />
+      <% } else {
+        var img = rm.images.standard_resolution;
+      %>
+        <span class="event-timeline-label">
+          <i class="icon-picture"></i>
+        </span>
+        <a href="<%= rm.link %>" class="image-anchor" target="_blank">
+          <img src="<%= img.url %>" class="post-instagram" width="561"
+              height="561" />
+        </a>
+      <% } %>
+    </div>
+  <% } %>
+<% } %>
+<% if (this.parentView || this.model.get('body').trim() !== '') { %>
   <div class="post-body">
     <%= this.model.body(!this.parentView) %>
   </div>

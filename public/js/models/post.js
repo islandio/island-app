@@ -38,8 +38,25 @@ define([
             break;
         }
       }
-      return name === '' ? ' added a <a href="/' + this.get('key')
-          + '" class="title navigate">post</a>.': name;
+      if (name !== '') {
+        return name;
+      }
+      var str = ' added a <a href="/' + this.get('key')
+          + '" class="title navigate">post</a>';
+      var rm = this.get('remote_media');
+      if (rm) {
+        var rmt = this.get('type');
+        switch (rmt) {
+          case 'instagram':
+            str += ' via <a href="' + rm.link
+                + '" class="title" target="_blank">' + _.str.capitalize(rmt)
+                + '</a>.';
+            break;
+        }
+      } else {
+        str += '.';
+      }
+      return str;
     },
 
     date: function () {
