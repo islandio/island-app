@@ -8,6 +8,14 @@
     "allow": [
       {
         "url": "/api/instagrams/users",
+        "method": "GET"
+      },
+      {
+        "url": "/api/instagrams/tags",
+        "method": "GET"
+      },
+      {
+        "url": "/api/instagrams/users",
         "method": "POST"
       },
       {
