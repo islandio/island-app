@@ -19,13 +19,11 @@ var argv = optimist
     .argv;
 
 if (cluster.isMaster) {
-
-  var ngrokUrl = null;
   var createWorkers = function() {
 
     // Create a worker for each CPU.
     for (var i = 0; i < cpus; ++i) {
-      cluster.fork({NGROKURL: ngrokUrl});
+      cluster.fork();
     }
 
     // Listen for dying workers
@@ -33,7 +31,7 @@ if (cluster.isMaster) {
 
       // Replace the dead worker.
       util.log('Worker ' + worker.id + ' died');
-      cluster.fork({NGROKURL: ngrokUrl});
+      cluster.fork();
     });
   }
 
@@ -44,7 +42,6 @@ if (cluster.isMaster) {
     tunnel.port = _package_.port;
     ngrok.connect(tunnel, function (err, url) {
       util.log('Setting up tunnel from this machine to ' + url);
-      ngrokUrl = url;
       createWorkers();
     });
   } else {
@@ -144,7 +141,6 @@ if (cluster.isMaster) {
         // App params
         app.set('ROOT_URI', '');
         app.set('HOME_URI', 'http://localhost:' + app.get('PORT'));
-        app.set('TUNNEL_URI', process.env['NGROKURL']);
       }
 
       // Production only
