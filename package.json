@@ -1,7 +1,7 @@
 {
   "author": "The Island (git://github.com/The-Island)",
   "name": "island-app",
-  "version": "3.0.72",
+  "version": "3.0.73",
   "beta": false,
   "protocol": {
     "name": "https",
