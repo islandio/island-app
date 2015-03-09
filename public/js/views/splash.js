@@ -33,7 +33,7 @@ define([
     },
 
     events: {
-      'click .start-button': 'submit',
+      'click button.start-button': 'submit',
     },
 
     setup: function () {
@@ -42,7 +42,7 @@ define([
       this.topBottom = this.$('.splash-top-bottom');
       this.bottom = this.$('.splash-bottom');
       this.header = $('.header');
-      this.signupSubmit = this.$('.start-button');
+      this.signupSubmit = this.$('button.start-button');
       this.signupInput = this.$('.splash-signup');
       this.signupButtonSpin = new Spin(this.$('.button-spin'), {
         color: '#396400',

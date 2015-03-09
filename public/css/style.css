@@ -955,7 +955,8 @@ a.button.buy-button:hover:not(.disabled) {
 }
 a.button.new-session-button,
 button.button.new-session-button,
-button.button.start-button {
+button.button.start-button,
+a.button.start-button {
   position: relative;
   color: #396400;
   border: 1px solid transparent;
@@ -970,31 +971,45 @@ button.button.start-button {
   -moz-border-radius: 0 0 2px 2px;
   border-radius: 0 0 2px 2px;
 }
+a.button.start-button {
+  display: block;
+  margin: 0 auto;
+  width: 250px;
+  font-size: 14px;
+  padding: 5px 0;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+}
 button.button.modal-button.modal-delete {
   position: relative;
 }
 a.button.new-session-button:hover:not(.disabled),
 button.button.new-session-button:hover:not(.disabled),
-button.button.start-button:hover:not(.disabled) {
+button.button.start-button:hover:not(.disabled),
+a.button.start-button:hover:not(.disabled) {
   color: #2f5a00;
   border: 1px solid transparent;
   background: #a7d22c;
 }
 a.button.new-session-button:active:not(.disabled),
 button.button.new-session-button:active:not(.disabled),
-button.button.start-button:active:not(.disabled) {
+button.button.start-button:active:not(.disabled),
+a.button.start-button:active:not(.disabled) {
   background: #a7d22c;
 }
 a.button.new-session-button.disabled,
 button.button.new-session-button.disabled,
 button.button.modal-button.modal-delete.disabled,
-button.button.start-button.disabled {
+button.button.start-button.disabled,
+a.button.start-button.disabled {
   opacity: 0.25;
   cursor: default;
 }
 a.button.new-session-button i,
 button.button.new-session-button i,
-button.button.start-button {
+button.button.start-button,
+a.button.start-button {
   color: #396400;
 }
 button.button.modal-button.modal-delete:hover,

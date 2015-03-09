@@ -8,14 +8,20 @@
         <h2 class="splash-heading-two">
           Join our mission to build a super duper logging system for rock climbing.
         </h2>
-        <form method="POST">
-          <input type="email" class="splash-signup" placeholder="Enter your email" />
-          <div class="splash-form-divider"></div>
-          <button class="start-button button">
-            Request an invite <i class="icon-angle-right"></i>
-            <div class="button-spin"></div>
-          </button>
-        </form>
+        <% if (this.app.profile.beta) { %>
+          <form method="POST">
+            <input type="email" class="splash-signup" placeholder="Enter your email" />
+            <div class="splash-form-divider"></div>
+            <button class="start-button button">
+              Request an invite <i class="icon-angle-right"></i>
+              <div class="button-spin"></div>
+            </button>
+          </form>
+        <% } else { %>
+          <a href="/signup" class="start-button button navigate">
+            Get started <i class="icon-angle-right"></i>
+          </a>
+        <% } %>
       </div>
     </div>
     <div id="splash-video" class="splash-video">
@@ -55,7 +61,7 @@
           </a>
         </div>
         <p>
-          Stay psyched by following fellow athletes who you care about. Push each other harder!.
+          Stay psyched by following fellow athletes who you care about. Push each other harder!
         </p>
       </div>
     </li>

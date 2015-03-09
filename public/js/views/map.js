@@ -113,12 +113,12 @@ define([
       this.lesser = this.$('.less-more');
 
       // Hide/show plot button.
-      if (this.app.profile && this.app.profile.member) {
+      if (false && this.app.profile && this.app.profile.member) {
         this.plotButton.css({visibility: 'visible'})
       } else {
         this.plotButton.css({visibility: 'hidden'});
       }
-      if (!this.$el.hasClass('closed')) {
+      if (false && !this.$el.hasClass('closed')) {
         this.plotButton.show();
         // this.weatherButton.show();
       }
@@ -361,7 +361,7 @@ define([
         this.hider.text('Hide map');
         this.hider.addClass('split-left');
         this.lesser.show();
-        this.plotButton.show();
+        // this.plotButton.show();
         this.resize(250);
         store.set('mapClosed', false);
       } else {
@@ -371,7 +371,7 @@ define([
         this.$el.addClass('closed');
         this.hider.text('Show map');
         this.hider.removeClass('split-left');
-        this.plotButton.hide();
+        // this.plotButton.hide();
         this.lesser.hide();
         store.set('mapClosed', true);
       }
