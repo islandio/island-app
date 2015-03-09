@@ -1057,6 +1057,9 @@ button.button.input-add-button {
   height: 28px;
   min-height: 28px;
 }
+button.button.input-add-button.add-crag {
+  display: none;
+}
 button.button.input-add-button:hover,
 button.button.input-add-button:active,
 button.button.input-add-button:focus {
