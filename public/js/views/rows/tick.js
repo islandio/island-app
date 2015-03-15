@@ -206,6 +206,7 @@ define([
                 var hd = getVideo.call(this, 'hd');
 
                 // Video params
+                console.log(this.model.attributes)
                 var params = {
                   width: el.width().toString(),
                   height: el.height().toString(),
@@ -214,7 +215,7 @@ define([
                   ga: {},
                   sharing: {
                     link: window.location.protocol + '//'
-                        + window.location.host + '/' + this.model.get('key'),
+                        + window.location.host + '/efforts/' + this.model.get('key'),
                     code: "<iframe width='100%' height='100%' src='//"
                         + window.location.host + "/embed/"
                         + ipad.video.id + "' frameborder='0'></iframe>"
@@ -254,20 +255,14 @@ define([
                   });
                 }
 
-                // if (this.parentView) {
-                //   // Place the video in the fancybox.
-                //   $.fancybox(this.videoTemp.call(this, {
-                //       data: hd, width: 1024, height: 576}), fancyOpts);
-                // } else {
-                  // Lay the video over the mosaic.
-                  $(this.videoTemp.call(this, {data: hd, width: el.width(), height: el.height()}))
-                      .appendTo(this.$('.image-mosaic[data-id="' + o.id + '"]'));
-                  _.extend(params, {
-                    width: el.width().toString(),
-                    height: el.height().toString()
-                  });
-                  this.$('span.image-mosaic-play-text').hide();
-                // }
+                // Lay the video over the mosaic.
+                $(this.videoTemp.call(this, {data: hd, width: el.width(), height: el.height()}))
+                    .appendTo(this.$('.image-mosaic[data-id="' + o.id + '"]'));
+                _.extend(params, {
+                  width: el.width().toString(),
+                  height: el.height().toString()
+                });
+                this.$('span.image-mosaic-play-text').hide();
                 
                 // Finally, play the video.
                 jwplayer('video-' + o.id).setup(params);

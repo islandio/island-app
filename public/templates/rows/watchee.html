@@ -3,8 +3,9 @@
   var gradeConverter = this.app.gradeConverter;
   var type = subscribee.type;
   var country = subscribee.country;
-  if (subscribee.grades)
+  if (subscribee.grades) {
     subscribee.grades = gradeConverter[type].grades(subscribee.grades, country);
+  }
 %>
 
 <% if (!this.app.profile.content.private) { %>

@@ -62,7 +62,8 @@ define([
       _.each(ticks, _.bind(function (el, i) {
         _.defer(_.bind(function () {
           el = $(el);
-          var data = _.find(this.model.get('ticks')[el.data('type')], function (t) {
+          var data = _.find(this.model.get('ticks')[el.data('type')],
+              function (t) {
             return t.id === el.attr('id');
           });
           this.ticks.push(new Tick({

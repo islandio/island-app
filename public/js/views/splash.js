@@ -11,9 +11,10 @@ define([
   'util',
   'Spin',
   'views/lists/events',
+  'views/lists/ticks',
   'text!../../templates/splash.html',
   'device'
-], function ($, _, Backbone, mps, rest, util, Spin, Events, template) {
+], function ($, _, Backbone, mps, rest, util, Spin, Events, Ticks, template) {
   return Backbone.View.extend({
 
     el: '.main',
@@ -86,6 +87,8 @@ define([
         headers: false
       });
 
+      this.ticks = new Ticks(this.app).render();
+
       // Handle the screenshots.
       this.$('.fancybox').fancybox({
         openEffect: 'fade',
@@ -115,6 +118,7 @@ define([
         mps.unsubscribe(s);
       });
       this.events.destroy();
+      this.ticks.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();
