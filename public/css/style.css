@@ -520,7 +520,7 @@ span.empty-list {
 .note {
   font-size: 11px;
   color: #808080;
-  line-height: 24px;
+  line-height: 30px;
 }
 .input-error {
   border: 1px solid #d04c38 !important;
@@ -4991,8 +4991,8 @@ input.import-input {
 .import button.button.import-search-button {
   position: relative;
   width: 190px;
-  line-height: 36px;
-  height: 36px;
+  line-height: 32px;
+  height: 34px;
 }
 .import ul.list {
   font-size: 14px;

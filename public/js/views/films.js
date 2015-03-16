@@ -10,8 +10,9 @@ define([
   'rest',
   'util',
   'text!../../templates/films.html',
-  'views/lists/events'
-], function ($, _, Backbone, mps, rest, util, template, Events) {
+  'views/lists/events',
+  'views/lists/ticks'
+], function ($, _, Backbone, mps, rest, util, template, Events, Ticks) {
 
   return Backbone.View.extend({
 
@@ -40,9 +41,13 @@ define([
 
     setup: function () {
 
-      // Render events.
+      // Render lists.
       this.events = new Events(this.app, {parentView: this,
           reverse: true, filters: false});
+      this.boulders = new Ticks(this.app, {parentView: this, type: 'tick',
+          subtype: 'b', heading: 'Boulders'});
+      this.routes = new Ticks(this.app, {parentView: this, type: 'tick',
+          subtype: 'r', heading: 'Routes'});
 
       return this;
     },
@@ -57,6 +62,8 @@ define([
         mps.unsubscribe(s);
       });
       this.events.destroy();
+      this.boulders.destroy();
+      this.routes.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

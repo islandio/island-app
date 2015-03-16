@@ -12,9 +12,11 @@ define([
   'Spin',
   'text!../../templates/crags.html',
   'text!../../templates/crags.list.html',
-  'views/session.new',
-], function ($, _, Backbone, mps, rest, util, Spin, template, list, Session) {
-
+  'views/lists/ticks',
+  'views/lists/watchees',
+  'views/session.new'
+], function ($, _, Backbone, mps, rest, util, Spin, template, list, Ticks,
+      Watchees, Session) {
   return Backbone.View.extend({
 
     el: '.main',
@@ -72,6 +74,16 @@ define([
           $(this.list.call(this, data)).appendTo(this.results);
         }
       }
+      this.crags = new Watchees(this.app, {parentView: this, reverse: true,
+          type: 'crag', heading: 'Crags'});
+      this.routes = new Watchees(this.app, {parentView: this, reverse: true,
+          type: 'ascent', subtype: 'r', heading: 'Routes'});
+      this.boulders = new Watchees(this.app, {parentView: this, reverse: true,
+          type: 'ascent', subtype: 'b', heading: 'Boulders'});
+      this.rboulders = new Ticks(this.app, {parentView: this, type: 'tick',
+          subtype: 'b', heading: 'Boulders'});
+      this.rroutes = new Ticks(this.app, {parentView: this, type: 'tick',
+          subtype: 'r', heading: 'Routes'});
 
       // Focus.
       if (!$('.header-search .search-display').is(':visible')) {
@@ -90,6 +102,11 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
+      this.crags.destroy();
+      this.routes.destroy();
+      this.boulders.destroy();
+      this.rroutes.destroy();
+      this.rboulders.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();
@@ -145,9 +162,11 @@ define([
         if (data.items.length === 0) {
           return this.noresults.show();
         }
+        this.noresults.hide();
 
         // Render results.
         $(this.list.call(this, data)).appendTo(this.results);
+        $(window).trigger('resize');
       }, this));
 
       return false;

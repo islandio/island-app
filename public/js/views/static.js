@@ -7,8 +7,9 @@ define([
   'Underscore',
   'Backbone',
   'mps',
-  'util'
-], function ($, _, Backbone, mps, util) {
+  'util',
+  'views/lists/ticks'
+], function ($, _, Backbone, mps, util, Ticks) {
   return Backbone.View.extend({
 
     el: '.main',
@@ -39,6 +40,13 @@ define([
     },
 
     setup: function () {
+
+      // Render lists.
+      this.boulders = new Ticks(this.app, {parentView: this, type: 'tick',
+          subtype: 'b', heading: 'Boulders'});
+      this.routes = new Ticks(this.app, {parentView: this, type: 'tick',
+          subtype: 'r', heading: 'Routes'});
+
       return this;
     },
 
@@ -51,6 +59,8 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
+      this.boulders.destroy();
+      this.routes.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

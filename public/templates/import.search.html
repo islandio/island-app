@@ -1,4 +1,16 @@
-<div class="rightside"></div>
+<div class="rightside">
+  <div class="sidebar-items">
+    <% if (this.app.profile.member.username !== 'island'
+        && this.app.profile.member.role !== 2) { %>
+      <div class="sidebar-watchees">
+        <span class="sidebar-heading">You're watching:</span>
+        <div class="sidebar-crags"></div>
+        <div class="sidebar-ascents-r"></div>
+        <div class="sidebar-ascents-b"></div>
+      </div>
+    <% } %>
+  </div>
+</div>
 <div class="leftside import">
   <p class="note">
     <span class="em">Step 1)</span> Let's find your 8a account.

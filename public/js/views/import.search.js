@@ -12,7 +12,8 @@ define([
   'util',
   'Spin',
   'text!../../templates/import.search.html',
-], function ($, _, Backbone, mps, rpc, rest, util, Spin, template) {
+  'views/lists/watchees'
+], function ($, _, Backbone, mps, rpc, rest, util, Spin, template, Watchees) {
 
   return Backbone.View.extend({
 
@@ -50,6 +51,14 @@ define([
       this.input = this.$('.import-input');
       this.button = this.$('.button');
 
+      // Render lists.
+      this.crags = new Watchees(this.app, {parentView: this, reverse: true,
+          type: 'crag', heading: 'Crags'});
+      this.sroutes = new Watchees(this.app, {parentView: this, reverse: true,
+          type: 'ascent', subtype: 'r', heading: 'Routes'});
+      this.sboulders = new Watchees(this.app, {parentView: this, reverse: true,
+          type: 'ascent', subtype: 'b', heading: 'Boulders'});
+
       return this;
     },
 
@@ -62,6 +71,9 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
+      this.crags.destroy();
+      this.sroutes.destroy();
+      this.sboulders.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

@@ -86,7 +86,6 @@ define([
         filters: false,
         headers: false
       });
-
       this.boulders = new Ticks(this.app, {parentView: this, type: 'tick',
           subtype: 'b', heading: 'Boulders'});
       this.routes = new Ticks(this.app, {parentView: this, type: 'tick',

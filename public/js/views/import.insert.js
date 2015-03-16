@@ -14,11 +14,9 @@ define([
   'Spin',
   'views/rows/tick',
   'text!../../templates/import.insert.html',
-  'views/lists/followers',
-  'views/lists/followees',
   'views/lists/watchees'
 ], function ($, _, Backbone, mps, rpc, rest, util, Card, Spin, Tick, template,
-    Followers, Followees, Watchees) {
+    Watchees) {
 
   return Backbone.View.extend({
 
@@ -136,6 +134,14 @@ define([
         this.filterBox.focus();
       }
 
+      // Render lists.
+      this.crags = new Watchees(this.app, {parentView: this, reverse: true,
+          type: 'crag', heading: 'Crags'});
+      this.sroutes = new Watchees(this.app, {parentView: this, reverse: true,
+          type: 'ascent', subtype: 'r', heading: 'Routes'});
+      this.sboulders = new Watchees(this.app, {parentView: this, reverse: true,
+          type: 'ascent', subtype: 'b', heading: 'Boulders'});
+
       return this;
     },
 
@@ -165,6 +171,9 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
+      this.crags.destroy();
+      this.sroutes.destroy();
+      this.sboulders.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

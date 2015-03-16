@@ -12,11 +12,9 @@ define([
   'views/rows/tick',
   'text!../../templates/ticks.html',
   'text!../../templates/ticks.title.html',
-  'views/lists/followers',
-  'views/lists/followees',
   'views/lists/watchees'
 ], function ($, _, Backbone, mps, util, Card, Tick, template,
-    title, Followers, Followees, Watchees) {
+    title, Watchees) {
   return Backbone.View.extend({
 
     el: '.main',
@@ -121,8 +119,6 @@ define([
       }
 
       // Render lists.
-      this.followers = new Followers(this.app, {parentView: this, reverse: true});
-      this.followees = new Followees(this.app, {parentView: this, reverse: true});
       this.crags = new Watchees(this.app, {parentView: this, reverse: true,
           type: 'crag', heading: 'Crags'});
       this.sroutes = new Watchees(this.app, {parentView: this, reverse: true,
@@ -203,8 +199,6 @@ define([
       _.each(this.ticks, function (t) {
         t.destroy();
       });
-      this.followers.destroy();
-      this.followees.destroy();
       this.crags.destroy();
       this.sroutes.destroy();
       this.sboulders.destroy();
