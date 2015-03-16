@@ -87,7 +87,10 @@ define([
         headers: false
       });
 
-      this.ticks = new Ticks(this.app).render();
+      this.boulders = new Ticks(this.app, {parentView: this, type: 'tick',
+          subtype: 'b', heading: 'Boulders'});
+      this.routes = new Ticks(this.app, {parentView: this, type: 'tick',
+          subtype: 'r', heading: 'Routes'});
 
       // Handle the screenshots.
       this.$('.fancybox').fancybox({
@@ -118,7 +121,8 @@ define([
         mps.unsubscribe(s);
       });
       this.events.destroy();
-      this.ticks.destroy();
+      this.boulders.destroy();
+      this.routes.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();

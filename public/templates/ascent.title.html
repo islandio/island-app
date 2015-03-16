@@ -38,7 +38,7 @@
   <% } %>
 <% } %>
 <div class="page-title">
-  <img class="crag-flag" src="/img/flags/<%= this.model.parentKey().substr(0,3) %>.png" height="26" />
+  <img class="crag-flag" src="<%= __s %>/img/flags/<%= this.model.parentKey().substr(0,3) %>.png" height="26" />
   <a href="/crags/<%= this.model.parentKey() %>" class="navigate"><%= data.crag %></a> / 
   <% if (data.sector && data.sector !== '') { %>
     <%= data.sector %> / 

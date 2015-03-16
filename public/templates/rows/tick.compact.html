@@ -6,9 +6,32 @@
   var grade = this.model.formatTickGrades(t.grade, t.feel, t.crag.country)
       || this.model.formatTickGrades(t.ascent.grades, null, t.crag.country)
       .join(' / ');
+  var txt = t.author.displayName + '-' + t.ascent.name;
+  txt = _.str.prune(txt, 50);
 %>
 
-<a href="/<%= this.model.get('key') %>" class="navigate">
-  <span class="list-row-title"><%= grade %></span>
-  <span class="list-row-title-right"><%= t.author.displayName %></span>  
+<a href="/efforts/<%= t.key %>" class="navigate">
+  <span class="list-row-title"><%= grade %>
+    <span class="right">
+      | <%= t.author.displayName %> - <%= t.ascent.name %>
+    </span>
+  </span>
 </a>
+<div class="sidebar-info">
+  <a href="/crags/<%= t.crag.key.substr(0,3) %>" class="navigate muted">
+    <img class="crag-flag" src="<%= __s %>/img/flags/<%= t.crag.key.substr(0,3) %>.png"
+        height="10" />
+  </a>
+  <a href="/crags/<%= t.crag.key %>" class="navigate muted">
+    <%= t.crag.name %>
+  </a>
+  <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+  <a href="/efforts/<%= t.key %>" class="navigate muted">
+    <time class="created" 
+        datetime="<%= t.updated %>" 
+        title="<%= t.updated %>" 
+        id="time_<%= this.model.id %>">
+      <%= t.updated %>
+    </time>
+  </a>
+</div>

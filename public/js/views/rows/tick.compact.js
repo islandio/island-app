@@ -16,7 +16,7 @@ define([
 
     attributes: function () {
       var back = this.model.collection.indexOf(this.model) % 2 === 0 ?
-          '#f2f2f2': '#f9f9f9';
+          '#fcfcfc': '#fcfcfc';
       return _.defaults({
         class: 'sidebar-tick',
         style: 'background:' + back + ';'
@@ -27,6 +27,7 @@ define([
       this.app = app;
       this.template = _.template(template);
       Row.prototype.initialize.call(this, options);
+      this.model.gradeConverter = this.app.gradeConverter;
     },
 
     setup: function () {

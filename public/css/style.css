@@ -2301,13 +2301,20 @@ p.sidebar-tip span {
   -moz-border-radius: 50%;
   border-radius: 50%;
 }
+.sidebar-tick {
+  border: 1px solid #f2f2f2;
+  border-bottom: none;
+}
+.sidebar-tick:last-child {
+  border-bottom: 1px solid #f2f2f2;
+}
 .sidebar-broadcast {
   background: #fcfcfc;
   border: 1px solid #f2f2f2;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
-  padding: 10px 0;
+  padding: 7px 0;
   margin-bottom: 15px;
 }
 .sidebar-broadcast:last-child {
@@ -2316,7 +2323,7 @@ p.sidebar-tip span {
 .sidebar-broadcast h1 {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-size: 16px;
-  padding: 0 12px 10px;
+  padding: 0 7px 5px;
 }
 .sidebar-broadcast h1 a {
   background: none;
@@ -2328,7 +2335,7 @@ p.sidebar-tip span {
   vertical-align: 1px;
 }
 .sidebar-broadcast p {
-  padding: 0 15px;
+  padding: 0 10px;
   color: #666;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 }
@@ -2339,6 +2346,15 @@ p.sidebar-tip span {
 .sidebar-broadcast p a:hover {
   background: none;
   text-decoration: underline;
+}
+.sidebar-info {
+  font-size: 11px;
+  color: #ccc;
+  padding-bottom: 5px;
+}
+.sidebar-info .crag-flag {
+  top: 1px;
+  margin: 0 3px 0 11px;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––instagrams*/
 .instagrams > div {
@@ -2912,13 +2928,17 @@ ul.list li:last-child {
   border-bottom-right-radius: 3px;
   border-bottom-left-radius: 3px;
 }
-ul.list li a:not(.session-tick-button) {
+ul.list li > a:not(.session-tick-button) {
   display: inline-block;
   background: none;
-  padding: 8px 7px 7px;
+  padding: 8px 11px 7px;
 }
-ul.list li a:not(.list-button) {
+ul.list li > a:not(.list-button) {
   max-width: 80%;
+}
+.sidebar-ticks ul.list li > a {
+  max-width: 100%;
+  padding-bottom: 0;
 }
 ul.list li a.list-button {
   position: absolute;
@@ -2979,10 +2999,6 @@ span.list-row-title {
 }
 span.list-row-title span {
   font-weight: normal;
-}
-span.list-row-title span.right {
-  font-weight: bold;
-  margin-left: 15px;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––spins*/
 .list-spin {
