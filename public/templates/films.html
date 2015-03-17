@@ -1,5 +1,10 @@
 <div class="rightside">
   <div class="sidebar-items">
+    <div class="sidebar-ticks">
+      <span class="sidebar-heading">Recent ascents:</span>
+      <div class="sidebar-ticks-r"></div>
+      <div class="sidebar-ticks-b"></div>
+    </div>
     <div class="sidebar-broadcasts">
       <% _.each(this.app.profile.content.broadcasts.items, _.bind(function (b, i) { %>
         <div class="sidebar-broadcast">
@@ -12,11 +17,6 @@
           <p>
         </div>
       <% }, this)); %>
-    </div>
-    <div class="sidebar-ticks">
-      <span class="sidebar-heading">Recent ascents:</span>
-      <div class="sidebar-ticks-r"></div>
-      <div class="sidebar-ticks-b"></div>
     </div>
   </div>
 </div>
