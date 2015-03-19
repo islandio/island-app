@@ -113,13 +113,12 @@ define([
       this.lesser = this.$('.less-more');
 
       // Hide/show plot button.
-      if (this.app.profile && this.app.profile.member
-          && this.app.profile.member.cragmin) {
+      if (this.app.profile && this.app.profile.member) {
         this.plotButton.css({visibility: 'visible'})
       } else {
         this.plotButton.css({visibility: 'hidden'});
       }
-      if (!this.$el.hasClass('closed') && this.app.profile.member.cragmin) {
+      if (!this.$el.hasClass('closed')) {
         this.plotButton.show();
         // this.weatherButton.show();
       }

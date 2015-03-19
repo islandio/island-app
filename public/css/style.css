@@ -1057,9 +1057,6 @@ button.button.input-add-button {
   height: 31px;
   min-height: 31px;
 }
-button.button.input-add-button.add-crag {
-  display: none;
-}
 button.button.input-add-button:hover,
 button.button.input-add-button:active,
 button.button.input-add-button:focus {
@@ -2627,7 +2624,7 @@ button.activity-button i {
 .map.opened {
   height: 600px;
 }
-.map.plotting .cartodb-map-wrapper {
+.map.plotting .map-inner {
   cursor: crosshair !important;
 }
 .map-spin {
