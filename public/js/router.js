@@ -257,9 +257,9 @@ define([
         if (secure && !mem) {
           return this.navigate('/', true);
         }
-        if (mem) {
+        // if (mem) {
           this.showMap = true;
-        }
+        // }
 
         // Set the profile.
         var login = this.app.update(pro || err);

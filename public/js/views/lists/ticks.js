@@ -38,6 +38,9 @@ define([
           _.bind(function (i) {
         return i.type === this.subtype;
       }, this));
+      items.sort(function (a, b) {
+        return (new Date(b.date)).valueOf() - (new Date(a.date)).valueOf();
+      });
       this.collection.reset(items);
     },
 

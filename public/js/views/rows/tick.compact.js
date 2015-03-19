@@ -7,9 +7,10 @@ define([
   'Underscore',
   'mps',
   'rest',
+  'util',
   'views/boiler/row',
   'text!../../../templates/rows/tick.compact.html'
-], function ($, _, mps, rest, Row, template) {
+], function ($, _, mps, rest, util, Row, template) {
   return Row.extend({
 
     tagName: 'li',
@@ -51,6 +52,16 @@ define([
         this.destroy();
         cb();
       }, this));
+    },
+
+    when: function () {
+      if (!this.model || !this.model.get('date')) {
+        return;
+      }
+      if (!this.time) {
+        this.time = this.$('time.created:first');
+      }
+      this.time.text(util.getRelativeTime(this.model.get('date')));
     },
 
   });
