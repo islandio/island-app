@@ -118,7 +118,9 @@ define([
 
       this.route('crags/:y', 'crag', this.crags);
       this.route('crags/:y/:g', 'crag', this.crag);
+      this.route('crags/:y/:g/config', 'crag.config', this.cragConfig);
       this.route('crags/:y/:g/:t/:a', 'ascent', this.ascent);
+      this.route('crags/:y/:g/:t/:a/config', 'ascent.config', this.ascentConfig);
 
       this.route('blog/:p', 'blog', this.blog);
       this.route('blog/category/:c', 'blog', this.blog);
@@ -556,6 +558,19 @@ define([
       }, this));
     },
 
+    ascentConfig: function (country, crag, type, ascent) {
+      this.start();
+      this.clearContainer();
+      this.renderTabs();
+      var key = [country, crag, type, ascent].join('/');
+      this.render('/service/ascent/' + key, _.bind(function (err) {
+        if (err) return;
+        this.page = new Ascent(this.app, {config: true}).render();
+        this.renderTabs({html: this.page.title});
+        this.stop();
+      }, this));
+    },
+
     crag: function (country, crag) {
       this.start();
       this.clearContainer();
@@ -565,6 +580,19 @@ define([
       this.render('/service/crag/' + key, query, _.bind(function (err) {
         if (err) return;
         this.page = new Crag(this.app).render();
+        this.renderTabs({html: this.page.title});
+        this.stop();
+      }, this));
+    },
+
+    cragConfig: function (country, crag) {
+      this.start();
+      this.clearContainer();
+      this.renderTabs();
+      var key = [country, crag].join('/');
+      this.render('/service/crag/' + key + '/config', _.bind(function (err) {
+        if (err) return;
+        this.page = new Crag(this.app, {config: true}).render();
         this.renderTabs({html: this.page.title});
         this.stop();
       }, this));

@@ -26,7 +26,10 @@ define([
     },
 
     instagramTags: function () {
-      return util.toUsername(this.get('name'), '').toLowerCase();
+      var tags = this.get('tags');
+
+      return tags && tags !== '' ? tags:
+          util.toUsername(this.get('name'), '').toLowerCase();
     }
 
   });

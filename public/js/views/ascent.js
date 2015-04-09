@@ -21,8 +21,9 @@ define([
 
     el: '.main',
 
-    initialize: function (app) {
+    initialize: function (app, options) {
       this.app = app;
+      this.options = options || {};
       this.subscriptions = [];
       this.on('rendered', this.setup, this);
     },

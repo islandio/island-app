@@ -395,6 +395,9 @@ h2.divider {
   font-size: 21px;
   line-height: 40px;
 }
+h2.divider.with-icon {
+  text-indent: 30px;
+}
 time.created {
   font-size: 11px;
   display: inline-block;
@@ -913,6 +916,10 @@ a.button.title-green-button {
   -moz-border-radius: 0;
   border-radius: 0;
   padding: 0 25px;
+  min-width: 0;
+}
+a.button.title-button.configure {
+  padding: 0 15px;
 }
 a.button.title-button.disabled,
 a.button.title-green-button.disabled {
@@ -3102,6 +3109,9 @@ img.page-title-avatar {
 .modal-title > img {
   vertical-align: -5px;
 }
+.modal-title .icon-attention {
+  color: #d04c38;
+}
 .modal-body {
   position: relative;
   z-index: 1;
@@ -4219,6 +4229,11 @@ table.post-params label {
   -moz-transition: all 0.15s ease-in-out;
   transition: all 0.15s ease-in-out;
 }
+.event-timeline-label-first {
+  left: 10px;
+  top: 50px;
+  border-bottom: none;
+}
 .event-title-text .event-timeline-label {
   top: 8px;
   border: none;
@@ -4783,6 +4798,7 @@ table.session-weather th {
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––settings & reset*/
 .settings {
+  position: relative;
   width: 680px;
 }
 .settings table {

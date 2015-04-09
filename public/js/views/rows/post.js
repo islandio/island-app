@@ -316,7 +316,9 @@ define([
         rest.delete('/api/posts/' + this.model.get('key'),
             {}, _.bind(function (err, data) {
           if (err) {
-            return console.log(err);
+            mps.publish('flash/new', [{err: err, level: 'error', type: 'popup'},
+              true]);
+            return false;
           }
 
           // Close the modal.

@@ -2,6 +2,7 @@
 
   // Save model attributes
   var data = this.model.attributes;
+  var location = data.location || {};
 
 %>
 
@@ -11,22 +12,108 @@
   </div>
   <div class="crag-ascents"></div>
 </div>
-<div class="leftside">
-  <div class="instagrams">
-    <div id="ig_tagged">
-      <span class="sidebar-heading-small">
-        Recent instagrams tagged <span class="sidebar-heading-cnt">
-        #<%= this.model.instagramTags() %></span>
-      </span>
-      <span class="instagrams-all">
-        <i class="icon-angle-down"></i>&nbsp;<i class="icon-angle-down"></i>
-      </span>
+
+<% if (this.options.config) { %>
+  <div class="leftside settings">
+    <h2 class="divider with-icon">Crag configuration</h2>
+    <span class="event-timeline-label event-timeline-label-first">
+      <i class="icon-location"></i>
+    </span>
+    <form enctype="multipart/form-data" method="POST">
+      <table>
+        <tbody>
+          <tr>
+            <td colspan="2">
+              <label for="cragName">Name</label>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <input type="text" tabindex="1" id="cragName" name="title"
+                  class="settings-param" placeholder="name" value="<%= data.name %>" />
+              <!-- <label class="checkbox-styled input-checkbox">
+                < if (data.public === false) { >
+                  <input class="save-private" type="checkbox" name="private" value="private" checked="checked" />
+                  <span style="padding:0; width:84px;"><i class="icon-lock"></i> Private</span>
+                < } else { >
+                  <input class="save-private" type="checkbox" name="private" value="private" />
+                  <span style="padding:0; width:84px;"><i class="icon-lock-open"></i> Public</span>
+                < } >
+              </label> -->
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="2">
+              <label for="cragOverview">Overview</label>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <textarea name="overview" tabindex="2" id="cragOverview"
+                  class="settings-param" placeholder="Write something about this crag..."><%= data.overview %></textarea>
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="2">
+              <label for="cragTags">Instagram Tags</label>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <input type="text" tabindex="3" id="cragTags" name="tags"
+                  class="settings-param" placeholder="Hashtags for Instagram search..." value="<%= data.tags %>" />
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="2">
+              <label for="datasetLocation">Location</label>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <input type="text" tabindex="4" id="cragLatitude" name="location.latitude"
+                  class="settings-param" placeholder="latitude" value="<%= location.latitude %>" />
+            </td>
+            <td>
+              <input type="text" tabindex="5" id="cragLongitude" name="location.longitude"
+                  class="settings-param" placeholder="longitude" value="<%= location.longitude %>" />
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="2" style="padding-top:15px;">
+              <a tabindex="6" href="javascript:;" class="demolish button signin-strategy-btn delete-btn">
+                Delete Crag
+                <i class="icon-right-open-big"></i>
+              </a>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </form>
+  </div>
+<% } else { %>
+  <div class="leftside">
+    <div class="instagrams">
+      <div id="ig_tagged">
+        <span class="sidebar-heading-small">
+          Recent instagrams tagged <span class="sidebar-heading-cnt">
+          #<%= this.model.instagramTags() %></span>
+        </span>
+        <span class="instagrams-all">
+          <i class="icon-angle-down"></i>&nbsp;<i class="icon-angle-down"></i>
+        </span>
+      </div>
+    </div>
+    <div class="events"></div>
+    <div class="list-spin">
+      <div class="events-spin"></div>
+      <span class="empty-feed">Showing all.</span>
     </div>
   </div>
-  <div class="events"></div>
-  <div class="list-spin">
-    <div class="events-spin"></div>
-    <span class="empty-feed">Showing all.</span>
-  </div>
-</div>
+<% } %>
 <div class="clear"></div>
