@@ -94,8 +94,8 @@ define([
       if (window.location.hash !== '' || window.location.href.indexOf('#') !== -1) {
         if (window.location.hash.length === 0 || window.location.hash === '#_=_') {
           try {
-            window.history.replaceState('', '', window.location.pathname
-                + window.location.search);
+            window.history.replaceState('', '', window.location.pathname +
+                window.location.search);
           } catch (err) {}
         }
       }
@@ -244,8 +244,8 @@ define([
       cb = cb || function(){};
 
       // Check if a profile exists already.
-      var query = this.app.profile
-          && this.app.profile.notes ? {n: 0}: {};
+      var query = this.app.profile &&
+          this.app.profile.notes ? {n: 0}: {};
       _.extend(query, data);
 
       // Get a profile, if needed.
@@ -259,17 +259,15 @@ define([
         if (secure && !mem) {
           return this.navigate('/', true);
         }
-        // if (mem) {
-          this.showMap = true;
-        // }
+        this.showMap = true;
 
         // Set the profile.
         var login = this.app.update(pro || err);
         _render.call(this, err, login);
 
         // Handle welcome modal.
-        if (this.app.profile && this.app.profile.member
-            && !this.app.profile.member.welcomed) {
+        if (this.app.profile && this.app.profile.member &&
+            !this.app.profile.member.welcomed) {
           this.app.profile.member.welcomed = true;
           this.renderWelcome('Thanks for signing up for our private beta!');
         }
@@ -287,21 +285,21 @@ define([
         return;
       }
       $.fancybox(_.template(tipTemp)({
-        message: '<span style="font-size:14px;"><strong>The Island welcomes you.</strong>'
-            + ' Here are a few tips to get you started:</span>'
-            + '<br /><br />'
-            + '<ol>'
-            + '<li>Use the search bar at the top of the page to find some crags and friends you want to watch or follow. You can find boulder problems and routes to watch on crag pages.</li>'
-            + '<li>Your activity feed shows logged climbing activity and posts from the crags and climbs you watch and the people you follow.</li>'
-            + '<li>Check out your sidebar for some suggested athletes to follow.</li>'
-            + '<li>The big green "Log" button is your starting place for tracking your rock climbing. The pencil icons are a shortcut for starting a log and are often next to crag and climb names - use \'em! </li>'
-            + '<li>In addition to logging a completed climb as an "ascent", log attempts as "work" - remember all your efforts!</li>'
-            + '<li>Don\'t want to broadcast your efforts to the entire world? Check out the privacy options in your profile <a class="alt" href="/settings" target="blank">settings</a>.</li>'
-            + '<li>Send us your questions, bug reports, and problems with the blue tab below or at <a class="alt" href="mailto:support@island.io">support@island.io</a>.</li>'
-            + '</ol>'
-            + '<span style="font-size:14px;"><strong>Do you use 8a.nu?</strong>'
-            + ' You can <a href="/import" target="blank" class="alt">import your 8a scorecard</a> from your profile <a class="alt" href="/settings" target="blank">settings</a>.</span>'
-        , title: title
+        message: '<span style="font-size:14px;"><strong>The Island welcomes you.</strong>' +
+            ' Here are a few tips to get you started:</span>' +
+            '<br /><br />' +
+            '<ol>' +
+            '<li>Use the search bar at the top of the page to find some crags and friends you want to watch or follow. You can find boulder problems and routes to watch on crag pages.</li>' +
+            '<li>Your activity feed shows logged climbing activity and posts from the crags and climbs you watch and the people you follow.</li>' +
+            '<li>Check out your sidebar for some suggested athletes to follow.</li>' +
+            '<li>The big green "Log" button is your starting place for tracking your rock climbing. The pencil icons are a shortcut for starting a log and are often next to crag and climb names - use \'em! </li>' +
+            '<li>In addition to logging a completed climb as an "ascent", log attempts as "work" - remember all your efforts!</li>' +
+            '<li>Don\'t want to broadcast your efforts to the entire world? Check out the privacy options in your profile <a class="alt" href="/settings" target="blank">settings</a>.</li>' +
+            '<li>Send us your questions, bug reports, and problems with the blue tab below or at <a class="alt" href="mailto:support@island.io">support@island.io</a>.</li>' +
+            '</ol>' +
+            '<span style="font-size:14px;"><strong>Do you use 8a.nu?</strong>' +
+            ' You can <a href="/import" target="blank" class="alt">import your 8a scorecard</a> from your profile <a class="alt" href="/settings" target="blank">settings</a>.</span>',
+        title: title
       }), {
         openEffect: 'fade',
         closeEffect: 'fade',
@@ -401,8 +399,8 @@ define([
           this.page = new Dashboard(this.app).render();
           this.renderTabs({tabs: [
             {title: 'Activity', href: '/', active: true},
-            {title: 'My Ascents', href: '/' + this.app.profile.member.username
-                + '/ascents'}
+            {title: 'My Ascents', href: '/' + this.app.profile.member.username +
+                '/ascents'}
           ], log: true});
         } else {
           $('.container').addClass('wide').addClass('landing');
@@ -418,19 +416,19 @@ define([
       this.clearContainer();
       this.render('/service/ticks/' + username, _.bind(function (err) {
         if (err) return;
-        if (this.app.profile.member
-            && this.app.profile.member.username === username) {
+        if (this.app.profile.member &&
+            this.app.profile.member.username === username) {
           this.header.highlight('/');
           this.renderTabs({tabs: [
             {title: 'Activity', href: '/'},
             {title: 'My Ascents', href: '/' + username + '/ascents',
                 active: true}
-          ], log: true});          
+          ], log: true});
         }
         _.defer(_.bind(function () {
           this.page = new Ticks(this.app).render();
-          if (!this.app.profile.member
-              || this.app.profile.member.username !== username) {
+          if (!this.app.profile.member ||
+              this.app.profile.member.username !== username) {
             this.renderTabs({html: this.page.title});
           }
         }, this));
@@ -563,7 +561,7 @@ define([
       this.clearContainer();
       this.renderTabs();
       var key = [country, crag, type, ascent].join('/');
-      this.render('/service/ascent/' + key, _.bind(function (err) {
+      this.render('/service/ascent/' + key + '/config', _.bind(function (err) {
         if (err) return;
         this.page = new Ascent(this.app, {config: true}).render();
         this.renderTabs({html: this.page.title});
@@ -629,7 +627,7 @@ define([
     post: function (username, key) {
       this.start();
       this.clearContainer();
-      var key = [username, key].join('/');
+      key = [username, key].join('/');
       this.renderTabs();
       this.render('/service/post/' + key, _.bind(function (err) {
         if (err) return;

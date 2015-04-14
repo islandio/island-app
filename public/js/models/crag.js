@@ -28,7 +28,7 @@ define([
     instagramTags: function () {
       var tags = this.get('tags');
 
-      return tags && tags !== '' ? tags:
+      return tags && tags !== '' ? tags.replace(' ', '').replace(',', ''):
           util.toUsername(this.get('name'), '').toLowerCase();
     }
 

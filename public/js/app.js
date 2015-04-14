@@ -10,8 +10,9 @@ define([
   'GradeConverter',
   'mps',
   'rpc',
-  'rest'
-], function ($, _, Backbone, Router, GradeConverter, mps, rpc, rest) {
+  'rest',
+  'util'
+], function ($, _, Backbone, Router, GradeConverter, mps, rpc, rest, util) {
 
   var App = function () {
 
@@ -34,9 +35,9 @@ define([
     // Client services.
     this.cartodb = {
       apiKey: '883965c96f62fd219721f59f2e7c20f08db0123b',
-      sqlPre: "select *, st_asgeojson(the_geom) as geometry from "
-          + (window.__s ? 'crags': 'crags_dev')
-          + " where forbidden is NULL",
+      sqlPre: "select *, st_asgeojson(the_geom) as geometry from " +
+          (window.__s ? 'crags': 'crags_dev') +
+          " where (forbidden is NULL or forbidden is FALSE)"
     };
     this.instagram = {
       clientId: window.__s ? 'a3003554a308427d8131cef13ef2619f':
@@ -49,7 +50,7 @@ define([
       window._rest = rest;
       window._mps = mps;
     }
-  }
+  };
 
   App.prototype.update = function (profile) {
     var login = false;
@@ -69,14 +70,14 @@ define([
       this.profile = profile;
     }
     return login;
-  }
+  };
 
   App.prototype.title = function (str) {
     if (!str) {
       return;
     }
     document.title = str;
-  }
+  };
 
   return {
 

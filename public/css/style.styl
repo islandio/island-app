@@ -1938,13 +1938,12 @@ span.count
   line-height 40px
   font-size 10px
   padding 0 15px
-  color #d0d0d0
 
 .block-messages .flash-remove:hover
   background rgba(0,0,0,0.1)
 
 .popup-messages .flash-remove:hover
-  color #4d4d4d
+  background rgba(0,0,0,0.01)
 
 .block-messages .flash-remove:active
   background rgba(0,0,0,0.15)
@@ -1993,15 +1992,17 @@ span.count
   font-weight bold
   line-height 30px
 
-.popup-messages .flash-error,
-.popup-messages .flash-alert
+.popup-messages .flash-error
   background rgba(255,255,255,0.9)
 
+.popup-messages .flash-alert
+  background rgba(177,220,54,0.5)
+
 .popup-messages .flash-error
-  border 1px solid red
+  border 2px solid red
 
 .popup-messages .flash-alert
-  border 1px solid #d0d0d0
+  border 2px solid green
 
 .popup-messages .flash-error-txt,
 .popup-messages .flash-alert-txt
@@ -2674,6 +2675,9 @@ button.activity-button i
 
 .map.plotting .map-inner
   cursor crosshair !important
+
+.map.plotting-external .map-plot
+  display none !important
 
 .map-spin
   position absolute
@@ -5033,6 +5037,13 @@ span.setting-error
 .settings-gravatar a
   font-weight bold
   margin-left 2px
+
+.settings-note
+  font-size 11px
+  color #808080
+  position absolute
+  left 0
+  top 38px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––page info*/
 

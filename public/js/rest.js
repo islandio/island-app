@@ -7,7 +7,7 @@ define([
   'Underscore',
   'mps'
 ], function ($, _, mps) {
-  return {  
+  return {
 
     exec: function(type, url, data, cb) {
       if (!data || typeof data === 'function') {
@@ -32,6 +32,7 @@ define([
               explain: err.error.explain,
               level: err.error.level,
               code: res.status,
+              type: err.error.type,
               transloadit: err.transloadit
             };
             if (data) {
@@ -42,7 +43,7 @@ define([
           }
           cb(err);
         },
-        contentType: 'application/json', 
+        contentType: 'application/json',
         dataType: 'json'
       };
       if (data) {
@@ -81,5 +82,5 @@ define([
       this.exec('POST', url, data, cb);
     }
 
-  }
+  };
 });

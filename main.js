@@ -33,7 +33,7 @@ if (cluster.isMaster) {
       util.log('Worker ' + worker.id + ' died');
       cluster.fork();
     });
-  }
+  };
 
   // Setup an outside tunnel to our localhost in development.
   // We will pass this to the workers.
@@ -104,7 +104,7 @@ if (cluster.isMaster) {
   /*
    * Error wrap JSON request.
    */
-  function errorHandler(err, req, res, data, estr) {
+  var errorHandler = function (err, req, res, data, estr) {
     if (typeof data === 'string') {
       estr = data;
       data = null;
@@ -119,7 +119,7 @@ if (cluster.isMaster) {
       };
       if (err) {
         util.error(err);
-        profile.error = err.stack ? {stack: err.stack} : err;
+        profile.error = {stack: err.stack, message: err.message};
         fn.call(res, 500, iutil.client(profile));
       } else {
         profile.error = {message: estr + ' not found'};
@@ -127,7 +127,7 @@ if (cluster.isMaster) {
       }
       return true;
     } else return false;
-  }
+  };
 
   Step(
     function () {
@@ -213,7 +213,7 @@ if (cluster.isMaster) {
       app.use(function (req, res, next) {
         req.rawBody = '';
         req.setEncoding('utf8');
-        req.on('data', function (chunk) { 
+        req.on('data', function (chunk) {
           req.rawBody += chunk;
         });
         next();
@@ -256,8 +256,8 @@ if (cluster.isMaster) {
       app.all('*', function (req, res, next) {
 
         // Check protocol.
-        if (process.env.NODE_ENV === 'production'
-            && app.get('package').protocol.name === 'https') {
+        if (process.env.NODE_ENV === 'production' &&
+            app.get('package').protocol.name === 'https') {
           if (req.secure || _.find(app.get('package').protocol.allow,
               function (allow) {
             var pathname = url.parse(req.url, true).pathname;
@@ -274,9 +274,9 @@ if (cluster.isMaster) {
         function _next() {
           var agent;
           agent = req.headers['user-agent'];
-          if (agent && agent.indexOf('Safari') > -1
-              && agent.indexOf('Chrome') === -1
-              && agent.indexOf('OPR') === -1) {
+          if (agent && agent.indexOf('Safari') > -1 &&
+              agent.indexOf('Chrome') === -1 &&
+              agent.indexOf('OPR') === -1) {
             res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
             res.header('Pragma', 'no-cache');
             res.header('Expires', 0);
@@ -291,7 +291,7 @@ if (cluster.isMaster) {
           function () {
 
             // Open DB connection.
-            new db.Connection(app.get('MONGO_URI'), {ensureIndexes: 
+            new db.Connection(app.get('MONGO_URI'), {ensureIndexes:
                 argv.index && cluster.worker.id === 1},
                 this.parallel());
 
@@ -424,10 +424,10 @@ if (cluster.isMaster) {
               _server.listen(app.get('PORT'));
             }
             if (cluster.worker.id === 1) {
-              util.log('Web server listening on port '
-                  + (process.env.NODE_ENV !== 'production' ?
-                  app.get('PORT'): app.get('SECURE_PORT'))
-                  + ' with ' + cpus + ' worker(s)');
+              util.log('Web server listening on port ' +
+                  (process.env.NODE_ENV !== 'production' ?
+                  app.get('PORT'): app.get('SECURE_PORT')) +
+                  ' with ' + cpus + ' worker(s)');
             }
           }
         );

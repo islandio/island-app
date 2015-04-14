@@ -29,7 +29,7 @@ define([
       }
 
       // Passing date through Date applies Date.parse, if necessary
-      date = date ? new Date(date) : new Date;
+      date = date ? new Date(date): new Date();
       if (isNaN(date)) throw SyntaxError("invalid date");
 
       mask = String(dF.masks[mask] || mask || dF.masks["default"]);
@@ -123,8 +123,8 @@ define([
     makeID: function (len) {
       if (!len) len = 5;
       var txt = '';
-      var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-                     + 'abcdefghijklmnopqrstuvwxyz0123456789';
+      var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
+          'abcdefghijklmnopqrstuvwxyz0123456789';
       for (var i = 0; i < len; ++i)
         txt += possible.charAt(Math.floor(
               Math.random() * possible.length));
@@ -138,8 +138,8 @@ define([
       var relativeDate = arguments.length > 1 ? arguments[1] : new Date();
       var delta;
       if ('string' === typeof ts && ts.indexOf('T') === -1)
-        delta = (relativeDate.getTime() - (parsedDate.getTime()
-            + (this.getTimeZone() * 60 * 60 * 1000))) / 1e3;
+        delta = (relativeDate.getTime() - (parsedDate.getTime() +
+            (this.getTimeZone() * 60 * 60 * 1000))) / 1e3;
       else
         delta = (relativeDate.getTime() - parsedDate.getTime()) / 1e3;
       if (delta < 5) return 'just now';
@@ -148,18 +148,18 @@ define([
       else if (delta < 60) return 'less than a minute ago';
       else if (delta < 120) return 'about a minute ago';
       else if (delta < (45 * 60))
-        return (parseInt(delta / 60)).toString() + ' minutes ago';
+        return (parseInt(delta / 60, 10)).toString() + ' minutes ago';
       else if (delta < (90 * 60))
         return 'about an hour ago';
       else if (delta < (24 * 60 * 60)) {
-        var h = (parseInt(delta / 3600)).toString();
+        var h = (parseInt(delta / 3600, 10)).toString();
         if (h != '1') return 'about ' + h + ' hours ago';
         else return 'about an hour ago';
       }
       else if (delta < (2 * 24 * 60 * 60))
         return 'about a day ago';
       else if (delta < (10 * 24 * 60 * 60))
-        return (parseInt(delta / 86400)).toString() + ' days ago';
+        return (parseInt(delta / 86400, 10)).toString() + ' days ago';
       else return this.toLocaleString(new Date(ts), 'm/d/yy');
     },
 
@@ -171,28 +171,28 @@ define([
       var relativeDate = arguments.length > 1 ? arguments[1] : new Date();
       var delta;
       if ('string' === typeof ts && ts.indexOf('T') === -1)
-        delta = (relativeDate.getTime() - (parsedDate.getTime()
-                  + (this.getTimeZone() * 60 * 60 * 1000))) / 1e3;
+        delta = (relativeDate.getTime() - (parsedDate.getTime() +
+            (this.getTimeZone() * 60 * 60 * 1000))) / 1e3;
       else
         delta = (relativeDate.getTime() - parsedDate.getTime()) / 1e3;
       delta *= -1;
       if (delta > (2 * 24 * 60 * 60)) {
-        result.value = (parseInt(delta / 86400) + 1).toString();
+        result.value = (parseInt(delta / 86400, 10) + 1).toString();
         result.label = 'days';
         result.interval = 2 * 60 * 60 * 1e3;
       }
       else if (delta > (2 * 60 * 60)) {
-        result.value = (parseInt(delta / 3600) + 1).toString();
+        result.value = (parseInt(delta / 3600, 10) + 1).toString();
         result.label = 'hours';
         result.interval = 2 * 60 * 1e3;
       }
       else if (delta > (2 * 60)) {
-        result.value = (parseInt(delta / 60) + 1).toString();
+        result.value = (parseInt(delta / 60, 10) + 1).toString();
         result.label = "minutes";
         result.interval = 1e3;
       }
       else if (delta > 0) {
-        result.value = (parseInt(delta)).toString();
+        result.value = (parseInt(delta, 10)).toString();
         result.label = "seconds";
         result.interval = 1e3;
       }
@@ -212,7 +212,7 @@ define([
         return (delta * 1e3).toFixed(1) + ' milliseconds';
       else if (delta < 60)
         return delta.toFixed(1) + ' seconds';
-      else if (delta < (45 * 60)) 
+      else if (delta < (45 * 60))
         return (delta / 60).toFixed(1) + ' minutes';
       else if (delta < (24 * 60 * 60))
         return (delta / 3600).toFixed(1) + ' hours';
@@ -269,7 +269,7 @@ define([
     },
 
     rid32: function () {
-      return parseInt(Math.random() * 0x7fffffff);
+      return parseInt(Math.random() * 0x7fffffff, 10);
     },
 
     blurb: function (str, max) {
@@ -330,7 +330,9 @@ define([
 
     // From underscore string
     titleize: function(str){
-      if (str == null) return '';
+      if (str === null) {
+        return '';
+      }
       str  = String(str).toLowerCase();
       return str.replace(/(?:^|\s|-)\S/g, function(c){ return c.toUpperCase(); });
     },
@@ -339,7 +341,7 @@ define([
       name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
       var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
       var results = regex.exec(window.location.search);
-      return results == null ? "":
+      return results === null ? "":
           decodeURIComponent(results[1].replace(/\+/g, " "));
     },
 
@@ -355,7 +357,7 @@ define([
     },
 
     isEmail: function (str) {
-      var str = str.toLowerCase();
+      str = str.toLowerCase();
       return (/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/).test(str);
     },
 
@@ -434,7 +436,7 @@ define([
       $('select', ctx).each(function() {
         var $this = $(this), numberOfOptions = $(this).children('option').length;
 
-        $this.addClass('select-hidden'); 
+        $this.addClass('select-hidden');
         $this.wrap('<div class="select"></div>');
         $this.after('<div class="select-styled"></div>');
 
@@ -480,7 +482,7 @@ define([
           $list.hide();
         });
 
-      }); 
+      });
     },
 
     numbersOnly: function (el) {
@@ -488,15 +490,15 @@ define([
         // Allow: backspace, delete, tab, escape, enter
         if ($.inArray(e.keyCode, [46,8,9,27,13]) !== -1 ||
           // Allow: Ctrl+A
-          (e.keyCode == 65 && e.ctrlKey === true) || 
+          (e.keyCode == 65 && e.ctrlKey === true) ||
           // Allow: home, end, left, right
           (e.keyCode >= 35 && e.keyCode <= 39)) {
           // let it happen, don't do anything
           return;
         } else {
           // Ensure that it is a number and stop the keypress
-          if (e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)
-              && (e.keyCode < 96 || e.keyCode > 105 )) {
+          if (e.shiftKey || (e.keyCode < 48 || e.keyCode > 57) &&
+              (e.keyCode < 96 || e.keyCode > 105 )) {
             e.preventDefault();
           }
         }
@@ -584,7 +586,7 @@ define([
       var mosaic = num > 3 ? _.groupBy(images, function (data, i) {
         return i < Math.ceil(num / 2) ? 1: 2;
       }): {1: images};
-      var width = (W - H) / _.size(mosaic);
+      width = (W - H) / _.size(mosaic);
 
       _.each(mosaic, function (images, i) {
         var column = {y: 0, items: []};
@@ -619,7 +621,7 @@ define([
             item.div.height += dir;
             for (var j=i+1; j < column.items.length; ++j)
               column.items[j].div.top += dir;
-            column.y += dir; 
+            column.y += dir;
           });
         }
 
@@ -636,7 +638,7 @@ define([
 
         // finally, size and show the elements
         _.each(column.items, function (item) {
-          insertFunction(item)
+          insertFunction(item);
         });
 
       });
@@ -645,5 +647,5 @@ define([
       cb();
     }
 
-  }
+  };
 });

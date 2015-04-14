@@ -39,6 +39,12 @@ define([
 
       this.cssTemplate = _.template(css);
 
+      // Map spinner.
+      this.subscriptions.push(mps.subscribe('map/start',
+          _.bind(function() { this.spin.start(); }, this)));
+      this.subscriptions.push(mps.subscribe('map/stop',
+          _.bind(function() { this.spin.stop(); }, this)));
+
       // Listen for fly to requests.
       this.subscriptions.push(mps.subscribe('map/fly',
           _.bind(this.flyTo, this)));
@@ -52,6 +58,7 @@ define([
         }
       }, this)));
 
+      // Crag was added.
       this.subscriptions.push(mps.subscribe('map/add',
           _.bind(function () {
         if (this.$el.hasClass('closed')) {
@@ -59,6 +66,17 @@ define([
         }
         this.listenForPlot();
       }, this, true)));
+
+      // Request to listen for plot.
+      this.plotQueue = [];
+      this.subscriptions.push(mps.subscribe('map/listen',
+          _.bind(function () {
+        if (this.dataLayer) {
+          this.listenForPlot(null, true);
+        } else {
+          this.plotQueue.push(_.bind(this.listenForPlot, this, null, true));
+        }
+      }, this)));
 
       // Get a geocoder.
       if (!this.geocoder) {
@@ -68,7 +86,7 @@ define([
       // Init the load indicator.
       if (!this.spin) {
         this.spin = new Spin(this.$('.map-spin'), {
-          color: '#b3b3b3',
+          color: '#404040',
           lines: 17,
           length: 12,
           width: 3,
@@ -114,7 +132,7 @@ define([
 
       // Hide/show plot button.
       if (this.app.profile && this.app.profile.member) {
-        this.plotButton.css({visibility: 'visible'})
+        this.plotButton.css({visibility: 'visible'});
       } else {
         this.plotButton.css({visibility: 'hidden'});
       }
@@ -202,11 +220,14 @@ define([
 
       // this.weatherLayers = L.layerGroup().addTo(this.map);
 
+      // Handle plot.
       this.map.on('click', _.bind(function (e) {
-        this.setPlotLocation({
+        var location = {
           latitude: e.latlng.lat,
           longitude: e.latlng.lng
-        });
+        };
+        this.setPlotLocation(location);
+        mps.publish('map/plot', [location]);
       }, this));
       this.map.on('mouseout', _.bind(this.featureOut, this));
 
@@ -223,6 +244,9 @@ define([
         this.spin.start();
       }
 
+      // Break the very sticky cache with random sql clause.
+      var sql = this.app.cartodb.sqlPre + " and id != '" + util.makeID() + "'";
+      
       // Create the data layer.
       cartodb.createLayer(this.map, {
         user_name: 'island',
@@ -232,7 +256,7 @@ define([
           map_key: this.app.cartodb.apiKey
         },
         sublayers: [{
-          sql: this.app.cartodb.sqlPre,
+          sql: sql,
           cartocss: this.cssTemplate.call(this),
           interactivity: 'cartodb_id,geometry,id,key,name,bcnt,rcnt'
         }]
@@ -249,6 +273,9 @@ define([
 
         this.mapped = true;
         this.spin.stop();
+
+        _.each(this.plotQueue, function (fn) { fn(); });
+        this.plotQueue = [];
       }, this));
     },
 
@@ -273,8 +300,8 @@ define([
           _.defer(_.bind(function () {
             $('.map-infobox-title', this.infoBox).text(data.name);
             $('.map-infobox-subtitle', this.infoBox).text(
-                util.addCommas(data.bcnt) + ' problems | '
-                + util.addCommas(data.rcnt) + ' routes');
+                util.addCommas(data.bcnt) + ' problems | ' +
+                util.addCommas(data.rcnt) + ' routes');
             var p = this.map.layerPointToContainerPoint(c._point);
             this.infoBox.css({left: p.x + 9 + this.getCragRadius(data),
                 top: p.y - 28}).show();
@@ -319,10 +346,10 @@ define([
     },
 
     flyTo: function (location) {
-      if (!location || (this.location && location.latitude
-          && this.location.latitude === location.latitude
-          && location.longitude
-          && this.location.longitude === location.longitude)) {
+      if (!location || (this.location && location.latitude &&
+          this.location.latitude === location.latitude &&
+          location.longitude &&
+          this.location.longitude === location.longitude)) {
         return;
       }
       this.fliedTo = true;
@@ -397,25 +424,37 @@ define([
       this.featureOut();
     },
 
-    listenForPlot: function (e) {
-      if (e) e.preventDefault(e);
+    listenForPlot: function (e, external) {
+      if (e) {
+        e.preventDefault(e);
+      }
       if (this.plotting) {
         this.plotting = false;
-        this.plotButton.removeClass('active');
-        this.plotButton.show();
-        this.plotForm.hide();
+        if (!external) {
+          this.plotButton.removeClass('active');
+          this.plotButton.show();
+          this.plotForm.hide();
+        }
         this.$el.removeClass('plotting');
+        if (external) {
+          this.$el.removeClass('plotting-external');
+        }
         this.dataLayer.setInteraction(true);
         this.$('.cartodb-infowindow').css({opacity: 1});
         this.$('input[type="text"]').val('');
-      } else if (this.map) {
+      } else if (this.dataLayer) {
         this.plotting = true;
-        this.map.fire('focus');
-        this.plotButton.addClass('active');
-        this.plotButton.hide();
-        this.plotForm.show();
-        this.setPlotLocation();
+        if (!external) {
+          this.map.fire('focus');
+          this.plotButton.addClass('active');
+          this.plotButton.hide();
+          this.plotForm.show();
+          this.setPlotLocation();
+        }
         this.$el.addClass('plotting');
+        if (external) {
+          this.$el.addClass('plotting-external');
+        }
         this.dataLayer.setInteraction(false);
         this.$('.cartodb-infowindow').css({opacity: 0});
         this.featureOut();
@@ -428,8 +467,8 @@ define([
       var longitude = parseFloat($('input[name="longitude"]', this.plotForm).val());
       if (name === '') {
         return false;
-      } else if (!_.isNumber(latitude) || _.isNaN(latitude)
-          || !_.isNumber(longitude) || _.isNaN(longitude)) {
+      } else if (!_.isNumber(latitude) || _.isNaN(latitude) ||
+          !_.isNumber(longitude) || _.isNaN(longitude)) {
         return false;
       } else {
         return {
@@ -503,7 +542,8 @@ define([
           }, true]);
 
           // Go to new crag page.
-          this.app.router.navigate('crags/' + data.key, {trigger: true});
+          this.app.router.navigate('crags/' + data.key + '/config',
+              {trigger: true});
 
           if (store.get('pendingAscent')) {
             mps.publish('ascent/add', [{crag_id: data._id}]);
@@ -514,6 +554,7 @@ define([
         this.listenForPlot();
         $('span', this.plotButton).show();
         this.submitButton.attr('disabled', true).addClass('disabled');
+        mps.publish('map/refresh/crags');
       }, this));
 
       return false;

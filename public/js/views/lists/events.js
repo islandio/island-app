@@ -24,7 +24,7 @@ define([
 
     initialize: function (app, options) {
       this.template = _.template(template);
-      this.collection = new Collection;
+      this.collection = new Collection();
       this.Row = Row;
 
       // Call super init.
@@ -53,9 +53,9 @@ define([
         return;
       }
       if (this.latestList.query) {
-        if (this.latestList.query.subscribee_id
-            && data.actor_id !== this.latestList.query.subscribee_id
-            && data.target_id !== this.latestList.query.subscribee_id) {
+        if (this.latestList.query.subscribee_id &&
+            data.actor_id !== this.latestList.query.subscribee_id &&
+            data.target_id !== this.latestList.query.subscribee_id) {
           return;
         }
         if (this.latestList.query.action) {
@@ -108,16 +108,17 @@ define([
       List.prototype.renderLast.call(this, pagination);
 
       // Handle day headers.
-      if (!this.collection.options
-          || this.collection.options.headers !== false) {
-        var view = pagination !== true && this.collection.options
-            && this.collection.options.reverse ?
+      var view;
+      if (!this.collection.options ||
+          this.collection.options.headers !== false) {
+        view = pagination !== true && this.collection.options &&
+            this.collection.options.reverse ?
             this.views[0]:
-            this.views[this.views.length - 1];  
+            this.views[this.views.length - 1];
         var ms = new Date(view.model.get('date')).valueOf();
         var header = this.$('.event-day-header').filter(function () {
-          return ms >= Number($(this).data('beg'))
-              && ms <= Number($(this).data('end'));
+          return ms >= Number($(this).data('beg')) &&
+              ms <= Number($(this).data('end'));
         });
         if (header.length > 0) {
           if (pagination !== true) {
@@ -137,14 +138,14 @@ define([
               _date.getDate());
           var end = new Date(_date.getFullYear(), _date.getMonth(),
               _date.getDate(), 23, 59, 59, 999);
-          header = $('<div class="event-day-header" data-beg="' + beg.valueOf()
-              + '" data-end="' + end.valueOf() + '">' + '<span>'
-              + end.format('mmmm dd, yyyy') + '</span></div>');
+          header = $('<div class="event-day-header" data-beg="' + beg.valueOf() +
+              '" data-end="' + end.valueOf() + '">' + '<span>' +
+              end.format('mmmm dd, yyyy') + '</span></div>');
           header.insertBefore(view.$el);
         }
       } else {
-        var view = pagination !== true && this.collection.options
-            && this.collection.options.reverse ?
+        view = pagination !== true && this.collection.options &&
+            this.collection.options.reverse ?
             this.views[0]:
             this.views[this.views.length - 1];
         $('<div class="event-divider">').insertBefore(view.$el).show();
@@ -188,8 +189,8 @@ define([
       if (navigator.userAgent.indexOf('MSIE') !== -1) {
         this.$('.post-input .post').remove();
         mps.publish('flash/new', [{
-          message: 'Internet Explorer isn\'t supported for posting content.'
-              + ' Please use Safari, Chrome, or Firefox.',
+          message: 'Internet Explorer isn\'t supported for posting content.' +
+              ' Please use Safari, Chrome, or Firefox.',
           level: 'error',
           sticky: true
         }, true]);
@@ -302,6 +303,7 @@ define([
             this.showingAll.hide();
             this.spin.target.show();
           }
+          $(window).trigger('resize');
         }, this), (list.items.length + 1) * 30);
       }
 
@@ -346,8 +348,8 @@ define([
     paginate: function () {
       var wrap = $(window);
       this._paginate = _.debounce(_.bind(function (e) {
-        var pos = this.$el.height() + this.$el.offset().top
-            - wrap.height() - wrap.scrollTop();
+        var pos = this.$el.height() + this.$el.offset().top -
+            wrap.height() - wrap.scrollTop();
         if (!this.nomore && pos < -this.spin.target.height() / 2) {
           this.more();
         }
@@ -393,11 +395,11 @@ define([
       var set = $('<div class="upload-set">');
       var parts = [];
       _.each(files, function (file) {
-        parts.push('<div class="upload-progress-wrap"><div class="upload-remove">'
-            + '<i class="icon-cancel"></i></div><div '
-            + 'class="upload-progress">' + '<span class="upload-label">',
-            file.name, '</span><span class="upload-progress-txt">'
-            + 'Waiting...</span>', '</div></div>');
+        parts.push('<div class="upload-progress-wrap"><div class="upload-remove">' +
+            '<i class="icon-cancel"></i></div><div ' +
+            'class="upload-progress">' + '<span class="upload-label">',
+            file.name, '</span><span class="upload-progress-txt">' +
+            'Waiting...</span>', '</div></div>');
         if (data && typeof file === 'object') {
           data.append('file', file);
         }
@@ -539,8 +541,8 @@ define([
       }
 
       // Add parent (if parent).
-      if (this.collection.options.parentId
-          && this.collection.options.parentType) {
+      if (this.collection.options.parentId &&
+          this.collection.options.parentType) {
         payload.parent_id = this.collection.options.parentId;
         payload.type = this.collection.options.parentType;
       }

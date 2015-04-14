@@ -29,7 +29,7 @@
           </tr>
           <tr>
             <td colspan="2">
-              <input type="text" tabindex="1" id="cragName" name="title"
+              <input type="text" tabindex="10" id="cragName" name="name" data-saved="<%= data.name %>"
                   class="settings-param" placeholder="name" value="<%= data.name %>" />
               <!-- <label class="checkbox-styled input-checkbox">
                 < if (data.public === false) { >
@@ -50,42 +50,48 @@
           </tr>
           <tr>
             <td colspan="2">
-              <textarea name="overview" tabindex="2" id="cragOverview"
+              <textarea name="overview" tabindex="11" id="cragOverview"
                   class="settings-param" placeholder="Write something about this crag..."><%= data.overview %></textarea>
             </td>
           </tr>
 
           <tr>
             <td colspan="2">
-              <label for="cragTags">Instagram Tags</label>
+              <label for="cragTags">Instagram Tag</label>
             </td>
           </tr>
           <tr>
             <td colspan="2">
-              <input type="text" tabindex="3" id="cragTags" name="tags"
-                  class="settings-param" placeholder="Hashtags for Instagram search..." value="<%= data.tags %>" />
+              <input type="text" tabindex="12" id="cragTags" name="tags"
+                  class="settings-param" placeholder="Hashtag for Instagram search..." value="<%= data.tags %>" />
             </td>
           </tr>
 
           <tr>
-            <td colspan="2">
-              <label for="datasetLocation">Location</label>
+            <td>
+              <label for="cragLatitude">Latitude</label>
+            </td>
+            <td>
+              <label for="cragLongitude">Longitude</label>
             </td>
           </tr>
           <tr>
-            <td>
-              <input type="text" tabindex="4" id="cragLatitude" name="location.latitude"
-                  class="settings-param" placeholder="latitude" value="<%= location.latitude %>" />
+            <td style="padding-bottom:20px;">
+              <input type="text" tabindex="13" id="cragLatitude" name="location.latitude"
+                  data-saved="<%= location.latitude %>" class="settings-param" placeholder="latitude"
+                  value="<%= location.latitude %>" />
+              <span class="settings-note">Click map to set a new location.</span>
             </td>
-            <td>
-              <input type="text" tabindex="5" id="cragLongitude" name="location.longitude"
-                  class="settings-param" placeholder="longitude" value="<%= location.longitude %>" />
+            <td style="padding-bottom:20px;">
+              <input type="text" tabindex="14" id="cragLongitude" name="location.longitude"
+                  data-saved="<%= location.longitude %>" class="settings-param" placeholder="longitude"
+                  value="<%= location.longitude %>" />
             </td>
           </tr>
 
           <tr>
             <td colspan="2" style="padding-top:15px;">
-              <a tabindex="6" href="javascript:;" class="demolish button signin-strategy-btn delete-btn">
+              <a tabindex="15" href="javascript:;" class="demolish button signin-strategy-btn delete-btn">
                 Delete Crag
                 <i class="icon-right-open-big"></i>
               </a>

@@ -60,10 +60,10 @@ define([
 
       // Render title if single
       if (!this.parentView) {
-        this.$el.addClass('single')
-        this.app.title('Island | ' + this.model.get('author').displayName
-            + ' - ' + (this.model.get('title')
-            || new Date(this.model.get('created')).format('mmm d, yyyy')));
+        this.$el.addClass('single');
+        this.app.title('Island | ' + this.model.get('author').displayName +
+            ' - ' + (this.model.get('title') ||
+            new Date(this.model.get('created')).format('mmm d, yyyy')));
         this.title = _.template(title).call(this);
       }
 
@@ -73,9 +73,10 @@ define([
       //     - (set = three vids of diff quality for each uploaded vid)
       var mosaics = [];
       _.each(this.model.get('medias'), _.bind(function (m) {
+        var o;
         switch (m.type) {
           case 'image':
-            var o = _.find(mosaics, function (o) {
+            o = _.find(mosaics, function (o) {
               return o.type === 'image';
             });
             if (!o) {
@@ -89,7 +90,7 @@ define([
             if (m.quality !== 'hd') {
               return;
             }
-            var o = {type: 'video', images: []};
+            o = {type: 'video', images: []};
             o.images.push(m.poster);
             _.each(m.thumbs, function (t, i) {
               if (i !== 1) {
@@ -115,15 +116,15 @@ define([
         var el = this.$('.image-mosaic[data-id="' + o.id + '"]');
         util.createImageMosaic(o.images, el.width(), el.height(), _.bind(function (item) {
           var src = item.data.ssl_url || item.data.url;
-          var anc = $('<a class="fancybox" data-type="' + o.type + '" rel="g-' + o.id
-              + '" href="' + src + '">');
+          var anc = $('<a class="fancybox" data-type="' + o.type + '" rel="g-' + o.id +
+              '" href="' + src + '">');
           var div = $('<div class="image-mosaic-wrap">').css(item.div).appendTo(anc);
           var img = $('<img src="' + src + '" />').css(item.img).wrap(
               $('<a class="fancybox" rel="g-' + o.id + '">')).appendTo(div);
           if (o.type === 'video' && item.first) {
             var s = 120;
-            var play = $('<img src="' + __s + '/img/play.png" class="image-mosaic-play"'
-                + ' width="' + s + '" height="' + s + '" />');
+            var play = $('<img src="' + __s + '/img/play.png" class="image-mosaic-play"' +
+                ' width="' + s + '" height="' + s + '" />');
             play.appendTo(div);
             if (item.data.trailer) {
               var subtext = $('<span class="image-mosaic-play-text">(trailer)</span>');
@@ -139,8 +140,8 @@ define([
 
           function getVideo(quality) {
             return _.find(this.model.get('medias'), function (m) {
-              return m.type === 'video' && m.quality === quality
-                  && m.video.original_id === o.id;
+              return m.type === 'video' && m.quality === quality &&
+                  m.video.original_id === o.id;
             });
           }
 
@@ -167,11 +168,11 @@ define([
                   primary: 'flash',
                   ga: {},
                   sharing: {
-                    link: window.location.protocol + '//'
-                        + window.location.host + '/' + this.model.get('key'),
-                    code: "<iframe width='100%' height='100%' src='//"
-                        + window.location.host + "/embed/"
-                        + ipad.video.id + "' frameborder='0'></iframe>"
+                    link: window.location.protocol + '//' +
+                        window.location.host + '/' + this.model.get('key'),
+                    code: "<iframe width='100%' height='100%' src='//" +
+                        window.location.host + "/embed/" +
+                        ipad.video.id + "' frameborder='0'></iframe>"
                   }
                 };
 
@@ -229,7 +230,7 @@ define([
 
       // Video params
       _.each($('video.post-instagram'), _.bind(function (el) {
-        var el = $(el);
+        el = $(el);
         jwplayer(el.attr('id')).setup({
           width: el.width().toString(),
           height: el.height().toString(),

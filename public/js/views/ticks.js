@@ -133,16 +133,16 @@ define([
     collect: function (data) {
       if (data.author.id === this.model.get('author').id && data.sent) {
         this._remove(data, true);
-        var el = $('<li class="tick" id="' + data.id + '" data-type="'
-            + data.type + '">');
+        var el = $('<li class="tick" id="' + data.id + '" data-type="' +
+            data.type + '">');
         var grade;
         if (isNaN(Number(data.grade))) {
           grade = 'not graded by you';
         } else {
           grade = this.app.gradeConverter[data.type].indexes(data.grade);
         }
-        var heading = this.$('.' + data.type + '-ticks .session-ticks '
-            + '[data-grade="' + grade + '"]');
+        var heading = this.$('.' + data.type + '-ticks .session-ticks ' +
+            '[data-grade="' + grade + '"]');
         el.insertAfter(heading);
         heading.parent().show();
 
@@ -182,7 +182,11 @@ define([
         this.checkCurrentCount();
       }
 
-      noslide ? _done.call(this): t.$el.slideUp('fast', _.bind(_done, this));
+      if (noslide) {
+        _done.call(this);
+      } else {
+        t.$el.slideUp('fast', _.bind(_done, this));
+      }
     },
 
     empty: function () {
@@ -216,8 +220,8 @@ define([
     },
 
     setTitle: function () {
-      this.app.title('The Island | ' + this.model.get('author').displayName
-          + ' - Ascents');
+      this.app.title('The Island | ' + this.model.get('author').displayName +
+          ' - Ascents');
     },
 
     checkCurrentCount: function () {

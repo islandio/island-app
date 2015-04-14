@@ -28,6 +28,13 @@ define([
       this.app = app;
       this.options = options || {};
       this.subscriptions = [];
+
+      if (this.options.config) {
+        this.subscriptions.push(
+          mps.subscribe('map/plot', _.bind(this.setLocation, this))
+        );
+      }
+
       this.on('rendered', this.setup, this);
     },
 
@@ -63,6 +70,11 @@ define([
       // Set map view.
       mps.publish('map/fly', [this.model.get('location')]);
 
+      // Enable location updates.
+      if (this.options.config) {
+        mps.publish('map/listen');
+      }
+
       // Render events.
       if (!this.options.config) {
         this.events = new Events(this.app, {
@@ -97,8 +109,8 @@ define([
         }).render();
       }
 
-      // Adjust height.
-      // this.$el.height(this.$('.rightside').outerHeight());
+      // Handle text area height.
+      this.$('textarea').autogrow();
 
       return this;
     },
@@ -114,6 +126,9 @@ define([
       });
       if (this.skycons) {
         this.skycons.remove('crag-weather');
+      }
+      if (this.options.config) {
+        mps.publish('map/listen');
       }
       this.watchers.destroy();
       this.ascents.destroy();
@@ -139,35 +154,95 @@ define([
       this.app.title(title);
     },
 
-    // Save the field.
-    save: function (e) {
-      var field = $(e.target);
-      var name = field.attr('name');
-      var val = util.sanitize(field.val());
+    setLocation: function (location) {
+      mps.publish('map/start');
 
-      // Create the paylaod.
-      if (val === field.data('saved')) {
-        return false;
-      }
+      this.save(null, {
+        'location.latitude': location.latitude,
+        'location.longitude': location.longitude
+      }, _.bind(function () {
+        this.$('[name="location.latitude"]').val(location.latitude)
+            .data('saved', location.latitude);
+        this.$('[name="location.longitude"]').val(location.longitude)
+            .data('saved', location.longitude);
+        this.model.set('location', location);
+      }, this));
+    },
+
+    // Save the field(s).
+    save: function (e, fields, cb) {
       var payload = {};
-      payload[name] = val;
 
-      // Now do the save.
-      rest.put('/api/crags/' + this.model.get('keys'), payload,
-          _.bind(function (err) {
-        if (err) {
-          mps.publish('flash/new', [{err: err, level: 'error'}]);
+      if (fields) {
+        payload = fields;
+      } else {
+        var field = $(e.target);
+        var name = field.attr('name');
+        var val = util.sanitize(field.val());
+
+        // Create the paylaod.
+        if (val === field.data('saved')) {
           return false;
         }
 
-        // Save the saved state.
-        field.data('saved', val);
+        payload[name] = val;
 
-        // Show saved status.
-        mps.publish('flash/new', [{
-          message: 'Saved.',
-          level: 'alert'
-        }, true]);
+        var location = this.model.get('location');
+        if (name === 'location.latitude') {
+          mps.publish('map/start');
+          if (location.longitude) {
+            payload['location.longitude'] = location.longitude;
+          }
+        }
+        if (name === 'location.longitude') {
+          mps.publish('map/start');
+          if (location.latitude) {
+            payload['location.latitude'] = location.latitude;
+          }
+        }
+      }
+
+      // Now do the save.
+      rest.put('/api/crags/' + this.model.get('key'), payload,
+          _.bind(function (err) {
+        if (err) {
+          if (err.type === 'LENGTH_INVALID') {
+            field.val(field.data('saved'));
+          }
+          if (err.message === 'no country code found') {
+            err.message = 'Hmm, are you sure there\'s a crag there?';
+          }
+          mps.publish('flash/new', [{err: err, level: 'error'}]);
+        } else {
+
+          // Save the saved state.
+          if (fields) {
+            cb();
+          } else if (val) {
+            field.data('saved', val);
+            if (name === 'location.latitude') {
+              location.latitude = Number(val);
+              this.model.set('location', location);
+            }
+            if (name === 'location.longitude') {
+              location.longitude = Number(val);
+              this.model.set('location', location);
+            }
+          }
+
+          // Show saved status.
+          mps.publish('flash/new', [{
+            message: 'Saved.',
+            level: 'alert',
+            type: 'popup'
+          }, true]);
+        }
+
+        // Refresh map.
+        if (fields || name === 'location.latitude' ||
+            name === 'location.longitude') {
+          mps.publish('map/refresh/crags');
+        }
 
       }, this));
 
@@ -179,8 +254,8 @@ define([
 
       // Render the confirm modal.
       $.fancybox(_.template(confirm)({
-        message: 'Delete this crag forever? All associated content and activity'
-            + ' will be deleted.',
+        message: 'Delete this crag forever? All associated content and activity' +
+            ' will be deleted.',
       }), {
         openEffect: 'fade',
         closeEffect: 'fade',
@@ -195,8 +270,7 @@ define([
       $('.modal-confirm').click(_.bind(function (e) {
 
         // Delete the user.
-        rest.delete('/api/crags/' + this.model.get('key'),
-            {}, _.bind(function (err) {
+        rest.delete('/api/crags/' + this.model.get('key'), _.bind(function (err) {
           if (err) {
             mps.publish('flash/new', [{err: err, level: 'error', type: 'popup'},
                 true]);
@@ -207,8 +281,9 @@ define([
             level: 'alert'
           }, true]);
 
-          // Route to home.
-          this.app.router.navigate('/', {trigger: true});
+          // Route to country home.
+          var code = this.model.get('key').split('/')[0];
+          this.app.router.navigate('/crags/' + code, {trigger: true});
 
           // Close the modal.
           $.fancybox.close();
