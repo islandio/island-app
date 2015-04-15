@@ -187,7 +187,7 @@ define([
 
         payload[name] = val;
 
-        var location = this.model.get('location');
+        var location = this.model.get('location') || {};
         if (name === 'location.latitude') {
           mps.publish('map/start');
           if (location.longitude) {
@@ -242,11 +242,11 @@ define([
         if (fields || name === 'location.latitude' ||
             name === 'location.longitude') {
           mps.publish('map/refresh/crags');
+          mps.publish('map/fly', [this.model.get('location')]);
         }
 
         // Crag's URL changed so refresh.
-        console.log(data)
-        if (this.model.get('key') !== data.key) {
+        if (data && this.model.get('key') !== data.key) {
           this.model.set('key', data.key);
           this.app.router.navigate('/crags/' + data.key + '/config',
               {trigger: true});
