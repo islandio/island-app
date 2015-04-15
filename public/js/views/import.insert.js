@@ -202,9 +202,15 @@ define([
         }
       }));
       var fn = ascents.length > 0 ? rest.post :
-          function(arg1, arg2, cb) { cb() };
+          function(arg1, arg2, cb) { cb(); };
       fn.call(rest, '/api/ascents/', ascents, _.bind(function (err, res) {
-        if (err) return this.submitError();
+        if (err) {
+          mps.publish('flash/new', [{
+            err: err,
+            level: 'error'
+          }, true]);
+          return this.submitError();
+        }
 
         var sessions = _.map(this.ticks, function(tick) {
           var t = tick.model.attributes;
@@ -228,7 +234,13 @@ define([
           return payload;
         });
         rest.post('/api/sessions/', sessions, _.bind(function (err, res) {
-          if (err) return this.submitError();
+          if (err) {
+            mps.publish('flash/new', [{
+              err: err,
+              level: 'error'
+            }, true]);
+            return this.submitError();
+          }
           this.spin.stop();
           this.button.removeClass('spinning').removeClass('disabled').attr('disabled', false);
           this.submitting = false;
@@ -236,8 +248,8 @@ define([
           // Show success.
           var ticks = this.ticks.length;
           mps.publish('flash/new', [{
-            message: 'You successfully imported your 8a.nu scorecard and added '
-                + ticks + ' new ascents.',
+            message: 'You successfully imported your 8a.nu scorecard and added ' +
+                ticks + ' new ascents.',
             level: 'alert',
             sticky: true
           }, true]);

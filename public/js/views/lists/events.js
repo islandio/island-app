@@ -303,7 +303,7 @@ define([
             this.showingAll.hide();
             this.spin.target.show();
           }
-          $(window).trigger('resize');
+          window.dispatchEvent(new Event('resize'));
         }, this), (list.items.length + 1) * 30);
       }
 

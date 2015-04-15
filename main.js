@@ -118,15 +118,17 @@ if (cluster.isMaster) {
         transloadit: service.transloadit(req)
       };
       if (err) {
-        util.error(err);
+        console.log(err.stack || err);
         profile.error = {stack: err.stack, message: err.message};
-        fn.call(res, 500, iutil.client(profile));
+        fn.call(res, err.code || 500, iutil.client(profile));
       } else {
         profile.error = {message: estr + ' not found'};
         fn.call(res, 404, iutil.client(profile));
       }
       return true;
-    } else return false;
+    } else {
+      return false;
+    }
   };
 
   Step(

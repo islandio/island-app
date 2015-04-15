@@ -204,7 +204,7 @@ define([
 
       // Now do the save.
       rest.put('/api/crags/' + this.model.get('key'), payload,
-          _.bind(function (err) {
+          _.bind(function (err, data) {
         if (err) {
           if (err.type === 'LENGTH_INVALID') {
             field.val(field.data('saved'));
@@ -242,6 +242,13 @@ define([
         if (fields || name === 'location.latitude' ||
             name === 'location.longitude') {
           mps.publish('map/refresh/crags');
+        }
+
+        // Crag's URL changed so refresh.
+        if (this.model.get('key') !== data.key) {
+          this.model.set('key', data.key);
+          this.app.router.navigate('/crags/' + data.key + '/config',
+              {trigger: true});
         }
 
       }, this));
@@ -287,6 +294,10 @@ define([
 
           // Close the modal.
           $.fancybox.close();
+
+          // Force new map query cause map cache is sticky.
+          mps.publish('map/refresh/crags');
+          mps.publish('map/fit');
         }, this));
       }, this));
 

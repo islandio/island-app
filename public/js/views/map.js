@@ -48,6 +48,8 @@ define([
       // Listen for fly to requests.
       this.subscriptions.push(mps.subscribe('map/fly',
           _.bind(this.flyTo, this)));
+      this.subscriptions.push(mps.subscribe('map/fit',
+          _.bind(this.fitWorld, this)));
 
       // Listen for crags layer refresh.
       this.subscriptions.push(mps.subscribe('map/refresh/crags',
@@ -276,6 +278,10 @@ define([
 
         _.each(this.plotQueue, function (fn) { fn(); });
         this.plotQueue = [];
+
+        _.defer(function () {
+          window.dispatchEvent(new Event('resize'));
+        });
       }, this));
     },
 
@@ -380,6 +386,10 @@ define([
           }
         }, this));
       }
+    },
+
+    fitWorld: function () {
+      this.map.setView(new L.LatLng(40, -20), 3);
     },
 
     hideShow: function (e) {

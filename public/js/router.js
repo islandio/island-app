@@ -191,6 +191,7 @@ define([
         } else {
           this.app.blog = false;
         }
+
         if (!this.map && this.showMap) {
           this.map = new Map(this.app).render();
         }
@@ -209,6 +210,9 @@ define([
 
         // Callback to route.
         cb(err);
+
+        // Resize for map.
+        window.dispatchEvent(new Event('resize'));
       }
 
       // Grab hash for comment.
@@ -654,6 +658,7 @@ define([
     signin: function () {
       this.start();
       this.clearContainer();
+      this.showMap = true;
       this.render(_.bind(function (err) {
         if (err) return;
         $('.container').addClass('narrow');
@@ -666,6 +671,7 @@ define([
     signup: function () {
       this.start();
       this.clearContainer();
+      this.showMap = true;
       this.render(_.bind(function (err) {
         if (err) return;
         $('.container').addClass('narrow');
