@@ -16,7 +16,7 @@ define([
   'views/lists/ascents',
   'views/lists/watchers',
   'views/instafeed',
-  'text!../../../templates/confirm.html',
+  'text!../../templates/confirm.html',
   'Skycons'
 ], function ($, _, Backbone, mps, rest, util, Crag, template, title,
       Events, Ascents, Watchers, Instafeed, confirm) {

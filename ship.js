@@ -46,7 +46,7 @@ var boots = require(rel + 'boots');
 var dir = 'build';
 var pack = require('./package.json');
 var bv = _.strLeftBack(pack.version, '.');
-var lv = parseInt(_.strRightBack(pack.version, '.')) + 1;
+var lv = parseInt(_.strRightBack(pack.version, '.'), 10) + 1;
 var nv = bv + '.' + String(lv);
 
 // AWS credentials.
@@ -61,8 +61,8 @@ Step(
   function () {
 
     // Run grunt tasks from Gruntfile.js
-    util.log(clc.blackBright('Starting statics build for new version ')
-        + clc.underline(clc.green(nv)) + clc.blackBright(' ...'));
+    util.log(clc.blackBright('Starting statics build for new version ') +
+        clc.underline(clc.green(nv)) + clc.blackBright(' ...'));
     exec('grunt build --dir=' + dir, this);
   },
   function (err) {
