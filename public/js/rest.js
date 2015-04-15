@@ -41,6 +41,15 @@ define([
           } catch (e) {
             err = res.status + ' - "' + res.statusText + '"';
           }
+          var log = new Error();
+          _.each(err, function (v, k) {
+            if (v && k !== 'member' && k !== 'content' && k !==
+                'transloadit' && k !== 'stack') {
+              log[k] = v;
+            }
+          });
+          log.stack = err.stack;
+          console.log(type + ': ', log);
           cb(err);
         },
         contentType: 'application/json',
