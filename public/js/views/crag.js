@@ -245,6 +245,7 @@ define([
         }
 
         // Crag's URL changed so refresh.
+        console.log(data)
         if (this.model.get('key') !== data.key) {
           this.model.set('key', data.key);
           this.app.router.navigate('/crags/' + data.key + '/config',
