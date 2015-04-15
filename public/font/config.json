@@ -97,6 +97,18 @@
       "src": "fontawesome"
     },
     {
+      "uid": "e99461abfef3923546da8d745372c995",
+      "css": "cog",
+      "code": 59435,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "21b42d3c3e6be44c3cc3d73042faa216",
+      "css": "sliders",
+      "code": 59434,
+      "src": "fontawesome"
+    },
+    {
       "uid": "531bc468eecbb8867d822f1c11f1e039",
       "css": "calendar",
       "code": 59424,

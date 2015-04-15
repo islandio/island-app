@@ -19,7 +19,7 @@ _.each(config, function (v, k) {
   config[k] = process.env[k] || v;
 });
 
-var error = exports.error = function(err) {
+var error = exports.error = function (err) {
   if (!err) return;
   util.error(err.stack || err);
   process.exit(1);

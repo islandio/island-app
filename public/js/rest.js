@@ -7,10 +7,10 @@ define([
   'Underscore',
   'mps'
 ], function ($, _, mps) {
-  return {  
+  return {
 
     exec: function(type, url, data, cb) {
-      if (!data || typeof data === 'function') {
+      if (typeof data === 'function') {
         cb = data;
         data = null;
       }
@@ -32,6 +32,7 @@ define([
               explain: err.error.explain,
               level: err.error.level,
               code: res.status,
+              type: err.error.type,
               transloadit: err.transloadit
             };
             if (data) {
@@ -42,7 +43,7 @@ define([
           }
           cb(err);
         },
-        contentType: 'application/json', 
+        contentType: 'application/json',
         dataType: 'json'
       };
       if (data) {
@@ -64,22 +65,24 @@ define([
     },
 
     put: function (url, data, cb) {
-      if (!data || typeof data === 'function') {
+      data = data || {};
+      if (typeof data === 'function') {
         cb = data;
-        data = null;
+        data = {};
       }
       data._method = 'PUT';
       this.exec('POST', url, data, cb);
     },
 
     delete: function (url, data, cb) {
-      if (!data || typeof data === 'function') {
+      data = data || {};
+      if (typeof data === 'function') {
         cb = data;
-        data = null;
+        data = {};
       }
       data._method = 'DELETE';
       this.exec('POST', url, data, cb);
     }
 
-  }
+  };
 });

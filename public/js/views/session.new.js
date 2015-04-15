@@ -674,7 +674,7 @@ define([
         this.armedForDelete = true;
         this.deleteButton.addClass('armed');
         $('span', this.deleteButton).text('Confirm delete');
-        return;
+        return false;
       }
       var oldTick = this.options.tick;
 
@@ -688,12 +688,9 @@ define([
         this.deleteButton.removeClass('spinning').attr('disabled', false);
         
         if (err) {
-          mps.publish('flash/new', [{
-            err: err,
-            level: 'error',
-            type: 'popup'
-          }, true]);
-          return;
+          mps.publish('flash/new', [{err: err, level: 'error', type: 'popup'},
+              true]);
+          return false;
         }
 
         var verb = oldTick.sent ? 'an ascent': 'some work';
