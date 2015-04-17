@@ -34,16 +34,14 @@
                     <td colspan="4" class="new-session-cell" style="width: 75%;">
                       <input tabindex="12" name="name" type="text" class="required" placeholder="Climb name (new or just missing from Island)" />
                     </td>
-                    <td class="new-session-cell" style="width: 12.5%; padding-right: 0;">
-                      <label class="checkbox-styled">
+                    <td colspan="2" class="new-session-cell checkbox-styled-wrap" style="width: 25%;">
+                      <label class="checkbox-styled checkbox-styled-left">
                         <input class="new-session-boulder" type="checkbox" name="boulder" value="b" checked />
-                        <span><img src="/img/boulder_16.png" width="16" height="16" /> Boulder</span>
+                        <span><img src="/img/boulder_16_white.png" data-alt="/img/boulder_16.png" width="16" height="16" /> Boulder</span>
                       </label>
-                    </td>
-                    <td class="new-session-cell" style="width: 12.5%; padding-left: 10px;">
-                      <label class="checkbox-styled">
+                      <label class="checkbox-styled checkbox-styled-right">
                         <input class="new-session-route" type="checkbox" name="route" value="r" />
-                        <span><img src="/img/route_16.png" width="16" height="16" /> Route</span>
+                        <span><img src="/img/route_16.png" data-alt="/img/route_16_white.png" width="16" height="16" /> Route</span>
                       </label>
                     </td>
                   </tr>
@@ -51,6 +49,7 @@
                     <td colspan="3" class="new-session-cell" style="width: 50%;">
                       <select name="grade" class="required" style="max-height: 175px;">
                         <option value="hide">-- Grade --</option>
+                        <option value="-1">Project</option>
                         <option value="0">3</option>
                         <option value="1">4</option>
                         <option value="2">5a</option>
@@ -90,6 +89,7 @@
                         <option value="3">Gritstone</option>
                         <option value="4">Limestone</option>
                         <option value="5">Sandstone</option>
+                        <option value="6">Quartzite</option>
                       </select>
                     </td>
                   </tr>

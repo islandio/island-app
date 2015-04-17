@@ -106,7 +106,7 @@ define([
 
       // Init choices.
       this.cragChoices = new Choices(this.app, {
-        reverse: true, 
+        reverse: true,
         el: '.new-session-crag-search',
         choose: true,
         onChoose: _.bind(this.validate, this),
@@ -146,7 +146,7 @@ define([
       }
 
       // Handle date.
-      var date = this.options.tick ? this.options.tick.date: date;
+      date = this.options.tick ? this.options.tick.date: date;
       date = date ? new Date(date): new Date();
       this.dateInput = this.$('.new-session-datepicker').pickadate({
         max: new Date(),
@@ -169,8 +169,8 @@ define([
       // Handle warning, and error displays.
       this.$('input[type="text"]').blur(function (e) {
         var el = $(e.target);
-        if (el.hasClass('required') && el.val().trim() === ''
-            && !$('.search-choice', el.parent()).is(':visible')) {
+        if (el.hasClass('required') && el.val().trim() === '' &&
+            !$('.search-choice', el.parent()).is(':visible')) {
           el.addClass('input-warning');
         }
         if (el.hasClass('input-error')) {
@@ -224,9 +224,6 @@ define([
         }
       }
 
-      // Store grades list elements
-      this.grades = this.$('select[name="grade"]').parent().find('li');
-
       return this;
     },
 
@@ -234,8 +231,8 @@ define([
       if (val === undefined) {
         return;
       }
-      var opt = this.$('select[name="' + key + '"] option[value="'
-          + val + '"]');
+      var opt = this.$('select[name="' + key + '"] option[value="' +
+          val + '"]');
       $('.select-styled', this.$('select[name="' + key + '"]').parent())
           .text(opt.text());
       opt.attr('selected', true);
@@ -322,7 +319,7 @@ define([
 
       var tickChoice = this.tickChoices.choice ?
           this.tickChoices.choice.model.attributes: {};
-      var cragChoice = this.cragChoices.choice ? 
+      var cragChoice = this.cragChoices.choice ?
           this.cragChoices.choice.model.attributes: {};
 
       // Build the payload.
@@ -514,12 +511,12 @@ define([
       var set = $('<div class="upload-set">');
       var parts = [];
       _.each(files, function (file, i) {
-        parts.push('<div class="upload-progress-wrap">'
-            + (i === 0 ? '<div class="upload-remove">'
-            + '<i class="icon-cancel"></i></div>': '')
-            + '<div class="upload-progress">' + '<span class="upload-label">',
-            file.name, '</span><span class="upload-progress-txt">'
-            + 'Waiting...</span>', '</div></div>');
+        parts.push('<div class="upload-progress-wrap">' +
+            (i === 0 ? '<div class="upload-remove">' +
+            '<i class="icon-cancel"></i></div>': '') +
+            '<div class="upload-progress">' + '<span class="upload-label">',
+            file.name, '</span><span class="upload-progress-txt">' +
+            'Waiting...</span>', '</div></div>');
         if (data && typeof file === 'object') {
           data.append('file', file);
         }
@@ -592,13 +589,13 @@ define([
                 var icon = '';
                 if (preview.type === 'video') {
                   var ih = (h / 2) - 12;
-                  icon = '<i class="icon-youtube-play" style="top: '
-                      + ih + 'px;"></i>';
+                  icon = '<i class="icon-youtube-play" style="top: ' +
+                      ih + 'px;"></i>';
                 }
-                var li = $('<li id="' + preview.original_id + '">' + icon
-                    + '<span class="media-delete"><i class="icon-cancel">'
-                    + '</i></span><img src="' + preview.ssl_url
-                    + '" width="' + w + '" height="' + h + '"></li>');
+                var li = $('<li id="' + preview.original_id + '">' + icon +
+                    '<span class="media-delete"><i class="icon-cancel">' +
+                    '</i></span><img src="' + preview.ssl_url +
+                    '" width="' + w + '" height="' + h + '"></li>');
                 li.insertBefore(this.$('.post-previews .clear:last'));
                 var n = this.$('.post-previews').children('li');
                 if (n-1 % 6 === 0) {
@@ -737,7 +734,15 @@ define([
 
     updateGrades: function (type, country) {
       var added = [];
-      this.grades.each(_.bind(function (index, el) {
+      var select = this.$('select[name="grade"]');
+      var grades = select.parent().find('li');
+      var chosen = select.parent().find('.select-styled');
+      var txt = chosen.text();
+      var val = Number(select.val());
+      if (txt !== 'Project' && !isNaN(val)) {
+        chosen.text(this.app.gradeConverter[type].indexes(val, country));
+      }
+      grades.each(_.bind(function (index, el) {
         var $e = $(el);
         var from = Number($e.attr('rel'));
         if (!_.isNaN(from)) {

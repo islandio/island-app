@@ -22,13 +22,17 @@ define([
       var name = '<a href="/crags/' + t.key + '" class="title navigate">"';
       name += t.name + '"</a>';
       name += ' in <a href="/crags/' + t.crag.key + '" class="title navigate">';
-      name += '<i class="icon-location"></i> ' + t.crag.name + ', ' + t.country + '</a>';
+      name += '<i class="icon-location"></i> ' + t.crag.name + ', ' +
+          t.country + '</a>';
       str = str.replace('*', name);
       return str;
     },
 
     instagramTags: function () {
-      return util.toUsername(this.get('name'), '').toLowerCase();
+      var tags = this.get('tags');
+
+      return tags && tags !== '' ? tags.replace(' ', '').replace(',', ''):
+          util.toUsername(this.get('name'), '').toLowerCase();
     }
 
   });

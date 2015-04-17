@@ -120,12 +120,12 @@ define([
               .toLowerCase()
               .replace(/[^\w ]+/g,'')
               .replace(/ +/g,'-');
-          this.list.append('<li>'
-              + '<a class="navigate" href="/import/' + slug + '">'
-              + '<i class="icon-user"></i>'
-              + '<b>' + member.name + '</b>&nbsp'
-              + '<span>' + member.city + ', ' + member.country + '</span>'
-              + '</a></li>');
+          this.list.append('<li>' +
+              '<a class="navigate" href="/import/' + slug + '">' +
+              '<i class="icon-user"></i>' +
+              '<b>' + member.name + '</b>&nbsp' +
+              '<span>' + member.city + ', ' + member.country + '</span>' +
+              '</a></li>');
         }, this));
 
       }, this));

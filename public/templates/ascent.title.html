@@ -18,23 +18,34 @@
 %>
 
 <% if (this.app.profile.member) { %>
-  <% if (this.app.profile.member.username !== 'island'
-      && this.app.profile.member.role !== 2) { %>
-    <a href="javascript:;" class="button title-green-button log-session"
-        data-cid="<%= this.model.get("crag_id") %>" data-aid="<%= this.model.id %>">
-      <i class="icon-pencil"></i> Log it
-    </a>
-  <% } %>
-  <% if (sub && sub.subscribee_id === this.model.id) { %>
-    <a href="javascript:;" class="button title-button unwatch-button"
-        data-path="/api/ascents/<%= this.model.id %>/unwatch"
-        data-_path="/api/ascents/<%= this.model.id %>/watch">
-      <i class="icon-eye-off"></i> Unwatch</a>
+  <% if (!this.options.config) { %>
+    <% if (data.author_id === this.app.profile.member.id ||
+        this.app.profile.member.admin) { %>
+      <a href="/crags/<%= data.key %>/config" class="button title-button configure navigate">
+          <i class="icon-cog"></i></a>
+    <% } %>
+
+    <% if (this.app.profile.member.username !== 'island'
+        && this.app.profile.member.role !== 2) { %>
+      <a href="javascript:;" class="button title-green-button log-session"
+          data-cid="<%= this.model.get("crag_id") %>" data-aid="<%= this.model.id %>">
+        <i class="icon-pencil"></i> Log it
+      </a>
+    <% } %>
+    <% if (sub && sub.subscribee_id === this.model.id) { %>
+      <a href="javascript:;" class="button title-button unwatch-button"
+          data-path="/api/ascents/<%= this.model.id %>/unwatch"
+          data-_path="/api/ascents/<%= this.model.id %>/watch">
+        <i class="icon-eye-off"></i> Unwatch</a>
+    <% } else { %>
+      <a href="javascript:;" class="button title-button watch-button"
+          data-path="/api/ascents/<%= this.model.id %>/watch"
+          data-_path="/api/ascents/<%= this.model.id %>/unwatch">
+        <i class="icon-eye"></i> Watch</a>
+    <% } %>
   <% } else { %>
-    <a href="javascript:;" class="button title-button watch-button"
-        data-path="/api/ascents/<%= this.model.id %>/watch"
-        data-_path="/api/ascents/<%= this.model.id %>/unwatch">
-      <i class="icon-eye"></i> Watch</a>
+    <a href="/crags/<%= data.key %>" class="button title-button navigate">
+        <i class="icon-angle-left"></i> Done</a>
   <% } %>
 <% } %>
 <div class="page-title">

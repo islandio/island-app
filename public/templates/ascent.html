@@ -10,22 +10,171 @@
     <div class="sidebar-watchers"></div>
   </div>
 </div>
-<div class="leftside">
-  <div class="instagrams">
-    <div id="ig_tagged">
-      <span class="sidebar-heading-small">
-        Recent instagrams tagged <span class="sidebar-heading-cnt">
-        #<%= this.model.instagramTags() %></span>
-      </span>
-      <span class="instagrams-all">
-        <i class="icon-angle-down"></i>&nbsp;<i class="icon-angle-down"></i>
-      </span>
+
+<% if (this.options.config) { %>
+  <div class="leftside settings">
+    <h2 class="divider with-icon">Climb configuration</h2>
+    <span class="event-timeline-label event-timeline-label-first">
+      <i class="icon-location"></i>
+    </span>
+    <form enctype="multipart/form-data" method="POST">
+      <table>
+        <tbody>
+
+          <tr>
+            <td colspan="2" class="checkbox-styled-wrap ascent-type" style="padding-bottom: 15px;">
+              <label class="checkbox-styled checkbox-styled-left" style="width: 341px;">
+                <% if (data.type === 'b') { %>
+                  <input type="checkbox" name="type" value="b" checked />
+                  <span><img src="/img/boulder_16_white.png" data-alt="/img/boulder_16.png" width="16" height="16" /> Boulder</span>
+                <% } else { %>
+                  <input type="checkbox" name="type" value="b" />
+                  <span><img src="/img/boulder_16.png" data-alt="/img/boulder_16_white.png" width="16" height="16" /> Boulder</span>
+                <% } %>
+              </label>
+              <label class="checkbox-styled checkbox-styled-right" style="width: 339px;">
+                <% if (data.type === 'r') { %>
+                  <input type="checkbox" name="type" value="r" checked />
+                  <span><img src="/img/route_16_white.png" data-alt="/img/route_16.png" width="16" height="16" /> Route</span>
+                <% } else { %>
+                  <input type="checkbox" name="type" value="r" />
+                  <span><img src="/img/route_16.png" data-alt="/img/route_16_white.png" width="16" height="16" /> Route</span>
+                <% } %>
+              </label>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <label for="ascentName">Name</label>
+            </td>
+            <td>
+              <label for="ascentSector">Sector</label>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <input type="text" tabindex="10" id="ascentName" name="name" data-saved="<%= data.name %>"
+                  class="settings-param" placeholder="name" value="<%= data.name %>" />
+            </td>
+            <td>
+              <input type="text" tabindex="10" id="ascentSector" name="sector"
+                  class="settings-param" placeholder="sector" value="<%= data.sector %>" />
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <label for="ascentGrade">Grade</label>
+            </td>
+            <td>
+              <label for="ascentRockType">Rock type</label>
+            </td>
+          </tr>
+          <tr>
+            <td style="width:52%; padding-bottom:15px;">
+              <select name="grade">
+                <option value="hide">-- Select --</option>
+                <option value="-1">Project</option>
+                <option value="0">3</option>
+                <option value="1">4</option>
+                <option value="2">5a</option>
+                <option value="3">5b</option>
+                <option value="4">5c</option>
+                <option value="5">6a</option>
+                <option value="6">6a+</option>
+                <option value="7">6b</option>
+                <option value="8">6b+</option>
+                <option value="9">6c</option>
+                <option value="10">6c+</option>
+                <option value="11">7a</option>
+                <option value="12">7a+</option>
+                <option value="13">7b</option>
+                <option value="14">7b+</option>
+                <option value="15">7c</option>
+                <option value="16">7c+</option>
+                <option value="17">8a</option>
+                <option value="18">8a+</option>
+                <option value="19">8b</option>
+                <option value="20">8b+</option>
+                <option value="21">8c</option>
+                <option value="22">8c+</option>
+                <option value="23">9a</option>
+                <option value="24">9a+</option>
+                <option value="25">9b</option>
+                <option value="26">9b+</option>
+                <option value="27">9c</option>
+                <option value="28">9c+</option>
+              </select>
+            </td>
+            <td style="width:50%; padding-bottom:15px;">
+              <select name="rock">
+                <option value="hide">-- Select --</option>
+                <option value="1">Gneiss</option>
+                <option value="2">Granite</option>
+                <option value="3">Gritstone</option>
+                <option value="4">Limestone</option>
+                <option value="5">Sandstone</option>
+                <option value="6">Quartzite</option>
+              </select>
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="2">
+              <label for="ascentNote">Notes</label>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <textarea name="note" tabindex="11" id="ascentNote"
+                  class="settings-param" placeholder="Write something about this climb..."><%= data.note %></textarea>
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="2">
+              <label for="ascentTags">Instagram Tag</label>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <input type="text" tabindex="12" id="ascentTags" name="tags"
+                  class="settings-param" placeholder="Hashtag for Instagram search..." value="<%= data.tags %>" />
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="2" style="padding-top:15px;">
+              <a tabindex="15" href="javascript:;" class="demolish button signin-strategy-btn delete-btn">
+                Delete Ascent
+                <i class="icon-right-open-big"></i>
+              </a>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </form>
+  </div>
+<% } else { %>
+  <div class="leftside">
+    <div class="instagrams">
+      <div id="ig_tagged">
+        <span class="sidebar-heading-small">
+          Recent instagrams tagged <span class="sidebar-heading-cnt">
+          #<%= this.model.instagramTags() %></span>
+        </span>
+        <span class="instagrams-all">
+          <i class="icon-angle-down"></i>&nbsp;<i class="icon-angle-down"></i>
+        </span>
+      </div>
+    </div>
+    <div class="events"></div>
+    <div class="list-spin">
+      <div class="events-spin"></div>
+      <span class="empty-feed">Showing all.</span>
     </div>
   </div>
-  <div class="events"></div>
-  <div class="list-spin">
-    <div class="events-spin"></div>
-    <span class="empty-feed">Showing all.</span>
-  </div>
-</div>
+<% } %>
 <div class="clear"></div>

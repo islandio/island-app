@@ -121,6 +121,7 @@ define([
       this.plotButton = this.$('.map-plot');
       // this.weatherButton = this.$('.map-weather');
       this.plotForm = this.$('.plot-form');
+      this.updateNote = this.$('.update-note');
       this.submitButton = this.$('.new-session-button');
       this.infoBox = this.$('.map-infobox');
 
@@ -447,6 +448,7 @@ define([
         }
         this.$el.removeClass('plotting');
         if (external) {
+          this.updateNote.hide();
           this.$el.removeClass('plotting-external');
         }
         this.dataLayer.setInteraction(true);
@@ -463,6 +465,7 @@ define([
         }
         this.$el.addClass('plotting');
         if (external) {
+          this.updateNote.show();
           this.$el.addClass('plotting-external');
         }
         this.dataLayer.setInteraction(false);

@@ -2028,8 +2028,12 @@ span.count
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––checkboxes*/
 
+td.checkbox-styled-wrap
+  font-size 0
+
 .checkbox-styled
   display block
+  padding 0
 
 .checkbox-styled input[type="checkbox"]
   display none
@@ -2041,16 +2045,17 @@ span.count
   color #4d4d4d
   font-size 12px
   text-align center
-  width 100%
-  line-height 34px
-  height 33px
+  // width 100%
+  line-height 33px
+  height 31px
   margin-top -10px
   border-radius 2px
   cursor pointer
 
-  -moz-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.5)
-  -webkit-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.5)
-  box-shadow inset 0 0 2px rgba(0, 0, 0, 0.5)
+  // -moz-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.5)
+  // -webkit-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.5)
+  // box-shadow inset 0 0 2px rgba(0, 0, 0, 0.5)
+  border 1px solid #ccc
 
   -moz-user-select none
   -webkit-user-select none
@@ -2099,17 +2104,33 @@ span.count
   box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
 
 .checkbox-styled input[type="checkbox"]:checked + span
-  background #d0ecf2
+  background #4d4d4d
+  border-color #4d4d4d
+  color #fff
 
-  -moz-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
-  -webkit-box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
-  box-shadow inset 0 0 2px rgba(0, 0, 0, 0.3)
+  -moz-box-shadow inset 0 0 7px rgba(0, 0, 0, 0.2)
+  -webkit-box-shadow inset 0 0 7px rgba(0, 0, 0, 0.2)
+  box-shadow inset 0 0 7px rgba(0, 0, 0, 0.2)
 
 .checkbox-styled input[type="checkbox"][value="sent"]:checked + span
   background green
+  border-color green
+  color #396400
 
 .checkbox-styled input[type="checkbox"]:checked + span i
   display inline-block
+
+td.checkbox-styled-wrap .checkbox-styled
+  display inline-block
+  width 50%
+
+.checkbox-styled-left input[type="checkbox"] + span
+  border-radius 2px 0 0 2px
+  border-right none
+
+.checkbox-styled-right input[type="checkbox"] + span
+  border-radius 0 2px 2px 0
+  border-left none
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––selects*/
 
@@ -2806,7 +2827,8 @@ a.button.map-button [class^="icon-"]:before, [class*=" icon-"]:before
   position absolute
 
 .plot-form,
-.map-infobox
+.map-infobox,
+.update-note
   position absolute
   z-index 1
   background white
@@ -2828,7 +2850,8 @@ a.button.map-button [class^="icon-"]:before, [class*=" icon-"]:before
   -o-animation-fill-mode both
   animation-fill-mode both
 
-.plot-form
+.plot-form,
+.update-note
   display none
   left 46px
   top 10px
@@ -2836,6 +2859,11 @@ a.button.map-button [class^="icon-"]:before, [class*=" icon-"]:before
   -webkit-box-shadow 0 1px 5px rgba(0,0,0,0.65)
   -moz-box-shadow 0 1px 5px rgba(0,0,0,0.65)
   box-shadow 0 1px 5px rgba(0,0,0,0.65);
+
+.update-note
+  padding 0 15px
+  line-height 53px
+  font-style italic
 
 .plot-form td
   padding 5px 0 0 5px

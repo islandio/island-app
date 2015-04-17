@@ -85,9 +85,9 @@ define([
 
       // Render title if single
       if (!this.parentView) {
-        this.$el.addClass('single')
-        this.app.title('Island | ' + this.model.get('author').displayName
-            + ' - ' + this.model.formatName());
+        this.$el.addClass('single');
+        this.app.title('Island | ' + this.model.get('author').displayName +
+            ' - ' + this.model.formatName());
         this.title = _.template(title).call(this);
       }
 
@@ -120,8 +120,8 @@ define([
       }).render();
 
       // Handle sizing.
-      if (!this.parentView && this.$('.leftside').height()
-          < this.$('.rightside').height()) {
+      if (!this.parentView && this.$('.leftside').height() <
+          this.$('.rightside').height()) {
         this.$('.leftside').height(this.$el.height() - 60);
       }
     },
@@ -130,8 +130,8 @@ define([
     collect: function (data) {
 
       function _collect () {
-        var el = $('<li class="tick" id="' + data.id + '" data-aid="'
-            + data.action_id + '">');
+        var el = $('<li class="tick" id="' + data.id + '" data-aid="' +
+            data.action_id + '">');
         if (!this.parentView) {
           el.addClass('single');
         }
@@ -200,7 +200,11 @@ define([
         }
       }
 
-      noslide ? _done(): t.$el.slideUp('fast', _done);
+      if (noslide) {
+        _done();
+      } else {
+        t.$el.slideUp('fast', _done);
+      }
     },
 
     onRemoved: function (data) {

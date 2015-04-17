@@ -70,7 +70,7 @@ define([
 
       // Init choices.
       this.cragChoices = new Choices(this.app, {
-        reverse: true, 
+        reverse: true,
         el: '.new-session-crag-search',
         choose: true,
         onChoose: _.bind(this.validate, this),
@@ -89,8 +89,8 @@ define([
       // Handle warning, and error displays.
       this.$('input[type="text"]').blur(function (e) {
         var el = $(e.target);
-        if (el.hasClass('required') && el.val().trim() === ''
-            && !$('.search-choice', el.parent()).is(':visible')) {
+        if (el.hasClass('required') && el.val().trim() === '' &&
+            !$('.search-choice', el.parent()).is(':visible')) {
           el.addClass('input-warning');
         }
         if (el.hasClass('input-error')) {
@@ -148,10 +148,7 @@ define([
         if (pending.note) {
           this.$('textarea[name="note"]').val(pending.note);
         }
-      }
-
-      // Store grades list elements
-      this.grades = this.$('select[name="grade"]').parent().find('li');
+      }      
 
       return this;
     },
@@ -160,8 +157,8 @@ define([
       if (val === undefined) {
         return;
       }
-      var opt = this.$('select[name="' + key + '"] option[value="'
-          + val + '"]');
+      var opt = this.$('select[name="' + key + '"] option[value="' +
+          val + '"]');
       $('.select-styled', this.$('select[name="' + key + '"]').parent())
           .text(opt.text());
       opt.attr('selected', true);
@@ -207,6 +204,8 @@ define([
       var r = this.$('.new-session-route');
       b.attr('checked', true);
       r.attr('checked', false);
+      this.swapImg(b);
+      this.swapImg(r);
       var crag = this.cragChoices.choice;
       this.updateGrades('b', crag ? crag.model.get('country') : 'default');
     },
@@ -216,8 +215,17 @@ define([
       var r = this.$('.new-session-route');
       b.attr('checked', false);
       r.attr('checked', true);
+      this.swapImg(b);
+      this.swapImg(r);
       var crag = this.cragChoices.choice;
       this.updateGrades('r', crag ? crag.model.get('country') : 'default');
+    },
+
+    swapImg: function (el) {
+      var img = $('img', el.parent());
+      var src = img.data('alt');
+      img.data('alt', img.attr('src'));
+      img.attr('src', src);
     },
 
     getPayload: function () {
@@ -228,13 +236,13 @@ define([
         $(this).val(util.sanitize($(this).val()));
       });
 
-      var cragChoice = this.cragChoices.choice ? 
+      var cragChoice = this.cragChoices.choice ?
           this.cragChoices.choice.model.attributes: {};
 
       // Build the payload.
       var type = this.$('.new-session-boulder').is(':checked') ? 'b': 'r';
       var grade = Number(this.$('select[name="grade"]').val());
-      grades = isNaN(grade) ? [] :
+      var grades = grade === -1 ? ['project']:
           [this.app.gradeConverter[type].indexes(grade, 'France')];
       var payload = {
         crag_id: cragChoice.id,
@@ -275,12 +283,12 @@ define([
 
         // Show success.
         mps.publish('flash/new', [{
-          message: 'You added a new ascent in ' + data.crag + '.',
+          message: 'You added a new climb in ' + data.crag + '.',
           level: 'alert'
         }, true]);
 
         // Go to the ascent page.
-        // this.app.router.navigate('crags/' + data.key, {trigger: true});
+        this.app.router.navigate('crags/' + data.key, {trigger: true});
         
         // Refresh the map.
         mps.publish('map/refresh/crags');
@@ -329,7 +337,15 @@ define([
 
     updateGrades: function (type, country) {
       var added = [];
-      this.grades.each(_.bind(function (index, el) {
+      var select = this.$('select[name="grade"]');
+      var grades = select.parent().find('li');
+      var chosen = select.parent().find('.select-styled');
+      var txt = chosen.text();
+      var val = Number(select.val());
+      if (txt !== 'Project' && !isNaN(val)) {
+        chosen.text(this.app.gradeConverter[type].indexes(val, country));
+      }
+      grades.each(_.bind(function (index, el) {
         var $e = $(el);
         var from = Number($e.attr('rel'));
         if (!_.isNaN(from)) {

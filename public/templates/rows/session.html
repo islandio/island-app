@@ -73,6 +73,8 @@
         <%= weather.dailyTempRange() %>&degC <%= weather.getWeatherIconName(daily.icon) %>
       </a>
     </span>
+  <% } else { %>
+    <br />
   <% } %>
 <% } %>
 <% if (this.model.get('actions').length === 0) { %>

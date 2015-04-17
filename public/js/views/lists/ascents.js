@@ -45,7 +45,7 @@ define([
           // convert grades
           var a = {};
           var self = this;
-          _.each(ascents, function (ascent, grade) { 
+          _.each(ascents, function (ascent, grade) {
             var key = self.app.gradeConverter[t].grades(grade, self.data.country);
             if (!a[key]) a[key] = [];
             a[key] = a[key].concat(ascent);

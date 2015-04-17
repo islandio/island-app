@@ -40,7 +40,7 @@ define([
     setup: function () {
 
       // Render lists.
-      this.events = new Events(this.app, {
+      this.feed = new Events(this.app, {
         parentView: this,
         reverse: true,
         input: true,
@@ -73,7 +73,7 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      this.events.destroy();
+      this.feed.destroy();
       this.followers.destroy();
       this.followees.destroy();
       this.crags.destroy();

@@ -80,7 +80,7 @@ define([
       this.resize();
 
       // Render lists.
-      this.events = new Events(this.app, {
+      this.feed = new Events(this.app, {
         parentView: this,
         reverse: true,
         filters: false,
@@ -119,7 +119,7 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      this.events.destroy();
+      this.feed.destroy();
       this.boulders.destroy();
       this.routes.destroy();
       this.undelegateEvents();

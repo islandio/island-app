@@ -54,37 +54,37 @@ define([
     setup: function () {
 
       // Set map view.
-      mps.publish('map/fly', [this.model.get('location') 
-          || this.model.get('hometown')]);
+      mps.publish('map/fly', [this.model.get('location') ||
+          this.model.get('hometown')]);
 
       // Load profile image.
       if (this.model.get('image')) {
         var defaultImg = this.$('.profile-picture img:not(.masked)').show();
         var bannerImg = this.$('.profile-picture img.masked');
-        var bannerURL = this.model.get('image').ssl_url
-            || this.model.get('image').cf_url
-            || this.model.get('image').url;
+        var bannerURL = this.model.get('image').ssl_url ||
+            this.model.get('image').cf_url ||
+            this.model.get('image').url;
 
-        var tmp = new Image;
+        var tmp = new Image();
         tmp.onload = function () {
           bannerImg.get(0).src = this.src;
           bannerImg.show();
           defaultImg.hide();
-        }
+        };
         tmp.onerror = function (err) {
           // defaultImg.show();
-        }
+        };
         tmp.src = bannerURL;
       }
 
       // Render lists.
-      this.events = new Events(this.app, {
+      this.feed = new Events(this.app, {
         parentView: this,
         parentId: this.model.id,
         parentType: 'member',
         reverse: true,
-        input: this.app.profile.member
-            && this.app.profile.member.id === this.model.id,
+        input: this.app.profile.member &&
+            this.app.profile.member.id === this.model.id,
         filters: ['session', 'post', 'crag', 'ascent'],
         hide: ['crag', 'ascent']
       });
@@ -110,7 +110,7 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      this.events.destroy();
+      this.feed.destroy();
       this.followers.destroy();
       this.followees.destroy();
       this.crags.destroy();
@@ -128,8 +128,8 @@ define([
     },
 
     setTitle: function () {
-      this.app.title('The Island | ' + this.model.get('displayName')
-          + ' (@' + this.model.get('username') + ')');
+      this.app.title('The Island | ' + this.model.get('displayName') +
+          ' (@' + this.model.get('username') + ')');
     }
 
   });

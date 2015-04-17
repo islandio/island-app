@@ -77,7 +77,7 @@ define([
 
       // Render events.
       if (!this.options.config) {
-        this.events = new Events(this.app, {
+        this.feed = new Events(this.app, {
           parentView: this,
           parentId: this.model.id,
           parentType: 'crag',
@@ -110,7 +110,9 @@ define([
       }
 
       // Handle text area height.
-      this.$('textarea').autogrow();
+      if (this.options.config) {
+        this.$('textarea').autogrow();
+      }
 
       return this;
     },
@@ -129,6 +131,9 @@ define([
       }
       if (this.options.config) {
         mps.publish('map/listen');
+      }
+      if (this.feed) {
+        this.feed.destroy();
       }
       this.watchers.destroy();
       this.ascents.destroy();

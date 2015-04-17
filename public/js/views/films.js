@@ -42,7 +42,7 @@ define([
     setup: function () {
 
       // Render lists.
-      this.events = new Events(this.app, {parentView: this,
+      this.feed = new Events(this.app, {parentView: this,
           reverse: true, filters: false});
       this.boulders = new Ticks(this.app, {parentView: this, type: 'tick',
           subtype: 'b', heading: 'Boulders'});
@@ -61,7 +61,7 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      this.events.destroy();
+      this.feed.destroy();
       this.boulders.destroy();
       this.routes.destroy();
       this.undelegateEvents();

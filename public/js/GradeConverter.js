@@ -2,7 +2,7 @@
 // The 'default' system is french (routes) and font (boulders), however, if
 // a country is supplied it will try to convert the grades for that country
 
-define([ ], function () {
+define([], function () {
 
 var GradeConverter = function(type) {
 
@@ -79,7 +79,7 @@ var GradeConverter = function(type) {
 
   return this;
 
-}
+};
 
 /* For sorting - will be slow because of the indexOf commands so use 
  * intelligently */
@@ -87,7 +87,7 @@ GradeConverter.prototype.compare = function(a, b, country) {
   var system = this.getSystem(country);
   var list = _.pluck(this.gradeMap, system);
   return list.indexOf(a) - list.indexOf(b);
-}
+};
 
 /* Determine the appropriate conversion system for a given country */
 GradeConverter.prototype.getSystem = function(country) {
@@ -105,7 +105,7 @@ GradeConverter.prototype.getSystem = function(country) {
   } else {
     return this.toSystem;
   }
-}
+};
 
 /* Direct lookup into the grade maps by index or array of indexes, optionally
  * supplying country or preferred conversion system */
@@ -117,9 +117,9 @@ GradeConverter.prototype.indexes = function(indexes, country, system) {
 
   var toSystem = system || this.getSystem(country);
 
-  if (!indexes || indexes.length === 0
-      || !this.fromSystem || !toSystem || _.min(indexes) < 0
-      || _.max(indexes) > this.gradeMap.length)
+  if (!indexes || indexes.length === 0 ||
+      !this.fromSystem || !toSystem || _.min(indexes) < 0 ||
+      _.max(indexes) > this.gradeMap.length)
     return undefined;
 
   var results = [];
@@ -131,7 +131,7 @@ GradeConverter.prototype.indexes = function(indexes, country, system) {
 
   if (!wasArray) results = results[0];
   return results;
-}
+};
 
 /* Convert a grade or array of grades directly, optionally supplying
  * country or preferred conversion system */
@@ -139,25 +139,31 @@ GradeConverter.prototype.grades = function(grades, country, system) {
 
   var toSystem = system || this.getSystem(country);
 
-  if (this.fromSystem !== null && this.fromSystem === toSystem)
+  if (this.fromSystem !== null && this.fromSystem === toSystem) {
     return grades;
+  }
 
   // Make into array and then lower case;
   var wasArray = grades instanceof Array;
   grades = (wasArray ? grades : [grades]) .map(function (g) {
-    return g.toLowerCase(); 
+    return g.toLowerCase();
   });
 
-  if (!grades || grades.length === 0 || !this.fromSystem || !toSystem)
+  if (grades.length === 0 || grades[0] === 'project') {
+    return toSystem === 'indexes' ? [-1]: ['Project'];
+  }
+
+  if (!grades || grades.length === 0 || !this.fromSystem || !toSystem) {
     return undefined;
+  }
 
   var results = [];
 
   var self = this;
   grades.forEach(function (g) {
-    self.gradeMap.some(function (e) {
+    self.gradeMap.some(function (e, i) {
       if (e[self.fromSystem] === g) {
-        results.push(e[toSystem]);
+        results.push(toSystem === 'indexes' ? i: e[toSystem]);
         return true;
       } else return false;
     });
@@ -166,19 +172,19 @@ GradeConverter.prototype.grades = function(grades, country, system) {
   if (!wasArray) results = results[0];
   return results;
 
-}
+};
 
 /* Set origin grading system */
 GradeConverter.prototype.from = function(system) {
   this.fromSystem  = system.toLowerCase();
   return this;
-}
+};
 
 /* Set target grading system */
 GradeConverter.prototype.to = function(system) {
   this.toSystem  = system.toLowerCase();
   return this;
-}
+};
 
 return GradeConverter;
 });

@@ -1,12 +1,12 @@
 <div class="session-activity" data-type="<%= a.type %>">
-  <span class="event-timeline-dot"></span>
-  <ul class="session-activity-title">
-    <li>
-      <% if (a.type === 'b') { %>Bouldering
-      <% } else if (a.type === 'r') { %>Route climbing
-      <% } %>
-    </li>
-  </ul>
+  <!-- <span class="event-timeline-dot"></span> -->
+  <!-- <ul class="session-activity-title">
+    <li> -->
+      <!-- < if (a.type === 'b') { >Bouldering
+      < } else if (a.type === 'r') { >Route climbing
+      < } > -->
+    <!-- </li>
+  </ul> -->
   <ul class="session-ticks">
     <% a.ticks = a.ticks || []; if (a.ticks.length !== 0) { %>
         <% _.each(a.ticks, _.bind(function (tick) {
