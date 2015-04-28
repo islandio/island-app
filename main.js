@@ -19,11 +19,11 @@ var argv = optimist
     .argv;
 
 if (cluster.isMaster) {
-  var createWorkers = function() {
+  var createWorkers = function (opts) {
 
     // Create a worker for each CPU.
     for (var i = 0; i < cpus; ++i) {
-      cluster.fork();
+      cluster.fork(opts);
     }
 
     // Listen for dying workers
@@ -42,7 +42,7 @@ if (cluster.isMaster) {
     tunnel.port = _package_.port;
     ngrok.connect(tunnel, function (err, url) {
       util.log('Setting up tunnel from this machine to ' + url);
-      createWorkers();
+      createWorkers({tunnelURL: url});
     });
   } else {
     createWorkers();
