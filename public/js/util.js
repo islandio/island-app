@@ -381,7 +381,6 @@ define([
         return p.trim() === '';
       });
 
-      // Get all links.
       var linkRx = /(?!src=")(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
       var links = [];
       _.each(parts, function (p) {
@@ -391,7 +390,6 @@ define([
         }
       });
 
-      // Type of videos to look for.
       var tests = [
         {
           type: 'vimeo',
@@ -406,7 +404,7 @@ define([
       ];
       var results = [];
 
-      // Run tests on each link.
+      // Test each link.
       _.each(links, function (l) {
         _.each(tests, function (t) {
           var m = l.match(t.rx);
@@ -416,7 +414,6 @@ define([
         });
       });
 
-      // Build embed links.
       results = _.map(results, function (r) {
         switch (r.type) {
           case 'vimeo':

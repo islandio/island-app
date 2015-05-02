@@ -25,12 +25,11 @@ define([
     render: function () {
       this.$el.show();
       var location = this.options.location;
-      if (location && location.latitude && location.longitude
-          && $('#' + this.$el.attr('id')).length !== 0) {
+      if (location && location.latitude && location.longitude &&
+          $('#' + this.$el.attr('id')).length !== 0) {
 
         // Setup the base map.
-        this.sql = new cartodb.SQL({user: 'island',
-            api_key: this.app.cartodb.apiKey, protocol: 'https'});
+        this.sql = new cartodb.SQL({user: 'island', protocol: 'https'});
         this.map = new L.Map(this.$el.attr('id'), {
           center: [location.latitude, location.longitude],
           zoom: 8,
@@ -62,7 +61,7 @@ define([
           type: 'cartodb',
           cartodb_logo: false,
           extra_params: {
-            map_key: this.app.cartodb.apiKey
+            // map_key: #
           },
           sublayers: [{
             sql: this.app.cartodb.sqlPre,

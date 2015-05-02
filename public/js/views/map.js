@@ -186,8 +186,7 @@ define([
       }
 
       // Setup the base map.
-      this.sql = new cartodb.SQL({user: 'island',
-          api_key: this.app.cartodb.apiKey, protocol: 'https'});
+      this.sql = new cartodb.SQL({user: 'island', protocol: 'https'});
       this.map = new L.Map('map_inner', {
         center: [40, -20],
         zoom: 3,
@@ -256,7 +255,7 @@ define([
         type: 'cartodb',
         cartodb_logo: false,
         extra_params: {
-          map_key: this.app.cartodb.apiKey
+          // map_key: #
         },
         sublayers: [{
           sql: sql,
