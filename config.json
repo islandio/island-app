@@ -1,5 +1,5 @@
 {
-  "MONGO_URI": "mongodb://islander:isL4nDm0n6o@c348.candidate.45.mongolayer.com:10348,c274.candidate.44.mongolayer.com:10274/the_island?replicaSet=set-5484f2935a3d577a7500c84c",
+  "MONGO_URI": "mongodb://localhost:27017/island",
 
   "REDIS_HOST_CACHE": "localhost",
   "REDIS_HOST_SESSION": "localhost",
