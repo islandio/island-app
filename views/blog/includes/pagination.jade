@@ -4,8 +4,8 @@ ul.pagination
     - var back = i % 2 === 0 ? '#f2f2f2': '#f9f9f9';
     if page == i
       li
-        a.active(href="/blog#{pageURL(i)}", style="background: #{back};") #{i}
+        a.active(href="#{pageURL(i)}", style="background: #{back};") #{i}
     else
       li
-        a(href="/blog#{pageURL(i)}", style="background: #{back};") #{i}
+        a(href="#{pageURL(i)}", style="background: #{back};") #{i}
     - i++;

@@ -1,14 +1,96 @@
+- var defaultDescription = "Log your climbing. Follow other athletes. Watch crags and climbs."
+
 doctype 5
 html(lang="en")
   head
+    meta(property="og:site_name", content="The Island")
+    meta(property="fb:app_id", content="203397619757208")
+    - if (typeof type !== 'undefined')
+      meta(property="og:type", content="#{type}")
+    - if (typeof url !== 'undefined')
+      meta(property="og:url", content="#{url}")
+    - if (typeof og_title !== 'undefined')
+      meta(property="og:title", content="#{og_title}")
+    - else if (typeof title !== 'undefined')
+      meta(property="og:title", content="#{title}")
+    - else
+      meta(property="og:title", content="The Island")
+    - if (typeof description !== 'undefined')
+      meta(property="og:description", content="#{description}")
+    - else
+      meta(property="og:description", content="#{defaultDescription}")
+    - if (typeof location !== 'undefined' && location.latitude && location.longitude)
+      meta(property="og:location:latitude", content="#{location.latitude}")
+      meta(property="og:location:longitude", content="#{location.longitude}")
+
+    - if (typeof medias !== 'undefined')
+      each m in medias
+        - if (m.type === 'image' || (m.image && m.image.type === 'image'))
+          meta(property="og:image", content="#{m.image.ssl_url || m.image.url}")
+          - if (m.image.ssl_url && m.image.ssl_url.indexOf('https://') !== -1)
+            meta(property="og:image:secure_url", content="#{m.image.ssl_url}")
+          - if (m.image.meta && m.image.meta.width && m.image.meta.height)
+            meta(property="og:image:width", content="#{m.image.meta.width}")
+            meta(property="og:image:height", content="#{m.image.meta.height}")
+          meta(property="og:image:type", content="#{m.image.mime || 'image/jpeg'}")
+
+        - else if (m.type === 'video' || (m.video && m.video.type === 'video'))
+          meta(property="og:image", content="#{m.poster.ssl_url || m.poster.url}")
+          - if (m.poster.ssl_url && m.poster.ssl_url.indexOf('https://') !== -1)
+            meta(property="og:image:secure_url", content="#{m.poster.ssl_url}")
+          meta(property="og:image:width", content="#{m.poster.meta.width}")
+          meta(property="og:image:height", content="#{m.poster.meta.height}")
+          meta(property="og:image:type", content="#{m.poster.mime || 'image/jpeg'}")
+
+          - swf = assets + '/plugins/jwplayer/player.swf?autostart=true&skin=' + encodeURIComponent(assets + '/plugins/jwplayer/skins/bekle.zip') + '&file=' + encodeURIComponent(m.video.ssl_url)
+          meta(property="og:video", content="#{swf}")
+          - if (m.video.ssl_url && m.video.ssl_url.indexOf('https://') !== -1)
+            meta(property="og:video:secure_url", content="#{swf}")
+          meta(property="og:video:type", content="application/x-shockwave-flash")
+          meta(property="og:video", content="#{m.video.ssl_url}")
+          - if (m.video.ssl_url && m.video.ssl_url.indexOf('https://') !== -1)
+            meta(property="og:video:secure_url", content="#{m.video.ssl_url}")
+          meta(property="og:video:type", content="video/mp4")
+          meta(property="og:video:width", content="500")
+          meta(property="og:video:height", content="#{Math.round(500*m.video.meta.height/m.video.meta.width)}")
+
+        - else if (m.type === 'audio' || (m.audio && m.audio.type === 'audio'))
+          meta(property="og:audio", content="#{m.audio.ssl_url || m.audio.url}")
+          - if (m.audio.ssl_url && m.audio.ssl_url.indexOf('https://') !== -1)
+            meta(property="og:audio:secure_url", content="#{m.audio.ssl_url}")
+          meta(property="og:audio:type", content="application/mp3")
+
+    - if (typeof link !== 'undefined')
+      meta(property="og:image", content="#{link.poster.ssl_url || link.poster.url}")
+      - if (link.poster.ssl_url && link.poster.ssl_url.indexOf('https://') !== -1)
+        meta(property="og:image:secure_url", content="#{link.poster.ssl_url}")
+      meta(property="og:image:width", content="#{link.poster.meta.width}")
+      meta(property="og:image:height", content="#{link.poster.meta.height}")
+      meta(property="og:image:type", content="#{link.poster.mime || 'image/jpeg'}")
+
+    - if (typeof type !== 'undefined' && type === 'website')
+      meta(property="og:image", content="https://s3.amazonaws.com/island.io/splash.jpg")
+      meta(property="og:image:secure_url", content="https://s3.amazonaws.com/island.io/splash.jpg")
+    - else
+      meta(property="og:image", content="https://s3.amazonaws.com/island.io/profile_s.png")
+      meta(property="og:image:secure_url", content="https://s3.amazonaws.com/island.io/profile_s.png")
+    meta(property="og:image:type", content="image/jpeg")
+
     - if (typeof title !== 'undefined')
       title= title
     - else
       title The Island
-    meta(name="description", content="Log your climbing. Follow other athletes. Watch crags and climbs.")
+    - if (typeof description !== 'undefined')
+      meta(name="description", content="#{description}")
+    - else
+      meta(name="description", content="#{defaultDescription}")
     meta(name="keywords", content="Climb, Climbing, Rock Climbing, Bouldering, Island, Training, Logging")
-    meta(name="author", content="The Island")
+    - if (typeof author !== 'undefined')
+      meta(name="author", content="#{author}")
+    - else
+      meta(name="author", content="The Island")
     meta(charset="UTF-8")
+
     <!--[if lt IE 9]><script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
     link(rel="stylesheet", href="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/themes/css/cartodb.css")
     link(rel="stylesheet", href="#{root}/css/fancybox.css")

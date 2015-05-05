@@ -4,6 +4,8 @@ block content
   #container.container.wide.landing
     .page-spin
     include header
+    - if (typeof body !== 'undefined')
+      !{body}
     include map
     block main
     include panel
