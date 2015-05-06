@@ -5,3 +5,5 @@ block main
     .tabs
     .content
       .main(role="main")
+        - if (typeof body !== 'undefined')
+          !{body}
