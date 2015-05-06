@@ -5,8 +5,9 @@
   var sub = this.app.profile.sub;
   var weather = this.model.get('weather');
   var daily;
-  if (weather)
+  if (weather) {
     daily = weather.get('daily');
+  }
   var weatherURL;
   if (daily && this.model.get('crag').location) {
     weatherURL = '//www.forecast.io/#/f/'

@@ -2,6 +2,17 @@
 // The 'default' system is french (routes) and font (boulders), however, if
 // a country is supplied it will try to convert the grades for that country
 
+// temp solution of backend use - should use browserfy for this kind of thing...
+if (typeof _ === 'undefined') {
+  var _ = require('underscore');
+  _.mixin(require('underscore.string'));
+}
+if (typeof define === 'undefined') {
+  var define = function (deps, factory) {
+    exports.GradeConverter = factory();
+  };
+}
+
 define([], function () {
 
 var GradeConverter = function(type) {
