@@ -341,12 +341,12 @@ if (cluster.isMaster) {
               return;
             }
 
-            // Init resources.
+            app.set('sharing', require('./lib/sharing'));
+
             _.each(resources, function (r, name) {
               r.init();
             });
 
-            // Init service.
             service.routes();
 
             // Catch all.

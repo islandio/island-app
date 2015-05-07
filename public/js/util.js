@@ -376,42 +376,28 @@ define([
     getVideoLinks: function (str) {
       if (!str) return false;
 
-      // Splitting on newlines makes matching easier.
-      var parts = _.reject(str.split('\n'), function (p) {
-        return p.trim() === '';
-      });
-
-      var linkRx = /(?!src=")(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-      var links = [];
-      _.each(parts, function (p) {
-        var m;
-        while (m = linkRx.exec(p)) {
-          links.push(m[1]);
-        }
-      });
-
       var tests = [
         {
           type: 'vimeo',
-          rx: /vimeo.com\/(?:channels\/|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|)(\d+)/i,
+          rx: /vimeo.com\/(?:channels\/|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|)(\d+)/ig,
           id: 3
         },
         {
           type: 'youtube',
-          rx: /(youtu\.be\/|youtube\.com\/(watch\?(.*&)?v=|(embed|v)\/))([^\?&"'>\s]+)/i,
+          rx: /(youtu\.be\/|youtube\.com\/(watch\?(.*&)?v=|(embed|v)\/))([^\?&"'>\s]+)/ig,
           id: 5
         }
       ];
       var results = [];
-
-      // Test each link.
-      _.each(links, function (l) {
-        _.each(tests, function (t) {
-          var m = l.match(t.rx);
-          if (m) {
-            results.push({id: m[t.id], type: t.type});
-          }
-        });
+      _.each(tests, function (test) {
+        var match;
+        while (match = test.rx.exec(str)) {
+          results.push({id: match[test.id], type: test.type});
+        }
+      });
+      
+      results = _.uniq(results, function (r) {
+        return r.id;
       });
 
       results = _.map(results, function (r) {

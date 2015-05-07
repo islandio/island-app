@@ -11,4 +11,4 @@ exports.init = function () {
   exports.put = _.bind(exports.app.put, exports.app);
   exports.delete = _.bind(exports.app.delete, exports.app);
   return exports.app;
-}
+};

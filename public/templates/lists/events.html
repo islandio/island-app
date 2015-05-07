@@ -43,16 +43,17 @@
                 <input type="text" name="title" placeholder="Title (optional)"
                     tabindex="3" style="width:200px;" />
               </td>
-              <% if (false && member.facebookId) { %>
+              <% if (member.facebookId || member.twitterId) { %>
                 <td>
-                  <input id="facebook" name="facebook" type="checkbox" tabindex="4" />
-                  <label for="facebook">Post to Facebook</label>
-                </td>
-              <% } %>
-              <% if (false && member.twitterId) { %>
-                <td>
-                  <input id="twitter" name="twitter" type="checkbox" tabindex="5" />
-                  <label for="twitter">Tweet post</label>
+                  <% if (member.facebookId) { %>
+                    <input id="facebook" name="facebook" type="checkbox" tabindex="4" />
+                    <label for="facebook">Facebook</label>
+                    &nbsp;&nbsp;
+                  <% } %>
+                  <% if (member.twitterId) { %>
+                    <input id="twitter" name="twitter" type="checkbox" tabindex="5" />
+                    <label for="twitter">Twitter</label>
+                  <% } %>
                 </td>
               <% } %>
               <td class="last">

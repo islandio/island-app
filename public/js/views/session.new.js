@@ -414,6 +414,9 @@ define([
       actions.push(action);
       payload.actions = actions;
 
+      payload.facebook = this.$('#facebook').is(':checked');
+      payload.twitter = this.$('#twitter').is(':checked');
+
       return payload;
     },
 
@@ -553,7 +556,6 @@ define([
         }, this),
         onSuccess: _.bind(function (assembly) {
           if (_.isEmpty(assembly.results)) {
-            console.log(assembly);
             mps.publish('flash/new', [{
               message: 'Whoa, there. You tried to attach an invalid file type.',
               level: 'alert',
