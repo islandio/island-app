@@ -118,7 +118,7 @@ if (cluster.isMaster) {
         transloadit: service.transloadit(req)
       };
       if (err) {
-        console.log(err.stack || err);
+        console.log('Error in errorHandler: ' + (err.stack || err));
         profile.error = err;
         fn.call(res, err.code || 500, iutil.client(profile));
       } else {

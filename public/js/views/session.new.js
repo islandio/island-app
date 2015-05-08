@@ -34,7 +34,6 @@ define([
       this.$el.html(this.template.call(this, {tick: this.tickTemp.call(this,
           {closable: false})}));
 
-      // Handle selects.
       util.customSelects(this.el);
 
       // Dump content into modal.

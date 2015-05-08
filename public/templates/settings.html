@@ -424,30 +424,60 @@
         <tr>
           <td colspan="6">
             <div class="settings-services-spin"></div>
+            <% if (!data.googleId) { %>
+              <a tabindex="16" class="button signin-strategy-btn google-btn"
+                  href="/connect/google">
+                Connect Google <i class="icon-angle-right"></i>
+              </a>
+            <% } else if (data.provider !== 'google') { %>
+              <a tabindex="16" class="button signin-strategy-btn google-btn"
+                  href="/disconnect/google">
+                Disconnect Google <i class="icon-angle-right"></i>
+              </a>
+            <% } else { %>
+              <a class="button signin-strategy-btn-disabled google-btn-disabled disabled"
+                  href="javascript:;" disabled="disabled">
+                Google connected (primary)
+              </a>
+            <% } %>
+            <br />
+
             <% if (!data.facebookId) { %>
               <a tabindex="16" class="button signin-strategy-btn facebook-btn"
                   href="/connect/facebook">
-                Connect with Facebook <i class="icon-angle-right"></i>
+                Connect Facebook <i class="icon-angle-right"></i>
+              </a>
+            <% } else if (data.provider !== 'facebook') { %>
+              <a tabindex="16" class="button signin-strategy-btn facebook-btn"
+                  href="/disconnect/facebook">
+                Disconnect Facebook <i class="icon-angle-right"></i>
               </a>
             <% } else { %>
               <a class="button signin-strategy-btn-disabled facebook-btn-disabled disabled"
                   href="javascript:;" disabled="disabled">
-                Connected with Facebook
+                Facebook connected (primary)
               </a>
             <% } %>
             <br />
+
             <% if (!data.twitterId) { %>
               <a tabindex="17" class="button signin-strategy-btn twitter-btn"
                   href="/connect/twitter">
-                Connect with Twitter <i class="icon-angle-right"></i>
+                Connect Twitter <i class="icon-angle-right"></i>
+              </a>
+            <% } else if (data.provider !== 'twitter') { %>
+              <a tabindex="17" class="button signin-strategy-btn twitter-btn"
+                  href="/disconnect/twitter">
+                Disconnect Twitter <i class="icon-angle-right"></i>
               </a>
             <% } else { %>
               <a class="button signin-strategy-btn-disabled twitter-btn-disabled disabled"
                   href="javascript:;" disabled="disabled">
-                Connected with Twitter
+                Twitter connected (primary)
               </a>
             <% } %>
             <br />
+
             <% if (!data.instagramId) { %>
               <a tabindex="18" class="button signin-strategy-btn instagram-btn"
                   href="/connect/instagram">
@@ -455,13 +485,13 @@
               </a>
             <% } else { %>
               <a tabindex="18" class="button signin-strategy-btn instagram-btn"
-                  href="/connect/instagram">
-                Re-connect with Instagram <i class="icon-angle-right"></i>
+                  href="/disconnect/instagram">
+                Disconnect with Instagram <i class="icon-angle-right"></i>
               </a>
               <p class="settings-instructions">
                 After you're connected, post to your feed by adding @island_io, #islandio, or #weareisland to your photos.
                 <br />
-                <strong>Not seeing your photos on your Island profile? Try re-connecting.</strong>
+                <strong>Not seeing your photos on your Island profile? Try disconnecting and re-connecting.</strong>
               </p>
             <% } %>
           </td>
