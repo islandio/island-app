@@ -6,7 +6,9 @@
 <% if (!this.parentView) { %>
   <div class="rightside">
     <div class="mini-map" id="session_map_<%= this.model.id %>"></div>
-    <% if (daily) { %>
+    <% if (daily) {
+      var cloudCover = Math.round(daily.cloudCover * 100);
+    %>
       <table class="session-weather">
         <tr>
           <th colspan="2"><i class="icon-temperatire"></i> <%= new Date(this.model.get('date')).format('dddd, mmm d, yyyy') %></th>
@@ -32,7 +34,7 @@
         </tr>
         <tr>
           <td>cloud cover</td>
-          <td><%= Math.round(daily.cloudCover * 100) %>%</td>
+          <td><%= !isNaN(cloudCover) ? cloudCover + '%': '?' %></td>
         </tr>
         <tr>
           <td>wind speed</td>

@@ -15,8 +15,6 @@ define([
 ], function ($, _, Backbone, Router, GradeConverter, mps, rpc, rest, util) {
 
   var App = function () {
-
-    // Save connection to server.
     this.rpc = rpc.init();
 
     // Location of images that must remain remote.
@@ -32,9 +30,7 @@ define([
       'r': new GradeConverter('routes').from('french').to('default')
     };
 
-    // Client services.
     this.cartodb = {
-      apiKey: '883965c96f62fd219721f59f2e7c20f08db0123b',
       sqlPre: "select *, st_asgeojson(the_geom) as geometry from " +
           (window.__s ? 'crags': 'crags_dev') +
           " where (forbidden is NULL or forbidden is FALSE)"
@@ -44,7 +40,6 @@ define([
           'b6e0d7d608a14a578cf94763f70f1b49'
     };
 
-    // For local dev.
     if (window.__s === '') {
       window._rpc = rpc;
       window._rest = rest;
@@ -55,7 +50,6 @@ define([
   App.prototype.update = function (profile) {
     var login = false;
 
-    // Set the app profile.
     if (this.profile) {
       this.profile.content = profile.content;
       this.profile.sub = profile.sub;
@@ -94,7 +88,6 @@ define([
         window.location.href = '/';
       });
 
-      // For local dev.
       if (window.__s === '') {
         window._app = app;
         console.log('island dev');

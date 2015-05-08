@@ -74,10 +74,10 @@ define([
           this.$el.addClass('single');
         }
       }
-      if (this.app.profile.member 
-          && this.model.get('author')
-          && this.model.get('author').id
-          === this.app.profile.member.id) {
+      if (this.app.profile.member &&
+          this.model.get('author') &&
+          this.model.get('author').id ===
+          this.app.profile.member.id) {
         this.$el.addClass('own');
       }
       if (this.model.get('sent')) {
@@ -86,8 +86,8 @@ define([
 
       // Render title if single
       if (!this.parentView) {
-        this.app.title('Island | ' + this.model.get('author').displayName
-            + ' - ' + this.model.get('ascent').name);
+        this.app.title('Island | ' + this.model.get('author').displayName +
+            ' - ' + this.model.get('ascent').name);
         this.title = _.template(title).call(this);
 
         // Handle weather icon.
@@ -115,9 +115,10 @@ define([
       //     - (set = three vids of diff quality for each uploaded vid)
       var mosaics = [];
       _.each(this.model.get('medias'), _.bind(function (m) {
+        var o;
         switch (m.type) {
           case 'image':
-            var o = _.find(mosaics, function (o) {
+            o = _.find(mosaics, function (o) {
               return o.type === 'image';
             });
             if (!o) {
@@ -131,7 +132,7 @@ define([
             if (m.quality !== 'hd') {
               return;
             }
-            var o = {type: 'video', images: []};
+            o = {type: 'video', images: []};
             o.images.push(m.poster);
             _.each(m.thumbs, function (t, i) {
               if (i !== 1) {
@@ -157,19 +158,19 @@ define([
         var el = this.$('.image-mosaic[data-id="' + o.id + '"]');
         util.createImageMosaic(o.images, el.width(), el.height(), _.bind(function (item) {
           var src = item.data.ssl_url || item.data.url;
-          var anc = $('<a class="fancybox" data-type="' + o.type + '" rel="g-' + o.id
-              + '" href="' + src + '">');
+          var anc = $('<a class="fancybox" data-type="' + o.type + '" rel="g-' + o.id +
+              '" href="' + src + '">');
           var div = $('<div class="image-mosaic-wrap">').css(item.div).appendTo(anc);
           var img = $('<img src="' + src + '" />').css(item.img).wrap(
               $('<a class="fancybox" rel="g-' + o.id + '">')).appendTo(div);
           if (o.type === 'video' && item.first) {
             var s = 120;
-            if (this.parentView && this.parentView.parentView
-                && this.parentView.$('.session-ticks').length > 0) {
+            if (this.parentView && this.parentView.parentView &&
+                this.parentView.$('.session-ticks').length > 0) {
               s = 80;
             }
-            var play = $('<img src="' + __s + '/img/play.png" class="image-mosaic-play"'
-                + ' width="' + s + '" height="' + s + '" />');
+            var play = $('<img src="' + __s + '/img/play.png" class="image-mosaic-play"' +
+                ' width="' + s + '" height="' + s + '" />');
             play.appendTo(div);
             if (item.data.trailer) {
               var subtext = $('<span class="image-mosaic-play-text">(trailer)</span>');
@@ -185,8 +186,8 @@ define([
 
           function getVideo(quality) {
             return _.find(this.model.get('medias'), function (m) {
-              return m.type === 'video' && m.quality === quality
-                  && m.video.original_id === o.id;
+              return m.type === 'video' && m.quality === quality &&
+                  m.video.original_id === o.id;
             });
           }
 
@@ -206,7 +207,6 @@ define([
                 var hd = getVideo.call(this, 'hd');
 
                 // Video params
-                console.log(this.model.attributes)
                 var params = {
                   width: el.width().toString(),
                   height: el.height().toString(),
@@ -214,11 +214,11 @@ define([
                   primary: 'flash',
                   ga: {},
                   sharing: {
-                    link: window.location.protocol + '//'
-                        + window.location.host + '/efforts/' + this.model.get('key'),
-                    code: "<iframe width='100%' height='100%' src='//"
-                        + window.location.host + "/embed/"
-                        + ipad.video.id + "' frameborder='0'></iframe>"
+                    link: window.location.protocol + '//' +
+                        window.location.host + '/efforts/' + this.model.get('key'),
+                    code: "<iframe width='100%' height='100%' src='//" +
+                        window.location.host + "/embed/" +
+                        ipad.video.id + "' frameborder='0'></iframe>"
                   }
                 };
 
@@ -263,8 +263,7 @@ define([
                   height: el.height().toString()
                 });
                 this.$('span.image-mosaic-play-text').hide();
-                
-                // Finally, play the video.
+
                 jwplayer('video-' + o.id).setup(params);
 
                 return false;
@@ -307,8 +306,8 @@ define([
       this.when();
 
       // Handle sizing.
-      if (!this.parentView && this.$('.leftside').height()
-          < this.$('.rightside').height()) {
+      if (!this.parentView && this.$('.leftside').height() <
+          this.$('.rightside').height()) {
         // this.$('.leftside').height(this.$el.height() - 60);
       }
     },

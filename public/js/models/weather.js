@@ -28,18 +28,18 @@ define([
     getWeatherIconName: function (str) {
       switch (str) {
         default:
-        case 'partly-cloudy-day': return 'and partly cloudy'
-        case 'clear-day': return 'and clear'
+        case 'partly-cloudy-day': return 'and partly cloudy';
+        case 'clear-day': return 'and clear';
 
-        case 'partly-cloudy-night': return 'and partly cloudy night'
-        case 'clear-night': return 'and clear night'
+        case 'partly-cloudy-night': return 'and partly cloudy night';
+        case 'clear-night': return 'and clear night';
 
-        case 'cloudy': return 'and cloudy'
-        case 'rain': return 'and raining'
-        case 'sleet': return 'and sleeting'
-        case 'snow': return 'and snowing'
-        case 'wind': return 'and windy'
-        case 'fog': return 'and foggy'
+        case 'cloudy': return 'and cloudy';
+        case 'rain': return 'and raining';
+        case 'sleet': return 'and sleeting';
+        case 'snow': return 'and snowing';
+        case 'wind': return 'and windy';
+        case 'fog': return 'and foggy';
       }
     }
 

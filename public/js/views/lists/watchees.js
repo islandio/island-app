@@ -20,18 +20,19 @@ define([
       this.type = options.type;
       this.subtype = options.subtype;
       this.heading = options.heading;
-      this.setElement(options.parentView.$('.sidebar-' + this.type + 's'
-          + (options.subtype ? '-' + options.subtype: '')));
+      this.setElement(options.parentView.$('.sidebar-' + this.type + 's' +
+          (options.subtype ? '-' + options.subtype: '')));
 
-      // Call super init.
       List.prototype.initialize.call(this, app, options);
 
-      // Socket subscriptions
       _.bindAll(this, 'collect', '_remove');
       this.app.rpc.socket.on('watch.new', this.collect);
       this.app.rpc.socket.on('watch.removed', this._remove);
 
-      // Reset the collection.
+      if (!this.app.profile.content.watchees) {
+        return;
+      }
+
       var items = _.filter(this.app.profile.content.watchees.items,
           _.bind(function (i) {
         if (this.type === 'crag') {

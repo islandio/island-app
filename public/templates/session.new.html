@@ -11,17 +11,27 @@
       </div>
     </div>
     <div class="modal-actions">
-      <button tabindex="2" class="modal-cancel modal-button button">Cancel</button>
+      <button tabindex="4" class="modal-cancel modal-button button">Cancel</button>
       <% if (this.options.tick) { %>
-        <button tabindex="3" class="modal-delete modal-button button">
+        <button tabindex="5" class="modal-delete modal-button button">
           <div class="button-spin"></div>
           <i class="icon-trash"></i> <span>Delete</span>
         </button>
       <% } %>
-      <button tabindex="4" class="modal-confirm modal-button button new-session-button disabled" disabled>
+      <button tabindex="6" class="modal-confirm modal-button button new-session-button disabled" disabled>
         <div class="button-spin"></div>
         <i class="icon-pencil"></i> <%= this.options.tick ? 'Update': 'Log' %>
       </button>
+      <div class="modal-sharing">
+        <% if (this.app.profile.member.facebookId) { %>
+          <input id="facebook" name="facebook" type="checkbox" tabindex="2" />
+          <label for="facebook">Facebook</label>
+        <% } %>
+        <% if (this.app.profile.member.twitterId) { %>
+          <input id="twitter" name="twitter" type="checkbox" tabindex="3" />
+          <label for="twitter">Twitter</label>
+        <% } %>
+      </div>
       <div class="clear"></div>
     </div>
     <input type="hidden" name="params"

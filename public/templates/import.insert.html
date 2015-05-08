@@ -5,7 +5,7 @@
 
 <div class="rightside">
   <div class="sidebar-items">
-    <% if (this.app.profile.member.username !== 'island'
+    <% if (this.app.profile.member && this.app.profile.member.username !== 'island'
         && this.app.profile.member.role !== 2) { %>
       <div class="sidebar-watchees">
         <span class="sidebar-heading">You're watching:</span>
