@@ -39,6 +39,9 @@ define([
       clientId: window.__s ? 'a3003554a308427d8131cef13ef2619f':
           'b6e0d7d608a14a578cf94763f70f1b49'
     };
+    this.facebook = {
+      clientId: window.__s ? 203397619757208:153015724883386
+    };
 
     if (window.__s === '') {
       window._rpc = rpc;

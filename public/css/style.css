@@ -1070,6 +1070,38 @@ button.button.input-add-button:focus {
   border: none;
   outline: none;
 }
+a.sharing-button {
+  position: relative;
+}
+div.share-button {
+  visibility: hidden;
+  position: absolute;
+  right: -43px;
+  top: 55px;
+}
+div.share-button.sharer-0 {
+  width: auto;
+  height: auto;
+}
+div.share-button.sharer-0 .social.right {
+  margin: 0;
+}
+div.share-button.sharer-0 .social ul {
+  background: none !important;
+  border: none !important;
+}
+div.share-button.sharer-0 .social ul li {
+  line-height: 69px;
+  float: none;
+  width: 30px;
+  height: auto;
+  padding: 0;
+  font-size: 12px;
+}
+div.share-button.sharer-0 .social.networks-4,
+div.share-button.sharer-0 .social.networks-4 ul {
+  width: auto;
+}
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––structure*/
 .container {
   padding: 0;
@@ -1128,6 +1160,9 @@ button.button.input-add-button:focus {
   margin: 40px auto 0;
   width: 1086px;
   background: none;
+}
+body.loading .folder {
+  visibility: hidden;
 }
 .container.wide .folder {
   margin: 0;
@@ -2688,11 +2723,13 @@ button.activity-button i {
   bottom: -21px;
   width: 100%;
   z-index: 2;
+  pointer-events: none;
 }
 .map-control div {
   position: relative;
   left: 50%;
   width: 146px;
+  pointer-events: all;
 }
 .map-control a.button {
   position: relative;

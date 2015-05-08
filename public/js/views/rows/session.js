@@ -107,19 +107,15 @@ define([
     },
 
     setup: function () {
-
-      // Set map view.
       if (!this.parentView) {
         mps.publish('map/fly', [this.model.get('crag').location]);
       }
 
-      // Render map.
       this.map = new MiniMap(this.app, {
         el: this.$('.mini-map'),
         location: this.model.get('crag').location
       }).render();
 
-      // Handle sizing.
       if (!this.parentView && this.$('.leftside').height() <
           this.$('.rightside').height()) {
         this.$('.leftside').height(this.$el.height() - 60);

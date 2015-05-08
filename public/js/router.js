@@ -208,7 +208,6 @@ define([
           });
         }
 
-        // Callback to route.
         cb(err);
 
         // Resize for map.

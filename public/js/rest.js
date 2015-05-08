@@ -41,6 +41,12 @@ define([
           } catch (e) {
             err = res.status + ' - "' + res.statusText + '"';
           }
+          if (res.status === 200) {
+            return cb(null, res.responseText);
+          }
+          if (typeof err === 'string') {
+            return cb(err);
+          }
           var log = new Error();
           _.each(err, function (v, k) {
             if (v && k !== 'member' && k !== 'content' && k !==

@@ -11,8 +11,10 @@ define([
   'rest',
   'text!../../templates/tabs.html',
   'views/ascent.new',
-  'views/session.new'
-], function ($, _, Backbone, util, mps, rest, template, NewAscent, NewSession) {
+  'views/session.new',
+  'Share',
+], function ($, _, Backbone, util, mps, rest, template, NewAscent,
+      NewSession, Share) {
 
   return Backbone.View.extend({
 
@@ -63,6 +65,7 @@ define([
       'click .unfollow-button': 'unfollow',
       'click .watch-button': 'watch',
       'click .unwatch-button': 'unwatch',
+      'click .sharing-button': 'toggleShare',
       'click .add-ascent': 'add',
       'click .log-session': 'log'
     },
@@ -183,7 +186,7 @@ define([
     },
 
     add: function (e, opts) {
-      var opts = opts || {};
+      opts = opts || {};
       if (e) {
         e.preventDefault();
         opts.crag_id = $(e.target).closest('a').data('cid');
@@ -196,6 +199,79 @@ define([
       var aid = $(e.target).closest('a').data('aid');
       var cid = $(e.target).closest('a').data('cid');
       new NewSession(this.app, {crag_id: cid, ascent_id: aid}).render();
+    },
+
+    toggleShare: function (err) {
+      if (this.share) {
+        this.share.toggle();
+        return;
+      }
+
+      rest.get(window.location.href + '?static=true',
+          _.bind(function (err, body) {
+        if (err) {
+          return console.log(err);
+        }
+
+        var rx = /(<meta.*?>)/g;
+        var metas = [];
+        var match;
+        while (match = rx.exec(body)) {
+          metas.push(match[1]);
+        }
+        var head = $('head');
+        $('meta', head).remove();
+        for (var i = metas.length - 1; i >= 0; --i) {
+          $(metas[i]).prependTo(head);
+        }
+
+        this.share = new Share('.share-button', {
+          url: $('meta[property="og:url"]').attr('content'),
+          // title:
+          // description:
+          // image:
+          ui: {
+            flyout: 'top right',
+            button_font: false,
+            button_text: '',
+            // icon_font:
+          },
+          networks: {
+            google_plus: {
+              enabled: true,
+              // url:
+            },
+            twitter: {
+              enabled: true,
+              // url:
+              // description:
+            },
+            facebook: {
+              enabled: true,
+              load_sdk: true,
+              // url: 
+              app_id: this.app.facebook.clientId,
+              // title:
+              // caption:
+              // description:
+              // image:
+            },
+            pinterest: {
+              enabled: false,
+              // url:
+              // image:
+              // description:
+            },
+            email: {
+              enabled: true,
+              // title:
+              // description:
+            }
+          }
+        });
+
+        this.share.open();
+      }, this));
     }
 
   });
