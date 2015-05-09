@@ -55,6 +55,10 @@ define([
         this.$('.tab:eq(' + i + ')').addClass('active');
       }
 
+      if (this.share) {
+        delete this.share;
+      }
+
       this.trigger('rendered');
       return this;
     },
@@ -225,8 +229,9 @@ define([
           $(metas[i]).prependTo(head);
         }
 
+        var url = $('meta[property="og:url"]').attr('content');
         this.share = new Share('.share-button', {
-          url: $('meta[property="og:url"]').attr('content'),
+          url: url,
           // title:
           // description:
           // image:
@@ -240,11 +245,19 @@ define([
             google_plus: {
               enabled: true,
               // url:
+              before: function () {
+                this.url = url;
+              }
             },
             twitter: {
               enabled: true,
               // url:
               // description:
+              before: function () {
+                var desc = $('meta[name="twitter:description"]')
+                    .attr('content');
+                this.description = encodeURIComponent(desc);
+              }
             },
             facebook: {
               enabled: true,
@@ -266,6 +279,11 @@ define([
               enabled: true,
               // title:
               // description:
+              before: function () {
+                var desc = url + '\n\n' + $('meta[property="og:description"]')
+                    .attr('content');
+                this.description = encodeURIComponent(desc);
+              }
             }
           }
         });

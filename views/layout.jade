@@ -1,5 +1,6 @@
 - var defaultDescription = "Log your climbing. Follow other athletes. Watch crags and climbs."
-- var shortDescription = typeof description !== 'undefined' ? description.substr(0, 137) + '...': ''
+- var urlLength = typeof url !== 'undefined' ? url.length: 0;
+- var shortDescription = typeof description !== 'undefined' ? description.substr(0, 136 - urlLength) + '...': ''
 
 doctype 5
 html(lang="en")
