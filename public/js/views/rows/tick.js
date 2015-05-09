@@ -55,7 +55,11 @@ define([
 
     events: {
       'click .navigate': 'navigate',
-      'click .tick-edit': 'edit'
+      'click .tick-edit': 'edit',
+      'click .info-share': function () {
+        mps.publish('modal/share/open', [{pathname: '/efforts/' +
+            this.model.get('key')}]);
+      },
     },
 
     render: function () {

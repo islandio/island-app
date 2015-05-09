@@ -45,7 +45,11 @@ define([
 
     events: {
       'click .navigate': 'navigate',
-      'click .post-delete': 'delete'
+      'click .post-delete': 'delete',
+      'click .info-share': function () {
+        mps.publish('modal/share/open', [{pathname: '/' +
+            this.model.get('key')}]);
+      },
     },
 
     render: function () {

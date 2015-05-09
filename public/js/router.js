@@ -40,11 +40,13 @@ define([
   'text!../templates/about.html',
   'text!../templates/privacy.html',
   'text!../templates/tip.html',
-  'views/session.new'
+  'views/session.new',
+  'views/share'
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
     Flashes, Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Tick,
     Crag, Admin, ImportSearch, ImportInsert, Ascent, Settings, Reset, Films, Static,
-    Crags, Dashboard, Splash, Ticks, aboutTemp, privacyTemp, tipTemp, NewSession) {
+    Crags, Dashboard, Splash, Ticks, aboutTemp, privacyTemp, tipTemp, NewSession, Share
+) {
 
   /*
    * Determine if parent is iframe.
@@ -152,6 +154,11 @@ define([
       // Render welcome modal.
       mps.subscribe('modal/welcome/open', _.bind(function (title, skipUpdate) {
         this.renderWelcome(title, skipUpdate);
+      }, this));
+
+      // Open share modal.
+      mps.subscribe('modal/share/open', _.bind(function (opts) {
+        this.modal = new Share(this.app, opts).render();
       }, this));
 
       // Log new session.
