@@ -108,7 +108,7 @@ define([
 
       // Init page spinner.
       this.spin = new Spin($('.page-spin'), {color: '#808080'});
-      this.start(true);
+      this.start(true, true);
 
       // Page routes.
       this.route(':un', 'profile', this.profile);
@@ -339,7 +339,7 @@ define([
       }
     },
 
-    start: function (skipQueue) {
+    start: function (skipQueue, skipClass) {
       if (!skipQueue) {
         this.loadingQueue.push(1);
       }
@@ -347,10 +347,12 @@ define([
         return;
       }
       this.loading = true;
-      $(window).scrollTop(0);
-      $('body').addClass('loading');
-      if (!$('footer').hasClass('nohide')) {
-        $('footer').hide();
+      if (!skipClass) {
+        $(window).scrollTop(0);
+        $('body').addClass('loading');
+        if (!$('footer').hasClass('nohide')) {
+          $('footer').hide();
+        }
       }
       this.spin.start();
     },
@@ -691,7 +693,7 @@ define([
       if (this.app.profile) {
         return this.refresh();
       }
-      this.start();
+      this.start(null, true);
       this.render('/service/static', _.bind(function (err) {
         if (err) return;
         this.page = new Static(this.app).render();
