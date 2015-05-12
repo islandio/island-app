@@ -57,8 +57,6 @@ define([
     },
 
     setup: function () {
-
-      // Save refs.
       this.submitButton = this.$('.new-session-button');
       this.submitButtonSpin = new Spin($('.button-spin', this.el), {
         color: '#396400',
@@ -354,7 +352,8 @@ define([
             $e.hide();
           } else {
             added.push(grade);
-            $e.text(this.app.gradeConverter[type].indexes(from, country));
+            $e.text(this.app.gradeConverter[type].indexes(from, country))
+                .show();
           }
         }
       }, this));
