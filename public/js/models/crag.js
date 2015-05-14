@@ -25,6 +25,14 @@ define([
       return str;
     },
 
+    formatOverview: function () {
+      var txt = this.get('overview') || '';
+      if (txt.trim() === '') {
+        return false;
+      }
+      return util.formatText(txt);
+    },
+
     instagramTags: function () {
       var tags = this.get('tags');
 

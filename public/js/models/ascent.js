@@ -28,6 +28,14 @@ define([
       return str;
     },
 
+    formatNote: function () {
+      var txt = this.get('note') || '';
+      if (txt.trim() === '') {
+        return false;
+      }
+      return util.formatText(txt);
+    },
+
     instagramTags: function () {
       var tags = this.get('tags');
 

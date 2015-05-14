@@ -3,6 +3,9 @@
   // Save model attributes
   var data = this.model.attributes;
 
+  var beta = this.model.formatNote() ||
+      '<span class="empty-feed">No information yet.</span>';
+
 %>
 
 <div class="rightside">
@@ -159,6 +162,11 @@
   </div>
 <% } else { %>
   <div class="leftside">
+    <div class="beta">
+      <p>
+        <%= beta %>
+      </p>
+    </div>
     <div class="instagrams">
       <div id="ig_tagged">
         <span class="sidebar-heading-small">

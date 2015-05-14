@@ -4,6 +4,9 @@
   var data = this.model.attributes;
   var location = data.location || {};
 
+  var beta = this.model.formatOverview() ||
+      '<span class="empty-feed">No information yet.</span>';
+
 %>
 
 <div class="rightside">
@@ -104,6 +107,11 @@
   </div>
 <% } else { %>
   <div class="leftside">
+    <div class="beta">
+      <p>
+        <%= beta %>
+      </p>
+    </div>
     <div class="instagrams">
       <div id="ig_tagged">
         <span class="sidebar-heading-small">
