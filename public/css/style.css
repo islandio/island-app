@@ -4673,7 +4673,9 @@ p.session-tick-note {
   color: #3d3d3d;
   max-width: 404px;
 }
-.tick-list p.session-tick-note {
+.tick-list p.session-tick-note,
+.event-right > .tick p.session-tick-note,
+.tick.single p.session-tick-note {
   max-width: initial;
 }
 a.session-tick-button {

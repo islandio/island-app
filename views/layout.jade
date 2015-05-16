@@ -1,12 +1,7 @@
-
-- var defaultDescription = "Log your climbing. Follow other athletes. Watch crags and climbs."
-- var description = typeof description !== 'undefined' ? description.replace('\n', ' '): '' 
-- var urlLength = typeof url !== 'undefined' ? url.length: 0;
-- var shortDescription = typeof description !== 'undefined' ? description.substr(0, 136 - urlLength) + '...': ''
-- var schema = typeof schema !== 'undefined' ? schema: 'Thing';
+- var defaultDescription = 'Log your climbing. Follow other athletes. Watch crags and climbs.';
 
 doctype 5
-html(lang="en", itemscope, itemtype="http://schema.org/#{schema}")
+html(lang="en", itemscope, itemtype="http://schema.org/#{typeof schema === 'undefined' ? 'Thing': schema}")
   head
     meta(property="og:site_name", content="The Island")
     meta(property="fb:app_id", content="203397619757208")

@@ -12,13 +12,11 @@ define([
   'views/rows/flash'
 ], function ($, _, List, mps, template, Collection, Row) {
   return List.extend({
-    
-    // el: '.block-messages > ul',
 
     initialize: function (app, options) {
       this.app = app;
       this.template = _.template(template);
-      this.collection = new Collection;
+      this.collection = new Collection();
       this.Row = Row;
       this.setElement(options.el);
 
@@ -26,7 +24,6 @@ define([
         options.type = 'block';
       }
 
-      // Call super init.
       List.prototype.initialize.call(this, app, options);
 
       if (this.app.profile && this.app.profile.member) {
