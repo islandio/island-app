@@ -20,7 +20,7 @@ define([
 
     initialize: function (app, options) {
       this.app = app;
-      this.collection = new Collection;
+      this.collection = new Collection();
       this.Row = Row;
       this.options = options;
       if (!this.options.query) {
@@ -102,9 +102,10 @@ define([
         if (e.keyCode === 13 && e.which === 13) {
           if (this.selecting.el) {
             this.views[this.selecting.el.index() - 1].choose();
-            if (!this.options.choose) {
-              this.input.select();
-            }
+            // if (!this.options.choose) {
+            //   this.input.blur();
+            //   this.results.hide();
+            // }
             return false;
           }
         }
@@ -211,11 +212,11 @@ define([
           if (!this.autocomplete) done();
           this.autocomplete.getPlacePredictions({input: str},
               _.bind(function (preds, status) {
-            if (status !== google.maps.places.PlacesServiceStatus.OK
-              || preds.length === 0) {
+            if (status !== google.maps.places.PlacesServiceStatus.OK ||
+              preds.length === 0) {
               return done();
             }
-            var _done = _.after(preds.length, done)
+            var _done = _.after(preds.length, done);
             items.places = [];
             _.each(preds, _.bind(function (p) {
               this.places.getDetails({reference: p.reference},
@@ -242,7 +243,11 @@ define([
     },
 
     choose: function (choice, fixed) {
-      if (!this.options.choose) return;
+      if (!this.options.choose) {
+        this.input.blur();
+        this.results.hide();
+        return;
+      }
       this.choiceContent.html(choice.$el.html());
       if (fixed) {
         this.choiceWrap.addClass('fixed');

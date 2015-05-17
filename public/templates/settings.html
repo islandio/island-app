@@ -233,9 +233,9 @@
           <td colspan="6">
             <ul class="settings-detail-txt settings-detail-list">
               <!-- <li>Anyone can view your full name.</li> -->
-              <li>Logged-in Island athletes can follow you.</li>
-              <li>Anyone can see your sessions and posts.</li>
-              <li>Logged-in Island athletes can see your activities on your Island Profile.</li>
+              <li>Logged-in Island athletes can follow me.</li>
+              <li>Anyone can see my sessions and posts.</li>
+              <li>Logged-in Island athletes can see my activities on my Island Profile.</li>
             </ul>
           </td>
         </tr>
@@ -255,9 +255,9 @@
           <td colspan="6">
             <ul class="settings-detail-txt settings-detail-list">
               <!-- <li>Your name will be anonymized (e.g. <= this.model.anonName() >) to all logged out athletes.</li> -->
-              <li>Only Island athletes that you approve can follow you.</li>
-              <li>Only Island athletes that you approve can see your sessions and posts.</li>
-              <li>Only approved followers can see your activities on your Island Profile.</li>
+              <li>Only Island athletes that I approve can follow me.</li>
+              <li>Only Island athletes that I approve can see my sessions and posts.</li>
+              <li>Only approved followers can see my activities on my Island Profile.</li>
             </ul>
           </td>
         </tr>
@@ -316,13 +316,25 @@
         </tr>
         <tr>
           <td colspan="6">
-            <h1 class="title-static">Download your Data </h1>
+            <h1 class="title-static">Download My Data </h1>
           </td>
         </tr>
         <tr>
           <td colspan="6">
             <a tabindex="14" class="button" href="/api/ticks?csv=true">
               Download <i class="icon-angle-down"></i>
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6">
+            <h1 class="title-static">Clear My Logs </h1>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6">
+            <a tabindex="14" class="button clear-ascents" href="javascript:;">
+              Clear <i class="icon-angle-right"></i>
             </a>
           </td>
         </tr>
@@ -350,7 +362,7 @@
 
         <tr>
           <td colspan="4">
-            <span class="settings-detail-txt">When someone gives you a "nod"</span>
+            <span class="settings-detail-txt">When someone gives me a "nod"</span>
           </td>
           <td colspan="2" class="text-right">
             <% if (notes.hangten.email === true || notes.hangten.email === 'true') { %>
@@ -367,7 +379,7 @@
 
         <tr>
           <td colspan="4">
-            <span class="settings-detail-txt">When someone follows you</span>
+            <span class="settings-detail-txt">When someone follows me</span>
           </td>
           <td colspan="2" class="text-right">
             <% if (notes.follow.email === true || notes.follow.email === 'true') { %>
@@ -384,7 +396,7 @@
 
         <tr>
           <td colspan="4">
-            <span class="settings-detail-txt">When someone requests to follow you</span>
+            <span class="settings-detail-txt">When someone requests to follow me</span>
           </td>
           <td colspan="2" class="text-right">
             <% if (notes.request.email === true || notes.request.email === 'true') { %>
@@ -401,7 +413,7 @@
 
         <tr>
           <td colspan="4">
-            <span class="settings-detail-txt">When someone accepts your follow request</span>
+            <span class="settings-detail-txt">When someone accepts my follow request</span>
           </td>
           <td colspan="2" class="text-right">
             <% if (notes.accept.email === true || notes.accept.email === 'true') { %>

@@ -430,19 +430,14 @@ define([
       var fn = oldTick ? rest.put: rest.post;
       var path = oldTick ? '/api/sessions/' + oldTick.id: '/api/sessions';
 
-      // Delete media.
       this.deleteMedia();
 
-      // Do the API request.
       fn.call(rest, path, payload, _.bind(function (err, data) {
 
-        // Stop spinner.
         this.submitButtonSpin.stop();
         this.submitButton.removeClass('spinning').attr('disabled', false);
         
         if (err) {
-
-          // Set the error display.
           mps.publish('flash/new', [{
             err: err,
             level: 'error',
@@ -451,7 +446,6 @@ define([
           return;
         }
 
-        // Show success.
         var verb = payload.actions[0].ticks[0].sent ? 'an ascent': 'some work';
         mps.publish('flash/new', [{
           message: 'You ' + (oldTick ? 'updated': 'logged') + ' ' + verb + '.',

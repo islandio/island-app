@@ -32,12 +32,11 @@ define([
     render: function () {
       this.model = new Model(this.app.profile.content.page);
 
-      this.app.title('The Island | ' + this.app.profile.member.displayName
-          + ' - Settings');
+      this.app.title('The Island | ' + this.app.profile.member.displayName +
+          ' - Settings');
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
 
-      // Render title.
       this.title = _.template(title).call(this, {settings: true});
 
       this.trigger('rendered');
@@ -46,7 +45,8 @@ define([
 
     events: {
       'click .navigate': 'navigate',
-      'click .demolish': 'demolish'
+      'click .demolish': 'demolish',
+      'click .clear-ascents': 'clearAscents'
     },
 
     setup: function () {
@@ -264,8 +264,8 @@ define([
       var w = {x: this.banner.width(), y: this.banner.height()};
       var m = {x: e.pageX, y: e.pageY};
       var p = {
-        x: parseInt(this.banner.css('left')),
-        y: parseInt(this.banner.css('top'))
+        x: parseInt(this.banner.css('left'), 10),
+        y: parseInt(this.banner.css('top'), 10)
       };
 
       // Called when moving banner.
@@ -288,10 +288,9 @@ define([
         self.banner.unbind('mousemove', move);
         $(document).unbind('mouseup', arguments.callee);
 
-        // Save.
-        if (!self.bannerUploading) {
-          return false;
-        }
+        // if (!self.bannerUploading) {
+        //   return false;
+        // }
         rest.put('/api/members/' + self.app.profile.member.username, {
           bannerLeft: self.bannerLeft,
           bannerTop: self.bannerTop
@@ -362,8 +361,8 @@ define([
           this.bannerDropZone.removeClass('uploading');
 
           // Show error.
-          mps.publish('flash/new', [{err: assembly.error + ': '
-              + assembly.message, level: 'error', type: 'popup'}]);
+          mps.publish('flash/new', [{err: assembly.error + ': ' +
+              assembly.message, level: 'error', type: 'popup'}]);
         }, this),
         onSuccess: _.bind(function (assembly) {
 
@@ -422,12 +421,10 @@ define([
               });
               this.banner.fadeIn('slow');
 
-              // Resets.
               this.bannerUploading = false;
               this.bannerSpin.stop();
               this.bannerDropZone.removeClass('uploading');
 
-              // Show saved status.
               mps.publish('flash/new', [{message: 'Saved.', level: 'alert',
                   type: 'popup'}, true]);
             }, this));
@@ -457,8 +454,8 @@ define([
       var w = {x: this.avatar.width(), y: this.avatar.height()};
       var m = {x: e.pageX, y: e.pageY};
       var p = {
-        x: parseInt(this.avatar.css('left')),
-        y: parseInt(this.avatar.css('top'))
+        x: parseInt(this.avatar.css('left'), 10),
+        y: parseInt(this.avatar.css('top'), 10)
       };
 
       // Called when moving avatar.
@@ -481,7 +478,6 @@ define([
         self.avatar.unbind('mousemove', move);
         $(document).unbind('mouseup', arguments.callee);
 
-        // Save.
         if (!self.avatarUploading) {
           return false;
         }
@@ -489,27 +485,23 @@ define([
           avatarLeft: self.avatarLeft,
           avatarTop: self.avatarTop
         }, function (err, data) {
-          self.avatarUploading = false;
           if (err) {
+            self.avatarUploading = false;
             return mps.publish('flash/new', [{err: err, level: 'error',
                 type: 'popup'}]);
           }
           self.model.get('avatar_full').meta.left = self.avatarLeft;
           self.model.get('avatar_full').meta.top = self.avatarTop;
 
-          // Handle cropping.
           self.cropAvatar(function (err) {
             if (!err) {
-
-              // Show saved status.
               mps.publish('flash/new', [{message: 'Saved.', level: 'alert',
                   type: 'popup'}, true]);
             } else {
-
-              // Show error.
               mps.publish('flash/new', [{err: err, level: 'error',
                   type: 'popup'}]);
             }
+            self.avatarUploading = false;
           });
         });
 
@@ -568,9 +560,8 @@ define([
           this.avatarSpin.stop();
           this.avatarDropZone.removeClass('uploading');
 
-          // Show error.
-          mps.publish('flash/new', [{err: assembly.error + ': '
-              + assembly.message, level: 'error', type: 'popup'}]);
+          mps.publish('flash/new', [{err: assembly.error + ': ' +
+              assembly.message, level: 'error', type: 'popup'}]);
         }, this),
         onSuccess: _.bind(function (assembly) {
 
@@ -630,21 +621,15 @@ define([
               });
               this.avatar.fadeIn('slow');
 
-              // Resets.
               this.avatarUploading = false;
               this.avatarSpin.stop();
               this.avatarDropZone.removeClass('uploading');
 
-              // Handle cropping.
               this.cropAvatar(_.bind(function (err) {
                 if (!err) {
-
-                  // Show saved status.
                   mps.publish('flash/new', [{message: 'Saved.', level: 'alert',
                       type: 'popup'}, true]);
                 } else {
-
-                  // Show error.
                   mps.publish('flash/new', [{err: err, level: 'error',
                       type: 'popup'}]);
                 }
@@ -672,25 +657,25 @@ define([
         return;
       }
 
-      if (this.avatarUploading) {
-        return false;
-      }
-      this.avatarUploading = true;
+      // if (this.avatarUploading) {
+      //   return false;
+      // }
+      // this.avatarUploading = true;
       this.avatarSpin.start();
       this.avatarDropZone.addClass('uploading');
 
-      var side;
+      var side, reduce;
       var crop = {};
       avatar.meta.left = avatar.meta.left || 0;
       avatar.meta.top = avatar.meta.top || 0;
       if (avatar.meta.width > avatar.meta.height) {
         side = avatar.meta.height;
-        var reduce = avatar.meta.height / 325;
+        reduce = avatar.meta.height / 325;
         var x1 = -avatar.meta.left * reduce;
         crop = {x1: x1, x2: x1 + side, y1: 0, y2: side};
       } else {
         side = avatar.meta.width;
-        var reduce = avatar.meta.width / 325;
+        reduce = avatar.meta.width / 325;
         var y1 = -avatar.meta.top * reduce;
         crop = {x1: 0, x2: side, y1: y1, y2: y1 + side};
       }
@@ -705,22 +690,24 @@ define([
           crop: JSON.stringify(crop)
         },
         onError: _.bind(function (assembly) {
-          this.avatarUploading = false;
+          // this.avatarUploading = false;
           this.avatarSpin.stop();
           this.avatarDropZone.removeClass('uploading');
           return cb(assembly.error + ': ' + assembly.message);
         }, this),
         onSuccess: _.bind(function (assembly) {
-          this.avatarUploading = false;
 
           // Error checks
           if (assembly) {
             if (assembly.ok !== 'ASSEMBLY_COMPLETED') {
+              // this.avatarUploading = false;
               return cb('Avatar crop failed. Please try again.');
             } if (_.isEmpty(assembly.results)) {
+              // this.avatarUploading = false;
               return cb('You must choose a file.');
             }
           } else {
+            // this.avatarUploading = false;
             return cb('No assembly found.');
           }
 
@@ -733,6 +720,7 @@ define([
             this.avatarDropZone.removeClass('uploading');
 
             if (err) {
+              // this.avatarUploading = false;
               return cb(err);
             }
 
@@ -743,6 +731,8 @@ define([
             this.model.set('avatar_big', avatar_big);
             this.app.profile.member.avatar = avatar.ssl_url;
             this.app.profile.member.avatar_big = avatar_big.ssl_url;
+
+            // this.avatarUploading = false;
           }, this));
         }, this)
       };
@@ -788,27 +778,12 @@ define([
       return false;
     },
 
-    // Help the user understand how to use Instagram w/ Island.
-    instagram: function () {
+    clearAscents: function (e) {
+      e.preventDefault();
 
       // Render the confirm modal.
-      $.fancybox(_.template(tip)({
-        message: '<strong>You are connected to Instagram.</strong>'
-            + ' We\'ll post photos of yours tagged @island_io, #islandio, or #weareisland'
-            + ' to your feed.'
-            + '<br /><br />'
-            + 'Tip: Want us to guess which crag you were at? Make sure location services'
-            + ' (GPS) are enabled'
-            + ' for Instagram on your phone and "Add to Photo Map" is set'
-            + ' to "on" when posting.<br /><br />'
-            + '&bull; <em>Directions for all iOS devices:</em> Select the '
-            + 'Settings icon on the device. Go to Settings > Privacy > Location'
-            + ' Services and toggle the setting for Instagram to “on”.<br /><br />'
-            + '&bull; <em>Directions for Android phones:</em> Open the camera app.'
-            + ' Select the Settings icon on the device. Scroll through the options'
-            +' and find GPS tag. Toggle the setting to “on”.',
-        title: 'The Island &hearts;\'s &nbsp;<img src="' + window.__s + '/img/instagram.png"'
-            + ' width="24" height="24" />'
+      $.fancybox(_.template(confirm)({
+        message: 'Clear all of your logs (work and "My Ascents") forever?',
       }), {
         openEffect: 'fade',
         closeEffect: 'fade',
@@ -817,6 +792,61 @@ define([
       });
 
       // Setup actions.
+      $('.modal-cancel').click(function (e) {
+        $.fancybox.close();
+      });
+      $('.modal-confirm').click(_.bind(function (e) {
+
+        // Delete the member.
+        rest.delete('/api/ascents/' + this.app.profile.member.username +
+            '/all', {}, _.bind(function (err, data) {
+          if (err) {
+            mps.publish('flash/new', [{err: err, level: 'error', type: 'popup'}]);
+            return;
+          }
+
+          $.fancybox.close();
+
+          mps.publish('flash/new', [{
+            message: 'You cleared your logs.',
+            level: 'alert',
+            type: 'popup'
+          }, true]);
+
+        }, this));
+      }, this));
+
+      return false;
+    },
+
+    // Help the user understand how to use Instagram.
+    instagram: function () {
+
+      // Render the confirm modal.
+      $.fancybox(_.template(tip)({
+        message: '<strong>You are connected to Instagram.</strong>' +
+            ' We\'ll post photos of yours tagged @island_io, #islandio, or #weareisland' +
+            ' to your feed.' +
+            '<br /><br />' +
+            'Tip: Want us to guess which crag you were at? Make sure location services' +
+            ' (GPS) are enabled' +
+            ' for Instagram on your phone and "Add to Photo Map" is set' +
+            ' to "on" when posting.<br /><br />' +
+            '&bull; <em>Directions for all iOS devices:</em> Select the ' +
+            'Settings icon on the device. Go to Settings > Privacy > Location' +
+            ' Services and toggle the setting for Instagram to “on”.<br /><br />' +
+            '&bull; <em>Directions for Android phones:</em> Open the camera app.' +
+            ' Select the Settings icon on the device. Scroll through the options' +
+            ' and find GPS tag. Toggle the setting to “on”.',
+        title: 'The Island &hearts;\'s &nbsp;<img src="' + window.__s +
+            '/img/instagram.png" width="24" height="24" />'
+      }), {
+        openEffect: 'fade',
+        closeEffect: 'fade',
+        closeBtn: false,
+        padding: 0
+      });
+
       $('#tip_close').click(function (e) {
         $.fancybox.close();
       });

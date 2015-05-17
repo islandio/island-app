@@ -55,7 +55,7 @@ define([
       // Start search choices.
       if(!this.choices) {
         this.choices = new Choices(this.app, {
-          reverse: true, 
+          reverse: true,
           el: '.header-search',
           collapse: true,
           placeholder: 'Search for members, ascents and crags...',

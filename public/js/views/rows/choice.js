@@ -41,8 +41,8 @@ define([
     choose: function (e) {
       if (e) {
         e.preventDefault();
-        if ($(e.target).hasClass('list-button')
-            || $(e.target).hasClass('icon-pencil')) {
+        if ($(e.target).hasClass('list-button') ||
+            $(e.target).hasClass('icon-pencil')) {
           return false;
         }
       }
@@ -50,7 +50,9 @@ define([
       // Show selection.
       this.parentView.choose(this);
 
-      if (!this.parentView.options.route) return;
+      if (!this.parentView.options.route) {
+        return;
+      }
 
       // Set map view.
       var geometry = this.model.get('geometry');
