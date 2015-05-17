@@ -2,7 +2,7 @@
 
   // Save model attributes
   var data = this.model.attributes;
-  var grades = ['not graded by you'].concat(this.model.grades);
+  var grades = ['ungraded'].concat(this.model.grades);
 
   var own = !this.model || (this.app.profile.member && data.author.id === this.app.profile.member.id);
   var owner = own ? 'You\'re': data.author.displayName.trim() + ' is ';

@@ -781,7 +781,6 @@ define([
     clearAscents: function (e) {
       e.preventDefault();
 
-      // Render the confirm modal.
       $.fancybox(_.template(confirm)({
         message: 'Clear all of your logs (work and "My Ascents") forever?',
       }), {
@@ -791,15 +790,13 @@ define([
         padding: 0
       });
 
-      // Setup actions.
       $('.modal-cancel').click(function (e) {
         $.fancybox.close();
       });
       $('.modal-confirm').click(_.bind(function (e) {
 
-        // Delete the member.
-        rest.delete('/api/ascents/' + this.app.profile.member.username +
-            '/all', {}, _.bind(function (err, data) {
+        // Delete all ticks.
+        rest.delete('/api/ticks/all', {}, _.bind(function (err, data) {
           if (err) {
             mps.publish('flash/new', [{err: err, level: 'error', type: 'popup'}]);
             return;

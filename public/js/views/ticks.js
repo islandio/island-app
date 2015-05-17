@@ -137,7 +137,7 @@ define([
             data.type + '">');
         var grade;
         if (isNaN(Number(data.grade))) {
-          grade = 'not graded by you';
+          grade = 'ungraded';
         } else {
           grade = this.app.gradeConverter[data.type].indexes(data.grade);
         }

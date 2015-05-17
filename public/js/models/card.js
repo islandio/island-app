@@ -29,7 +29,7 @@ define([
           }
           ticks[grade].push(t);
         } else {
-          var k = 'not graded by you';
+          var k = 'ungraded';
           if (!ticks[k]) {
             ticks[k] = [];
           }

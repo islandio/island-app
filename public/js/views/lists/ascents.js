@@ -114,7 +114,7 @@ define([
       // Handle type changes.
       this.data.ascents.bcnt = this.data.ascents.bcnt || 0;
       this.data.ascents.rcnt = this.data.ascents.rcnt || 0;
-      if (this.data.ascents.bcnt > this.data.ascents.rcnt) {
+      if (this.data.ascents.bcnt >= this.data.ascents.rcnt) {
         this.currentType = 'b';
         this.bouldersFilter.addClass('active');
         this.boulders.show();
