@@ -195,6 +195,7 @@ define([
         }
         if (!this.app.blog) {
           this.header.highlight(window.location.pathname);
+          this.header.highlightSub(window.location.pathname);
         } else {
           this.app.blog = false;
         }

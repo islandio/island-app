@@ -3,8 +3,8 @@ header.header
     ul
   .header-inner
     a.button.disabled.logo.navigate(href="/")
-      //- span.tagline Train &middot; Climb
       span.tagline The Island Beta
+      //- span.tagline Train &middot; Climb
       img(src="#{root}/img/logo.png", width="127", height="30")
     div.divider-vertical.pad-right
     - if (typeof member !== 'undefined')
@@ -15,6 +15,15 @@ header.header
     ul.header-links
       li
         a(class="navigate", href="/", alt="Log your climbing. Follow other athletes. Watch crags and climbs.") Home
+        - if (typeof member !== 'undefined')
+          div.header-menu
+            ul
+              li
+                a(class="navigate", href="/", alt="Log your climbing. Follow other athletes. Watch crags and climbs.") Activity
+              li
+                a(class="navigate", href="/media", alt="Recently uploaded photos and videos.") Media
+              li
+                a(class="navigate", href="/#{member.username}/ascents", alt="My rock climbing ascents.") My Ascents
       - if (typeof member !== 'undefined')
         li
           a(class="navigate", href="/crags", alt="Search for a crag.") Crags

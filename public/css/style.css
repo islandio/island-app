@@ -1239,7 +1239,7 @@ li.tab.active a {
   background: #fff;
   color: #333;
   border-top: 4px solid #4bb8d7;
-  padding-top: 13px;
+  padding-top: 12px;
   top: 6px;
 }
 li.tab a .tab-count {
@@ -1858,21 +1858,70 @@ ul.header-links {
   float: left;
   margin: 17px 10px 0 10px;
 }
-ul.header-links li {
+ul.header-links > li {
+  position: relative;
   display: inline-block;
   list-style-type: none;
   margin: 0 15px 0 0;
 }
-ul.header-links li a {
+ul.header-links > li > a {
+  display: block;
   font-size: 14px;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   background: none;
+  height: 19px;
 }
-ul.header-links li a:hover {
+ul.header-links > li > a:hover {
   text-decoration: none;
 }
-ul.header-links li a.active {
+ul.header-links > li > a:hover + .header-menu {
+  display: block;
+}
+ul.header-links > li > a.active {
   border-bottom: 2px solid #4bb8d7;
+}
+.header-menu {
+  display: none;
+  position: absolute;
+  z-index: 10;
+  top: 17px;
+  left: -10px;
+  padding-top: 16px;
+}
+.header-menu:hover {
+  display: block;
+}
+.header-menu ul {
+  background: rgba(252,252,251,0.9);
+  border: 1px solid #cdcdcd;
+  border-top: none;
+  -webkit-border-radius: 0 0 2px 2px;
+  -moz-border-radius: 0 0 2px 2px;
+  border-radius: 0 0 2px 2px;
+}
+.header-menu ul li a {
+  display: block;
+  font-size: 13px;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  background: none;
+  line-height: 30px;
+  padding: 3px 30px 3px 10px;
+  border-top: 1px solid #cdcdcd;
+  -webkit-animation-name: fadeIn;
+  -moz-animation-name: fadeIn;
+  -o-animation-name: fadeIn;
+  animation-name: fadeIn;
+  -webkit-animation-duration: 0.2s;
+  -moz-animation-duration: 0.2s;
+  -o-animation-duration: 0.2s;
+  animation-duration: 0.2s;
+  -webkit-animation-fill-mode: both;
+  -moz-animation-fill-mode: both;
+  -o-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+.header-menu ul li a.active {
+  color: #4bb8d7;
 }
 .member-box {
   float: right;

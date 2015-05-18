@@ -118,8 +118,13 @@ define([
     },
 
     highlight: function (href) {
-      this.$('.header-links a').removeClass('active');
-      this.$('.header-links a[href="' + href + '"]').addClass('active');
+      this.$('.header-links > li > a').removeClass('active');
+      this.$('.header-links > li > a[href="' + href + '"]').addClass('active');
+    },
+
+    highlightSub: function (href) {
+      this.$('.header-menu a').removeClass('active');
+      this.$('.header-menu a[href="' + href + '"]').addClass('active');
     },
 
     navigate: function (e) {
