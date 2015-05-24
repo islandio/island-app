@@ -64,8 +64,7 @@ define([
     setup: function () {
       var tick = this.options.tick;
 
-      // Save refs.
-      this.dropZone = this.$('.post-dnd');
+      this.dropZone = this.$('.modal-body');
       this.postSelect = this.$('.post-select');
       this.postFiles = this.$('.post-files');
       this.postForm = this.$('.new-session-post-form');

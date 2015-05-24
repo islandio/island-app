@@ -2647,18 +2647,6 @@ p.sidebar-tip span {
 }
 .new-session-tick-details {
   display: none;
-  -webkit-animation-name: fadeIn;
-  -moz-animation-name: fadeIn;
-  -o-animation-name: fadeIn;
-  animation-name: fadeIn;
-  -webkit-animation-duration: 0.2s;
-  -moz-animation-duration: 0.2s;
-  -o-animation-duration: 0.2s;
-  animation-duration: 0.2s;
-  -webkit-animation-fill-mode: both;
-  -moz-animation-fill-mode: both;
-  -o-animation-fill-mode: both;
-  animation-fill-mode: both;
 }
 .new-session tr.new-session-tick-details td.new-session-cell {
   padding-bottom: 10px;
@@ -3240,6 +3228,9 @@ img.page-title-avatar {
   z-index: 1;
   padding: 30px;
   min-height: 66px;
+}
+.modal-body.dragging {
+  background: rgba(209,43,131,0.5);
 }
 .modal-body > p {
   font-size: 12px;
@@ -4023,6 +4014,10 @@ input.file-chooser {
 }
 input.post-file-chooser {
   left: 192px;
+}
+input.session-file-chooser {
+  left: 0;
+  margin: -6px 0 0 0;
 }
 input.banner-file-chooser,
 input.avatar-file-chooser {
