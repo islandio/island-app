@@ -1,0 +1,122 @@
+<%
+
+  var member = this.app.profile.member;
+  var gravatar = member ? 'https://www.gravatar.com/avatar/'
+      + member.gravatar + '?s=50&d='
+      + encodeURIComponent(this.app.images.avatar)
+      : null;
+  
+  var input = member && this.collection.options.input;
+  var feed = store.get(this.collection.options.feedStore || 'feed') || {};
+  var private = this.app.profile.content.private;
+
+%>
+
+<% if (!private && input) { %>
+  <div class="post-input">
+    <div class="post">
+      <span class="post-input-avatar">
+        <img src="<%= member.avatar || gravatar %>" width="50" height="50" />
+      </span>
+      <div class="post-input-wrap">
+        <form action="/api/posts" enctype="multipart/form-data" method="POST"
+            class="post-input-form">
+          <div class="post-dnd">
+            <textarea name="body" class="post-input" tabindex="2" 
+                placeholder="Say something... include Vimeo and YouTube links"></textarea>
+            <div class="post-select">
+              Attach a video or photos by
+              <% if (Modernizr.draganddrop) { %>
+                dragging &amp; dropping or 
+                <a class="post-file-chooser-dummy file-chooser-dummy important" href="javascript:;">selecting them</a>.
+                <input class="post-file-chooser file-chooser" type="file" name="post_file" multiple="multiple" />
+              <% } else { %>
+                <a class="post-file-chooser-dummy file-chooser-dummy important" href="javascript:;">selecting them</a>.
+                <input class="post-file-chooser file-chooser" type="file" name="post_file" multiple="multiple" style="left:78px;" />
+              <% } %>
+            </div>
+            <div class="post-files"></div>
+          </div>
+          <table class="post-params">
+            <tr>
+              <td style="width:213px;">
+                <input type="text" name="title" placeholder="Title (optional)"
+                    tabindex="3" style="width:200px;" />
+              </td>
+              <% if (member.facebookId || member.twitterId) { %>
+                <td>
+                  <% if (member.facebookId) { %>
+                    <input id="facebook" name="facebook" type="checkbox" tabindex="4" />
+                    <label for="facebook">Facebook</label>
+                    &nbsp;&nbsp;
+                  <% } %>
+                  <% if (member.twitterId) { %>
+                    <input id="twitter" name="twitter" type="checkbox" tabindex="5" />
+                    <label for="twitter">Twitter</label>
+                  <% } %>
+                </td>
+              <% } %>
+              <td class="last">
+                <input type="submit" class="post-button" value="Post" tabindex="6" />
+              </td>
+            </tr>
+          </table>
+          <input type="hidden" name="params"
+              value='<%= JSON.stringify(this.app.profile.transloadit.media) %>' />
+        </form>
+      </div>
+    </div>
+  </div>
+<% } %>
+<% if (!private && this.collection.options.filters !== false) { %>
+  <div class="events-filter">
+    <div class="subtabs">
+      <ul>
+        <li data-filter="all" class="subtab<%= !feed.actions || feed.actions === 'all' ? ' active': '' %>">
+          <a href="javascript:;">All</a>
+        </li>
+        <% var titles = this.collection.options.filterTitles; 
+          _.each(_.difference(this.collection.options.filters,
+              this.collection.options.hide), function (f, i) { %>
+          <li data-filter="<%= f %>" class="subtab<%= feed.actions && feed.actions === f ? ' active': '' %>">
+            <a href="javascript:;"><%= titles ? titles[i]: f.substr(0,1).toUpperCase() + f.substr(1) + 's' %></a>
+          </li>
+        <% }) %>
+      </ul>
+    </div>
+  </div>
+<% } %>
+<% if (!private) { %>
+  <div class="list-header"></div>
+  <% if (this.collection.models.length > 0) { %>
+    <% if (this.collection.options.headers !== false) {
+      var day, month, year;
+      _.each(this.collection.models, _.bind(function (m) { %>
+        <% var _date = new Date(m.get('date')) %>
+        <% var _day = _date.getDate() %>
+        <% var _month = _date.getMonth() %>
+        <% var _year = _date.getFullYear() %>
+        <% if (_day !== day || _month !== month || _year !== year) { %>
+          <% var beg = new Date(_date.getFullYear(), _date.getMonth(), _date.getDate()); %>
+          <% var end = new Date(_date.getFullYear(), _date.getMonth(), _date.getDate(), 23, 59, 59, 999); %>
+          <div class="event-day-header" data-beg="<%= beg.valueOf() %>" data-end="<%= end.valueOf() %>">
+            <span><%= (end.format('mmmm dd, yyyy')) %></span>
+          </div>
+        <% } else { %>
+          <div class="event-divider"></div>
+        <% } %>
+        <%= this.row(m) %>
+        <% day = _day %>
+        <% month = _month %>
+        <% year = _year %>
+      <% }, this)); %>
+    <% } else { %>
+      <% _.each(this.collection.models, _.bind(function (m, i) { %>
+        <% if (i !== 0) { %>
+          <div class="event-divider"></div>
+        <% } %>
+        <%= this.row(m) %>
+      <% }, this)); %>
+    <% } %>
+  <% } %>
+<% } %>
