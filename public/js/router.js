@@ -37,7 +37,7 @@ define([
   'views/dashboard',
   'views/splash',
   'views/ticks',
-  'views/media',
+  'views/medias',
   'text!../templates/about.html',
   'text!../templates/privacy.html',
   'text!../templates/tip.html',
@@ -46,7 +46,7 @@ define([
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
     Flashes, Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Tick,
     Crag, Admin, ImportSearch, ImportInsert, Ascent, Settings, Reset, Films, Static,
-    Crags, Dashboard, Splash, Ticks, Media, aboutTemp, privacyTemp, tipTemp, NewSession,
+    Crags, Dashboard, Splash, Ticks, Medias, aboutTemp, privacyTemp, tipTemp, NewSession,
     Share
 ) {
 
@@ -411,7 +411,7 @@ define([
           this.page = new Dashboard(this.app).render();
           this.renderTabs({tabs: [
             {title: 'Activity', href: '/', active: true},
-            {title: 'Media', href: '/media'},
+            {title: 'Recent Media', href: '/media'},
             {title: 'My Ascents', href: '/' + this.app.profile.member.username +
                 '/ascents'}
           ], log: true});
@@ -433,13 +433,13 @@ define([
           this.header.highlight('/');
           this.renderTabs({tabs: [
             {title: 'Activity', href: '/'},
-            {title: 'Media', href: '/media', active: true},
+            {title: 'Recent Media', href: '/media', active: true},
             {title: 'My Ascents', href: '/' +
                 this.app.profile.member.username + '/ascents'}
           ], log: true});
         }
         _.defer(_.bind(function () {
-          this.page = new Media(this.app).render();
+          this.page = new Medias(this.app).render();
           if (!this.app.profile.member) {
             this.renderTabs({html: this.page.title});
           }
@@ -459,7 +459,7 @@ define([
           this.header.highlight('/');
           this.renderTabs({tabs: [
             {title: 'Activity', href: '/'},
-            {title: 'Media', href: '/media'},
+            {title: 'Recent Media', href: '/media'},
             {title: 'My Ascents', href: '/' + username + '/ascents',
                 active: true}
           ], log: true});

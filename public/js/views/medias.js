@@ -1,5 +1,5 @@
 /*
- * Page view for all activity.
+ * Page view for all media activity.
  */
 
 define([
@@ -8,14 +8,14 @@ define([
   'Backbone',
   'mps',
   'util',
-  'text!../../templates/dashboard.html',
-  'views/lists/events',
+  'text!../../templates/medias.html',
+  'views/lists/medias',
   'views/lists/followers',
   'views/lists/followees',
   'views/lists/watchees',
   'views/lists/members',
   'views/lists/ticks'
-], function ($, _, Backbone, mps, util, template, Events,
+], function ($, _, Backbone, mps, util, template, Medias,
     Followers, Followees, Watchees, Members, Ticks) {
   return Backbone.View.extend({
 
@@ -38,12 +38,12 @@ define([
     },
 
     setup: function () {
-      this.feed = new Events(this.app, {
+      this.feed = new Medias(this.app, {
         parentView: this,
         reverse: true,
-        input: true,
-        filters: ['session', 'post', 'crag', 'ascent'],
-        hide: ['crag', 'ascent']
+        // input: true,
+        // filters: ['session', 'post', 'crag', 'ascent'],
+        // hide: ['crag', 'ascent']
       });
       this.followers = new Followers(this.app, {parentView: this, reverse: true});
       this.followees = new Followees(this.app, {parentView: this, reverse: true});
@@ -87,7 +87,7 @@ define([
 
     setTitle: function () {
       var name = this.app.profile.member.displayName;
-      this.app.title('The Island | ' + name + ' - Home');
+      this.app.title('The Island | Recent Media');
     }
 
   });
