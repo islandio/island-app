@@ -1,14 +1,41 @@
 <%
+  var data = this.model.attributes;
   var gravatar = 'https://www.gravatar.com/avatar/'
-      + this.model.get('action').author.gravatar + '?s=48&d='
+      + data.author.gravatar + '?s=48&d='
       + encodeURIComponent(this.app.images.avatar);
+
+  var image = data.type === 'image' ? data.thumbs[0]: data.thumbs[3];
+  var _w = 225;
+  var _h = 225;
+  var w, h;
+  var l = 'margin-left:0;';
+  var t = 'margin-top:0;';
+  w = _w
+  h = (image.meta.height / image.meta.width) * _w;
+  if (h - _h >= 0) {
+    t = 'margin-top:' + (image.meta.top !== undefined ?
+        image.meta.top: (-(h - _h) / 2)) + 'px;';
+  } else {
+    w = (image.meta.width / image.meta.height) * _h;
+    h = _h;
+    l = 'margin-left:' + (image.meta.left !== undefined ?
+        image.meta.left: (-(w - _w) / 2)) + 'px;';
+  }
 %>
 
-<div class="media">
-  <span class="media-avatar">
-    <a href="/<%= this.model.get('action').author.username %>" class="image-anchor navigate">
-      <img src="<%= this.model.get('action').author.avatar || gravatar %>" width="48"
-          height="48" class="tooltip" title="<%= this.model.get('action').author.displayName %>" /></a>
-    </a>
-  </span>
+<span class="event-avatar">
+  <a href="/<%= data.author.username %>" class="image-anchor navigate">
+    <img src="<%= data.author.avatar || gravatar %>" width="48"
+        height="48" class="tooltip" title="<%= data.author.displayName %>" /></a>
+  </a>
+</span>
+<div class="media-media">
+  <a href="/<%= data.path %>" class="image-anchor navigate">
+    <% if (data.type === 'video') { %>
+    <img src="<%= __s %>/img/play.png" class="media-media-play" />
+    <% } %>
+    <img src="<%= image.ssl_url %>" width="<%= w %>" height="<%= h %>"
+        style="<%= t + l %>" />
+    
+  </a>
 </div>

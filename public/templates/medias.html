@@ -5,22 +5,38 @@
       <div class="sidebar-ticks-r"></div>
       <div class="sidebar-ticks-b"></div>
     </div>
-    <% if (this.app.profile.member.username !== 'island'
-        && this.app.profile.member.role !== 2) { %>
-      <div class="sidebar-watchees">
-        <span class="sidebar-heading">You're watching:</span>
-        <div class="sidebar-crags"></div>
-        <div class="sidebar-ascents-r"></div>
-        <div class="sidebar-ascents-b"></div>
+    <% if (!this.app.profile.member) { %>
+      <div class="sidebar-broadcasts">
+        <% _.each(this.app.profile.content.broadcasts.items, _.bind(function (b, i) { %>
+          <div class="sidebar-broadcast">
+            <h1>
+              <a href="/blog/<%= b.slug %>">
+                <i class="icon-signal"></i> <%= b.title %>
+              </a>
+            </h1>
+            <p><%= b.preview %></p>
+            <p>
+          </div>
+        <% }, this)); %>
       </div>
+    <% } else { %>
+      <% if (this.app.profile.member.username !== 'island'
+          && this.app.profile.member.role !== 2) { %>
+        <div class="sidebar-watchees">
+          <span class="sidebar-heading">You're watching:</span>
+          <div class="sidebar-crags"></div>
+          <div class="sidebar-ascents-r"></div>
+          <div class="sidebar-ascents-b"></div>
+        </div>
+      <% } %>
+      <div class="sidebar-followers"></div>
+      <div class="sidebar-followees"></div>
+      <div class="sidebar-recs"></div>
     <% } %>
-    <div class="sidebar-followers"></div>
-    <div class="sidebar-followees"></div>
-    <div class="sidebar-recs"></div>
   </div>
 </div>
 <div class="leftside">
-  <div class="medias"></div>
+  <div class="events"></div>
   <div class="list-spin">
     <div class="events-spin"></div>
     <span class="empty-feed">Showing all.</span>

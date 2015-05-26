@@ -16,7 +16,7 @@ define([
 ], function ($, _, List, mps, rest, util, Spin, template, Collection, Row) {
   return List.extend({
 
-    el: '.medias',
+    el: '.events',
 
     fetching: false,
     nomore: false,
@@ -37,40 +37,56 @@ define([
       this.app.rpc.socket.on('media.new', this.collect);
       this.app.rpc.socket.on('media.removed', this._remove);
 
-      this.latestList = this.app.profile.content.medias;
-      this.collection.reset(this.latestList.items);
+      this.latestList = this.app.profile.content.events;
+      var medias = [];
+      _.each(this.latestList.items, function (i) {
+        _.each(i.action.medias, function (m) {
+          if (m.type === 'video' && m.quality !== 'ipad') {
+            return;
+          }
+          m.author = i.action.author;
+          m.path = i.action_type === 'post' ? i.action.key: 'efforts/' +
+              i.action.key;
+          medias.push(m);
+        });
+      });
+      medias.sort(function (a, b) {
+        return new Date(b.created) - new Date(a.created);
+      });
+      this.collection.reset(medias);
     },
 
     // receive event from event bus
     collect: function (data) {
-      if (!_.contains(this.latestList.actions, data.action_type)) {
-        return;
-      }
-      if (this.latestList.query) {
-        if (this.latestList.query.subscribee_id &&
-            data.actor_id !== this.latestList.query.subscribee_id &&
-            data.target_id !== this.latestList.query.subscribee_id) {
-          return;
-        }
-        if (this.latestList.query.action) {
-          if (data.action_type !== this.latestList.query.action.type) {
-            return;
-          }
-          var valid = true;
-          _.each(this.latestList.query.action.query, function (v, p) {
-            if (v.$ne !== undefined) {
-              v = !v.$ne;
-              if (!!data.action[p] !== v) {
-                valid = false;
-              }
-            } else if (data.action[p] !== v) {
-              valid = false;
-            }
-          });
-          if (!valid) return;
-        }
-      }
-      this.collection.unshift(data);
+      return;
+      // if (!_.contains(this.latestList.actions, data.action_type)) {
+      //   return;
+      // }
+      // if (this.latestList.query) {
+      //   if (this.latestList.query.subscribee_id &&
+      //       data.actor_id !== this.latestList.query.subscribee_id &&
+      //       data.target_id !== this.latestList.query.subscribee_id) {
+      //     return;
+      //   }
+      //   if (this.latestList.query.action) {
+      //     if (data.action_type !== this.latestList.query.action.type) {
+      //       return;
+      //     }
+      //     var valid = true;
+      //     _.each(this.latestList.query.action.query, function (v, p) {
+      //       if (v.$ne !== undefined) {
+      //         v = !v.$ne;
+      //         if (!!data.action[p] !== v) {
+      //           valid = false;
+      //         }
+      //       } else if (data.action[p] !== v) {
+      //         valid = false;
+      //       }
+      //     });
+      //     if (!valid) return;
+      //   }
+      // }
+      // this.collection.unshift(data);
     },
 
     // initial bulk render of list
@@ -171,9 +187,24 @@ define([
             }
           }
         } else {
+          var medias = [];
           _.each(list.items, _.bind(function (i,o) {
-            this.collection.push(i, {silent: true});
-            this.renderLast(true);
+            _.each(i.action.medias, function (m) {
+              if (m.type === 'video' && m.quality !== 'ipad') {
+                return;
+              }
+              m.author = i.action.author;
+              m.path = i.action_type === 'post' ? i.action.key: 'efforts/' +
+                  i.action.key;
+              medias.push(m);
+            });
+            medias.sort(function (a, b) {
+              return new Date(b.created) - new Date(a.created);
+            });
+            _.each(medias, _.bind(function (m) {
+              this.collection.push(m, {silent: true});
+              this.renderLast(true);
+            }, this));
           }, this));
         }
 
@@ -225,7 +256,7 @@ define([
         }
 
         // Add the items.
-        updateUI.call(this, data.medias);
+        updateUI.call(this, data.events);
 
       }, this));
 
