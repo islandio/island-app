@@ -1,5 +1,6 @@
 <%
   var data = this.model.attributes;
+  console.log(data)
   var gravatar = 'https://www.gravatar.com/avatar/'
       + data.author.gravatar + '?s=48&d='
       + encodeURIComponent(this.app.images.avatar);

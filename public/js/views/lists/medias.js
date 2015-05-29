@@ -37,23 +37,12 @@ define([
       this.app.rpc.socket.on('media.new', this.collect);
       this.app.rpc.socket.on('media.removed', this._remove);
 
-      this.latestList = this.app.profile.content.events;
-      var medias = [];
+      this.latestList = this.app.profile.content.medias;
       _.each(this.latestList.items, function (i) {
-        _.each(i.action.medias, function (m) {
-          if (m.type === 'video' && m.quality !== 'ipad') {
-            return;
-          }
-          m.author = i.action.author;
-          m.path = i.action_type === 'post' ? i.action.key: 'efforts/' +
-              i.action.key;
-          medias.push(m);
-        });
+        i.path = i.parent_type === 'post' ? i.parent.key: 'efforts/' +
+            i.parent.key;
       });
-      medias.sort(function (a, b) {
-        return new Date(b.created) - new Date(a.created);
-      });
-      this.collection.reset(medias);
+      this.collection.reset(this.latestList.items);
     },
 
     // receive event from event bus
@@ -93,7 +82,7 @@ define([
     render: function (options) {
       List.prototype.render.call(this, options);
       this.spin.stop();
-      if (this.collection.length > 0) {
+      if (this.latestList.more) {
         _.delay(_.bind(function () {
           this.checkHeight();
         }, this), (this.collection.length + 1) * 30);
@@ -124,6 +113,7 @@ define([
     },
 
     setup: function () {
+      this.footer = this.$('.list-footer');
       this.listSpin = this.parentView.$('.list-spin');
       this.showingAll = this.parentView.$('.list-spin .empty-feed');
 
@@ -171,7 +161,7 @@ define([
       function updateUI(list) {
         _.defaults(list, {items:[]});
         this.latestList = list;
-        if (list.items.length === 0) {
+        if (!list.more) {
           this.nomore = true;
           this.fetching = false;
           this.spin.stop();
@@ -187,24 +177,11 @@ define([
             }
           }
         } else {
-          var medias = [];
           _.each(list.items, _.bind(function (i,o) {
-            _.each(i.action.medias, function (m) {
-              if (m.type === 'video' && m.quality !== 'ipad') {
-                return;
-              }
-              m.author = i.action.author;
-              m.path = i.action_type === 'post' ? i.action.key: 'efforts/' +
-                  i.action.key;
-              medias.push(m);
-            });
-            medias.sort(function (a, b) {
-              return new Date(b.created) - new Date(a.created);
-            });
-            _.each(medias, _.bind(function (m) {
-              this.collection.push(m, {silent: true});
-              this.renderLast(true);
-            }, this));
+            i.path = i.parent_type === 'post' ? i.parent.key: 'efforts/' +
+                i.parent.key;
+            this.collection.push(i, {silent: true});
+            this.renderLast(true);
           }, this));
         }
 
@@ -240,14 +217,13 @@ define([
       // get more
       this.spin.start();
       this.fetching = true;
-      rest.post('/api/events/list', {
+      rest.post('/api/medias/list', {
         limit: this.latestList.limit,
         cursor: this.latestList.cursor,
         actions: this.latestList.actions,
         query: this.latestList.query,
-        media: true
+        // media: true
       }, _.bind(function (err, data) {
-
         if (err) {
           this.spin.stop();
           this.spin.target.hide();
@@ -255,9 +231,7 @@ define([
           return console.error(err.stack);
         }
 
-        // Add the items.
-        updateUI.call(this, data.events);
-
+        updateUI.call(this, data.medias);
       }, this));
 
     },

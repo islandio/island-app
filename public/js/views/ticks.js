@@ -50,8 +50,6 @@ define([
       this.setTitle();
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
-
-      // Render title.
       this.title = _.template(title).call(this);
 
       // Render each tick as a view.

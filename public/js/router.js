@@ -441,7 +441,7 @@ define([
         _.defer(_.bind(function () {
           this.page = new Medias(this.app).render();
           if (!this.app.profile.member) {
-            this.renderTabs({html: this.page.title});
+            this.renderTabs({title: 'Recent Media'});
           }
         }, this));
         this.stop();

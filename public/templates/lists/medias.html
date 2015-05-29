@@ -1,7 +1,5 @@
 <%
-
   var feed = store.get(this.collection.options.feedStore || 'feed') || {};
-
 %>
 
 <% if (this.collection.options.filters !== false) { %>
@@ -24,12 +22,11 @@
 <% } %>
 
 <div class="medias">
-  <div class="list-header"></div>
   <% if (this.collection.models.length > 0) { %>
     <% _.each(this.collection.models, _.bind(function (m, i) { %>
       <%= this.row(m) %>
     <% }, this)); %>
   <% } %>
-  <div class="clear"></div>
+  <div class="list-footer clear"></div>
 </div>
 

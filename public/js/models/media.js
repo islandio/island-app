@@ -7,9 +7,7 @@ define([
   'Backbone',
   'util'
 ], function (_, Backbone, util) {
-  return Backbone.Model.extend({
-
-    
+  return Backbone.Model.extend({    
 
   });
 });
