@@ -28,29 +28,29 @@ define([
         switch (target.t) {
           case 'member':
             if (target.u) {
-              name += ' &rarr; <a href="' + target.u
-                  + '" class="title navigate">' + target.a + '</a>';
+              name += ' &rarr; <a href="' + target.u +
+                  '" class="title navigate">' + target.a + '</a>';
             }
             break;
           case 'crag': case 'ascent':
-            name += ' &rarr; <a href="' + target.s
-                + '" class="title navigate">' + target.n + '</a>';
+            name += ' &rarr; <a href="' + target.s +
+                '" class="title navigate">' + target.n + '</a>';
             break;
         }
       }
       if (name !== '') {
         return name;
       }
-      var str = ' added a <a href="/' + this.get('key')
-          + '" class="title navigate">post</a>';
+      var str = ' added a <a href="/' + this.get('key') +
+          '" class="title navigate">post</a>';
       var rm = this.get('remote_media');
       if (rm) {
         var rmt = this.get('type');
         switch (rmt) {
           case 'instagram':
-            str += ' via <a href="' + rm.link
-                + '" class="title" target="_blank">' + _.str.capitalize(rmt)
-                + '</a>.';
+            str += ' via <a href="' + rm.link +
+                '" class="title" target="_blank">' + _.str.capitalize(rmt) +
+                '</a>.';
             break;
         }
       } else {

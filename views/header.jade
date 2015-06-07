@@ -24,11 +24,13 @@ header.header
                 a(class="navigate", href="/media", alt="Recently uploaded photos and videos.") Recent Media
               li
                 a(class="navigate", href="/#{member.username}/ascents", alt="My rock climbing ascents.") My Ascents
-      - if (typeof member !== 'undefined')
-        li
-          a(class="navigate", href="/crags", alt="Search for a crag.") Crags
+      li
+        a(class="navigate", href="/crags", alt="Search for a crag.") Crags
       li
         a(class="navigate", href="/films", alt="We\'re proud to bring you professional grade content. Many thanks to everyone that has made these films happen.") Films
+      - if (typeof member === 'undefined')
+        li
+          a(class="navigate", href="/media", alt="Recently uploaded photos and videos.") Recent Media
       li
         a(class="navigate #{typeof blog !== 'undefined' && blog == true ? 'active':''}", href="/blog", alt="News and feature updates.") Blog
       - if (typeof member !== 'undefined')

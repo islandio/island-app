@@ -1,27 +1,10 @@
 <%
-  var data = this.model.attributes;
-  console.log(data)
+  var type = this.model.get('action_type');
+  var data = this.model.attributes.action;
   var gravatar = 'https://www.gravatar.com/avatar/'
       + data.author.gravatar + '?s=48&d='
       + encodeURIComponent(this.app.images.avatar);
-
-  var image = data.type === 'image' ? data.thumbs[0]: data.thumbs[3];
-  var _w = 225;
-  var _h = 225;
-  var w, h;
-  var l = 'margin-left:0;';
-  var t = 'margin-top:0;';
-  w = _w
-  h = (image.meta.height / image.meta.width) * _w;
-  if (h - _h >= 0) {
-    t = 'margin-top:' + (image.meta.top !== undefined ?
-        image.meta.top: (-(h - _h) / 2)) + 'px;';
-  } else {
-    w = (image.meta.width / image.meta.height) * _h;
-    h = _h;
-    l = 'margin-left:' + (image.meta.left !== undefined ?
-        image.meta.left: (-(w - _w) / 2)) + 'px;';
-  }
+  var mediaTypes = _.uniq(_.pluck(data.medias, 'type'));
 %>
 
 <span class="event-avatar">
@@ -29,14 +12,50 @@
     <img src="<%= data.author.avatar || gravatar %>" width="48"
         height="48" class="tooltip" title="<%= data.author.displayName %>" /></a>
   </a>
+  <% if (type === 'post') { %>
+    <!-- <a href="/<%= data.author.username %>" class="navigate">
+      @<= data.author.username ></a> 
+      /  -->
+    <a href="/<%= data.path %>" class="navigate">
+        <%= this.model.getTitle() %></a>
+  <% } else { %>
+    <a href="/<%= data.path %>" class="navigate">
+        <%= this.model.getTitle() %></a>
+  <% } %>
 </span>
-<div class="media-media">
-  <a href="/<%= data.path %>" class="image-anchor navigate">
-    <% if (data.type === 'video') { %>
-    <img src="<%= __s %>/img/play.png" class="media-media-play" />
-    <% } %>
-    <img src="<%= image.ssl_url %>" width="<%= w %>" height="<%= h %>"
-        style="<%= t + l %>" />
-    
-  </a>
+<% if (_.contains(mediaTypes, 'image')) { %>
+  <div class="media-media" data-type="image">
+    <div class="image-mosaic" data-type="image" data-id="<%= data.id %>"></div>
+  </div>
+<% } %>
+<% if (_.contains(mediaTypes, 'video')) {
+  var vids = _.filter(data.medias, function (m) { return m.type === 'video'; });
+  vids = _.uniq(vids, function (v) {
+    return v.video.original_id;
+  });
+  vids = vids.sort(function (a, b) {
+    return a.video._index - b.video._index;
+  });
+  _.each(vids, function (v) { %>
+    <div class="media-media" data-type="video">
+      <div class="image-mosaic" data-type="video" data-id="<%= v.video.original_id %>"></div>
+    </div>
+  <% }) %>
+<% } %>
+<% _.each(this.model.get('videoEmbeds'), _.bind(function (v) { %>
+  <div class="media-media" data-type="video">
+    <iframe src="<%= v.link %>" width="381" height="210"
+        frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+  </div>
+<% }, this)); %>
+<div class="media-info">
+  From <a href="/<%= data.author.username %>" class="muted">@<%= data.author.username %></a>
+  <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+  <a href="/<%= data.path %>"
+      class="muted navigate"><time class="created" 
+      datetime="<%= data.updated %>" 
+      title="<%= data.updated %>" 
+      id="time_<%= this.model.id %>">
+    <%= data.updated %>
+    </time></a>
 </div>

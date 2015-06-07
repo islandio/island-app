@@ -34,14 +34,10 @@ define([
       this.subscriptions = [];
 
       _.bindAll(this, 'collect', '_remove');
-      this.app.rpc.socket.on('media.new', this.collect);
-      this.app.rpc.socket.on('media.removed', this._remove);
+      this.app.rpc.socket.on('event.new', this.collect);
+      this.app.rpc.socket.on('event.removed', this._remove);
 
-      this.latestList = this.app.profile.content.medias;
-      _.each(this.latestList.items, function (i) {
-        i.path = i.parent_type === 'post' ? i.parent.key: 'efforts/' +
-            i.parent.key;
-      });
+      this.latestList = this.app.profile.content.events;
       this.collection.reset(this.latestList.items);
     },
 
@@ -178,8 +174,6 @@ define([
           }
         } else {
           _.each(list.items, _.bind(function (i,o) {
-            i.path = i.parent_type === 'post' ? i.parent.key: 'efforts/' +
-                i.parent.key;
             this.collection.push(i, {silent: true});
             this.renderLast(true);
           }, this));
@@ -217,12 +211,11 @@ define([
       // get more
       this.spin.start();
       this.fetching = true;
-      rest.post('/api/medias/list', {
+      rest.post('/api/events/list', {
         limit: this.latestList.limit,
         cursor: this.latestList.cursor,
         actions: this.latestList.actions,
-        query: this.latestList.query,
-        // media: true
+        query: this.latestList.query
       }, _.bind(function (err, data) {
         if (err) {
           this.spin.stop();
@@ -231,7 +224,7 @@ define([
           return console.error(err.stack);
         }
 
-        updateUI.call(this, data.medias);
+        updateUI.call(this, data.events);
       }, this));
 
     },

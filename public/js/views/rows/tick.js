@@ -36,7 +36,7 @@ define([
     initialize: function (options, app) {
       this.app = app;
       this.model = new Model(options.model || this.app.profile.content.page,
-        { gradeConverter: this.app.gradeConverter} );
+        {gradeConverter: this.app.gradeConverter});
       this.parentView = options.parentView;
       this.wrap = options.wrap;
       this.template = _.template(template);
@@ -46,8 +46,6 @@ define([
       // Socket subscriptions
       _.bindAll(this, 'onRemoved');
       this.app.rpc.socket.on('tick.removed', this.onRemoved);
-      // this.app.rpc.socket.on('media.new', _.bind(function (data) {}, this));
-      // this.app.rpc.socket.on('media.removed', _.bind(function (data) {}, this));
 
       this.on('rendered', this.setup, this);
       return this;

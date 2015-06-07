@@ -43,21 +43,21 @@ define([
         reverse: true,
         filters: false
       });
-      if (this.app.profile.member) {
-        this.followers = new Followers(this.app, {parentView: this, reverse: true});
-        this.followees = new Followees(this.app, {parentView: this, reverse: true});
-        this.crags = new Watchees(this.app, {parentView: this, reverse: true,
-            type: 'crag', heading: 'Crags'});
-        this.routes = new Watchees(this.app, {parentView: this, reverse: true,
-            type: 'ascent', subtype: 'r', heading: 'Routes'});
-        this.boulders = new Watchees(this.app, {parentView: this, reverse: true,
-            type: 'ascent', subtype: 'b', heading: 'Boulders'});
-        this.recs = new Members(this.app, {parentView: this, reverse: true});
-      }
-      this.rboulders = new Ticks(this.app, {parentView: this, type: 'tick',
-          subtype: 'b', heading: 'Boulders'});
-      this.rroutes = new Ticks(this.app, {parentView: this, type: 'tick',
-          subtype: 'r', heading: 'Routes'});
+      // if (this.app.profile.member) {
+        // this.followers = new Followers(this.app, {parentView: this, reverse: true});
+        // this.followees = new Followees(this.app, {parentView: this, reverse: true});
+        // this.crags = new Watchees(this.app, {parentView: this, reverse: true,
+        //     type: 'crag', heading: 'Crags'});
+        // this.routes = new Watchees(this.app, {parentView: this, reverse: true,
+        //     type: 'ascent', subtype: 'r', heading: 'Routes'});
+        // this.boulders = new Watchees(this.app, {parentView: this, reverse: true,
+        //     type: 'ascent', subtype: 'b', heading: 'Boulders'});
+        // this.recs = new Members(this.app, {parentView: this, reverse: true});
+      // }
+      // this.rboulders = new Ticks(this.app, {parentView: this, type: 'tick',
+      //     subtype: 'b', heading: 'Boulders'});
+      // this.rroutes = new Ticks(this.app, {parentView: this, type: 'tick',
+      //     subtype: 'r', heading: 'Routes'});
 
       return this;
     },
@@ -72,26 +72,26 @@ define([
         mps.unsubscribe(s);
       });
       this.feed.destroy();
-      if (this.followers) {
-        this.followers.destroy();
-      }
-      if (this.followees) {
-        this.followees.destroy();
-      }
-      if (this.crags) {
-        this.crags.destroy();
-      }
-      if (this.routes) {
-        this.routes.destroy();
-      }
-      if (this.boulders) {
-        this.boulders.destroy();
-      }
-      if (this.recs) {
-        this.recs.destroy();
-      }
-      this.rroutes.destroy();
-      this.rboulders.destroy();
+      // if (this.followers) {
+      //   this.followers.destroy();
+      // }
+      // if (this.followees) {
+      //   this.followees.destroy();
+      // }
+      // if (this.crags) {
+      //   this.crags.destroy();
+      // }
+      // if (this.routes) {
+      //   this.routes.destroy();
+      // }
+      // if (this.boulders) {
+      //   this.boulders.destroy();
+      // }
+      // if (this.recs) {
+      //   this.recs.destroy();
+      // }
+      // this.rroutes.destroy();
+      // this.rboulders.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();
