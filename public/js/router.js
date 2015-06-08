@@ -565,7 +565,7 @@ define([
         } else {
           this.page = new ImportSearch(this.app).render();
         }
-        this.renderTabs({title: 'Import your 8a.nu Scorecard', log: true});
+        this.renderTabs({title: 'Import your Scorecard', log: true});
         this.stop();
       }, this));
     },

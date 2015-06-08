@@ -41,7 +41,8 @@ define([
     events: {
       'click .navigate': 'navigate',
       'click .button': 'submit',
-      'keydown .import-input': 'keydown'
+      'keydown .import-input': 'keydown',
+      'change input[type="radio"]': 'updateRadio'
     },
 
     setup: function () {
@@ -65,6 +66,18 @@ define([
     empty: function () {
       this.$el.empty();
       return this;
+    },
+
+    updateRadio: function() {
+    /*
+      var val = $('input[type="radio"]:checked').val();
+      var placeholder = '';
+      if (val.indexOf("8a") !== -1)
+        placeholder = "Enter your full name";
+      else if (val.indexOf("27crags") !== -1)
+        placeholder = "Enter your 27crags username"
+      this.input.attr('placeholder', placeholder);
+    */
     },
 
     destroy: function () {
@@ -98,11 +111,15 @@ define([
       this.noResults.hide();
       this.input.removeClass('input-error');
 
-      var member = this.input.val();
       this.spin.start();
       this.button.addClass('spinning').addClass('disabled').attr('disabled', true);
       this.searching = true;
-      this.app.rpc.do('get8aUser', member, _.bind(function (err, res) {
+      var rpcData = { 
+        userId: this.input.val(),
+        from: $('input[type=radio]:checked').val()
+      };
+
+      this.app.rpc.do('getUser', rpcData, _.bind(function (err, res) {
 
         this.searching = false;
         this.spin.stop();
