@@ -9,28 +9,30 @@ define([
 ], function (_, Backbone, util) {
   return Backbone.Model.extend({
 
-    src: function () {
-      var link = this.get('video').link;
-      switch (link.type) {
-        case 'vimeo':
-          return 'https://player.vimeo.com/video/' + link.id + '?api=1';
+    initialize: function (attributes, options) {
+      this.set('videoEmbeds', util.getVideoLinks(this.get('note')));
+      this.set('path', this.get('action_type') === 'post' ?
+          this.get('action').key: 'efforts/' + this.get('action').key);
+    },
+
+    getTitle: function () {
+      var str;
+      var a = this.get('action');
+      switch (this.get('action_type')) {
+        case 'post':
+          if (a.title) {
+            str = _.str.prune(a.title, 30);
+          } else {
+            var date = new Date(a.created);
+            str = date.format('mm.dd.yy');
+          }
           break;
-        case 'youtube':
-          return '//www.youtube.com/embed/' + link.id;
+        case 'tick':
+          str = _.str.prune(a.ascent.name, 30);
           break;
-        default:
-          return '';
       }
-    },
-
-    date: function () {
-      var date = new Date(this.get('created'));
-      return date.format('mmm d');
-    },
-
-    views: function () {
-      return util.addCommas(this.get('vcnt') || 0);
-    },
+      return str;
+    }
 
   });
 });

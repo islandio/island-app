@@ -47,8 +47,6 @@ define([
     },
 
     setup: function () {
-
-      // Save refs.
       this.footer = this.$('.list-footer');
       this.inputWrap = this.$('#comment_input .comment');
 

@@ -38,8 +38,6 @@ define([
     },
 
     setup: function () {
-
-      // Render lists.
       this.feed = new Events(this.app, {
         parentView: this,
         reverse: true,

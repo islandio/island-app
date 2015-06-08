@@ -37,6 +37,7 @@ define([
   'views/dashboard',
   'views/splash',
   'views/ticks',
+  'views/medias',
   'text!../templates/about.html',
   'text!../templates/privacy.html',
   'text!../templates/tip.html',
@@ -45,7 +46,8 @@ define([
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
     Flashes, Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Tick,
     Crag, Admin, ImportSearch, ImportInsert, Ascent, Settings, Reset, Films, Static,
-    Crags, Dashboard, Splash, Ticks, aboutTemp, privacyTemp, tipTemp, NewSession, Share
+    Crags, Dashboard, Splash, Ticks, Medias, aboutTemp, privacyTemp, tipTemp, NewSession,
+    Share
 ) {
 
   /*
@@ -128,6 +130,8 @@ define([
       this.route('blog/category/:c', 'blog', this.blog);
       this.route('blog/page/:c', 'blog', this.blog);
       this.route('blog', 'blog', this.blog);
+
+      this.route('media', 'media', this.media);
 
       this.route('reset', 'reset', this.reset);
       this.route('admin', 'admin', this.admin);
@@ -399,11 +403,6 @@ define([
       $('.container').removeClass('narrow').removeClass('blog')
           .addClass('landing');
       this.renderTabs();
-      // if (!this.tabs || !this.tabs.params.tabs || !this.tabs.params.tabs[1]
-      //     || (_.str.strRightBack(this.tabs.params.tabs[1].href, '/')
-      //     !== 'ascents')) {
-      //   this.renderTabs();
-      // }
       var query = {actions: this.getEventActions()};
       this.render('/service/dashboard', query, _.bind(function (err) {
         if (err) return;
@@ -412,6 +411,7 @@ define([
           this.page = new Dashboard(this.app).render();
           this.renderTabs({tabs: [
             {title: 'Activity', href: '/', active: true},
+            {title: 'Recent Media', href: '/media'},
             {title: 'My Ascents', href: '/' + this.app.profile.member.username +
                 '/ascents'}
           ], log: true});
@@ -419,6 +419,31 @@ define([
           $('.container').addClass('wide').addClass('landing');
           this.page = new Splash(this.app).render();
         }
+        this.stop();
+      }, this));
+    },
+
+    media: function () {
+      this.start();
+      this.renderTabs();
+      this.clearContainer();
+      this.render('/service/media', _.bind(function (err) {
+        if (err) return;
+        if (this.app.profile.member) {
+          this.header.highlight('/');
+          this.renderTabs({tabs: [
+            {title: 'Activity', href: '/'},
+            {title: 'Recent Media', href: '/media', active: true},
+            {title: 'My Ascents', href: '/' +
+                this.app.profile.member.username + '/ascents'}
+          ], log: true});
+        }
+        _.defer(_.bind(function () {
+          this.page = new Medias(this.app).render();
+          if (!this.app.profile.member) {
+            this.renderTabs({title: 'Recent Media'});
+          }
+        }, this));
         this.stop();
       }, this));
     },
@@ -434,6 +459,7 @@ define([
           this.header.highlight('/');
           this.renderTabs({tabs: [
             {title: 'Activity', href: '/'},
+            {title: 'Recent Media', href: '/media'},
             {title: 'My Ascents', href: '/' + username + '/ascents',
                 active: true}
           ], log: true});

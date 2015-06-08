@@ -1,0 +1,112 @@
+<%
+  var type = this.model.get('action_type');
+  var data = this.model.attributes.action;
+  var gravatar = 'https://www.gravatar.com/avatar/'
+      + data.author.gravatar + '?s=48&d='
+      + encodeURIComponent(this.app.images.avatar);
+  var mediaTypes = _.uniq(_.pluck(data.medias, 'type'));
+  var title = this.model.getTitle();
+  var path = this.model.get('path');
+%>
+
+<% if (_.contains(mediaTypes, 'image')) { %>
+  <span class="event-avatar">
+    <a href="/<%= data.author.username %>" class="image-anchor navigate">
+      <img src="<%= data.author.avatar || gravatar %>" width="48"
+          height="48" class="tooltip" title="<%= data.author.displayName %>" /></a>
+    </a>
+    <% if (type === 'post') { %>
+      <a href="/<%= path %>" class="navigate">
+          <%= title %></a>
+    <% } else { %>
+      <a href="/<%= path %>" class="navigate">
+          <%= title %></a>
+    <% } %>
+  </span>
+  <div class="media-media" data-type="image">
+    <div class="image-mosaic" data-type="image" data-id="<%= data.id %>"></div>
+  </div>
+  <div class="media-info">
+    <i class="icon-picture"></i> from <a href="/<%= data.author.username %>" class="muted">@<%= data.author.username %></a>
+    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+    <a href="javascript:;" class="muted info-share">Share</a>
+    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+    <a href="/<%= path %>"
+        class="muted navigate"><time class="created" 
+        datetime="<%= data.updated %>" 
+        title="<%= data.updated %>" 
+        id="time_<%= data.id %>">
+      <%= data.updated %>
+      </time></a>
+  </div>
+<% } %>
+<% if (_.contains(mediaTypes, 'video')) {
+  var vids = _.filter(data.medias, function (m) { return m.type === 'video'; });
+  vids = _.uniq(vids, function (v) {
+    return v.video.original_id;
+  });
+  vids = vids.sort(function (a, b) {
+    return a.video._index - b.video._index;
+  });
+  _.each(vids, function (v) { %>
+    <span class="event-avatar">
+      <a href="/<%= data.author.username %>" class="image-anchor navigate">
+        <img src="<%= data.author.avatar || gravatar %>" width="48"
+            height="48" class="tooltip" title="<%= data.author.displayName %>" /></a>
+      </a>
+      <% if (type === 'post') { %>
+        <a href="/<%= path %>" class="navigate">
+            <%= title %></a>
+      <% } else { %>
+        <a href="/<%= path %>" class="navigate">
+            <%= title %></a>
+      <% } %>
+    </span>
+    <div class="media-media" data-type="video">
+      <div class="image-mosaic" data-type="video" data-id="<%= v.video.original_id %>"></div>
+    </div>
+    <div class="media-info">
+      <i class="icon-youtube-play"></i> from <a href="/<%= data.author.username %>" class="muted">@<%= data.author.username %></a>
+      <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+      <a href="javascript:;" class="muted info-share">Share</a>
+      <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+      <a href="/<%= path %>"
+          class="muted navigate"><time class="created" 
+          datetime="<%= data.updated %>" 
+          title="<%= data.updated %>" 
+          id="time_<%= data.id %>">
+        <%= data.updated %>
+        </time></a>
+    </div>
+  <% }); %>
+<% } %>
+<% _.each(this.model.get('videoEmbeds'), _.bind(function (v) { %>
+  <span class="event-avatar">
+    <a href="/<%= data.author.username %>" class="image-anchor navigate">
+      <img src="<%= data.author.avatar || gravatar %>" width="48"
+          height="48" class="tooltip" title="<%= data.author.displayName %>" /></a>
+    </a>
+    <% if (type === 'post') { %>
+      <a href="/<%= path %>" class="navigate"><%= title %></a>
+    <% } else { %>
+      <a href="/<%= path %>" class="navigate"><%= title %></a>
+    <% } %>
+  </span>
+  <div class="media-media" data-type="video">
+    <iframe src="<%= v.link %>" width="381" height="210"
+        frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+  </div>
+  <div class="media-info">
+    <i class="icon-youtube-play"></i> from <a href="/<%= data.author.username %>" class="muted">@<%= data.author.username %></a>
+    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+    <a href="javascript:;" class="muted info-share">Share</a>
+    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+    <a href="/<%= path %>"
+        class="muted navigate"><time class="created" 
+        datetime="<%= data.updated %>" 
+        title="<%= data.updated %>" 
+        id="time_<%= data.id %>">
+      <%= data.updated %>
+      </time></a>
+  </div>
+<% }, this)); %>

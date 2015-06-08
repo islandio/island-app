@@ -87,8 +87,8 @@ define([
         parentView: this,
         model: model
       }, this.app);
-      if (pagination !== true
-          && this.collection.options && this.collection.options.reverse) {
+      if (pagination !== true &&
+          this.collection.options && this.collection.options.reverse) {
         this.views.unshift(view);
       } else {
         this.views.push(view);

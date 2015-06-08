@@ -1,122 +1,53 @@
 /*
- * Tick View
+ * Media Row view
  */
 
 define([
   'jQuery',
   'Underscore',
-  'Backbone',
+  'views/boiler/row',
   'mps',
   'rest',
   'util',
-  'models/tick',
-  'text!../../../templates/rows/tick.html',
-  'text!../../../templates/tick.title.html',
-  'views/lists/comments',
-  'text!../../../templates/confirm.html',
-  'views/minimap',
-  'views/session.new',
+  'text!../../../templates/rows/media.html',
   'text!../../../templates/video.html',
-  'Skycons',
   'device'
-], function ($, _, Backbone, mps, rest, util, Model, template, title, Comments,
-      confirm, MiniMap, NewSession, videoTemp, skycons) {
-  return Backbone.View.extend({
-
-    tagName: 'li',
+], function ($, _, Row, mps, rest, util, template, videoTemp) {
+  return Row.extend({
 
     attributes: function () {
-      var attrs = {class: 'tick'};
-      if (this.model) {
-        attrs.id = this.model.id;
-      }
-      return attrs;
+      return _.defaults({class: 'media'},
+          Row.prototype.attributes.call(this));
     },
 
     initialize: function (options, app) {
       this.app = app;
-      this.model = new Model(options.model || this.app.profile.content.page,
-        {gradeConverter: this.app.gradeConverter});
-      this.parentView = options.parentView;
-      this.wrap = options.wrap;
       this.template = _.template(template);
       this.videoTemp = _.template(videoTemp);
-      this.subscriptions = [];
 
-      // Socket subscriptions
-      _.bindAll(this, 'onRemoved');
-      this.app.rpc.socket.on('tick.removed', this.onRemoved);
+      // _.bindAll(this, 'onRemoved');
+      // this.app.rpc.socket.on('tick.removed', this.onRemoved);
+      // this.app.rpc.socket.on('post.removed', this.onRemoved);
 
-      this.on('rendered', this.setup, this);
-      return this;
+      Row.prototype.initialize.call(this, options);
     },
 
     events: {
       'click .navigate': 'navigate',
-      'click .tick-edit': 'edit',
       'click .info-share': function () {
-        mps.publish('modal/share/open', [{pathname: '/efforts/' +
-            this.model.get('key')}]);
+        mps.publish('modal/share/open', [{pathname: this.model.get('path')}]);
       },
     },
 
-    render: function () {
-
-      // Render content
-      if (this.options.el) {
-        this.setElement(this.options.el);
-      }
-      this.$el.html(this.template.call(this));
-      if (!this.options.el) {
-        if (this.parentView) {
-          this.$el.prependTo(this.parentView.$('.event-right'));
-        } else {
-          this.$el.attr('id', this.model.id);
-          this.$el.appendTo(this.wrap);
-          this.$el.addClass('single');
-        }
-      }
-      if (this.app.profile.member &&
-          this.model.get('author') &&
-          this.model.get('author').id ===
-          this.app.profile.member.id) {
-        this.$el.addClass('own');
-      }
-      if (this.model.get('sent')) {
-        this.$el.addClass('sent');
-      }
-
-      // Render title if single
-      if (!this.parentView) {
-        this.app.title('Island | ' + this.model.get('author').displayName +
-            ' - ' + this.model.get('ascent').name);
-        this.title = _.template(title).call(this);
-
-        // Handle weather icon.
-        _.defer(_.bind(function () {
-          var weather = this.model.get('weather');
-          var w;
-          if (!_.isEmpty(weather))
-            w = weather.get('hourly') || weather.get('daily');
-          if (w && w.icon) {
-            this.skycons = new Skycons({'color': '#666', static: true});
-            var iconName = w.icon.replace(/-/g, '_').toUpperCase();
-            this.skycons.add('crag_weather', w.icon);
-          }
-        }, this));
-      }
-
-      if (this.options.medialess) {
-        this.trigger('rendered');
-        return this;
-      }
+    setup: function () {
+      this.$('.tooltip').tooltipster({delay: 300, multiple: true});
 
       // Group medias by type.
       //   - images can all be in one mosaic
       //   - each video set needs its own mosaic
       //     - (set = three vids of diff quality for each uploaded vid)
       var mosaics = [];
-      _.each(this.model.get('medias'), _.bind(function (m) {
+      _.each(this.model.get('action').medias, _.bind(function (m) {
         var o;
         switch (m.type) {
           case 'image':
@@ -126,7 +57,7 @@ define([
             if (!o) {
               o = {type: 'image', images: []};
               mosaics.push(o);
-              o.id = this.model.id; // will be uniq cause only one photo mosaic
+              o.id = this.model.get('action').id; // will be uniq cause only one photo mosaic
             }
             o.images.push(m.image);
             break;
@@ -166,11 +97,7 @@ define([
           var img = $('<img src="' + src + '" />').css(item.img).wrap(
               $('<a class="fancybox" rel="g-' + o.id + '">')).appendTo(div);
           if (o.type === 'video' && item.first) {
-            var s = 120;
-            if (this.parentView && this.parentView.parentView &&
-                this.parentView.$('.session-ticks').length > 0) {
-              s = 80;
-            }
+            var s = 80;
             var play = $('<img src="' + __s + '/img/play.png" class="image-mosaic-play"' +
                 ' width="' + s + '" height="' + s + '" />');
             play.appendTo(div);
@@ -187,7 +114,7 @@ define([
         _.bind(function () {
 
           function getVideo(quality) {
-            return _.find(this.model.get('medias'), function (m) {
+            return _.find(this.model.get('action').medias, function (m) {
               return m.type === 'video' && m.quality === quality &&
                   m.video.original_id === o.id;
             });
@@ -217,7 +144,7 @@ define([
                   ga: {},
                   sharing: {
                     link: window.location.protocol + '//' +
-                        window.location.host + '/efforts/' + this.model.get('key'),
+                        window.location.host + '/' + this.model.get('path'),
                     code: "<iframe width='100%' height='100%' src='//" +
                         window.location.host + "/embed/" +
                         ipad.video.id + "' frameborder='0'></iframe>"
@@ -275,94 +202,25 @@ define([
         }, this));
       }, this));
 
-      this.trigger('rendered');
-      return this;
+      return Row.prototype.setup.call(this);
     },
 
-    setup: function () {
-
-      // Set map view.
-      if (!this.parentView) {
-        mps.publish('map/fly', [this.model.get('crag').location]);
-      }
-
-      // Render map.
-      if (!this.options.mapless && this.$('.mini-map').length !== 0) {
-        this.map = new MiniMap(this.app, {
-          el: this.$('.mini-map'),
-          location: this.model.get('ascent').location
-        }).render();
-      }
-
-      // Render comments.
-      if (!this.options.commentless) {
-        this.comments = new Comments(this.app, {
-          parentView: this,
-          type: 'tick',
-          hideInput: true
-        });
-      }
-
-      // Handle time.
-      this.timer = setInterval(_.bind(this.when, this), 5000);
-      this.when();
-
-      // Handle sizing.
-      if (!this.parentView && this.$('.leftside').height() <
-          this.$('.rightside').height()) {
-        // this.$('.leftside').height(this.$el.height() - 60);
-      }
-    },
-
-    onRemoved: function (data) {
-      if (!this.parentView && data.id === this.model.id) {
-        this.app.router.tick(this.model.get('key'));
-      }
-    },
-
-    destroy: function () {
-      this.app.rpc.socket.removeListener('tick.removed', this.onRemoved);
-      _.each(this.subscriptions, function (s) {
-        mps.unsubscribe(s);
-      });
-      if (this.map) {
-        this.map.destroy();
-      }
-      if (this.comments) {
-        this.comments.destroy();
-      }
-      this.undelegateEvents();
-      this.stopListening();
-      if (this.timer) {
-        clearInterval(this.timer);
-      }
-      this.remove();
-    },
-
-    navigate: function (e) {
-      e.preventDefault();
-      var path = $(e.target).closest('a').attr('href');
-      if (path) {
-        this.app.router.navigate(path, {trigger: true});
-      }
+    _remove: function (cb) {
+      this.$el.slideUp('fast', _.bind(function () {
+        this.destroy();
+        cb();
+      }, this));
     },
 
     when: function () {
-      if (!this.model.get('updated')) return;
-      if (!this.time) {
-        this.time = this.$('#time_' + this.model.id);
+      if (!this.model || !this.model.get('created')) {
+        return;
       }
-      this.time.text(util.getRelativeTime(this.model.get('updated')));
+      if (!this.time) {
+        this.time = this.$('time.created');
+      }
+      this.time.text(util.getRelativeTime(this.model.get('created')));
     },
-
-    edit: function (e) {
-      e.preventDefault();
-      new NewSession(this.app, {
-        tick: this.model.attributes,
-        crag_id: this.model.get('crag_id'),
-        ascent_id: this.model.get('ascent').id
-      }).render();
-    }
 
   });
 });

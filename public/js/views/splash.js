@@ -56,8 +56,8 @@ define([
       // Handle the background video.
       if (!document.createElement('video').play) {
         swfobject.embedSWF(__s + '/swf/roll.swf', 'splash-video', '100%',
-            '100%', '9.0.0', false, {src: (__s === '' ? '..': '')
-            + '/vid/roll.mp4'}, {menu: 'false', wmode: 'opaque',
+            '100%', '9.0.0', false, {src: (__s === '' ? '..': '') +
+            '/vid/roll.mp4'}, {menu: 'false', wmode: 'opaque',
             allowscriptaccess: 'always', allowfullscreen: 'true'});
       } else {
 
@@ -66,7 +66,7 @@ define([
         if (!device.mobile()) {
           vid.addEventListener('loadeddata', function () {}, false);
           vid.addEventListener('progress', function () {}, false);
-          if (!(typeof vid.loop === 'boolean')) {
+          if (typeof vid.loop !== 'boolean') {
             vid.addEventListener('ended', function () {
               this.currentTime = 0;
               this.play();

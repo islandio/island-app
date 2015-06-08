@@ -1,0 +1,32 @@
+<%
+  var feed = store.get(this.collection.options.feedStore || 'feed') || {};
+%>
+
+<% if (this.collection.options.filters !== false) { %>
+  <div class="events-filter">
+    <div class="subtabs">
+      <ul>
+        <li data-filter="all" class="subtab<%= !feed.actions || feed.actions === 'all' ? ' active': '' %>">
+          <a href="javascript:;">All</a>
+        </li>
+        <% var titles = this.collection.options.filterTitles; 
+          _.each(_.difference(this.collection.options.filters,
+              this.collection.options.hide), function (f, i) { %>
+          <li data-filter="<%= f %>" class="subtab<%= feed.actions && feed.actions === f ? ' active': '' %>">
+            <a href="javascript:;"><%= titles ? titles[i]: f.substr(0,1).toUpperCase() + f.substr(1) + 's' %></a>
+          </li>
+        <% }) %>
+      </ul>
+    </div>
+  </div>
+<% } %>
+
+<div class="medias">
+  <% if (this.collection.models.length > 0) { %>
+    <% _.each(this.collection.models, _.bind(function (m, i) { %>
+      <%= this.row(m) %>
+    <% }, this)); %>
+  <% } %>
+  <div class="list-footer clear"></div>
+</div>
+
