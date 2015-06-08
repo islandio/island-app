@@ -310,7 +310,7 @@ a.contact-link {
   font-weight: bold;
 }
 a.muted {
-  color: #ccc;
+  color: #808080;
   background: none;
 }
 a.muted:hover {
@@ -403,7 +403,7 @@ time.created {
   display: inline-block;
 }
 time.created.static {
-  color: #ccc;
+  color: #808080;
 }
 .error {
   min-height: 336px;
@@ -534,7 +534,7 @@ span.empty-list {
 .info-delete,
 .info-accept {
   font-size: 11px;
-  color: #ccc;
+  color: #808080;
   background: none;
   cursor: pointer;
 }
@@ -544,11 +544,11 @@ span.empty-list {
 }
 .info-divider {
   font-size: 11px;
-  color: #ccc;
+  color: #808080;
 }
 .info-item {
   font-size: 11px;
-  color: #ccc;
+  color: #808080;
 }
 p.page {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -1241,6 +1241,13 @@ li.tab.active a {
   border-top: 4px solid #4bb8d7;
   padding-top: 12px;
   top: 6px;
+  margin-right: -1px;
+}
+li:first-child.tab.active a {
+  margin-right: 0;
+}
+li:last-child.tab.active a {
+  margin-right: 1px;
 }
 li.tab a .tab-count {
   display: none;
@@ -2455,7 +2462,7 @@ p.sidebar-tip span {
 }
 .sidebar-info {
   font-size: 11px;
-  color: #ccc;
+  color: #808080;
   padding-bottom: 5px;
 }
 .sidebar-info .crag-flag {
@@ -3904,7 +3911,7 @@ ul.pagination li a.active {
   margin: 10px 0 0;
   font-size: 11px;
   line-height: 13px;
-  color: #ccc;
+  color: #808080;
 }
 .post-input .post {
   width: 710px;
@@ -4333,7 +4340,7 @@ table.post-params label {
   margin: 10px 0 3px;
   font-size: 11px;
   line-height: 13px;
-  color: #ccc;
+  color: #808080;
 }
 .single .event-info {
   width: 561px;
@@ -4472,8 +4479,8 @@ table.post-params label {
   width: 100%;
   height: 100%;
 }
-.media-media + .media-media {
-  margin-top: 72px;
+.media-info + .event-avatar {
+  margin-top: 30px;
 }
 .media-info {
   margin-top: 10px;

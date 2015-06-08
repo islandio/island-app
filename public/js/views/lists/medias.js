@@ -182,15 +182,8 @@ define([
         _.delay(_.bind(function () {
           this.fetching = false;
           this.spin.stop();
-          if (list.items.length < this.latestList.limit) {
-            this.spin.target.hide();
-            if (!this.$('.empty-feed').is(':visible')) {
-              this.showingAll.css('display', 'block');
-            }
-          } else {
-            this.showingAll.hide();
-            this.spin.target.show();
-          }
+          this.showingAll.hide();
+          this.spin.target.show();
           window.dispatchEvent(new Event('resize'));
         }, this), (list.items.length + 1) * 30);
       }
@@ -200,7 +193,7 @@ define([
         return;
       }
 
-      // Show spin region.
+      // show spin region
       this.listSpin.show();
 
       // there are no more, don't call server

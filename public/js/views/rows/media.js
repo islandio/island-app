@@ -32,6 +32,13 @@ define([
       Row.prototype.initialize.call(this, options);
     },
 
+    events: {
+      'click .navigate': 'navigate',
+      'click .info-share': function () {
+        mps.publish('modal/share/open', [{pathname: this.model.get('path')}]);
+      },
+    },
+
     setup: function () {
       this.$('.tooltip').tooltipster({delay: 300, multiple: true});
 
@@ -203,6 +210,16 @@ define([
         this.destroy();
         cb();
       }, this));
+    },
+
+    when: function () {
+      if (!this.model || !this.model.get('created')) {
+        return;
+      }
+      if (!this.time) {
+        this.time = this.$('time.created');
+      }
+      this.time.text(util.getRelativeTime(this.model.get('created')));
     },
 
   });
