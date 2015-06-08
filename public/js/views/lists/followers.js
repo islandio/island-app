@@ -29,6 +29,7 @@ define([
       this.app.rpc.socket.on('follow.removed', this._remove);
 
       // Reset the collection.
+      this.collection.count = this.app.profile.content.followers.count;
       this.collection.reset(this.app.profile.content.followers.items);
     },
 
@@ -82,16 +83,16 @@ define([
     },
 
     updateCount: function () {
-      if (!this.parentView.model
-          || (this.app.profile.member
-          && this.parentView.model.id === this.app.profile.member.id)) {
+      if (!this.parentView.model ||
+          (this.app.profile.member &&
+          this.parentView.model.id === this.app.profile.member.id)) {
         if (this.collection.length === 0) {
           this.tip.show();
         } else {
           this.tip.hide();
         }
       }
-      this.count.text('(' + this.collection.length + ')');
+      this.count.text('(' + this.collection.count + ')');
     },
 
   });
