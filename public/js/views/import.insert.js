@@ -28,9 +28,7 @@ define([
       this.subscriptions = [];
       this.ticks = [];
 
-      var name = options.slug.split('-');
-      name.pop();
-      this.name = util.titleize(name.join(' '));
+      this.name = options.name;
 
       this.on('rendered', this.setup, this);
     },

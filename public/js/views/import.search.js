@@ -69,15 +69,7 @@ define([
     },
 
     updateRadio: function() {
-    /*
-      var val = $('input[type="radio"]:checked').val();
-      var placeholder = '';
-      if (val.indexOf("8a") !== -1)
-        placeholder = "Enter your full name";
-      else if (val.indexOf("27crags") !== -1)
-        placeholder = "Enter your 27crags username"
-      this.input.attr('placeholder', placeholder);
-    */
+      this.list.empty();
     },
 
     destroy: function () {
@@ -99,9 +91,14 @@ define([
 
     navigate: function (e) {
       e.preventDefault();
-      var path = $(e.target).closest('a').attr('href');
-      if (path) {
-        this.app.router.navigate(path, {trigger: true});
+      var anchor = $(e.target).closest('a');
+      if (anchor.attr('href')) {
+        this.app.state.import = {
+          userId: anchor.attr('data-id'),
+          name: anchor.attr('data-name'),
+          target: $('input[type=radio]:checked').val()
+        }
+        this.app.router.navigate(anchor.attr('href'), {trigger: true});
       }
     },
 
@@ -116,7 +113,7 @@ define([
       this.searching = true;
       var rpcData = { 
         userId: this.input.val(),
-        from: $('input[type=radio]:checked').val()
+        target: $('input[type=radio]:checked').val()
       };
 
       this.app.rpc.do('getUser', rpcData, _.bind(function (err, res) {
@@ -127,21 +124,32 @@ define([
 
         if (err) {
           this.input.addClass('input-error');
-          return console.log(err);
         }
 
         if (!res || res.length === 0) return this.noResults.show();
 
         _.each(res, _.bind(function(member) {
-          var slug = (member.name + ' ' + member.userId)
+          var slug = (member.name + ' ' + member.userId + ' ' + rpcData.target)
               .toLowerCase()
               .replace(/[^\w ]+/g,'')
               .replace(/ +/g,'-');
+          // Show id in paranthesis if its interesting
+          var idString = /[a-zA-Z]/g.test(member.userId) ? '(' + member.userId
+              + ')&nbsp' : ''
+          var geoString = '';
+          if (member.country) {
+            if (member.city) {
+              geoString = member.city + ', ' + member.country;
+            } else {
+              geoString = member.country;
+            }
+          }
           this.list.append('<li>' +
-              '<a class="navigate" href="/import/' + slug + '">' +
+              '<a class="navigate" href="/import/2" data-id="' + member.userId +
+                  '" data-name="' + member.name + '">' + 
               '<i class="icon-user"></i>' +
               '<b>' + member.name + '</b>&nbsp' +
-              '<span>' + member.city + ', ' + member.country + '</span>' +
+              '<span>' + idString + geoString + '</span>' +
               '</a></li>');
         }, this));
 
