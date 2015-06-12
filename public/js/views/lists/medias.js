@@ -43,7 +43,6 @@ define([
 
     // receive event from event bus
     collect: function (data) {
-      return;
       // if (!_.contains(this.latestList.actions, data.action_type)) {
       //   return;
       // }

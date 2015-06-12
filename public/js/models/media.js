@@ -10,9 +10,11 @@ define([
   return Backbone.Model.extend({
 
     initialize: function (attributes, options) {
-      this.set('videoEmbeds', util.getVideoLinks(this.get('note')));
-      this.set('path', this.get('action_type') === 'post' ?
-          this.get('action').key: 'efforts/' + this.get('action').key);
+      var a = this.get('action');
+      var str = a.body || a.note;
+      this.set('videoEmbeds', util.getVideoLinks(str));
+      this.set('path', this.get('action_type') === 'post' ? a.key: 'efforts/' +
+          a.key);
     },
 
     getTitle: function () {

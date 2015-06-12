@@ -374,7 +374,7 @@ define([
     },
 
     getVideoLinks: function (str) {
-      if (!str) return false;
+      if (!str) return [];
 
       var tests = [
         {

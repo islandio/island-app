@@ -25,10 +25,6 @@ define([
       this.template = _.template(template);
       this.videoTemp = _.template(videoTemp);
 
-      // _.bindAll(this, 'onRemoved');
-      // this.app.rpc.socket.on('tick.removed', this.onRemoved);
-      // this.app.rpc.socket.on('post.removed', this.onRemoved);
-
       Row.prototype.initialize.call(this, options);
     },
 
@@ -206,7 +202,7 @@ define([
     },
 
     _remove: function (cb) {
-      this.$el.slideUp('fast', _.bind(function () {
+      this.$el.fadeOut('fast', _.bind(function () {
         this.destroy();
         cb();
       }, this));
