@@ -110,3 +110,51 @@
       </time></a>
   </div>
 <% }, this)); %>
+<% if (data.type === 'instagram') {
+  var rm = data.remote_media;
+%>
+  <% if (rm) { %>
+    <span class="event-avatar">
+      <a href="/<%= data.author.username %>" class="image-anchor navigate">
+        <img src="<%= data.author.avatar || gravatar %>" width="48"
+            height="48" class="tooltip" title="<%= data.author.displayName %>" /></a>
+      </a>
+      <% if (type === 'post') { %>
+        <a href="/<%= path %>" class="navigate"><%= title %></a>
+      <% } else { %>
+        <a href="/<%= path %>" class="navigate"><%= title %></a>
+      <% } %>
+    </span>
+    <div class="media-media" data-type="<%= rm.type %>">
+      <% if (rm.type === 'video') {
+        var img = rm.images.standard_resolution;
+        var vid = rm.videos.standard_resolution;
+        var icon = 'youtube-play';
+      %>
+        <video src="<%= vid.url %>" id="video-<%= rm.id %>" class="media-instagram" 
+            poster="<%= img.url %>" controls="controls" width="301" height="301" />
+      <% } else {
+        var img = rm.images.standard_resolution;
+        var icon = 'picture';
+      %>
+        <a href="<%= rm.link %>" class="image-anchor" target="_blank">
+          <img src="<%= img.url %>" class="media-instagram" width="301"
+              height="301" />
+        </a>
+      <% } %>
+    </div>
+    <div class="media-info">
+      <i class="icon-<%= icon %>"></i> from <a href="/<%= data.author.username %>" class="muted">@<%= data.author.username %></a>
+      <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+      <a href="javascript:;" class="muted info-share">Share</a>
+      <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+      <a href="/<%= path %>"
+          class="muted navigate"><time class="created" 
+          datetime="<%= data.updated %>" 
+          title="<%= data.updated %>" 
+          id="time_<%= data.id %>">
+        <%= data.updated %>
+        </time></a>
+    </div>
+  <% } %>
+<% } %>

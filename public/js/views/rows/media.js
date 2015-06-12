@@ -198,6 +198,20 @@ define([
         }, this));
       }, this));
 
+      // Video params
+      _.each($('video.media-instagram'), _.bind(function (el) {
+        el = $(el);
+        jwplayer(el.attr('id')).setup({
+          width: el.width().toString(),
+          height: el.height().toString(),
+          autostart: false,
+          primary: 'flash',
+          file: el.attr('src'),
+          image: el.attr('poster'),
+          ga: {}
+        });
+      }, this));
+
       return Row.prototype.setup.call(this);
     },
 

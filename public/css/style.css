@@ -4490,6 +4490,9 @@ table.post-params label {
   width: 100%;
   height: 100%;
 }
+.media-media iframe {
+  display: block;
+}
 .media-info + .event-avatar {
   margin-top: 30px;
 }
@@ -4507,6 +4510,9 @@ table.post-params label {
 .media .image-mosaic-play {
   top: 45px;
   left: 45px;
+}
+.media-instagram {
+  display: block;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––sessions*/
 .session .leftside {

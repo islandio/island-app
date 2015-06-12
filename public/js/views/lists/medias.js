@@ -205,52 +205,5 @@ define([
       $(window).unbind('scroll', this._paginate).unbind('resize', this._paginate);
     },
 
-    filter: function (e) {
-      // e.preventDefault();
-
-      // // Update buttons.
-      // var chosen = $(e.target).closest('li');
-      // if (chosen.hasClass('active')) return;
-      // var active = $('.active', chosen.parent());
-      // chosen.addClass('active');
-      // active.removeClass('active');
-
-      // // Update list query.
-      // switch (chosen.data('filter')) {
-      //   case 'all':
-      //     this.latestList.actions = this.collection.options.filters;
-      //     break;
-      //   case 'session':
-      //     this.latestList.actions = ['session'];
-      //     break;
-      //   case 'post':
-      //     this.latestList.actions = ['post'];
-      //     break;
-      //   case 'tick':
-      //     this.latestList.actions = ['tick'];
-      //     break;
-      // }
-
-      // // Set feed state.
-      // store.set(this.collection.options.feedStore || 'feed',
-      //     {actions: chosen.data('filter')});
-
-      // // Reset the collection.
-      // this.nomore = false;
-      // this.latestList.cursor = 0;
-      // this.latestList.more = true;
-      // this.collection.reset([]);
-      // _.each(this.views, function (v) {
-      //   v.destroy();
-      // });
-      // this.views = [];
-      // this.$('.event-day-header').remove();
-      // this.$('.event-divider').remove();
-      // this.showingAll.hide();
-      // this.more();
-
-      // return false;
-    },
-
   });
 });
