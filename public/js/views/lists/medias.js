@@ -33,44 +33,11 @@ define([
 
       this.subscriptions = [];
 
-      _.bindAll(this, 'collect', '_remove');
-      this.app.rpc.socket.on('event.new', this.collect);
+      _.bindAll(this, '_remove');
       this.app.rpc.socket.on('event.removed', this._remove);
 
       this.latestList = this.app.profile.content.events;
       this.collection.reset(this.latestList.items);
-    },
-
-    // receive event from event bus
-    collect: function (data) {
-      // if (!_.contains(this.latestList.actions, data.action_type)) {
-      //   return;
-      // }
-      // if (this.latestList.query) {
-      //   if (this.latestList.query.subscribee_id &&
-      //       data.actor_id !== this.latestList.query.subscribee_id &&
-      //       data.target_id !== this.latestList.query.subscribee_id) {
-      //     return;
-      //   }
-      //   if (this.latestList.query.action) {
-      //     if (data.action_type !== this.latestList.query.action.type) {
-      //       return;
-      //     }
-      //     var valid = true;
-      //     _.each(this.latestList.query.action.query, function (v, p) {
-      //       if (v.$ne !== undefined) {
-      //         v = !v.$ne;
-      //         if (!!data.action[p] !== v) {
-      //           valid = false;
-      //         }
-      //       } else if (data.action[p] !== v) {
-      //         valid = false;
-      //       }
-      //     });
-      //     if (!valid) return;
-      //   }
-      // }
-      // this.collection.unshift(data);
     },
 
     // initial bulk render of list
