@@ -554,7 +554,7 @@ define([
       }, this));
     },
 
-    import: function (stage) {
+    import: function () {
       this.start();
       this.renderTabs();
       this.clearContainer();
@@ -567,7 +567,7 @@ define([
       delete this.app.state.import;
       this.render('/service/import/' + path, _.bind(function (err) {
         if (err) return;
-        if (stage) {
+        if (path) {
           this.page = new ImportInsert(this.app, {name: name}).render();
         } else {
           this.page = new ImportSearch(this.app).render();

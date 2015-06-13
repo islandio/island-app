@@ -51,7 +51,7 @@ define([
           var data = _.find(this.model.get('ticks')[el.data('type')], function (t) {
             return t.id === el.attr('id');
           });
-          this.ticks.push(new Tick({
+          var tick = new Tick({
             parentView: this,
             el: el,
             model: data,
@@ -60,10 +60,16 @@ define([
             commentless: true,
             inlineWeather: false,
             showCragName: true,
-            inlineDate: false,
-            info: false
-          }, this.app).render());
+            inlineDate: true,
+            shareless: true,
+            inlineRemove: true,
+			info: false
+          }, this.app);
+          tick.render();
+          this.ticks.push(tick);
+
           win.trigger('resize');
+
         }, this));
       }, this));
 
@@ -73,6 +79,7 @@ define([
 
     events: {
       'click .button': 'submit',
+      'click .info-remove': 'setTickRemove'
     },
 
     setup: function () {
@@ -212,7 +219,12 @@ define([
           return this.submitError();
         }
 
-        var sessions = _.map(this.ticks, function(tick) {
+        var filteredTicks = _.filter(this.ticks, function(tick) {
+          return tick.model.get('remove') === true;
+        });
+
+        // Gather up all ticks into 'sessions' with some basic manipulations
+        var sessions = _.map(filteredTicks, function(tick) {
           var t = tick.model.attributes;
           t.index = 0;
 
@@ -227,12 +239,15 @@ define([
           delete t.ascent;
           t.ascent = {name: name};
 
+          delete t.remove;
+
           // some legacy stuff going on here
           var action = {ticks: [t]};
           var actions = [action];
           payload.actions = actions;
           return payload;
         });
+
         rest.post('/api/sessions/', sessions, _.bind(function (err, res) {
           if (err) {
             mps.publish('flash/new', [{
@@ -246,7 +261,7 @@ define([
           this.submitting = false;
 
           // Show success.
-          var ticks = this.ticks.length;
+          var ticks = filteredTicks.length;
           mps.publish('flash/new', [{
             message: 'You successfully imported your 8a.nu scorecard and added ' +
                 ticks + ' new ascents.',
@@ -258,6 +273,25 @@ define([
 
         }, this));
       }, this));
+    },
+
+    setTickRemove: function(e) {
+      var $tickRemoveText = $(e.target)
+      var $tickInner = $tickRemoveText.parentsUntil('.tick');
+
+      var model = _.find(this.ticks, function(t) {
+        return t.model.get('id') === $tickInner.parent().attr('id');
+      }).model;
+
+      if (model.get('remove')) {
+        model.set('remove', false);
+        $tickRemoveText.text('Remove');
+        $tickInner.css({opacity: ''});
+      } else {
+        model.set('remove', true);
+        $tickRemoveText.text('Include');
+        $tickInner.css({opacity: .15});
+      }
     },
 
     submitError: function () {
