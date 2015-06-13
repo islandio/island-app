@@ -41,9 +41,7 @@ define([
       this.footer = this.$('.sidebar-more');
       if (this.footer.length === 0) {
         delete this.footer;
-      }
-
-      if (this.collection.count === this.collection.length) {
+      } else if (this.collection.count === this.collection.length) {
         this.footer.hide();
       }
 
