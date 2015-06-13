@@ -78,8 +78,10 @@ define([
     },
 
     events: {
-      'click .button': 'submit',
-      'click .info-remove': 'setTickRemove'
+      'click .new-session-button': 'submit',
+      'click .info-remove': 'setTickRemove',
+      'click .import-include-all': 'includeAll',
+      'click .import-remove-all': 'removeAll'
     },
 
     setup: function () {
@@ -187,13 +189,18 @@ define([
     },
 
     submit: function (e) {
-      if (this.ticks.length === 0 || this.submitting) return;
+
+      var filteredTicks = _.filter(this.ticks, function(tick) {
+        return tick.model.get('remove') !== true;
+      });
+
+      if (filteredTicks.length === 0 || this.submitting) return;
       this.submitting = true;
       this.spin.start();
       this.button.addClass('spinning').addClass('disabled').attr('disabled', true);
 
       // Add missing ascents
-      var ascents = _.compact(_.map(this.ticks, function (tick) {
+      var ascents = _.compact(_.map(filteredTicks, function (tick) {
         var t = tick.model.attributes;
         if (!t.ascent.id) {
           return {
@@ -218,10 +225,6 @@ define([
           }, true]);
           return this.submitError();
         }
-
-        var filteredTicks = _.filter(this.ticks, function(tick) {
-          return tick.model.get('remove') === true;
-        });
 
         // Gather up all ticks into 'sessions' with some basic manipulations
         var sessions = _.map(filteredTicks, function(tick) {
@@ -290,8 +293,24 @@ define([
       } else {
         model.set('remove', true);
         $tickRemoveText.text('Include');
-        $tickInner.css({opacity: .15});
+        $tickInner.css({opacity: .20});
       }
+    },
+
+    removeAll: function() {
+      $('.tick-inner').css({opacity: .20});
+      $('.info-remove').text('Include');
+      _.each(this.ticks, function(tick) {
+        tick.model.set('remove', true);
+      });
+    },
+
+    includeAll: function() {
+      $('.tick-inner').css({opacity: ''});
+      $('.info-remove').text('Remove');
+      _.each(this.ticks, function(tick) {
+        tick.model.set('remove', false);
+      });
     },
 
     submitError: function () {

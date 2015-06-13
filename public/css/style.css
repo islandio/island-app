@@ -5263,7 +5263,7 @@ input.import-input {
   color: inherit;
 }
 .import .subtabs {
-  float: clear;
+  clear: both;
 }
 .import-scorecard-title {
   font-size: 20px;
@@ -5275,6 +5275,14 @@ input.import-input {
 }
 .import .ticks-filter {
   margin-top: 40px;
+}
+.import .import-include-all {
+  float: left;
+  margin: 20px 10px 0px 0px;
+}
+.import .import-remove-all {
+  float: left;
+  margin-top: 20px;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crags*/
 .crag-flag {
