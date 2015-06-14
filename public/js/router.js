@@ -564,6 +564,7 @@ define([
         path = this.app.state.import.userId + '-' + this.app.state.import.target;
         name = this.app.state.import.name;
       }
+      //path = 'rajones2186-27crags';
       delete this.app.state.import;
       this.render('/service/import/' + path, _.bind(function (err) {
         if (err) return;

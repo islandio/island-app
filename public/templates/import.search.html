@@ -12,20 +12,50 @@
   </div>
 </div>
 <div class="leftside import">
-  <p class="note">
-    <span class="em">Step 1)</span> Let's find your account.
-  </p>
 
-  <input type="radio" name="climbingsite" value="8a" id="climbingsite.8a" 
-      checked="checked" />
-  <label for="climbingsite.8a">8a.nu</label>
-  <input type="radio" name="climbingsite" value="27crags" id="climbingsite.27crags"/>
-  <label for="climbingsite.27crags">27crags</label>
-
-  <input class='import-input' type="search" placeholder="Your full name"></input>
-  <button class="button import-search-button"><i class="icon-search"></i> Search
-    <div class="button-spin"></div>
-  </button>
+  <table>
+    <tbody>
+      <tr>
+        <td>
+          <p class="note">
+            <span class="em">Step 1)</span> Let's find your account.
+          </p>
+        </td>        
+      </tr>
+      <tr>
+        <td>
+          <span>Select the climbing site...</span>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="radio" name="climbingsite" value="8a" id="climbingsite.8a" checked="checked" />
+          <label for="climbingsite.8a">8a.nu</label>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="radio" name="climbingsite" value="27crags" id="climbingsite.27crags"/>
+          <label for="climbingsite.27crags">27crags</label>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <span>Search for your acount...</span>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input class='import-input' type="search" placeholder="Your full name"></input>
+        </td>
+        <td>
+          <button class="button import-search-button"><i class="icon-search"></i> Search
+            <div class="button-spin"></div>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
   <div class="list-wrap" style="display:block;">
     <span class="no-results">No results.</span>
     <ul class="list"></ul>
