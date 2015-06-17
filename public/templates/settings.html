@@ -57,6 +57,7 @@
   // Notifications config
   var notes = data.config.notifications;
   var privacy = data.config.privacy;
+  var prefs = data.prefs;
 
 %>
 
@@ -201,12 +202,101 @@
                 placeholder="One URL per line..."><%= data.website %></textarea>
           </td>
         </tr>
-        <!-- <tr>
-          <td colspan="6" class="settings-gravatar">
-            <img src=<= gravatar > width="24" height="24" />
-            <a tabindex="8" href="http://gravatar.com" class="important" target="_blank">Change your avatar at Gravatar.com</a>.
+        <tr>
+          <td colspan="6">
+            <h1 class="title-static">Preferences</h1>
           </td>
-        </tr> -->
+        </tr>
+        <tr>
+          <td colspan="2">
+            <span class="settings-detail-txt">Bouldering grade system</span>
+          </td>
+          <td colspan="2">
+            <span class="settings-detail-txt">Route grade system</span>
+          </td>
+          <td colspan="2">
+            <span class="settings-detail-txt">Units</span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" style="padding-top: 5px;">
+            <input tabindex="9" type="radio" name="prefs.grades.boulder"
+                value="hueco" id="prefs.grades.boulder.hueco" 
+                <%= prefs.grades.boulder === 'hueco' ? 'checked="checked"': '' %> />
+            <label for="prefs.grades.boulder.hueco" style="vertical-align:-1px;">Hueco</label>
+          </td>
+
+          <td colspan="2" style="padding-top: 5px;">
+            <input tabindex="9" type="radio" name="prefs.grades.route"
+                value="yds" id="prefs.grades.route.yds" 
+                <%= prefs.grades.route === 'yds' ? 'checked="checked"': '' %> />
+            <label for="prefs.grades.route.yds" style="vertical-align:-1px;">YDS</label>
+          </td>
+
+          <td colspan="2" style="padding-top: 5px;">
+            <input tabindex="9" type="radio" name="prefs.units"
+                value="si" id="prefs.units.si" 
+                <%= prefs.units === 'si' ? 'checked="checked"': '' %> />
+            <label for="prefs.units.si" style="vertical-align:-1px;">SI</label>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" style="padding-top: 5px;">
+            <input tabindex="9" type="radio" name="prefs.grades.boulder"
+                value="font" id="prefs.grades.boulder.font" 
+                <%= prefs.grades.boulder === 'font' ? 'checked="checked"': '' %> />
+            <label for="prefs.grades.boulder.font" style="vertical-align:-1px;">Font</label>
+          </td>
+
+          <td colspan="2" style="padding-top: 5px;">
+            <input tabindex="9" type="radio" name="prefs.grades.route"
+                value="french" id="prefs.grades.route.french" 
+                <%= prefs.grades.route === 'french' ? 'checked="checked"': '' %> />
+            <label for="prefs.grades.route.french" style="vertical-align:-1px;">French</label>
+          </td>
+
+          <td colspan="2" style="padding-top: 5px;">
+            <input tabindex="9" type="radio" name="prefs.units"
+                value="en" id="prefs.units.en" 
+                <%= prefs.units === 'en' ? 'checked="checked"': '' %> />
+            <label for="prefs.units.en" style="vertical-align:-1px;">English</label>
+          </td>
+        </tr>
+
+        <tr>
+          <td colspan="2" style="padding-top: 5px;">
+            
+          </td>
+
+          <td colspan="2" style="padding-top: 5px;">
+            <input tabindex="9" type="radio" name="prefs.grades.route"
+                value="brit" id="prefs.grades.route.brit" 
+                <%= prefs.grades.route === 'brit' ? 'checked="checked"': '' %> />
+            <label for="prefs.grades.route.brit" style="vertical-align:-1px;">British</label>
+          </td>
+
+          <td colspan="2" style="padding-top: 5px;">
+            
+          </td>
+        </tr>
+
+        <tr>
+          <td colspan="2" style="padding-top: 5px;">
+            
+          </td>
+
+          <td colspan="2" style="padding-top: 5px;">
+            <input tabindex="9" type="radio" name="prefs.grades.route"
+                value="aus" id="prefs.grades.route.aus" 
+                <%= prefs.grades.route === 'aus' ? 'checked="checked"': '' %> />
+            <label for="prefs.grades.route.aus" style="vertical-align:-1px;">Ewbank</label>
+          </td>
+
+          <td colspan="2" style="padding-top: 5px;">
+            
+          </td>
+        </tr>
+
         <tr>
           <td colspan="6">
             <h1 class="title-static">Privacy</h1>
@@ -310,7 +400,7 @@
         <tr>
           <td colspan="6">
             <a tabindex="14" class="button navigate" href="/import">
-              Import <i class="icon-angle-up"></i>
+              <i class="icon-angle-right"></i> Import
             </a>
           </td>
         </tr>

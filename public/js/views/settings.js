@@ -27,6 +27,8 @@ define([
     initialize: function (app) {
       this.app = app;
       this.on('rendered', this.setup, this);
+
+      this.cropAvatar = _.throttle(this.cropAvatar, 1000);
     },
 
     render: function () {
@@ -221,27 +223,20 @@ define([
         return false;
       }
 
-      // Now do the save.
       rest.put('/api/members/' + this.app.profile.member.username, payload,
           _.bind(function (err, data) {
         if (err) {
 
-          // Show error.
           mps.publish('flash/new', [{err: err, level: 'error', type: 'popup'}]);
-
-          // Show error highlight.
           field.addClass('input-error').val('').focus();
 
           return false;
         }
 
-        // Update profile.
         _.extend(this.app.profile.member, payload);
 
-        // Save the saved state and show indicator.
         field.data('saved', val);
 
-        // Show saved status.
         mps.publish('flash/new', [{
           message: 'Saved.',
           level: 'alert',
@@ -261,6 +256,7 @@ define([
         return false;
       }
       this.bannerUploading = true;
+
       var w = {x: this.banner.width(), y: this.banner.height()};
       var m = {x: e.pageX, y: e.pageY};
       var p = {
@@ -268,7 +264,6 @@ define([
         y: parseInt(this.banner.css('top'), 10)
       };
 
-      // Called when moving banner.
       var move = _.bind(function (e) {
         var d = {x: e.pageX - m.x, y: e.pageY - m.y};
         var top = d.y + p.y;
@@ -288,9 +283,6 @@ define([
         self.banner.unbind('mousemove', move);
         $(document).unbind('mouseup', arguments.callee);
 
-        // if (!self.bannerUploading) {
-        //   return false;
-        // }
         rest.put('/api/members/' + self.app.profile.member.username, {
           bannerLeft: self.bannerLeft,
           bannerTop: self.bannerTop
@@ -301,7 +293,6 @@ define([
                 type: 'popup'}]);
           }
 
-          // Show saved status.
           mps.publish('flash/new', [{message: 'Saved.', level: 'alert',
               type: 'popup'}, true]);
         });
@@ -350,7 +341,6 @@ define([
           data.append('file', file);
       });
 
-      // Transloadit options.
       var opts = {
         wait: true,
         autoSubmit: true,
@@ -360,13 +350,10 @@ define([
           this.bannerSpin.stop();
           this.bannerDropZone.removeClass('uploading');
 
-          // Show error.
           mps.publish('flash/new', [{err: assembly.error + ': ' +
               assembly.message, level: 'error', type: 'popup'}]);
         }, this),
         onSuccess: _.bind(function (assembly) {
-
-          // Error checks
           if (assembly) {
             if (assembly.ok !== 'ASSEMBLY_COMPLETED') {
               this.bannerSpin.stop();
@@ -387,7 +374,6 @@ define([
             return;
           }
 
-          // Now save the banner to server.
           rest.put('/api/members/' + this.app.profile.member.username,
               {assembly: assembly}, _.bind(function (err, data) {
 
@@ -396,7 +382,6 @@ define([
               this.bannerSpin.stop();
               this.bannerDropZone.removeClass('uploading');
 
-              // Show error.
               mps.publish('flash/new', [{err: err, level: 'error', type: 'popup'}]);
               return;
             }
@@ -446,34 +431,34 @@ define([
     avatarPosition: function (e) {
       e.stopPropagation();
       e.preventDefault();
+      var self = this;
 
-      if (this.avatarUploading) {
+      if (self.avatarUploading) {
         return false;
       }
-      this.avatarUploading = true;
-      var w = {x: this.avatar.width(), y: this.avatar.height()};
+      self.avatarUploading = true;
+
+      var w = {x: self.avatar.width(), y: self.avatar.height()};
       var m = {x: e.pageX, y: e.pageY};
       var p = {
-        x: parseInt(this.avatar.css('left'), 10),
-        y: parseInt(this.avatar.css('top'), 10)
+        x: parseInt(self.avatar.css('left'), 10),
+        y: parseInt(self.avatar.css('top'), 10)
       };
 
-      // Called when moving avatar.
       var move = _.bind(function (e) {
         var d = {x: e.pageX - m.x, y: e.pageY - m.y};
         var top = d.y + p.y;
         var left = d.x + p.x;
         if (top <= 0 && w.y + top >= 325) {
-          this.avatarTop = top;
-          this.avatar.css({top: top + 'px'});
+          self.avatarTop = top;
+          self.avatar.css({top: top + 'px'});
         }
         if (left <= 0 && w.x + left >= 325) {
-          this.avatarLeft = left;
-          this.avatar.css({left: left + 'px'});
+          self.avatarLeft = left;
+          self.avatar.css({left: left + 'px'});
         }
-      }, this);
-      this.avatar.bind('mousemove', move);
-      var self = this;
+      }, self);
+      self.avatar.bind('mousemove', move);
       $(document).bind('mouseup', function (e) {
         self.avatar.unbind('mousemove', move);
         $(document).unbind('mouseup', arguments.callee);
@@ -481,6 +466,19 @@ define([
         if (!self.avatarUploading) {
           return false;
         }
+
+        if (self.avatarTop === undefined) {
+          self.avatarTop = self.model.get('avatar_full').meta.top || 0;
+        }
+        if (self.avatarLeft === undefined) {
+          self.avatarLeft = self.model.get('avatar_full').meta.left || 0;
+        }
+        if (self.avatarTop === self.model.get('avatar_full').meta.top &&
+            self.avatarLeft === self.model.get('avatar_full').meta.left) {
+          self.avatarUploading = false;
+          return;
+        }
+
         rest.put('/api/members/' + self.app.profile.member.username, {
           avatarLeft: self.avatarLeft,
           avatarTop: self.avatarTop
@@ -550,7 +548,6 @@ define([
         }
       });
 
-      // Transloadit options.
       var opts = {
         wait: true,
         autoSubmit: true,
@@ -564,8 +561,6 @@ define([
               assembly.message, level: 'error', type: 'popup'}]);
         }, this),
         onSuccess: _.bind(function (assembly) {
-
-          // Error checks
           if (assembly) {
             if (assembly.ok !== 'ASSEMBLY_COMPLETED') {
               this.avatarSpin.stop();
@@ -586,7 +581,6 @@ define([
             return;
           }
 
-          // Now save the avatar to server.
           rest.put('/api/members/' + this.app.profile.member.username,
               {assembly: assembly}, _.bind(function (err, data) {
 
@@ -595,7 +589,6 @@ define([
               this.avatarSpin.stop();
               this.avatarDropZone.removeClass('uploading');
 
-              // Show error.
               mps.publish('flash/new', [{err: err, level: 'error', type: 'popup'}]);
               return;
             }
@@ -654,13 +647,9 @@ define([
       var avatar = this.model.get('avatar_full');
       var url = avatar ? avatar.ssl_url: null;
       if (!url) {
-        return;
+        return cb('avatar invalid');
       }
 
-      // if (this.avatarUploading) {
-      //   return false;
-      // }
-      // this.avatarUploading = true;
       this.avatarSpin.start();
       this.avatarDropZone.addClass('uploading');
 
@@ -680,7 +669,6 @@ define([
         crop = {x1: 0, x2: side, y1: y1, y2: y1 + side};
       }
 
-      // Transloadit options.
       var opts = {
         wait: true,
         autoSubmit: true,
@@ -690,41 +678,31 @@ define([
           crop: JSON.stringify(crop)
         },
         onError: _.bind(function (assembly) {
-          // this.avatarUploading = false;
           this.avatarSpin.stop();
           this.avatarDropZone.removeClass('uploading');
           return cb(assembly.error + ': ' + assembly.message);
         }, this),
         onSuccess: _.bind(function (assembly) {
-
-          // Error checks
           if (assembly) {
             if (assembly.ok !== 'ASSEMBLY_COMPLETED') {
-              // this.avatarUploading = false;
               return cb('Avatar crop failed. Please try again.');
             } if (_.isEmpty(assembly.results)) {
-              // this.avatarUploading = false;
               return cb('You must choose a file.');
             }
           } else {
-            // this.avatarUploading = false;
             return cb('No assembly found.');
           }
 
-          // Now save the avatar to server.
           rest.put('/api/members/' + this.app.profile.member.username,
               {assembly: assembly}, _.bind(function (err, data) {
 
-            // Resets.
             this.avatarSpin.stop();
             this.avatarDropZone.removeClass('uploading');
 
             if (err) {
-              // this.avatarUploading = false;
               return cb(err);
             }
 
-            // Save new avatar.
             var avatar = assembly.results.avatar[0];
             var avatar_big = assembly.results.avatar_big[0];
             this.model.set('avatar', avatar);
@@ -732,7 +710,8 @@ define([
             this.app.profile.member.avatar = avatar.ssl_url;
             this.app.profile.member.avatar_big = avatar_big.ssl_url;
 
-            // this.avatarUploading = false;
+            cb();
+
           }, this));
         }, this)
       };
@@ -746,7 +725,6 @@ define([
     demolish: function (e) {
       e.preventDefault();
 
-      // Render the confirm modal.
       $.fancybox(_.template(confirm)({
         message: 'Delete your profile forever?',
       }), {
@@ -756,13 +734,10 @@ define([
         padding: 0
       });
 
-      // Setup actions.
       $('.modal-cancel').click(function (e) {
         $.fancybox.close();
       });
       $('.modal-confirm').click(_.bind(function (e) {
-
-        // Delete the member.
         rest.delete('/api/members/' + this.app.profile.member.username,
             {}, _.bind(function (err, data) {
           if (err) {
@@ -770,7 +745,6 @@ define([
             return;
           }
 
-          // Route to home.
           window.location.href = '/';
         }, this));
       }, this));
@@ -818,8 +792,6 @@ define([
 
     // Help the user understand how to use Instagram.
     instagram: function () {
-
-      // Render the confirm modal.
       $.fancybox(_.template(tip)({
         message: '<strong>You are connected to Instagram.</strong>' +
             ' We\'ll post photos of yours tagged @island_io, #islandio, or #weareisland' +
