@@ -18,15 +18,15 @@
         </tr>
         <tr>
           <td>low temp.</td>
-          <td><%= weather.tempFtoC(daily.temperatureMin) %>&degC @ <%= new Date(daily.temperatureMinTime * 1000).format('h:MM TT') %></td>
+          <td><%= weather.getTemp(daily.temperatureMin) %>&deg<%= weather.getTempUnits() %> @ <%= new Date(daily.temperatureMinTime * 1000).format('h:MM TT') %></td>
         </tr>
         <tr>
           <td>high temp.</td>
-          <td><%= weather.tempFtoC(daily.temperatureMax) %>&degC @ <%= new Date(daily.temperatureMaxTime * 1000).format('h:MM TT') %></td>
+          <td><%= weather.getTemp(daily.temperatureMax) %>&deg<%= weather.getTempUnits() %> @ <%= new Date(daily.temperatureMaxTime * 1000).format('h:MM TT') %></td>
         </tr>
         <tr>
           <td>dew point</td>
-          <td><%= weather.tempFtoC(daily.dewPoint) %>&degC</td>
+          <td><%= weather.getTemp(daily.dewPoint) %>&deg<%= weather.getTempUnits() %></td>
         </tr>
         <tr>
           <td>humidity</td>
@@ -38,12 +38,12 @@
         </tr>
         <tr>
           <td>wind speed</td>
-          <td><%= (daily.windSpeed * 3.6).toFixed(1) %> km/hr</td>
+          <td><%= weather.getSpeed(daily.windSpeed) %> <%= weather.getSpeedUnits() %></td>
         </tr>
         <% if (daily.precipIntensity > 0) { %>
           <tr>
             <td>precip. intensity</td>
-            <td><%= daily.precipIntensity %> (<%= daily.precipType %>)</td>
+            <td><%= weather.getIntensity(daily.precipIntensity) %> <%= weather.getIntensityUnits() %> (<%= daily.precipType %>)</td>
           </tr>
         <% } %>
       </table>
@@ -72,7 +72,7 @@
         <i class="icon-temperatire"></i>
       </span>
       <a href="/sessions/<%= this.model.get('key') %>" class="title-medium navigate">
-        <%= weather.dailyTempRange() %>&degC <%= weather.getWeatherIconName(daily.icon) %>
+        <%= weather.dailyTempRange() %>&deg<%= weather.getTempUnits() %> <%= weather.getWeatherIconName(daily.icon) %>
       </a>
     </span>
   <% } else { %>

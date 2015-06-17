@@ -35,8 +35,9 @@ define([
 
     initialize: function (options, app) {
       this.app = app;
-      this.model = new Model(options.model || this.app.profile.content.page,
-        {gradeConverter: this.app.gradeConverter});
+      var data = options.model || this.app.profile.content.page;
+      data.prefs = app.profile.member ? app.profile.member.prefs: app.prefs;
+      this.model = new Model(data, {gradeConverter: this.app.gradeConverter});
       this.parentView = options.parentView;
       this.wrap = options.wrap;
       this.template = _.template(template);

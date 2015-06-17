@@ -33,7 +33,9 @@ define([
 
     initialize: function (options, app) {
       this.app = app;
-      this.model = new Model(options.model || this.app.profile.content.page);
+      var data = options.model || this.app.profile.content.page;
+      data.prefs = app.profile.member ? app.profile.member.prefs: app.prefs;
+      this.model = new Model(data);
 
       this.parentView = options.parentView;
       this.wrap = options.wrap;

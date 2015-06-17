@@ -25,6 +25,14 @@ define([
       banner_big: 'https://s3.amazonaws.com/island.io/banner_1024.png'
     };
 
+    this.prefs = {
+      grades: {
+        boulder: 'font',
+        route: 'french'
+      },
+      units: 'si'
+    };
+
     this.gradeConverter = {
       'b': new GradeConverter('boulders').from('font').to('default'),
       'r': new GradeConverter('routes').from('french').to('default')

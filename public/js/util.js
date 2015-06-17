@@ -508,6 +508,30 @@ define([
       return str.replace(/[^\w^\.]/g, b).substr(0, 30);
     },
 
+    stringToObject: function (str, val) {
+      var obj = {};
+      var i = str.lastIndexOf('.');
+      if (i === -1) {
+        obj[str] = val;
+        return obj;
+      }
+      obj[str.substr(i+1)] = val;
+      return arguments.callee(str.substr(0, i), obj);
+    },
+
+    deepExtend: function (destination, source) {
+      for (var property in source) {
+        if (source[property] && source[property].constructor &&
+            source[property].constructor === Object) {
+          destination[property] = destination[property] || {};
+          arguments.callee(destination[property], source[property]);
+        } else {
+          destination[property] = source[property];
+        }
+      }
+      return destination;
+    },
+
     // pass a function to insert into the DOM
     createImageMosaic: function (images, width, height, insertFunction, cb) {
       if (images.length === 0) {

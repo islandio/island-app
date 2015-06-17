@@ -233,7 +233,8 @@ define([
           return false;
         }
 
-        _.extend(this.app.profile.member, payload);
+        payload = util.stringToObject(name, val);
+        util.deepExtend(this.app.profile.member, payload);
 
         field.data('saved', val);
 

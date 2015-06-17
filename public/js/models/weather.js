@@ -18,11 +18,52 @@ define([
       if (!minT || !maxT) {
         return '?';
       }
-      return this.tempFtoC(minT) + ' to ' + this.tempFtoC(maxT);
+      return this.getTemp(minT) + ' to ' + this.getTemp(maxT);
+    },
+
+    getTemp: function (n) {
+      var units = this.get('prefs').units;
+      var t = units === 'si' ? this.tempFtoC(n): n;
+      return Math.floor(t);
+    },
+
+    getSpeed: function (n) {
+      var units = this.get('prefs').units;
+      var s = units === 'si' ? this.miToKm(n): n;
+      return s.toFixed(1);
+    },
+
+    getIntensity: function (n) {
+      var units = this.get('prefs').units;
+      var s = units === 'si' ? this.inToCm(n): n;
+      return s.toFixed(3);
+    },
+
+    getTempUnits: function (n) {
+      var units = this.get('prefs').units;
+      return units === 'si' ? 'C': 'F';
+    },
+
+    getSpeedUnits: function () {
+      var units = this.get('prefs').units;
+      return units === 'si' ? 'km/hr': 'mi/hr';
+    },
+
+    getIntensityUnits: function (n) {
+      var units = this.get('prefs').units;
+      return units === 'si' ? 'cm/hr': 'in/hr';
     },
 
     tempFtoC: function (n) {
-      return Math.floor((n - 32) * 5/9);
+      return (n - 32) * 5/9;
+    },
+
+    miToKm: function (n) {
+      return n * 1.60934;
+    },
+
+    inToCm: function () {
+      return n * 2.54;
     },
 
     getWeatherIconName: function (str) {

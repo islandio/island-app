@@ -22,8 +22,11 @@ define([
       }
 
       if (!this.get('weather')) {
-        var w = this.get('session') ? this.get('session').weather || {}: {};
-        this.set('weather', new Weather(w));
+        var w = this.get('session') ? this.get('session').weather: null;
+        if (w) {
+          w.prefs = this.get('prefs');
+        }
+        this.set('weather', new Weather(w || {}));
       }
 
       this.gradeConverter = options.gradeConverter;

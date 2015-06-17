@@ -11,7 +11,11 @@ define([
   return Backbone.Model.extend({
 
     initialize: function () {
-      this.set('weather', new Weather(this.get('weather') || {}));
+      var w = this.get('weather');
+      if (w) {
+        w.prefs = this.get('prefs');
+      }
+      this.set('weather', new Weather(w || {}));
     },
 
     formatAuthorFor: function (member) {

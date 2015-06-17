@@ -36,21 +36,21 @@
         <% if (w.temperature) { %>
           <tr>
             <td>temperature</td>
-            <td><%= weather.tempFtoC(w.temperature) %>&degC</td>
+            <td><%= weather.getTemp(w.temperature) %>&deg<%= weather.getTempUnits() %></td>
           </tr>
         <% } else { %>
           <tr>
             <td>low temp.</td>
-            <td><%= weather.tempFtoC(w.temperatureMin) %>&degC @ <%= new Date(w.temperatureMinTime * 1000).format('h:MM TT') %></td>
+            <td><%= weather.getTemp(w.temperatureMin) %>&deg<%= weather.getTempUnits() %> @ <%= new Date(w.temperatureMinTime * 1000).format('h:MM TT') %></td>
           </tr>
           <tr>
             <td>high temp.</td>
-            <td><%= weather.tempFtoC(w.temperatureMax) %>&degC @ <%= new Date(w.temperatureMaxTime * 1000).format('h:MM TT') %></td>
+            <td><%= weather.getTemp(w.temperatureMax) %>&deg<%= weather.getTempUnits() %> @ <%= new Date(w.temperatureMaxTime * 1000).format('h:MM TT') %></td>
           </tr>
         <% } %>
         <tr>
           <td>dew point</td>
-          <td><%= weather.tempFtoC(w.dewPoint) %>&degC</td>
+          <td><%= weather.getTemp(w.dewPoint) %>&deg<%= weather.getTempUnits() %></td>
         </tr>
         <tr>
           <td>humidity</td>
@@ -62,12 +62,12 @@
         </tr>
         <tr>
           <td>wind speed</td>
-          <td><%= (w.windSpeed * 3.6).toFixed(1) %> km/hr</td>
+          <td><%= weather.getSpeed(w.windSpeed) %> <%= weather.getSpeedUnits() %></td>
         </tr>
         <% if (w.precipIntensity > 0) { %>
           <tr>
             <td>precip. intensity</td>
-            <td><%= w.precipIntensity %> (<%= w.precipType %>)</td>
+            <td><%= weather.getIntensity(w.precipIntensity) %> <%= weather.getIntensityUnits() %> (<%= w.precipType %>)</td>
           </tr>
         <% } %>
       </table>
@@ -146,7 +146,7 @@
   <% if (t.duration || t.performance || w) { %>
     <span class="session-tick-detail">
       <% if (inlineWeather) { %>
-        <%= w.temperature ? weather.tempFtoC(w.temperature): weather.dailyTempRange() %>&degC <%= weather.getWeatherIconName(w.icon) %>
+        <%= w.temperature ? weather.getTemp(w.temperature): weather.dailyTempRange() %>&deg<%= weather.getTempUnits() %> <%= weather.getWeatherIconName(w.icon) %>
       <% } %>
       <% if (t.duration) { %>
         <% if (inlineWeather) { %>
