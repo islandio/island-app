@@ -29,6 +29,7 @@ define([
       this.ticks = [];
 
       this.name = options.name;
+      this.target = options.target;
 
       this.on('rendered', this.setup, this);
     },
@@ -93,7 +94,8 @@ define([
       this.routesFilter = this.$('.r-filter').parent();
       this.boulders = this.$('.b-ticks');
       this.routes = this.$('.r-ticks');
-      this.button = this.$('.button');
+      this.button = this.$('.import-insert');
+      this.allButtons = this.$('.button');
 
       // Init the load indicator.
       this.spin = new Spin(this.$('.button-spin'), {
@@ -127,7 +129,7 @@ define([
 
       if (this.model.get('ticks').b.length === 0 &&
           this.model.get('ticks').r.length === 0) {
-        this.button.addClass('disabled');
+        this.allButtons.addClass('disabled');
       }
 
       _.defer(_.bind(function () {
@@ -197,7 +199,8 @@ define([
       if (filteredTicks.length === 0 || this.submitting) return;
       this.submitting = true;
       this.spin.start();
-      this.button.addClass('spinning').addClass('disabled').attr('disabled', true);
+      this.allButtons.addClass('disabled').attr('disabled', true);
+      this.button.addClass('spinning');
 
       // Add missing ascents
       var ascents = _.compact(_.map(filteredTicks, function (tick) {
@@ -260,7 +263,8 @@ define([
             return this.submitError();
           }
           this.spin.stop();
-          this.button.removeClass('spinning').removeClass('disabled').attr('disabled', false);
+          this.allButtons.removeClass('disabled').attr('disabled', false);
+          this.button.removeClass('spinning');
           this.submitting = false;
 
           // Show success.
@@ -315,7 +319,8 @@ define([
 
     submitError: function () {
       this.spin.stop();
-      this.button.removeClass('spinning').removeClass('disabled').attr('disabled', false);
+      this.allButtons.removeClass('disabled').attr('disabled', false);
+      this.button.removeClass('spinning');
       this.submitting = false;
     },
 

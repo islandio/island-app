@@ -124,6 +124,7 @@ define([
 
         if (err) {
           this.input.addClass('input-error');
+          console.log(err);
         }
 
         if (!res || res.length === 0) return this.noResults.show();
