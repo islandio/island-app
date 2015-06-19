@@ -141,10 +141,15 @@ define([
         case 1: str = ' (hard)'; break;
       }
       var type = this.get('type');
+      var prefs = this.get('prefs');
+      var system;
+      if (prefs) {
+        system = type === 'r' ? prefs.grades.route: prefs.grades.boulder;
+      }
       var fn = this.gradeConverter[type];
       // Deals with indexes vs string grades
       var g = ((grade === +grade) ?
-          fn.indexes(grade, country) : fn.grades(grade, country));
+          fn.indexes(grade, country, system) : fn.grades(grade, country, system));
       // Add feel only if its not an array
       return (str !== '' && !_.isArray(g)) ? g + str : g;
     },

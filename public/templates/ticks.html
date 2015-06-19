@@ -40,11 +40,14 @@
       </div>
     </div>
     <div class="tick-list">
-      <% _.each(data.ticks, _.bind(function (ticks, type) {
+      <%
+      var prefs = this.app.profile.member ? this.app.profile.member.prefs: this.app.prefs;
+      _.each(data.ticks, _.bind(function (ticks, type) {
         ticks = this.model.ticksByGrade(type);
         var self = this;
+        var system = type === 'r' ? prefs.grades.route: prefs.grades.boulder;
         var grades = _.keys(ticks).sort(function (a, b) {
-          return self.model.gradeConverter[type].compare(b, a); // note: reverse
+          return self.model.gradeConverter[type].compare(b, a, null, system); // note: reverse
         });
       %>
         <div class="list-wrap <%= type %>-ticks">

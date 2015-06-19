@@ -85,8 +85,8 @@ define([
 
   /* For sorting - will be slow because of the indexOf commands so use 
    * intelligently */
-  GradeConverter.prototype.compare = function(a, b, country) {
-    var system = this.getSystem(country);
+  GradeConverter.prototype.compare = function(a, b, country, system) {
+    system = system || this.getSystem(country);
     var list = _.pluck(this.gradeMap, system);
     return list.indexOf(a) - list.indexOf(b);
   };

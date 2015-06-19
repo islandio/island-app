@@ -45,7 +45,8 @@ define([
 
     render: function () {
       this.model = new Card(this.app.profile.content.page, {
-        gradeConverter: this.app.gradeConverter
+        gradeConverter: this.app.gradeConverter,
+        prefs: this.app.profile.member ? this.app.profile.member.prefs: this.app.prefs
       });
       this.setTitle();
       this.template = _.template(template);
@@ -137,7 +138,9 @@ define([
         if (isNaN(Number(data.grade))) {
           grade = 'ungraded';
         } else {
-          grade = this.app.gradeConverter[data.type].indexes(data.grade);
+          var prefs = this.model.prefs;
+          var system = data.type === 'r' ? prefs.grades.route: prefs.grades.boulder;
+          grade = this.app.gradeConverter[data.type].indexes(data.grade, null, system);
         }
         var heading = this.$('.' + data.type + '-ticks .session-ticks ' +
             '[data-grade="' + grade + '"]');

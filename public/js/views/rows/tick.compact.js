@@ -27,6 +27,8 @@ define([
     initialize: function (options, app) {
       this.app = app;
       this.template = _.template(template);
+      options.model.set('prefs', app.profile.member ?
+          app.profile.member.prefs: app.prefs);
       Row.prototype.initialize.call(this, options);
       this.model.gradeConverter = this.app.gradeConverter;
     },

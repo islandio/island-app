@@ -39,14 +39,17 @@ define([
 
         // Save ref to flattened lists for filtering and convert the grade
         this.flattened = {};
+        var prefs = this.app.profile.member ?
+            this.app.profile.member.prefs: this.app.prefs;
         _.each(this.data.ascents, _.bind(function (ascents, t) {
           this.flattened[t] = _.flatten(ascents);
 
           // convert grades
           var a = {};
           var self = this;
+          var system = t === 'r' ? prefs.grades.route: prefs.grades.boulder;
           _.each(ascents, function (ascent, grade) {
-            var key = self.app.gradeConverter[t].grades(grade, self.data.country);
+            var key = self.app.gradeConverter[t].grades(grade, self.data.country, system);
             if (!a[key]) a[key] = [];
             a[key] = a[key].concat(ascent);
             delete ascents[grade];
@@ -57,13 +60,11 @@ define([
           });
 
           // sort grades
-          this.grades[t] = _.keys(a).sort(function(a, b) {
-            return self.app.gradeConverter[t].compare(b, a, self.data.country);
+          this.grades[t] = _.keys(a).sort(function (a, b) {
+            return self.app.gradeConverter[t].compare(b, a, self.data.country, system);
           });
-
         }, this));
 
-        // Render template.
         this.$el.html(this.template.call(this));
 
         this.trigger('rendered');
