@@ -64,7 +64,7 @@ boots.start(function (client) {
       var _this = _.after(docs.length, this);
       _.each(docs, function (d, idx) {
         // Add new.
-        cragsIndexed += client.cache.index('crags', d, ['name'],
+        cragsIndexed += client.cache.index('crags', d, ['name', 'city', 'country'],
             {strategy: 'noTokens'}, _this);
       });
     },
