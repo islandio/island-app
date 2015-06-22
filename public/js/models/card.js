@@ -23,8 +23,9 @@ define([
     ticksByGrade: function (type) {
       var ticks = {};
       _.each(this.get('ticks')[type], _.bind(function (t) {
-        if (t.grade) {
-          var system = t === 'r' ? this.prefs.grades.route: this.prefs.grades.boulder;
+        if (t.grade !== undefined) {
+          var system = type === 'r' ? this.prefs.grades.route:
+              this.prefs.grades.boulder;
           var grade = this.gradeConverter[type].indexes(t.grade, null, system);
           if (!ticks[grade]) {
             ticks[grade] = [];

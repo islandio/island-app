@@ -39,7 +39,7 @@ define([
       return s.toFixed(3);
     },
 
-    getTempUnits: function (n) {
+    getTempUnits: function () {
       var units = this.get('prefs').units;
       return units === 'si' ? 'C': 'F';
     },
@@ -49,7 +49,7 @@ define([
       return units === 'si' ? 'km/hr': 'mi/hr';
     },
 
-    getIntensityUnits: function (n) {
+    getIntensityUnits: function () {
       var units = this.get('prefs').units;
       return units === 'si' ? 'cm/hr': 'in/hr';
     },
@@ -62,7 +62,7 @@ define([
       return n * 1.60934;
     },
 
-    inToCm: function () {
+    inToCm: function (n) {
       return n * 2.54;
     },
 

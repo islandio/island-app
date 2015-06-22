@@ -2,7 +2,6 @@
 
   // Save model attributes
   var data = this.model.attributes;
-  var grades = ['ungraded'].concat(this.model.grades);
 
   var own = !this.model || (this.app.profile.member && data.author.id === this.app.profile.member.id);
   var owner = own ? 'You\'re': data.author.displayName.trim() + ' is ';
@@ -44,25 +43,34 @@
       var prefs = this.app.profile.member ? this.app.profile.member.prefs: this.app.prefs;
       _.each(data.ticks, _.bind(function (ticks, type) {
         ticks = this.model.ticksByGrade(type);
-        var self = this;
         var system = type === 'r' ? prefs.grades.route: prefs.grades.boulder;
-        var grades = _.keys(ticks).sort(function (a, b) {
-          return self.model.gradeConverter[type].compare(b, a, null, system); // note: reverse
-        });
+        var grades = _.pluck(this.model.gradeConverter[type].gradeMap, system);
+        grades.unshift('ungraded');
+        grades = _.uniq(grades);
       %>
         <div class="list-wrap <%= type %>-ticks">
           <span class="empty-feed"><%= owner2 %> logged any <%= type === 'b' ? 'boulder problems': 'routes' %> yet.</span>
           <span class="no-results">No results.</span>
-          <% _.each(grades, function (grade) { %>
-            <ul class="session-ticks">
-              <div class="tick-list-group-heading" data-grade="<%= grade %>">
-                <span><%= grade %></span>
-              </div>
-              <% _.each(ticks[grade], _.bind(function (tick) { %>
-                <li class="tick" id="<%= tick.id %>" data-type="<%= tick.type %>"></li>
-              <% })); %>
-            </ul>
-          <% }); %>
+          <% for (var i=grades.length-1; i >=0; --i) {
+            var grade = grades[i];
+          %>
+            <% if (ticks[grade] && ticks[grade].length > 0) { %>
+              <ul class="session-ticks">
+                <div class="tick-list-group-heading" data-grade="<%= grade %>">
+                  <span><%= grade %></span>
+                </div>
+                <% _.each(ticks[grade], _.bind(function (tick) { %>
+                  <li class="tick" id="<%= tick.id %>" data-type="<%= tick.type %>"></li>
+                <% })); %>
+              </ul>
+            <% } else { %>
+              <ul class="session-ticks" style="display:none;">
+                <div class="tick-list-group-heading" data-grade="<%= grade %>">
+                  <span><%= grade %></span>
+                </div>
+              </ul>
+            <% } %>
+          <% } %>
         </div>
       <% }, this)); %>
     </div>

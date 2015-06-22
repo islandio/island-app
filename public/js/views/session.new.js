@@ -275,6 +275,8 @@ define([
 
       if (tick) {
         this.updateGrades(tick.model.get('type'), tick.model.get('country'));
+      } else {
+        this.updateGrades('r', null);
       }
 
       // Check for in-progress uploads.
@@ -733,19 +735,22 @@ define([
       var chosen = select.parent().find('.select-styled');
       var txt = chosen.text();
       var val = Number(select.val());
+      var prefs = this.app.profile.member ?
+          this.app.profile.member.prefs: this.app.prefs;
+      var system = type === 'r' ? prefs.grades.route: prefs.grades.boulder;
       if (txt !== 'Project' && !isNaN(val)) {
-        chosen.text(this.app.gradeConverter[type].indexes(val, country));
+        chosen.text(this.app.gradeConverter[type].indexes(val, country, system));
       }
       grades.each(_.bind(function (index, el) {
         var $e = $(el);
         var from = Number($e.attr('rel'));
         if (!_.isNaN(from)) {
-          var grade = this.app.gradeConverter[type].indexes(from, country);
+          var grade = this.app.gradeConverter[type].indexes(from, country, system);
           if (added.indexOf(grade) !== -1) {
             $e.hide();
           } else {
             added.push(grade);
-            $e.text(this.app.gradeConverter[type].indexes(from, country));
+            $e.text(this.app.gradeConverter[type].indexes(from, country, system));
           }
         }
       }, this));
