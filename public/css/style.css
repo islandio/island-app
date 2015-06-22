@@ -2315,6 +2315,9 @@ td.checkbox-styled-wrap .checkbox-styled {
 .select-options li:active {
   background-color: #adc9d0;
 }
+.select-options.required li[rel="hide"] {
+  display: none;
+}
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––privacy*/
 span.privacy-indent {
   margin-left: 10px;

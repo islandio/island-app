@@ -138,6 +138,7 @@ define([
   /* Convert a grade or array of grades directly, optionally supplying
    * country or preferred conversion system */
   GradeConverter.prototype.grades = function(grades, country, system) {
+    grades = grades || [];
 
     var toSystem = system || this.getSystem(country);
 
