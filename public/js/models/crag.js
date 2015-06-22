@@ -12,7 +12,20 @@ define([
       return n !== 0 ? '~' + util.addCommas(n): 0;
     },
 
-    tempFtoC: function(n) { return Math.floor((n - 32) * 5/9); },
+    getTemp: function (n) {
+      var units = this.get('prefs').units;
+      var t = units === 'si' ? this.tempFtoC(n): n;
+      return Math.floor(t);
+    },
+
+    getTempUnits: function () {
+      var units = this.get('prefs').units;
+      return units === 'si' ? 'C': 'F';
+    },
+
+    tempFtoC: function(n) {
+      return (n - 32) * 5/9;
+    },
 
     formatDescription: function () {
       var t = this.attributes;

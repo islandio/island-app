@@ -44,7 +44,7 @@
   <span class="session-title"><%= this.model.formatName() %></span></a>
   <% if (daily && weatherURL) { %>
     <a href="<%= weatherURL %>" class="crag-weather">
-      <%= weather.dailyTempRange() %>&deg<%= weather.getTempUnits() %>&nbsp
+      <%= weather.dailyTempRange() %>&deg<%= weather.getTempUnits() %>
       <canvas id="crag_weather" width="26" height="26"></canvas>
     </a>
   <% } %>

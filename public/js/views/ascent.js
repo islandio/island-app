@@ -31,7 +31,10 @@ define([
     },
 
     render: function () {
-      this.model = new Ascent(this.app.profile.content.page);
+      var data = this.app.profile.content.page;
+      data.prefs = this.app.profile.member ? this.app.profile.member.prefs:
+          this.app.prefs;
+      this.model = new Ascent(data);
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
       this.setTitle();

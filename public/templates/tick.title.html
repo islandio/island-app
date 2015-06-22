@@ -45,9 +45,9 @@
   <% if (w && weatherURL) { %>
     <a href="<%= weatherURL %>" class="crag-weather">
       <% if (w.temperature) { %>
-        <%= weather.tempFtoC(w.temperature) %>&degC @ <%= new Date(this.model.get('ts') * 1000).format('h:MM TT') %>
+        <%= weather.getTemp(w.temperature) %>&deg<%= weather.getTempUnits() %>
       <% } else { %>
-        <%= weather.dailyTempRange() %>&deg<%= weather.getTempUnits() %>&nbsp
+        <%= weather.dailyTempRange() %>&deg<%= weather.getTempUnits() %>
       <% } %>
       <canvas id="crag_weather" width="26" height="26"></canvas>
     </a>

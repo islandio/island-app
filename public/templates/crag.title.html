@@ -55,7 +55,7 @@
   <a href="/crags/<%= data.key %>" class="navigate"><span><%= data.name %></span></a>
   <% if (weather) { %>
     <a href="<%= weatherURL %>" class="crag-weather">
-      <%= this.model.tempFtoC(weather.temperature) %>&degC&nbsp
+      <%= this.model.getTemp(weather.temperature) %>&deg<%= this.model.getTempUnits() %>
       <canvas id="crag_weather" width="26" height="26"></canvas>
     </a>
   <% } %>

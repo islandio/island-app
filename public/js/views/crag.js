@@ -39,7 +39,10 @@ define([
     },
 
     render: function () {
-      this.model = new Crag(this.app.profile.content.page);
+      var data = this.app.profile.content.page;
+      data.prefs = this.app.profile.member ? this.app.profile.member.prefs:
+          this.app.prefs;
+      this.model = new Crag(data);
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
       this.setTitle();
