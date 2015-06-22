@@ -1,6 +1,5 @@
 <%
   var data = this.model.attributes;
-  var grades = ['ungraded'].concat(this.model.grades);
 %>
 
 <div class="rightside">
@@ -42,12 +41,16 @@
     </div>
   </div>
   <div class="tick-list">
-    <% _.each(data.ticks, _.bind(function (ticks, type) {
-      ticks = this.model.ticksByGrade(type);
+    <%
+    var prefs = this.app.profile.member ? this.app.profile.member.prefs: this.app.prefs;
+    _.each(data.ticks, _.bind(function (ticks, type) {
+      var ticks = this.model.ticksByGrade(type);
+      var system = type === 'r' ? prefs.grades.route: prefs.grades.boulder;
       var self = this;
       var grades = _.keys(ticks).sort(function (a, b) {
-        return self.model.gradeConverter[type].compare(b, a); // note: reverse
+        return self.model.gradeConverter[type].compare(b, a, null, system); // note: reverse
       });
+      grades = _.uniq(grades);
     %>
       <div class="list-wrap <%= type %>-ticks">
         <span class="empty-feed"><%= this.name %> hasn't logged any <%= type === 'b' ? 'boulder problems': 'routes' %> yet.</span>

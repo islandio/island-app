@@ -38,7 +38,8 @@ define([
     render: function () {
       this.app.title('The Island | 8a.nu Import');
       this.model = new Card(this.app.profile.content.page, {
-        gradeConverter: this.app.gradeConverter
+        gradeConverter: this.app.gradeConverter,
+        prefs: this.app.profile.member ? this.app.profile.member.prefs: this.app.prefs
       });
       this.template = _.template(template);
       $(this.template.call(this)).appendTo('.main');
@@ -61,7 +62,8 @@ define([
             commentless: true,
             inlineWeather: false,
             showCragName: true,
-            inlineDate: true
+            inlineDate: false,
+            info: false
           }, this.app).render());
           win.trigger('resize');
         }, this));

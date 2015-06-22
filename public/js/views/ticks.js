@@ -24,7 +24,6 @@ define([
       this.app = app;
       this.subscriptions = [];
 
-      // Socket subscriptions
       _.bindAll(this, 'collect', '_remove');
       this.app.rpc.socket.on('tick.new', this.collect);
       this.app.rpc.socket.on('tick.removed', this._remove);
@@ -82,8 +81,6 @@ define([
     },
 
     setup: function () {
-
-      // Save refs.
       this.filterBox = this.$('.ticks-filter-input input');
       this.emptyTxt = this.$('.ticks-filter-input span');
       this.bouldersFilter = this.$('.b-filter').parent();
@@ -91,7 +88,6 @@ define([
       this.boulders = this.$('.b-ticks');
       this.routes = this.$('.r-ticks');
 
-      // Handle type changes.
       if (this.model.get('ticks').b.length > this.model.get('ticks').r.length) {
         this.currentType = 'b';
         this.bouldersFilter.addClass('active');
@@ -109,15 +105,12 @@ define([
         this.routesFilter.click(_.bind(this.changeType, this, 'r'));
       }, this));
 
-      // Handle filtering.
       this.filterBox.bind('keyup search', _.bind(this.filter, this));
 
-      // Focus.
       if (!$('.header-search .search-display').is(':visible')) {
         this.filterBox.focus();
       }
 
-      // Render lists.
       this.crags = new Watchees(this.app, {parentView: this, reverse: true,
           type: 'crag', heading: 'Crags'});
       this.sroutes = new Watchees(this.app, {parentView: this, reverse: true,
@@ -128,7 +121,6 @@ define([
       return this;
     },
 
-    // Collect a tick.
     collect: function (data) {
       if (data.author.id === this.model.get('author').id && data.sent) {
         this._remove(data, true);
@@ -240,8 +232,6 @@ define([
     },
 
     changeType: function (type, e) {
-
-      // Update buttons.
       var chosen = $(e.target).closest('li');
       if (chosen.hasClass('active') || chosen.hasClass('disabled')) {
         return;
@@ -250,7 +240,6 @@ define([
       chosen.addClass('active');
       active.removeClass('active');
 
-      // Set new type.
       this.currentType = type;
       this.$('.list-wrap').hide();
       this.$('.' + this.currentType + '-ticks').show();
