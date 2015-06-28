@@ -237,8 +237,13 @@
       <a href="javascript:;" class="muted tick-edit">Edit</a>
       <span class="info-divider">&nbsp;&middot;&nbsp;</span>
     <% } %>
-    <a href="javascript:;" class="muted info-share">Share</a>
-    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+    <% if (!this.options.shareless) { %>
+      <a href="javascript:;" class="muted info-share">Share</a>
+      <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+    <% } %>
+    <% if (this.options.inlineRemove) { %>
+      <a href="javascript:;" class="muted info-remove">Remove</a>
+    <% } %>
     <a href="/efforts/<%= this.model.get('key') %>"
         class="muted navigate"><time class="created" 
         datetime="<%= this.model.get('updated') %>" 

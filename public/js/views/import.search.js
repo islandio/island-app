@@ -124,7 +124,7 @@ define([
 
         if (err) {
           this.input.addClass('input-error');
-          console.log(err);
+          console.log("Error searching lib27 crags");
         }
 
         if (!res || res.length === 0) return this.noResults.show();

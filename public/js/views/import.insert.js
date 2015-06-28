@@ -35,7 +35,8 @@ define([
     },
 
     render: function () {
-      this.app.title('The Island | 8a.nu Import');
+      this.app.title('The Island | ' + this.target + ' Import');
+      console.log(this.app.profile.member)
       this.model = new Card(this.app.profile.content.page, {
         gradeConverter: this.app.gradeConverter,
         prefs: this.app.profile.member ? this.app.profile.member.prefs: this.app.prefs
@@ -64,7 +65,6 @@ define([
             inlineDate: true,
             shareless: true,
             inlineRemove: true,
-			info: false
           }, this.app);
           tick.render();
           this.ticks.push(tick);
@@ -270,8 +270,8 @@ define([
           // Show success.
           var ticks = filteredTicks.length;
           mps.publish('flash/new', [{
-            message: 'You successfully imported your 8a.nu scorecard and added ' +
-                ticks + ' new ascents.',
+            message: 'You successfully imported your ' + this.target
+                + ' scorecard and added ' + ticks + ' new ascents.',
             level: 'alert',
             sticky: true
           }, true]);
