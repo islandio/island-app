@@ -36,7 +36,6 @@ define([
 
     render: function () {
       this.app.title('The Island | ' + this.target + ' Import');
-      console.log(this.app.profile.member)
       this.model = new Card(this.app.profile.content.page, {
         gradeConverter: this.app.gradeConverter,
         prefs: this.app.profile.member ? this.app.profile.member.prefs: this.app.prefs

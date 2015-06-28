@@ -46,6 +46,7 @@
     "island-events": "git+https://island-ebs:i51andghebs@github.com/The-Island/island-events.git#develop",
     "island-emailer": "git+https://island-ebs:i51andghebs@github.com/The-Island/island-emailer.git#develop",
     "island-lib8a": "git+https://island-ebs:i51andghebs@github.com/The-Island/island-lib8a.git#develop",
+    "island-lib27crags": "git+https://island-ebs:i51andghebs@github.com/The-Island/island-lib27crags.git#develop",
     "cheerio": "^0.18.0",
     "jade": "~0.30.0",
     "express": "~3.2.5",
