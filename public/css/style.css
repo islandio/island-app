@@ -5234,6 +5234,9 @@ span.no-description {
 .import {
   font-size: 14px;
 }
+.import td {
+  padding-left: 0;
+}
 .import .note {
   font-size: 14px;
   color: #666;
