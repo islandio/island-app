@@ -64,6 +64,7 @@ define([
             inlineDate: true,
             shareless: true,
             inlineRemove: true,
+            dateless: true
           }, this.app);
           tick.render();
           this.ticks.push(tick);
@@ -296,12 +297,12 @@ define([
       } else {
         model.set('remove', true);
         $tickRemoveText.text('Include');
-        $tickInner.css({opacity: .20});
+        $tickInner.css({opacity: 0.5});
       }
     },
 
     removeAll: function() {
-      $('.tick-inner').css({opacity: .20});
+      $('.tick-inner').css({opacity: 0.5});
       $('.info-remove').text('Include');
       _.each(this.ticks, function(tick) {
         tick.model.set('remove', true);
