@@ -28,15 +28,14 @@ define([
       this.subscriptions = [];
       this.ticks = [];
 
-      var name = options.slug.split('-');
-      name.pop();
-      this.name = util.titleize(name.join(' '));
+      this.name = options.name;
+      this.target = options.target;
 
       this.on('rendered', this.setup, this);
     },
 
     render: function () {
-      this.app.title('The Island | 8a.nu Import');
+      this.app.title('The Island | ' + this.target + ' Import');
       this.model = new Card(this.app.profile.content.page, {
         gradeConverter: this.app.gradeConverter,
         prefs: this.app.profile.member ? this.app.profile.member.prefs: this.app.prefs
@@ -53,7 +52,7 @@ define([
           var data = _.find(this.model.get('ticks')[el.data('type')], function (t) {
             return t.id === el.attr('id');
           });
-          this.ticks.push(new Tick({
+          var tick = new Tick({
             parentView: this,
             el: el,
             model: data,
@@ -62,10 +61,16 @@ define([
             commentless: true,
             inlineWeather: false,
             showCragName: true,
-            inlineDate: false,
-            info: false
-          }, this.app).render());
+            inlineDate: true,
+            shareless: true,
+            inlineRemove: true,
+            dateless: true
+          }, this.app);
+          tick.render();
+          this.ticks.push(tick);
+
           win.trigger('resize');
+
         }, this));
       }, this));
 
@@ -74,7 +79,10 @@ define([
     },
 
     events: {
-      'click .button': 'submit',
+      'click .new-session-button': 'submit',
+      'click .info-remove': 'setTickRemove',
+      'click .import-include-all': 'includeAll',
+      'click .import-remove-all': 'removeAll'
     },
 
     setup: function () {
@@ -86,7 +94,8 @@ define([
       this.routesFilter = this.$('.r-filter').parent();
       this.boulders = this.$('.b-ticks');
       this.routes = this.$('.r-ticks');
-      this.button = this.$('.button');
+      this.button = this.$('.import-insert');
+      this.allButtons = this.$('.button');
 
       // Init the load indicator.
       this.spin = new Spin(this.$('.button-spin'), {
@@ -120,7 +129,7 @@ define([
 
       if (this.model.get('ticks').b.length === 0 &&
           this.model.get('ticks').r.length === 0) {
-        this.button.addClass('disabled');
+        this.allButtons.addClass('disabled');
       }
 
       _.defer(_.bind(function () {
@@ -182,13 +191,19 @@ define([
     },
 
     submit: function (e) {
-      if (this.ticks.length === 0 || this.submitting) return;
+
+      var filteredTicks = _.filter(this.ticks, function(tick) {
+        return tick.model.get('remove') !== true;
+      });
+
+      if (filteredTicks.length === 0 || this.submitting) return;
       this.submitting = true;
       this.spin.start();
-      this.button.addClass('spinning').addClass('disabled').attr('disabled', true);
+      this.allButtons.addClass('disabled').attr('disabled', true);
+      this.button.addClass('spinning');
 
       // Add missing ascents
-      var ascents = _.compact(_.map(this.ticks, function (tick) {
+      var ascents = _.compact(_.map(filteredTicks, function (tick) {
         var t = tick.model.attributes;
         if (!t.ascent.id) {
           return {
@@ -214,7 +229,8 @@ define([
           return this.submitError();
         }
 
-        var sessions = _.map(this.ticks, function(tick) {
+        // Gather up all ticks into 'sessions' with some basic manipulations
+        var sessions = _.map(filteredTicks, function(tick) {
           var t = tick.model.attributes;
           t.index = 0;
 
@@ -229,12 +245,15 @@ define([
           delete t.ascent;
           t.ascent = {name: name};
 
+          delete t.remove;
+
           // some legacy stuff going on here
           var action = {ticks: [t]};
           var actions = [action];
           payload.actions = actions;
           return payload;
         });
+
         rest.post('/api/sessions/', sessions, _.bind(function (err, res) {
           if (err) {
             mps.publish('flash/new', [{
@@ -244,14 +263,15 @@ define([
             return this.submitError();
           }
           this.spin.stop();
-          this.button.removeClass('spinning').removeClass('disabled').attr('disabled', false);
+          this.allButtons.removeClass('disabled').attr('disabled', false);
+          this.button.removeClass('spinning');
           this.submitting = false;
 
           // Show success.
-          var ticks = this.ticks.length;
+          var ticks = filteredTicks.length;
           mps.publish('flash/new', [{
-            message: 'You successfully imported your 8a.nu scorecard and added ' +
-                ticks + ' new ascents.',
+            message: 'You successfully imported your ' + this.target
+                + ' scorecard and added ' + ticks + ' new ascents.',
             level: 'alert',
             sticky: true
           }, true]);
@@ -262,9 +282,45 @@ define([
       }, this));
     },
 
+    setTickRemove: function(e) {
+      var $tickRemoveText = $(e.target)
+      var $tickInner = $tickRemoveText.parentsUntil('.tick');
+
+      var model = _.find(this.ticks, function(t) {
+        return t.model.get('id') === $tickInner.parent().attr('id');
+      }).model;
+
+      if (model.get('remove')) {
+        model.set('remove', false);
+        $tickRemoveText.text('Remove');
+        $tickInner.css({opacity: ''});
+      } else {
+        model.set('remove', true);
+        $tickRemoveText.text('Include');
+        $tickInner.css({opacity: 0.5});
+      }
+    },
+
+    removeAll: function() {
+      $('.tick-inner').css({opacity: 0.5});
+      $('.info-remove').text('Include');
+      _.each(this.ticks, function(tick) {
+        tick.model.set('remove', true);
+      });
+    },
+
+    includeAll: function() {
+      $('.tick-inner').css({opacity: ''});
+      $('.info-remove').text('Remove');
+      _.each(this.ticks, function(tick) {
+        tick.model.set('remove', false);
+      });
+    },
+
     submitError: function () {
       this.spin.stop();
-      this.button.removeClass('spinning').removeClass('disabled').attr('disabled', false);
+      this.allButtons.removeClass('disabled').attr('disabled', false);
+      this.button.removeClass('spinning');
       this.submitting = false;
     },
 

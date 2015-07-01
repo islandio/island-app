@@ -17,10 +17,14 @@
 </div>
 <div class="leftside import">
   <p class="note">
-    <span class="em">Step 2)</span> We'll add all the below boulder problems and routes to your Island ascent list. We'll also add any missing climbs to The Island if we recognize the crag. Note: Importing can take up to a minute for large scorecards.
+    We'll add all the below boulder problems and routes to your Island ascent list. We'll also add any missing climbs to The Island if we recognize the crag.
   </p>
-
-  <button class="button new-session-button"><i class="icon-up"></i> Import
+  <br>
+  <p class="note">
+    Note: Importing can take up to a minute for large scorecards.
+  </p>
+  <br>
+  <button class="button new-session-button import-insert"><i class="icon-up"></i> Import from <%=this.target%>
     <div class="button-spin"></div>
   </button>
 
@@ -39,6 +43,9 @@
     <div class="ticks-filter-input">
       <input class="filter-box" type="search" tabindex="2" placeholder="filter ascents..." />
     </div>
+    <button class="button import-include-all"> Include all</button>
+    <button class="button import-remove-all"> Remove all</button>
+    <div class="clear"></div>
   </div>
   <div class="tick-list">
     <%

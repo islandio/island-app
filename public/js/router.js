@@ -93,7 +93,7 @@ define([
 
     initialize: function (app) {
       this.app = app;
-      
+
       // Clear the hashtag that comes back from facebook.
       if (window.location.hash !== '' || window.location.href.indexOf('#') !== -1) {
         if (window.location.hash.length === 0 || window.location.hash === '#_=_') {
@@ -312,8 +312,8 @@ define([
             '<li>Don\'t want to broadcast your efforts to the entire world? Check out the privacy options in your profile <a class="alt" href="/settings" target="blank">settings</a>.</li>' +
             '<li>Send us your questions, bug reports, and problems with the blue tab below or at <a class="alt" href="mailto:support@island.io">support@island.io</a>.</li>' +
             '</ol>' +
-            '<span style="font-size:14px;"><strong>Do you use 8a.nu?</strong>' +
-            ' You can <a href="/import" target="blank" class="alt">import your 8a scorecard</a> from your profile <a class="alt" href="/settings" target="blank">settings</a>.</span>',
+            '<span style="font-size:14px;"><strong>Do you use 8a.nu or 27crags?</strong>' +
+            ' You can <a href="/import" target="blank" class="alt">import your scorecard</a> from your profile <a class="alt" href="/settings" target="blank">settings</a>.</span>',
         title: title
       }), {
         openEffect: 'fade',
@@ -554,18 +554,26 @@ define([
       }, this));
     },
 
-    import: function (slug) {
+    import: function () {
       this.start();
       this.renderTabs();
       this.clearContainer();
-      this.render('/service/import/' + slug, _.bind(function (err) {
+      if (this.app.state && this.app.state.import) {
+        var target = this.app.state.import.target;
+        var path = this.app.state.import.userId + '-' + target
+        var name = this.app.state.import.name;
+      }
+      delete this.app.state.import;
+      this.render('/service/import/' + path, _.bind(function (err) {
         if (err) return;
-        if (slug) {
-          this.page = new ImportInsert(this.app, {slug: slug}).render();
+        if (path) {
+          this.page = new ImportInsert(this.app,
+              {name: name, target: target}).render();
         } else {
+          this.navigate('/import');
           this.page = new ImportSearch(this.app).render();
         }
-        this.renderTabs({title: 'Import your 8a.nu Scorecard', log: true});
+        this.renderTabs({title: 'Import your Scorecard', log: true});
         this.stop();
       }, this));
     },

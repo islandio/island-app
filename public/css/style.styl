@@ -578,6 +578,9 @@ span.empty-list
 .info-accept:hover
   color blue
 
+.info-remove
+  margin-top 10px
+
 .info-divider
   font-size 11px
   color #808080
@@ -1125,6 +1128,12 @@ div.share-button.sharer-0 .social ul li
 div.share-button.sharer-0 .social.networks-4,
 div.share-button.sharer-0 .social.networks-4 ul
   width auto
+
+a.button.info-remove
+  display block
+  font-size 10px
+  line-height 20px
+  min-height 20px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––structure*/
 
@@ -5310,12 +5319,14 @@ span.no-description
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––import*/
 
 .import
-  font-size 0
+  font-size 14px
+
+.import td
+  padding-left 0
 
 .import .note
   font-size 14px
   color #666
-  margin-bottom 15px
   line-height 20px
 
 input.import-input
@@ -5327,7 +5338,6 @@ input.import-input
 .import button.button.import-search-button
   position relative
   width 190px
-  // line-height 36px
   height 36px
 
 .import ul.list
@@ -5341,11 +5351,8 @@ input.import-input
 .import ul.list li a:hover span
   color inherit
 
-// .import ul.list span
-//   color #888
-
 .import .subtabs
-  float clear
+  clear both
 
 .import-scorecard-title
   font-size 20px
@@ -5357,6 +5364,16 @@ input.import-input
 
 .import .ticks-filter
   margin-top 40px
+
+.import button.import-include-all
+  float left
+  margin 20px 10px 0 0
+  padding 0 15px
+
+.import button.import-remove-all
+  float left
+  margin-top 20px
+  padding 0 15px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crags*/
 
@@ -5400,8 +5417,8 @@ input.import-input
   border-top 1px solid #f2f2f2
 
 .ticks-filter-input
-  margin: 0 -40px 0 -30px;
-  padding: 20px 40px 0 30px;
+  margin 0 -40px 0 -30px
+  padding 20px 40px 0 30px
   border-top 1px solid #f2f2f2
 
 .ascents-filter-input input,

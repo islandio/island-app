@@ -58,6 +58,8 @@ define([
     }
   };
 
+  App.prototype.state = {};
+
   App.prototype.update = function (profile) {
     var login = false;
 

@@ -41,7 +41,8 @@ define([
     events: {
       'click .navigate': 'navigate',
       'click .button': 'submit',
-      'keydown .import-input': 'keydown'
+      'keydown .import-input': 'keydown',
+      'change input[type="radio"]': 'updateRadio'
     },
 
     setup: function () {
@@ -67,6 +68,10 @@ define([
       return this;
     },
 
+    updateRadio: function() {
+      this.list.empty();
+    },
+
     destroy: function () {
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
@@ -86,9 +91,14 @@ define([
 
     navigate: function (e) {
       e.preventDefault();
-      var path = $(e.target).closest('a').attr('href');
-      if (path) {
-        this.app.router.navigate(path, {trigger: true});
+      var anchor = $(e.target).closest('a');
+      if (anchor.attr('href')) {
+        this.app.state.import = {
+          userId: anchor.attr('data-id'),
+          name: anchor.attr('data-name'),
+          target: $('input[type=radio]:checked').val()
+        }
+        this.app.router.navigate(anchor.attr('href'), {trigger: true});
       }
     },
 
@@ -98,11 +108,15 @@ define([
       this.noResults.hide();
       this.input.removeClass('input-error');
 
-      var member = this.input.val();
       this.spin.start();
       this.button.addClass('spinning').addClass('disabled').attr('disabled', true);
       this.searching = true;
-      this.app.rpc.do('get8aUser', member, _.bind(function (err, res) {
+      var rpcData = { 
+        userId: this.input.val(),
+        target: $('input[type=radio]:checked').val()
+      };
+
+      this.app.rpc.do('getUser', rpcData, _.bind(function (err, res) {
 
         this.searching = false;
         this.spin.stop();
@@ -110,21 +124,33 @@ define([
 
         if (err) {
           this.input.addClass('input-error');
-          return console.log(err);
+          console.log("Error searching lib27 crags");
         }
 
         if (!res || res.length === 0) return this.noResults.show();
 
         _.each(res, _.bind(function(member) {
-          var slug = (member.name + ' ' + member.userId)
+          var slug = (member.name + ' ' + member.userId + ' ' + rpcData.target)
               .toLowerCase()
               .replace(/[^\w ]+/g,'')
               .replace(/ +/g,'-');
+          // Show id in paranthesis if its interesting
+          var idString = /[a-zA-Z]/g.test(member.userId) ? '(' + member.userId
+              + ')&nbsp' : ''
+          var geoString = '';
+          if (member.country) {
+            if (member.city) {
+              geoString = member.city + ', ' + member.country;
+            } else {
+              geoString = member.country;
+            }
+          }
           this.list.append('<li>' +
-              '<a class="navigate" href="/import/' + slug + '">' +
+              '<a class="navigate" href="/import/2" data-id="' + member.userId +
+                  '" data-name="' + member.name + '">' + 
               '<i class="icon-user"></i>' +
               '<b>' + member.name + '</b>&nbsp' +
-              '<span>' + member.city + ', ' + member.country + '</span>' +
+              '<span>' + idString + geoString + '</span>' +
               '</a></li>');
         }, this));
 

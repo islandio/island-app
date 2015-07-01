@@ -237,15 +237,22 @@
       <a href="javascript:;" class="muted tick-edit">Edit</a>
       <span class="info-divider">&nbsp;&middot;&nbsp;</span>
     <% } %>
-    <a href="javascript:;" class="muted info-share">Share</a>
-    <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-    <a href="/efforts/<%= this.model.get('key') %>"
-        class="muted navigate"><time class="created" 
-        datetime="<%= this.model.get('updated') %>" 
-        title="<%= this.model.get('updated') %>" 
-        id="time_<%= this.model.id %>">
-      <%= this.model.get('updated') %>
-      </time></a>
+    <% if (!this.options.shareless) { %>
+      <a href="javascript:;" class="muted info-share">Share</a>
+      <span class="info-divider">&nbsp;&middot;&nbsp;</span>
+    <% } %>
+    <% if (this.options.inlineRemove) { %>
+      <a href="javascript:;" class="button info-remove">Remove</a>
+    <% } %>
+    <% if (!this.options.dateless) { %>
+      <a href="/efforts/<%= this.model.get('key') %>"
+          class="muted navigate"><time class="created" 
+          datetime="<%= this.model.get('updated') %>" 
+          title="<%= this.model.get('updated') %>" 
+          id="time_<%= this.model.id %>">
+        <%= this.model.get('updated') %>
+        </time></a>
+    <% } %>
   <% } %>
 </div>
 <% if (!this.options.commentless) { %>

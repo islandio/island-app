@@ -12,13 +12,44 @@
   </div>
 </div>
 <div class="leftside import">
-  <p class="note">
-    <span class="em">Step 1)</span> Let's find your 8a account.
-  </p>
-  <input class='import-input' type="search" placeholder="Your full name on 8a"></input>
-  <button class="button import-search-button"><i class="icon-search"></i> Search
-    <div class="button-spin"></div>
-  </button>
+
+  <table>
+    <tbody>
+      <tr>
+        <td class="note">
+          Which climbing site are you importing from?
+        </td>        
+      </tr>
+      <tr>
+        <td>
+          <input type="radio" name="climbingsite" value="8a" id="climbingsite.8a" checked="checked" />
+          <label for="climbingsite.8a">8a.nu</label>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="radio" name="climbingsite" value="27crags" id="climbingsite.27crags"/>
+          <label for="climbingsite.27crags">27crags</label>
+        </td>
+      </tr>
+      <tr> <td>&nbsp</td> </tr>
+      <tr>
+        <td class="note">
+          <span>Search for your acount...</span>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input class='import-input' type="search" placeholder="Your full name"></input>
+        </td>
+        <td>
+          <button class="button import-search-button"><i class="icon-search"></i> Search
+            <div class="button-spin"></div>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
   <div class="list-wrap" style="display:block;">
     <span class="no-results">No results.</span>
     <ul class="list"></ul>
