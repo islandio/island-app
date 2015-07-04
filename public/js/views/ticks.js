@@ -110,8 +110,10 @@ define([
         this.boulders.hide();
       }
 
-      this.barChart.update(this.model.get('ticks')[this.currentType], this.currentType);
-      this.scatterChart.update(this.model.get('ticks')[this.currentType], this.currentType);
+      this.barChart.update(this.model.get('ticks')[this.currentType],
+          this.currentType, {immediate: true} );
+      this.scatterChart.update(this.model.get('ticks')[this.currentType], 
+          this.currentType, {immediate: true});
 
       _.defer(_.bind(function () {
         this.checkCurrentCount();
