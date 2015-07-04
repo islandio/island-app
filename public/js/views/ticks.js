@@ -12,9 +12,10 @@ define([
   'views/rows/tick',
   'text!../../templates/ticks.html',
   'text!../../templates/ticks.title.html',
+  'views/d3barchart',
   'views/lists/watchees'
 ], function ($, _, Backbone, mps, util, Card, Tick, template,
-    title, Watchees) {
+    title, BarChart, Watchees) {
   return Backbone.View.extend({
 
     el: '.main',
@@ -51,6 +52,10 @@ define([
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
       this.title = _.template(title).call(this);
+
+      this.barChart = new BarChart(this.app, {
+        $el: this.$('.ticks-barchart')
+      }).render();
 
       // Render each tick as a view.
       var ticks = this.$('.tick');
@@ -99,6 +104,9 @@ define([
         this.routes.show();
         this.boulders.hide();
       }
+
+      this.barChart.update(this.model.get('ticks')[this.currentType], this.currentType);
+
       _.defer(_.bind(function () {
         this.checkCurrentCount();
         this.bouldersFilter.click(_.bind(this.changeType, this, 'b'));
@@ -241,6 +249,9 @@ define([
       active.removeClass('active');
 
       this.currentType = type;
+
+      this.barChart.update(this.model.get('ticks')[this.currentType], this.currentType);
+
       this.$('.list-wrap').hide();
       this.$('.' + this.currentType + '-ticks').show();
       this.checkCurrentCount();
