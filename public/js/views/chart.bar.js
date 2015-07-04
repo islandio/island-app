@@ -32,7 +32,7 @@ define([
     }, 0);
   };
 
-  var fadeTime = 150;
+  var fadeTime = 300;
   var legend_dy = 40;
 
   var colors = {
@@ -71,9 +71,11 @@ define([
 
     },
 
-    update: function(data, type) {
+    update: function(data, type, options) {
+      options = options || { immediate: false };
       var d = this._transposeData(data, type);
-      this._updateGraph(d.ticksByGrade, d.gradeDomain);
+      this._updateGraph(d.ticksByGrade, d.gradeDomain,
+          options.immediate);
     },
 
     renderGraph: function() {

@@ -13,7 +13,7 @@ define([
   'd3Tip'
 ], function ($, _, Backbone, mps, rest, util, d3, d3Tip) {
 
-  var fadeTime = 150;
+  var fadeTime = 300;
   var legend_dy = 40;
 
   var colors = {
@@ -58,9 +58,11 @@ define([
 
     },
 
-    update: function(data, type) {
+    update: function(data, type, options) {
+      options = options || { immediate: false };
       var d = this._transposeData(data, type);
-      this._updateGraph(d.ticks, d.gradeDomain);
+      this._updateGraph(d.ticks, d.gradeDomain, d.avgGrade,
+          options.immediate);
     },
 
     renderGraph: function() {
@@ -106,10 +108,20 @@ define([
           .attr('class', 'y axis')
           .call(this.yAxis);
 
+      // Create some data groupings
       this.svg.append('g')
           .attr('class', 'scatterGroup');
 
-        // Create the legend
+      this.svg.append('g')
+          .attr('class', 'lineGroup');
+
+      // Create a line generator function
+      this.line = d3.svg.line()
+          .x(function(d) { return self.x(new Date((d.x + 1).toString())); })
+          .y(function(d) { return self.y(d.y); })
+          .interpolate('linear')
+
+      // Create the legend
       var legendEntries = this.svg.append('g')
           .attr('class', 'legend')
           .selectAll('legendEntries')
@@ -154,18 +166,18 @@ define([
 
             var html = '<strong style="font-size:1.4em">' 
                 + d.ascent.name + ', ' + d.crag.name + '</strong></br>'
-                + '<strong>a ' + d.grade + ' in ' + d.cragCountry + '</strong></br>'
+                + '<strong>a ' + d.grade + ' in ' + d.crag.country+ '</strong></br>'
                 + '<strong style="color:' + getColor(d) + '">' + style + ' on '
                 + new Date(d.date).format('longDate') + '</strong>';
 
-            return html;
+                return html;
           });
 
       this.svg.call(this.tip);
 
     },
 
-    _updateGraph: function(data, gradeDomain, immediate) {
+    _updateGraph: function(data, gradeDomain, avgGrade, immediate) {
 
       var self = this;
 
@@ -174,8 +186,7 @@ define([
         return new Date(d.date)
       }).map(function(d, idx) {
         var months = 12;
-        var blah = d.setDate(d.getDate() + months * 30 * ((idx % 2) === 0 ? -1 : 1));
-        return blah;
+        return d.setDate(d.getDate() + months * 30 * ((idx % 2) === 0 ? -1 : 1));
       }));
       this.svg.selectAll('.x')
           .transition().duration(immediate ? 0 : fadeTime*2).ease("sin-in-out")
@@ -189,15 +200,38 @@ define([
       this.svg.selectAll('.y .tick')
           .style('opacity', 0.2);
 
-      // Data join
+      // Data joins
 
-      var scatterGraph = this.svg.selectAll('.circle')
+      var scatterGraph = this.svg.select('.scatterGroup').selectAll('.circle')
           .data(data, function(d) { return d.id; });
 
+      var lineGroup = this.svg.select('.lineGroup')
+
+      // Showing one point on a line graph is sort of pointless
+      if (avgGrade.length <= 1) avgGrade = [];
+
+      var avgTickLine = lineGroup
+          .selectAll('.avgGradeLine')
+          .data([avgGrade]);
+
+      var avgTickCircle = lineGroup
+          .selectAll('.avgGradeCircle')
+          .data(avgGrade);
+
       // Enter
+
       scatterGraph.enter()
           .append('circle')
-          .attr('class', 'circle')
+          .attr('class', 'circle');
+
+      avgTickLine.enter()
+          .append('path')
+          .attr('class', 'avgGradeLine')
+
+      avgTickCircle.enter()
+          .append('circle')
+          .attr('class', 'avgGradeCircle')
+
 
       // Update + Enter
       scatterGraph
@@ -218,6 +252,30 @@ define([
           .delay(immediate ? 0 : fadeTime)
           .duration(immediate ? 0 : fadeTime)
           .style('opacity', .4);
+  
+      avgTickLine.attr('d', this.line)
+          .style('fill', 'none')
+          .style('stroke', 'darkgrey')
+          .style('stroke-width', '2px')
+          .style('stroke-opacity', 0)
+          .transition()
+          .delay(immediate ? 0 : fadeTime)
+          .duration(immediate ? 0 : fadeTime)
+          .style('stroke-opacity', 1);
+
+      avgTickCircle
+          .attr('cx', function(d) { return self.x(new Date((d.x + 1).toString())); })
+          .attr('cy', function(d) { return self.y(d.y) })
+          .attr('r', 4)
+          .style('fill', 'black')
+          .style('stroke', 'lightgrey')
+          .style('stroke-width', '2px')
+          .style('opacity', 0)
+          .transition()
+          .delay(immediate ? 0 : fadeTime)
+          .duration(immediate ? 0 : fadeTime)
+          .style('opacity', 1);
+
 
       // Exit
       scatterGraph
@@ -226,6 +284,21 @@ define([
           .duration(fadeTime)
           .style('opacity', 0)
           .remove();
+
+      avgTickCircle
+          .exit()
+          .transition()
+          .duration(fadeTime)
+          .style('opacity', 0)
+          .remove();
+
+      avgTickLine
+          .exit()
+          .transition()
+          .duration(fadeTime)
+          .style('stroke-opacity', 0)
+          .remove();
+
 
     },
 
@@ -259,8 +332,30 @@ define([
           .unique()
           .value();
 
-      return {ticks: ticksMapped, gradeDomain: gradeDomain };
+      // Group ticks by year
+      dataByYear = [];
+      _.each(ticksFiltered, function(t) {
+        var year = new Date(t.date).getFullYear();
+        if (!dataByYear[year]) dataByYear[year] = [];
+        dataByYear[year].push(t);
+      });
 
+      // Get average grade per year and present as {x, y}
+      avgGrade = [];
+      _.each(dataByYear, function(el, key) {
+        var sum = el.reduce(function(prev, cur) {
+          return prev + cur.grade;
+        }, 0);
+        var avg = Math.floor(sum / el.length);
+        avg = gradeConverter.indexes(avg, null, system);
+        avgGrade.push({x: key, y: avg});
+      });
+
+      return {
+        ticks: ticksMapped,
+        gradeDomain: gradeDomain,
+        avgGrade: avgGrade
+      };
     },
 
     empty: function () {
