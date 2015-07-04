@@ -5335,6 +5335,9 @@ input.import-input {
   stroke: #000;
   shape-rendering: crispEdges;
 }
+.ticks-barchart .x .tick {
+  font-size: 11px;
+}
 .ticks-barchart .y .tick {
   opacity: 0.2;
 }

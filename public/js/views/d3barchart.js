@@ -49,7 +49,7 @@ define([
     initialize: function (app, options) {
 
       this.app = app;
-      this.prefs =  this.app.profile.member ? this.app.profile.member.prefs: this.app.prefs
+      this.prefs =  this.app.profile.member ? this.app.profile.member.prefs: this.app.prefs;
       this.options = options || {};
       this.$el = options.$el;
       this.subscriptions = [];
@@ -80,7 +80,7 @@ define([
       var self = this;
 
       // Static graph setup
-      this.margin = {top: 60, right: 20, bottom: 40, left: 40};
+      this.margin = {top: 60, right: 20, bottom: 80, left: 40};
       this.width = this.$el.width() - this.margin.left - this.margin.right;
       this.height = this.$el.height() - this.margin.top - this.margin.bottom;
 
@@ -257,7 +257,7 @@ define([
       barGraph.selectAll('.onsites')
           .attr('width', this.x.rangeBand())
           .attr('y', function(d) { return self.y(getOnsites(d.values)); })
-          .attr('height', function(d) { 
+          .attr('height', function(d) {
             return self.height - self.y(getOnsites(d.values));
           })
           .style('opacity', 0)
@@ -330,10 +330,15 @@ define([
           .key(function(t) { return t.grade; })
           .entries(ticksMapped);
 
+      // We show lower grades than the climber has completed to give
+      // a sense of accomplishment. However, don't go too low or the xaxis
+      // gets crowded
+      var lowerGrade = Math.max(0, gradeExtent[0] - 4);
+
       // Get grade domain for this graph
-      var gradeDomain = _.chain(d3.range(gradeExtent[0], gradeExtent[1] + 1))
+      var gradeDomain = _.chain(d3.range(lowerGrade, gradeExtent[1] + 1))
           .map(function(g) {
-            return gradeConverter.indexes(g, null, system)
+            return gradeConverter.indexes(g, null, system);
            })
           .unique()
           .value();
