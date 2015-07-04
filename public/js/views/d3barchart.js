@@ -172,7 +172,8 @@ define([
                   }
                 }
                 var html =
-                '<div style="width:10px;height:10px;display:inline-block;'
+                '<div style="position:relative;top:1px;width:10px;'
+                    + 'height:10px;display:inline-block;'
                     + 'background-color:' + colors[style] + '"></div>'
                 + '<span style=color:' + colors[style] + '>&nbsp&nbsp'
                     + count  + ' ' + noun + '</span>'
@@ -190,7 +191,8 @@ define([
                 + makeLine(d.values, 'flash')
                 + makeLine(d.values, 'redpoint')
                 + '<span> most recently in </span>'
-                + '<strong>' +  new Date(recent.date).getFullYear() + '</strong>';
+                + '<strong style="font-size:1.2em">'
+                +  new Date(recent.date).getFullYear() + '</strong>';
 
             return html;
           });
