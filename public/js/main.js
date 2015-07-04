@@ -21,7 +21,9 @@ require.config({
     Skycons: 'lib/skycons/skycons',
     Instafeed: 'lib/instafeed/instafeed.min',
     Share: 'lib/share/share.min',
-    plugins: 'lib/jquery/plugins'
+    plugins: 'lib/jquery/plugins',
+    d3: 'lib/d3/d3',
+    d3Tip: 'lib/d3/d3-tip'
   },
 
   // Dependency mapping:

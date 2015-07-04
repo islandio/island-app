@@ -5375,6 +5375,7 @@ input.import-input
   margin-top 20px
   padding 0 15px
 
+
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crags*/
 
 .crag-flag
@@ -5400,6 +5401,60 @@ input.import-input
 .crags-search-input input
   font-size 16px
   width 100%
+
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––charts*/
+
+.ticks-barchart
+  width 100%
+  height 400px
+
+.ticks-barchart .axis path,
+.ticks-barchart .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.ticks-barchart .y .tick {
+  opacity: 0.2;
+}
+
+.ticks-barchart .y.axis line {
+  stroke: black;
+}
+
+.ticks-barchart .axis path {
+  display: none;
+}
+
+.d3-tip {
+  font-size: 12px;
+  line-height: 1.6;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 5px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crag*/
 
