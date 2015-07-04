@@ -12,10 +12,11 @@ define([
   'views/rows/tick',
   'text!../../templates/ticks.html',
   'text!../../templates/ticks.title.html',
-  'views/d3barchart',
+  'views/chart.bar',
+  'views/chart.scatter',
   'views/lists/watchees'
 ], function ($, _, Backbone, mps, util, Card, Tick, template,
-    title, BarChart, Watchees) {
+    title, BarChart, ScatterChart, Watchees) {
   return Backbone.View.extend({
 
     el: '.main',
@@ -54,7 +55,11 @@ define([
       this.title = _.template(title).call(this);
 
       this.barChart = new BarChart(this.app, {
-        $el: this.$('.ticks-barchart')
+        $el: this.$('.bar-chart')
+      }).render();
+
+      this.scatterChart = new ScatterChart(this.app, {
+        $el: this.$('.scatter-chart')
       }).render();
 
       // Render each tick as a view.
@@ -106,6 +111,7 @@ define([
       }
 
       this.barChart.update(this.model.get('ticks')[this.currentType], this.currentType);
+      this.scatterChart.update(this.model.get('ticks')[this.currentType], this.currentType);
 
       _.defer(_.bind(function () {
         this.checkCurrentCount();
@@ -251,6 +257,7 @@ define([
       this.currentType = type;
 
       this.barChart.update(this.model.get('ticks')[this.currentType], this.currentType);
+      this.scatterChart.update(this.model.get('ticks')[this.currentType], this.currentType);
 
       this.$('.list-wrap').hide();
       this.$('.' + this.currentType + '-ticks').show();

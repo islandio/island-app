@@ -5404,32 +5404,35 @@ input.import-input
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––charts*/
 
-.ticks-barchart
+.ticks-chart
   width 100%
   height 400px
 
-.ticks-barchart .axis path,
-.ticks-barchart .axis line {
+.ticks-chart .axis path,
+.ticks-chart .axis line {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
 }
 
-.ticks-barchart .x .tick {
+.ticks-chart .tick {
   font-size: 11px
 }
 
-.ticks-barchart .y .tick {
+.ticks-chart .y .tick {
   opacity: 0.2;
 }
 
-.ticks-barchart .y.axis line {
+.ticks-chart .y.axis line {
   stroke: black;
 }
 
-.ticks-barchart .axis path {
+.ticks-chart .axis path {
   display: none;
 }
+
+.scatter-chart .circle 
+  cursor pointer
 
 .d3-tip {
   font-size: 12px;
