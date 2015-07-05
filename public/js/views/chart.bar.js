@@ -121,7 +121,7 @@ define([
           .attr('class', 'y axis')
           .call(this.yAxis);
 
-        // Create the legend
+      // Create the legend
       var legendEntries = this.svg.append('g')
           .attr('class', 'legend')
           .selectAll('legendEntries')
@@ -133,7 +133,7 @@ define([
       legendEntries.append('rect')
           .attr('width', 10)
           .attr('height', 10)
-          .attr('y', -10)
+          .attr('y', -9)
           .style('fill', function(d) { return d.value; })
           .style('opacity', 1);
 
@@ -145,10 +145,11 @@ define([
       // Once legend is rendered move it to right spot
       legendEntries
           .attr('transform', function(d, idx) {
-            var bboxw = this.getBBox().width;
+            var lwidth = 100;
+            var lpad = 80;
             var entries = legendEntries[0].length;
-            var locIdx = Math.ceil(idx - entries/2);
-            var locX = (self.width/2) - (bboxw/2) + (locIdx*80);
+            var locIdx = idx - (entries/2 - 0.5);
+            var locX = (self.width/2) - (lwidth/2) + (locIdx*lpad);
             return 'translate(' + locX + ',' + (self.height + legend_dy) + ')';
           });
 

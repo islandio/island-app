@@ -19,7 +19,8 @@ define([
   var colors = {
     flash: '#b1ec36',
     redpoint: '#009cde',
-    onsite: '#e8837b'
+    onsite: '#e8837b',
+    average: '#333'
   };
 
   // Helper functions
@@ -37,7 +38,8 @@ define([
     initialize: function (app, options) {
 
       this.app = app;
-      this.prefs =  this.app.profile.member ? this.app.profile.member.prefs: this.app.prefs;
+      this.prefs =  this.app.profile.member
+          ? this.app.profile.member.prefs: this.app.prefs;
       this.options = options || {};
       this.$el = options.$el;
       this.subscriptions = [];
@@ -133,7 +135,7 @@ define([
       legendEntries.append('rect')
           .attr('width', 10)
           .attr('height', 10)
-          .attr('y', -10)
+          .attr('y', -9)
           .style('fill', function(d) { return d.value; })
           .style('opacity', 1);
 
@@ -145,10 +147,11 @@ define([
       // Once legend is rendered move it to right spot
       legendEntries
           .attr('transform', function(d, idx) {
-            var bboxw = this.getBBox().width;
+            var lwidth = 100;
+            var lpad = 80;
             var entries = legendEntries[0].length;
-            var locIdx = Math.ceil(idx - entries/2);
-            var locX = (self.width/2) - (bboxw/2) + (locIdx*80);
+            var locIdx = idx - (entries/2 - 0.5);
+            var locX = (self.width/2) - (lwidth/2) + (locIdx*lpad);
             return 'translate(' + locX + ',' + (self.height + legend_dy) + ')';
           });
 
@@ -182,6 +185,7 @@ define([
       var self = this;
 
       // Handle x-axis
+
       this.x.domain(d3.extent(data, function(d) {
         return new Date(d.date)
       }).map(function(d, idx) {
@@ -193,19 +197,28 @@ define([
           .call(this.xAxis);
 
       // Handle y-axis
+
       this.y.domain(gradeDomain);
+
+      // skip first ordinal tick and skip every other if we have more than
+      // 6 ticks
+      this.yAxis
+        .tickValues(gradeDomain.filter(function(d, i) {
+          if (i == 0) return false;
+          return gradeDomain.length > 6 ? !(i%2) : i;
+      }));
       this.svg.selectAll('.y')
           .call(this.yAxis);
-
       this.svg.selectAll('.y .tick')
           .style('opacity', 0.2);
-
+ 
       // Data joins
 
       var scatterGraph = this.svg.select('.scatterGroup').selectAll('.circle')
           .data(data, function(d) { return d.id; });
 
       var lineGroup = this.svg.select('.lineGroup')
+          .style('opacity', '.8');
 
       // Showing one point on a line graph is sort of pointless
       if (avgGrade.length <= 1) avgGrade = [];
@@ -234,6 +247,7 @@ define([
 
 
       // Update + Enter
+
       scatterGraph
           .on('mouseenter', this.tip.show)
           .on('mouseleave', this.tip.hide)
@@ -255,7 +269,7 @@ define([
   
       avgTickLine.attr('d', this.line)
           .style('fill', 'none')
-          .style('stroke', 'darkgrey')
+          .style('stroke', colors.average)
           .style('stroke-width', '2px')
           .style('stroke-opacity', 0)
           .transition()
@@ -267,9 +281,9 @@ define([
           .attr('cx', function(d) { return self.x(new Date((d.x + 1).toString())); })
           .attr('cy', function(d) { return self.y(d.y) })
           .attr('r', 4)
-          .style('fill', 'black')
-          .style('stroke', 'lightgrey')
-          .style('stroke-width', '2px')
+          .style('fill', colors.average)
+          //.style('stroke', 'lightgrey')
+          //.style('stroke-width', '2px')
           .style('opacity', 0)
           .transition()
           .delay(immediate ? 0 : fadeTime)
@@ -278,6 +292,7 @@ define([
 
 
       // Exit
+
       scatterGraph
           .exit()
           .transition()
