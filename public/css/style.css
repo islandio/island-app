@@ -5327,7 +5327,7 @@ input.import-input {
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––charts*/
 .ticks-chart {
   width: 100%;
-  height: 400px;
+  height: 500px;
 }
 .ticks-chart .axis path,
 .ticks-chart .axis line {

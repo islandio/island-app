@@ -84,7 +84,9 @@ define([
 
       this.xAxis = d3.svg.axis()
           .scale(this.x)
-          .orient('bottom');
+          .orient('bottom')
+          .ticks(4, '')
+          .tickSize(-this.height);
 
       this.yAxis = d3.svg.axis()
           .scale(this.y)
@@ -103,6 +105,8 @@ define([
       this.svg.append('g')
           .attr('class', 'x axis')
           .attr('transform', 'translate(0,' + this.height + ')')
+          .style('stroke-dasharray', ('4, 4'))
+          .style('stroke-opacity', .4)
           .call(this.xAxis);
 
       // Create the Y axis
@@ -204,7 +208,7 @@ define([
       // 6 ticks
       this.yAxis
         .tickValues(gradeDomain.filter(function(d, i) {
-          if (i == 0) return false;
+          if (i == 0) return true;
           return gradeDomain.length > 6 ? !(i%2) : i;
       }));
       this.svg.selectAll('.y')
