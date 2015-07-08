@@ -13,27 +13,21 @@ define([
   'd3Tip'
 ], function ($, _, Backbone, mps, rest, util, d3, d3Tip) {
 
-  var fadeTime = 300;
-  var legend_dy = 40;
-
-  var colors = {
-    flash: '#b1ec36',
-    redpoint: '#009cde',
-    onsite: '#e8837b',
-    average: '#333'
-  };
-
   // Helper functions
-  var getColor = function(tick) {
-    if (tick.tries <= 1) { return colors.onsite; }
-    else if (tick.tries > 1 && tick.tries <=2) { return colors.flash; }
-    else { return colors.redpoint; }
-  };
 
 
   return Backbone.View.extend({
 
     el: '.main',
+
+    fadeTime: 300,
+    legend_dy: 40,
+    colors: {
+      flash: '#b1ec36',
+      redpoint: '#009cde',
+      onsite: '#e8837b',
+      average: '#333'
+    },
 
     initialize: function (app, options) {
 
@@ -60,13 +54,14 @@ define([
 
     },
 
+    // call with tick data and type ('r' or 'b') for routes or boulders
     update: function(data, type, options) {
       options = options || { immediate: false };
       var d = this._transposeData(data, type);
-      this._updateGraph(d.ticks, d.gradeDomain, d.avgGrade,
-          options.immediate);
+      this._updateGraph(d.ticks, d.gradeDomain, d.avgGrade, options.immediate);
     },
 
+    // Create the static graph elements
     renderGraph: function() {
 
       var self = this;
@@ -85,7 +80,7 @@ define([
       this.xAxis = d3.svg.axis()
           .scale(this.x)
           .orient('bottom')
-          .ticks(4, '')
+          .ticks(6, '')
           .tickSize(-this.height);
 
       this.yAxis = d3.svg.axis()
@@ -131,7 +126,7 @@ define([
       var legendEntries = this.svg.append('g')
           .attr('class', 'legend')
           .selectAll('legendEntries')
-          .data(d3.entries(colors))
+          .data(d3.entries(this.colors))
           .enter()
           .append('g')
           .attr('class', 'legend-entry');
@@ -156,7 +151,8 @@ define([
             var entries = legendEntries[0].length;
             var locIdx = idx - (entries/2 - 0.5);
             var locX = (self.width/2) - (lwidth/2) + (locIdx*lpad);
-            return 'translate(' + locX + ',' + (self.height + legend_dy) + ')';
+            return 'translate(' + locX + ','
+                + (self.height + self.legend_dy) + ')';
           });
 
       // Create the tooltip
@@ -174,8 +170,9 @@ define([
             var html = '<strong style="font-size:1.4em">' 
                 + d.ascent.name + ', ' + d.crag.name + '</strong></br>'
                 + '<strong>a ' + d.grade + ' in ' + d.crag.country+ '</strong></br>'
-                + '<strong style="color:' + getColor(d) + '">' + style + ' on '
-                + new Date(d.date).format('longDate') + '</strong>';
+                + '<strong style="color:' + self.colors[self._getStyle(d)]
+                + '">' + style + ' on ' + new Date(d.date).format('longDate')
+                + '</strong>';
 
                 return html;
           });
@@ -197,7 +194,7 @@ define([
         return d.setDate(d.getDate() + months * 30 * ((idx % 2) === 0 ? -1 : 1));
       }));
       this.svg.selectAll('.x')
-          .transition().duration(immediate ? 0 : fadeTime*2).ease("sin-in-out")
+          .transition().duration(immediate ? 0 : this.fadeTime*2).ease("sin-in-out")
           .call(this.xAxis);
 
       // Handle y-axis
@@ -218,7 +215,7 @@ define([
  
       // Data joins
 
-      var scatterGraph = this.svg.select('.scatterGroup').selectAll('.circle')
+      var scatterGraph = this.svg.select('.scatterGroup').selectAll('.tickCircle')
           .data(data, function(d) { return d.id; });
 
       var lineGroup = this.svg.select('.lineGroup')
@@ -239,7 +236,7 @@ define([
 
       scatterGraph.enter()
           .append('circle')
-          .attr('class', 'circle');
+          .attr('class', 'tickCircle');
 
       avgTickLine.enter()
           .append('path')
@@ -264,34 +261,32 @@ define([
           .attr('cx', function(d) { return self.x(new Date(d.date)); })
           .attr('cy', function(d) { return self.y(d.grade); })
           .attr('r', 8)
-          .attr('fill', function(d) { return getColor(d); })
+          .attr('fill', function(d) { return self.colors[self._getStyle(d)]; })
           .style('opacity', 0)
           .transition()
-          .delay(immediate ? 0 : fadeTime)
-          .duration(immediate ? 0 : fadeTime)
+          .delay(immediate ? 0 : this.fadeTime)
+          .duration(immediate ? 0 : this.fadeTime)
           .style('opacity', .4);
   
       avgTickLine.attr('d', this.line)
           .style('fill', 'none')
-          .style('stroke', colors.average)
+          .style('stroke', this.colors.average)
           .style('stroke-width', '2px')
           .style('stroke-opacity', 0)
           .transition()
-          .delay(immediate ? 0 : fadeTime)
-          .duration(immediate ? 0 : fadeTime)
+          .delay(immediate ? 0 : this.fadeTime)
+          .duration(immediate ? 0 : this.fadeTime)
           .style('stroke-opacity', 1);
 
       avgTickCircle
           .attr('cx', function(d) { return self.x(new Date((d.x + 1).toString())); })
           .attr('cy', function(d) { return self.y(d.y) })
           .attr('r', 4)
-          .style('fill', colors.average)
-          //.style('stroke', 'lightgrey')
-          //.style('stroke-width', '2px')
+          .style('fill', this.colors.average)
           .style('opacity', 0)
           .transition()
-          .delay(immediate ? 0 : fadeTime)
-          .duration(immediate ? 0 : fadeTime)
+          .delay(immediate ? 0 : this.fadeTime)
+          .duration(immediate ? 0 : this.fadeTime)
           .style('opacity', 1);
 
 
@@ -300,27 +295,28 @@ define([
       scatterGraph
           .exit()
           .transition()
-          .duration(fadeTime)
+          .duration(this.fadeTime)
           .style('opacity', 0)
           .remove();
 
       avgTickCircle
           .exit()
           .transition()
-          .duration(fadeTime)
+          .duration(this.fadeTime)
           .style('opacity', 0)
           .remove();
 
       avgTickLine
           .exit()
           .transition()
-          .duration(fadeTime)
+          .duration(this.fadeTime)
           .style('stroke-opacity', 0)
           .remove();
 
 
     },
 
+    // Convert incoming tick data to D3 suitable data
     _transposeData: function(ticks, type) {
 
       var gradeConverter = this.app.gradeConverter[type];
@@ -375,6 +371,12 @@ define([
         gradeDomain: gradeDomain,
         avgGrade: avgGrade
       };
+    },
+
+    _getStyle: function(tick) {
+      if (tick.tries <= 1) { return 'onsite'; }
+      else if (tick.tries > 1 && tick.tries <=2) { return 'flash'; }
+      else { return 'redpoint'; }
     },
 
     empty: function () {

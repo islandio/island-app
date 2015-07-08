@@ -52,7 +52,6 @@ define([
       this.prefs =  this.app.profile.member ? this.app.profile.member.prefs: this.app.prefs;
       this.options = options || {};
       this.$el = options.$el;
-      console.log(this.$el);
       this.subscriptions = [];
       this.on('rendered', this.setup, this);
     },
