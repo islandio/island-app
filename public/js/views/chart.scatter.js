@@ -146,10 +146,10 @@ define([
         var sr = Number(self.sliderRight.attr('x'));
         if (pos[0] > (sr + sl) / 2) {
           var newPos = sr + (self.width/12 * (pos[0] > sr ? 1 : -1));
-          self.updateRightSlider(newPos);
+          self.updateRightSlider(newPos, false);
         } else {
           var newPos = sl + (self.width/12 * (pos[0] > sl ? 1 : -1));
-          self.updateLeftSlider(newPos);
+          self.updateLeftSlider(newPos, false);
         }
       });
 
@@ -199,9 +199,9 @@ define([
             d3.event.stopPropagation();
             if (self.mouse.moving) {
               if (self.mouse.which === 'right') {
-                self.updateRightSlider(d3.mouse(self.sliderRight.node())[0]);
+                self.updateRightSlider(d3.mouse(self.sliderRight.node())[0], true);
               } else {
-                self.updateLeftSlider(d3.mouse(self.sliderLeft.node())[0]);
+                self.updateLeftSlider(d3.mouse(self.sliderLeft.node())[0], true);
               }
             }
           })
@@ -287,20 +287,10 @@ define([
       d3.event.stopPropagation();
       this.mouse.moving = false;
 
-/*
-      var extent = this.d.timeDomain[1] - this.d.timeDomain[0]
-      var l = Number(this.sliderLeft.attr('x')) / this.width;
-      var r = Number(this.sliderRight.attr('x')) / this.width;
-
-      var newDomain = [this.d.timeDomain[0] + extent * l,
-          this.d.timeDomain[1] - extent * (1-r)];
-
-      this._updateXDomain(newDomain);
-*/
       return false;
     },
 
-    recalculateTimeDomain: function() {
+    recalculateTimeDomain: function(immediate) {
       var extent = this.d.timeDomain[1] - this.d.timeDomain[0]
       var l = Number(this.sliderLeft.attr('x')) / this.width;
       var r = Number(this.sliderRight.attr('x')) / this.width;
@@ -308,7 +298,7 @@ define([
       var newDomain = [this.d.timeDomain[0] + extent * l,
           this.d.timeDomain[1] - extent * (1-r)];
 
-      this._updateXDomain(newDomain);
+      this._updateXDomain(newDomain, immediate);
     },
 
     updateSliderHighlight: function() {
@@ -317,7 +307,7 @@ define([
           - this.sliderLeft.attr('x'))
     },
 
-    updateRightSlider: _.debounce(function(newPos) {
+    updateRightSlider: _.debounce(function(newPos, immediate) {
       var xMax = this.width - this.sliderRight.attr('width');
       var xMin = Number(this.sliderLeft.attr('x'))
           + Number(this.sliderLeft.attr('width'));
@@ -325,10 +315,10 @@ define([
       x = Math.max(x, xMin);
       this.sliderRight.attr('x', x);
       this.updateSliderHighlight();
-      this.recalculateTimeDomain();
+      this.recalculateTimeDomain(immediate);
     }, 2),
 
-    updateLeftSlider: _.debounce(function(newPos) {
+    updateLeftSlider: _.debounce(function(newPos, immediate) {
       var xMin = 0;
       var xMax = Number(this.sliderRight.attr('x'))
           - Number(this.sliderLeft.attr('width'));
@@ -336,7 +326,7 @@ define([
       x = Math.min(x, xMax);
       this.sliderLeft.attr('x', x);
       this.updateSliderHighlight();
-      this.recalculateTimeDomain();
+      this.recalculateTimeDomain(immediate);
     }, 2),
 
     _resetSliders: function() {
@@ -347,7 +337,7 @@ define([
 
     },
 
-    _updateXDomain: function(xDomain) {
+    _updateXDomain: function(xDomain, immediate) {
       var self = this;
 
       this.x.domain(xDomain)
@@ -360,13 +350,13 @@ define([
       var scatterGraph = this.svg.select('.scatterGroup').selectAll('.tickCircle');
 
       scatterGraph
-          .transition().duration(200)
+          .transition().duration(immediate ? 0 : 200)
           .attr('cx', function(d) { return self.x(new Date(d.date)); })
       avgTickCircle
-          .transition().duration(200)
+          .transition().duration(immediate ? 0 : 200)
           .attr('cx', function(d) { return self.x(new Date((d.x + 1).toString())); })
       avgTickLine
-          .transition().duration(200)
+          .transition().duration(immediate ? 0 : 200)
           .attr('d', this.line)
 
       this.svg.select('.lineGroup')
