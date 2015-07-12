@@ -54,7 +54,6 @@ if (cluster.isMaster) {
     process.exit(1);
   }
 
-  // Module Dependencies
   var http = require('http');
   var https = require('https');
   var connect = require('connect');
@@ -83,20 +82,19 @@ if (cluster.isMaster) {
   var Emailer = require('island-emailer').Emailer;
   var resources = require('./lib/resources.js').resources;
   var Client = require('./lib/client').Client;
+  var SendOwl = require('sendowl-node').SendOwl;
+  var Shipwire = require('shipwire-node').Shipwire;
   var Poet = require('poet');
   var service = require('./lib/service');
 
-  // Setup Environments
   var app = require('./app').init();
 
-  // Package info.
   app.set('package', _package_);
 
   // App port is env var in production.
   app.set('PORT', process.env.PORT || app.get('package').port);
   app.set('SECURE_PORT', app.get('package').securePort);
 
-  // Add connection config to app.
   _.each(require('./config.json'), function (v, k) {
     app.set(k, process.env[k] || v);
   });
@@ -140,7 +138,6 @@ if (cluster.isMaster) {
         // Use console for logging in dev
         app.set('log', console.log);
 
-        // App params
         app.set('ROOT_URI', '');
         app.set('HOME_URI', 'http://localhost:' + app.get('PORT'));
       }
@@ -156,14 +153,12 @@ if (cluster.isMaster) {
           json: true
         }));
 
-        // App params
         app.set('ROOT_URI', [app.get('package').builds.cloudfront,
             app.get('package').version].join('/'));
         app.set('HOME_URI', [app.get('package').protocol.name,
             app.get('package').domain].join('://'));
       }
 
-      // Redis connect
       this.parallel()(null, redis.createClient(app.get('REDIS_PORT'),
           app.get('REDIS_HOST_SESSION')));
       this.parallel()(null, redis.createClient(app.get('REDIS_PORT'),
@@ -179,7 +174,6 @@ if (cluster.isMaster) {
         return;
       }
 
-      // App config.
       app.set('db', db);
       app.set('emailer', new Emailer({
         db: db,
@@ -201,7 +195,6 @@ if (cluster.isMaster) {
       }));
       app.set('errorHandler', errorHandler);
 
-      // Express config
       app.set('views', __dirname + '/views');
       app.set('view engine', 'jade');
       app.set('sessionStore', new RedisStore({client: rc, maxAge: 2592000000}));
@@ -257,7 +250,6 @@ if (cluster.isMaster) {
 
       app.all('*', function (req, res, next) {
 
-        // Check protocol.
         if (process.env.NODE_ENV === 'production' &&
             app.get('package').protocol.name === 'https') {
           if (req.secure || _.find(app.get('package').protocol.allow,
@@ -297,7 +289,6 @@ if (cluster.isMaster) {
                 argv.index && cluster.worker.id === 1},
                 this.parallel());
 
-            // Init search cache.
             app.set('cache', new Search({
               redisHost: app.get('REDIS_HOST_CACHE'),
               redisPort: app.get('REDIS_PORT')
@@ -306,7 +297,6 @@ if (cluster.isMaster) {
           function (err, connection) {
             if (err) return this(err);
 
-            // Init collections.
             if (_.size(collections) === 0) {
               return this();
             }
@@ -317,7 +307,6 @@ if (cluster.isMaster) {
           function (err) {
             if (err) return this(err);
 
-            // Init the blog.
             var poet = Poet(app, {
               posts: './blog/',
               postsPerPage: 5,
@@ -342,6 +331,18 @@ if (cluster.isMaster) {
             }
 
             app.set('sharing', require('./lib/sharing'));
+
+            app.set('sendowl', new SendOwl({
+              host: app.get('SENDOWL_HOST'),
+              key: app.get('SENDOWL_KEY'),
+              secret: app.get('SENDOWL_SECRET')
+            }));
+
+            app.set('shipwire', new Shipwire({
+              host: app.get('SHIPWIRE_HOST'),
+              username: app.get('SHIPWIRE_USER'),
+              password: app.get('SHIPWIRE_PASS')
+            }));
 
             _.each(resources, function (r, name) {
               r.init();
@@ -370,7 +371,6 @@ if (cluster.isMaster) {
               _server = http.createServer(app);
             }
 
-            // Socket handling
             var sio = socketio.listen(server, {log: false,
                 secure: process.env.NODE_ENV === 'production'});
             sio.set('store', new socketio.RedisStore({
@@ -380,7 +380,6 @@ if (cluster.isMaster) {
               redisClient: rc
             }));
 
-            // Development only.
             if (process.env.NODE_ENV !== 'production') {
               sio.set('log level', 2);
             } else {
@@ -397,7 +396,6 @@ if (cluster.isMaster) {
               ]);
             }
 
-            // Socket auth
             sio.set('authorization', psio.authorize({
               cookieParser: express.cookieParser,
               key: app.get('sessionKey'),
@@ -407,18 +405,15 @@ if (cluster.isMaster) {
               success: function(data, accept) { accept(null, true); }
             }));
 
-            // Websocket connect
             sio.sockets.on('connection', function (webSock) {
 
               // Back-end socket for talking to other Island services
               var backSock = zmq.socket('sub');
               backSock.connect(app.get('SUB_SOCKET_PORT'));
 
-              // Create new client.
               webSock.client = new Client(webSock, backSock);
             });
 
-            // Start server
             if (process.env.NODE_ENV !== 'production') {
               server.listen(app.get('PORT'));
             } else {

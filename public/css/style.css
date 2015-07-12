@@ -2433,7 +2433,11 @@ p.sidebar-tip span {
 .sidebar-tick:last-child {
   border-bottom: 1px solid #f2f2f2;
 }
-.sidebar-broadcast {
+.sidebar-products {
+  margin-top: 10px !important;
+}
+.sidebar-broadcast,
+.sidebar-product {
   background: #fcfcfc;
   border: 1px solid #f2f2f2;
   -webkit-border-radius: 3px;
@@ -2442,13 +2446,19 @@ p.sidebar-tip span {
   padding: 7px 0;
   margin-bottom: 15px;
 }
-.sidebar-broadcast:last-child {
+.sidebar-broadcast:last-child,
+.sidebar-product:last-child {
   margin-bottom: 0;
 }
-.sidebar-broadcast h1 {
+.sidebar-broadcast h1,
+.sidebar-product h1 {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-size: 16px;
   padding: 0 7px 5px;
+}
+.sidebar-product h1 {
+  padding: 10px 15px;
+  color: #404040;
 }
 .sidebar-broadcast h1 a {
   background: none;
@@ -2459,7 +2469,12 @@ p.sidebar-tip span {
 .sidebar-broadcast h1 a i {
   vertical-align: 1px;
 }
-.sidebar-broadcast p {
+.sidebar-product h1 a.buy-button {
+  float: right;
+  margin: -4px 0 0 0;
+}
+.sidebar-broadcast p,
+.sidebar-product p {
   padding: 0 10px;
   color: #666;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -2500,6 +2515,7 @@ a.sidebar-more:hover {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-size: 16px;
   line-height: 24px;
+  margin-bottom: 15px;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––instagrams*/
 .instagrams > div {

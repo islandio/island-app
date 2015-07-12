@@ -9,7 +9,7 @@ define([
   'mps',
   'rest',
   'util',
-  'text!../../templates/films.html',
+  'text!../../templates/store.html',
   'views/lists/events',
   'views/lists/ticks'
 ], function ($, _, Backbone, mps, rest, util, template, Events, Ticks) {
@@ -25,7 +25,7 @@ define([
     },
 
     render: function () {
-      this.app.title('The Island | Films');
+      this.app.title('The Island | Store');
 
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
@@ -40,8 +40,6 @@ define([
     },
 
     setup: function () {
-
-      // Render lists.
       this.feed = new Events(this.app, {parentView: this,
           reverse: true, filters: false});
       this.boulders = new Ticks(this.app, {parentView: this, type: 'tick',

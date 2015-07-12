@@ -15,7 +15,7 @@
       </div>
     <% } %>
     <div class="sidebar-broadcasts">
-      <% _.each(this.app.profile.content.broadcasts.items, _.bind(function (b, i) { %>
+      <% _.each(this.app.profile.content.broadcasts.items, _.bind(function (b) { %>
         <div class="sidebar-broadcast">
           <h1>
             <a href="/blog/<%= b.slug %>">
@@ -23,7 +23,6 @@
             </a>
           </h1>
           <p><%= b.preview %></p>
-          <p>
         </div>
       <% }, this)); %>
     </div>

@@ -1,0 +1,47 @@
+<div class="rightside">
+  <div class="sidebar-items">
+    <span class="sidebar-heading">Custom made goods:</span>
+    <div class="sidebar-products">
+      <% _.each(this.app.profile.content.products.items, _.bind(function (p) { %>
+        <div class="sidebar-product">
+          <h1>
+            <%= p.name %> <a class="button buy-button" target="_blank"
+                href="<%= p.add_to_cart_url %>">
+              <i class="icon-cart-plus"></i>
+            </a>
+          </h1>
+          <p></p>
+        </div>
+      <% }, this)); %>
+    </div>
+    <div class="sidebar-ticks">
+      <span class="sidebar-heading">Recent public ascents:</span>
+      <div class="sidebar-ticks-r"></div>
+      <div class="sidebar-ticks-b"></div>
+    </div>
+    <div class="sidebar-broadcasts">
+      <% _.each(this.app.profile.content.broadcasts.items, _.bind(function (b) { %>
+        <div class="sidebar-broadcast">
+          <h1>
+            <a href="/blog/<%= b.slug %>">
+              <i class="icon-signal"></i> <%= b.title %>
+            </a>
+          </h1>
+          <p><%= b.preview %></p>
+        </div>
+      <% }, this)); %>
+    </div>
+  </div>
+</div>
+<div class="leftside">
+  <p class="page">
+    <span class="sidebar-heading">Our films:</span>
+Many thanks to everyone that has made these films happen. If you have a sales question or just need some help with something, please <a href="mailto:support@island.io">send us an email</a>.
+  </p>
+  <div class="events"></div>
+  <div class="list-spin">
+    <div class="events-spin"></div>
+    <span class="empty-feed">Showing all.</span>
+  </div>
+</div>
+<div class="clear"></div>
