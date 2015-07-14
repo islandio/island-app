@@ -5,12 +5,12 @@
       <% _.each(this.app.profile.content.products.items, _.bind(function (p) { %>
         <div class="sidebar-product">
           <h1>
-            <%= p.name %> <a class="button buy-button" target="_blank"
-                href="<%= p.add_to_cart_url %>">
-              <i class="icon-cart-plus"></i>
+            <%= p.name %> <a class="button buy-button" href="javascript:;"
+                id="<%= p.sku %>">
+              $<%= (p.price/100).toFixed(2) %>
             </a>
           </h1>
-          <p></p>
+          <p><%= p.description %></p>
         </div>
       <% }, this)); %>
     </div>

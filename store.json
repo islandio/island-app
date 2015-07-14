@@ -1,0 +1,18 @@
+{
+  "M1-Island-Brush": {
+    "name": "M1 Island Brush",
+    "price": 750,
+    "image": "https://s3.amazonaws.com/island.io/store/img/brushes.jpg"
+  },
+  "M1-Island-Case": {
+    "price": 75000
+  },
+  "M3-Island-Brush": {
+    "name": "M3 Island Brush",
+    "price": 1250,
+    "image": "https://s3.amazonaws.com/island.io/store/img/brushes.jpg"
+  },
+  "M3-Island-Case": {
+    "price": 31250
+  }
+}

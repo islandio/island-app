@@ -164,6 +164,7 @@ html(lang="en", itemscope, itemtype="http://schema.org/#{typeof schema === 'unde
     script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js")
     script(type="text/javascript", src="https://jwpsrv.com/library/1lrC0MMbEeKOnyIACqoQEQ.js")
     script(src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/cartodb.js")
+    script(src="https://checkout.stripe.com/checkout.js")
     - if (process.env.NODE_ENV === 'production')
       script(type="text/javascript", src="#{root}/js/min.js")
     - else

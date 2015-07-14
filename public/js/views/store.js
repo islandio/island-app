@@ -47,6 +47,24 @@ define([
       this.routes = new Ticks(this.app, {parentView: this, type: 'tick',
           subtype: 'r', heading: 'Routes'});
 
+      _.each(this.app.profile.content.products.items, function (p) {
+        var handler = StripeCheckout.configure({
+          key: 'pk_test_6pRNASCoBOKtIshFeQd4XMUh',
+          name: p.name,
+          description: p.description,
+          amount: p.price,
+          image: p.image,
+          token: function(token) {
+            console.log(token)
+          }
+        });
+
+        $('#' + p.sku).on('click', function (e) {
+          handler.open();
+          e.preventDefault();
+        });
+      });
+
       return this;
     },
 
