@@ -5327,7 +5327,7 @@ input.import-input {
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––charts*/
 .ticks-chart {
   width: 100%;
-  height: 500px;
+  height: 600px;
 }
 .pie-chart {
   width: 600px;

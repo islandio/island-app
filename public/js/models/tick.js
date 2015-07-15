@@ -36,10 +36,14 @@ define([
       return util.formatText(this.get('note'), true);
     },
 
-    formatDate: function () {
+    formatDate: function (compact) {
       if (this.get('ts')) {
         var d = new Date(this.get('ts') * 1000);
-        return d.format('h:MM TT') + '<br />' + d.format('mmm d, yyyy');
+        var dstr = '';
+        if (!compact) {
+          dstr += d.format('h:MM TT') + '<br />';
+        }
+        return dstr + d.format('mmm d, yyyy');
       } else {
         return new Date(this.get('date')).format('mediumDate');
       }
