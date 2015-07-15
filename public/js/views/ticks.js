@@ -15,9 +15,10 @@ define([
   'views/chart.bar',
   'views/chart.scatter',
   'views/chart.pie',
+  'views/lists/events',
   'views/lists/watchees'
 ], function ($, _, Backbone, mps, util, Card, Tick, template,
-    title, BarChart, ScatterChart, PieChart, Watchees) {
+    title, BarChart, ScatterChart, PieChart, Events, Watchees) {
   return Backbone.View.extend({
 
     el: '.main',
@@ -55,6 +56,7 @@ define([
       this.$el.html(this.template.call(this));
       this.title = _.template(title).call(this);
 
+/*
       this.pieChart = new PieChart(this.app, {
         $el: this.$('.pie-chart')
       }).render();
@@ -62,6 +64,7 @@ define([
       this.barChart = new BarChart(this.app, {
         $el: this.$('.bar-chart')
       }).render();
+*/
 
       this.scatterChart = new ScatterChart(this.app, {
         $el: this.$('.scatter-chart')
@@ -81,6 +84,7 @@ define([
             parentView: this,
             el: el,
             model: data,
+            compact: true,
             mapless: true,
             medialess: true,
             commentless: true,
@@ -115,14 +119,28 @@ define([
         this.boulders.hide();
       }
 
+      console.log(this.app.profile.content);
+      /*
+      this.feed = new Events(this.app, {
+        parentView: this,
+        reverse: true,
+        input: true,
+        filters: ['tick']
+      });
+      */
+
+/*
       this.barChart.update(this.model.get('ticks')[this.currentType],
           this.currentType, {immediate: true} );
+*/
       this.scatterChart.update(this.model.get('ticks')[this.currentType], 
           this.currentType, {immediate: true});
 
+/*
       var countryData = _.pluck(this.model.get('ticks')[this.currentType],
           'crag');
       this.pieChart.update(countryData, 'country', {immediate: true});
+*/
 
       _.defer(_.bind(function () {
         this.checkCurrentCount();
@@ -221,6 +239,7 @@ define([
       _.each(this.ticks, function (t) {
         t.destroy();
       });
+      this.scatterChart.destroy();
       this.crags.destroy();
       this.sroutes.destroy();
       this.sboulders.destroy();
@@ -267,12 +286,16 @@ define([
 
       this.currentType = type;
 
+/*
       this.barChart.update(this.model.get('ticks')[this.currentType], this.currentType);
+*/
       this.scatterChart.update(this.model.get('ticks')[this.currentType], this.currentType);
 
+/*
       var countryData = _.pluck(this.model.get('ticks')[this.currentType],
           'crag');
       this.pieChart.update(countryData, 'country', {immediate: true});
+*/
 
       this.$('.list-wrap').hide();
       this.$('.' + this.currentType + '-ticks').show();

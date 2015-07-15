@@ -11,6 +11,7 @@
     w = weather.get('hourly') || weather.get('daily');
   }
   var inlineWeather = w && this.options.inlineWeather;
+  var compact = this.options.compact;
   var mediaTypes = _.uniq(_.pluck(t.medias, 'type'));
 %>
 
@@ -107,7 +108,7 @@
   </span>
   <% if (this.options.inlineDate) { %>
     <span class="session-tick-date">
-      <%= this.model.formatDate() %>
+      <%= this.model.formatDate(compact) %>
     </span>
   <% } %>
   <% if (this.options.inlineTime) { %>
@@ -143,7 +144,7 @@
       </a>
     <% } %>
   </span>
-  <% if (t.duration || t.performance || w) { %>
+  <% if ((t.duration || t.performance || w) && !compact) { %>
     <span class="session-tick-detail">
       <% if (inlineWeather) { %>
         <%= w.temperature ? weather.getTemp(w.temperature): weather.dailyTempRange() %>&deg<%= weather.getTempUnits() %> <%= weather.getWeatherIconName(w.icon) %>
@@ -162,7 +163,7 @@
       <% } %>
     </span>
   <% } %>
-  <% if (t.note) { %>
+  <% if (t.note && !compact) { %>
     <p class="session-tick-note">
       &ldquo;<%= this.model.formatNote() %>&rdquo;
     </p>

@@ -72,7 +72,7 @@ define([
       var self = this;
 
       // Static graph setup
-      this.margin = {top: 60, right: 20, bottom: 80, left: 60};
+      this.margin = {top: 120, right: 60, bottom: 120, left: 60};
       this.width = this.$el.width() - this.margin.left - this.margin.right;
       this.height = this.$el.height() - this.margin.top - this.margin.bottom;
 
@@ -134,11 +134,11 @@ define([
 
       // Slider
 
-      var slider = this.svg.append('g')
+      this.slider = this.svg.append('g')
           .attr('class', 'slider')
           .attr('transform', 'translate(0,' + (this.height  + 50) + ')');
 
-      slider.on('mousedown', function() {
+      this.slider.on('mousedown', function() {
         d3.event.preventDefault();
         d3.event.stopPropagation();
         var pos = d3.mouse(this);
@@ -153,20 +153,20 @@ define([
         }
       });
 
-      this.sliderBar = slider.append('rect')
+      this.sliderBar = this.slider.append('rect')
           .attr('class', 'slider-bar')
           .attr('rx', 6)
           .attr('width', this.width)
           .attr('height', 10)
           .style('fill', 'grey')
 
-      this.sliderHighlight = slider.append('rect')
+      this.sliderHighlight = this.slider.append('rect')
           .attr('class', 'slider-highlight')
           .attr('width', this.width)
           .attr('height', this.sliderBar.attr('height'))
           .style('fill', this.colors.redpoint)
 
-      this.sliderLeft = slider.append('rect')
+      this.sliderLeft = this.slider.append('rect')
           .attr('class', 'slider-left')
           .attr('y', -5)
           .attr('width', 10)
@@ -179,7 +179,29 @@ define([
             self.startMove('left')
           })
 
-      this.sliderRight = slider.append('rect')
+      this.sliderStartDate = this.slider.append('text')
+          .attr('x', 5)
+          .attr('y', 20)
+          .style('text-anchor', 'middle')
+          .attr('transform', 'rotate(90)')
+          .attr('font-size', '16')
+
+      this.sliderEndDate = this.slider.append('text')
+          .attr('x', 5)
+          .attr('y', -this.width - 20)
+          .style('text-anchor', 'middle')
+          .attr('transform', 'rotate(90)')
+          .attr('font-size', '16')
+
+/*
+      this.sliderLeftText.append('text')
+          .attr('class', 'slider-left-text')
+          .attr('y', 40)
+          .text(new Date(this.x.domain()[0]).format('longDate'))
+          .attr('font-size', 12)
+*/
+
+      this.sliderRight = this.slider.append('rect')
           .attr('class', 'slider-right')
           .attr('x', this.width-10)
           .attr('y', -5)
@@ -245,13 +267,14 @@ define([
             var locIdx = idx - (entries/2 - 0.5);
             var locX = (self.width/2) - (lwidth/2) + (locIdx*lpad);
             return 'translate(' + locX + ','
-                + (self.height + self.legend_dy) + ')';
+                + (-self.legend_dy) + ')';
           });
 
       // Create the tooltip
       this.tip = d3Tip()
           .attr('class', 'd3-tip')
-          .offset([-10, 0])
+          .style('opacity', 0)
+          .offset([-20, 0])
           .html(function(d) {
             // Make a line that says '- redpoint
 
@@ -268,7 +291,7 @@ define([
                 + '</strong>';
 
                 return html;
-          });
+          })
 
       this.svg.call(this.tip);
 
@@ -392,7 +415,25 @@ define([
           .call(this.yAxis);
       this.svg.selectAll('.y .tick')
           .style('opacity', 0.2);
- 
+
+      // Update slider
+
+      this.sliderStartDate.text(new Date(this.x.domain()[0]).format('yyyy'))
+      this.sliderEndDate.text(new Date(this.x.domain()[1]).format('yyyy'))
+
+      // Slider ticks
+      var years = d3.time.year.range(new Date(xDomain[0]), new Date(xDomain[1]));
+      this.slider.select('.sliderTicks').remove();
+      var sliderTicks = this.slider.append('g').attr('class', 'sliderTicks');
+      _.each(years, function (y) {
+        sliderTicks.append('line')
+            .attr('x1', self.x(y))
+            .attr('x2', self.x(y))
+            .attr('y1', 0)
+            .attr('y2', 10)
+            .style('stroke', '#333')
+      });
+
       // Data joins
 
       var scatterGraph = this.svg.select('.scatterGroup').selectAll('.tickCircle')
@@ -430,8 +471,18 @@ define([
       // Update + Enter
 
       scatterGraph
-          .on('mouseenter', this.tip.show)
-          .on('mouseleave', this.tip.hide)
+          .on('mouseenter', function(d) {
+            d3.select(this)
+                .attr('r', 12)
+                .style('opacity', 1);
+            self.tip.show(d);
+          })
+          .on('mouseleave', function(d) {
+            d3.select(this)
+                .attr('r', 8)
+                .style('opacity', .4);
+            self.tip.hide(d);
+          })
           .on('click', function(d) {
             var path = '/efforts/' + d.key;
             self.app.router.navigate(path, {trigger: true});
@@ -446,7 +497,8 @@ define([
           .transition()
           .delay(immediate ? 0 : this.fadeTime)
           .duration(immediate ? 0 : this.fadeTime)
-          .style('opacity', .4);
+          .style('opacity', .4)
+          .style('cursor', 'pointer')
   
       avgTickLine.attr('d', this.line)
           .style('fill', 'none')
@@ -469,6 +521,14 @@ define([
           .duration(immediate ? 0 : this.fadeTime)
           .style('opacity', 1);
 
+/*
+        setInterval(_.bind(function() {
+          this.svg.select('.scatterGroup').selectAll('.tickCircle')
+              .transition().duration(1500).ease('linear')
+              .attr('cx', function(d) { return self.x(new Date(d.date)) + (Math.random() - .5) * 5; })
+              .attr('cy', function(d) { return self.y(d.grade) + (Math.random() - .5) * 5; })
+        }, this), 1500)
+*/
 
       // Exit
 
@@ -577,7 +637,10 @@ define([
         mps.unsubscribe(s);
       });
 
-      this.watchers.destroy();
+      d3.select('body')
+          .on('mousemove', null)
+          .on('mouseup', null);
+
       this.undelegateEvents();
       this.stopListening();
       this.empty();
