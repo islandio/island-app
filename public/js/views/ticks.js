@@ -120,14 +120,12 @@ define([
       }
 
       console.log(this.app.profile.content);
-      /*
       this.feed = new Events(this.app, {
         parentView: this,
         reverse: true,
         input: true,
         filters: ['tick']
       });
-      */
 
 /*
       this.barChart.update(this.model.get('ticks')[this.currentType],
