@@ -168,9 +168,9 @@ define([
 
       this.sliderLeft = this.slider.append('rect')
           .attr('class', 'slider-left')
-          .attr('y', -5)
+          .attr('y', -this.sliderBar.attr('height')/2)
           .attr('width', 10)
-          .attr('height', 20)
+          .attr('height', this.sliderBar.attr('height')*2)
           .attr('rx', 2)
           .attr('ry', 2)
           .style('fill', '#333')
@@ -179,6 +179,7 @@ define([
             self.startMove('left')
           })
 
+/*
       this.sliderStartDate = this.slider.append('text')
           .attr('x', 5)
           .attr('y', 20)
@@ -192,6 +193,7 @@ define([
           .style('text-anchor', 'middle')
           .attr('transform', 'rotate(90)')
           .attr('font-size', '16')
+*/
 
 /*
       this.sliderLeftText.append('text')
@@ -204,9 +206,9 @@ define([
       this.sliderRight = this.slider.append('rect')
           .attr('class', 'slider-right')
           .attr('x', this.width-10)
-          .attr('y', -5)
+          .attr('y', -this.sliderBar.attr('height')/2)
           .attr('width', 10)
-          .attr('height', 20)
+          .attr('height', this.sliderBar.attr('height')*2)
           .attr('rx', 2)
           .attr('ry', 2)
           .style('fill', '#333')
@@ -331,7 +333,7 @@ define([
     },
 
     updateRightSlider: _.debounce(function(newPos, immediate) {
-      var xMax = this.width - this.sliderRight.attr('width');
+      var xMax = this.width;
       var xMin = Number(this.sliderLeft.attr('x'))
           + Number(this.sliderLeft.attr('width'));
       var x = Math.min(newPos, xMax);
@@ -418,20 +420,32 @@ define([
 
       // Update slider
 
+/*
       this.sliderStartDate.text(new Date(this.x.domain()[0]).format('yyyy'))
       this.sliderEndDate.text(new Date(this.x.domain()[1]).format('yyyy'))
+*/
 
       // Slider ticks
-      var years = d3.time.year.range(new Date(xDomain[0]), new Date(xDomain[1]));
+      var years = d3.time.year.range(new Date(xDomain[0]), new Date(xDomain[1] + 1));
       this.slider.select('.sliderTicks').remove();
       var sliderTicks = this.slider.append('g').attr('class', 'sliderTicks');
-      _.each(years, function (y) {
-        sliderTicks.append('line')
-            .attr('x1', self.x(y))
-            .attr('x2', self.x(y))
-            .attr('y1', 0)
-            .attr('y2', 10)
-            .style('stroke', '#333')
+      var sbh = Number(this.sliderBar.attr('height'));
+      _.each(years, function (y, idx) {
+        if (idx != 0 && idx != years.length-1) {
+          sliderTicks.append('line')
+              .attr('x1', self.x(y))
+              .attr('x2', self.x(y))
+              .attr('y1', sbh/2)
+              .attr('y2', sbh*1.5)
+              .style('stroke', '#333')
+        }
+        sliderTicks.append('text')
+            .text(new Date(y).format('yyyy'))
+            .attr('x', self.x(y))
+            .attr('y', sbh+15)
+            .style('text-anchor', 'middle')
+            .style('fill', '#999')
+            .style('font-size', 10)
       });
 
       // Data joins
@@ -578,9 +592,10 @@ define([
       // a sense of accomplishment. However, don't go too low or the xaxis
       // gets crowded
       var lowerGrade = Math.max(0, gradeExtent[0] - 4);
+      var higherGrade = gradeExtent[1] + 2;
 
       // Get grade domain for this graph
-      var gradeDomain = _.chain(d3.range(lowerGrade, gradeExtent[1] + 1))
+      var gradeDomain = _.chain(d3.range(lowerGrade, higherGrade))
           .map(function(g) {
             return gradeConverter.indexes(g, null, system);
            })
@@ -606,12 +621,11 @@ define([
         avgGrade.push({x: key, y: avg});
       });
 
-      var timeDomain =
-          d3.extent(ticksMapped, function(d) { return new Date(d.date) })
-          .map(function(d, idx) {
-            var months = 12;
-            return d.setDate(d.getDate() + months * 30 * ((idx % 2) === 0 ? -1 : 1));
-          });
+      avgGrade = _.initial(avgGrade)
+
+      var timeDomain = d3.extent(ticksMapped, function(d) { return d.date; });
+      timeDomain[0] = d3.time.year.floor(new Date(timeDomain[0])).valueOf()
+      timeDomain[1] = d3.time.year.ceil(new Date(timeDomain[1])).valueOf()
 
       return {
         ticks: ticksMapped,
