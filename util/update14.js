@@ -81,17 +81,19 @@ boots.start(function (client) {
                   }
                 }
               },
-              public: d.public
+              public: d.public,
+              retro: true
             };
 
-            client.events.publish('tick', 'tick.new', params);
-            if (!e) {
-              client.events.subscribe(d.author, d, {style: 'watch', type: 'tick'});
-            }
-
-            _this();
+            Step(
+              function () {
+                client.events.publish('tick', 'tick.new', params, this.parallel());
+                client.events.subscribe(d.author, d, {style: 'watch', type: 'tick'},
+                    this.parallel());
+              },
+              _this
+            );
           });
-
         });
       });
     },
