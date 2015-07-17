@@ -237,7 +237,7 @@ define([
           var payload = {
             crag_id: t.crag.id,
             date: t.date,
-            silent: true // doesn't post to event feed
+            silent: false
           };
           delete t.crag;
 
