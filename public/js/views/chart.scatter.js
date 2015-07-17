@@ -72,7 +72,7 @@ define([
       var self = this;
 
       // Static graph setup
-      this.margin = {top: 120, right: 60, bottom: 120, left: 60};
+      this.margin = {top: 80, right: 60, bottom: 80, left: 60};
       this.width = this.$el.width() - this.margin.left - this.margin.right;
       this.height = this.$el.height() - this.margin.top - this.margin.bottom;
 
@@ -591,16 +591,13 @@ define([
       // We show lower grades than the climber has completed to give
       // a sense of accomplishment. However, don't go too low or the xaxis
       // gets crowded
-      var lowerGrade = Math.max(0, gradeExtent[0] - 4);
-      var higherGrade = gradeExtent[1] + 2;
+      var lowerGrade = gradeConverter.indexes(gradeExtent[0], null, system);
+      var higherGrade = gradeConverter.indexes(gradeExtent[1], null, system);
 
-      // Get grade domain for this graph
-      var gradeDomain = _.chain(d3.range(lowerGrade, higherGrade))
-          .map(function(g) {
-            return gradeConverter.indexes(g, null, system);
-           })
-          .unique()
-          .value();
+      lowerGrade = gradeConverter.offset(lowerGrade, -3, system);
+      higherGrade = gradeConverter.offset(higherGrade, 1, system);
+
+      gradeDomain = gradeConverter.range(lowerGrade, higherGrade, system);
 
       // Group ticks by year
       dataByYear = [];
