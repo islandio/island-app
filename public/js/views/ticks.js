@@ -61,10 +61,12 @@ define([
         $el: this.$('.pie-chart')
       }).render();
 
+*/
+      /*
       this.barChart = new BarChart(this.app, {
         $el: this.$('.bar-chart')
       }).render();
-*/
+      */
 
       this.scatterChart = new ScatterChart(this.app, {
         $el: this.$('.scatter-chart')
@@ -119,8 +121,7 @@ define([
       //   this.boulders.hide();
       }
 
-      // console.log(this.app.profile.content);
-
+      console.log(this.app.profile.content.events.items[0]);
       this.feed = new Events(this.app, {
         parentView: this,
         // parentId: this.model.id,
@@ -134,7 +135,7 @@ define([
 /*
       this.barChart.update(this.model.get('ticks')[this.currentType],
           this.currentType, {immediate: true} );
-*/
+      */
       this.scatterChart.update(this.model.get('ticks')[this.currentType],
           this.currentType, {immediate: true});
 
@@ -290,7 +291,7 @@ define([
 
 /*
       this.barChart.update(this.model.get('ticks')[this.currentType], this.currentType);
-*/
+      */
       this.scatterChart.update(this.model.get('ticks')[this.currentType], this.currentType);
 
 /*

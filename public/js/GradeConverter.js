@@ -180,12 +180,13 @@ define([
   // Return higher grades, works for positive offsets only
   GradeConverter.prototype.offset = function(grade, offset, system) {
     system = system || this.toSystem;
-    for (var idx = 0; idx < this.gradeMap.length; idx++) {
-      if (this.gradeMap[idx][system] === grade)
+    var gmap = _.unique(_.pluck(this.gradeMap, system))
+    for (var idx = 0; idx < gmap.length; idx++) {
+      if (gmap[idx] === grade)
         break;
     }
-    idx = Math.max(Math.min(idx+offset, this.gradeMap.length), 0);
-    return this.gradeMap[idx][system]
+    idx = Math.max(Math.min(idx+offset, gmap.length), 0);
+    return gmap[idx];
   };
 
   // Get a range of grades, ie [V1, V2, V3] inclusive
