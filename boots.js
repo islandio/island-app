@@ -12,6 +12,7 @@ var _ = require('underscore');
 _.mixin(require('underscore.string'));
 var db = require('mongish');
 var Search = require('island-search').Search;
+var Events = require('island-events').Events;
 var collections = require('island-collections').collections;
 
 var config = require('./config.json');
@@ -23,7 +24,7 @@ var error = exports.error = function (err) {
   if (!err) return;
   util.error(err.stack || err);
   process.exit(1);
-}
+};
 
 exports.start = function (opts, cb) {
   if (typeof opts === 'function') {
@@ -34,12 +35,9 @@ exports.start = function (opts, cb) {
 
   Step(
     function () {
-
-      // Open DB connection.
       new db.Connection(config.MONGO_URI, {ensureIndexes: opts.index},
           this.parallel());
 
-      // Init search cache.
       if (config.REDIS_PORT && config.REDIS_HOST_CACHE) {
         props.cache = new Search({
           redisHost: config.REDIS_HOST_CACHE,
@@ -48,8 +46,6 @@ exports.start = function (opts, cb) {
       }
     },
     function (err, connection) {
-
-      // Init collections.
       if (_.size(collections) === 0) {
         return this();
       }
@@ -59,7 +55,10 @@ exports.start = function (opts, cb) {
     },
     function (err) {
       error(err);
+
+      props.events = new Events({db: db});
+
       cb(props);
     }
   );
-}
+};
