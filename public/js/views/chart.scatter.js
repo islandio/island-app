@@ -72,15 +72,19 @@ define([
       var self = this;
 
       // Static graph setup
-      this.margin = {top: 80, right: 60, bottom: 80, left: 60};
+      this.margin = {top: 80, right: 60, bottom: 80, left: 200};
       this.width = this.$el.width() - this.margin.left - this.margin.right;
       this.height = this.$el.height() - this.margin.top - this.margin.bottom;
 
       this.x = d3.time.scale()
           .range([0, this.width]);
 
+      // for bar count
+      this.x2 = d3.scale.linear()
+          .range([0, this.width/8, 0]);
+
       this.y = d3.scale.ordinal()
-          .rangePoints([this.height, 0]);
+          .rangeRoundPoints([this.height, 0]);
 
       this.xAxis = d3.svg.axis()
           .scale(this.x)
@@ -90,8 +94,9 @@ define([
 
       this.yAxis = d3.svg.axis()
           .scale(this.y)
-          .orient('left')
-          .tickSize(-this.width);
+          .orient('right')
+          //.tickSize(0);
+          //.tickSize(-this.width);
 
       // Create the baseline SVG
       this.svg = d3.select(this.$el.get(0)).append('svg')
@@ -118,12 +123,20 @@ define([
           .style('stroke-opacity', .2)
           .call(this.xAxis);
 
+      var barGroup = this.svg.append('g')
+          .attr('class', 'barGroup')
+
+      barGroup.append('line')
+          .attr('y1', 0)
+          .attr('y2', this.height)
+          .style('stroke-width', '1px')
+          .style('stroke', '#333')
+
       // Create the Y axis
       this.svg.append('g')
           .attr('class', 'y axis')
           .call(this.yAxis);
 
-      // Create some data groupings
       this.svg.append('g')
           .attr('class', 'scatterGroup')
           .attr('clip-path', 'url(#clip)');
@@ -406,24 +419,16 @@ define([
       // 6 ticks
       this.yAxis
         .tickValues(yDomain.filter(function(d, i) {
-          if (i == 0) return true;
-          if (yDomain.length > 6) {
-            return yDomain.length % 2 === 0 ? i%2 : !(i%2);
-          } else {
-            return i;
-          }
+          if (i == 0) return false;
+          else if (i == yDomain.length - 1) return false;
+          else return true;
       }));
       this.svg.selectAll('.y')
           .call(this.yAxis);
       this.svg.selectAll('.y .tick')
-          .style('opacity', 0.2);
+      //    .style('opacity', 0.2);
 
       // Update slider
-
-/*
-      this.sliderStartDate.text(new Date(this.x.domain()[0]).format('yyyy'))
-      this.sliderEndDate.text(new Date(this.x.domain()[1]).format('yyyy'))
-*/
 
       // Slider ticks
       var years = d3.time.year.range(new Date(xDomain[0]), new Date(xDomain[1] + 1));
@@ -456,6 +461,15 @@ define([
       var lineGroup = this.svg.select('.lineGroup')
           .style('opacity', '.8');
 
+      var bgd = _.groupBy(data, 'grade');
+      _.each(bgd, function(v, k) { bgd[k] = v.length });
+      bgd = d3.entries(bgd);
+      this.x2.domain([0, d3.max(bgd, function(d) { return d.value })]);
+
+      var barGraph = this.svg.select('.barGroup').selectAll('.gradeBar')
+          .data(bgd, function(d) { return d.key; })
+
+
       // Showing one point on a line graph is sort of pointless
       if (avgGrade.length <= 1) avgGrade = [];
 
@@ -480,6 +494,10 @@ define([
       avgTickCircle.enter()
           .append('circle')
           .attr('class', 'avgGradeCircle')
+
+      barGraph.enter()
+          .append('rect')
+          .attr('class', 'gradeBar')
 
 
       // Update + Enter
@@ -513,7 +531,14 @@ define([
           .duration(immediate ? 0 : this.fadeTime)
           .style('opacity', .4)
           .style('cursor', 'pointer')
-  
+
+      barGraph
+          .attr('x', function(d) { return -self.x2(d.value) })
+          .attr('y', function(d) { return self.y(d.key) -10})
+          .attr('width', function(d) { return self.x2(d.value) })
+          .attr('height', 20)
+          .style('fill', this.colors.redpoint)
+
       avgTickLine.attr('d', this.line)
           .style('fill', 'none')
           .style('stroke', this.colors.average)
@@ -621,8 +646,10 @@ define([
       avgGrade = _.initial(avgGrade)
 
       var timeDomain = d3.extent(ticksMapped, function(d) { return d.date; });
-      timeDomain[0] = d3.time.year.floor(new Date(timeDomain[0])).valueOf()
-      timeDomain[1] = d3.time.year.ceil(new Date(timeDomain[1])).valueOf()
+      timeDomain[0] = d3.time.year.floor(new Date(timeDomain[0]));
+      timeDomain[0] = d3.time.month.offset(timeDomain[0], -6).valueOf();
+      timeDomain[1] = d3.time.year.ceil(new Date(timeDomain[1]));
+      timeDomain[1] = d3.time.month.offset(timeDomain[1], 6).valueOf();
 
       return {
         ticks: ticksMapped,
