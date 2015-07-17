@@ -34,6 +34,7 @@ define([
 
   var fadeTime = 300;
   var legend_dy = 40;
+  var showLegend = false;
 
   var colors = {
     flash: '#b1ec36',
@@ -82,7 +83,7 @@ define([
       var self = this;
 
       // Static graph setup
-      this.margin = {top: 60, right: 20, bottom: 80, left: 40};
+      this.margin = {top: 40, right: 60, bottom: 20, left: 60};
       this.width = this.$el.width() - this.margin.left - this.margin.right;
       this.height = this.$el.height() - this.margin.top - this.margin.bottom;
 
@@ -121,36 +122,38 @@ define([
           .call(this.yAxis);
 
       // Create the legend
-      var legendEntries = this.svg.append('g')
-          .attr('class', 'legend')
-          .selectAll('legendEntries')
-          .data(d3.entries(colors))
-          .enter()
-          .append('g')
-          .attr('class', 'legend-entry');
+      if (showLegend) {
+        var legendEntries = this.svg.append('g')
+            .attr('class', 'legend')
+            .selectAll('legendEntries')
+            .data(d3.entries(colors))
+            .enter()
+            .append('g')
+            .attr('class', 'legend-entry');
 
-      legendEntries.append('rect')
-          .attr('width', 10)
-          .attr('height', 10)
-          .attr('y', -9)
-          .style('fill', function(d) { return d.value; })
-          .style('opacity', 1);
+        legendEntries.append('rect')
+            .attr('width', 10)
+            .attr('height', 10)
+            .attr('y', -9)
+            .style('fill', function(d) { return d.value; })
+            .style('opacity', 1);
 
-      legendEntries.append('text')
-          .text(function(d) { return d.key; })
-          .attr('font-size', 12)
-          .attr('x', 15);
+        legendEntries.append('text')
+            .text(function(d) { return d.key; })
+            .attr('font-size', 12)
+            .attr('x', 15);
 
-      // Once legend is rendered move it to right spot
-      legendEntries
-          .attr('transform', function(d, idx) {
-            var lwidth = 100;
-            var lpad = 80;
-            var entries = legendEntries[0].length;
-            var locIdx = idx - (entries/2 - 0.5);
-            var locX = (self.width/2) - (lwidth/2) + (locIdx*lpad);
-            return 'translate(' + locX + ',' + (self.height + legend_dy) + ')';
-          });
+        // Once legend is rendered move it to right spot
+        legendEntries
+            .attr('transform', function(d, idx) {
+              var lwidth = 100;
+              var lpad = 80;
+              var entries = legendEntries[0].length;
+              var locIdx = idx - (entries/2 - 0.5);
+              var locX = (self.width/2) - (lwidth/2) + (locIdx*lpad);
+              return 'translate(' + locX + ',' + (self.height + legend_dy) + ')';
+            });
+      }
 
       // Create the tooltip
       this.tip = d3Tip()
@@ -338,15 +341,13 @@ define([
       // We show lower grades than the climber has completed to give
       // a sense of accomplishment. However, don't go too low or the xaxis
       // gets crowded
-      var lowerGrade = Math.max(0, gradeExtent[0] - 4);
+      var lowerGrade = gradeConverter.indexes(gradeExtent[0], null, system);
+      var higherGrade = gradeConverter.indexes(gradeExtent[1], null, system);
 
-      // Get grade domain for this graph
-      var gradeDomain = _.chain(d3.range(lowerGrade, gradeExtent[1] + 1))
-          .map(function(g) {
-            return gradeConverter.indexes(g, null, system);
-           })
-          .unique()
-          .value();
+      lowerGrade = gradeConverter.offset(lowerGrade, -3, system);
+      higherGrade = gradeConverter.offset(higherGrade, 1, system);
+
+      gradeDomain = gradeConverter.range(lowerGrade, higherGrade, system);
 
       return {ticksByGrade: ticksByGrade, gradeDomain: gradeDomain };
 

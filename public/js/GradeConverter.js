@@ -177,6 +177,35 @@ define([
 
   };
 
+  // Return higher grades, works for positive offsets only
+  GradeConverter.prototype.offset = function(grade, offset, system) {
+    system = system || this.toSystem;
+    for (var idx = 0; idx < this.gradeMap.length; idx++) {
+      if (this.gradeMap[idx][system] === grade)
+        break;
+    }
+    idx = Math.max(Math.min(idx+offset, this.gradeMap.length), 0);
+    return this.gradeMap[idx][system]
+  };
+
+  // Get a range of grades, ie [V1, V2, V3] inclusive
+  GradeConverter.prototype.range = function(gradel, gradeh, system) {
+    var range = [];
+    var include = false;
+    system = system || this.toSystem;
+
+    for (var idx = 0; idx < this.gradeMap.length; idx++) {
+      if (this.gradeMap[idx][system] === gradel) {
+        include = true;
+      }
+      if (include) range.push(this.gradeMap[idx][system])
+      if (this.gradeMap[idx][system] === gradeh) {
+        include = false;
+      }
+    }
+    return _.unique(range);
+  }
+
   /* Set origin grading system */
   GradeConverter.prototype.from = function(system) {
     this.fromSystem  = system.toLowerCase();
