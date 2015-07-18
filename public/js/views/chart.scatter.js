@@ -327,7 +327,7 @@ define([
           .on('mouseenter', function(d) {
             d3.selectAll('.fadeable:not(.' + d.key +')')
                 .transition().duration(300)
-                .style('opacity', .1)
+                .style('opacity', .05)
             d3.selectAll('.tickCircle.' + d.key)
                 .transition().duration(300)
                 .style('opacity', .8)
@@ -449,7 +449,9 @@ define([
       var newDomain = [this.d.timeDomain[0] + extent * l,
           this.d.timeDomain[1] - extent * (1-r)];
 
-      this._updateXDomain(newDomain, null, immediate);
+      this._updateXDomain(newDomain, immediate);
+      var scatterGraph = this.mtSvg.select('.scatterGroup').selectAll('.tickCircle');
+      this._updateBarGraph(scatterGraph.data(), newDomain, immediate);
     },
 
     updateSliderHighlight: function() {
@@ -544,35 +546,13 @@ define([
 
     },
 
-    // pass data or the function will grab it from the scatter plot
-    _updateXDomain: function(xDomain, data, immediate) {
+    _updateBarGraph: function(data, xDomain, immediate) {
       var self = this;
-
-      this.x.domain(xDomain)
-      this.mtSvg.selectAll('.x')
-          //.call(this.xAxis);
-
-      var lineGroup = this.mtSvg.select('.lineGroup');
-      var avgTickLine = lineGroup.selectAll('.avgGradeLine');
-      var avgTickCircle = lineGroup.selectAll('.avgGradeCircle');
-      var scatterGraph = this.mtSvg.select('.scatterGroup').selectAll('.tickCircle');
-
-      scatterGraph
-          .transition().duration(immediate ? 0 : 200)
-          .attr('cx', function(d) { return self.x(new Date(d.date)); })
-      avgTickCircle
-          .transition().duration(immediate ? 0 : 200)
-          .attr('cx', function(d) { return self.x(new Date((+d.key + 1).toString())); })
-      avgTickLine
-          .transition().duration(immediate ? 0 : 200)
-          .attr('d', this.line)
-
-      // use data from scatter graph for bar graph
       var filt = function(d) {
         var d = new Date(d.date).valueOf();
         return (d >= xDomain[0] && d <= xDomain[1]);
       }
-      var bgd = this._updateBarGraphData(data || scatterGraph.data(), filt);
+      var bgd = this._updateBarGraphData(data, filt);
 
       //this.x2.domain([0, d3.max(bgd, function(d) { return d.value.total })]);
       var barGraph = this.ltSvg.select('.barGroup').selectAll('.bars')
@@ -605,20 +585,26 @@ define([
           .attr('x', function(d) {
             return self.lwidth - self.x2(d.value.onsite)
           })
-          .attr('width', function(d) {
-            return self.x2(d.value.onsite)
-          })
+          .attr('width', function(d) { return self.x2(d.value.onsite) })
           .style('fill', this.colors.onsite)
+          .style('opacity', 0)
+          .transition()
+          .delay(immediate ? 0 : this.fadeTime)
+          .duration(immediate ? 0 : this.fadeTime)
+          .style('opacity', 1)
 
       barGraph.selectAll('.bar-flash')
           .attr('height', this.y.rangeBand())
           .attr('x', function(d) {
               return self.lwidth - self.x2(d.value.onsite + d.value.flash)
            })
-          .attr('width', function(d) {
-              return self.x2(d.value.flash)
-           })
+          .attr('width', function(d) { return self.x2(d.value.flash) })
           .style('fill', this.colors.flash)
+          .style('opacity', 0)
+          .transition()
+          .delay(immediate ? 0 : this.fadeTime)
+          .duration(immediate ? 0 : this.fadeTime)
+          .style('opacity', 1)
 
       barGraph.selectAll('.bar-redpoint')
           .attr('height', this.y.rangeBand())
@@ -626,18 +612,50 @@ define([
               return self.lwidth - self.x2(d.value.redpoint
                   + d.value.flash + d.value.onsite)
            })
-          .attr('width', function(d) {
-              return self.x2(d.value.redpoint)
-           })
+          .attr('width', function(d) { return self.x2(d.value.redpoint) })
           .style('fill', this.colors.redpoint)
+          .style('opacity', 0)
+          .transition()
+          .delay(immediate ? 0 : this.fadeTime)
+          .duration(immediate ? 0 : this.fadeTime)
+          .style('opacity', 1)
 
       barGraph
           .exit()
+          .transition()
+          .duration(this.fadeTime)
+          .style('opacity', 0)
           .remove();
 
       barGraph
           .on('mouseenter', this.barTip.show)
           .on('mouseleave', this.barTip.hide)
+
+    },
+
+    // pass data or the function will grab it from the scatter plot
+    _updateXDomain: function(xDomain, immediate) {
+      var self = this;
+
+      this.x.domain(xDomain)
+      this.mtSvg.selectAll('.x')
+          //.call(this.xAxis);
+
+      var lineGroup = this.mtSvg.select('.lineGroup');
+      var avgTickLine = lineGroup.selectAll('.avgGradeLine');
+      var avgTickCircle = lineGroup.selectAll('.avgGradeCircle');
+      var scatterGraph = this.mtSvg.select('.scatterGroup').selectAll('.tickCircle');
+
+      scatterGraph
+          .transition().duration(immediate ? 0 : 200)
+          .attr('cx', function(d) { return self.x(new Date(d.date)); })
+      avgTickCircle
+          .transition().duration(immediate ? 0 : 200)
+          .attr('cx', function(d) { return self.x(new Date((+d.key + 1).toString())); })
+      avgTickLine
+          .transition().duration(immediate ? 0 : 200)
+          .attr('d', this.line)
+
     },
 
     _updateGraph: function(data, yDomain, xDomain, immediate) {
@@ -657,6 +675,7 @@ define([
       // Create y-axis
 
       this.mtSvg.selectAll('.y')
+          .transition().duration(immediate ? 0 : this.fadeTime*2).ease('linear')
           .call(this.yAxis);
 
       this.mtSvg.selectAll('.x')
@@ -678,6 +697,11 @@ define([
               .attr('y1', sbh/2)
               .attr('y2', sbh*1.5)
               .style('stroke', '#333')
+              .style('stroke-opacity', 0)
+              .transition()
+              .delay(immediate ? 0 : self.fadeTime)
+              .duration(immediate ? 0 : self.fadeTime)
+              .style('stroke-opacity', 1)
         //}
         sliderTicks.append('text')
             .text(new Date(y).format('yyyy'))
@@ -686,11 +710,17 @@ define([
             .style('text-anchor', 'middle')
             .style('fill', '#999')
             .style('font-size', 10)
+            .style('opacity', 0)
+            .transition()
+            .delay(immediate ? 0 : self.fadeTime)
+            .duration(immediate ? 0 : self.fadeTime)
+            .style('opacity', 1)
+
       });
 
 
       // Build bar graph
-      this._updateXDomain(xDomain, data, immediate)
+      this._updateBarGraph(data, xDomain, immediate)
 
       // Data joins
 
@@ -734,12 +764,12 @@ define([
           .attr('r', 8)
           .attr('class', function(d) { return 'tickCircle fadeable ' + self._getStyle(d)} )
           .attr('fill', function(d) { return self.colors[self._getStyle(d)]; })
+          .style('cursor', 'pointer')
           .style('opacity', 0)
           .transition()
           .delay(immediate ? 0 : this.fadeTime)
           .duration(immediate ? 0 : this.fadeTime)
           .style('opacity', self.scatterOpacity)
-          .style('cursor', 'pointer')
 
       avgTickLine.attr('d', this.line)
           .style('fill', 'none')
