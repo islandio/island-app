@@ -15,6 +15,10 @@ define([
   'd3Tip'
 ], function ($, _, Backbone, mps, rest, util, d3, d3Tip) {
 
+  var sCenter = function(sl) {
+    return Number(sl.attr('x')) + Number(sl.attr('width'))/2;
+  }
+
   return Backbone.View.extend({
 
     el: '.main',
@@ -163,10 +167,9 @@ define([
           .attr('id', 'clip')
           .append('rect')
           .attr('x', 10)
-          .attr('y', -10)
-          .attr('width', this.mwidth - 10)
-          .attr('height', this.theight + 10)
-          .attr('fill', 'blue');
+          .attr('y', 0)
+          .attr('width', this.mwidth + 10)
+          .attr('height', this.theight)
 
       // Create the X axis
       this.mtSvg.append('g')
@@ -176,16 +179,6 @@ define([
           .style('stroke-opacity', .2)
           //.call(this.xAxis);
 
-/*
-      this.mtSvg.append('line')
-          .attr('x1', this.mwidth)
-          .attr('x2', this.mwidth)
-          .attr('y1', 0)
-          .attr('y2', this.theight)
-          .style('stroke-width', '1px')
-          .style('stroke', '#333')
-*/
-
       this.mtSvg.append('line')
           .attr('x1', 0)
           .attr('x2', 0)
@@ -193,17 +186,6 @@ define([
           .attr('y2', this.theight)
           .style('stroke-width', '1px')
           .style('stroke', '#333')
-
-/*
-      this.ltSvg.append('line')
-          .attr('x1', 0)
-          .attr('x2', 0)
-          .attr('y1', 0)
-          .attr('y2', this.theight)
-          .style('stroke-width', 1)
-          .style('stroke', '#333')
-          .style('stroke-dasharray', ('4, 4'))
-          */
 
       var barGroup = this.ltSvg.append('g')
           .attr('class', 'barGroup')
@@ -234,8 +216,8 @@ define([
         d3.event.preventDefault();
         d3.event.stopPropagation();
         var pos = d3.mouse(this);
-        var sl = Number(self.sliderLeft.attr('x'));
-        var sr = Number(self.sliderRight.attr('x'));
+        var sl = sCenter(self.sliderLeft);
+        var sr = sCenter(self.sliderRight);
         if (pos[0] > (sr + sl) / 2) {
           var newPos = sr + (self.mwidth/12 * (pos[0] > sr ? 1 : -1));
           self.updateRightSlider(newPos, false);
@@ -261,6 +243,7 @@ define([
       this.sliderLeft = this.slider.append('rect')
           .attr('class', 'slider-left')
           .attr('y', -this.sliderBar.attr('height')/2)
+          .attr('x', -5)
           .attr('width', 10)
           .attr('height', this.sliderBar.attr('height')*2)
           .attr('rx', 2)
@@ -273,8 +256,8 @@ define([
 
       this.sliderRight = this.slider.append('rect')
           .attr('class', 'slider-right')
-          .attr('x', this.mwidth-10)
           .attr('y', -this.sliderBar.attr('height')/2)
+          .attr('x', this.mwidth-5)
           .attr('width', 10)
           .attr('height', this.sliderBar.attr('height')*2)
           .attr('rx', 2)
@@ -291,9 +274,9 @@ define([
             d3.event.stopPropagation();
             if (self.mouse.moving) {
               if (self.mouse.which === 'right') {
-                self.updateRightSlider(d3.mouse(self.sliderRight.node())[0], true);
+                self.updateRightSlider(d3.mouse(self.sliderRight.node())[0], false);
               } else {
-                self.updateLeftSlider(d3.mouse(self.sliderLeft.node())[0], true);
+                self.updateLeftSlider(d3.mouse(self.sliderLeft.node())[0], false);
               }
             }
           })
@@ -330,7 +313,7 @@ define([
                 .style('opacity', .05)
             d3.selectAll('.tickCircle.' + d.key)
                 .transition().duration(300)
-                .style('opacity', .8)
+                .style('opacity', .7)
           })
           .on('mouseleave', function(d) {
             d3.selectAll('.fadeable')
@@ -352,8 +335,6 @@ define([
           .attr('class', 'd3-tip')
           .offset([-20, 0])
           .html(function(d) {
-            // Make a line that says '- redpoint
-
             var style;
             if (d.tries <= 1) { style = 'ONSITE'; }
             else if (d.tries > 1 && d.tries <=2) { style = 'FLASHED'; }
@@ -443,8 +424,8 @@ define([
 
     recalculateTimeDomain: function(immediate) {
       var extent = this.d.timeDomain[1] - this.d.timeDomain[0]
-      var l = Number(this.sliderLeft.attr('x')) / this.mwidth;
-      var r = Number(this.sliderRight.attr('x')) / this.mwidth;
+      var l = sCenter(this.sliderLeft) / this.mwidth;
+      var r = sCenter(this.sliderRight) / this.mwidth;
 
       var newDomain = [this.d.timeDomain[0] + extent * l,
           this.d.timeDomain[1] - extent * (1-r)];
@@ -454,14 +435,15 @@ define([
       this._updateBarGraph(scatterGraph.data(), newDomain, immediate);
     },
 
+
     updateSliderHighlight: function() {
-      this.sliderHighlight.attr('x', this.sliderLeft.attr('x'));
-      this.sliderHighlight.attr('width', this.sliderRight.attr('x')
-          - this.sliderLeft.attr('x'))
+      this.sliderHighlight.attr('x', sCenter(this.sliderLeft));
+      this.sliderHighlight.attr('width', sCenter(this.sliderRight)
+          - sCenter(this.sliderLeft));
     },
 
     updateRightSlider: _.debounce(function(newPos, immediate) {
-      var xMax = this.mwidth;
+      var xMax = this.mwidth - Number(this.sliderRight.attr('width'))/2;
       var xMin = Number(this.sliderLeft.attr('x'))
           + Number(this.sliderLeft.attr('width'));
       var x = Math.min(newPos, xMax);
@@ -472,7 +454,7 @@ define([
     }, 2),
 
     updateLeftSlider: _.debounce(function(newPos, immediate) {
-      var xMin = 0;
+      var xMin = -Number(this.sliderLeft.attr('width'))/2;
       var xMax = Number(this.sliderRight.attr('x'))
           - Number(this.sliderLeft.attr('width'));
       var x = Math.max(newPos, xMin);
@@ -483,8 +465,10 @@ define([
     }, 2),
 
     _resetSliders: function() {
-      this.sliderLeft.transition().duration(500).attr('x', 0);
-      this.sliderRight.transition().duration(500).attr('x', this.mwidth);
+      this.sliderLeft.transition().duration(500)
+          .attr('x', -Number(this.sliderLeft.attr('width'))/2);
+      this.sliderRight.transition().duration(500)
+          .attr('x', this.mwidth - Number(this.sliderRight.attr('width'))/2);
       this.sliderHighlight.transition().duration(500)
           .attr('x', 0).attr('width', this.mwidth);
 
@@ -563,9 +547,18 @@ define([
           .append('g')
           .attr('class', 'bars');
 
-      barGroupEnter.append('rect').attr('class', 'bar-onsite onsite fadeable');
-      barGroupEnter.append('rect').attr('class', 'bar-flash flash fadeable');
-      barGroupEnter.append('rect').attr('class', 'bar-redpoint redpoint fadeable');
+      barGroupEnter.append('rect')
+          .attr('class', 'bar-onsite onsite fadeable')
+          .attr('x', this.lwidth)
+          .attr('width', 0)
+      barGroupEnter.append('rect')
+          .attr('class', 'bar-flash flash fadeable')
+          .attr('x', this.lwidth)
+          .attr('width', 0)
+      barGroupEnter.append('rect')
+          .attr('class', 'bar-redpoint redpoint fadeable')
+          .attr('x', this.lwidth)
+          .attr('width', 0)
 
       barGraph
           .attr('transform', function(d) {
@@ -582,49 +575,37 @@ define([
 
       barGraph.selectAll('.bar-onsite')
           .attr('height', this.y.rangeBand())
+          .style('fill', this.colors.onsite)
+          .transition()
+          .duration(immediate ? 0 : this.fadeTime*2)
           .attr('x', function(d) {
             return self.lwidth - self.x2(d.value.onsite)
           })
           .attr('width', function(d) { return self.x2(d.value.onsite) })
-          .style('fill', this.colors.onsite)
-          .style('opacity', 0)
-          .transition()
-          .delay(immediate ? 0 : this.fadeTime)
-          .duration(immediate ? 0 : this.fadeTime)
-          .style('opacity', 1)
 
       barGraph.selectAll('.bar-flash')
           .attr('height', this.y.rangeBand())
+          .style('fill', this.colors.flash)
+          .transition()
+          .duration(immediate ? 0 : this.fadeTime*2)
           .attr('x', function(d) {
               return self.lwidth - self.x2(d.value.onsite + d.value.flash)
            })
           .attr('width', function(d) { return self.x2(d.value.flash) })
-          .style('fill', this.colors.flash)
-          .style('opacity', 0)
-          .transition()
-          .delay(immediate ? 0 : this.fadeTime)
-          .duration(immediate ? 0 : this.fadeTime)
-          .style('opacity', 1)
 
       barGraph.selectAll('.bar-redpoint')
           .attr('height', this.y.rangeBand())
+          .style('fill', this.colors.redpoint)
+          .transition()
+          .duration(immediate ? 0 : this.fadeTime*2)
           .attr('x', function(d) {
               return self.lwidth - self.x2(d.value.redpoint
                   + d.value.flash + d.value.onsite)
            })
           .attr('width', function(d) { return self.x2(d.value.redpoint) })
-          .style('fill', this.colors.redpoint)
-          .style('opacity', 0)
-          .transition()
-          .delay(immediate ? 0 : this.fadeTime)
-          .duration(immediate ? 0 : this.fadeTime)
-          .style('opacity', 1)
 
       barGraph
           .exit()
-          .transition()
-          .duration(this.fadeTime)
-          .style('opacity', 0)
           .remove();
 
       barGraph
@@ -690,7 +671,7 @@ define([
       var sliderTicks = this.slider.append('g').attr('class', 'sliderTicks');
       var sbh = Number(this.sliderBar.attr('height'));
       _.each(years, function (y, idx) {
-        //if (idx != 0 && idx != years.length-1) {
+        if (idx != 0 && idx != years.length-1) {
           sliderTicks.append('line')
               .attr('x1', self.x(y))
               .attr('x2', self.x(y))
@@ -702,7 +683,7 @@ define([
               .delay(immediate ? 0 : self.fadeTime)
               .duration(immediate ? 0 : self.fadeTime)
               .style('stroke-opacity', 1)
-        //}
+        }
         sliderTicks.append('text')
             .text(new Date(y).format('yyyy'))
             .attr('x', self.x(y))
@@ -897,10 +878,8 @@ define([
       });
 
       var timeDomain = d3.extent(ticksMapped, function(d) { return d.date; });
-      timeDomain[0] = d3.time.year.floor(new Date(timeDomain[0]));
-      timeDomain[0] = d3.time.month.offset(timeDomain[0], -6).valueOf();
-      timeDomain[1] = d3.time.year.ceil(new Date(timeDomain[1]));
-      timeDomain[1] = d3.time.month.offset(timeDomain[1], 6).valueOf();
+      timeDomain[0] = d3.time.year.floor(new Date(timeDomain[0])).valueOf();
+      timeDomain[1] = d3.time.year.ceil(new Date(timeDomain[1])).valueOf();
 
       return {
         ticks: ticksMapped,
