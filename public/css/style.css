@@ -5331,6 +5331,7 @@ input.import-input {
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––charts*/
 .ticks-chart {
   width: 100%;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 }
 .scatter-chart {
   height: 500px;
@@ -5370,9 +5371,9 @@ input.import-input {
   padding: 12px;
   background: rgba(0,0,0,0.8);
   color: #fff;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
   z-index: 10000;
 }
 /* Creates a small triangle extender for the tooltip */

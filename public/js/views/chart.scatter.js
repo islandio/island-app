@@ -25,7 +25,7 @@ define([
 
     fadeTime: 300,
     legend_dy: 40,
-    leftWidthFrac: 0.15,
+    leftWidthFrac: 0.175,
     vertInnerPad: 20,
     scatterOpacity: .4,
     colors: {
@@ -42,6 +42,8 @@ define([
           ? this.app.profile.member.prefs: this.app.prefs;
       this.options = options || {};
       this.$el = options.$el;
+      this.parentView = options.parentView;
+      this.buttons = options.buttons || ['Boulders', 'Routes']
       this.subscriptions = [];
 
       this.mouse = { which: 'right'};
@@ -150,17 +152,19 @@ define([
 
       this.ltSvg.append('text')
           .attr('x', this.lwidth/2)
-          .attr('y', -10)
-          .text('ascents')
+          .attr('y', -5)
+          .text('Grade Histogram')
           .style('text-anchor', 'middle')
-          .style('font-size', 14)
+          .style('font-size', '14px')
+          .style('font-weight', 'bold')
 
       this.mtSvg.append('text')
           .attr('x', this.mwidth/2)
-          .attr('y', -10)
-          .text('ascents by time')
+          .attr('y', -5)
+          .text('Ascent Timeline')
           .style('text-anchor', 'middle')
-          .style('font-size', 14)
+          .style('font-size', '14px')
+          .style('font-weight', 'bold')
 
 
       this.mtSvg.append('clipPath')
@@ -168,7 +172,7 @@ define([
           .append('rect')
           .attr('x', 10)
           .attr('y', 0)
-          .attr('width', this.mwidth + 10)
+          .attr('width', this.mwidth)
           .attr('height', this.theight)
 
       // Create the X axis
@@ -307,6 +311,8 @@ define([
           .attr('r', 8)
           .style('fill', function(d) { return d.value; })
           .style('opacity', 1)
+
+      legendEntries
           .on('mouseenter', function(d) {
             d3.selectAll('.fadeable:not(.' + d.key +')')
                 .transition().duration(300)
@@ -330,10 +336,85 @@ define([
           .attr('x', 15)
           .attr('y', 4)
 
+      // Create some radio buttons. All these do is raise an event on click
+      // These could be HTML but fit nicely in the layout of the SVG
+
+      var buttonClick = function(d, donttrigger) {
+        if (!donttrigger) {
+          self.parentView.trigger('svgButton', d);
+        }
+
+        var g = d3.select(this);
+        var t = g.select('text');
+        var r = g.select('rect');
+
+        var gNot = d3.selectAll('.svg-buttons .svg-button:not(#' + this.id + ')');
+        var tNot = gNot.selectAll('text');
+        var rNot = gNot.selectAll('rect');
+
+        // defaults
+        rNot.style('fill', '#f2f2f2')
+        tNot.style('fill', '#333')
+        gNot.classed('active', false);
+
+        r.style('fill', '#333')
+        t.style('fill', '#fff')
+        g.classed('active', true);
+      }
+
+      var buttonEnter = function(d) {
+        var g = d3.select(this)
+        var r = g.select('rect');
+        if (!g.classed('active')) {
+          r.transition().duration(100).ease('linear').style('fill', '#ddd')
+        }
+      }
+
+      var buttonLeave = function(d) {
+        var g = d3.select(this)
+        var r = g.select('rect');
+        if (!g.classed('active')) {
+          r.transition().duration(100).ease('linear').style('fill', '#f2f2f2')
+        }
+      }
+
+      var radioButtons = this.rtSvg.append('g')
+          .attr('class', 'svg-buttons')
+          .attr('transform', 'translate(30, 200)')
+          .selectAll('svg-button')
+          .data(this.buttons)
+          .enter()
+          .append('g')
+          .attr('class', 'svg-button')
+          .attr('id', function(d, i) { return 'svgButton' + i})
+          .attr('transform', function(d, idx) {
+            return 'translate(' + 0 + ',' + (idx*40) + ')';
+          })
+          .on('click', function(d) { buttonClick.call(this, d) })
+          .on('mouseenter', buttonEnter)
+          .on('mouseleave', buttonLeave)
+          .style('cursor', 'pointer')
+
+      radioButtons
+          .append('rect')
+          .attr('width', '60')
+          .attr('height', '30')
+          .attr('rx', '2')
+          .attr('ry', '2')
+
+      radioButtons.append('text')
+          .text(function(d) { return d; })
+          .attr('x', '30')
+          .attr('y', '18')
+          .attr('text-anchor', 'middle')
+
+      var ctxt = d3.select('.svg-button')[0][0];
+      buttonClick.call(ctxt, this.buttons[0], true);
+
       // Create the tooltip
       this.scatterTip = d3Tip()
           .attr('class', 'd3-tip')
-          .offset([-20, 0])
+          .offset([-10, 0])
           .html(function(d) {
             var style;
             if (d.tries <= 1) { style = 'ONSITE'; }
@@ -372,7 +453,7 @@ define([
 
       this.barTip = d3Tip()
           .attr('class', 'd3-tip')
-          .offset([-20, 0])
+          .offset([-10, 0])
           .html(function(d) {
             var sends = d.value.total > 1 ? ' SENDS' : ' SEND';
             var html = '<strong style="font-size:1.4em">' + d.key + '</strong></br>'
@@ -387,11 +468,12 @@ define([
 
       this.avgTickCircleTip = d3Tip()
           .attr('class', 'd3-tip')
-          .offset([-20, 0])
+          .offset([-10, 0])
           .html(function(d) {
             // Sort by date
             var sends = d.value.total > 1 ? ' SENDS' : ' SEND';
-            var html = '<strong style="font-size:1.4em">' + d.key + '</strong></br>'
+            var html = '<strong style="font-size:1.4em">' + d.key
+                + ' - ' + (+d.key + 1) + '</strong></br>'
                 + 'averaging <strong>' + d.value.avg + '</strong>'
                 + '</br>'
                 + makeLine(d.value.onsite, 'onsite')

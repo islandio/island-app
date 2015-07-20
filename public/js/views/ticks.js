@@ -56,6 +56,13 @@ define([
       this.$el.html(this.template.call(this));
       this.title = _.template(title).call(this);
 
+      var buttonNames = [ 'Boulders', 'Routes' ];
+      if (this.model.get('ticks').b.length > this.model.get('ticks').r.length) {
+        this.currentType = 'b';
+      } else {
+        this.currentType = 'r';
+        buttonNames.reverse()
+      }
 /*
       this.pieChart = new PieChart(this.app, {
         $el: this.$('.pie-chart')
@@ -69,7 +76,9 @@ define([
       */
 
       this.scatterChart = new ScatterChart(this.app, {
-        $el: this.$('.scatter-chart')
+        $el: this.$('.scatter-chart'),
+        parentView: this,
+        buttons: buttonNames
       }).render();
 
       // Render each tick as a view.
@@ -121,6 +130,8 @@ define([
       //   this.boulders.hide();
       }
 
+      this.on('svgButton', this.svgButton, this);
+
       console.log(this.app.profile.content.events.items[0]);
       this.feed = new Events(this.app, {
         parentView: this,
@@ -165,6 +176,23 @@ define([
       //     type: 'ascent', subtype: 'b', heading: 'Boulders'});
 
       return this;
+    },
+
+    svgButton: function(d) {
+      console.log(d, this.currentType);
+      if (d === 'Boulders' && this.currentType === 'r') {
+        this.currentType = 'b';
+      }
+      else if (d === 'Routes' && this.currentType === 'b') {
+        this.currentType = 'r';
+      }
+      else {
+        return;
+      }
+
+      this.scatterChart.update(this.model.get('ticks')[this.currentType], 
+          this.currentType, {immediate: false});
+
     },
 
     collect: function (data) {
