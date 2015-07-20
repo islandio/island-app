@@ -71,67 +71,71 @@ define([
       }).render();
 
       // Render each tick as a view.
-      var ticks = this.$('.tick');
-      var win = $(window);
-      _.each(ticks, _.bind(function (el, i) {
-        _.defer(_.bind(function () {
-          el = $(el);
-          var data = _.find(this.model.get('ticks')[el.data('type')],
-              function (t) {
-            return t.id === el.attr('id');
-          });
-          this.ticks.push(new Tick({
-            parentView: this,
-            el: el,
-            model: data,
-            compact: true,
-            mapless: true,
-            medialess: true,
-            commentless: true,
-            showCragName: true,
-            inlineDate: true
-          }, this.app).render());
-          win.trigger('resize');
-        }, this));
-      }, this));
+      // var ticks = this.$('.tick');
+      // var win = $(window);
+      // _.each(ticks, _.bind(function (el, i) {
+      //   _.defer(_.bind(function () {
+      //     el = $(el);
+      //     var data = _.find(this.model.get('ticks')[el.data('type')],
+      //         function (t) {
+      //       return t.id === el.attr('id');
+      //     });
+      //     this.ticks.push(new Tick({
+      //       parentView: this,
+      //       el: el,
+      //       model: data,
+      //       compact: true,
+      //       mapless: true,
+      //       medialess: true,
+      //       commentless: true,
+      //       showCragName: true,
+      //       inlineDate: true
+      //     }, this.app).render());
+      //     win.trigger('resize');
+      //   }, this));
+      // }, this));
 
       this.trigger('rendered');
       return this;
     },
 
     setup: function () {
-      this.filterBox = this.$('.ticks-filter-input input');
-      this.emptyTxt = this.$('.ticks-filter-input span');
-      this.bouldersFilter = this.$('.b-filter').parent();
-      this.routesFilter = this.$('.r-filter').parent();
-      this.boulders = this.$('.b-ticks');
-      this.routes = this.$('.r-ticks');
+      // this.filterBox = this.$('.ticks-filter-input input');
+      // this.emptyTxt = this.$('.ticks-filter-input span');
+      // this.bouldersFilter = this.$('.b-filter').parent();
+      // this.routesFilter = this.$('.r-filter').parent();
+      // this.boulders = this.$('.b-ticks');
+      // this.routes = this.$('.r-ticks');
 
       if (this.model.get('ticks').b.length > this.model.get('ticks').r.length) {
         this.currentType = 'b';
-        this.bouldersFilter.addClass('active');
-        this.boulders.show();
-        this.routes.hide();
+      //   this.bouldersFilter.addClass('active');
+      //   this.boulders.show();
+      //   this.routes.hide();
       } else {
         this.currentType = 'r';
-        this.routesFilter.addClass('active');
-        this.routes.show();
-        this.boulders.hide();
+      //   this.routesFilter.addClass('active');
+      //   this.routes.show();
+      //   this.boulders.hide();
       }
 
-      console.log(this.app.profile.content);
+      // console.log(this.app.profile.content);
+
       this.feed = new Events(this.app, {
         parentView: this,
+        // parentId: this.model.id,
+        // parentType: 'member',
         reverse: true,
-        input: true,
-        filters: ['tick']
+        input: false,
+        filters: false//['session', 'post', 'crag', 'ascent'],
+        // hide: ['crag', 'ascent']
       });
 
 /*
       this.barChart.update(this.model.get('ticks')[this.currentType],
           this.currentType, {immediate: true} );
 */
-      this.scatterChart.update(this.model.get('ticks')[this.currentType], 
+      this.scatterChart.update(this.model.get('ticks')[this.currentType],
           this.currentType, {immediate: true});
 
 /*
@@ -140,24 +144,24 @@ define([
       this.pieChart.update(countryData, 'country', {immediate: true});
 */
 
-      _.defer(_.bind(function () {
-        this.checkCurrentCount();
-        this.bouldersFilter.click(_.bind(this.changeType, this, 'b'));
-        this.routesFilter.click(_.bind(this.changeType, this, 'r'));
-      }, this));
+      // _.defer(_.bind(function () {
+      //   this.checkCurrentCount();
+      //   this.bouldersFilter.click(_.bind(this.changeType, this, 'b'));
+      //   this.routesFilter.click(_.bind(this.changeType, this, 'r'));
+      // }, this));
 
-      this.filterBox.bind('keyup search', _.bind(this.filter, this));
+      // this.filterBox.bind('keyup search', _.bind(this.filter, this));
 
-      if (!$('.header-search .search-display').is(':visible')) {
-        this.filterBox.focus();
-      }
+      // if (!$('.header-search .search-display').is(':visible')) {
+      //   this.filterBox.focus();
+      // }
 
-      this.crags = new Watchees(this.app, {parentView: this, reverse: true,
-          type: 'crag', heading: 'Crags'});
-      this.sroutes = new Watchees(this.app, {parentView: this, reverse: true,
-          type: 'ascent', subtype: 'r', heading: 'Routes'});
-      this.sboulders = new Watchees(this.app, {parentView: this, reverse: true,
-          type: 'ascent', subtype: 'b', heading: 'Boulders'});
+      // this.crags = new Watchees(this.app, {parentView: this, reverse: true,
+      //     type: 'crag', heading: 'Crags'});
+      // this.sroutes = new Watchees(this.app, {parentView: this, reverse: true,
+      //     type: 'ascent', subtype: 'r', heading: 'Routes'});
+      // this.sboulders = new Watchees(this.app, {parentView: this, reverse: true,
+      //     type: 'ascent', subtype: 'b', heading: 'Boulders'});
 
       return this;
     },
@@ -238,9 +242,9 @@ define([
         t.destroy();
       });
       this.scatterChart.destroy();
-      this.crags.destroy();
-      this.sroutes.destroy();
-      this.sboulders.destroy();
+      // this.crags.destroy();
+      // this.sroutes.destroy();
+      // this.sboulders.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();
@@ -264,11 +268,11 @@ define([
         return t.model.get('type') === this.currentType;
       }, this));
       if (ticks.length === 0) {
-        this.filterBox.hide();
+        // this.filterBox.hide();
         this.$('.' + this.currentType + '-ticks .empty-feed').show()
             .css('display', 'block');
       } else {
-        this.filterBox.show();
+        // this.filterBox.show();
         this.$('.' + this.currentType + '-ticks .empty-feed').hide();
       }
     },
@@ -295,38 +299,38 @@ define([
       this.pieChart.update(countryData, 'country', {immediate: true});
 */
 
-      this.$('.list-wrap').hide();
-      this.$('.' + this.currentType + '-ticks').show();
+      // this.$('.list-wrap').hide();
+      // this.$('.' + this.currentType + '-ticks').show();
       this.checkCurrentCount();
-      this.filterBox.keyup();
+      // this.filterBox.keyup();
     },
 
-    filter: function (e) {
-      var txt = this.filterBox.val().trim().toLowerCase();
-      var ct = this.currentType;
-      $('.' + ct + '-ticks .no-results').hide();
-      if (txt === '') {
-        $('.' + ct + '-ticks .session-ticks li').show();
-        $('.' + ct + '-ticks .tick-list-group-heading').show();
-        return false;
-      }
-      $('.' + ct + '-ticks .session-ticks li').hide();
-      $('.' + ct + '-ticks .tick-list-group-heading').hide();
-      var rx = new RegExp('^(.*?(' + txt + ')[^$]*)$', 'ig');
-      var y = false;
-      _.each(this.model.get('ticks')[ct], function (t) {
-        if (rx.test(t.ascent.name)) {
-          y = true;
-          var d = $('.' + ct + '-ticks .session-ticks li[id="' + t.id + '"]');
-          d.show();
-          $('.tick-list-group-heading', d.parent()).show();
-        }
-      });
-      if (!y) {
-        $('.list-wrap .no-results').show();
-      }
-      return false;
-    },
+    // filter: function (e) {
+    //   var txt = this.filterBox.val().trim().toLowerCase();
+    //   var ct = this.currentType;
+    //   $('.' + ct + '-ticks .no-results').hide();
+    //   if (txt === '') {
+    //     $('.' + ct + '-ticks .session-ticks li').show();
+    //     $('.' + ct + '-ticks .tick-list-group-heading').show();
+    //     return false;
+    //   }
+    //   $('.' + ct + '-ticks .session-ticks li').hide();
+    //   $('.' + ct + '-ticks .tick-list-group-heading').hide();
+    //   var rx = new RegExp('^(.*?(' + txt + ')[^$]*)$', 'ig');
+    //   var y = false;
+    //   _.each(this.model.get('ticks')[ct], function (t) {
+    //     if (rx.test(t.ascent.name)) {
+    //       y = true;
+    //       var d = $('.' + ct + '-ticks .session-ticks li[id="' + t.id + '"]');
+    //       d.show();
+    //       $('.tick-list-group-heading', d.parent()).show();
+    //     }
+    //   });
+    //   if (!y) {
+    //     $('.list-wrap .no-results').show();
+    //   }
+    //   return false;
+    // },
 
   });
 });

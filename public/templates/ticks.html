@@ -9,14 +9,13 @@
   var privacy = data.author.config.privacy.ticks ? data.author.config.privacy.ticks.toString(): '0';
 %>
 
-
 <% if (this.app.profile.content.page.private && !own) { %>
   <span class="empty-feed">This athlete's ascents are <%= privacy === '1' ? 'only visible to followers': 'private' %>.</span>
 <% } else { %>
   <div class="ticks-chart bar-chart"></div>
   <div class="ticks-chart scatter-chart"></div>
   <div class="rightside"></div>
-  <div class="leftside">
+  <div class="leftside my-ascents">
     <div class="events"></div>
     <div class="list-spin">
       <div class="events-spin"></div>

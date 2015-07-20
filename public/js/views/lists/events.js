@@ -326,6 +326,7 @@ define([
       rest.post('/api/events/list', {
         limit: this.latestList.limit,
         cursor: this.latestList.cursor,
+        sort: this.latestList.sort,
         actions: this.latestList.actions,
         query: this.latestList.query
       }, _.bind(function (err, data) {
