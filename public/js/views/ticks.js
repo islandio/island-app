@@ -51,16 +51,18 @@ define([
         gradeConverter: this.app.gradeConverter,
         prefs: this.app.profile.member ? this.app.profile.member.prefs: this.app.prefs
       });
-      this.setTitle();
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
       this.title = _.template(title).call(this);
 
       var buttonNames = [ 'Boulders', 'Routes' ];
+      var graphTitle = ''
       if (this.model.get('ticks').b.length > this.model.get('ticks').r.length) {
         this.currentType = 'b';
+        graphTitle = 'Bouldering Timeline'
       } else {
         this.currentType = 'r';
+        graphTitle = 'Route Timeline'
         buttonNames.reverse()
       }
 /*
@@ -80,6 +82,8 @@ define([
         parentView: this,
         buttons: buttonNames
       }).render();
+
+      this.scatterChart.setTitle(graphTitle);
 
       // Render each tick as a view.
       // var ticks = this.$('.tick');
@@ -150,6 +154,7 @@ define([
       this.scatterChart.update(this.model.get('ticks')[this.currentType],
           this.currentType, {immediate: true});
 
+      $(window).resize(_.debounce(_.bind(this.scatterChart.resize, this.scatterChart), 20));
 /*
       var countryData = _.pluck(this.model.get('ticks')[this.currentType],
           'crag');
@@ -179,12 +184,13 @@ define([
     },
 
     svgButton: function(d) {
-      console.log(d, this.currentType);
       if (d === 'Boulders' && this.currentType === 'r') {
         this.currentType = 'b';
+        this.scatterChart.setTitle('Bouldering Timeline')
       }
       else if (d === 'Routes' && this.currentType === 'b') {
         this.currentType = 'r';
+        this.scatterChart.setTitle('Route Timeline')
       }
       else {
         return;
