@@ -34,6 +34,7 @@ define([
       onsite: '#e8837b',
       average: '#333'
     },
+    compact: false,
 
     initialize: function (app, options) {
 
@@ -45,6 +46,7 @@ define([
       this.parentView = options.parentView;
       this.buttons = options.buttons || ['Boulders', 'Routes']
       this.subscriptions = [];
+      this.store = {}
 
       this.mouse = { which: 'right'};
 
@@ -78,6 +80,7 @@ define([
       this.renderGraph();
       this._updateGraph(this.d.ticks, this.d.gradeDomain, this.d.timeDomain,
           { immediate: true} );
+      this.setTitle();
     },
 
     // Create the static graph elements
@@ -86,10 +89,9 @@ define([
       var self = this;
 
       // Static graph setup
-      this.margin = {top: 60, right: 0, bottom: 20, left: 20};
+      this.margin = {top: 80, right: 0, bottom: 20, left: 20};
       this.width = this.$el.width() - this.margin.left - this.margin.right;
       this.height = this.$el.height() - this.margin.top - this.margin.bottom;
-      console.log(this.width, this.height);
 
       // Create the baseline SVG
       if (this.svg) {
@@ -108,7 +110,7 @@ define([
       this.mwidth = (this.$el.width() - this.margin.left - this.margin.right)
           - this.lwidth - this.rwidth;
       // responsive stuff
-      if (this.mwidth < 300) {
+      if (this.mwidth < 300 || this.compact) {
         this.mwidth = 0;
       }
 
@@ -174,11 +176,10 @@ define([
       this.title = this.mtSvg.append('text')
           .attr('x', this.mwidth/2)
           .attr('y', -5)
-          .text('Timeline')
+          .text(this.store.title || '')
           .style('text-anchor', 'middle')
           .style('font-size', '14px')
           .style('font-weight', 'bold')
-
 
       this.mtSvg.append('clipPath')
           .attr('id', 'clip')
@@ -359,6 +360,7 @@ define([
       var buttonClick = function(d, donttrigger) {
         if (!donttrigger) {
           self.parentView.trigger('svgButton', d);
+          self.store.buttonId = this.id;
         }
 
         var g = d3.select(this);
@@ -425,7 +427,9 @@ define([
           .attr('y', '18')
           .attr('text-anchor', 'middle')
 
-      var ctxt = d3.select('.svg-button')[0][0];
+      var defaultButtonId =
+        this.store.buttonId ? '#' + this.store.buttonId : '.svg-button';
+      var ctxt = d3.select(defaultButtonId)[0][0];
       buttonClick.call(ctxt, this.buttons[0], true);
 
       // Create the tooltip
@@ -1055,6 +1059,17 @@ define([
     },
 
     setTitle: function(t) {
+      // load state
+      if (!t) {
+        t = this.store.title || ''
+      } else {
+        this.store.title = t;
+      }
+
+      if (this.mwidth === 0) {
+        this.title.text('');
+        return;
+      }
       var time = 100;
       this.title.transition().duration(time).style('opacity', 0)
       this.title.transition().delay(time).text(t);
