@@ -1,10 +1,30 @@
 // Converts grades between various climbing systems
 // The 'default' system is french (routes) and font (boulders), however, if
 // a country is supplied it will try to convert the grades for that country
+//
+// Use in both node.js and the browser. If using the browser and requirejs
+// make sure to provide underscore as a dependency in a shim
 
-define([
-  'Underscore'
-], function (_) {
+
+(function() {
+
+  // Establish the root object, `window` (`self`) in the browser, `global`
+  // on the server, or `this` in some virtual machines. We use `self`
+  // instead of `window` for `WebWorker` support.
+  var root = typeof self === 'object' && self.self === self && self ||
+            typeof global === 'object' && global.global === global && global ||
+            this;
+
+  var has_require = typeof require !== 'undefined';
+
+  var _ = root._;
+
+  if( typeof _ === 'undefined' ) {
+    if( has_require ) {
+      _ = require('underscore');
+    }
+    else throw new Error('GradeConverter requires underscore, see http://underscorejs.org');
+  }
 
   var GradeConverter = function(type) {
 
@@ -83,10 +103,22 @@ define([
 
   };
 
+  // Hook into module systems
+  if( typeof exports !== 'undefined' ) {
+    if( typeof module !== 'undefined' && module.exports ) {
+      exports = module.exports = GradeConverter;
+    }
+    exports.GradeConverter = GradeConverter;
+  } 
+  else {
+    root.GradeConverter = GradeConverter;
+  }
+
+
+
   /* For sorting - will be slow because of the indexOf commands so use 
    * intelligently */
   GradeConverter.prototype.compare = function(a, b, country, system) {
-    console.log(a, b, country, system);
     system = system || this.getSystem(country);
     var list = _.pluck(this.gradeMap, system);
     return list.indexOf(a) - list.indexOf(b);
@@ -221,4 +253,7 @@ define([
   };
 
   return GradeConverter;
-});
+
+
+
+}).call(this);
