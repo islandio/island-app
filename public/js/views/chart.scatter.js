@@ -1,7 +1,6 @@
 /*
  * D3 scatter chart of ticks vs time
- * SVG is organized into 4 quadrants.
- * There is no padding between the left and right quadrants
+ * SVG is organized into sections with content quadrants.
  */
 
 define([
@@ -34,6 +33,7 @@ define([
       onsite: '#e8837b',
       average: '#333'
     },
+    breakWidth: 250, // width of scatter plot before 'breaking' to a smaller design
     compact: false,
 
     initialize: function (app, options) {
@@ -80,7 +80,7 @@ define([
       this.renderGraph();
       this._updateGraph(this.d.ticks, this.d.gradeDomain, this.d.timeDomain,
           { immediate: true} );
-      this.setTitle();
+      this.setTitle(null, true);
     },
 
     // Create the static graph elements
@@ -110,7 +110,7 @@ define([
       this.mwidth = (this.$el.width() - this.margin.left - this.margin.right)
           - this.lwidth - this.rwidth;
       // responsive stuff
-      if (this.mwidth < 300 || this.compact) {
+      if (this.mwidth < this.breakWidth || this.compact) {
         this.mwidth = 0;
       }
 
@@ -333,7 +333,7 @@ define([
           .on('mouseenter', function(d) {
             d3.selectAll('.fadeable:not(.' + d.key +')')
                 .transition().duration(300)
-                .style('opacity', .05)
+                .style('opacity', .025)
             d3.selectAll('.tickCircle.' + d.key)
                 .transition().duration(300)
                 .style('opacity', .7)
@@ -988,6 +988,7 @@ define([
           })
           .on('click', function(d) {
             var path = '/efforts/' + d.key;
+            self.scatterTip.hide(d);
             self.app.router.navigate(path, {trigger: true});
           });
 
@@ -1010,7 +1011,9 @@ define([
       var gradeConverter = this.app.gradeConverter[type];
       var system = type === 'r' ? this.prefs.grades.route : this.prefs.grades.boulder;
 
-      var ticksFiltered = _.filter(ticks, function(t) { return t && t.grade; });
+      var ticksFiltered = _.filter(ticks, function(t) {
+        return t && (t.grade || (t.ascent.grades && t.ascent.grades.length > 0));
+      });
 
       // Get range of grades
       var gradeExtent = d3.extent(ticksFiltered, function(t) { return t.grade; });
@@ -1018,9 +1021,17 @@ define([
       // Get grade of each array entry
       var ticksMapped = _.map(ticksFiltered, function(t, idx) {
         t =  _.clone(t);
-        t.grade = gradeConverter.indexes(t.grade, null, system);
+        if (t.grade) {
+          t.grade = gradeConverter.indexes(t.grade, null, system);
+        } else {
+          // TODO: Take the average instead
+          //t.grade = t.ascent.grades[0];
+        }
         return t;
       });
+
+      //ticksMapped = _.pluck(ticksMapped, 'grade').sort(_.bind(gradeConverter.compare, gradeConverter))
+      //console.log(ticksMapped);
 
       // We show lower grades than the climber has completed to give
       // a sense of accomplishment. However, don't go too low or the xaxis
@@ -1058,7 +1069,7 @@ define([
       else { return 'redpoint'; }
     },
 
-    setTitle: function(t) {
+    setTitle: function(t, immediate) {
       // load state
       if (!t) {
         t = this.store.title || ''
@@ -1070,7 +1081,7 @@ define([
         this.title.text('');
         return;
       }
-      var time = 100;
+      var time = immediate ? 0 : 100;
       this.title.transition().duration(time).style('opacity', 0)
       this.title.transition().delay(time).text(t);
       this.title.transition().duration(time).delay(time).style('opacity', 1)

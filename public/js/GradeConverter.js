@@ -86,6 +86,7 @@ define([
   /* For sorting - will be slow because of the indexOf commands so use 
    * intelligently */
   GradeConverter.prototype.compare = function(a, b, country, system) {
+    console.log(a, b, country, system);
     system = system || this.getSystem(country);
     var list = _.pluck(this.gradeMap, system);
     return list.indexOf(a) - list.indexOf(b);
@@ -177,7 +178,7 @@ define([
 
   };
 
-  // Return higher grades, works for positive offsets only
+  // Return grades offset by some amount
   GradeConverter.prototype.offset = function(grade, offset, system) {
     system = system || this.toSystem;
     var gmap = _.unique(_.pluck(this.gradeMap, system))
