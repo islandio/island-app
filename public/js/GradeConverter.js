@@ -146,6 +146,8 @@
    * supplying country or preferred conversion system */
   GradeConverter.prototype.indexes = function(indexes, country, system) {
 
+    if (!indexes) return;
+
     // Make into array and then lower case;
     var wasArray = indexes instanceof Array;
     indexes = wasArray ? indexes : [indexes];

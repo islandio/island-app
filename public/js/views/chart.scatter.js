@@ -188,14 +188,6 @@ define([
           .attr('width', this.mwidth)
           .attr('height', this.theight);
 
-      // Create the X axis
-      this.mtSvg.append('g')
-          .attr('class', 'x axis')
-          .attr('transform', 'translate(0,' + this.theight + ')')
-          .style('stroke-dasharray', ('4, 4'))
-          .style('stroke-opacity', 0.2);
-          //.call(this.xAxis);
-
       this.mtSvg.append('line')
           .attr('x1', 0)
           .attr('x2', 0)
@@ -764,6 +756,7 @@ define([
             .style('stroke-dasharray', ('4, 4'))
             .style('stroke-opacity', 0)
             .transition()
+            .ease('linear')
             .delay(immediate ? 0: this.fadeTime*2)
             .duration(300)
             .ease('linear')
@@ -778,7 +771,8 @@ define([
             .style('opacity', 0)
             .style('fill', '#333')
             .transition()
-            .delay(immediate ? 0: this.fadeTime*2 + 300).duration(250)
+            .ease('linear')
+            .delay(immediate ? 0: this.fadeTime*2 + 400).duration(250)
             .style('opacity', 1)
             .text(count);
         }
@@ -789,8 +783,6 @@ define([
       var self = this;
 
       this.x.domain(xDomain);
-      this.mtSvg.selectAll('.x');
-          //.call(this.xAxis);
 
       var lineGroup = this.mtSvg.select('.lineGroup');
       var avgTickLine = lineGroup.selectAll('.avgGradeLine');
@@ -1026,14 +1018,10 @@ define([
         return t.grade;
       });
 
-      // Get grade of each array entry
-      var ticksMapped = _.map(ticksFiltered, function(t) {
-        t =  _.clone(t);
-        if (t.grade) {
-          t.grade = gradeConverter.indexes(t.grade, null, system);
-        }
-        return t;
-      });
+      if (!gradeExtent[0]) {
+        gradeExtent[0] = 8;
+        gradeExtent[1] = 12;
+      }
 
       // We show lower grades than the climber has completed to give
       // a sense of accomplishment. However, don't go too low or the xaxis
@@ -1046,6 +1034,15 @@ define([
 
       var gradeDomain = gradeConverter.range(lowerGrade, higherGrade, system);
 
+      // Get grade of each array entry
+      var ticksMapped = _.map(ticksFiltered, function(t) {
+        t =  _.clone(t);
+        if (t.grade) {
+          t.grade = gradeConverter.indexes(t.grade, null, system);
+        }
+        return t;
+      });
+
       // Group ticks by year
       var dataByYear = [];
       _.each(ticksFiltered, function(t) {
@@ -1055,6 +1052,12 @@ define([
       });
 
       var timeDomain = d3.extent(ticksMapped, function(d) { return d.date; });
+
+      if (!timeDomain[0]) {
+        timeDomain[0] = new Date('1/1/2015');
+        timeDomain[1] = new Date();
+      }
+
       timeDomain[0] = d3.time.year.floor(new Date(timeDomain[0])).valueOf();
       timeDomain[1] = d3.time.year.ceil(new Date(timeDomain[1])).valueOf();
 
