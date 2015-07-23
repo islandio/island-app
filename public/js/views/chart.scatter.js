@@ -164,10 +164,10 @@ define([
           .orient('right');
 
       this.ltSvg.append('text')
-          .attr('x', this.lwidth/2)
+          .attr('x', 0)
           .attr('y', -5)
           .text('Grade Histogram')
-          .style('text-anchor', 'middle')
+          .style('text-anchor', 'left')
           .style('font-size', '14px')
           .style('font-weight', 'bold');
 
@@ -668,9 +668,9 @@ define([
           // an explicit select. This code below achieves this for each group.
           .each(function() {
             var d3this = d3.select(this);
-            d3this.select('.bar-onsite');
-            d3this.select('.bar-redpoint');
-            d3this.select('.bar-flash');
+            d3this.select('.onsite-bar');
+            d3this.select('.redpoint-bar');
+            d3this.select('.flash-bar');
           });
 
       barGraph.selectAll('.onsite-bar')
@@ -758,12 +758,12 @@ define([
             .duration(immediate ? 0 : 300)
             .ease('linear')
             .style('stroke-opacity', 1)
-            .attr('y2', barY-60);
+            .attr('y2', barY + this.y.rangeBand()/2 - 52);
 
         barCount
             .append('text')
             .attr('x', leftX)
-            .attr('y', barY-60-7)
+            .attr('y', barY + this.y.rangeBand()/2 - 52 - 7)
             .style('text-anchor', 'middle')
             .style('opacity', 0)
             .style('fill', '#333')

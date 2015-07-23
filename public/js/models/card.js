@@ -20,27 +20,27 @@ define([
       this.prefs = options.prefs;
     },
 
-    // ticksByGrade: function (type) {
-    //   var ticks = {};
-    //   _.each(this.get('ticks')[type], _.bind(function (t) {
-    //     if (t.grade !== undefined) {
-    //       var system = type === 'r' ? this.prefs.grades.route:
-    //           this.prefs.grades.boulder;
-    //       var grade = this.gradeConverter[type].indexes(t.grade, null, system);
-    //       if (!ticks[grade]) {
-    //         ticks[grade] = [];
-    //       }
-    //       ticks[grade].push(t);
-    //     } else {
-    //       var k = 'ungraded';
-    //       if (!ticks[k]) {
-    //         ticks[k] = [];
-    //       }
-    //       ticks[k].push(t);
-    //     }
-    //   }, this));
-    //   return ticks;
-    // },
+    ticksByGrade: function (type) {
+      var ticks = {};
+      _.each(this.get('ticks')[type], _.bind(function (t) {
+        if (t.grade !== undefined) {
+          var system = type === 'r' ? this.prefs.grades.route:
+              this.prefs.grades.boulder;
+          var grade = this.gradeConverter[type].indexes(t.grade, null, system);
+          if (!ticks[grade]) {
+            ticks[grade] = [];
+          }
+          ticks[grade].push(t);
+        } else {
+          var k = 'ungraded';
+          if (!ticks[k]) {
+            ticks[k] = [];
+          }
+          ticks[k].push(t);
+        }
+      }, this));
+      return ticks;
+    },
 
     // formatActivityDuration: function (mins) {
     //   if (!mins) return '';
