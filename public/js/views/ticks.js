@@ -14,9 +14,8 @@ define([
   'text!../../templates/ticks.title.html',
   'views/chart.scatter',
   'views/lists/events',
-  'views/lists/watchees'
 ], function ($, _, Backbone, mps, util, Card, Tick, template,
-    title, ScatterChart, Events, Watchees) {
+    title, ScatterChart, Events) {
   return Backbone.View.extend({
 
     el: '.main',
@@ -47,21 +46,22 @@ define([
     render: function () {
       this.model = new Card(this.app.profile.content.page, {
         gradeConverter: this.app.gradeConverter,
-        prefs: this.app.profile.member ? this.app.profile.member.prefs: this.app.prefs
+        prefs: this.app.profile.member
+            ? this.app.profile.member.prefs: this.app.prefs
       });
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
       this.title = _.template(title).call(this);
 
       var buttonNames = [ 'Boulders', 'Routes' ];
-      var graphTitle = ''
+      var graphTitle = '';
       if (this.model.get('ticks').b.length > this.model.get('ticks').r.length) {
         this.currentType = 'b';
-        graphTitle = 'Bouldering Timeline'
+        graphTitle = 'Bouldering Timeline';
       } else {
         this.currentType = 'r';
-        graphTitle = 'Route Timeline'
-        buttonNames.reverse()
+        graphTitle = 'Route Timeline';
+        buttonNames.reverse();
       }
 
       this.scatterChart = new ScatterChart(this.app, {
@@ -90,7 +90,8 @@ define([
       this.scatterChart.update(this.model.get('ticks')[this.currentType],
           this.currentType, {immediate: true});
 
-      $(window).resize(_.debounce(_.bind(this.scatterChart.resize, this.scatterChart), 20));
+      $(window).resize(_.debounce(_.bind(
+          this.scatterChart.resize, this.scatterChart), 20));
 
       return this;
     },
@@ -98,55 +99,47 @@ define([
     svgButton: function(d) {
       if (d === 'Boulders' && this.currentType === 'r') {
         this.currentType = 'b';
-        this.scatterChart.setTitle('Bouldering Timeline')
+        this.scatterChart.setTitle('Bouldering Timeline');
       }
       else if (d === 'Routes' && this.currentType === 'b') {
         this.currentType = 'r';
-        this.scatterChart.setTitle('Route Timeline')
+        this.scatterChart.setTitle('Route Timeline');
       }
       else {
         return;
       }
 
-      this.scatterChart.update(this.model.get('ticks')[this.currentType], 
+      this.scatterChart.update(this.model.get('ticks')[this.currentType],
           this.currentType, {immediate: false});
 
     },
 
     collect: function (data) {
       if (data.author.id === this.model.get('author').id && data.sent) {
-        var t = this.model.get('ticks')
+        var t = this.model.get('ticks');
         t[data.type].push(data);
-        this.scatterChart.update(this.model.get('ticks')[this.currentType], 
-            this.currentType, {immediate: false});
+        if (this.currentType === data.type) {
+          this.scatterChart.update(this.model.get('ticks')[this.currentType],
+              this.currentType, {immediate: false});
+        }
       }
     },
 
-    _remove: function (data, noslide) {
-      var t = _.find(this.ticks, function (t) {
-        return t.model.id === data.id;
+    _remove: function (data) {
+      var ticks = this.model.get('ticks');
+      var dataType;
+      _.each(ticks, function(v, k) {
+        ticks[k] = _.reject(v, function(t) {
+          if (data.id === t.id) {
+            dataType = t.type;
+            return true;
+          }
+          return false;
+        });
       });
-      if (!t) {
-        return;
-      }
-
-      this.ticks = _.reject(this.ticks, function (t) {
-        return t.model.id === data.id;
-      });
-      var list = t.$el.closest('.session-ticks');
-
-      function _done() {
-        t.destroy();
-        if (list.children('li').length === 0) {
-          list.hide();
-        }
-        this.checkCurrentCount();
-      }
-
-      if (noslide) {
-        _done.call(this);
-      } else {
-        t.$el.slideUp('fast', _.bind(_done, this));
+      if (this.currentType === dataType) {
+        this.scatterChart.update(this.model.get('ticks')[this.currentType],
+            this.currentType, {immediate: false});
       }
     },
 
@@ -156,6 +149,7 @@ define([
     },
 
     destroy: function () {
+      $(window).off('resize');
       this.app.rpc.socket.removeListener('tick.new', this.collect);
       this.app.rpc.socket.removeListener('tick.removed', this._remove);
       _.each(this.subscriptions, function (s) {

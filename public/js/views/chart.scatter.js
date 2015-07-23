@@ -16,7 +16,7 @@ define([
 
   var sCenter = function(sl) {
     return Number(sl.attr('x')) + Number(sl.attr('width'))/2;
-  }
+  };
 
   return Backbone.View.extend({
 
@@ -26,14 +26,15 @@ define([
     legend_dy: 40,
     sideWidth: 200,
     vertInnerPad: 20,
-    scatterOpacity: .4,
+    scatterOpacity: 0.4,
     colors: {
       flash: '#b1ec36',
       redpoint: '#009cde',
       onsite: '#e8837b',
       average: '#333'
     },
-    breakWidth: 250, // width of scatter plot before 'breaking' to a smaller design
+    // width of scatter plot before 'breaking' to a smaller design
+    breakWidth: 250,
     compact: false,
 
     initialize: function (app, options) {
@@ -44,9 +45,9 @@ define([
       this.options = options || {};
       this.$el = options.$el;
       this.parentView = options.parentView;
-      this.buttons = options.buttons || ['Boulders', 'Routes']
+      this.buttons = options.buttons || ['Boulders', 'Routes'];
       this.subscriptions = [];
-      this.store = {}
+      this.store = {};
 
       this.mouse = { which: 'right'};
 
@@ -57,7 +58,7 @@ define([
       return this;
     },
 
-    render: function (width, height) {
+    render: function () {
       this.renderGraph();
       this.trigger('rendered');
       return this;
@@ -98,11 +99,11 @@ define([
         this.svg.remove();
       }
 
-      this.svg = d3.select(this.$el.get(0)).append('svg')
+      this.svg = d3.select(this.$el.get(0)).append('svg');
 
       this.svg
           .attr('width', this.$el.width())
-          .attr('height', this.$el.height())
+          .attr('height', this.$el.height());
 
       // Generate widths and heights for the container classes
       this.lwidth = this.sideWidth;
@@ -114,7 +115,7 @@ define([
         this.mwidth = 0;
       }
 
-      this.bheight = 40
+      this.bheight = 40;
       this.theight = this.$el.height() - this.margin.top - this.margin.bottom
           - this.vertInnerPad - this.bheight;
 
@@ -126,8 +127,8 @@ define([
 
       this.mtSvg = this.svg.append('g')
           .attr('class', 'mt-svg')
-          .attr('transform', 'translate(' + (this.margin.left + this.lwidth) + ','
-              + this.margin.top + ')');
+          .attr('transform', 'translate(' + (this.margin.left + this.lwidth)
+              + ',' + this.margin.top + ')');
 
       this.rtSvg = this.svg.append('g')
           .attr('class', 'rt-svg')
@@ -138,8 +139,8 @@ define([
 
       this.mbSvg = this.svg.append('g')
           .attr('class', 'mb-svg')
-          .attr('transform', 'translate(' + (this.margin.left + this.lwidth) + ','
-              + btop + ')');
+          .attr('transform', 'translate(' + (this.margin.left + this.lwidth)
+              + ',' + btop + ')');
 
       // Scales
 
@@ -161,9 +162,7 @@ define([
 
       this.yAxis = d3.svg.axis()
           .scale(this.y)
-          .orient('right')
-          //.tickSize(0);
-          //.tickSize(-this.mwidth);
+          .orient('right');
 
       this.ltSvg.append('text')
           .attr('x', this.lwidth/2)
@@ -171,7 +170,7 @@ define([
           .text('Grade Histogram')
           .style('text-anchor', 'middle')
           .style('font-size', '14px')
-          .style('font-weight', 'bold')
+          .style('font-weight', 'bold');
 
       this.title = this.mtSvg.append('text')
           .attr('x', this.mwidth/2)
@@ -179,7 +178,7 @@ define([
           .text(this.store.title || '')
           .style('text-anchor', 'middle')
           .style('font-size', '14px')
-          .style('font-weight', 'bold')
+          .style('font-weight', 'bold');
 
       this.mtSvg.append('clipPath')
           .attr('id', 'clip')
@@ -187,14 +186,14 @@ define([
           .attr('x', 10)
           .attr('y', 0)
           .attr('width', this.mwidth)
-          .attr('height', this.theight)
+          .attr('height', this.theight);
 
       // Create the X axis
       this.mtSvg.append('g')
           .attr('class', 'x axis')
           .attr('transform', 'translate(0,' + this.theight + ')')
           .style('stroke-dasharray', ('4, 4'))
-          .style('stroke-opacity', .2)
+          .style('stroke-opacity', 0.2);
           //.call(this.xAxis);
 
       this.mtSvg.append('line')
@@ -203,10 +202,10 @@ define([
           .attr('y1', 0)
           .attr('y2', this.theight)
           .style('stroke-width', '1px')
-          .style('stroke', '#333')
+          .style('stroke', '#333');
 
-      var barGroup = this.ltSvg.append('g')
-          .attr('class', 'barGroup')
+      this.ltSvg.append('g')
+          .attr('class', 'barGroup');
 
       // Create the Y axis
       this.mtSvg.append('g')
@@ -222,14 +221,14 @@ define([
           .attr('clip-path', 'url(#clip)');
 
       this.mtSvg.append('g')
-          .attr('class', 'hoverGroup')
+          .attr('class', 'hoverGroup');
 
 
       // Slider
 
       if (this.mwidth !== 0) {
         this.slider = this.mbSvg.append('g')
-            .attr('class', 'slider')
+            .attr('class', 'slider');
 
         this.slider.on('mousedown', function() {
           d3.event.preventDefault();
@@ -237,11 +236,12 @@ define([
           var pos = d3.mouse(this);
           var sl = sCenter(self.sliderLeft);
           var sr = sCenter(self.sliderRight);
+          var newPos;
           if (pos[0] > (sr + sl) / 2) {
-            var newPos = sr + (self.mwidth/12 * (pos[0] > sr ? 1 : -1));
+            newPos = sr + (self.mwidth/12 * (pos[0] > sr ? 1 : -1));
             self.updateRightSlider(newPos, false);
           } else {
-            var newPos = sl + (self.mwidth/12 * (pos[0] > sl ? 1 : -1));
+            newPos = sl + (self.mwidth/12 * (pos[0] > sl ? 1 : -1));
             self.updateLeftSlider(newPos, false);
           }
         });
@@ -251,13 +251,13 @@ define([
             .attr('rx', 6)
             .attr('width', this.mwidth)
             .attr('height', 10)
-            .style('fill', 'grey')
+            .style('fill', 'grey');
 
         this.sliderHighlight = this.slider.append('rect')
             .attr('class', 'slider-highlight')
             .attr('width', this.mwidth)
             .attr('height', this.sliderBar.attr('height'))
-            .style('fill', this.colors.redpoint)
+            .style('fill', this.colors.redpoint);
 
         this.sliderLeft = this.slider.append('rect')
             .attr('class', 'slider-left')
@@ -269,9 +269,9 @@ define([
             .attr('ry', 2)
             .style('fill', '#333')
             .style('cursor', 'pointer')
-            .on('mousedown', function(d) {
-              self.startMove('left')
-            })
+            .on('mousedown', function() {
+              self.startMove('left');
+            });
 
         this.sliderRight = this.slider.append('rect')
             .attr('class', 'slider-right')
@@ -283,9 +283,9 @@ define([
             .attr('ry', 2)
             .style('fill', '#333')
             .style('cursor', 'pointer')
-            .on('mousedown', function(d) {
-              self.startMove('right')
-            })
+            .on('mousedown', function() {
+              self.startMove('right');
+            });
 
         d3.select('body')
             .on('mousemove', function() {
@@ -293,9 +293,11 @@ define([
               d3.event.stopPropagation();
               if (self.mouse.moving) {
                 if (self.mouse.which === 'right') {
-                  self.updateRightSlider(d3.mouse(self.sliderRight.node())[0], false);
+                  self.updateRightSlider(
+                      d3.mouse(self.sliderRight.node())[0], false);
                 } else {
-                  self.updateLeftSlider(d3.mouse(self.sliderLeft.node())[0], false);
+                  self.updateLeftSlider(
+                      d3.mouse(self.sliderLeft.node())[0], false);
                 }
               }
             })
@@ -307,7 +309,7 @@ define([
       this.line = d3.svg.line()
           .x(function(d) { return self.x(new Date((+d.key + 1).toString())); })
           .y(function(d) { return self.y(d.value.avg) + self.y.rangeBand()/2; })
-          .interpolate('linear')
+          .interpolate('linear');
 
       // Create the legend
       var legendEntries = this.rtSvg.append('g')
@@ -318,7 +320,7 @@ define([
           .enter()
           .append('g')
           .attr('class', function(d) {
-            return 'legend-entry fadeable ' + d.key
+            return 'legend-entry fadeable ' + d.key;
           })
           .attr('transform', function(d, idx) {
             return 'translate(' + 0 + ',' + (idx*30) + ')';
@@ -327,32 +329,32 @@ define([
       legendEntries.append('circle')
           .attr('r', 8)
           .style('fill', function(d) { return d.value; })
-          .style('opacity', 1)
+          .style('opacity', 1);
 
       legendEntries
           .on('mouseenter', function(d) {
             d3.selectAll('.fadeable:not(.' + d.key +')')
                 .transition().duration(300)
-                .style('opacity', .025)
+                .style('opacity', 0.025);
             d3.selectAll('.tickCircle.' + d.key)
                 .transition().duration(300)
-                .style('opacity', .7)
+                .style('opacity', 0.7);
           })
-          .on('mouseleave', function(d) {
+          .on('mouseleave', function() {
             d3.selectAll('.fadeable')
                 .transition().duration(300)
-                .style('opacity', 1)
+                .style('opacity', 1);
             d3.selectAll('.tickCircle')
                 .transition().duration(300)
-                .style('opacity', self.scatterOpacity)
-          })
+                .style('opacity', self.scatterOpacity);
+          });
 
       legendEntries.append('text')
           .text(function(d) { return d.key; })
           .attr('font-size', 12)
           .attr('x', 15)
           .attr('y', 4)
-          .style('cursor', 'default')
+          .style('cursor', 'default');
 
       // Create some radio buttons. All these do is raise an event on click
       // These could be HTML but fit nicely in the layout of the SVG
@@ -367,35 +369,36 @@ define([
         var t = g.select('text');
         var r = g.select('rect');
 
-        var gNot = d3.selectAll('.svg-buttons .svg-button:not(#' + this.id + ')');
+        var gNot = d3.selectAll(
+            '.svg-buttons .svg-button:not(#' + this.id + ')');
         var tNot = gNot.selectAll('text');
         var rNot = gNot.selectAll('rect');
 
         // defaults
-        rNot.style('fill', '#f2f2f2')
-        tNot.style('fill', '#333')
+        rNot.style('fill', '#f2f2f2');
+        tNot.style('fill', '#333');
         gNot.classed('active', false);
 
-        r.style('fill', '#333')
-        t.style('fill', '#fff')
+        r.style('fill', '#333');
+        t.style('fill', '#fff');
         g.classed('active', true);
-      }
+      };
 
-      var buttonEnter = function(d) {
-        var g = d3.select(this)
+      var buttonEnter = function() {
+        var g = d3.select(this);
         var r = g.select('rect');
         if (!g.classed('active')) {
-          r.transition().duration(100).ease('linear').style('fill', '#ddd')
+          r.transition().duration(100).ease('linear').style('fill', '#ddd');
         }
-      }
+      };
 
-      var buttonLeave = function(d) {
-        var g = d3.select(this)
+      var buttonLeave = function() {
+        var g = d3.select(this);
         var r = g.select('rect');
         if (!g.classed('active')) {
-          r.transition().duration(100).ease('linear').style('fill', '#f2f2f2')
+          r.transition().duration(100).ease('linear').style('fill', '#f2f2f2');
         }
-      }
+      };
 
       var radioButtons = this.rtSvg.append('g')
           .attr('class', 'svg-buttons')
@@ -405,27 +408,27 @@ define([
           .enter()
           .append('g')
           .attr('class', 'svg-button')
-          .attr('id', function(d, i) { return 'svgButton' + i})
+          .attr('id', function(d, i) { return 'svgButton' + i; })
           .attr('transform', function(d, idx) {
             return 'translate(' + 0 + ',' + (idx*40) + ')';
           })
-          .on('click', function(d) { buttonClick.call(this, d) })
+          .on('click', function(d) { buttonClick.call(this, d); })
           .on('mouseenter', buttonEnter)
           .on('mouseleave', buttonLeave)
-          .style('cursor', 'pointer')
+          .style('cursor', 'pointer');
 
       radioButtons
           .append('rect')
           .attr('width', '60')
           .attr('height', '30')
           .attr('rx', '2')
-          .attr('ry', '2')
+          .attr('ry', '2');
 
       radioButtons.append('text')
           .text(function(d) { return d; })
           .attr('x', '30')
           .attr('y', '18')
-          .attr('text-anchor', 'middle')
+          .attr('text-anchor', 'middle');
 
       var defaultButtonId =
         this.store.buttonId ? '#' + this.store.buttonId : '.svg-button';
@@ -444,13 +447,14 @@ define([
 
             var html = '<strong style="font-size:1.4em">' 
                 + d.ascent.name + ', ' + d.crag.name + '</strong></br>'
-                + '<strong>a ' + d.grade + ' in ' + d.crag.country+ '</strong></br>'
+                + '<strong>a ' + d.grade + ' in ' + d.crag.country
+                + '</strong></br>'
                 + '<strong style="color:' + self.colors[self._getStyle(d)]
                 + '">' + style + ' on ' + new Date(d.date).format('longDate')
                 + '</strong>';
 
             return html;
-          })
+          });
 
       var makeLine = function(count, style) {
         if (count === 0) return '';
@@ -477,12 +481,13 @@ define([
           .offset([-10, 0])
           .html(function(d) {
             var sends = d.value.total > 1 ? ' SENDS' : ' SEND';
-            var html = '<strong style="font-size:1.4em">' + d.key + '</strong></br>'
+            var html = '<strong style="font-size:1.4em">' + d.key
+                + '</strong></br>'
                 + '<strong>' + d.value.total + sends + '</strong>'
                 + '</br>'
                 + makeLine(d.value.onsite, 'onsite')
                 + makeLine(d.value.flash, 'flash')
-                + makeLine(d.value.redpoint, 'redpoint')
+                + makeLine(d.value.redpoint, 'redpoint');
 
             return html;
           });
@@ -492,14 +497,13 @@ define([
           .offset([-10, 0])
           .html(function(d) {
             // Sort by date
-            var sends = d.value.total > 1 ? ' SENDS' : ' SEND';
             var html = '<strong style="font-size:1.4em">' + d.key
                 + ' - ' + (+d.key + 1) + '</strong></br>'
                 + 'averaging <strong>' + d.value.avg + '</strong>'
                 + '</br>'
                 + makeLine(d.value.onsite, 'onsite')
                 + makeLine(d.value.flash, 'flash')
-                + makeLine(d.value.redpoint, 'redpoint')
+                + makeLine(d.value.redpoint, 'redpoint');
             return html;
           });
 
@@ -526,7 +530,7 @@ define([
     },
 
     recalculateTimeDomain: function(immediate) {
-      var extent = this.d.timeDomain[1] - this.d.timeDomain[0]
+      var extent = this.d.timeDomain[1] - this.d.timeDomain[0];
       var l = sCenter(this.sliderLeft) / this.mwidth;
       var r = sCenter(this.sliderRight) / this.mwidth;
 
@@ -534,7 +538,8 @@ define([
           this.d.timeDomain[1] - extent * (1-r)];
 
       this._updateXDomain(newDomain, immediate);
-      var scatterGraph = this.mtSvg.select('.scatterGroup').selectAll('.tickCircle');
+      var scatterGraph = this.mtSvg.select('.scatterGroup')
+          .selectAll('.tickCircle');
       this._updateBarGraph(scatterGraph.data(), newDomain, immediate);
     },
 
@@ -580,7 +585,7 @@ define([
     },
 
     _updateAvgTickData: function(data, domain) {
-      dataByYear = {};
+      var dataByYear = {};
       _.each(data, function(t) {
         var year = new Date(t.date).getFullYear();
         if (!dataByYear[year]) dataByYear[year] = [];
@@ -589,12 +594,12 @@ define([
 
       _.each(dataByYear, function(val, key) {
         var sums = _.reduce(val, function(m, v) {
-          var next = {}
+          var next = {};
           next.avg = m.avg + domain.indexOf(v.grade);
           next.redpoint = m.redpoint
               + (_.isUndefined(v.tries) || v.tries >= 3);
           next.flash = m.flash +(v.tries > 1 && v.tries < 3);
-          next.onsite = m.onsite +(v.tries <= 1)
+          next.onsite = m.onsite +(v.tries <= 1);
           return next;
         }, {avg: 0, redpoint: 0, flash: 0, onsite: 0});
         var avg = Math.floor(sums.avg / val.length);
@@ -605,7 +610,7 @@ define([
       });
 
       var atd = d3.entries(dataByYear);
-      return _.initial(_.sortBy(atd, 'key'))
+      return _.initial(_.sortBy(atd, 'key'));
     },
 
     _updateBarGraphData: function(data, filter) {
@@ -627,7 +632,7 @@ define([
             return +(val.tries <= 1) + m;
           }, 0),
           total: v.length
-        }
+        };
       });
       bgd = d3.entries(bgd);
 
@@ -638,15 +643,15 @@ define([
     _updateBarGraph: function(data, xDomain, immediate) {
       var self = this;
       var filt = function(d) {
-        var d = new Date(d.date).valueOf();
-        return (d >= xDomain[0] && d <= xDomain[1]);
-      }
+        var d_ = new Date(d.date).valueOf();
+        return (d_ >= xDomain[0] && d_ <= xDomain[1]);
+      };
       var bgd = this._updateBarGraphData(data, filt);
 
       var barGroup = this.ltSvg.select('.barGroup');
 
       var barGraph = barGroup.selectAll('.bars')
-          .data(bgd, function(d) { return d.key; })
+          .data(bgd, function(d) { return d.key; });
 
       var barGroupEnter = barGraph
           .enter()
@@ -656,23 +661,23 @@ define([
       barGroupEnter.append('rect')
           .attr('class', 'bar-onsite onsite')
           .attr('x', this.lwidth)
-          .attr('width', 0)
+          .attr('width', 0);
       barGroupEnter.append('rect')
           .attr('class', 'bar-flash flash')
           .attr('x', this.lwidth)
-          .attr('width', 0)
+          .attr('width', 0);
       barGroupEnter.append('rect')
           .attr('class', 'bar-redpoint redpoint')
           .attr('x', this.lwidth)
-          .attr('width', 0)
+          .attr('width', 0);
 
       barGraph
           .attr('transform', function(d) {
-            return 'translate(0,' + self.y(d.key) + ')'
+            return 'translate(0,' + self.y(d.key) + ')';
           })
           // Note: D3 children do not inherit their parents data without
           // an explicit select. This code below achieves this for each group.
-          .each(function(d) {
+          .each(function() {
             var d3this = d3.select(this);
             d3this.select('.bar-onsite');
             d3this.select('.bar-redpoint');
@@ -685,9 +690,9 @@ define([
           .transition()
           .duration(immediate ? 0 : this.fadeTime*2)
           .attr('x', function(d) {
-            return self.lwidth - self.x2(d.value.onsite)
+            return self.lwidth - self.x2(d.value.onsite);
           })
-          .attr('width', function(d) { return self.x2(d.value.onsite) })
+          .attr('width', function(d) { return self.x2(d.value.onsite); });
 
       barGraph.selectAll('.bar-flash')
           .attr('height', this.y.rangeBand())
@@ -695,9 +700,9 @@ define([
           .transition()
           .duration(immediate ? 0 : this.fadeTime*2)
           .attr('x', function(d) {
-              return self.lwidth - self.x2(d.value.onsite + d.value.flash)
+              return self.lwidth - self.x2(d.value.onsite + d.value.flash);
            })
-          .attr('width', function(d) { return self.x2(d.value.flash) })
+          .attr('width', function(d) { return self.x2(d.value.flash); });
 
       barGraph.selectAll('.bar-redpoint')
           .attr('height', this.y.rangeBand())
@@ -706,9 +711,9 @@ define([
           .duration(immediate ? 0 : this.fadeTime*2)
           .attr('x', function(d) {
               return self.lwidth - self.x2(d.value.redpoint
-                  + d.value.flash + d.value.onsite)
+                  + d.value.flash + d.value.onsite);
            })
-          .attr('width', function(d) { return self.x2(d.value.redpoint) })
+          .attr('width', function(d) { return self.x2(d.value.redpoint); });
 
       barGraph
           .exit()
@@ -716,26 +721,27 @@ define([
 
       barGraph
           .on('mouseenter', this.barTip.show)
-          .on('mouseleave', this.barTip.hide)
+          .on('mouseleave', this.barTip.hide);
 
       barGroup.select('.barCount').remove();
-      var barCount = barGroup.append('g').attr('class', 'barCount')
+      var barCount = barGroup.append('g').attr('class', 'barCount');
 
-      var barY
+      var barY;
       var count = -1;
       var leftX = Number.MAX_VALUE;
       d3.selectAll('.bars').each(function(d) {
         var x = self.lwidth
-            - self.x2(d.value.redpoint + d.value.flash + d.value.onsite)
+            - self.x2(d.value.redpoint + d.value.flash + d.value.onsite);
         if (x < leftX) {
-          leftX = Number(x)
+          leftX = Number(x);
           count = d.value.total;
           // get y value in group transform
-          barY = Number(d3.select(this).attr('transform').split(',')[1].slice(0,-1));
+          barY = Number(d3.select(this)
+              .attr('transform').split(',')[1].slice(0,-1));
         }
       });
 
-      if (count != -1) {
+      if (count !== -1) {
         barCount
             .append('circle')
             .attr('cx', leftX)
@@ -744,7 +750,7 @@ define([
             .style('fill', '#333')
             .style('opacity', 0)
             .transition().delay(immediate ? 0: this.fadeTime*2)
-            .style('opacity', 1)
+            .style('opacity', 1);
 
         barCount
             .append('line')
@@ -762,7 +768,7 @@ define([
             .duration(300)
             .ease('linear')
             .style('stroke-opacity', 1)
-            .attr('y2', barY-60)
+            .attr('y2', barY-60);
 
         barCount
             .append('text')
@@ -771,9 +777,10 @@ define([
             .style('text-anchor', 'middle')
             .style('opacity', 0)
             .style('fill', '#333')
-            .transition().delay(immediate ? 0: this.fadeTime*2 + 300).duration(250)
+            .transition()
+            .delay(immediate ? 0: this.fadeTime*2 + 300).duration(250)
             .style('opacity', 1)
-            .text(count)
+            .text(count);
         }
     },
 
@@ -781,24 +788,27 @@ define([
     _updateXDomain: function(xDomain, immediate) {
       var self = this;
 
-      this.x.domain(xDomain)
-      this.mtSvg.selectAll('.x')
+      this.x.domain(xDomain);
+      this.mtSvg.selectAll('.x');
           //.call(this.xAxis);
 
       var lineGroup = this.mtSvg.select('.lineGroup');
       var avgTickLine = lineGroup.selectAll('.avgGradeLine');
       var avgTickCircle = lineGroup.selectAll('.avgGradeCircle');
-      var scatterGraph = this.mtSvg.select('.scatterGroup').selectAll('.tickCircle');
+      var scatterGraph = this.mtSvg.select('.scatterGroup')
+          .selectAll('.tickCircle');
 
       scatterGraph
           .transition().duration(immediate ? 0 : 200)
-          .attr('cx', function(d) { return self.x(new Date(d.date)); })
+          .attr('cx', function(d) { return self.x(new Date(d.date)); });
       avgTickCircle
           .transition().duration(immediate ? 0 : 200)
-          .attr('cx', function(d) { return self.x(new Date((+d.key + 1).toString())); })
+          .attr('cx', function(d) {
+              return self.x(new Date((+d.key + 1).toString()));
+          });
       avgTickLine
           .transition().duration(immediate ? 0 : 200)
-          .attr('d', this.line)
+          .attr('d', this.line);
 
     },
 
@@ -811,31 +821,27 @@ define([
       this.x.domain(xDomain);
 
       // Create some data for graphing
-      var bgd = this._updateBarGraphData(data)
-      var atd = this._updateAvgTickData(data, yDomain)
+      var bgd = this._updateBarGraphData(data);
+      var atd = this._updateAvgTickData(data, yDomain);
 
-      this.x2.domain([0, d3.max(bgd, function(d) { return d.value.total })]);
+      this.x2.domain([0, d3.max(bgd, function(d) { return d.value.total; })]);
 
       // Create y-axis
 
       this.mtSvg.selectAll('.y')
-          .transition().duration(immediate ? 0 : this.fadeTime*2).ease('linear')
+          .transition()
+          .duration(immediate ? 0 : this.fadeTime*2).ease('linear')
           .call(this.yAxis);
 
-      this.mtSvg.selectAll('.x')
-          .transition().duration(immediate ? 0 : this.fadeTime*2).ease('sin-in-out')
-          //.call(this.xAxis);
-
-      // Update slider
-
       // Slider ticks
-      var years = d3.time.year.range(new Date(xDomain[0]), new Date(xDomain[1] + 1));
+      var years = d3.time.year.range(
+          new Date(xDomain[0]), new Date(xDomain[1] + 1));
       if (this.mwidth !== 0) {
         this.slider.select('.sliderTicks').remove();
         var sliderTicks = this.slider.append('g').attr('class', 'sliderTicks');
         var sbh = Number(this.sliderBar.attr('height'));
         _.each(years, function (y, idx) {
-          if (idx != 0 && idx != years.length-1) {
+          if (idx !== 0 && idx !== years.length-1) {
             sliderTicks.append('line')
                 .attr('x1', self.x(y))
                 .attr('x2', self.x(y))
@@ -846,7 +852,7 @@ define([
                 .transition()
                 .delay(immediate ? 0 : self.fadeTime)
                 .duration(immediate ? 0 : self.fadeTime)
-                .style('stroke-opacity', 1)
+                .style('stroke-opacity', 1);
           }
           sliderTicks.append('text')
               .text(new Date(y).format('yyyy'))
@@ -859,17 +865,18 @@ define([
               .transition()
               .delay(immediate ? 0 : self.fadeTime)
               .duration(immediate ? 0 : self.fadeTime)
-              .style('opacity', 1)
+              .style('opacity', 1);
         });
       }
 
 
       // Build bar graph
-      this._updateBarGraph(data, xDomain, immediate)
+      this._updateBarGraph(data, xDomain, immediate);
 
       // Data joins
 
-      var scatterGraph = this.mtSvg.select('.scatterGroup').selectAll('.tickCircle')
+      var scatterGraph = this.mtSvg.select('.scatterGroup')
+          .selectAll('.tickCircle')
           .data(data, function(d) { return d.id; });
 
       var lineGroup = this.mtSvg.select('.lineGroup')
@@ -889,15 +896,15 @@ define([
       // Enter
 
       scatterGraph.enter()
-          .append('circle')
+          .append('circle');
 
       avgTickLine.enter()
           .append('path')
-          .attr('class', 'avgGradeLine average fadeable')
+          .attr('class', 'avgGradeLine average fadeable');
 
       avgTickCircle.enter()
           .append('circle')
-          .attr('class', 'avgGradeCircle average fadeable')
+          .attr('class', 'avgGradeCircle average fadeable');
 
       // Update + Enter
 
@@ -905,16 +912,20 @@ define([
 
       scatterGraph
           .attr('cx', function(d) { return self.x(new Date(d.date)); })
-          .attr('cy', function(d) { return self.y(d.grade) + self.y.rangeBand()/2; })
+          .attr('cy', function(d) {
+              return self.y(d.grade) + self.y.rangeBand()/2;
+          })
           .attr('r', 8)
-          .attr('class', function(d) { return 'tickCircle fadeable ' + self._getStyle(d)} )
+          .attr('class', function(d) {
+              return 'tickCircle fadeable ' + self._getStyle(d);
+          })
           .attr('fill', function(d) { return self.colors[self._getStyle(d)]; })
           .style('cursor', 'pointer')
           .style('opacity', 0)
           .transition()
           .delay(immediate ? 0 : this.fadeTime)
           .duration(immediate ? 0 : this.fadeTime)
-          .style('opacity', self.scatterOpacity)
+          .style('opacity', self.scatterOpacity);
 
       avgTickLine.attr('d', this.line)
           .style('fill', 'none')
@@ -927,8 +938,12 @@ define([
           .style('stroke-opacity', 1);
 
       avgTickCircle
-          .attr('cx', function(d) { return self.x(new Date((+d.key + 1).toString())); })
-          .attr('cy', function(d) { return self.y(d.value.avg) + self.y.rangeBand()/2; })
+          .attr('cx', function(d) {
+            return self.x(new Date((+d.key + 1).toString()));
+          })
+          .attr('cy', function(d) {
+            return self.y(d.value.avg) + self.y.rangeBand()/2;
+           })
           .attr('r', 6)
           .style('fill', this.colors.average)
           .style('opacity', 0)
@@ -936,18 +951,8 @@ define([
           .delay(immediate ? 0 : this.fadeTime)
           .duration(immediate ? 0 : this.fadeTime)
           .style('opacity', 1);
-/*
-        setInterval(_.bind(function() {
-          this.mtSvg.select('.scatterGroup').selectAll('.tickCircle')
-              .transition().duration(1500).ease('linear')
-              .attr('cx', function(d) { return self.x(new Date(d.date)) + (Math.random() - .5) * 5; })
-              .attr('cy', function(d) { return self.y(d.grade) + (Math.random() - .5) * 5; })
-        }, this), 1500)
-*/
 
       // Exit
-
-
 
       scatterGraph
           .exit()
@@ -983,7 +988,7 @@ define([
           .on('mouseleave', function(d) {
             d3.select(this)
                 .attr('r', 8)
-                .style('opacity', .4);
+                .style('opacity', 0.4);
             self.scatterTip.hide(d);
           })
           .on('click', function(d) {
@@ -994,13 +999,13 @@ define([
 
       avgTickCircle
           .on('mouseenter', function(d) {
-            d3.select(this).attr('r', 9)
+            d3.select(this).attr('r', 9);
             self.avgTickCircleTip.show(d);
           })
           .on('mouseleave', function(d) {
-            d3.select(this).attr('r', 6)
+            d3.select(this).attr('r', 6);
             self.avgTickCircleTip.hide(d);
-          })
+          });
 
 
     },
@@ -1009,29 +1014,26 @@ define([
     _transposeData: function(ticks, type) {
 
       var gradeConverter = this.app.gradeConverter[type];
-      var system = type === 'r' ? this.prefs.grades.route : this.prefs.grades.boulder;
+      var system =
+          type === 'r' ? this.prefs.grades.route : this.prefs.grades.boulder;
 
       var ticksFiltered = _.filter(ticks, function(t) {
-        return t && (t.grade || (t.ascent.grades && t.ascent.grades.length > 0));
+        return t && t.grade;
       });
 
       // Get range of grades
-      var gradeExtent = d3.extent(ticksFiltered, function(t) { return t.grade; });
+      var gradeExtent = d3.extent(ticksFiltered, function(t) {
+        return t.grade;
+      });
 
       // Get grade of each array entry
-      var ticksMapped = _.map(ticksFiltered, function(t, idx) {
+      var ticksMapped = _.map(ticksFiltered, function(t) {
         t =  _.clone(t);
         if (t.grade) {
           t.grade = gradeConverter.indexes(t.grade, null, system);
-        } else {
-          // TODO: Take the average instead
-          //t.grade = t.ascent.grades[0];
         }
         return t;
       });
-
-      //ticksMapped = _.pluck(ticksMapped, 'grade').sort(_.bind(gradeConverter.compare, gradeConverter))
-      //console.log(ticksMapped);
 
       // We show lower grades than the climber has completed to give
       // a sense of accomplishment. However, don't go too low or the xaxis
@@ -1042,10 +1044,10 @@ define([
       lowerGrade = gradeConverter.offset(lowerGrade, -3, system);
       higherGrade = gradeConverter.offset(higherGrade, 1, system);
 
-      gradeDomain = gradeConverter.range(lowerGrade, higherGrade, system);
+      var gradeDomain = gradeConverter.range(lowerGrade, higherGrade, system);
 
       // Group ticks by year
-      dataByYear = [];
+      var dataByYear = [];
       _.each(ticksFiltered, function(t) {
         var year = new Date(t.date).getFullYear();
         if (!dataByYear[year]) dataByYear[year] = [];
@@ -1072,7 +1074,7 @@ define([
     setTitle: function(t, immediate) {
       // load state
       if (!t) {
-        t = this.store.title || ''
+        t = this.store.title || '';
       } else {
         this.store.title = t;
       }
@@ -1082,9 +1084,9 @@ define([
         return;
       }
       var time = immediate ? 0 : 100;
-      this.title.transition().duration(time).style('opacity', 0)
+      this.title.transition().duration(time).style('opacity', 0);
       this.title.transition().delay(time).text(t);
-      this.title.transition().duration(time).delay(time).style('opacity', 1)
+      this.title.transition().duration(time).delay(time).style('opacity', 1);
     },
 
     empty: function () {
