@@ -65,7 +65,12 @@ require.config({
     },
     plugins: {
       deps: ['jQuery']
-    }
+    },
+    GradeConverter: {
+      exports: 'GradeConverter',
+      deps: ['Underscore']
+    },
+
   }
 });
 

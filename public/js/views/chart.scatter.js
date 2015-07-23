@@ -1,7 +1,6 @@
 /*
  * D3 scatter chart of ticks vs time
- * SVG is organized into 4 quadrants.
- * There is no padding between the left and right quadrants
+ * SVG is organized into sections with content quadrants.
  */
 
 define([
@@ -17,23 +16,28 @@ define([
 
   var sCenter = function(sl) {
     return Number(sl.attr('x')) + Number(sl.attr('width'))/2;
-  }
+  };
 
   return Backbone.View.extend({
 
     el: '.main',
 
     fadeTime: 300,
-    legend_dy: 40,
+    // Width of side panels
     sideWidth: 200,
+    // padding between upper and lower sections
     vertInnerPad: 20,
-    scatterOpacity: .4,
+    scatterOpacity: 0.4,
     colors: {
       flash: '#b1ec36',
       redpoint: '#009cde',
       onsite: '#e8837b',
       average: '#333'
     },
+    // width of scatter plot before 'breaking' to a smaller design
+    breakWidth: 250,
+    // Histgram only
+    compact: false,
 
     initialize: function (app, options) {
 
@@ -43,9 +47,13 @@ define([
       this.options = options || {};
       this.$el = options.$el;
       this.parentView = options.parentView;
-      this.buttons = options.buttons || ['Boulders', 'Routes']
+      this.buttons = options.buttons || ['Boulders', 'Routes'];
       this.subscriptions = [];
 
+      // Store some variables 
+      this.store = {};
+
+      // Mouse down events
       this.mouse = { which: 'right'};
 
       this.on('rendered', this.setup, this);
@@ -55,7 +63,7 @@ define([
       return this;
     },
 
-    render: function (width, height) {
+    render: function () {
       this.renderGraph();
       this.trigger('rendered');
       return this;
@@ -78,6 +86,7 @@ define([
       this.renderGraph();
       this._updateGraph(this.d.ticks, this.d.gradeDomain, this.d.timeDomain,
           { immediate: true} );
+      this.setTitle(null, true);
     },
 
     // Create the static graph elements
@@ -86,21 +95,20 @@ define([
       var self = this;
 
       // Static graph setup
-      this.margin = {top: 60, right: 0, bottom: 20, left: 20};
+      this.margin = {top: 80, right: 0, bottom: 20, left: 20};
       this.width = this.$el.width() - this.margin.left - this.margin.right;
       this.height = this.$el.height() - this.margin.top - this.margin.bottom;
-      console.log(this.width, this.height);
 
       // Create the baseline SVG
       if (this.svg) {
         this.svg.remove();
       }
 
-      this.svg = d3.select(this.$el.get(0)).append('svg')
+      this.svg = d3.select(this.$el.get(0)).append('svg');
 
       this.svg
           .attr('width', this.$el.width())
-          .attr('height', this.$el.height())
+          .attr('height', this.$el.height());
 
       // Generate widths and heights for the container classes
       this.lwidth = this.sideWidth;
@@ -108,11 +116,11 @@ define([
       this.mwidth = (this.$el.width() - this.margin.left - this.margin.right)
           - this.lwidth - this.rwidth;
       // responsive stuff
-      if (this.mwidth < 300) {
+      if (this.mwidth < this.breakWidth || this.compact) {
         this.mwidth = 0;
       }
 
-      this.bheight = 40
+      this.bheight = 40;
       this.theight = this.$el.height() - this.margin.top - this.margin.bottom
           - this.vertInnerPad - this.bheight;
 
@@ -124,8 +132,8 @@ define([
 
       this.mtSvg = this.svg.append('g')
           .attr('class', 'mt-svg')
-          .attr('transform', 'translate(' + (this.margin.left + this.lwidth) + ','
-              + this.margin.top + ')');
+          .attr('transform', 'translate(' + (this.margin.left + this.lwidth)
+              + ',' + this.margin.top + ')');
 
       this.rtSvg = this.svg.append('g')
           .attr('class', 'rt-svg')
@@ -136,65 +144,49 @@ define([
 
       this.mbSvg = this.svg.append('g')
           .attr('class', 'mb-svg')
-          .attr('transform', 'translate(' + (this.margin.left + this.lwidth) + ','
-              + btop + ')');
+          .attr('transform', 'translate(' + (this.margin.left + this.lwidth)
+              + ',' + btop + ')');
 
       // Scales
 
       this.x = d3.time.scale()
           .range([0, this.mwidth]);
 
-      // for bar count
+      // X2 is thie histograms x axis
       this.x2 = d3.scale.linear()
           .range([0, this.lwidth]);
 
       this.y = d3.scale.ordinal()
           .rangeRoundBands([this.theight, 0], 0.25);
 
-      this.xAxis = d3.svg.axis()
-          .scale(this.x)
-          .orient('bottom')
-          .ticks(6, '')
-          .tickSize(-this.theight);
-
       this.yAxis = d3.svg.axis()
           .scale(this.y)
-          .orient('right')
-          //.tickSize(0);
-          //.tickSize(-this.mwidth);
+          .orient('right');
 
       this.ltSvg.append('text')
-          .attr('x', this.lwidth/2)
+          .attr('x', 0)
           .attr('y', -5)
           .text('Grade Histogram')
-          .style('text-anchor', 'middle')
+          .style('text-anchor', 'left')
           .style('font-size', '14px')
-          .style('font-weight', 'bold')
+          .style('font-weight', 'bold');
 
       this.title = this.mtSvg.append('text')
           .attr('x', this.mwidth/2)
           .attr('y', -5)
-          .text('Timeline')
+          .text(this.store.title || '')
           .style('text-anchor', 'middle')
           .style('font-size', '14px')
-          .style('font-weight', 'bold')
+          .style('font-weight', 'bold');
 
-
+      // Clip path cuts off rendering of chart if it exceeds bounds
       this.mtSvg.append('clipPath')
           .attr('id', 'clip')
           .append('rect')
           .attr('x', 10)
           .attr('y', 0)
           .attr('width', this.mwidth)
-          .attr('height', this.theight)
-
-      // Create the X axis
-      this.mtSvg.append('g')
-          .attr('class', 'x axis')
-          .attr('transform', 'translate(0,' + this.theight + ')')
-          .style('stroke-dasharray', ('4, 4'))
-          .style('stroke-opacity', .2)
-          //.call(this.xAxis);
+          .attr('height', this.theight);
 
       this.mtSvg.append('line')
           .attr('x1', 0)
@@ -202,33 +194,28 @@ define([
           .attr('y1', 0)
           .attr('y2', this.theight)
           .style('stroke-width', '1px')
-          .style('stroke', '#333')
+          .style('stroke', '#333');
 
-      var barGroup = this.ltSvg.append('g')
-          .attr('class', 'barGroup')
+      this.ltSvg.append('g')
+          .attr('class', 'grade-bars-group');
 
       // Create the Y axis
       this.mtSvg.append('g')
-          .attr('class', 'y axis')
-          .call(this.yAxis);
+          .attr('class', 'grades-y-axis');
 
       this.mtSvg.append('g')
-          .attr('class', 'scatterGroup')
+          .attr('class', 'ticks-scatter-group')
           .attr('clip-path', 'url(#clip)');
 
       this.mtSvg.append('g')
-          .attr('class', 'lineGroup')
+          .attr('class', 'avg-line-group')
           .attr('clip-path', 'url(#clip)');
-
-      this.mtSvg.append('g')
-          .attr('class', 'hoverGroup')
-
 
       // Slider
 
       if (this.mwidth !== 0) {
         this.slider = this.mbSvg.append('g')
-            .attr('class', 'slider')
+            .attr('class', 'slider');
 
         this.slider.on('mousedown', function() {
           d3.event.preventDefault();
@@ -236,12 +223,13 @@ define([
           var pos = d3.mouse(this);
           var sl = sCenter(self.sliderLeft);
           var sr = sCenter(self.sliderRight);
+          var newPos;
           if (pos[0] > (sr + sl) / 2) {
-            var newPos = sr + (self.mwidth/12 * (pos[0] > sr ? 1 : -1));
-            self.updateRightSlider(newPos, false);
+            newPos = sr + (self.mwidth/12 * (pos[0] > sr ? 1 : -1));
+            self._updateRightSlider(newPos, false);
           } else {
-            var newPos = sl + (self.mwidth/12 * (pos[0] > sl ? 1 : -1));
-            self.updateLeftSlider(newPos, false);
+            newPos = sl + (self.mwidth/12 * (pos[0] > sl ? 1 : -1));
+            self._updateLeftSlider(newPos, false);
           }
         });
 
@@ -250,13 +238,13 @@ define([
             .attr('rx', 6)
             .attr('width', this.mwidth)
             .attr('height', 10)
-            .style('fill', 'grey')
+            .style('fill', 'grey');
 
         this.sliderHighlight = this.slider.append('rect')
             .attr('class', 'slider-highlight')
             .attr('width', this.mwidth)
             .attr('height', this.sliderBar.attr('height'))
-            .style('fill', this.colors.redpoint)
+            .style('fill', this.colors.redpoint);
 
         this.sliderLeft = this.slider.append('rect')
             .attr('class', 'slider-left')
@@ -268,9 +256,9 @@ define([
             .attr('ry', 2)
             .style('fill', '#333')
             .style('cursor', 'pointer')
-            .on('mousedown', function(d) {
-              self.startMove('left')
-            })
+            .on('mousedown', function() {
+              self._startMove('left');
+            });
 
         this.sliderRight = this.slider.append('rect')
             .attr('class', 'slider-right')
@@ -282,9 +270,9 @@ define([
             .attr('ry', 2)
             .style('fill', '#333')
             .style('cursor', 'pointer')
-            .on('mousedown', function(d) {
-              self.startMove('right')
-            })
+            .on('mousedown', function() {
+              self._startMove('right');
+            });
 
         d3.select('body')
             .on('mousemove', function() {
@@ -292,13 +280,15 @@ define([
               d3.event.stopPropagation();
               if (self.mouse.moving) {
                 if (self.mouse.which === 'right') {
-                  self.updateRightSlider(d3.mouse(self.sliderRight.node())[0], false);
+                  self._updateRightSlider(
+                      d3.mouse(self.sliderRight.node())[0], false);
                 } else {
-                  self.updateLeftSlider(d3.mouse(self.sliderLeft.node())[0], false);
+                  self._updateLeftSlider(
+                      d3.mouse(self.sliderLeft.node())[0], false);
                 }
               }
             })
-            .on('mouseup', _.bind(self.endMove, self));
+            .on('mouseup', _.bind(self._endMove, self));
       }
 
 
@@ -306,7 +296,7 @@ define([
       this.line = d3.svg.line()
           .x(function(d) { return self.x(new Date((+d.key + 1).toString())); })
           .y(function(d) { return self.y(d.value.avg) + self.y.rangeBand()/2; })
-          .interpolate('linear')
+          .interpolate('linear');
 
       // Create the legend
       var legendEntries = this.rtSvg.append('g')
@@ -317,7 +307,7 @@ define([
           .enter()
           .append('g')
           .attr('class', function(d) {
-            return 'legend-entry fadeable ' + d.key
+            return 'legend-entry fadeable ' + d.key;
           })
           .attr('transform', function(d, idx) {
             return 'translate(' + 0 + ',' + (idx*30) + ')';
@@ -326,32 +316,32 @@ define([
       legendEntries.append('circle')
           .attr('r', 8)
           .style('fill', function(d) { return d.value; })
-          .style('opacity', 1)
+          .style('opacity', 1);
 
       legendEntries
           .on('mouseenter', function(d) {
             d3.selectAll('.fadeable:not(.' + d.key +')')
                 .transition().duration(300)
-                .style('opacity', .05)
+                .style('opacity', 0.025);
             d3.selectAll('.tickCircle.' + d.key)
                 .transition().duration(300)
-                .style('opacity', .7)
+                .style('opacity', 0.7);
           })
-          .on('mouseleave', function(d) {
+          .on('mouseleave', function() {
             d3.selectAll('.fadeable')
                 .transition().duration(300)
-                .style('opacity', 1)
+                .style('opacity', 1);
             d3.selectAll('.tickCircle')
                 .transition().duration(300)
-                .style('opacity', self.scatterOpacity)
-          })
+                .style('opacity', self.scatterOpacity);
+          });
 
       legendEntries.append('text')
           .text(function(d) { return d.key; })
           .attr('font-size', 12)
           .attr('x', 15)
           .attr('y', 4)
-          .style('cursor', 'default')
+          .style('cursor', 'default');
 
       // Create some radio buttons. All these do is raise an event on click
       // These could be HTML but fit nicely in the layout of the SVG
@@ -359,41 +349,43 @@ define([
       var buttonClick = function(d, donttrigger) {
         if (!donttrigger) {
           self.parentView.trigger('svgButton', d);
+          self.store.buttonId = this.id;
         }
 
         var g = d3.select(this);
         var t = g.select('text');
         var r = g.select('rect');
 
-        var gNot = d3.selectAll('.svg-buttons .svg-button:not(#' + this.id + ')');
+        var gNot = d3.selectAll(
+            '.svg-buttons .svg-button:not(#' + this.id + ')');
         var tNot = gNot.selectAll('text');
         var rNot = gNot.selectAll('rect');
 
         // defaults
-        rNot.style('fill', '#f2f2f2')
-        tNot.style('fill', '#333')
-        gNot.classed('active', false);
+        rNot.style('fill', '#f2f2f2');
+        tNot.style('fill', '#333');
+        gNot.classed('chart-active', false);
 
-        r.style('fill', '#333')
-        t.style('fill', '#fff')
-        g.classed('active', true);
-      }
+        r.style('fill', '#333');
+        t.style('fill', '#fff');
+        g.classed('chart-active', true);
+      };
 
-      var buttonEnter = function(d) {
-        var g = d3.select(this)
+      var buttonEnter = function() {
+        var g = d3.select(this);
         var r = g.select('rect');
-        if (!g.classed('active')) {
-          r.transition().duration(100).ease('linear').style('fill', '#ddd')
+        if (!g.classed('chart-active')) {
+          r.transition().duration(100).ease('linear').style('fill', '#ddd');
         }
-      }
+      };
 
-      var buttonLeave = function(d) {
-        var g = d3.select(this)
+      var buttonLeave = function() {
+        var g = d3.select(this);
         var r = g.select('rect');
-        if (!g.classed('active')) {
-          r.transition().duration(100).ease('linear').style('fill', '#f2f2f2')
+        if (!g.classed('chart-active')) {
+          r.transition().duration(100).ease('linear').style('fill', '#f2f2f2');
         }
-      }
+      };
 
       var radioButtons = this.rtSvg.append('g')
           .attr('class', 'svg-buttons')
@@ -403,32 +395,35 @@ define([
           .enter()
           .append('g')
           .attr('class', 'svg-button')
-          .attr('id', function(d, i) { return 'svgButton' + i})
+          .attr('id', function(d, i) { return 'svgButton' + i; })
           .attr('transform', function(d, idx) {
             return 'translate(' + 0 + ',' + (idx*40) + ')';
           })
-          .on('click', function(d) { buttonClick.call(this, d) })
+          .on('click', function(d) { buttonClick.call(this, d); })
           .on('mouseenter', buttonEnter)
           .on('mouseleave', buttonLeave)
-          .style('cursor', 'pointer')
+          .style('cursor', 'pointer');
 
       radioButtons
           .append('rect')
           .attr('width', '60')
           .attr('height', '30')
           .attr('rx', '2')
-          .attr('ry', '2')
+          .attr('ry', '2');
 
       radioButtons.append('text')
           .text(function(d) { return d; })
           .attr('x', '30')
           .attr('y', '18')
-          .attr('text-anchor', 'middle')
+          .attr('text-anchor', 'middle');
 
-      var ctxt = d3.select('.svg-button')[0][0];
+      var defaultButtonId =
+        this.store.buttonId ? '#' + this.store.buttonId : '.svg-button';
+      var ctxt = d3.select(defaultButtonId)[0][0];
       buttonClick.call(ctxt, this.buttons[0], true);
 
-      // Create the tooltip
+      // Create the tooltips
+
       this.scatterTip = d3Tip()
           .attr('class', 'd3-tip')
           .offset([-10, 0])
@@ -438,15 +433,16 @@ define([
             else if (d.tries > 1 && d.tries <=2) { style = 'FLASHED'; }
             else { style = 'REDPOINT'; }
 
-            var html = '<strong style="font-size:1.4em">' 
+            var html = '<strong style="font-size:1.4em">'
                 + d.ascent.name + ', ' + d.crag.name + '</strong></br>'
-                + '<strong>a ' + d.grade + ' in ' + d.crag.country+ '</strong></br>'
+                + '<strong>a ' + d.grade + ' in ' + d.crag.country
+                + '</strong></br>'
                 + '<strong style="color:' + self.colors[self._getStyle(d)]
                 + '">' + style + ' on ' + new Date(d.date).format('longDate')
                 + '</strong>';
 
             return html;
-          })
+          });
 
       var makeLine = function(count, style) {
         if (count === 0) return '';
@@ -473,12 +469,13 @@ define([
           .offset([-10, 0])
           .html(function(d) {
             var sends = d.value.total > 1 ? ' SENDS' : ' SEND';
-            var html = '<strong style="font-size:1.4em">' + d.key + '</strong></br>'
+            var html = '<strong style="font-size:1.4em">' + d.key
+                + '</strong></br>'
                 + '<strong>' + d.value.total + sends + '</strong>'
                 + '</br>'
                 + makeLine(d.value.onsite, 'onsite')
                 + makeLine(d.value.flash, 'flash')
-                + makeLine(d.value.redpoint, 'redpoint')
+                + makeLine(d.value.redpoint, 'redpoint');
 
             return html;
           });
@@ -488,14 +485,13 @@ define([
           .offset([-10, 0])
           .html(function(d) {
             // Sort by date
-            var sends = d.value.total > 1 ? ' SENDS' : ' SEND';
             var html = '<strong style="font-size:1.4em">' + d.key
                 + ' - ' + (+d.key + 1) + '</strong></br>'
                 + 'averaging <strong>' + d.value.avg + '</strong>'
                 + '</br>'
                 + makeLine(d.value.onsite, 'onsite')
                 + makeLine(d.value.flash, 'flash')
-                + makeLine(d.value.redpoint, 'redpoint')
+                + makeLine(d.value.redpoint, 'redpoint');
             return html;
           });
 
@@ -505,7 +501,7 @@ define([
 
     },
 
-    startMove: function(which) {
+    _startMove: function(which) {
       d3.event.preventDefault();
       d3.event.stopPropagation();
       this.mouse.moving = true;
@@ -513,7 +509,7 @@ define([
       return false;
     },
 
-    endMove: function() {
+    _endMove: function() {
       d3.event.preventDefault();
       d3.event.stopPropagation();
       this.mouse.moving = false;
@@ -521,8 +517,9 @@ define([
       return false;
     },
 
-    recalculateTimeDomain: function(immediate) {
-      var extent = this.d.timeDomain[1] - this.d.timeDomain[0]
+    // Use slider values to recalculate time domain
+    _recalculateTimeDomain: function(immediate) {
+      var extent = this.d.timeDomain[1] - this.d.timeDomain[0];
       var l = sCenter(this.sliderLeft) / this.mwidth;
       var r = sCenter(this.sliderRight) / this.mwidth;
 
@@ -530,37 +527,38 @@ define([
           this.d.timeDomain[1] - extent * (1-r)];
 
       this._updateXDomain(newDomain, immediate);
-      var scatterGraph = this.mtSvg.select('.scatterGroup').selectAll('.tickCircle');
+      var scatterGraph = this.mtSvg.select('.ticks-scatter-group')
+          .selectAll('.tickCircle');
       this._updateBarGraph(scatterGraph.data(), newDomain, immediate);
     },
 
 
-    updateSliderHighlight: function() {
+    _updateSliderHighlight: function() {
       this.sliderHighlight.attr('x', sCenter(this.sliderLeft));
       this.sliderHighlight.attr('width', sCenter(this.sliderRight)
           - sCenter(this.sliderLeft));
     },
 
-    updateRightSlider: _.debounce(function(newPos, immediate) {
+    _updateRightSlider: _.debounce(function(newPos, immediate) {
       var xMax = this.mwidth - Number(this.sliderRight.attr('width'))/2;
       var xMin = Number(this.sliderLeft.attr('x'))
           + Number(this.sliderLeft.attr('width'));
       var x = Math.min(newPos, xMax);
       x = Math.max(x, xMin);
       this.sliderRight.attr('x', x);
-      this.updateSliderHighlight();
-      this.recalculateTimeDomain(immediate);
+      this._updateSliderHighlight();
+      this._recalculateTimeDomain(immediate);
     }, 2),
 
-    updateLeftSlider: _.debounce(function(newPos, immediate) {
+    _updateLeftSlider: _.debounce(function(newPos, immediate) {
       var xMin = -Number(this.sliderLeft.attr('width'))/2;
       var xMax = Number(this.sliderRight.attr('x'))
           - Number(this.sliderLeft.attr('width'));
       var x = Math.max(newPos, xMin);
       x = Math.min(x, xMax);
       this.sliderLeft.attr('x', x);
-      this.updateSliderHighlight();
-      this.recalculateTimeDomain(immediate);
+      this._updateSliderHighlight();
+      this._recalculateTimeDomain(immediate);
     }, 2),
 
     _resetSliders: function() {
@@ -576,7 +574,7 @@ define([
     },
 
     _updateAvgTickData: function(data, domain) {
-      dataByYear = {};
+      var dataByYear = {};
       _.each(data, function(t) {
         var year = new Date(t.date).getFullYear();
         if (!dataByYear[year]) dataByYear[year] = [];
@@ -585,12 +583,12 @@ define([
 
       _.each(dataByYear, function(val, key) {
         var sums = _.reduce(val, function(m, v) {
-          var next = {}
+          var next = {};
           next.avg = m.avg + domain.indexOf(v.grade);
           next.redpoint = m.redpoint
               + (_.isUndefined(v.tries) || v.tries >= 3);
           next.flash = m.flash +(v.tries > 1 && v.tries < 3);
-          next.onsite = m.onsite +(v.tries <= 1)
+          next.onsite = m.onsite +(v.tries <= 1);
           return next;
         }, {avg: 0, redpoint: 0, flash: 0, onsite: 0});
         var avg = Math.floor(sums.avg / val.length);
@@ -601,7 +599,7 @@ define([
       });
 
       var atd = d3.entries(dataByYear);
-      return _.initial(_.sortBy(atd, 'key'))
+      return _.initial(_.sortBy(atd, 'key'));
     },
 
     _updateBarGraphData: function(data, filter) {
@@ -623,7 +621,7 @@ define([
             return +(val.tries <= 1) + m;
           }, 0),
           total: v.length
-        }
+        };
       });
       bgd = d3.entries(bgd);
 
@@ -634,77 +632,77 @@ define([
     _updateBarGraph: function(data, xDomain, immediate) {
       var self = this;
       var filt = function(d) {
-        var d = new Date(d.date).valueOf();
-        return (d >= xDomain[0] && d <= xDomain[1]);
-      }
+        var d_ = new Date(d.date).valueOf();
+        return (d_ >= xDomain[0] && d_ <= xDomain[1]);
+      };
       var bgd = this._updateBarGraphData(data, filt);
 
-      var barGroup = this.ltSvg.select('.barGroup');
+      var barGroup = this.ltSvg.select('.grade-bars-group');
 
-      var barGraph = barGroup.selectAll('.bars')
-          .data(bgd, function(d) { return d.key; })
+      var barGraph = barGroup.selectAll('.grade-bars')
+          .data(bgd, function(d) { return d.key; });
 
       var barGroupEnter = barGraph
           .enter()
           .append('g')
-          .attr('class', 'bars');
+          .attr('class', 'grade-bars');
 
       barGroupEnter.append('rect')
-          .attr('class', 'bar-onsite onsite')
+          .attr('class', 'onsite-bar onsite')
           .attr('x', this.lwidth)
-          .attr('width', 0)
+          .attr('width', 0);
       barGroupEnter.append('rect')
-          .attr('class', 'bar-flash flash')
+          .attr('class', 'flash-bar flash')
           .attr('x', this.lwidth)
-          .attr('width', 0)
+          .attr('width', 0);
       barGroupEnter.append('rect')
-          .attr('class', 'bar-redpoint redpoint')
+          .attr('class', 'redpoint-bar redpoint')
           .attr('x', this.lwidth)
-          .attr('width', 0)
+          .attr('width', 0);
 
       barGraph
           .attr('transform', function(d) {
-            return 'translate(0,' + self.y(d.key) + ')'
+            return 'translate(0,' + self.y(d.key) + ')';
           })
           // Note: D3 children do not inherit their parents data without
           // an explicit select. This code below achieves this for each group.
-          .each(function(d) {
+          .each(function() {
             var d3this = d3.select(this);
-            d3this.select('.bar-onsite');
-            d3this.select('.bar-redpoint');
-            d3this.select('.bar-flash');
+            d3this.select('.onsite-bar');
+            d3this.select('.redpoint-bar');
+            d3this.select('.flash-bar');
           });
 
-      barGraph.selectAll('.bar-onsite')
+      barGraph.selectAll('.onsite-bar')
           .attr('height', this.y.rangeBand())
           .style('fill', this.colors.onsite)
           .transition()
           .duration(immediate ? 0 : this.fadeTime*2)
           .attr('x', function(d) {
-            return self.lwidth - self.x2(d.value.onsite)
+            return self.lwidth - self.x2(d.value.onsite);
           })
-          .attr('width', function(d) { return self.x2(d.value.onsite) })
+          .attr('width', function(d) { return self.x2(d.value.onsite); });
 
-      barGraph.selectAll('.bar-flash')
+      barGraph.selectAll('.flash-bar')
           .attr('height', this.y.rangeBand())
           .style('fill', this.colors.flash)
           .transition()
           .duration(immediate ? 0 : this.fadeTime*2)
           .attr('x', function(d) {
-              return self.lwidth - self.x2(d.value.onsite + d.value.flash)
+              return self.lwidth - self.x2(d.value.onsite + d.value.flash);
            })
-          .attr('width', function(d) { return self.x2(d.value.flash) })
+          .attr('width', function(d) { return self.x2(d.value.flash); });
 
-      barGraph.selectAll('.bar-redpoint')
+      barGraph.selectAll('.redpoint-bar')
           .attr('height', this.y.rangeBand())
           .style('fill', this.colors.redpoint)
           .transition()
           .duration(immediate ? 0 : this.fadeTime*2)
           .attr('x', function(d) {
               return self.lwidth - self.x2(d.value.redpoint
-                  + d.value.flash + d.value.onsite)
+                  + d.value.flash + d.value.onsite);
            })
-          .attr('width', function(d) { return self.x2(d.value.redpoint) })
+          .attr('width', function(d) { return self.x2(d.value.redpoint); });
 
       barGraph
           .exit()
@@ -712,26 +710,27 @@ define([
 
       barGraph
           .on('mouseenter', this.barTip.show)
-          .on('mouseleave', this.barTip.hide)
+          .on('mouseleave', this.barTip.hide);
 
-      barGroup.select('.barCount').remove();
-      var barCount = barGroup.append('g').attr('class', 'barCount')
+      barGroup.select('.bar-counter').remove();
+      var barCount = barGroup.append('g').attr('class', 'bar-counter');
 
-      var barY
+      var barY;
       var count = -1;
       var leftX = Number.MAX_VALUE;
-      d3.selectAll('.bars').each(function(d) {
+      d3.selectAll('.grade-bars').each(function(d) {
         var x = self.lwidth
-            - self.x2(d.value.redpoint + d.value.flash + d.value.onsite)
+            - self.x2(d.value.redpoint + d.value.flash + d.value.onsite);
         if (x < leftX) {
-          leftX = Number(x)
+          leftX = Number(x);
           count = d.value.total;
           // get y value in group transform
-          barY = Number(d3.select(this).attr('transform').split(',')[1].slice(0,-1));
+          barY = Number(d3.select(this)
+              .attr('transform').split(',')[1].slice(0,-1));
         }
       });
 
-      if (count != -1) {
+      if (count !== -1) {
         barCount
             .append('circle')
             .attr('cx', leftX)
@@ -740,7 +739,7 @@ define([
             .style('fill', '#333')
             .style('opacity', 0)
             .transition().delay(immediate ? 0: this.fadeTime*2)
-            .style('opacity', 1)
+            .style('opacity', 1);
 
         barCount
             .append('line')
@@ -754,22 +753,26 @@ define([
             .style('stroke-dasharray', ('4, 4'))
             .style('stroke-opacity', 0)
             .transition()
+            .ease('linear')
             .delay(immediate ? 0: this.fadeTime*2)
-            .duration(300)
+            .duration(immediate ? 0 : 300)
             .ease('linear')
             .style('stroke-opacity', 1)
-            .attr('y2', barY-60)
+            .attr('y2', barY + this.y.rangeBand()/2 - 52);
 
         barCount
             .append('text')
             .attr('x', leftX)
-            .attr('y', barY-60-7)
+            .attr('y', barY + this.y.rangeBand()/2 - 52 - 7)
             .style('text-anchor', 'middle')
             .style('opacity', 0)
             .style('fill', '#333')
-            .transition().delay(immediate ? 0: this.fadeTime*2 + 300).duration(250)
+            .transition()
+            .ease('linear')
+            .delay(immediate ? 0: (this.fadeTime*2 + 400))
+            .duration(immediate ? 0 : 250)
             .style('opacity', 1)
-            .text(count)
+            .text(count);
         }
     },
 
@@ -777,24 +780,25 @@ define([
     _updateXDomain: function(xDomain, immediate) {
       var self = this;
 
-      this.x.domain(xDomain)
-      this.mtSvg.selectAll('.x')
-          //.call(this.xAxis);
+      this.x.domain(xDomain);
 
-      var lineGroup = this.mtSvg.select('.lineGroup');
-      var avgTickLine = lineGroup.selectAll('.avgGradeLine');
-      var avgTickCircle = lineGroup.selectAll('.avgGradeCircle');
-      var scatterGraph = this.mtSvg.select('.scatterGroup').selectAll('.tickCircle');
+      var lineGroup = this.mtSvg.select('.avg-line-group');
+      var avgTickLine = lineGroup.selectAll('.avg-tick-line');
+      var avgTickCircle = lineGroup.selectAll('.avg-tick-circle');
+      var scatterGraph = this.mtSvg.select('.ticks-scatter-group')
+          .selectAll('.tickCircle');
 
       scatterGraph
           .transition().duration(immediate ? 0 : 200)
-          .attr('cx', function(d) { return self.x(new Date(d.date)); })
+          .attr('cx', function(d) { return self.x(new Date(d.date)); });
       avgTickCircle
           .transition().duration(immediate ? 0 : 200)
-          .attr('cx', function(d) { return self.x(new Date((+d.key + 1).toString())); })
+          .attr('cx', function(d) {
+              return self.x(new Date((+d.key + 1).toString()));
+          });
       avgTickLine
           .transition().duration(immediate ? 0 : 200)
-          .attr('d', this.line)
+          .attr('d', this.line);
 
     },
 
@@ -807,31 +811,38 @@ define([
       this.x.domain(xDomain);
 
       // Create some data for graphing
-      var bgd = this._updateBarGraphData(data)
-      var atd = this._updateAvgTickData(data, yDomain)
+      var bgd = this._updateBarGraphData(data);
+      var atd = this._updateAvgTickData(data, yDomain);
 
-      this.x2.domain([0, d3.max(bgd, function(d) { return d.value.total })]);
+      this.x2.domain([0, d3.max(bgd, function(d) { return d.value.total; })]);
 
       // Create y-axis
 
-      this.mtSvg.selectAll('.y')
-          .transition().duration(immediate ? 0 : this.fadeTime*2).ease('linear')
+      var axis = this.mtSvg.selectAll('.grades-y-axis')
+          .transition()
+          .duration(immediate ? 0 : this.fadeTime*2).ease('linear')
           .call(this.yAxis);
 
-      this.mtSvg.selectAll('.x')
-          .transition().duration(immediate ? 0 : this.fadeTime*2).ease('sin-in-out')
-          //.call(this.xAxis);
+      axis.selectAll('path')
+          .style('display', 'none');
 
-      // Update slider
+      axis.selectAll('line')
+          .style('fill', 'none')
+          .style('stroke', '#333')
+          .style('shape-rendering', 'crispEdges');
+
+      axis.selectAll('.tick')
+          .style('font-size', 11);
 
       // Slider ticks
-      var years = d3.time.year.range(new Date(xDomain[0]), new Date(xDomain[1] + 1));
+      var years = d3.time.year.range(
+          new Date(xDomain[0]), new Date(xDomain[1] + 1));
       if (this.mwidth !== 0) {
         this.slider.select('.sliderTicks').remove();
         var sliderTicks = this.slider.append('g').attr('class', 'sliderTicks');
         var sbh = Number(this.sliderBar.attr('height'));
         _.each(years, function (y, idx) {
-          if (idx != 0 && idx != years.length-1) {
+          if (idx !== 0 && idx !== years.length-1) {
             sliderTicks.append('line')
                 .attr('x1', self.x(y))
                 .attr('x2', self.x(y))
@@ -842,7 +853,7 @@ define([
                 .transition()
                 .delay(immediate ? 0 : self.fadeTime)
                 .duration(immediate ? 0 : self.fadeTime)
-                .style('stroke-opacity', 1)
+                .style('stroke-opacity', 1);
           }
           sliderTicks.append('text')
               .text(new Date(y).format('yyyy'))
@@ -855,62 +866,65 @@ define([
               .transition()
               .delay(immediate ? 0 : self.fadeTime)
               .duration(immediate ? 0 : self.fadeTime)
-              .style('opacity', 1)
+              .style('opacity', 1);
         });
       }
 
 
       // Build bar graph
-      this._updateBarGraph(data, xDomain, immediate)
+      this._updateBarGraph(data, xDomain, immediate);
 
       // Data joins
 
-      var scatterGraph = this.mtSvg.select('.scatterGroup').selectAll('.tickCircle')
+      var scatterGraph = this.mtSvg.select('.ticks-scatter-group')
+          .selectAll('.tickCircle')
           .data(data, function(d) { return d.id; });
 
-      var lineGroup = this.mtSvg.select('.lineGroup')
+      var lineGroup = this.mtSvg.select('.avg-line-group')
           .style('opacity', '.8');
 
       // Showing one point on a line graph is sort of pointless
       if (atd.length <= 1) atd = [];
 
       var avgTickLine = lineGroup
-          .selectAll('.avgGradeLine')
+          .selectAll('.avg-tick-line')
           .data([atd]); // note single array makes only one line element
 
       var avgTickCircle = lineGroup
-          .selectAll('.avgGradeCircle')
+          .selectAll('.avg-tick-circle')
           .data(atd);
 
       // Enter
 
       scatterGraph.enter()
-          .append('circle')
+          .append('circle');
 
       avgTickLine.enter()
           .append('path')
-          .attr('class', 'avgGradeLine average fadeable')
+          .attr('class', 'avg-tick-line average fadeable');
 
       avgTickCircle.enter()
           .append('circle')
-          .attr('class', 'avgGradeCircle average fadeable')
+          .attr('class', 'avg-tick-circle average fadeable');
 
       // Update + Enter
 
-
-
       scatterGraph
           .attr('cx', function(d) { return self.x(new Date(d.date)); })
-          .attr('cy', function(d) { return self.y(d.grade) + self.y.rangeBand()/2; })
+          .attr('cy', function(d) {
+              return self.y(d.grade) + self.y.rangeBand()/2;
+          })
           .attr('r', 8)
-          .attr('class', function(d) { return 'tickCircle fadeable ' + self._getStyle(d)} )
+          .attr('class', function(d) {
+              return 'tickCircle fadeable ' + self._getStyle(d);
+          })
           .attr('fill', function(d) { return self.colors[self._getStyle(d)]; })
           .style('cursor', 'pointer')
           .style('opacity', 0)
           .transition()
           .delay(immediate ? 0 : this.fadeTime)
           .duration(immediate ? 0 : this.fadeTime)
-          .style('opacity', self.scatterOpacity)
+          .style('opacity', self.scatterOpacity);
 
       avgTickLine.attr('d', this.line)
           .style('fill', 'none')
@@ -923,8 +937,12 @@ define([
           .style('stroke-opacity', 1);
 
       avgTickCircle
-          .attr('cx', function(d) { return self.x(new Date((+d.key + 1).toString())); })
-          .attr('cy', function(d) { return self.y(d.value.avg) + self.y.rangeBand()/2; })
+          .attr('cx', function(d) {
+            return self.x(new Date((+d.key + 1).toString()));
+          })
+          .attr('cy', function(d) {
+            return self.y(d.value.avg) + self.y.rangeBand()/2;
+           })
           .attr('r', 6)
           .style('fill', this.colors.average)
           .style('opacity', 0)
@@ -932,18 +950,8 @@ define([
           .delay(immediate ? 0 : this.fadeTime)
           .duration(immediate ? 0 : this.fadeTime)
           .style('opacity', 1);
-/*
-        setInterval(_.bind(function() {
-          this.mtSvg.select('.scatterGroup').selectAll('.tickCircle')
-              .transition().duration(1500).ease('linear')
-              .attr('cx', function(d) { return self.x(new Date(d.date)) + (Math.random() - .5) * 5; })
-              .attr('cy', function(d) { return self.y(d.grade) + (Math.random() - .5) * 5; })
-        }, this), 1500)
-*/
 
       // Exit
-
-
 
       scatterGraph
           .exit()
@@ -965,7 +973,6 @@ define([
           .duration(this.fadeTime)
           .style('stroke-opacity', 0)
           .remove();
-
 
       // Events
 
@@ -979,44 +986,49 @@ define([
           .on('mouseleave', function(d) {
             d3.select(this)
                 .attr('r', 8)
-                .style('opacity', .4);
+                .style('opacity', 0.4);
             self.scatterTip.hide(d);
           })
           .on('click', function(d) {
             var path = '/efforts/' + d.key;
+            self.scatterTip.hide(d);
             self.app.router.navigate(path, {trigger: true});
           });
 
       avgTickCircle
           .on('mouseenter', function(d) {
-            d3.select(this).attr('r', 9)
+            d3.select(this).attr('r', 9);
             self.avgTickCircleTip.show(d);
           })
           .on('mouseleave', function(d) {
-            d3.select(this).attr('r', 6)
+            d3.select(this).attr('r', 6);
             self.avgTickCircleTip.hide(d);
-          })
+          });
 
 
     },
 
     // Convert incoming tick data to D3 suitable data
+
     _transposeData: function(ticks, type) {
 
       var gradeConverter = this.app.gradeConverter[type];
-      var system = type === 'r' ? this.prefs.grades.route : this.prefs.grades.boulder;
+      var system =
+          type === 'r' ? this.prefs.grades.route : this.prefs.grades.boulder;
 
-      var ticksFiltered = _.filter(ticks, function(t) { return t && t.grade; });
+      var ticksFiltered = _.filter(ticks, function(t) {
+        return t && t.grade;
+      });
 
       // Get range of grades
-      var gradeExtent = d3.extent(ticksFiltered, function(t) { return t.grade; });
-
-      // Get grade of each array entry
-      var ticksMapped = _.map(ticksFiltered, function(t, idx) {
-        t =  _.clone(t);
-        t.grade = gradeConverter.indexes(t.grade, null, system);
-        return t;
+      var gradeExtent = d3.extent(ticksFiltered, function(t) {
+        return t.grade;
       });
+
+      if (!gradeExtent[0]) {
+        gradeExtent[0] = 8;
+        gradeExtent[1] = 12;
+      }
 
       // We show lower grades than the climber has completed to give
       // a sense of accomplishment. However, don't go too low or the xaxis
@@ -1027,10 +1039,19 @@ define([
       lowerGrade = gradeConverter.offset(lowerGrade, -3, system);
       higherGrade = gradeConverter.offset(higherGrade, 1, system);
 
-      gradeDomain = gradeConverter.range(lowerGrade, higherGrade, system);
+      var gradeDomain = gradeConverter.range(lowerGrade, higherGrade, system);
+
+      // Get grade of each array entry
+      var ticksMapped = _.map(ticksFiltered, function(t) {
+        t =  _.clone(t);
+        if (t.grade) {
+          t.grade = gradeConverter.indexes(t.grade, null, system);
+        }
+        return t;
+      });
 
       // Group ticks by year
-      dataByYear = [];
+      var dataByYear = [];
       _.each(ticksFiltered, function(t) {
         var year = new Date(t.date).getFullYear();
         if (!dataByYear[year]) dataByYear[year] = [];
@@ -1038,6 +1059,12 @@ define([
       });
 
       var timeDomain = d3.extent(ticksMapped, function(d) { return d.date; });
+
+      if (!timeDomain[0]) {
+        timeDomain[0] = new Date('1/1/2015');
+        timeDomain[1] = new Date();
+      }
+
       timeDomain[0] = d3.time.year.floor(new Date(timeDomain[0])).valueOf();
       timeDomain[1] = d3.time.year.ceil(new Date(timeDomain[1])).valueOf();
 
@@ -1054,11 +1081,22 @@ define([
       else { return 'redpoint'; }
     },
 
-    setTitle: function(t) {
-      var time = 100;
-      this.title.transition().duration(time).style('opacity', 0)
+    setTitle: function(t, immediate) {
+      // load state
+      if (!t) {
+        t = this.store.title || '';
+      } else {
+        this.store.title = t;
+      }
+
+      if (this.mwidth === 0) {
+        this.title.text('');
+        return;
+      }
+      var time = immediate ? 0 : 100;
+      this.title.transition().duration(time).style('opacity', 0);
       this.title.transition().delay(time).text(t);
-      this.title.transition().duration(time).delay(time).style('opacity', 1)
+      this.title.transition().duration(time).delay(time).style('opacity', 1);
     },
 
     empty: function () {
