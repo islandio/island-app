@@ -210,9 +210,18 @@
 
   };
 
+  // Get the indexes of already converted grades
+  GradeConverter.prototype.indexOf = function(grades, system) {
+    grades = _.isArray(grades) ? grades : [grades]
+    system = system || this.fromSystem;
+    var gmap = _.pluck(this.gradeMap, system);
+    var idxs = _.map(grades, function(g) { return gmap.indexOf(g); });
+    return _.isArray(grades) ? idxs: idxs[0];
+  }
+
   // Return grades offset by some amount
   GradeConverter.prototype.offset = function(grade, offset, system) {
-    system = system || this.toSystem;
+    system = system || this.fromSystem;
     var gmap = _.unique(_.pluck(this.gradeMap, system))
     for (var idx = 0; idx < gmap.length; idx++) {
       if (gmap[idx] === grade)
@@ -226,7 +235,7 @@
   GradeConverter.prototype.range = function(gradel, gradeh, system) {
     var range = [];
     var include = false;
-    system = system || this.toSystem;
+    system = system || this.fromSystem;
 
     for (var idx = 0; idx < this.gradeMap.length; idx++) {
       if (this.gradeMap[idx][system] === gradel) {
@@ -238,6 +247,30 @@
       }
     }
     return _.unique(range);
+  }
+
+  // O(n * m)
+  GradeConverter.prototype.min = function(grades, system) {
+    system = system || this.fromSystem;
+    var gmap = _.pluck(this.gradeMap, system);
+    var idx = gmap.length-1;
+    _.each(grades, function(g) {
+      var i = gmap.indexOf(g);
+      if (i < idx) idx = i; 
+    })
+    return gmap[idx];
+  }
+
+  // O(n * m)
+  GradeConverter.prototype.max = function(grades, system) {
+    system = system || this.fromSystem;
+    var gmap = _.pluck(this.gradeMap, system);
+    var idx = 0;
+    _.each(grades, function(g) {
+      var i = gmap.indexOf(g);
+      if (i > idx) idx = i; 
+    })
+    return gmap[idx];
   }
 
   /* Set origin grading system */
