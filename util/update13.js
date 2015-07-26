@@ -26,7 +26,7 @@ boots.start(function (client) {
 
   Step(
     function () {
-      client.db.Members._update({}, {$set: {prefs:
+      client.db.Members._update({prefs: {$exists: false}}, {$set: {prefs:
       {
         grades: {
           boulder: 'font',
