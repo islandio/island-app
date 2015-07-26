@@ -498,7 +498,7 @@ define([
       this.render('/service/store', _.bind(function (err) {
         if (err) return;
         this.page = new Store(this.app).render();
-        this.renderTabs({title: 'The Island Store', log: true});
+        this.renderTabs({html: this.page.title});
         this.stop();
       }, this));
     },
@@ -558,10 +558,11 @@ define([
       this.start();
       this.renderTabs();
       this.clearContainer();
+      var path, name = '';
       if (this.app.state && this.app.state.import) {
         var target = this.app.state.import.target;
-        var path = this.app.state.import.userId + '-' + target
-        var name = this.app.state.import.name;
+        path = this.app.state.import.userId + '-' + target;
+        name = this.app.state.import.name;
       }
       delete this.app.state.import;
       this.render('/service/import/' + path, _.bind(function (err) {

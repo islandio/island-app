@@ -18,6 +18,9 @@
   "CARTODB_API_KEY": "883965c96f62fd219721f59f2e7c20f08db0123b",
   "CARTODB_CRAGS_TABLE": "crags_dev",
 
+  "STRIPE_SECRET_KEY": "sk_test_jDlsyyvD8y77XMC7wC1w6cNB",
+  "STRIPE_PUBLISHABLE_KEY": "pk_test_hUrz7pk2qdjqgIU1BDuHraVv",
+
   "SENDOWL_HOST": "www.sendowl.com",
   "SENDOWL_KEY": "463c1877e8b8dbc",
   "SENDOWL_SECRET": "424f38d72e99c6f54d89",

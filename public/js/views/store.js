@@ -10,9 +10,10 @@ define([
   'rest',
   'util',
   'text!../../templates/store.html',
+  'text!../../templates/store.title.html',
   'views/lists/events',
   'views/lists/ticks'
-], function ($, _, Backbone, mps, rest, util, template, Events, Ticks) {
+], function ($, _, Backbone, mps, rest, util, template, title, Events, Ticks) {
 
   return Backbone.View.extend({
 
@@ -29,6 +30,7 @@ define([
 
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
+      this.title = _.template(title).call(this);
 
       this.trigger('rendered');
 
@@ -36,7 +38,10 @@ define([
     },
 
     events: {
-      'click .navigate': 'navigate',
+      'click .picker-up': 'addItem',
+      'click .picker-down': 'removeItem',
+      'click .add-to-cart': 'addToCart',
+      'click .navigate': 'navigate'
     },
 
     setup: function () {
@@ -47,20 +52,30 @@ define([
       this.routes = new Ticks(this.app, {parentView: this, type: 'tick',
           subtype: 'r', heading: 'Routes'});
 
-      _.each(this.app.profile.content.products.items, function (p) {
-        var handler = StripeCheckout.configure({
-          key: 'pk_test_6pRNASCoBOKtIshFeQd4XMUh',
-          name: p.name,
-          description: p.description,
-          amount: p.price,
-          image: p.image,
-          token: function(token) {
-            console.log(token)
-          }
-        });
+      var handler = StripeCheckout.configure({
+        key: this.app.stripe.key,
+        billingAddress: true,
+        shippingAddress: true
+      });
 
-        $('#' + p.sku).on('click', function (e) {
-          handler.open();
+      _.each(this.app.profile.content.products.items, function (product) {
+        $('#' + product.sku).on('click', function (e) {
+          handler.open({
+            name: 'We Are Island, Inc.',
+            description: product.name + ' - ' + product.description,
+            amount: product.price,
+            image: product.image,
+            token: function (token, args) {
+              var payload = {
+                token: token,
+                product: product,
+                address: args
+              };
+              rest.post('/api/store/orders', payload, function (err) {
+                console.log('done');
+              });
+            }
+          });
           e.preventDefault();
         });
       });
@@ -92,6 +107,18 @@ define([
         this.app.router.navigate(path, {trigger: true});
       }
     },
+
+    addItem: function (e) {
+
+    },
+
+    removeItem: function (e) {
+
+    },
+
+    addToCart: function (e) {
+      
+    }
 
   });
 });

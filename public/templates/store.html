@@ -4,13 +4,33 @@
     <div class="sidebar-products">
       <% _.each(this.app.profile.content.products.items, _.bind(function (p) { %>
         <div class="sidebar-product">
-          <h1>
-            <%= p.name %> <a class="button buy-button" href="javascript:;"
-                id="<%= p.sku %>">
-              $<%= (p.price/100).toFixed(2) %>
-            </a>
-          </h1>
-          <p><%= p.description %></p>
+          <div class="sidebar-product-details">
+            <h1><%= p.title %></h1>
+            <div class="sidebar-product-images">
+              <img src="http://bestinspired.com/wp-content/uploads/2015/03/339432-dogs-music-dog.jpg" />
+              <img src="http://bestinspired.com/wp-content/uploads/2015/03/339432-dogs-music-dog.jpg" />
+              <img src="http://bestinspired.com/wp-content/uploads/2015/03/339432-dogs-music-dog.jpg" />
+            </div>
+          </div>
+          <div class="clear"></div>
+          <div class="sidebar-product-picker">
+            <div class="sidebar-product-picker-left">
+              <a href="javascript:;" class="button buy-button picker-up"
+                  data-sku="<%= p.sku %>">
+                <i class="icon-up-dir"></i>
+              </a>
+              <a href="javascript:;" class="button buy-button picker-down"
+                  data-sku="<%= p.sku %>">
+                <i class="icon-down-dir"></i>
+              </a>
+            </div>
+            <div class="sidebar-product-picker-right">
+              <a href="javascript:;" class="button buy-button add-to-cart" id="<%= p.sku %>">
+                <i class="icon-cart-plus"></i> Add <span class="picker-value">1</span> ($<%= (p.price/100).toFixed(2) %>)
+              </a>
+            </div>
+          </div>
+          <div class="clear"></div>
         </div>
       <% }, this)); %>
     </div>

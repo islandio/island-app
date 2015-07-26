@@ -1,6 +1,7 @@
 {
   "M1-Island-Brush": {
     "name": "M1 Island Brush",
+    "title": "The Island M1 Classic Brush",
     "price": 750,
     "image": "https://s3.amazonaws.com/island.io/store/img/brushes.jpg"
   },
@@ -9,6 +10,7 @@
   },
   "M3-Island-Brush": {
     "name": "M3 Island Brush",
+    "title": "The Island M3 Scrub Brush",
     "price": 1250,
     "image": "https://s3.amazonaws.com/island.io/store/img/brushes.jpg"
   },

@@ -47,7 +47,13 @@ define([
           'b6e0d7d608a14a578cf94763f70f1b49'
     };
     this.facebook = {
-      clientId: window.__s ? 203397619757208:153015724883386
+      clientId: window.__s ? 203397619757208: 153015724883386
+    };
+    this.stripe = {
+      // "publishable" keys - can only create tokens (not charges)
+      key: window.__s ? 'pk_live_p1Ojag00gWkn0MzgnF52RWFw':
+          'pk_test_hUrz7pk2qdjqgIU1BDuHraVv'
+          
     };
 
     if (window.__s === '') {

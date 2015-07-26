@@ -82,6 +82,7 @@ if (cluster.isMaster) {
   var Emailer = require('island-emailer').Emailer;
   var resources = require('./lib/resources.js').resources;
   var Client = require('./lib/client').Client;
+  var Stripe = require('stripe');
   var SendOwl = require('sendowl-node').SendOwl;
   var Shipwire = require('shipwire-node').Shipwire;
   var Poet = require('poet');
@@ -331,6 +332,8 @@ if (cluster.isMaster) {
             }
 
             app.set('sharing', require('./lib/sharing'));
+
+            app.set('stripe', Stripe(app.get('STRIPE_SECRET_KEY')));
 
             app.set('sendowl', new SendOwl({
               host: app.get('SENDOWL_HOST'),
