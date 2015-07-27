@@ -21,7 +21,8 @@ define([
       avatar: 'https://s3.amazonaws.com/island.io/avatar_48.png',
       avatar_big: 'https://s3.amazonaws.com/island.io/avatar_325.png',
       banner: 'https://s3.amazonaws.com/island.io/banner_680.png',
-      banner_big: 'https://s3.amazonaws.com/island.io/banner_1024.png'
+      banner_big: 'https://s3.amazonaws.com/island.io/banner_1024.png',
+      store_avatar: 'https://s3.amazonaws.com/island.io/profile_s.png'
     };
 
     this.prefs = {

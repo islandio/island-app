@@ -7,28 +7,20 @@
           <div class="sidebar-product-details">
             <h1><%= p.title %></h1>
             <div class="sidebar-product-images">
-              <img src="http://bestinspired.com/wp-content/uploads/2015/03/339432-dogs-music-dog.jpg" />
-              <img src="http://bestinspired.com/wp-content/uploads/2015/03/339432-dogs-music-dog.jpg" />
-              <img src="http://bestinspired.com/wp-content/uploads/2015/03/339432-dogs-music-dog.jpg" />
+              <% _.each(p.images, function (i) { %>
+                <img src="<%= i %>" />
+              <% }); %>
             </div>
           </div>
           <div class="clear"></div>
-          <div class="sidebar-product-picker">
-            <div class="sidebar-product-picker-left">
-              <a href="javascript:;" class="button buy-button picker-up"
-                  data-sku="<%= p.sku %>">
-                <i class="icon-up-dir"></i>
-              </a>
-              <a href="javascript:;" class="button buy-button picker-down"
-                  data-sku="<%= p.sku %>">
-                <i class="icon-down-dir"></i>
-              </a>
-            </div>
-            <div class="sidebar-product-picker-right">
-              <a href="javascript:;" class="button buy-button add-to-cart" id="<%= p.sku %>">
-                <i class="icon-cart-plus"></i> Add <span class="picker-value">1</span> ($<%= (p.price/100).toFixed(2) %>)
-              </a>
-            </div>
+          <div class="sidebar-product-picker" data-sku="<%= p.sku %>" data-count="1"
+              data-price="<%= p.price %>">
+            <a href="javascript:;" class="button buy-button buy-button-left add-to-cart">
+              <i class="icon-cart-plus"></i> Add to Cart
+            </a>
+            <a href="javascript:;" class="button buy-button buy-button-right buy-now">
+              <i class="icon-cart-arrow-down"></i> $<%= (p.price/100).toFixed(2) %>
+            </a>
           </div>
           <div class="clear"></div>
         </div>

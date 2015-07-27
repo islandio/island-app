@@ -3,7 +3,11 @@
     "name": "M1 Island Brush",
     "title": "The Island M1 Classic Brush",
     "price": 750,
-    "image": "https://s3.amazonaws.com/island.io/store/img/brushes.jpg"
+    "images": [
+      "https://s3.amazonaws.com/island.io/store/img/m1-1.jpg",
+      "https://s3.amazonaws.com/island.io/store/img/m1-2.jpg",
+      "https://s3.amazonaws.com/island.io/store/img/m1-3.jpg"
+    ]
   },
   "M1-Island-Case": {
     "price": 75000
@@ -12,7 +16,11 @@
     "name": "M3 Island Brush",
     "title": "The Island M3 Scrub Brush",
     "price": 1250,
-    "image": "https://s3.amazonaws.com/island.io/store/img/brushes.jpg"
+    "images": [
+      "https://s3.amazonaws.com/island.io/store/img/m3-1.jpg",
+      "https://s3.amazonaws.com/island.io/store/img/m3-2.jpg",
+      "https://s3.amazonaws.com/island.io/store/img/m3-3.jpg"
+    ]
   },
   "M3-Island-Case": {
     "price": 31250
