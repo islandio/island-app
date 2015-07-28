@@ -82,6 +82,7 @@ define([
       options = options || { immediate: false };
       this.d = this._transposeData(data, type);
       this._resetSliders();
+      this._resetLegend();
       this._updateGraph(this.d.ticks, this.d.gradeDomain, this.d.timeDomain,
           options.immediate);
     },
@@ -90,6 +91,7 @@ define([
       if (this.$el.length === 0) return;
       if (this.previousWidth !== $(window).width()) {
         this.renderGraph();
+        this._resetLegend();
         this._updateGraph(this.d.ticks, this.d.gradeDomain, this.d.timeDomain,
             { immediate: true} );
         this.setTitle(null, true);
@@ -336,10 +338,11 @@ define([
             legendEntries.selectAll('circle')
                   .style('stroke-width', '')
                   .style('stroke', '');
-            legendEntries.selectAll('text').style('font-weight', '');
 
             var active = _this.classed('chart-active');
-            legendEntries.classed('chart-active', false);
+            legendEntries.each(function() {
+              d3.select(this).select('circle').classed('chart-active', false);
+            });
             self.legendActive = null;
 
             if (active) {
@@ -569,6 +572,21 @@ define([
         return false;
       }
     },
+
+    _resetLegend: function() {
+      this.legendActive = null;
+      d3.selectAll('.fadeable')
+          .style('cursor', 'pointer')
+          .transition().duration(500)
+          .style('opacity', 1);
+      d3.selectAll('.tickCircle')
+          .transition().duration(500)
+          .style('opacity', self.scatterOpacity);
+      this.rtSvg.selectAll('.legend-entry').selectAll('circle')
+            .style('stroke-width', '')
+            .style('stroke', '');
+    },
+
 
     // Use slider values to recalculate time domain
     _recalculateTimeDomain: function(immediate) {
