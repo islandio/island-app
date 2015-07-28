@@ -336,8 +336,10 @@ define([
             if (d.key === 'average') return;
             var _this = d3.select(this);
             legendEntries.selectAll('circle')
-                  .style('stroke-width', '')
-                  .style('stroke', '');
+                .style('stroke-width', '')
+                .style('stroke', '');
+            legendEntries.selectAll('text')
+                .style('font-weight', '');
 
             var active = _this.classed('chart-active');
             legendEntries.each(function() {
@@ -351,6 +353,8 @@ define([
             } else {
               _this.classed('chart-active', true);
               _this.style('stroke-width', '1px').style('stroke', '#333');
+              d3.select(this.parentNode).select('text')
+                  .style('font-weight', 'bold');
               self.legendActive = d.key;
               mps.publish('chart/state-change', [{tries: d.key}]);
             }
@@ -581,10 +585,12 @@ define([
           .style('opacity', 1);
       d3.selectAll('.tickCircle')
           .transition().duration(500)
-          .style('opacity', self.scatterOpacity);
+          .style('opacity', this.scatterOpacity);
       this.rtSvg.selectAll('.legend-entry').selectAll('circle')
-            .style('stroke-width', '')
-            .style('stroke', '');
+          .style('stroke-width', '')
+          .style('stroke', '');
+      this.rtSvg.selectAll('.legend-entry').selectAll('text')
+          .style('font-weight', '');
     },
 
 
