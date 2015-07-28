@@ -60,6 +60,9 @@ define([
     },
 
     setup: function () {
+
+      this.previousWidth = $(window).width();
+
       return this;
     },
 
@@ -83,10 +86,12 @@ define([
     },
 
     resize: function() {
-      this.renderGraph();
-      this._updateGraph(this.d.ticks, this.d.gradeDomain, this.d.timeDomain,
-          { immediate: true} );
-      this.setTitle(null, true);
+      if (this.previousWidth !== $(window).width()) {
+        this.renderGraph();
+        this._updateGraph(this.d.ticks, this.d.gradeDomain, this.d.timeDomain,
+            { immediate: true} );
+        this.setTitle(null, true);
+      }
     },
 
     // Create the static graph elements

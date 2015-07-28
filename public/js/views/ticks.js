@@ -97,10 +97,8 @@ define([
       this.scatterChart.update(this.model.get('ticks')[this.currentType],
           this.currentType, {immediate: true});
 
-/*
       $(window).resize(_.debounce(_.bind(
           this.scatterChart.resize, this.scatterChart), 20));
-          */
 
       return this;
     },

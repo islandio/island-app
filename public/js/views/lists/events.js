@@ -275,13 +275,14 @@ define([
       this.$('.event-day-header').remove();
       _.each(this.views, function(v) {
         v.destroy();
-      })
+      });
+      this.$('.event-divider').remove();
       this.more();
     },
 
 
     // attempt to get more models (older) from server
-    more: function (newQuery) {
+    more: function () {
 
       // render models and handle edge cases
       function updateUI(list) {
