@@ -321,14 +321,14 @@ define([
           })
           .attr('transform', function(d, idx) {
             return 'translate(' + 0 + ',' + (idx*30) + ')';
-          })
+          });
 
       legendEntries.append('circle')
           .attr('r', 8)
           .style('fill', function(d) { return d.value; })
           .style('opacity', 1)
           .style('cursor', function(d) {
-            return (d.key !== 'average') ? 'pointer' : 'default'
+            return (d.key !== 'average') ? 'pointer' : 'default';
           })
           .on('click', function(d) {
             if (d.key === 'average') return;
@@ -340,41 +340,46 @@ define([
 
             var active = _this.classed('chart-active');
             legendEntries.classed('chart-active', false);
+            self.legendActive = null;
 
             if (active) {
               _this.classed('chart-active', false);
               mps.publish('chart/state-change');
             } else {
               _this.classed('chart-active', true);
-              mps.publish('chart/state-change', [{tries: d.key}]);
               _this.style('stroke-width', '1px').style('stroke', '#333');
-              d3.select(_this.parentNode).select('text')
-                  .style('font-weight', 'bold');
+              self.legendActive = d.key;
+              mps.publish('chart/state-change', [{tries: d.key}]);
             }
           })
           .on('mouseenter', function(d) {
-            d3.select(this)
-                .transition().duration(500)
-                .style('fill', function(d) {
-                  return d3.hsl(d.value).darker();
-                });
             d3.selectAll('.fadeable:not(.' + d.key +')')
-                .transition().delay(200).duration(500)
-                .style('opacity', 0.025);
+                .style('cursor', 'default')
+                .transition().duration(500)
+                .style('opacity', 0.1);
             d3.selectAll('.tickCircle.' + d.key)
-                .transition().delay(200).duration(500)
+                .transition().duration(500)
                 .style('opacity', 0.7);
           })
           .on('mouseleave', function() {
-            d3.select(this)
-                .transition().duration(500)
-                .style('fill', function(d) { return d.value; });
             d3.selectAll('.fadeable')
-                .transition().duration(300)
+                .style('cursor', 'pointer')
+                .transition().duration(500)
                 .style('opacity', 1);
             d3.selectAll('.tickCircle')
-                .transition().duration(300)
+                .transition().duration(500)
                 .style('opacity', self.scatterOpacity);
+
+            // go back to previous state
+            if (self.legendActive) {
+              d3.selectAll('.fadeable:not(.' + self.legendActive +')')
+                  .style('cursor', 'default')
+                  .transition().duration(500)
+                  .style('opacity', 0.1);
+              d3.selectAll('.tickCircle.' + self.legendActive)
+                  .transition().duration(500)
+                  .style('opacity', 0.7);
+            }
           });
 
       legendEntries.append('text')
@@ -1026,31 +1031,42 @@ define([
 
       scatterGraph
           .on('mouseenter', function(d) {
-            d3.select(this)
-                .attr('r', 12)
-                .style('opacity', 1);
-            self.scatterTip.show(d);
+            var _this = d3.select(this);
+            if (!self.legendActive || _this.classed(self.legendActive)) {
+              _this.attr('r', 12).style('opacity', 1);
+              self.scatterTip.show(d);
+            }
           })
           .on('mouseleave', function(d) {
-            d3.select(this)
-                .attr('r', 8)
-                .style('opacity', 0.4);
-            self.scatterTip.hide(d);
+            var _this = d3.select(this);
+            if (!self.legendActive || _this.classed(self.legendActive)) {
+              _this.attr('r', 8).style('opacity', 0.4);
+              self.scatterTip.hide(d);
+            }
           })
           .on('click', function(d) {
-            var path = '/efforts/' + d.key;
-            self.scatterTip.hide(d);
-            self.app.router.navigate(path, {trigger: true});
+            var _this = d3.select(this);
+            if (!self.legendActive || _this.classed(self.legendActive)) {
+              var path = '/efforts/' + d.key;
+              self.scatterTip.hide(d);
+              self.app.router.navigate(path, {trigger: true});
+            }
           });
 
       avgTickCircle
           .on('mouseenter', function(d) {
-            d3.select(this).attr('r', 9);
-            self.avgTickCircleTip.show(d);
+            var _this = d3.select(this);
+            if (!self.legendActive || _this.classed(self.legendActive)) {
+              _this.attr('r', 9);
+              self.avgTickCircleTip.show(d);
+            }
           })
           .on('mouseleave', function(d) {
-            d3.select(this).attr('r', 6);
-            self.avgTickCircleTip.hide(d);
+            var _this = d3.select(this);
+            if (!self.legendActive || _this.classed(self.legendActive)) {
+              _this.attr('r', 6);
+              self.avgTickCircleTip.hide(d);
+            }
           });
 
 
