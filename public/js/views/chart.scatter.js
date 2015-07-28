@@ -78,6 +78,7 @@ define([
 
     // call with tick data and type ('r' or 'b') for routes or boulders
     update: function(data, type, options) {
+      if (this.$el.length === 0) return;
       options = options || { immediate: false };
       this.d = this._transposeData(data, type);
       this._resetSliders();
@@ -86,6 +87,7 @@ define([
     },
 
     resize: function() {
+      if (this.$el.length === 0) return;
       if (this.previousWidth !== $(window).width()) {
         this.renderGraph();
         this._updateGraph(this.d.ticks, this.d.gradeDomain, this.d.timeDomain,
@@ -98,6 +100,8 @@ define([
     renderGraph: function() {
 
       var self = this;
+
+      if (this.$el.length === 0) return;
 
       // Static graph setup
       this.margin = {top: 80, right: 20, bottom: 20, left: 20};
@@ -1094,6 +1098,9 @@ define([
     },
 
     setTitle: function(t, immediate) {
+
+      if (this.$el.length === 0) return;
+
       // load state
       if (!t) {
         t = this.store.title || '';

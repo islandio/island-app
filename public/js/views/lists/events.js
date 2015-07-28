@@ -44,7 +44,9 @@ define([
 
       // Reset the collection.
       this.latestList = this.app.profile.content.events;
-      this.collection.reset(this.latestList.items);
+      if (this.latestList) {
+        this.collection.reset(this.latestList.items);
+      }
     },
 
     // receive event from event bus
@@ -263,7 +265,9 @@ define([
     },
 
     getQuery: function() {
-      return this.latestList.query;
+      if (this.latestList) {
+        return this.latestList.query;
+      }
     },
 
     changeQuery: function(query) {
