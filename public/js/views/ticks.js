@@ -104,13 +104,21 @@ define([
     },
 
     updateEventFeed: function(obj) {
-      var query = this.baseQuery;
-      if (obj.timeDomain) {
-        query.action.query.startdate = new Date(obj.timeDomain[0]);
-        query.action.query.enddate = new Date(obj.timeDomain[1]);
+      var query = this.baseQuery.action.query;
+      if (obj && obj.timeDomain) {
+        query.startdate = new Date(obj.timeDomain[0]);
+        query.enddate = new Date(obj.timeDomain[1]);
       }
-      query.action.query.type = this.currentType;
-      this.feed.changeQuery(query);
+      if (obj && obj.tries) {
+        if (obj.tries === 'onsite') query.tries = 1;
+        else if (obj.tries === 'flash') query.tries = 2;
+        else if (obj.tries === 'redpoint') query.tries = {'$gte': 3};
+        else delete query.tries;
+      } else  {
+        delete query.tries;
+      }
+      query.type = this.currentType;
+      this.feed.changeQuery(this.baseQuery);
     },
 
     svgButton: function(d) {

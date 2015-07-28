@@ -317,10 +317,13 @@ define([
           .enter()
           .append('g')
           .attr('class', function(d) {
-            return 'legend-entry fadeable ' + d.key;
+            return 'legend-entry ' + d.key;
           })
           .attr('transform', function(d, idx) {
             return 'translate(' + 0 + ',' + (idx*30) + ')';
+          })
+          .style('cursor', function(d) {
+            return (d.key !== 'average') ? 'pointer' : 'default'
           });
 
       legendEntries.append('circle')
@@ -329,12 +332,34 @@ define([
           .style('opacity', 1);
 
       legendEntries
+          .on('click', function(d) {
+            if (d.key === 'average') return;
+            var _this = d3.select(this);
+
+            legendEntries.selectAll('text')
+                  .style('font-weight', '');
+            legendEntries.selectAll('circle')
+                  .style('stroke-width', '')
+                  .style('stroke', '');
+
+            if (_this.classed('chart-active')) {
+              _this.classed('chart-active', false);
+              mps.publish('chart/state-change');
+            } else {
+              _this.classed('chart-active', true);
+              mps.publish('chart/state-change', [{tries: d.key}]);
+              _this.select('text').style('font-weight', 'bold');
+              _this.select('circle')
+                  .style('stroke-width', '1px')
+                  .style('stroke', '#333');
+            }
+          })
           .on('mouseenter', function(d) {
             d3.selectAll('.fadeable:not(.' + d.key +')')
-                .transition().duration(300)
+                .transition().delay(500).duration(500)
                 .style('opacity', 0.025);
             d3.selectAll('.tickCircle.' + d.key)
-                .transition().duration(300)
+                .transition().delay(500).duration(500)
                 .style('opacity', 0.7);
           })
           .on('mouseleave', function() {
@@ -351,7 +376,7 @@ define([
           .attr('font-size', 12)
           .attr('x', 15)
           .attr('y', 4)
-          .style('cursor', 'default');
+
 
       // Create some radio buttons. All these do is raise an event on click
       // These could be HTML but fit nicely in the layout of the SVG
