@@ -262,8 +262,26 @@ define([
       }
     },
 
+    getQuery: function() {
+      return this.latestList.query;
+    },
+
+    changeQuery: function(query) {
+      this.latestList.cursor = 0;
+      this.latestList.more = true;
+      this.latestList.query = query;
+      this.nomore = false;
+      this.collection.reset();
+      this.$('.event-day-header').remove();
+      _.each(this.views, function(v) {
+        v.destroy();
+      })
+      this.more();
+    },
+
+
     // attempt to get more models (older) from server
-    more: function () {
+    more: function (newQuery) {
 
       // render models and handle edge cases
       function updateUI(list) {

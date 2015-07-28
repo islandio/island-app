@@ -95,7 +95,7 @@ define([
       var self = this;
 
       // Static graph setup
-      this.margin = {top: 80, right: 0, bottom: 20, left: 20};
+      this.margin = {top: 80, right: 20, bottom: 20, left: 20};
       this.width = this.$el.width() - this.margin.left - this.margin.right;
       this.height = this.$el.height() - this.margin.top - this.margin.bottom;
 
@@ -231,6 +231,7 @@ define([
             newPos = sl + (self.mwidth/12 * (pos[0] > sl ? 1 : -1));
             self._updateLeftSlider(newPos, false);
           }
+          mps.publish('chart/state-change', [{timeDomain: self.x.domain()}]);
         });
 
         this.sliderBar = this.slider.append('rect')
@@ -347,12 +348,16 @@ define([
       // These could be HTML but fit nicely in the layout of the SVG
 
       var buttonClick = function(d, donttrigger) {
+
+        var g = d3.select(this);
+        if (g.classed('chart-active')) { return; }
+
         if (!donttrigger) {
           self.parentView.trigger('svgButton', d);
           self.store.buttonId = this.id;
+          mps.publish('chart/state-change', [{timeDomain: self.x.domain()}]);
         }
 
-        var g = d3.select(this);
         var t = g.select('text');
         var r = g.select('rect');
 
@@ -510,11 +515,13 @@ define([
     },
 
     _endMove: function() {
-      d3.event.preventDefault();
-      d3.event.stopPropagation();
-      this.mouse.moving = false;
-
-      return false;
+      if (this.mouse.moving) {
+        d3.event.preventDefault();
+        d3.event.stopPropagation();
+        this.mouse.moving = false;
+        mps.publish('chart/state-change', [{timeDomain: this.x.domain()}]);
+        return false;
+      }
     },
 
     // Use slider values to recalculate time domain
@@ -721,7 +728,7 @@ define([
       d3.selectAll('.grade-bars').each(function(d) {
         var x = self.lwidth
             - self.x2(d.value.redpoint + d.value.flash + d.value.onsite);
-        if (x < leftX) {
+        if (x <= leftX) {
           leftX = Number(x);
           count = d.value.total;
           // get y value in group transform

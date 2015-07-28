@@ -29,6 +29,11 @@ define([
       this.app.rpc.socket.on('tick.new', this.collect);
       this.app.rpc.socket.on('tick.removed', this._remove);
 
+      var u = _.debounce(_.bind(this.updateEventFeed, this), 100);
+      this.subscriptions.push(
+        mps.subscribe('chart/state-change', u)
+      );
+
       this.on('rendered', this.setup, this);
     },
 
@@ -87,13 +92,27 @@ define([
         filters: false
       });
 
+      this.baseQuery = this.feed.getQuery();
+
       this.scatterChart.update(this.model.get('ticks')[this.currentType],
           this.currentType, {immediate: true});
 
+/*
       $(window).resize(_.debounce(_.bind(
           this.scatterChart.resize, this.scatterChart), 20));
+          */
 
       return this;
+    },
+
+    updateEventFeed: function(obj) {
+      var query = this.baseQuery;
+      if (obj.timeDomain) {
+        query.action.query.startdate = new Date(obj.timeDomain[0]);
+        query.action.query.enddate = new Date(obj.timeDomain[1]);
+      }
+      query.action.query.type = this.currentType;
+      this.feed.changeQuery(query);
     },
 
     svgButton: function(d) {
