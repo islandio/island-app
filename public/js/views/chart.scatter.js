@@ -587,10 +587,13 @@ define([
           .style('opacity', 1);
       d3.selectAll('.tickCircle')
           .transition().duration(500)
-          .style('opacity', this.scatterOpacity);
+          .style('opacity', this.scatterOpacity)
       this.rtSvg.selectAll('.legend-entry').selectAll('circle')
           .style('stroke-width', '')
-          .style('stroke', '');
+          .style('stroke', '')
+          .each(function() {
+            d3.select(this).classed('chart-active', false);
+          });
       this.rtSvg.selectAll('.legend-entry').selectAll('text')
           .style('font-weight', '');
     },
