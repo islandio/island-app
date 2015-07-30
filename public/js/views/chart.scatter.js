@@ -31,7 +31,7 @@ define([
     colors: {
       flash: '#b1ec36',
       redpoint: '#009cde',
-      onsite: '#e8837b',
+      onsight: '#e8837b',
       average: '#333'
     },
     // width of scatter plot before 'breaking' to a smaller design
@@ -511,7 +511,7 @@ define([
           switch (style) {
             case 'redpoint': { noun = 'redpoints'; break; }
             case 'flash': { noun = 'flashes'; break; }
-            case 'onsite': {  noun = 'onsites'; break; }
+            case 'onsight': {  noun = 'onsights'; break; }
           }
         }
         var html =
@@ -533,7 +533,7 @@ define([
                 + '</strong></br>'
                 + '<strong>' + d.value.total + sends + '</strong>'
                 + '</br>'
-                + makeLine(d.value.onsite, 'onsite')
+                + makeLine(d.value.onsight, 'onsight')
                 + makeLine(d.value.flash, 'flash')
                 + makeLine(d.value.redpoint, 'redpoint');
 
@@ -549,7 +549,7 @@ define([
                 + ' - ' + (+d.key + 1) + '</strong></br>'
                 + 'averaging <strong>' + d.value.avg + '</strong>'
                 + '</br>'
-                + makeLine(d.value.onsite, 'onsite')
+                + makeLine(d.value.onsight, 'onsight')
                 + makeLine(d.value.flash, 'flash')
                 + makeLine(d.value.redpoint, 'redpoint');
             return html;
@@ -669,14 +669,14 @@ define([
           next.redpoint = m.redpoint
               + (_.isUndefined(v.tries) || v.tries >= 3);
           next.flash = m.flash +(v.tries > 1 && v.tries < 3);
-          next.onsite = m.onsite +(v.tries <= 1);
+          next.onsight = m.onsight +(v.tries <= 1);
           return next;
-        }, {avg: 0, redpoint: 0, flash: 0, onsite: 0});
+        }, {avg: 0, redpoint: 0, flash: 0, onsight: 0});
         var avg = Math.floor(sums.avg / val.length);
         avg = domain[avg];
         sums.avg = avg;
         dataByYear[key] = sums;
-        sums.total = sums.redpoint + sums.flash + sums.onsite;
+        sums.total = sums.redpoint + sums.flash + sums.onsight;
       });
 
       var atd = d3.entries(dataByYear);
@@ -698,7 +698,7 @@ define([
           redpoint: _.reduce(v, function(m, val) {
             return +(_.isUndefined(val.tries) || val.tries >= 3) + m;
           }, 0),
-          onsite: _.reduce(v, function(m, val) {
+          onsight: _.reduce(v, function(m, val) {
             return +(val.tries <= 1) + m;
           }, 0),
           total: v.length
@@ -730,7 +730,7 @@ define([
           .style('cursor', 'pointer');
 
       barGroupEnter.append('rect')
-          .attr('class', 'onsite-bar onsite')
+          .attr('class', 'onsight-bar onsight')
           .attr('x', this.lwidth)
           .attr('width', 0);
       barGroupEnter.append('rect')
@@ -750,20 +750,20 @@ define([
           // an explicit select. This code below achieves this for each group.
           .each(function() {
             var d3this = d3.select(this);
-            d3this.select('.onsite-bar');
+            d3this.select('.onsight-bar');
             d3this.select('.redpoint-bar');
             d3this.select('.flash-bar');
           });
 
-      barGraph.selectAll('.onsite-bar')
+      barGraph.selectAll('.onsight-bar')
           .attr('height', this.y.rangeBand())
-          .style('fill', this.colors.onsite)
+          .style('fill', this.colors.onsight)
           .transition()
           .duration(immediate ? 0 : this.fadeTime*2)
           .attr('x', function(d) {
-            return self.lwidth - self.x2(d.value.onsite);
+            return self.lwidth - self.x2(d.value.onsight);
           })
-          .attr('width', function(d) { return self.x2(d.value.onsite); });
+          .attr('width', function(d) { return self.x2(d.value.onsight); });
 
       barGraph.selectAll('.flash-bar')
           .attr('height', this.y.rangeBand())
@@ -771,7 +771,7 @@ define([
           .transition()
           .duration(immediate ? 0 : this.fadeTime*2)
           .attr('x', function(d) {
-              return self.lwidth - self.x2(d.value.onsite + d.value.flash);
+              return self.lwidth - self.x2(d.value.onsight + d.value.flash);
            })
           .attr('width', function(d) { return self.x2(d.value.flash); });
 
@@ -782,7 +782,7 @@ define([
           .duration(immediate ? 0 : this.fadeTime*2)
           .attr('x', function(d) {
               return self.lwidth - self.x2(d.value.redpoint
-                  + d.value.flash + d.value.onsite);
+                  + d.value.flash + d.value.onsight);
            })
           .attr('width', function(d) { return self.x2(d.value.redpoint); });
 
@@ -848,7 +848,7 @@ define([
       var leftX = Number.MAX_VALUE;
       d3.selectAll('.grade-bars').each(function(d) {
         var x = self.lwidth
-            - self.x2(d.value.redpoint + d.value.flash + d.value.onsite);
+            - self.x2(d.value.redpoint + d.value.flash + d.value.onsight);
         if (x <= leftX) {
           leftX = Number(x);
           count = d.value.total;
@@ -1215,7 +1215,7 @@ define([
     },
 
     _getStyle: function(tick) {
-      if (tick.tries <= 1) { return 'onsite'; }
+      if (tick.tries <= 1) { return 'onsight'; }
       else if (tick.tries > 1 && tick.tries <=2) { return 'flash'; }
       else { return 'redpoint'; }
     },
