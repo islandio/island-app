@@ -95,6 +95,7 @@ define([
         this._updateGraph(this.d.ticks, this.d.gradeDomain, this.d.timeDomain,
             { immediate: true} );
         this.setTitle(null, true);
+        this.previousWidth = $(window).width();
       }
     },
 
@@ -342,6 +343,7 @@ define([
                 .style('font-weight', '');
 
             var active = _this.classed('chart-active');
+            // Clear previous active
             legendEntries.each(function() {
               d3.select(this).select('circle').classed('chart-active', false);
             });
@@ -349,7 +351,7 @@ define([
 
             if (active) {
               _this.classed('chart-active', false);
-              mps.publish('chart/state-change');
+              mps.publish('chart/state-change', [{tries: null}]);
             } else {
               _this.classed('chart-active', true);
               _this.style('stroke-width', '1px').style('stroke', '#333');
@@ -593,7 +595,6 @@ define([
           .style('font-weight', '');
     },
 
-
     // Use slider values to recalculate time domain
     _recalculateTimeDomain: function(immediate) {
       var extent = this.d.timeDomain[1] - this.d.timeDomain[0];
@@ -722,7 +723,8 @@ define([
       var barGroupEnter = barGraph
           .enter()
           .append('g')
-          .attr('class', 'grade-bars');
+          .attr('class', 'grade-bars')
+          .style('cursor', 'pointer');
 
       barGroupEnter.append('rect')
           .attr('class', 'onsite-bar onsite')
@@ -785,9 +787,55 @@ define([
           .exit()
           .remove();
 
+
+      if (this.barHighlight) {
+        d3.select(this.barHighlight).selectAll('rect').style('fill', '#721d1d');
+      } else {
+        this.barHighlight = null;
+      }
+
       barGraph
-          .on('mouseenter', this.barTip.show)
-          .on('mouseleave', this.barTip.hide);
+          .on('mouseenter', function(d, i) {
+            self.barTip.show(d, i);
+            if (self.barHighlight !== this) {
+              d3.select(this).selectAll('rect')
+                  .transition().duration(250).style('fill', '#a33a3a');
+            }
+          })
+          .on('mouseleave', function(d, i) {
+            self.barTip.hide(d, i);
+            if (self.barHighlight !== this) {
+              d3.select(this).selectAll('rect').each(function() {
+                var _this = d3.select(this);
+                _this.transition().duration(250).style('fill', function() {
+                  var classType = _this.attr('class').split(' ')[1];
+                  return classType ? self.colors[classType] : 'none';
+                });
+              });
+            }
+          })
+          .on('click', function(d) {
+
+             // reset
+             d3.select(self.barHighlight).selectAll('rect').each(function() {
+                var _this = d3.select(this);
+                _this.transition().style('fill', function() {
+                  var classType = _this.attr('class').split(' ')[1];
+                  return classType ? self.colors[classType] : 'none';
+                });
+              });
+
+            if (self.barHighlight !== this) {
+              mps.publish('chart/state-change', [{grade: d.key}]);
+              d3.select(this).selectAll('rect').style('fill', '#721d1d');
+              self.barHighlight = this;
+            }
+            else {
+              mps.publish('chart/state-change', [{grade: null}]);
+              d3.select(this).selectAll('rect').style('fill', '#a33a3a');
+              self.barHighlight = null;
+            }
+          });
 
       barGroup.select('.bar-counter').remove();
       var barCount = barGroup.append('g').attr('class', 'bar-counter');

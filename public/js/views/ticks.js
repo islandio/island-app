@@ -24,6 +24,8 @@ define([
     initialize: function (app) {
       this.app = app;
       this.subscriptions = [];
+      this.prefs =  this.app.profile.member
+          ? this.app.profile.member.prefs: this.app.prefs;
 
       _.bindAll(this, 'collect', '_remove');
       this.app.rpc.socket.on('tick.new', this.collect);
@@ -109,13 +111,24 @@ define([
         query.startdate = new Date(obj.timeDomain[0]);
         query.enddate = new Date(obj.timeDomain[1]);
       }
-      if (obj && obj.tries) {
-        if (obj.tries === 'onsite') query.tries = 1;
-        else if (obj.tries === 'flash') query.tries = 2;
-        else if (obj.tries === 'redpoint') query.tries = {'$gte': 3};
-        else delete query.tries;
-      } else  {
-        delete query.tries;
+      if (obj && obj.tries !== undefined) {
+        if (obj.tries !== null) {
+          query.tries = obj.tries;
+        } else {
+          delete query.tries;
+        }
+      }
+      if (obj && obj.grade !== undefined) {
+        if (obj.grade !== null) {
+          query.grade = {
+            val: obj.grade,
+            type: this.currentType,
+            system: this.currentType === 'r'
+                ? this.prefs.grades.route : this.prefs.grades.boulder
+          };
+        } else {
+          delete query.grade;
+        }
       }
       query.type = this.currentType;
       this.feed.changeQuery(this.baseQuery);
@@ -134,6 +147,8 @@ define([
         return;
       }
 
+      delete this.baseQuery.action.query.tries;
+      delete this.baseQuery.action.query.grade;
       this.scatterChart.update(this.model.get('ticks')[this.currentType],
           this.currentType, {immediate: false});
 

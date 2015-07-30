@@ -200,7 +200,7 @@
     var self = this;
     grades.forEach(function (g) {
       self.gradeMap.some(function (e, i) {
-        if (e[self.fromSystem] === g) {
+        if (e[self.fromSystem].toLowerCase() === g) {
           results.push(toSystem === 'indexes' ? i: e[toSystem]);
           return true;
         } else return false;
@@ -212,13 +212,26 @@
 
   };
 
-  // Get the indexes of already converted grades
+  // Get the first index of already converted grades.
   GradeConverter.prototype.indexOf = function(grades, system) {
-    grades = _.isArray(grades) ? grades : [grades]
+    var _grades = _.isArray(grades) ? grades : [grades]
     system = system || this.fromSystem;
     var gmap = _.pluck(this.gradeMap, system);
-    var idxs = _.map(grades, function(g) { return gmap.indexOf(g); });
+    var idxs = _.map(_grades, function(g) { return gmap.indexOf(g); });
     return _.isArray(grades) ? idxs: idxs[0];
+  }
+
+  // Get the index range of a single converted grade
+  GradeConverter.prototype.indexRangeOf = function(grade, system) {
+    system = system || this.fromSystem;
+    var idxs = [];
+    var gmap = _.pluck(this.gradeMap, system);
+    _.each(this.gradeMap, function(g, i) {
+      if (g[system] === grade) {
+        idxs.push(i);
+      }
+    })
+    return idxs;
   }
 
   // Return grades offset by some amount
