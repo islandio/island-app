@@ -217,10 +217,7 @@ define([
 
       if (name === 'grade') {
         name = 'grades';
-        val = Number(val);
-        val = val === -1 ? ['project']:
-            [this.app.gradeConverter[this.model.get('type')]
-            .convert(val, 'France')];
+        val = [Number(val)];
       }
 
       payload[name] = val;
