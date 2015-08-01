@@ -750,7 +750,7 @@ define([
             $e.hide();
           } else {
             added.push(grade);
-            $e.text(this.app.gradeConverter[type].indexes(from, country, system));
+            $e.text(grade);
           }
         }
       }, this));
