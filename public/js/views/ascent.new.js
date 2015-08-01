@@ -239,9 +239,7 @@ define([
 
       // Build the payload.
       var type = this.$('.new-session-boulder').is(':checked') ? 'b': 'r';
-      var grade = Number(this.$('select[name="grade"]').val());
-      var grades = grade === -1 ? ['project']:
-          [this.app.gradeConverter[type].convert(grade, 'France')];
+      var grades = [Number(this.$('select[name="grade"]').val())];
       var payload = {
         crag_id: cragChoice.id,
         sector: this.$('input[name="sector"]').val().trim(),
