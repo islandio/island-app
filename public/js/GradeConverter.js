@@ -12,7 +12,8 @@
   // Establish the root object, `window` in the browser, or `global` on
   // the server.
 
-  var root = this;
+  var root = typeof global === 'object' && global.global === global && global ||
+      this;
 
   var has_require = typeof require !== 'undefined';
 
@@ -169,7 +170,6 @@
 
     var results = [];
 
-    var self = this;
     var isIdx = self.fromSystem === 'indexes';
     grades.forEach(function (g) {
       self.gradeMap.some(function (e, i) {
@@ -269,10 +269,6 @@
     this.toSystem  = system.toLowerCase();
     return this;
   };
-
-  GradeConverter.prototype.getGrades = function(country) {
-    return _.unique(_.pluck(this.gradeMap, this.getSystem(country)));
-  }
 
   return GradeConverter;
 
