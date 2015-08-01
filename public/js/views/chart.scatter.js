@@ -1170,8 +1170,8 @@ define([
       // We show lower grades than the climber has completed to give
       // a sense of accomplishment. However, don't go too low or the xaxis
       // gets crowded
-      var lowerGrade = gradeConverter.indexes(gradeExtent[0], null, system);
-      var higherGrade = gradeConverter.indexes(gradeExtent[1], null, system);
+      var lowerGrade = gradeConverter.convert(gradeExtent[0], null, system);
+      var higherGrade = gradeConverter.convert(gradeExtent[1], null, system);
 
       lowerGrade = gradeConverter.offset(lowerGrade, -3, system);
       higherGrade = gradeConverter.offset(higherGrade, 1, system);
@@ -1182,7 +1182,7 @@ define([
       var ticksMapped = _.map(ticksFiltered, function(t) {
         t =  _.clone(t);
         if (t.grade) {
-          t.grade = gradeConverter.indexes(t.grade, null, system);
+          t.grade = gradeConverter.convert(t.grade, null, system);
         }
         return t;
       });

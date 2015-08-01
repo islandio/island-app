@@ -49,7 +49,7 @@ define([
           var self = this;
           var system = t === 'r' ? prefs.grades.route: prefs.grades.boulder;
           _.each(ascents, function (ascent, grade) {
-            var key = self.app.gradeConverter[t].indexes(grade, self.data.country, system);
+            var key = self.app.gradeConverter[t].convert(Number(grade), self.data.country, system);
             if (!a[key]) a[key] = [];
             a[key] = a[key].concat(ascent);
             delete ascents[grade];

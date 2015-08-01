@@ -26,7 +26,7 @@ define([
         if (t.grade !== undefined) {
           var system = type === 'r' ? this.prefs.grades.route:
               this.prefs.grades.boulder;
-          var grade = this.gradeConverter[type].indexes(t.grade, null, system);
+          var grade = this.gradeConverter[type].convert(t.grade, null, system);
           if (!ticks[grade]) {
             ticks[grade] = [];
           }

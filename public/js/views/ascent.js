@@ -102,7 +102,7 @@ define([
         // Handle selects.
         var type = this.model.get('type');
         var country = this.model.get('country');
-        var grades = this.app.gradeConverter[type].grades(
+        var grades = this.app.gradeConverter[type].convert(
             this.model.get('grades'), null, 'indexes');
         this.selectOption('grade', grades[0]);
         this.updateGrades(type, country);
@@ -151,18 +151,18 @@ define([
       var txt = chosen.text();
       var val = Number(select.val());
       if (txt !== 'Project' && !isNaN(val)) {
-        chosen.text(this.app.gradeConverter[type].indexes(val, country));
+        chosen.text(this.app.gradeConverter[type].convert(val, country));
       }
       grades.each(_.bind(function (index, el) {
         var $e = $(el);
         var from = Number($e.attr('rel'));
         if (!_.isNaN(from)) {
-          var grade = this.app.gradeConverter[type].indexes(from, country);
+          var grade = this.app.gradeConverter[type].convert(from, country);
           if (added.indexOf(grade) !== -1) {
             $e.hide();
           } else {
             added.push(grade);
-            $e.text(this.app.gradeConverter[type].indexes(from, country));
+            $e.text(this.app.gradeConverter[type].convert(from, country));
           }
         }
       }, this));
@@ -220,7 +220,7 @@ define([
         val = Number(val);
         val = val === -1 ? ['project']:
             [this.app.gradeConverter[this.model.get('type')]
-            .indexes(val, 'France')];
+            .convert(val, 'France')];
       }
 
       payload[name] = val;
