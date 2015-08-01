@@ -24,8 +24,8 @@ define([
     initialize: function (app) {
       this.app = app;
       this.subscriptions = [];
-      this.prefs =  this.app.profile.member
-          ? this.app.profile.member.prefs: this.app.prefs;
+      this.prefs =  this.app.profile.member ?
+          this.app.profile.member.prefs: this.app.prefs;
 
       _.bindAll(this, 'collect', '_remove');
       this.app.rpc.socket.on('tick.new', this.collect);
@@ -53,8 +53,8 @@ define([
     render: function () {
       this.model = new Card(this.app.profile.content.page, {
         gradeConverter: this.app.gradeConverter,
-        prefs: this.app.profile.member
-            ? this.app.profile.member.prefs: this.app.prefs
+        prefs: this.app.profile.member ?
+            this.app.profile.member.prefs: this.app.prefs
       });
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
@@ -123,8 +123,8 @@ define([
           query.grade = {
             val: obj.grade,
             type: this.currentType,
-            system: this.currentType === 'r'
-                ? this.prefs.grades.route : this.prefs.grades.boulder
+            system: this.currentType === 'r' ?
+                this.prefs.grades.route : this.prefs.grades.boulder
           };
         } else {
           delete query.grade;

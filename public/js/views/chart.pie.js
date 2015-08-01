@@ -28,8 +28,8 @@ define([
     initialize: function (app, options) {
 
       this.app = app;
-      this.prefs =  this.app.profile.member
-          ? this.app.profile.member.prefs: this.app.prefs;
+      this.prefs =  this.app.profile.member ?
+          this.app.profile.member.prefs: this.app.prefs;
       this.options = options || {};
       this.$el = options.$el;
       this.subscriptions = [];
@@ -77,15 +77,15 @@ define([
 
       this.pie = d3.layout.pie()
           .sort(null)
-          .value(function(d) { return d.count; })
+          .value(function(d) { return d.count; });
 
       // Create the baseline SVG
       this.svg = d3.select(this.$el.get(0)).append('svg')
           .attr('width', this.width)
           .attr('height', this.height)
           .append('g')
-          .attr("transform", "translate(" + this.width / 2
-              + "," + this.height / 2 + ")");
+          .attr("transform", "translate(" + this.width / 2 +
+              "," + this.height / 2 + ")");
 
       // Create some data groupings
       this.svg.append('g')
@@ -113,7 +113,7 @@ define([
       // Data joins
 
       var pieArcs = this.svg.select('.pieArcGroup').selectAll('.arc')
-          .data(this.pie(data))
+          .data(this.pie(data));
 
       // Enter
 
@@ -124,7 +124,7 @@ define([
       arcGroupEnter.append('path');
 
       arcGroupEnter.append('text')
-          .attr('class', 'pieLabel')
+          .attr('class', 'pieLabel');
 
       arcGroupEnter.append('text')
           .attr('class', 'piePercentage');
@@ -133,7 +133,7 @@ define([
           .style('opacity', '.3')
           .style('stroke', 'black')
           .style('stroke-width', '2px')
-          .style('fill', 'none')
+          .style('fill', 'none');
 
       // Update + Enter
 
@@ -145,7 +145,7 @@ define([
             d3this.select('.pieLabel');
             d3this.select('.piePercentage');
             d3this.select('polyline');
-          })
+          });
 
       pieArcs.selectAll('path')
           .style('fill', function(d) { return self.colors(Math.floor(Math.random() * 20)); })
@@ -157,11 +157,11 @@ define([
             return function(t) {
               return self.arc(interpolate(t));
             };
-          })
+          });
 
       var midAngle = function(d){
         return d.startAngle + (d.endAngle - d.startAngle)/2;
-      }
+      };
 
       pieArcs.selectAll('.pieLabel')
           .attr("transform", function(d) {
@@ -177,7 +177,7 @@ define([
 
       pieArcs.selectAll('.piePercentage')
           .attr("transform", function(d) {
-            var pos = self.arc.centroid(d)
+            var pos = self.arc.centroid(d);
             return "translate(" + pos + ")";
           })
           .attr("dy", ".35em")
@@ -193,13 +193,13 @@ define([
             var pos = self.outerArc.centroid(d);
             pos[0] = self.radius * 0.95 * (midAngle(d) < Math.PI ? 1 : -1);
             return [self.arc.centroid(d), self.outerArc.centroid(d), pos];
-          })
+          });
 
       // Exit
 
       pieArcs
           .exit()
-          .remove()
+          .remove();
     },
 
     _countData: function(data, key) {

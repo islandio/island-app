@@ -42,8 +42,8 @@ define([
     initialize: function (app, options) {
 
       this.app = app;
-      this.prefs =  this.app.profile.member
-          ? this.app.profile.member.prefs: this.app.prefs;
+      this.prefs =  this.app.profile.member ?
+          this.app.profile.member.prefs: this.app.prefs;
       this.options = options || {};
       this.$el = options.$el;
       this.parentView = options.parentView;
@@ -125,39 +125,39 @@ define([
       // Generate widths and heights for the container classes
       this.lwidth = this.sideWidth;
       this.rwidth = this.lwidth;
-      this.mwidth = (this.$el.width() - this.margin.left - this.margin.right)
-          - this.lwidth - this.rwidth;
+      this.mwidth = (this.$el.width() - this.margin.left - this.margin.right) -
+          this.lwidth - this.rwidth;
       // responsive stuff
       if (this.mwidth < this.breakWidth || this.compact) {
         this.mwidth = 0;
       }
 
       this.bheight = 40;
-      this.theight = this.$el.height() - this.margin.top - this.margin.bottom
-          - this.vertInnerPad - this.bheight;
+      this.theight = this.$el.height() - this.margin.top - this.margin.bottom -
+          this.vertInnerPad - this.bheight;
 
       // Generate the 4 quadrant container classes
       this.ltSvg = this.svg.append('g')
           .attr('class', 'lt-svg')
-          .attr('transform', 'translate(' + this.margin.left + ','
-              + this.margin.top + ')');
+          .attr('transform', 'translate(' + this.margin.left + ',' +
+              this.margin.top + ')');
 
       this.mtSvg = this.svg.append('g')
           .attr('class', 'mt-svg')
-          .attr('transform', 'translate(' + (this.margin.left + this.lwidth)
-              + ',' + this.margin.top + ')');
+          .attr('transform', 'translate(' + (this.margin.left + this.lwidth) +
+              ',' + this.margin.top + ')');
 
       this.rtSvg = this.svg.append('g')
           .attr('class', 'rt-svg')
-          .attr('transform', 'translate(' + (this.margin.left + this.lwidth
-              + this.mwidth) + ',' + this.margin.top + ')');
+          .attr('transform', 'translate(' + (this.margin.left + this.lwidth +
+              this.mwidth) + ',' + this.margin.top + ')');
 
       var btop = this.margin.top + this.theight + this.vertInnerPad;
 
       this.mbSvg = this.svg.append('g')
           .attr('class', 'mb-svg')
-          .attr('transform', 'translate(' + (this.margin.left + this.lwidth)
-              + ',' + btop + ')');
+          .attr('transform', 'translate(' + (this.margin.left + this.lwidth) +
+              ',' + btop + ')');
 
       // Scales
 
@@ -178,18 +178,17 @@ define([
       this.ltSvg.append('text')
           .attr('x', 0)
           .attr('y', -5)
+          .attr('class', 'd3-title')
           .text('Grade Histogram')
           .style('text-anchor', 'left')
-          .style('font-size', '14px')
-          .style('font-weight', 'bold');
+          .style("opacity", 0.8);
 
       this.title = this.mtSvg.append('text')
           .attr('x', this.mwidth/2)
           .attr('y', -5)
+          .attr('class', 'd3-title')
           .text(this.store.title || '')
-          .style('text-anchor', 'middle')
-          .style('font-size', '14px')
-          .style('font-weight', 'bold');
+          .style('text-anchor', 'middle');
 
       // Clip path cuts off rendering of chart if it exceeds bounds
       this.mtSvg.append('clipPath')
@@ -493,13 +492,13 @@ define([
             else if (d.tries > 1 && d.tries <=2) { style = 'FLASHED'; }
             else { style = 'REDPOINT'; }
 
-            var html = '<strong style="font-size:1.4em">'
-                + d.ascent.name + ', ' + d.crag.name + '</strong></br>'
-                + '<strong>a ' + d.grade + ' in ' + d.crag.country
-                + '</strong></br>'
-                + '<strong style="color:' + self.colors[self._getStyle(d)]
-                + '">' + style + ' on ' + new Date(d.date).format('longDate')
-                + '</strong>';
+            var html = '<span class="d3-tip-header">' +
+                d.ascent.name + ', ' + d.crag.name + '</span>' +
+                '<span class="d3-tip-detail">a ' + d.grade + ' in ' + d.crag.country +
+                '</sspan>' +
+                '<sspan style="color:' + self.colors[self._getStyle(d)] +
+                '" class="d3-tip-style">' + style + ' on ' +
+                new Date(d.date).format('longDate') + '</span>';
 
             return html;
           });
@@ -509,18 +508,18 @@ define([
         var noun = style;
         if (count !== 1) {
           switch (style) {
-            case 'redpoint': { noun = 'redpoints'; break; }
-            case 'flash': { noun = 'flashes'; break; }
-            case 'onsight': {  noun = 'onsights'; break; }
+            case 'redpoint': noun = 'redpoints'; break;
+            case 'flash': noun = 'flashes'; break;
+            case 'onsight': noun = 'onsights'; break;
           }
         }
         var html =
-        '<div style="position:relative;top:1px;width:10px;'
-            + 'height:10px;display:inline-block;'
-            + 'background-color:' + self.colors[style] + '"></div>'
-        + '<span style=color:' + self.colors[style] + '>&nbsp&nbsp'
-            + count  + ' ' + noun + '</span>'
-        + '</br>';
+        '<div style="position:relative;top:1px;width:10px;' +
+              'height:10px;display:inline-block;' +
+              'background-color:' + self.colors[style] + '"></div>' +
+          '<span style=color:' + self.colors[style] + '>&nbsp&nbsp' +
+              count  + ' ' + noun + '</span>' +
+          '</br>';
         return html;
       };
 
@@ -529,13 +528,12 @@ define([
           .offset([-10, 0])
           .html(function(d) {
             var sends = d.value.total > 1 ? ' SENDS' : ' SEND';
-            var html = '<strong style="font-size:1.4em">' + d.key
-                + '</strong></br>'
-                + '<strong>' + d.value.total + sends + '</strong>'
-                + '</br>'
-                + makeLine(d.value.onsight, 'onsight')
-                + makeLine(d.value.flash, 'flash')
-                + makeLine(d.value.redpoint, 'redpoint');
+            var html = '<span class="d3-tip-header" style="line-height:16px;">' +
+                d.key + '</span>' + '<span class="d3-tip-header">' +
+                d.value.total + sends + '</span><span class="d3-tip-style">' +
+                makeLine(d.value.onsight, 'onsight') +
+                makeLine(d.value.flash, 'flash') +
+                makeLine(d.value.redpoint, 'redpoint') + '</span>';
 
             return html;
           });
@@ -545,13 +543,13 @@ define([
           .offset([-10, 0])
           .html(function(d) {
             // Sort by date
-            var html = '<strong style="font-size:1.4em">' + d.key
-                + ' - ' + (+d.key + 1) + '</strong></br>'
-                + 'averaging <strong>' + d.value.avg + '</strong>'
-                + '</br>'
-                + makeLine(d.value.onsight, 'onsight')
-                + makeLine(d.value.flash, 'flash')
-                + makeLine(d.value.redpoint, 'redpoint');
+            var html = '<span class="d3-tip-header">' + d.key +
+                ' - ' + (+d.key + 1) + '</span>' +
+                '<span class="d3-tip-detail">averaging ' + d.value.avg +
+                '</span><span class="d3-tip-style">' +
+                makeLine(d.value.onsight, 'onsight') +
+                makeLine(d.value.flash, 'flash') +
+                makeLine(d.value.redpoint, 'redpoint') + '</span>';
             return html;
           });
 
@@ -587,7 +585,7 @@ define([
           .style('opacity', 1);
       d3.selectAll('.tickCircle')
           .transition().duration(500)
-          .style('opacity', this.scatterOpacity)
+          .style('opacity', this.scatterOpacity);
       this.rtSvg.selectAll('.legend-entry').selectAll('circle')
           .style('stroke-width', '')
           .style('stroke', '')
@@ -616,14 +614,14 @@ define([
 
     _updateSliderHighlight: function() {
       this.sliderHighlight.attr('x', sCenter(this.sliderLeft));
-      this.sliderHighlight.attr('width', sCenter(this.sliderRight)
-          - sCenter(this.sliderLeft));
+      this.sliderHighlight.attr('width', sCenter(this.sliderRight) -
+          sCenter(this.sliderLeft));
     },
 
     _updateRightSlider: _.debounce(function(newPos, immediate) {
       var xMax = this.mwidth - Number(this.sliderRight.attr('width'))/2;
-      var xMin = Number(this.sliderLeft.attr('x'))
-          + Number(this.sliderLeft.attr('width'));
+      var xMin = Number(this.sliderLeft.attr('x')) +
+          Number(this.sliderLeft.attr('width'));
       var x = Math.min(newPos, xMax);
       x = Math.max(x, xMin);
       this.sliderRight.attr('x', x);
@@ -633,8 +631,8 @@ define([
 
     _updateLeftSlider: _.debounce(function(newPos, immediate) {
       var xMin = -Number(this.sliderLeft.attr('width'))/2;
-      var xMax = Number(this.sliderRight.attr('x'))
-          - Number(this.sliderLeft.attr('width'));
+      var xMax = Number(this.sliderRight.attr('x')) -
+          Number(this.sliderLeft.attr('width'));
       var x = Math.max(newPos, xMin);
       x = Math.min(x, xMax);
       this.sliderLeft.attr('x', x);
@@ -666,8 +664,8 @@ define([
         var sums = _.reduce(val, function(m, v) {
           var next = {};
           next.avg = m.avg + domain.indexOf(v.grade);
-          next.redpoint = m.redpoint
-              + (_.isUndefined(v.tries) || v.tries >= 3);
+          next.redpoint = m.redpoint +
+              (_.isUndefined(v.tries) || v.tries >= 3);
           next.flash = m.flash +(v.tries > 1 && v.tries < 3);
           next.onsight = m.onsight +(v.tries <= 1);
           return next;
@@ -781,8 +779,8 @@ define([
           .transition()
           .duration(immediate ? 0 : this.fadeTime*2)
           .attr('x', function(d) {
-              return self.lwidth - self.x2(d.value.redpoint
-                  + d.value.flash + d.value.onsight);
+              return self.lwidth - self.x2(d.value.redpoint +
+                  d.value.flash + d.value.onsight);
            })
           .attr('width', function(d) { return self.x2(d.value.redpoint); });
 
@@ -847,8 +845,8 @@ define([
       var count = -1;
       var leftX = Number.MAX_VALUE;
       d3.selectAll('.grade-bars').each(function(d) {
-        var x = self.lwidth
-            - self.x2(d.value.redpoint + d.value.flash + d.value.onsight);
+        var x = self.lwidth -
+            self.x2(d.value.redpoint + d.value.flash + d.value.onsight);
         if (x <= leftX) {
           leftX = Number(x);
           count = d.value.total;
@@ -1238,7 +1236,7 @@ define([
       var time = immediate ? 0 : 100;
       this.title.transition().duration(time).style('opacity', 0);
       this.title.transition().delay(time).text(t);
-      this.title.transition().duration(time).delay(time).style('opacity', 1);
+      this.title.transition().duration(time).delay(time).style('opacity', 0.8);
     },
 
     empty: function () {

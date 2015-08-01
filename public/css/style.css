@@ -5336,10 +5336,13 @@ input.import-input {
 .scatter-chart {
   height: 500px;
 }
+.d3-title {
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-size: 16px;
+}
 .d3-tip {
   font-size: 12px;
-  line-height: 1.6;
-  padding: 12px;
+  padding: 10px;
   background: rgba(0,0,0,0.8);
   color: #fff;
   -webkit-border-radius: 3px;
@@ -5364,6 +5367,24 @@ input.import-input {
   margin: -1px 0 0 0;
   top: 100%;
   left: 0;
+}
+.d3-tip-header,
+.d3-tip-detail,
+.d3-tip-style {
+  display: block;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+}
+.d3-tip-header {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: bold;
+}
+.d3-tip-detail {
+  font-size: 12px;
+}
+.d3-tip-style {
+  font-size: 12px;
+  margin-bottom: -3px;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crag*/
 .ascents-filter,
