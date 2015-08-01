@@ -144,7 +144,7 @@
   /* Convert a grade or array of grades directly, optionally supplying
    * country or preferred conversion system */
   GradeConverter.prototype.convert = function(grades, country, system) {
-    grades = grades || [];
+    grades = _.isNull(grades) || _.isUndefined(grades) ? [] : grades;
 
     var toSystem = system || this.getSystem(country);
 
@@ -170,9 +170,13 @@
     var results = [];
 
     var self = this;
+    var isIdx = self.fromSystem === 'indexes';
     grades.forEach(function (g) {
       self.gradeMap.some(function (e, i) {
-        var isIdx = self.fromSystem === 'indexes';
+        if (isIdx && g === -1) {
+          results.push(toSystem === 'indexes' ? i: 'Project');
+          return true;
+        }
         if ((isIdx && i === g) ||
              !isIdx && e[self.fromSystem].toLowerCase() === g) {
           results.push(toSystem === 'indexes' ? i: e[toSystem]);
@@ -265,6 +269,10 @@
     this.toSystem  = system.toLowerCase();
     return this;
   };
+
+  GradeConverter.prototype.getGrades = function(country) {
+    return _.unique(_.pluck(this.gradeMap, this.getSystem(country)));
+  }
 
   return GradeConverter;
 
