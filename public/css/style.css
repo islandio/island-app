@@ -2465,6 +2465,9 @@ p.sidebar-tip span {
 .sidebar-product h1 {
   padding: 10px;
   color: #404040;
+  text-align: center;
+  border-bottom: 1px solid #f2f2f2;
+  font-weight: bold;
 }
 .sidebar-broadcast h1 a {
   background: none;
@@ -2517,12 +2520,13 @@ a.sidebar-more:hover {
   padding: 0;
 }
 .sidebar-product-images {
-  height: 90px;
+  height: 83px;
+  padding: 10px;
 }
 .sidebar-product-images img {
   float: left;
   font-size: 0;
-  width: 90px;
+  width: 83px;
   margin: 0;
   padding: 0;
   border-right: 1px solid transparent;
