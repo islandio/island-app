@@ -452,7 +452,8 @@ define([
       this.start();
       this.renderTabs();
       this.clearContainer();
-      this.render('/service/ticks/' + username, _.bind(function (err) {
+      var query = {actions: this.getEventActions()};
+      this.render('/service/ticks/' + username, query, _.bind(function (err) {
         if (err) return;
         if (this.app.profile.member &&
             this.app.profile.member.username === username) {

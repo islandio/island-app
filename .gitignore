@@ -5,7 +5,7 @@ build/
 .aws/
 aws.config.json
 dump.rdb
-
+.DS_Store
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml

@@ -44,7 +44,9 @@ define([
 
       // Reset the collection.
       this.latestList = this.app.profile.content.events;
-      this.collection.reset(this.latestList.items);
+      if (this.latestList) {
+        this.collection.reset(this.latestList.items);
+      }
     },
 
     // receive event from event bus
@@ -262,6 +264,27 @@ define([
       }
     },
 
+    getQuery: function() {
+      if (this.latestList) {
+        return this.latestList.query;
+      }
+    },
+
+    changeQuery: function(query) {
+      this.latestList.cursor = 0;
+      this.latestList.more = true;
+      this.latestList.query = query;
+      this.nomore = false;
+      this.collection.reset();
+      this.$('.event-day-header').remove();
+      _.each(this.views, function(v) {
+        v.destroy();
+      });
+      this.$('.event-divider').remove();
+      this.more();
+    },
+
+
     // attempt to get more models (older) from server
     more: function () {
 
@@ -326,6 +349,7 @@ define([
       rest.post('/api/events/list', {
         limit: this.latestList.limit,
         cursor: this.latestList.cursor,
+        sort: this.latestList.sort,
         actions: this.latestList.actions,
         query: this.latestList.query
       }, _.bind(function (err, data) {

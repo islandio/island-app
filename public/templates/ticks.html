@@ -9,71 +9,18 @@
   var privacy = data.author.config.privacy.ticks ? data.author.config.privacy.ticks.toString(): '0';
 %>
 
-<div class="rightside">
-  <div class="sidebar-items">
-    <div class="sidebar-watchees">
-      <span class="sidebar-heading"><%= owner %> watching:</span>
-      <div class="sidebar-crags"></div>
-      <div class="sidebar-ascents-r"></div>
-      <div class="sidebar-ascents-b"></div>
+<% if (this.app.profile.content.page.private && !own) { %>
+  <span class="empty-feed">This athlete's ascents are <%= privacy === '1' ? 'only visible to followers': 'private' %>.</span>
+<% } else { %>
+
+  <div class="ticks-chart scatter-chart"></div>
+  <div class="rightside"></div>
+  <div class="leftside my-ascents">
+    <div class="events"></div>
+    <div class="list-spin">
+      <div class="events-spin"></div>
+      <span class="empty-feed">Showing all.</span>
     </div>
   </div>
-</div>
-<div class="leftside">
-  <% if (this.app.profile.content.page.private && !own) { %>
-    <span class="empty-feed">This athlete's ascents are <%= privacy === '1' ? 'only visible to followers': 'private' %>.</span>
-  <% } else { %>
-    <div class="ticks-filter">
-      <div class="subtabs">
-        <ul>
-          <li class="subtab">
-            <a href="javascript:;" class="b-filter"><%= data.ticks.b.length %> Boulders</a>
-          </li>
-          <li data-filter="r" class="subtab">
-            <a href="javascript:;" class="r-filter"><%= data.ticks.r.length %> Routes</a>
-          </li>
-        </ul>
-      </div>
-      <div class="ticks-filter-input">
-        <input class="filter-box" type="search" tabindex="2" placeholder="filter ascents..." />
-      </div>
-    </div>
-    <div class="tick-list">
-      <%
-      var prefs = this.app.profile.member ? this.app.profile.member.prefs: this.app.prefs;
-      _.each(data.ticks, _.bind(function (ticks, type) {
-        ticks = this.model.ticksByGrade(type);
-        var system = type === 'r' ? prefs.grades.route: prefs.grades.boulder;
-        var grades = _.pluck(this.model.gradeConverter[type].gradeMap, system);
-        grades.unshift('ungraded');
-        grades = _.uniq(grades);
-      %>
-        <div class="list-wrap <%= type %>-ticks">
-          <span class="empty-feed"><%= owner2 %> logged any <%= type === 'b' ? 'boulder problems': 'routes' %> yet.</span>
-          <span class="no-results">No results.</span>
-          <% for (var i=grades.length-1; i >=0; --i) {
-            var grade = grades[i];
-          %>
-            <% if (ticks[grade] && ticks[grade].length > 0) { %>
-              <ul class="session-ticks">
-                <div class="tick-list-group-heading" data-grade="<%= grade %>">
-                  <span><%= grade %></span>
-                </div>
-                <% _.each(ticks[grade], _.bind(function (tick) { %>
-                  <li class="tick" id="<%= tick.id %>" data-type="<%= tick.type %>"></li>
-                <% })); %>
-              </ul>
-            <% } else { %>
-              <ul class="session-ticks" style="display:none;">
-                <div class="tick-list-group-heading" data-grade="<%= grade %>">
-                  <span><%= grade %></span>
-                </div>
-              </ul>
-            <% } %>
-          <% } %>
-        </div>
-      <% }, this)); %>
-    </div>
-  <% } %>
-</div>
-<div class="clear"></div>
+  <div class="clear"></div>
+<% } %>
