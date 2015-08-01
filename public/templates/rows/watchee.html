@@ -4,7 +4,7 @@
   var type = subscribee.type;
   var country = subscribee.country;
   if (subscribee.grades) {
-    subscribee.grades = gradeConverter[type].indexes(subscribee.grades, country);
+    subscribee.grades = gradeConverter[type].convert(subscribee.grades, country);
   }
 %>
 

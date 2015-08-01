@@ -61,7 +61,7 @@ define([
           var t = this.get('type');
           var g = this.get('grades');
           var c = this.get('country');
-          var g_ = this.gradeConverter[t].indexes(g, c);
+          var g_ = this.gradeConverter[t].convert(g, c);
           title += '<strong>' + this.get('name') + '</strong>, '
               + this.get('crag') + ' ('
               + g_.join(', ') + ')';

@@ -241,7 +241,7 @@ define([
       var type = this.$('.new-session-boulder').is(':checked') ? 'b': 'r';
       var grade = Number(this.$('select[name="grade"]').val());
       var grades = grade === -1 ? ['project']:
-          [this.app.gradeConverter[type].indexes(grade, 'France')];
+          [this.app.gradeConverter[type].convert(grade, 'France')];
       var payload = {
         crag_id: cragChoice.id,
         sector: this.$('input[name="sector"]').val().trim(),
@@ -341,13 +341,13 @@ define([
       var txt = chosen.text();
       var val = Number(select.val());
       if (txt !== 'Project' && !isNaN(val)) {
-        chosen.text(this.app.gradeConverter[type].indexes(val, country));
+        chosen.text(this.app.gradeConverter[type].convert(val, country));
       }
       grades.each(_.bind(function (index, el) {
         var $e = $(el);
         var from = Number($e.attr('rel'));
         if (!_.isNaN(from)) {
-          var grade = this.app.gradeConverter[type].indexes(from, country);
+          var grade = this.app.gradeConverter[type].convert(from, country);
           if (added.indexOf(grade) !== -1) {
             $e.hide();
           } else {
