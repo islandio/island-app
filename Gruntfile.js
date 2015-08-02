@@ -3,13 +3,18 @@ module.exports = function (grunt) {
   // Use dir arg from command line
   var dir = grunt.option('dir') || 'build';
 
+  var publicjs = ['public/js/views/**/*.js', 'public/js/*.js'];
+  var libjs = ['lib/**.js'];
+  var islandjs = ['node_modules/island-*/*.js', 'node_modules/island-*/lib/*.js'];
+
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     jshint: {
-      all: ['public/lib/**/*.js', 'public/js/views/**/*.js', 'public/js/*.js'],
-      public: ['public/js/views/**/*.js', 'public/js/*.js'],
-      lib: ['public/lib/**/*.js'],
+      all: publicjs.concat(libjs, islandjs),
+      public: publicjs,
+      lib: libjs,
+      island: islandjs,
       options: {
         jshintrc: 'linters/.jshintrc'
       }
