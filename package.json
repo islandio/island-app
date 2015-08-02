@@ -87,15 +87,16 @@
     "twitter-text": "^1.12.0"
   },
   "devDependencies": {
-    "grunt": "0.4.x",
-    "requirejs": "2.1.11",
-    "grunt-requirejs": "~0.4.0",
-    "wrench": "~1.4.4",
-    "iconv": "~2.0.2",
     "async": "~0.2.6",
-    "walk": "~2.2.1",
+    "csvtojson": "^0.3.21",
+    "grunt": "0.4.x",
+    "grunt-contrib-jshint": "^0.11.2",
+    "grunt-requirejs": "~0.4.0",
+    "iconv": "~2.0.2",
     "knox": "~0.8.5",
-    "csvtojson": "^0.3.21"
+    "requirejs": "2.1.11",
+    "walk": "~2.2.1",
+    "wrench": "~1.4.4"
   },
   "engines": {
     "node": "~0.10.31"

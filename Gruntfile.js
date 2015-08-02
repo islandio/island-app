@@ -6,6 +6,14 @@ module.exports = function (grunt) {
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    jshint: {
+      all: ['public/lib/**/*.js', 'public/js/views/**/*.js', 'public/js/*.js'],
+      public: ['public/js/views/**/*.js', 'public/js/*.js'],
+      lib: ['public/lib/**/*.js'],
+      options: {
+        jshintrc: 'linters/.jshintrc'
+      }
+    },
     requirejs: {
       std: {
         options: {
@@ -26,6 +34,7 @@ module.exports = function (grunt) {
   });
 
   grunt.loadNpmTasks('grunt-requirejs');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.registerTask('build', 'requirejs');
 
 };
