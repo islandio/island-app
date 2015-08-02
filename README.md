@@ -19,11 +19,11 @@ Island is now running at [```http://localhost:8080/```](http://localhost:8080/).
 
 ##### Development Rules
 
-1. Work on Island is done in the ```develop``` branch.
-2. Features are developed in feature branches. Try to work against a [Github issue](https://github.com/The-Island/island-app/issues)
-3. [JSHint](http://jshint.com/) all files using Island's [.jshintrc](https://github.com/The-Island/island-app/blob/develop/linters/.jshintrc) file
-4. When ready, open rebase the feature branch onto develop and request a review from another Island developer.
-5. Once reviewed, merge the pull request into develop.
+1. The mainline development branch for Island is called ```develop```.
+2. Features are developed in feature branches. Try to work against a [Github issue](https://github.com/The-Island/island-app/issues).
+3. [JSHint](http://jshint.com/) all files using Island's [.jshintrc](https://github.com/The-Island/island-app/blob/develop/linters/.jshintrc) file.
+4. When ready, rebase the feature branch onto ```develop```, open a Github pull request, and request a review from another Island developer.
+5. Once reviewed, merge and close the pull request.
 
 ### Deployment
 
