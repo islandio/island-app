@@ -3,8 +3,8 @@
   var gradeConverter = this.app.gradeConverter;
   var type = subscribee.type;
   var country = subscribee.country;
-  if (subscribee.grades) {
-    subscribee.grades = gradeConverter[type].convert(subscribee.grades, country);
+  if (subscribee.grade) {
+    subscribee.grade = gradeConverter[type].convert(subscribee.grade, country);
   }
 %>
 
@@ -13,8 +13,8 @@
     <span class="list-row-title"><%= subscribee.name %>, <span>
         <%= subscribee.crag || subscribee.country %>
       </span>
-      <% if (subscribee.grades) { %>
-        <%= ' ' %><span style="font-size:90%;">(<%= subscribee.grades.join(', ') %>)</span>
+      <% if (subscribee.grade) { %>
+        <%= ' ' %><span style="font-size:90%;">(<%= subscribee.grade %>)</span>
       <% } %>
     </span>
   </a>

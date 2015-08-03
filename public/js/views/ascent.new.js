@@ -135,13 +135,6 @@ define([
         } else {
           this.checkRoute();
         }
-        /*
-        var grade = pending.grades[0];
-        if (grade) {
-          this.selectOption('grade', this.app.grades.length
-              - this.app.grades.indexOf(grade) - 1);
-        }
-        */
         this.selectOption('rock', pending.rock);
         if (pending.note) {
           this.$('textarea[name="note"]').val(pending.note);
@@ -239,13 +232,13 @@ define([
 
       // Build the payload.
       var type = this.$('.new-session-boulder').is(':checked') ? 'b': 'r';
-      var grades = [Number(this.$('select[name="grade"]').val())];
+      var grade = Number(this.$('select[name="grade"]').val());
       var payload = {
         crag_id: cragChoice.id,
         sector: this.$('input[name="sector"]').val().trim(),
         name: this.$('input[name="name"]').val().trim(),
         type: type,
-        grades: grades,
+        grade: grade,
         rock: this.$('select[name="rock"]').val(),
         note: this.$('textarea[name="note"]').val().trim()
       };
