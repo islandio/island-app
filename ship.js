@@ -123,7 +123,11 @@ Step(
 
     // Commit the package.json changes.
     util.log(clc.blackBright('Committing package version bump ...'));
-    exec('git commit -a -m "' + 'bump v' + nv + '"', this);
+    exec('git add ' + rel + 'package.json', this);
+  },
+  function (err) {
+    boots.error(err);
+    exec('git commit -m "' + 'bump v' + nv + '"', this);
   },
   function (err) {
     boots.error(err);
