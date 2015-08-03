@@ -18,7 +18,7 @@ define([
   'text!../../templates/confirm.html',
   'Skycons'
 ], function ($, _, Backbone, mps, rest, util, Ascent, template, title, Events,
-      Watchers, Instafeed, confirm) {
+      Watchers, Instafeed, confirm, Skycons) {
   return Backbone.View.extend({
 
     el: '.main',
@@ -44,7 +44,6 @@ define([
         var weather = this.app.profile.weather;
         if (weather) {
           this.skycons = new Skycons({'color': '#666', static: true});
-          var iconName = weather.icon.replace(/-/g, '_').toUpperCase();
           this.skycons.add('crag_weather', weather.icon);
         }
       }, this));
@@ -102,9 +101,9 @@ define([
         // Handle selects.
         var type = this.model.get('type');
         var country = this.model.get('country');
-        var grades = this.app.gradeConverter[type].convert(
-            this.model.get('grades'), null, 'indexes');
-        this.selectOption('grade', grades[0]);
+        var grade = this.app.gradeConverter[type].convert(
+            this.model.get('grade'), null, 'indexes');
+        this.selectOption('grade', grade);
         this.updateGrades(type, country);
         this.selectOption('rock', this.model.get('rock'));
       }
@@ -216,8 +215,7 @@ define([
       }
 
       if (name === 'grade') {
-        name = 'grades';
-        val = [Number(val)];
+        val = Number(val);
       }
 
       payload[name] = val;
@@ -262,8 +260,8 @@ define([
 
       // Render the confirm modal.
       $.fancybox(_.template(confirm)({
-        message: 'Delete this climb forever? All associated content and activity' +
-            ' will be deleted.',
+        message: 'Delete this climb forever? All associated content and' +
+            ' activity will be deleted.',
       }), {
         openEffect: 'fade',
         closeEffect: 'fade',
@@ -272,10 +270,10 @@ define([
       });
 
       // Setup actions.
-      $('.modal-cancel').click(function (e) {
+      $('.modal-cancel').click(function () {
         $.fancybox.close();
       });
-      $('.modal-confirm').click(_.bind(function (e) {
+      $('.modal-confirm').click(_.bind(function () {
 
         // Delete the user.
         rest.delete('/api/ascents/' + this.model.id, _.bind(function (err) {

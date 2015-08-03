@@ -1,6 +1,13 @@
 #!/usr/bin/env node
 /*
- * update15.js: Ascent grades from Font to index
+ *  update16.js: Ascent grades from array to
+ *  {
+ *    grade: <number>
+ *    consensus: [
+ *      { grade: <number>, author_id: <ObjectID or null> }
+ *      { grade: <number>, author_id: <ObjectID or null> }
+ *    ]
+ *  }
  *
  */
 
@@ -21,12 +28,6 @@ var _ = require('underscore');
 _.mixin(require('underscore.string'));
 var boots = require('../boots');
 var async = require('async');
-var GradeConverter = new require('../public/js/GradeConverter').GradeConverter;
-
-var gradeConverter = {
-  'b': new GradeConverter('boulders').from('font').to('indexes'),
-  'r': new GradeConverter('routes').from('french').to('indexes')
-};
 
 boots.start(function (client) {
 
@@ -44,17 +45,24 @@ boots.start(function (client) {
         if (len % 1000 === 0) {
           console.log(len + ' left');
         }
-        client.db.Ascents.update({_id: task.id},
-            {$set: {grades: task.newGrades}}, cb);
+        client.db.Ascents.update({_id: task.id}, {
+            $set: {grade: task.obj.grade, consensus: task.obj.consensus},
+            $unset: {grades: ''}}, cb);
       }, 20);
 
       queue.drain = cb;
 
       _.each(ascents, function(a, idx) {
-        if (!_.isNumber(a.grades[0])) {
+        if (a.grades) {
           try {
-            queue.push({ 
-              newGrades: gradeConverter[a.type].convert(a.grades),
+            var obj = {};
+            obj.grade = a.grades[0];
+            obj.consensus = [];
+            _.each(a.grades, function(a) {
+              obj.consensus.push({grade: a});
+            });
+            queue.push({
+              obj: obj,
               id: a._id
             });
           } catch (err) {
