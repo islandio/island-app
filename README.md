@@ -2,6 +2,8 @@
 
 ### Development
 
+##### Getting started
+
 1. Download and install [Node.JS](http://nodejs.org/download/) from the latest stable source or package installer (recommended).
 2. Download and install [MongoDB](http://www.mongodb.org/downloads) from the latest stable source. Use ```bin/mongod``` to start a local DB server in the background.
 3. Download and install [Redis](http://redis.io/download). Do something like [this](http://reistiago.wordpress.com/2011/07/23/installing-on-redis-mac-os-x/) to start the Redis server via a launch daemon, or just do ```redis-server``` whenever developing.
@@ -15,6 +17,13 @@
 
 Island is now running at [```http://localhost:8080/```](http://localhost:8080/).
 
+##### Development Rules
+
+1. The mainline development branch for Island is called ```develop```.
+2. Features are developed in feature branches. Try to work against a [Github issue](https://github.com/The-Island/island-app/issues).
+3. [JSHint](http://jshint.com/) all files using Island's [.jshintrc](https://github.com/The-Island/island-app/blob/develop/linters/.jshintrc) file.
+4. When ready, rebase the feature branch onto ```develop```, open a Github pull request, and request a review from another Island developer.
+5. Once reviewed, merge and close the pull request.
 
 ### Deployment
 
@@ -126,6 +135,11 @@ Lastly, install the frontend builder globally.
 ```
 $ npm install grunt-cli -g
 ```
+
+##### Deployment TBD
+1. Deployment rules
+2. Devleopment server
+3. Testing rules
 
 ##### Shipping
 
