@@ -119,8 +119,8 @@ if (cluster.isMaster) {
       };
       if (err) {
         console.log('Error in errorHandler: ', (err.stack || err));
-        profile.error = err;
-        fn.call(res, err.code || 500, iutil.client(profile));
+        profile.error = err.error || err;
+        fn.call(res, profile.error.code || 500, iutil.client(profile));
       } else {
         profile.error = {message: estr + ' not found'};
         fn.call(res, 404, iutil.client(profile));
