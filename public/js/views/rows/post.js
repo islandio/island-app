@@ -301,7 +301,6 @@ define([
     delete: function (e) {
       e.preventDefault();
 
-      // Render the confirm modal.
       $.fancybox(_.template(confirm)({
         message: 'Delete this post forever?',
       }), {
@@ -311,13 +310,10 @@ define([
         padding: 0
       });
 
-      // Setup actions.
       $('.modal-cancel').click(function (e) {
         $.fancybox.close();
       });
       $('.modal-confirm').click(_.bind(function (e) {
-
-        // Delete the post.
         rest.delete('/api/posts/' + this.model.get('key'),
             {}, _.bind(function (err, data) {
           if (err) {
@@ -326,14 +322,11 @@ define([
             return false;
           }
 
-          // Close the modal.
           $.fancybox.close();
 
-          // Go home if single view.
           if (!this.parentView) {
             this.app.router.navigate('/', {trigger: true, replace: true});
           }
-
         }, this));
       }, this));
 

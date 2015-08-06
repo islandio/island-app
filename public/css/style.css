@@ -505,6 +505,9 @@ span.empty-feed {
   text-align: center;
   font-size: 11px;
 }
+.main > span.empty-feed {
+  margin-top: 40px;
+}
 span.empty-list {
   display: inline-block;
   margin: 0 0 10px 0;

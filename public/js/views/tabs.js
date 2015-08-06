@@ -10,9 +10,10 @@ define([
   'mps',
   'rest',
   'text!../../templates/tabs.html',
+  'text!../../../templates/confirm.html',
   'views/ascent.new',
   'views/session.new'
-], function ($, _, Backbone, util, mps, rest, template, NewAscent,
+], function ($, _, Backbone, util, mps, rest, template, confirm, NewAscent,
       NewSession) {
 
   return Backbone.View.extend({
@@ -72,7 +73,8 @@ define([
         mps.publish('modal/share/open');
       },
       'click .add-ascent': 'add',
-      'click .log-session': 'log'
+      'click .log-session': 'log',
+      'click .clean-button': 'cleanLogs'
     },
 
     setup: function () {
@@ -204,6 +206,38 @@ define([
       var aid = $(e.target).closest('a').data('aid');
       var cid = $(e.target).closest('a').data('cid');
       new NewSession(this.app, {crag_id: cid, ascent_id: aid}).render();
+    },
+
+    cleanLogs: function (e) {
+      e.preventDefault();
+
+      $.fancybox(_.template(confirm)({
+        message: 'Delete duplicate sends?',
+        confirm: '<i class="icon-flash"></i> <span>Clean</span>'
+      }), {
+        openEffect: 'fade',
+        closeEffect: 'fade',
+        closeBtn: false,
+        padding: 0
+      });
+
+      var mid = $(e.target).closest('.clean-button').data('member-id');
+      $('.modal-cancel').click(function (e) {
+        $.fancybox.close();
+      });
+      $('.modal-confirm').click(_.bind(function (e) {
+        rest.post('/api/ticks/' + mid + '/clean', {}, _.bind(function (err, data) {
+          if (err) {
+            mps.publish('flash/new', [{err: err, level: 'error', type: 'popup'},
+              true]);
+            return false;
+          }
+
+          $.fancybox.close();
+        }, this));
+      }, this));
+
+      return false;
     },
 
   });

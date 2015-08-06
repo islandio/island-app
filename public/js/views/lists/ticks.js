@@ -17,13 +17,13 @@ define([
 
     initialize: function (app, options) {
       this.template = _.template(template);
-      this.collection = new Collection;
+      this.collection = new Collection();
       this.Row = Row;
       this.type = options.type;
       this.subtype = options.subtype;
       this.heading = options.heading;
-      this.setElement(options.parentView.$('.sidebar-' + this.type + 's'
-          + (options.subtype ? '-' + options.subtype: '')));
+      this.setElement(options.parentView.$('.sidebar-' + this.type + 's' +
+          (options.subtype ? '-' + options.subtype: '')));
 
       // Call super init.
       List.prototype.initialize.call(this, app, options);
