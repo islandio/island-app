@@ -233,6 +233,13 @@ define([
             return false;
           }
 
+          mps.publish('flash/new', [{
+            message: 'You deleted ' + util.addCommas(data.count) +
+                ' duplicate ascent' + (data.count !== 1 ? 's': '') + '.',
+            level: 'alert',
+            sticky: true
+          }, true]);
+
           $.fancybox.close();
         }, this));
       }, this));

@@ -24,7 +24,8 @@ define([
 
     fadeTime: 300,
     // Width of side panels
-    sideWidth: 200,
+    lSideWidth: 200,
+    rSideWidth: 125,
     // padding between upper and lower sections
     vertInnerPad: 20,
     scatterOpacity: 0.4,
@@ -107,7 +108,7 @@ define([
       if (this.$el.length === 0) return;
 
       // Static graph setup
-      this.margin = {top: 80, right: 20, bottom: 20, left: 20};
+      this.margin = {top: 55, right: 40, bottom: 20, left: 40};
       this.width = this.$el.width() - this.margin.left - this.margin.right;
       this.height = this.$el.height() - this.margin.top - this.margin.bottom;
 
@@ -123,8 +124,8 @@ define([
           .attr('height', this.$el.height());
 
       // Generate widths and heights for the container classes
-      this.lwidth = this.sideWidth;
-      this.rwidth = this.lwidth;
+      this.lwidth = this.lSideWidth;
+      this.rwidth = this.rSideWidth;
       this.mwidth = (this.$el.width() - this.margin.left - this.margin.right) -
           this.lwidth - this.rwidth;
       // responsive stuff
@@ -313,7 +314,7 @@ define([
       // Create the legend
       var legendEntries = this.rtSvg.append('g')
           .attr('class', 'legend')
-          .attr('transform', 'translate(50, 50)')
+          .attr('transform', 'translate(55, 110)')
           .selectAll('legendEntries')
           .data(d3.entries(this.colors))
           .enter()
@@ -448,7 +449,7 @@ define([
 
       var radioButtons = this.rtSvg.append('g')
           .attr('class', 'svg-buttons')
-          .attr('transform', 'translate(50, 200)')
+          .attr('transform', 'translate(45, 0)')
           .selectAll('svg-button')
           .data(this.buttons)
           .enter()
@@ -456,7 +457,7 @@ define([
           .attr('class', 'svg-button')
           .attr('id', function(d, i) { return 'svgButton' + i; })
           .attr('transform', function(d, idx) {
-            return 'translate(' + 0 + ',' + (idx*40) + ')';
+            return 'translate(' + 0 + ',' + (idx*35) + ')';
           })
           .on('click', function(d) { buttonClick.call(this, d); })
           .on('mouseenter', buttonEnter)
@@ -465,15 +466,15 @@ define([
 
       radioButtons
           .append('rect')
-          .attr('width', '60')
+          .attr('width', '80')
           .attr('height', '30')
           .attr('rx', '2')
           .attr('ry', '2');
 
       radioButtons.append('text')
           .text(function(d) { return d; })
-          .attr('x', '30')
-          .attr('y', '18')
+          .attr('x', '40')
+          .attr('y', '19')
           .attr('text-anchor', 'middle');
 
       var defaultButtonId =
