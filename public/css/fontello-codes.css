@@ -44,3 +44,9 @@
 .icon-sliders:before { content: '\e82a'; } /* '' */
 .icon-cog:before { content: '\e82b'; } /* '' */
 .icon-export:before { content: '\e82c'; } /* '' */
+.icon-cart-plus:before { content: '\e82d'; } /* '' */
+.icon-cart-arrow-down:before { content: '\e82e'; } /* '' */
+.icon-basket:before { content: '\e82f'; } /* '' */
+.icon-down-dir:before { content: '\e830'; } /* '' */
+.icon-up-dir:before { content: '\e831'; } /* '' */
+.icon-flash:before { content: '\e832'; } /* '' */

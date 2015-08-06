@@ -270,8 +270,8 @@ define([
           // Show success.
           var ticks = filteredTicks.length;
           mps.publish('flash/new', [{
-            message: 'You successfully imported your ' + this.target
-                + ' scorecard and added ' + ticks + ' new ascents.',
+            message: 'You successfully imported your ' + this.target +
+                ' scorecard and added ' + ticks + ' new ascents.',
             level: 'alert',
             sticky: true
           }, true]);
