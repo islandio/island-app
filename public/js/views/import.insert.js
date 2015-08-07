@@ -211,7 +211,7 @@ define([
             sector: t.ascentSector,
             name: t.ascent.name,
             type: t.type,
-            grades: [t.grade],
+            grade: t.grade,
             silent: true // doesn't post to event feed
           };
         } else {

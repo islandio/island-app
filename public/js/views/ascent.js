@@ -15,10 +15,11 @@ define([
   'views/lists/events',
   'views/lists/watchers',
   'views/instafeed',
+  'views/chart.histogram',
   'text!../../templates/confirm.html',
   'Skycons'
 ], function ($, _, Backbone, mps, rest, util, Ascent, template, title, Events,
-      Watchers, Instafeed, confirm) {
+      Watchers, Instafeed, Histogram, confirm, Skycons) {
   return Backbone.View.extend({
 
     el: '.main',
@@ -32,6 +33,7 @@ define([
 
     render: function () {
       var data = this.app.profile.content.page;
+      data.gradeConverter = this.app.gradeConverter[data.type];
       data.prefs = this.app.profile.member ? this.app.profile.member.prefs:
           this.app.prefs;
       this.model = new Ascent(data);
@@ -44,10 +46,13 @@ define([
         var weather = this.app.profile.weather;
         if (weather) {
           this.skycons = new Skycons({'color': '#666', static: true});
-          var iconName = weather.icon.replace(/-/g, '_').toUpperCase();
           this.skycons.add('crag_weather', weather.icon);
         }
       }, this));
+
+      this.histogram = new Histogram(this.app, {
+        $el: $('.ascent-grades-histogram')
+      }).render();
 
       // Handle selects.
       util.customSelects(this.el);
@@ -102,12 +107,14 @@ define([
         // Handle selects.
         var type = this.model.get('type');
         var country = this.model.get('country');
-        var grades = this.app.gradeConverter[type].grades(
-            this.model.get('grades'), null, 'indexes');
-        this.selectOption('grade', grades[0]);
+        var grade = this.app.gradeConverter[type].convert(
+            this.model.get('grade'), null, 'indexes');
+        this.selectOption('grade', grade);
         this.updateGrades(type, country);
         this.selectOption('rock', this.model.get('rock'));
       }
+
+      this.histogram.update(this.model.makeHistogram(), this.model.getGrade());
 
       return this;
     },
@@ -151,18 +158,18 @@ define([
       var txt = chosen.text();
       var val = Number(select.val());
       if (txt !== 'Project' && !isNaN(val)) {
-        chosen.text(this.app.gradeConverter[type].indexes(val, country));
+        chosen.text(this.app.gradeConverter[type].convert(val, country));
       }
       grades.each(_.bind(function (index, el) {
         var $e = $(el);
         var from = Number($e.attr('rel'));
         if (!_.isNaN(from)) {
-          var grade = this.app.gradeConverter[type].indexes(from, country);
+          var grade = this.app.gradeConverter[type].convert(from, country);
           if (added.indexOf(grade) !== -1) {
             $e.hide();
           } else {
             added.push(grade);
-            $e.text(this.app.gradeConverter[type].indexes(from, country));
+            $e.text(this.app.gradeConverter[type].convert(from, country));
           }
         }
       }, this));
@@ -183,6 +190,7 @@ define([
       if (this.feed) {
         this.feed.destroy();
       }
+      this.histogram.destroy();
       this.watchers.destroy();
       this.undelegateEvents();
       this.stopListening();
@@ -216,11 +224,7 @@ define([
       }
 
       if (name === 'grade') {
-        name = 'grades';
         val = Number(val);
-        val = val === -1 ? ['project']:
-            [this.app.gradeConverter[this.model.get('type')]
-            .indexes(val, 'France')];
       }
 
       payload[name] = val;
@@ -265,8 +269,8 @@ define([
 
       // Render the confirm modal.
       $.fancybox(_.template(confirm)({
-        message: 'Delete this climb forever? All associated content and activity' +
-            ' will be deleted.',
+        message: 'Delete this climb forever? All associated content and' +
+            ' activity will be deleted.',
       }), {
         openEffect: 'fade',
         closeEffect: 'fade',
@@ -275,10 +279,10 @@ define([
       });
 
       // Setup actions.
-      $('.modal-cancel').click(function (e) {
+      $('.modal-cancel').click(function () {
         $.fancybox.close();
       });
-      $('.modal-confirm').click(_.bind(function (e) {
+      $('.modal-confirm').click(_.bind(function () {
 
         // Delete the user.
         rest.delete('/api/ascents/' + this.model.id, _.bind(function (err) {

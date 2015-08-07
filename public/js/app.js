@@ -34,8 +34,8 @@ define([
     };
 
     this.gradeConverter = {
-      'b': new GradeConverter('boulders').from('font').to('default'),
-      'r': new GradeConverter('routes').from('french').to('default')
+      'b': new GradeConverter('boulders'),
+      'r': new GradeConverter('routes')
     };
 
     this.cartodb = {

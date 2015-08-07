@@ -67,7 +67,7 @@ define([
         case 1: str = ' (hard)'; break;
       }
       var type = this.get('type');
-      return this.gradeConverter[type].indexes(num) + str;
+      return this.gradeConverter[type].convert(num) + str;
     },
 
     formatDescription: function () {
@@ -152,8 +152,7 @@ define([
       }
       var fn = this.gradeConverter[type];
       // Deals with indexes vs string grades
-      var g = ((grade === +grade) ?
-          fn.indexes(grade, country, system) : fn.grades(grade, country, system));
+      var g = fn.convert(grade, country, system);
       // Add feel only if its not an array
       return (str !== '' && !_.isArray(g)) ? g + str : g;
     },

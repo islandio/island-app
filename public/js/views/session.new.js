@@ -739,18 +739,18 @@ define([
           this.app.profile.member.prefs: this.app.prefs;
       var system = type === 'r' ? prefs.grades.route: prefs.grades.boulder;
       if (txt !== 'Project' && !isNaN(val)) {
-        chosen.text(this.app.gradeConverter[type].indexes(val, country, system));
+        chosen.text(this.app.gradeConverter[type].convert(val, country, system));
       }
       grades.each(_.bind(function (index, el) {
         var $e = $(el);
         var from = Number($e.attr('rel'));
         if (!_.isNaN(from)) {
-          var grade = this.app.gradeConverter[type].indexes(from, country, system);
+          var grade = this.app.gradeConverter[type].convert(from, country, system);
           if (added.indexOf(grade) !== -1) {
             $e.hide();
           } else {
             added.push(grade);
-            $e.text(this.app.gradeConverter[type].indexes(from, country, system));
+            $e.text(grade);
           }
         }
       }, this));

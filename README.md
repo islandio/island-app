@@ -172,3 +172,10 @@ We index of posts, ticks, members, crags and ascents across their names and tags
 The architecture for search doesn't allow for removal of entries very easily (would need to search the sorted set for an entry which is difficult to do in Redis). Because removal is rare, a good solution is to just re-index nightly. This can be accomplished by installing Node where the Redis instance is located and running a cron job like below.
 
 ```0 3 * * * NODE_ENV=production bash -c 'time /home/ec2-user/island-app/util/index.js' >> /var/log/index.js 2>&1```
+
+
+##### Grading
+
+Grades are stored internally as an index into a grade map. Grades are converted to their text representations (V3, 5.12a etc) on the client.
+
+When an ascent is created, it is assigned a grade by the creator. Every tick that is sent adds to an overall grade consensus. The grade that appears the most in the consensus is the official Island grade. In this way, grades are dynamic and reflect the growing consensus of Island users. If two grades have equal consensus, the earlier grade is considered first. Any given Island user may only suggest a grade for an ascent once. The only exception is when the grade is first assigned to the ascent, which has no author designated.
