@@ -10,7 +10,7 @@ define([
   'mps',
   'rest',
   'text!../../templates/tabs.html',
-  'text!../../../templates/confirm.html',
+  'text!../../templates/confirm.html',
   'views/ascent.new',
   'views/session.new'
 ], function ($, _, Backbone, util, mps, rest, template, confirm, NewAscent,
