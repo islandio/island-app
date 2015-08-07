@@ -190,7 +190,7 @@ define([
       this.updateGrades(type, crag ? crag.model.get('country') : 'default');
     },
 
-    checkBoulder: function (e) {
+    checkBoulder: function () {
       var b = this.$('.new-session-boulder');
       var r = this.$('.new-session-route');
       b.attr('checked', true);
@@ -201,7 +201,7 @@ define([
       this.updateGrades('b', crag ? crag.model.get('country') : 'default');
     },
 
-    checkRoute: function (e) {
+    checkRoute: function () {
       var b = this.$('.new-session-boulder');
       var r = this.$('.new-session-route');
       b.attr('checked', false);
@@ -223,7 +223,7 @@ define([
 
       // Sanitize.
       this.$('input[type!="submit"]:visible, textarea:visible')
-          .each(function (i) {
+          .each(function () {
         $(this).val(util.sanitize($(this).val()));
       });
 
@@ -297,7 +297,7 @@ define([
 
     addNewCrag: function (e) {
       e.preventDefault();
-      var p = this.save();
+      this.save();
       this.cancel();
       mps.publish('map/add');
       return false;

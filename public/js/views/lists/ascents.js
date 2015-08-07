@@ -49,7 +49,8 @@ define([
           var self = this;
           var system = t === 'r' ? prefs.grades.route: prefs.grades.boulder;
           _.each(ascents, function (ascent, grade) {
-            var key = self.app.gradeConverter[t].convert(Number(grade), self.data.country, system);
+            var key = self.app.gradeConverter[t].convert(Number(grade),
+                self.data.country, system);
             if (!a[key]) a[key] = [];
             a[key] = a[key].concat(ascent);
             delete ascents[grade];
@@ -61,7 +62,8 @@ define([
 
           // sort grades
           this.grades[t] = _.keys(a).sort(function (a, b) {
-            return self.app.gradeConverter[t].compare(b, a, self.data.country, system);
+            return self.app.gradeConverter[t].compare(b, a,
+                self.data.country, system);
           });
         }, this));
 
@@ -187,7 +189,7 @@ define([
       this.filterBox.keyup();
     },
 
-    filter: function (e) {
+    filter: function () {
       var txt = this.filterBox.val().trim().toLowerCase();
       var ct = this.currentType;
       $('.' + ct + '-ascents .no-results').hide();

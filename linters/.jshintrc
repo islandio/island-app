@@ -1,7 +1,8 @@
 {
 
   "globals"   : {
-    "define"   : false
+    "define"   : false,
+    "store"    : false
   },
 
   // Define globals exposed by modern browsers.

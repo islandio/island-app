@@ -10,9 +10,8 @@ define([
   'GradeConverter',
   'mps',
   'rpc',
-  'rest',
-  'util'
-], function ($, _, Backbone, Router, GradeConverter, mps, rpc, rest, util) {
+  'rest'
+], function ($, _, Backbone, Router, GradeConverter, mps, rpc, rest) {
 
   var App = function () {
     this.rpc = rpc.init();

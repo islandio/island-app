@@ -4,9 +4,8 @@
 
 define([
   'Underscore',
-  'Backbone',
-  'util'
-], function (_, Backbone, util) {
+  'Backbone'
+], function (_, Backbone) {
   return Backbone.Model.extend({
 
     initialize: function (attributes, options) {

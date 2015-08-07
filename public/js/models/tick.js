@@ -111,7 +111,8 @@ define([
         str += 'tried</span> *';
       }
 
-      var name = '<a href="/crags/' + t.ascent.key + '" class="title navigate">';
+      var name = '<a href="/crags/' + t.ascent.key
+          + '" class="title navigate">';
       name += t.ascent.name + '</a>';
       name += ' at <a href="/crags/' + t.crag.key + '" class="title navigate">';
       name += t.crag.name + '</a>';

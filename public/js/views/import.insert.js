@@ -38,7 +38,8 @@ define([
       this.app.title('The Island | ' + this.target + ' Import');
       this.model = new Card(this.app.profile.content.page, {
         gradeConverter: this.app.gradeConverter,
-        prefs: this.app.profile.member ? this.app.profile.member.prefs: this.app.prefs
+        prefs: this.app.profile.member
+            ? this.app.profile.member.prefs: this.app.prefs
       });
       this.template = _.template(template);
       $(this.template.call(this)).appendTo('.main');
@@ -46,10 +47,11 @@ define([
       // Render each tick as a view.
       var ticks = this.$('.tick');
       var win = $(window);
-      _.each(ticks, _.bind(function (el, i) {
+      _.each(ticks, _.bind(function (el) {
         _.defer(_.bind(function () {
           el = $(el);
-          var data = _.find(this.model.get('ticks')[el.data('type')], function (t) {
+          var data = _.find(this.model.get('ticks')[el.data('type')],
+              function (t) {
             return t.id === el.attr('id');
           });
           var tick = new Tick({
@@ -190,7 +192,7 @@ define([
       this.empty();
     },
 
-    submit: function (e) {
+    submit: function () {
 
       var filteredTicks = _.filter(this.ticks, function(tick) {
         return tick.model.get('remove') !== true;
@@ -220,7 +222,7 @@ define([
       }));
       var fn = ascents.length > 0 ? rest.post :
           function(arg1, arg2, cb) { cb(); };
-      fn.call(rest, '/api/ascents/', ascents, _.bind(function (err, res) {
+      fn.call(rest, '/api/ascents/', ascents, _.bind(function (err) {
         if (err) {
           mps.publish('flash/new', [{
             err: err,
@@ -254,7 +256,7 @@ define([
           return payload;
         });
 
-        rest.post('/api/sessions/', sessions, _.bind(function (err, res) {
+        rest.post('/api/sessions/', sessions, _.bind(function (err) {
           if (err) {
             mps.publish('flash/new', [{
               err: err,
@@ -283,7 +285,7 @@ define([
     },
 
     setTickRemove: function(e) {
-      var $tickRemoveText = $(e.target)
+      var $tickRemoveText = $(e.target);
       var $tickInner = $tickRemoveText.parentsUntil('.tick');
 
       var model = _.find(this.ticks, function(t) {
@@ -324,7 +326,7 @@ define([
       this.submitting = false;
     },
 
-    filter: function (e) {
+    filter: function () {
       var txt = this.filterBox.val().trim().toLowerCase();
       var ct = this.currentType;
       $('.' + ct + '-ticks .no-results').hide();
