@@ -54,6 +54,29 @@ define([
 
       return tags && tags !== '' ? tags.replace(' ', '').replace(',', ''):
           util.toUsername(this.get('name'), '').toLowerCase();
+    },
+
+    makeHistogram: function() {
+      var prefs = this.get('prefs');
+      var type = this.get('type');
+      var system = type === 'r' ? prefs.grades.route : prefs.grades.boulder;
+      var gradeConverter = this.get('gradeConverter');
+      var counted = _.chain(this.get('consensus'))
+          .sortBy('grade')
+          .map(function(c) {
+            return {grade: gradeConverter.convert(c.grade, null, system)};
+          })
+          .countBy('grade')
+          .value();
+      return counted;
+    },
+
+    getGrade: function() {
+      var prefs = this.get('prefs');
+      var type = this.get('type');
+      var system = type === 'r' ? prefs.grades.route : prefs.grades.boulder;
+      return this.get('gradeConverter')
+          .convert(this.get('grade'), null, system);
     }
 
   });

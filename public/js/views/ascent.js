@@ -15,10 +15,11 @@ define([
   'views/lists/events',
   'views/lists/watchers',
   'views/instafeed',
+  'views/chart.histogram',
   'text!../../templates/confirm.html',
   'Skycons'
 ], function ($, _, Backbone, mps, rest, util, Ascent, template, title, Events,
-      Watchers, Instafeed, confirm, Skycons) {
+      Watchers, Instafeed, Histogram, confirm, Skycons) {
   return Backbone.View.extend({
 
     el: '.main',
@@ -32,6 +33,7 @@ define([
 
     render: function () {
       var data = this.app.profile.content.page;
+      data.gradeConverter = this.app.gradeConverter[data.type];
       data.prefs = this.app.profile.member ? this.app.profile.member.prefs:
           this.app.prefs;
       this.model = new Ascent(data);
@@ -47,6 +49,10 @@ define([
           this.skycons.add('crag_weather', weather.icon);
         }
       }, this));
+
+      this.histogram = new Histogram(this.app, {
+        $el: $('.ascent-grades-histogram')
+      }).render();
 
       // Handle selects.
       util.customSelects(this.el);
@@ -107,6 +113,8 @@ define([
         this.updateGrades(type, country);
         this.selectOption('rock', this.model.get('rock'));
       }
+
+      this.histogram.update(this.model.makeHistogram(), this.model.getGrade());
 
       return this;
     },
@@ -182,6 +190,7 @@ define([
       if (this.feed) {
         this.feed.destroy();
       }
+      this.histogram.destroy();
       this.watchers.destroy();
       this.undelegateEvents();
       this.stopListening();
