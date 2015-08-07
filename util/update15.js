@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /*
- *  update16.js: Ascent grades from array to
+ *  update15.js: Ascent grades from array of font grades to below
+ *
  *  {
  *    grade: <number>
  *    consensus: [

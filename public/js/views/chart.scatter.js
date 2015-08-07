@@ -494,9 +494,9 @@ define([
 
             var html = '<span class="d3-tip-header">' +
                 d.ascent.name + ', ' + d.crag.name + '</span>' +
-                '<span class="d3-tip-detail">a ' + d.grade + ' in ' + d.crag.country +
-                '</sspan>' +
-                '<sspan style="color:' + self.colors[self._getStyle(d)] +
+                '<span class="d3-tip-detail">a ' + d.grade + ' in ' +
+                d.crag.country + '</span>' +
+                '<span style="color:' + self.colors[self._getStyle(d)] +
                 '" class="d3-tip-style">' + style + ' on ' +
                 new Date(d.date).format('longDate') + '</span>';
 
