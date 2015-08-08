@@ -233,7 +233,7 @@
         <span class="info-divider">&nbsp;&middot;&nbsp;</span>
       <% } %>
     <% } %>
-    <% if (this.app.profile.member.admin || own) { %>
+    <% if ((this.app.profile.member && this.app.profile.member.admin) || own) { %>
       <a href="javascript:;" class="muted tick-edit">Edit</a>
       <span class="info-divider">&nbsp;&middot;&nbsp;</span>
     <% } %>

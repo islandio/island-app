@@ -39,10 +39,10 @@
           data-_path="/api/members/<%= data.author.username %>/unfollow">
         <i class="icon-user-add"></i> Follow</a>
     <% } %>
-  <% } %>
-  <% if (this.app.profile.member.admin) { %>
-    <a href="javascript:;" data-member-id="<%= data.author.id %>" class="button title-button clean-button">
-        <i class="icon-flash"></i> Clean</a>
+    <% if (this.app.profile.member.admin) { %>
+      <a href="javascript:;" data-member-id="<%= data.author.id %>" class="button title-button clean-button">
+          <i class="icon-flash"></i> Clean</a>
+    <% } %>
   <% } %>
 <% } %>
 <a href="/<%= data.author.username %>" class="button title-button navigate">
