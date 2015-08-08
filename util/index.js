@@ -17,15 +17,33 @@ if (argv._.length || argv.help) {
 
 // Module Dependencies
 var util = require('util');
+var async = require('async');
 var Step = require('step');
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
 var boots = require('../boots');
 
-var membersIndexed = 0;
-var postsIndexed = 0;
-var cragsIndexed = 0;
-var ascentsIndexed = 0;
+var membersIndexed, postsIndexed, cragsIndexed, ascentsIndexed;
+
+var requestIndex = function(client, type, docs, keys, cb) {
+  if (docs.length === 0) return cb(null, 0);
+  var count = 0;
+  var queue = async.queue(function(task, cb) {
+    var len = docs.length;
+    var left = len - queue.length();
+    if (left % 10000 === 0 || len === left) {
+      console.log(left + '/' + len);
+    }
+    client.cache.index(type, task, keys, function(err, indexed) {
+      count += indexed;
+      return cb();
+    });
+  }, 20);
+  queue.drain = function() {
+    cb(null, count);
+  };
+  _.each(docs, function(d) { queue.push(d); });
+};
 
 boots.start(function (client) {
 
@@ -37,39 +55,26 @@ boots.start(function (client) {
       client.db.Members.list({}, this.parallel());
       client.cache.del('members-search', this.parallel());
     },
-    function (err, docs, res) {
+    function (err, docs) {
       boots.error(err);
-
-      if (docs.length === 0) return this();
-
-      var _this = _.after(docs.length, this);
-      _.each(docs, function (d, idx) {
-        // Add new.
-        membersIndexed += client.cache.index('members', d, ['username',
-            'displayName'], {strategy: 'noTokens'}, _this);
-      });
+      requestIndex(client, 'members', docs, ['username', 'displayName'], this);
     },
-    function (err) {
+    function (err, count) {
       boots.error(err);
+      membersIndexed = count;
       console.log('Indexing crags');
 
       // Get all crags.
       client.db.Crags.list({}, this.parallel());
       client.cache.del('crags-search', this.parallel());
     },
-    function (err, docs, res) {
+    function (err, docs) {
       boots.error(err);
-
-      if (docs.length === 0) return this();
-      var _this = _.after(docs.length, this);
-      _.each(docs, function (d, idx) {
-        // Add new.
-        cragsIndexed += client.cache.index('crags', d, ['name', 'country'],
-            {strategy: 'noTokens'}, _this);
-      });
+      requestIndex(client, 'crags', docs, ['name', 'country'], this);
     },
-    function (err) {
+    function (err, count) {
       boots.error(err);
+      cragsIndexed = count;
       console.log('Indexing posts');
 
       // Get all posts.
@@ -78,17 +83,11 @@ boots.start(function (client) {
     },
     function (err, docs) {
       boots.error(err);
-
-      if (docs.length === 0) return this();
-      var _this = _.after(docs.length, this);
-      _.each(docs, function (d) {
-        // Add new.
-        postsIndexed += client.cache.index('posts', d, ['title'],
-            {strategy: 'noTokens'}, _this);
-      });
+      requestIndex(client, 'posts', docs, ['title'], this);
     },
-    function (err) {
+    function (err, count) {
       boots.error(err);
+      postsIndexed = count;
       console.log('Indexing ascents');
 
       // Get all ascents.
@@ -97,33 +96,11 @@ boots.start(function (client) {
     },
     function (err, docs) {
       boots.error(err);
-
-      var next = this;
-
-      if (docs.length === 0) return this();
-      var iter = 0;
-
-      var run100 = function () {
-        for (var i = iter;i < (iter + 100) && i < docs.length; i++) {
-          ascentsIndexed += client.cache.index('ascents', docs[i], ['name'],
-              {strategy: 'noTokens'}, function (err) { step(err, i) });
-        }
-      };
-
-      var step = function(err, i) {
-        if (err) { boots.error(err); process.exit(0) }
-        else if (i === docs.length) { next(); }
-        else if (i === iter + 100) {
-          iter = i;
-          run100();
-        }
-        else {}
-      };
-
-      run100();
+      requestIndex(client, 'ascents', docs, ['name', 'sector'], this);
     },
-    function (err) {
+    function (err, count) {
       boots.error(err);
+      ascentsIndexed = count;
       util.log('Redis: Indexed members, ascents, crags, and posts');
       util.log('Members entries: ' + membersIndexed);
       util.log('Posts entries: ' + postsIndexed);
