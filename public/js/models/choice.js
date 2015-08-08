@@ -5,8 +5,7 @@
 define([
   'Underscore',
   'Backbone',
-  'util'
-], function (_, Backbone, util) {
+], function (_, Backbone) {
   return Backbone.Model.extend({
 
     initialize: function(attr, opts) {
@@ -59,12 +58,12 @@ define([
           break;
         case 'ascents':
           var t = this.get('type');
-          var g = this.get('grades');
+          var g = this.get('grade');
           var c = this.get('country');
-          var g_ = this.gradeConverter[t].grades(g, c);
+          var g_ = this.gradeConverter[t].convert(g, c);
           title += '<strong>' + this.get('name') + '</strong>, '
               + this.get('crag') + ' ('
-              + g_.join(', ') + ')';
+              + g_ + ')';
           break;
       }
       return title;

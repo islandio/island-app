@@ -4,16 +4,16 @@
 //
 // Use in both node.js and the browser. If using the browser and requirejs
 // make sure to provide underscore as a dependency in a shim
-
+//
+// new GradeConverter.convert(grade)
 
 (function() {
 
-  // Establish the root object, `window` (`self`) in the browser, `global`
-  // on the server, or `this` in some virtual machines. We use `self`
-  // instead of `window` for `WebWorker` support.
-  var root = typeof self === 'object' && self.self === self && self ||
-            typeof global === 'object' && global.global === global && global ||
-            this;
+  // Establish the root object, `window` in the browser, or `global` on
+  // the server.
+
+  var root = typeof global === 'object' && global.global === global && global ||
+      this;
 
   var has_require = typeof require !== 'undefined';
 
@@ -23,7 +23,7 @@
     if( has_require ) {
       _ = require('underscore');
     }
-    else throw new Error('GradeConverter requires underscore, see http://underscorejs.org');
+    else throw new Error('GradeConverter requires underscore');
   }
 
   var GradeConverter = function(type) {
@@ -96,8 +96,8 @@
     }
 
     this.type = type;
-    this.fromSystem = null;
-    this.toSystem = null;
+    this.fromSystem = 'indexes';
+    this.toSystem = 'default';
 
     return this;
 
@@ -109,14 +109,14 @@
       exports = module.exports = GradeConverter;
     }
     exports.GradeConverter = GradeConverter;
-  } 
+  }
   else {
     root.GradeConverter = GradeConverter;
   }
 
 
 
-  /* For sorting - will be slow because of the indexOf commands so use 
+  /* For sorting - will be slow because of the indexOf commands so use
    * intelligently */
   GradeConverter.prototype.compare = function(a, b, country, system) {
     system = system || this.getSystem(country);
@@ -142,38 +142,10 @@
     }
   };
 
-  /* Direct lookup into the grade maps by index or array of indexes, optionally
-   * supplying country or preferred conversion system */
-  GradeConverter.prototype.indexes = function(indexes, country, system) {
-
-    if (!indexes) return;
-
-    // Make into array and then lower case;
-    var wasArray = indexes instanceof Array;
-    indexes = wasArray ? indexes : [indexes];
-
-    var toSystem = system || this.getSystem(country);
-
-    if (!indexes || indexes.length === 0 ||
-        !this.fromSystem || !toSystem || _.min(indexes) < 0 ||
-        _.max(indexes) > this.gradeMap.length)
-      return undefined;
-
-    var results = [];
-
-    var self = this;
-    indexes.forEach(function (i) {
-      results.push(self.gradeMap[i][toSystem]);
-    });
-
-    if (!wasArray) results = results[0];
-    return results;
-  };
-
   /* Convert a grade or array of grades directly, optionally supplying
    * country or preferred conversion system */
-  GradeConverter.prototype.grades = function(grades, country, system) {
-    grades = grades || [];
+  GradeConverter.prototype.convert = function(grades, country, system) {
+    grades = _.isNull(grades) || _.isUndefined(grades) ? [] : grades;
 
     var toSystem = system || this.getSystem(country);
 
@@ -183,8 +155,9 @@
 
     // Make into array and then lower case;
     var wasArray = grades instanceof Array;
+    var self = this;
     grades = (wasArray ? grades : [grades]) .map(function (g) {
-      return g.toLowerCase();
+      return self.fromSystem === 'indexes' ? g : g.toLowerCase();
     });
 
     if (grades.length === 0 || grades[0] === 'project') {
@@ -197,13 +170,20 @@
 
     var results = [];
 
-    var self = this;
+    var isIdx = self.fromSystem === 'indexes';
     grades.forEach(function (g) {
       self.gradeMap.some(function (e, i) {
-        if (e[self.fromSystem].toLowerCase() === g) {
+        if (isIdx && g === -1) {
+          results.push(toSystem === 'indexes' ? i: 'Project');
+          return true;
+        }
+        if ((isIdx && i === g) ||
+             !isIdx && e[self.fromSystem].toLowerCase() === g) {
           results.push(toSystem === 'indexes' ? i: e[toSystem]);
           return true;
-        } else return false;
+        } else {
+          return false;
+        }
       });
     });
 
@@ -212,32 +192,22 @@
 
   };
 
-  // Get the first index of already converted grades.
-  GradeConverter.prototype.indexOf = function(grades, system) {
-    var _grades = _.isArray(grades) ? grades : [grades]
-    system = system || this.fromSystem;
-    var gmap = _.pluck(this.gradeMap, system);
-    var idxs = _.map(_grades, function(g) { return gmap.indexOf(g); });
-    return _.isArray(grades) ? idxs: idxs[0];
-  }
-
   // Get the index range of a single converted grade
   GradeConverter.prototype.indexRangeOf = function(grade, system) {
     system = system || this.fromSystem;
     var idxs = [];
-    var gmap = _.pluck(this.gradeMap, system);
     _.each(this.gradeMap, function(g, i) {
       if (g[system] === grade) {
         idxs.push(i);
       }
-    })
+    });
     return idxs;
-  }
+  };
 
   // Return grades offset by some amount
   GradeConverter.prototype.offset = function(grade, offset, system) {
     system = system || this.fromSystem;
-    var gmap = _.unique(_.pluck(this.gradeMap, system))
+    var gmap = _.unique(_.pluck(this.gradeMap, system));
     for (var idx = 0; idx < gmap.length; idx++) {
       if (gmap[idx] === grade)
         break;
@@ -256,13 +226,13 @@
       if (this.gradeMap[idx][system] === gradel) {
         include = true;
       }
-      if (include) range.push(this.gradeMap[idx][system])
+      if (include) range.push(this.gradeMap[idx][system]);
       if (this.gradeMap[idx][system] === gradeh) {
         include = false;
       }
     }
     return _.unique(range);
-  }
+  };
 
   // O(n * m)
   GradeConverter.prototype.min = function(grades, system) {
@@ -271,10 +241,10 @@
     var idx = gmap.length-1;
     _.each(grades, function(g) {
       var i = gmap.indexOf(g);
-      if (i < idx) idx = i; 
-    })
+      if (i < idx) idx = i;
+    });
     return gmap[idx];
-  }
+  };
 
   // O(n * m)
   GradeConverter.prototype.max = function(grades, system) {
@@ -283,10 +253,10 @@
     var idx = 0;
     _.each(grades, function(g) {
       var i = gmap.indexOf(g);
-      if (i > idx) idx = i; 
-    })
+      if (i > idx) idx = i;
+    });
     return gmap[idx];
-  }
+  };
 
   /* Set origin grading system */
   GradeConverter.prototype.from = function(system) {

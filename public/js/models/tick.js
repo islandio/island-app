@@ -67,7 +67,7 @@ define([
         case 1: str = ' (hard)'; break;
       }
       var type = this.get('type');
-      return this.gradeConverter[type].indexes(num) + str;
+      return this.gradeConverter[type].convert(num) + str;
     },
 
     formatDescription: function () {
@@ -111,7 +111,8 @@ define([
         str += 'tried</span> *';
       }
 
-      var name = '<a href="/crags/' + t.ascent.key + '" class="title navigate">';
+      var name = '<a href="/crags/' + t.ascent.key
+          + '" class="title navigate">';
       name += t.ascent.name + '</a>';
       name += ' at <a href="/crags/' + t.crag.key + '" class="title navigate">';
       name += t.crag.name + '</a>';
@@ -152,8 +153,7 @@ define([
       }
       var fn = this.gradeConverter[type];
       // Deals with indexes vs string grades
-      var g = ((grade === +grade) ?
-          fn.indexes(grade, country, system) : fn.grades(grade, country, system));
+      var g = fn.convert(grade, country, system);
       // Add feel only if its not an array
       return (str !== '' && !_.isArray(g)) ? g + str : g;
     },

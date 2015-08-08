@@ -10,9 +10,8 @@ define([
   'GradeConverter',
   'mps',
   'rpc',
-  'rest',
-  'util'
-], function ($, _, Backbone, Router, GradeConverter, mps, rpc, rest, util) {
+  'rest'
+], function ($, _, Backbone, Router, GradeConverter, mps, rpc, rest) {
 
   var App = function () {
     this.rpc = rpc.init();
@@ -34,8 +33,8 @@ define([
     };
 
     this.gradeConverter = {
-      'b': new GradeConverter('boulders').from('font').to('default'),
-      'r': new GradeConverter('routes').from('french').to('default')
+      'b': new GradeConverter('boulders'),
+      'r': new GradeConverter('routes')
     };
 
     this.cartodb = {

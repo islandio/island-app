@@ -1,7 +1,8 @@
 {
 
   "globals"   : {
-    "define"   : false
+    "define"   : false,
+    "store"    : false
   },
 
   // Define globals exposed by modern browsers.
@@ -32,7 +33,7 @@
   "unused": true,
 
   // Single quotes only
-  "quotmark": "single",
+  //"quotmark": "single",
 
   // Don't complain about line breaks starting with symbols
   "laxbreak": true

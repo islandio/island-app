@@ -13,7 +13,8 @@ define([
   'text!../../templates/session.new.html',
   'text!../../templates/tick.new.html',
   'views/lists/choices'
-], function ($, _, Backbone, mps, rest, util, Spin, template, tickTemp, Choices) {
+], function ($, _, Backbone, mps, rest, util, Spin, template, tickTemp,
+    Choices) {
   return Backbone.View.extend({
 
     attachments: [],
@@ -87,13 +88,13 @@ define([
 
       // Add mouse events for dummy file selector.
       var dummy = this.$('.post-file-chooser-dummy');
-      this.$('.post-file-chooser').on('mouseover', function (e) {
+      this.$('.post-file-chooser').on('mouseover', function () {
         dummy.addClass('hover');
       })
-      .on('mouseout', function (e) { dummy.removeClass('hover'); })
-      .on('mousedown', function (e) { dummy.addClass('active'); })
+      .on('mouseout', function () { dummy.removeClass('hover'); })
+      .on('mousedown', function () { dummy.addClass('active'); })
       .change(_.bind(this.drop, this));
-      $(document).on('mouseup', function (e) {
+      $(document).on('mouseup', function () {
         dummy.removeClass('active');
       });
 
@@ -135,7 +136,7 @@ define([
       // - pending session does not restrict crag choice
       var date;
       if (!tick) {
-        pending = store.get('pendingSession');
+        var pending = store.get('pendingSession');
         store.set('pendingSession', false);
         if (pending) {
           tick = pending.actions[0].ticks[0];
@@ -268,7 +269,8 @@ define([
         this.tickChoices.options.query.crag_id = crag.model.get('id');
       } else if (!crag) {
         if (tick && !this.tickChoices.options.query.crag_id) {
-          this.cragChoices.preChoose({type: 'crags', id: tick.model.get('crag_id')});
+          this.cragChoices.preChoose({type: 'crags',
+              id: tick.model.get('crag_id')});
         }
         this.tickChoices.options.query = {};
       }
@@ -291,7 +293,7 @@ define([
       }
     },
 
-    checkTried: function (e) {
+    checkTried: function () {
       var ctx = this.$('.new-session-tick');
       var sent = $('.new-session-sent', ctx);
       var tried = $('.new-session-tried', ctx);
@@ -300,7 +302,7 @@ define([
       $('.new-session-tick-details', ctx).hide();
     },
 
-    checkSent: function (e) {
+    checkSent: function () {
       var ctx = this.$('.new-session-tick');
       var sent = $('.new-session-sent', ctx);
       var tried = $('.new-session-tried', ctx);
@@ -313,7 +315,7 @@ define([
 
       // Sanitize.
       this.$('input[type!="submit"]:visible, textarea:visible')
-          .each(function (i) {
+          .each(function () {
         $(this).val(util.sanitize($(this).val()));
       });
 
@@ -433,7 +435,7 @@ define([
 
       this.deleteMedia();
 
-      fn.call(rest, path, payload, _.bind(function (err, data) {
+      fn.call(rest, path, payload, _.bind(function (err) {
 
         this.submitButtonSpin.stop();
         this.submitButton.removeClass('spinning').attr('disabled', false);
@@ -462,7 +464,7 @@ define([
 
     addNewCrag: function (e) {
       e.preventDefault();
-      var p = this.save();
+      this.save();
       this.cancel();
       mps.publish('map/add');
       return false;
@@ -483,7 +485,7 @@ define([
       this.dropZone.addClass('dragging');
     },
 
-    dragout: function (e) {
+    dragout: function () {
       this.dropZone.removeClass('dragging');
     },
 
@@ -597,8 +599,8 @@ define([
                 if (n-1 % 6 === 0) {
                   $('<div class="clear">').insertBefore(li);
                 }
-                $('.media-delete', li).click(_.bind(function (e) {
-                  _.each(files, function (v, k) {
+                $('.media-delete', li).click(_.bind(function () {
+                  _.each(files, function (v) {
                     _.each(v, function (file) {
                       if (file.original_id === preview.original_id) {
                         file.cancelled = true;
@@ -625,7 +627,7 @@ define([
       var uploader = this.postForm.transloadit(opts);
 
       // For canceling.
-      $('.upload-remove', set).click(function (e) {
+      $('.upload-remove', set).click(function () {
         uploader.cancelled = true;
         if (uploader.instance) {
           clearTimeout(uploader.timer);
@@ -674,7 +676,7 @@ define([
       this.deleteButtonSpin.start();
       this.deleteButton.addClass('spinning').attr('disabled', true);
 
-      rest.delete('/api/ticks/' + oldTick.id, {}, _.bind(function (err, data) {
+      rest.delete('/api/ticks/' + oldTick.id, {}, _.bind(function (err) {
 
         // Stop spinner.
         this.deleteButtonSpin.stop();
@@ -707,7 +709,7 @@ define([
 
     deleteMedia: function () {
       _.each(this.mediaToDelete, function (mid) {
-        rest.delete('/api/medias/' + mid, {}, function (err, data) {
+        rest.delete('/api/medias/' + mid, {}, function (err) {
           if (err) {
             console.log(err);
             return;
@@ -739,18 +741,20 @@ define([
           this.app.profile.member.prefs: this.app.prefs;
       var system = type === 'r' ? prefs.grades.route: prefs.grades.boulder;
       if (txt !== 'Project' && !isNaN(val)) {
-        chosen.text(this.app.gradeConverter[type].indexes(val, country, system));
+        chosen.text(this.app.gradeConverter[type].convert(val, country,
+            system));
       }
       grades.each(_.bind(function (index, el) {
         var $e = $(el);
         var from = Number($e.attr('rel'));
         if (!_.isNaN(from)) {
-          var grade = this.app.gradeConverter[type].indexes(from, country, system);
+          var grade = this.app.gradeConverter[type].convert(from, country,
+              system);
           if (added.indexOf(grade) !== -1) {
             $e.hide();
           } else {
             added.push(grade);
-            $e.text(this.app.gradeConverter[type].indexes(from, country, system));
+            $e.text(grade);
           }
         }
       }, this));
