@@ -1,4 +1,4 @@
 test:
   pre:
     - node start.js:
-      background: true
+        background: true
