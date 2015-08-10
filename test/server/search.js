@@ -60,9 +60,9 @@ describe('Search', function() {
       search.search('tests', t, 10, check);
     });
   });
-  it('Index then search 100,000 documents', function(done) {
-    this.timeout(10000);
-    var toIndex = 100000;
+  it('Index then search 10,000 documents', function(done) {
+    this.timeout(20000);
+    var toIndex = 10000;
     // will contain last added values
     var name, id;
     var cb = _.after(toIndex, function() {
