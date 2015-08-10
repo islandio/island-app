@@ -60,4 +60,28 @@ describe('Search', function() {
       search.search('tests', t, 10, check);
     });
   });
+  it('Index then search 100,000 documents', function(done) {
+    this.timeout(10000);
+    var toIndex = 100000;
+    // will contain last added values
+    var name, id;
+    var cb = _.after(toIndex, function() {
+      search.search('tests', name, 10, function(err, res) {
+        res[0].split('::')[1].should.equal(id);
+        done(err);
+      });
+    });
+    function addRandomDoc() {
+      name = Math.random().toString().substr(2, 10);
+      id = Math.random().toString().substr(2, 10);
+      var doc = {
+        _id: id,
+        name: name
+      };
+      search.index('tests', doc, ['name'], cb);
+    }
+    for (var i = 0; i < toIndex; i++) {
+      addRandomDoc();
+    }
+  });
 });
