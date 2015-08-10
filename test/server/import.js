@@ -6,8 +6,6 @@ var _ = require('underscore');
 var lib8a = require('island-lib8a');
 var lib27 = require('island-lib27crags');
 
-var url = 'localhost:8080';
-
 var lib8aUserId, lib27UserId;
 
 describe('Import8a', function() {
@@ -32,20 +30,20 @@ describe('Import8a', function() {
       var tick = _.find(res, function(r) {
         return r.ascent === 'Apu';
       });
-      tick.sent.should.equal(true)
-      tick.ascent.should.equal('Apu')
-      tick.recommended.should.equal(false)
-      tick.crag.should.equal('Hatun Machay')
-      tick.ascentSector.should.equal('')
-      tick.first.should.equal(true)
-      tick.feel.should.equal('Soft')
-      tick.secondGo.should.equal(false)
+      tick.sent.should.equal(true);
+      tick.ascent.should.equal('Apu');
+      tick.recommended.should.equal(false);
+      tick.crag.should.equal('Hatun Machay');
+      tick.ascentSector.should.equal('');
+      tick.first.should.equal(true);
+      tick.feel.should.equal('Soft');
+      tick.secondGo.should.equal(false);
       tick.note.should.be.String();
       tick.rating.should.equal(3);
       tick.type.should.equal('b');
       tick.grade.should.equal('8b');
       done(err);
-    })
+    });
   });
 });
 
@@ -69,17 +67,17 @@ describe('Import27crags', function() {
       var tick = _.find(res, function(r) {
         return r.ascent === 'Warpath';
       });
-      tick.sent.should.equal(true)
-      tick.ascent.should.equal('Warpath')
-      tick.recommended.should.equal(false)
-      tick.crag.should.equal('Castle Rock, Idaho')
-      tick.first.should.equal(false)
+      tick.sent.should.equal(true);
+      tick.ascent.should.equal('Warpath');
+      tick.recommended.should.equal(false);
+      tick.crag.should.equal('Castle Rock, Idaho');
+      tick.first.should.equal(false);
       tick.note.should.be.String();
       tick.rating.should.equal(3);
       tick.type.should.equal('b');
       tick.grade.should.equal('8b+');
       done(err);
-    })
+    });
   });
 });
 
