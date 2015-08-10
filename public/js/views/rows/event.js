@@ -55,6 +55,7 @@ define([
           params.mapless = true;
           params.inlineWeather = true;
           params.inlineTime = true;
+          params.showAuthorName = true;
         }
         this.action = new Action(params, this.app).render(true);
       }
