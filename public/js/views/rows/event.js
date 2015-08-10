@@ -55,7 +55,13 @@ define([
           params.mapless = true;
           params.inlineWeather = true;
           params.inlineTime = true;
-          params.showAuthorName = true;
+          var containerType = this.parentView.parentView.model ?
+              this.parentView.parentView.model.get('type'): null;
+          // Show ascentionist name not ascent name on ascent pages.
+          if (containerType === 'b' || containerType === 'r') {
+            params.showAuthorName = true;
+            params.showAscentName = false;
+          }
         }
         this.action = new Action(params, this.app).render(true);
       }
