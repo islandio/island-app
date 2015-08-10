@@ -1,5 +1,5 @@
-+![Island Build Status](https://circleci.com/gh/The-Island/island-app.svg?style=shield&circle-token=f46cdeda0c3c2f693e5e085b5f3b980561a2d41b "Island-app Build Status")
-+
+![Island Build Status](https://circleci.com/gh/The-Island/island-app.svg?style=shield&circle-token=f46cdeda0c3c2f693e5e085b5f3b980561a2d41b "Island-app Build Status")
+
 
 # The Island
 
