@@ -40,7 +40,7 @@
     <%= this.model.get('author').displayName %></a> 
   / <a href="/sessions/<%= this.model.get('session').key %>" class="navigate">
   <%= new Date(this.model.get('session').date).format('mediumDate') %></a> / 
-  <a href="/efforts/<%= this.model.get('key') %>" class="navigate">
+  <a href="/crags/<%= this.model.get('ascent').key %>" class="navigate">
   <span class="session-title"><%= this.model.get('ascent').name %></span></a>
   <% if (w && weatherURL) { %>
     <a href="<%= weatherURL %>" class="crag-weather">
