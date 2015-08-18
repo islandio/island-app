@@ -1,5 +1,5 @@
 {
-  "MONGO_URI": "mongodb://localhost:27017/island",
+  "MONGO_URI": "mongodb://localhost:27017/the_island",
 
   "REDIS_HOST_CACHE": "localhost",
   "REDIS_HOST_SESSION": "localhost",

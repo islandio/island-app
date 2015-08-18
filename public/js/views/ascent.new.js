@@ -181,7 +181,7 @@ define([
       var name = this.$('input[name="name"]').val().trim();
       var grade = this.$('select[name="grade"]').val();
       var rock = this.$('select[name="rock"]').val();
-      if (!crag || name === '' || grade === 'hide' || rock === 'hide') {
+      if (!crag || name === '') {
         this.submitButton.attr('disabled', true).addClass('disabled');
       } else {
         this.submitButton.attr('disabled', false).removeClass('disabled');

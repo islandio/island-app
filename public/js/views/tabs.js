@@ -213,7 +213,7 @@ define([
 
       $.fancybox(_.template(confirm)({
         message: 'Delete duplicate sends?',
-        confirm: '<i class="icon-flash"></i> <span>Clean</span>'
+        confirmTxt: '<i class="icon-flash"></i> <span>Clean</span>'
       }), {
         openEffect: 'fade',
         closeEffect: 'fade',
