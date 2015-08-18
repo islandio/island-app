@@ -273,20 +273,19 @@ define([
         // Show success.
         mps.publish('flash/new', [{
           message: 'You added a new climb in ' + data.crag + '.',
-          level: 'alert'
+          level: 'alert',
+          type: 'popup'
         }, true]);
-
-        // Go to the ascent page.
-        this.app.router.navigate('crags/' + data.key, {trigger: true});
         
         // Refresh the map.
         mps.publish('map/refresh/crags');
 
         // All done.
-        this.destroy();
+        this.clearInputs();
 
         // Check if there's a pending session with this crag.
         if (this.options.back) {
+          this.destroy();
           new NewSession(this.app, {crag_id: data.crag_id,
               ascent_id: data.ascent_id}).render();
         }
@@ -322,6 +321,13 @@ define([
         e.preventDefault();
       }
       this.destroy();
+    },
+
+    clearInputs: function() {
+      this.$('input[name="name"]').val('');
+      this.$('textarea[name="note"]').val('');
+      this.selectOption('grade', 'hide');
+      this.validate();
     },
 
     updateGrades: function (type, country) {
