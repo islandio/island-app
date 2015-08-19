@@ -17,32 +17,27 @@ if (argv._.length || argv.help) {
 
 // Module Dependencies
 var util = require('util');
-var async = require('async');
 var Step = require('step');
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
 var boots = require('../boots');
+var queue = require('queue-async');
 
 var membersIndexed, postsIndexed, cragsIndexed, ascentsIndexed;
 
 var requestIndex = function(client, type, docs, keys, cb) {
   if (docs.length === 0) return cb(null, 0);
-  var count = 0;
-  var queue = async.queue(function(task, cb) {
-    var len = docs.length;
-    var left = len - queue.length();
-    if (left % 10000 === 0 || len === left) {
-      console.log(left + '/' + len);
-    }
-    client.cache.index(type, task, keys, function(err, indexed) {
-      count += indexed;
-      return cb();
-    });
-  }, 20);
-  queue.drain = function() {
-    cb(null, count);
-  };
-  _.each(docs, function(d) { queue.push(d); });
+  var q = queue(25);
+  var fcn = _.bind(client.cache.index, client.cache);
+  _.each(docs, function(d) {
+    q.defer(fcn, type, d, keys)
+  });
+  q.awaitAll(function(err, res) {
+    var idxed = _.reduce(res, function(m, r) {
+      return m + r;
+    }, 0);
+    cb(err, idxed);
+  });
 };
 
 boots.start(function (client) {
@@ -91,12 +86,12 @@ boots.start(function (client) {
       console.log('Indexing ascents');
 
       // Get all ascents.
-      client.db.Ascents.list({}, this.parallel());
+      client.db.Ascents.list({}, {limit: 100000}, this.parallel());
       client.cache.del('ascents-search', this.parallel());
     },
     function (err, docs) {
       boots.error(err);
-      requestIndex(client, 'ascents', docs, ['name', 'sector'], this);
+      requestIndex(client, 'ascents', docs, ['name'], this);
     },
     function (err, count) {
       boots.error(err);

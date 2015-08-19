@@ -6,6 +6,7 @@
     "public",
     ".elasticbeanstalk",
     ".ebextensions",
-    "dump.rdb"
+    "dump.rdb",
+    "test/**"
   ]
 }
