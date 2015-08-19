@@ -1,0 +1,39 @@
+<div class="modal">
+  <span class="modal-title"><i class="icon-gauge"></i> How fast do you want it?</span>
+  <div class="modal-body">
+    <form class="shipping-options-form">
+      <table>
+        <tbody>
+          <% _.each(options, function (o) {
+            var shipment = o.shipments[0];
+            console.log(shipment)
+          %>
+            <tr>
+              <td>
+                <input type="radio" name="option" value="<%= o.serviceLevelCode %>" />
+              </td>
+              <td>
+                <%= o.serviceLevelName %> (<%= shipment.carrier.description %>)
+              </td>
+              <td>
+                Ships <%= new Date(shipment.expectedShipDate).format('ddd, mmm d, h:MMtt Z') %>
+                <br />
+                Delivered by <%= new Date(shipment.expectedDeliveryMaxDate).format('ddd, mmm d, h:MMtt Z') %>
+              </td>
+              <td>
+                <%= shipment.cost.amount %> (<%= shipment.cost.currency %>)
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </form>
+  </div>
+  <div class="modal-actions">
+    <button class="modal-cancel modal-button button">Cancel</button>
+    <button class="modal-confirm modal-button modal-delete button">
+      <span>Choose Billing</span> <i class="icon-angle-right"></i>
+    </button>
+    <div class="clear"></div>
+  </div>
+</div>

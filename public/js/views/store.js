@@ -11,9 +11,12 @@ define([
   'util',
   'text!../../templates/store.html',
   'text!../../templates/store.title.html',
+  'text!../../templates/shipping.address.html',
+  'text!../../templates/shipping.options.html',
   'views/lists/events',
   'views/lists/ticks'
-], function ($, _, Backbone, mps, rest, util, template, title, Events, Ticks) {
+], function ($, _, Backbone, mps, rest, util, template, title, shippingAddress,
+      shippingOptions, Events, Ticks) {
 
   return Backbone.View.extend({
 
@@ -22,7 +25,7 @@ define([
     initialize: function (app) {
       this.app = app;
       this.subscriptions = [
-        mps.subscribe('cart/checkout', _.bind(this.checkout, this)),
+        mps.subscribe('cart/checkout', _.bind(this.getShippingOptions, this)),
         mps.subscribe('cart/empty', _.bind(this.emptyCart, this))
       ];
       this.on('rendered', this.setup, this);
@@ -135,31 +138,57 @@ define([
       mps.publish('cart/update');
     },
 
-    checkout: function () {
-
-      rest.post('/api/store/rate', {}, function (err) {
-        console.log('done');
+    getShippingOptions: function () {
+      $.fancybox(_.template(shippingAddress)({
+        member: this.app.profile.member
+      }), {
+        openEffect: 'fade',
+        closeEffect: 'fade',
+        closeBtn: false,
+        padding: 0
       });
-
-      console.log('checkout.... ')
-      return;
-
-      this.stripeHandler.open({
-        name: 'We Are Island, Inc.',
-        description: 'These things...',
-        amount: price,
-        // image: product.image,
-        token: function (token, args) {
-          var payload = {
-            token: token,
-            // product: product,
-            address: args
-          };
-          rest.post('/api/store/orders', payload, function (err) {
-            console.log('done');
-          });
-        }
+      $('.modal-cancel').click(function (e) {
+        $.fancybox.close();
       });
+      $('.modal-confirm').click(_.bind(function (e) {
+
+        // Get shipping options for sending the cart items to this address.
+        var payload = {
+          cart: store.get('cart') || {},
+          address: $('.shipping-address-form').serializeObject()
+        };
+        rest.post('/api/store/shipping', payload, _.bind(function (err, data) {
+          
+          store.set('shippingOptions', data.options);
+          
+          $.fancybox.close();
+          this.chooseShippingOption();
+        }, this));
+      }, this));
+
+      return false;
+    },
+
+    chooseShippingOption: function () {
+      $.fancybox(_.template(shippingOptions)({
+        member: this.app.profile.member,
+        cart: store.get('cart'),
+        address: store.get('address'),
+        options: store.get('shippingOptions')
+      }), {
+        openEffect: 'fade',
+        closeEffect: 'fade',
+        closeBtn: false,
+        padding: 0
+      });
+      $('.modal-cancel').click(function (e) {
+        $.fancybox.close();
+      });
+      $('.modal-confirm').click(_.bind(function (e) {
+
+      }, this));
+
+      return false;
     },
 
     emptyCart: function () {
