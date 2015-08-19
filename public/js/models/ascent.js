@@ -68,6 +68,12 @@ define([
           })
           .countBy('grade')
           .value();
+
+      // Remove project from the grade consensus
+      if (counted.Project && _.keys(counted).length > 1) {
+        delete counted.Project;
+      }
+
       return counted;
     },
 

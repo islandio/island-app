@@ -10,7 +10,7 @@ var async = require('async');
 var url = 'localhost:8080';
 var cookies;
 
-function getOrCreateMember(name, logout, cb) {
+function createMember(name, cb) {
   var profile = {
     username: name,
     password: name,
@@ -26,28 +26,36 @@ function getOrCreateMember(name, logout, cb) {
           request(url)
               .post('/api/members')
               .send(profile)
-              .expect(200)
               .end(function(err, res) {
-                if (err || !logout) return cb(err);
-                var req = request(url).get('/service/logout');
-                cookies = res.headers['set-cookie'].pop().split(';')[0];
-                req.cookies = cookies;
-                req.expect(200, cb);
-              });
-        } else {
-          if (logout) return cb();
-          console.log('logging in user ' + name);
-          request(url)
-              .post('/api/members/auth')
-              .send(profile)
-              .expect(200)
-              .end(function(err, res) {
-                cookies = res.headers['set-cookie'].pop().split(';')[0];
-                return cb();
+                return cb(err);
               })
+        } else {
+          cb(err);
         }
       });
 };
+
+function login(name, cb) {
+  var profile = {
+    username: name,
+    password: name,
+    email: name + '@' + name + 'com'
+  };
+  request(url)
+      .post('/api/members/auth')
+      .send(profile)
+      .expect(200)
+      .end(function(err, res) {
+        cookies = res.headers['set-cookie'].pop().split(';')[0];
+        return cb(err);
+      })
+};
+
+function logout(name, cb) {
+  var req = request(url).get('/service/logout');
+  req.cookies = cookies;
+  req.expect(200, cb);
+}
 
 function deleteMember(name, cb) {
   var profile = {
@@ -110,7 +118,8 @@ function createAscent(name, type, grade, cragid, cb) {
 before('building a mini island database of users, ascents, crags', function(done) {
   this.timeout(30000);
   async.waterfall([
-    function(cb) { getOrCreateMember('islandTest', false, cb) },
+    function(cb) { createMember('islandTest', cb) },
+    function(cb) { login('islandTest', cb) },
     function(cb) { createCrag('crag1', cb) },
     function(res, cb) { createAscent('ascent1', 'b', 3, res.body._id, cb) }
   ], done);

@@ -181,7 +181,7 @@ define([
       var name = this.$('input[name="name"]').val().trim();
       var grade = this.$('select[name="grade"]').val();
       var rock = this.$('select[name="rock"]').val();
-      if (!crag || name === '' || grade === 'hide' || rock === 'hide') {
+      if (!crag || name === '') {
         this.submitButton.attr('disabled', true).addClass('disabled');
       } else {
         this.submitButton.attr('disabled', false).removeClass('disabled');
@@ -273,20 +273,19 @@ define([
         // Show success.
         mps.publish('flash/new', [{
           message: 'You added a new climb in ' + data.crag + '.',
-          level: 'alert'
+          level: 'alert',
+          type: 'popup'
         }, true]);
-
-        // Go to the ascent page.
-        this.app.router.navigate('crags/' + data.key, {trigger: true});
         
         // Refresh the map.
         mps.publish('map/refresh/crags');
 
         // All done.
-        this.destroy();
+        this.clearInputs();
 
         // Check if there's a pending session with this crag.
         if (this.options.back) {
+          this.destroy();
           new NewSession(this.app, {crag_id: data.crag_id,
               ascent_id: data.ascent_id}).render();
         }
@@ -322,6 +321,13 @@ define([
         e.preventDefault();
       }
       this.destroy();
+    },
+
+    clearInputs: function() {
+      this.$('input[name="name"]').val('');
+      this.$('textarea[name="note"]').val('');
+      this.selectOption('grade', 'hide');
+      this.validate();
     },
 
     updateGrades: function (type, country) {

@@ -271,6 +271,10 @@ define([
         if (tick && !this.tickChoices.options.query.crag_id) {
           this.cragChoices.preChoose({type: 'crags',
               id: tick.model.get('crag_id')});
+          var el = this.cragChoices.$el.find('input');
+          if (el.hasClass('input-warning')) {
+            el.removeClass('input-warning');
+          }
         }
         this.tickChoices.options.query = {};
       }
@@ -393,7 +397,7 @@ define([
       _.each(this.attachments, function (a) {
         if (!a.assembly) return;
         _.each(a.assembly.results, function (v, k) {
-          _.each(v, function (r) {
+          _.each(v, function (r, i) {
             if (r.cancelled) {
               return;
             }
@@ -456,7 +460,12 @@ define([
           type: 'popup'
         }, true]);
 
-        this.destroy();
+        if (!this.options.tick) {
+          this.tickChoices.clearChoice();
+          this.validate();
+        } else {
+          this.destroy();
+        }
       }, this));
 
       return false;
