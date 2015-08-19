@@ -52,6 +52,7 @@ describe('Service (not logged in)', function() {
     request(url)
         .get(route('ticks') + '/islandTest')
         .expect(200, function(err, res) {
+          console.log(res.body);
           res.body.content.page.ticks.should.be.empty();
           done(err);
         });
