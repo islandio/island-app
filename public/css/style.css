@@ -3307,6 +3307,9 @@ img.page-title-avatar {
   -moz-border-radius: 2px;
   border-radius: 2px;
 }
+.modal.modal-wide {
+  width: 650px;
+}
 .modal-title {
   display: block;
   background: #f2f2f2;

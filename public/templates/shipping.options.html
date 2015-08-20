@@ -1,16 +1,19 @@
-<div class="modal">
+<div class="modal modal-wide">
   <span class="modal-title"><i class="icon-gauge"></i> How fast do you want it?</span>
   <div class="modal-body">
     <form class="shipping-options-form">
       <table>
         <tbody>
-          <% _.each(options, function (o) {
+          <% _.each(options, function (o, i) {
             var shipment = o.shipments[0];
-            console.log(shipment)
           %>
             <tr>
               <td>
-                <input type="radio" name="option" value="<%= o.serviceLevelCode %>" />
+                <% if (i === 0) { %>
+                  <input type="radio" name="option" value="<%= o.serviceLevelCode %>" checked="checked" />
+                <% } else { %>
+                  <input type="radio" name="option" value="<%= o.serviceLevelCode %>"/>
+                <% } %>
               </td>
               <td>
                 <%= o.serviceLevelName %> (<%= shipment.carrier.description %>)

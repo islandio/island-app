@@ -109,22 +109,7 @@ define([
         return;
       }
 
-      this.stripeHandler.open({
-        name: 'We Are Island, Inc.',
-        description: 'These things...',
-        amount: product.price,
-        image: this.app.images.store_avatar,
-        token: function (token, args) {
-          var payload = {
-            token: token,
-            product: product,
-            address: args
-          };
-          rest.post('/api/store/orders', payload, function (err) {
-            console.log('done');
-          });
-        }
-      });
+      return;
     },
 
     addToCart: function (e) {
@@ -186,9 +171,59 @@ define([
       });
       $('.modal-confirm').click(_.bind(function (e) {
 
+        var optionCode =
+            $('.shipping-options-form input:radio[name="option"]:checked')
+            .val();
+        var shipping = _.find(store.get('shippingOptions'), function (o) {
+          return o.serviceLevelCode === optionCode;
+        });
+        store.set('shipping', shipping);
+
+        $.fancybox.close();
+        this.checkout();
+
       }, this));
 
       return false;
+    },
+
+    checkout: function () {
+
+      var cart = store.get('cart');
+      var shipping = store.get('shipping');
+
+      var description = '2 things';
+
+      var amount = shipping.shipments[0].cost.amount * 100;
+      _.each(cart, _.bind(function (quantity, sku) {
+        var product = _.find(this.app.profile.content.products.items,
+            function (i) {
+          return i.sku === sku;
+        });
+        if (!product) {
+          return;
+        }
+        amount += (quantity * product.price);
+      }, this));
+
+      return;
+
+      this.stripeHandler.open({
+        name: 'We Are Island, Inc.',
+        description: description,
+        amount: amount,
+        image: this.app.images.store_avatar,
+        token: function (token) {
+          var payload = {
+            token: token,
+            cart: cart,
+            shipping: shipping,
+          };
+          rest.post('/api/store/orders', payload, function (err) {
+            console.log('done');
+          });
+        }
+      });
     },
 
     emptyCart: function () {
