@@ -50,9 +50,11 @@ define([
         }
       }, this));
 
-      this.histogram = new Histogram(this.app, {
-        $el: $('.ascent-grades-histogram')
-      }).render();
+      if ($('.ascent-grades-histogram').length) {
+        this.histogram = new Histogram(this.app, {
+          $el: $('.ascent-grades-histogram')
+        }).render();
+      }
 
       // Handle selects.
       util.customSelects(this.el);
@@ -114,7 +116,10 @@ define([
         this.selectOption('rock', this.model.get('rock'));
       }
 
-      this.histogram.update(this.model.makeHistogram(), this.model.getGrade());
+      if (this.histogram) {
+        this.histogram.update(this.model.makeHistogram(),
+            this.model.getGrade());
+      }
 
       return this;
     },
@@ -190,7 +195,9 @@ define([
       if (this.feed) {
         this.feed.destroy();
       }
-      this.histogram.destroy();
+      if (this.histogram) {
+        this.histogram.destroy();
+      }
       this.watchers.destroy();
       this.undelegateEvents();
       this.stopListening();

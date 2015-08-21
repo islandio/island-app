@@ -49,12 +49,14 @@ describe('GradeConsensus', function() {
     dut(consensus).should.equal(1);
   });
 
-  it('grades with author have preference', function() {
-    consensus.push({grade: 3, author_id: 'eyal'});
-    dut(consensus).should.equal(1);
-    consensus.push({grade: 3, author_id: 'eyal'});
+  it('grades with tick_id have preference', function() {
+    consensus.push({grade: 3, tick_id: 'eyal'});
     dut(consensus).should.equal(3);
-    consensus.push({grade: 3, author_id: 'eyal'});
+    consensus.push({grade: 4, tick_id: 'eyal'});
+    dut(consensus).should.equal(3);
+    consensus.push({grade: 4, tick_id: 'eyal'});
+    dut(consensus).should.equal(4);
+    consensus.push({grade: 3, tick_id: 'eyal'});
     dut(consensus).should.equal(3);
   });
 

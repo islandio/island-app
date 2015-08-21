@@ -56,12 +56,24 @@ define([
           util.toUsername(this.get('name'), '').toLowerCase();
     },
 
+    wasSent: function() {
+      var consensus = this.get('consensus');
+      return _.some(consensus, function(c) { return !!c.tick_id; });
+    },
+
     makeHistogram: function() {
       var prefs = this.get('prefs');
       var type = this.get('type');
       var system = type === 'r' ? prefs.grades.route : prefs.grades.boulder;
       var gradeConverter = this.get('gradeConverter');
-      var counted = _.chain(this.get('consensus'))
+
+      // Don't include suggestions if a tick has occurred
+      var consensus = this.get('consensus');
+      if (_.some(consensus, function(c) { return !!c.tick_id; })) {
+        consensus = _.filter(consensus, function(c) { return !!c.tick_id; });
+      }
+
+      var counted = _.chain(consensus)
           .sortBy('grade')
           .map(function(c) {
             return {grade: gradeConverter.convert(c.grade, null, system)};

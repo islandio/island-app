@@ -9,10 +9,12 @@
 %>
 
 <div class="rightside">
-  <span class="sidebar-heading">
-    Consensus grade at <%= this.model.getGrade() %>
-  </span>
-  <div class="ascent-grades-histogram"></div>
+  <% if (this.model.wasSent()) { %>
+    <span class="sidebar-heading">
+      Consensus grade at <%= this.model.getGrade() %>
+    </span>
+    <div class="ascent-grades-histogram"></div>
+  <% } %>
   <div class="sidebar-items">
     <div class="sidebar-watchers"></div>
   </div>
