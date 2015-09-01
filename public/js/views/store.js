@@ -63,8 +63,7 @@ define([
 
       this.stripeHandler = StripeCheckout.configure({
         key: this.app.stripe.key,
-        billingAddress: true,
-        shippingAddress: true
+        billingAddress: false
       });
 
       return this;
@@ -188,13 +187,11 @@ define([
     },
 
     checkout: function () {
-
       var cart = store.get('cart');
       var shipping = store.get('shipping');
 
-      var description = '2 things';
-
-      var amount = shipping.shipments[0].cost.amount * 100;
+      var description = '';
+      var total = 0;
       _.each(cart, _.bind(function (quantity, sku) {
         var product = _.find(this.app.profile.content.products.items,
             function (i) {
@@ -203,23 +200,30 @@ define([
         if (!product) {
           return;
         }
-        amount += (quantity * product.price);
+        var cost = quantity * product.price;
+        total += cost;
+        description += quantity + ' x ' + product.title + ' ($' +
+            (cost / 100).toFixed(2) + '), ';
       }, this));
 
-      return;
+      var shippingAndHandling = shipping.shipments[0].cost.amount * 100;
+      total += shippingAndHandling;
+      description += 'Shipping & Handling ($' +
+          (shippingAndHandling / 100).toFixed(2) + ')';
 
       this.stripeHandler.open({
         name: 'We Are Island, Inc.',
         description: description,
-        amount: amount,
+        amount: total,
         image: this.app.images.store_avatar,
         token: function (token) {
           var payload = {
             token: token,
             cart: cart,
             shipping: shipping,
+            description: description
           };
-          rest.post('/api/store/orders', payload, function (err) {
+          rest.post('/api/store/checkout', payload, function (err) {
             console.log('done');
           });
         }
