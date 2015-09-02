@@ -144,6 +144,7 @@ define([
         rest.post('/api/store/shipping', payload, _.bind(function (err, data) {
           
           store.set('shippingOptions', data.options);
+          store.set('shipTo', data.shipTo);
           
           $.fancybox.close();
           this.chooseShippingOption();
@@ -176,6 +177,7 @@ define([
         var shipping = _.find(store.get('shippingOptions'), function (o) {
           return o.serviceLevelCode === optionCode;
         });
+        shipping.shipTo = store.get('shipTo');
         store.set('shipping', shipping);
 
         $.fancybox.close();
