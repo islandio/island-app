@@ -98,17 +98,11 @@ define([
       var button = $(e.target).closest('.buy-now');
       var picker = button.parent();
       var sku = picker.data('sku');
+      var buyNow = {};
+      buyNow[sku] = 1;
+      store.set('buyNow', buyNow);
 
-      var product = _.find(this.app.profile.content.products.items,
-          function (i) {
-        return i.sku === sku;
-      });
-
-      if (!product) {
-        return;
-      }
-
-      return;
+      this.getShippingOptions(true);
     },
 
     addToCart: function (e) {
@@ -122,7 +116,7 @@ define([
       mps.publish('cart/update');
     },
 
-    getShippingOptions: function () {
+    getShippingOptions: function (buyNow) {
       $.fancybox(_.template(shippingAddress)({
         member: this.app.profile.member
       }), {
@@ -138,26 +132,36 @@ define([
 
         // Get shipping options for sending the cart items to this address.
         var payload = {
-          cart: store.get('cart') || {},
+          cart: buyNow ? store.get('buyNow'): store.get('cart') || {},
           address: $('.shipping-address-form').serializeObject()
         };
         rest.post('/api/store/shipping', payload, _.bind(function (err, data) {
+
+          if (err) {
+            mps.publish('flash/new', [{
+              err: err,
+              level: 'error',
+              type: 'popup',
+              sticky: true
+            }]);
+            return false;
+          }
           
           store.set('shippingOptions', data.options);
           store.set('shipTo', data.shipTo);
           
           $.fancybox.close();
-          this.chooseShippingOption();
+          this.chooseShippingOption(buyNow);
         }, this));
       }, this));
 
       return false;
     },
 
-    chooseShippingOption: function () {
+    chooseShippingOption: function (buyNow) {
       $.fancybox(_.template(shippingOptions)({
         member: this.app.profile.member,
-        cart: store.get('cart'),
+        cart: buyNow ? store.get('buyNow'): store.get('cart'),
         address: store.get('address'),
         options: store.get('shippingOptions')
       }), {
@@ -181,18 +185,18 @@ define([
         store.set('shipping', shipping);
 
         $.fancybox.close();
-        this.checkout();
+        this.checkout(buyNow);
 
       }, this));
 
       return false;
     },
 
-    checkout: function () {
-      var cart = store.get('cart');
+    checkout: function (buyNow) {
+      var cart = buyNow ? store.get('buyNow'): store.get('cart');
       var shipping = store.get('shipping');
 
-      var description = '';
+      var count = 0;
       var total = 0;
       _.each(cart, _.bind(function (quantity, sku) {
         var product = _.find(this.app.profile.content.products.items,
@@ -204,17 +208,21 @@ define([
         }
         var cost = quantity * product.price;
         total += cost;
-        description += quantity + ' x ' + product.title + ' ($' +
-            (cost / 100).toFixed(2) + '), ';
+        count += quantity;
       }, this));
+      var name = count + ' item';
+      if (count !== 1) {
+        name += 's';
+      }
+      name += ': $' + (total / 100).toFixed(2);
 
       var shippingAndHandling = shipping.shipments[0].cost.amount * 100;
       total += shippingAndHandling;
-      description += 'Shipping & Handling ($' +
-          (shippingAndHandling / 100).toFixed(2) + ')';
+      var description = 'Shipping & handling: $' +
+          (shippingAndHandling / 100).toFixed(2);
 
       this.stripeHandler.open({
-        name: 'We Are Island, Inc.',
+        name: name,
         description: description,
         amount: total,
         image: this.app.images.store_avatar,
@@ -223,10 +231,39 @@ define([
             token: token,
             cart: cart,
             shipping: shipping,
-            description: description
+            description: [name, description].join(', ')
           };
-          rest.post('/api/store/checkout', payload, function (err) {
-            console.log('done');
+          rest.post('/api/store/checkout', payload, function (err, data) {
+            if (err) {
+              var errOpts = {level: 'error', type: 'popup', sticky: true};
+              if (err.message === 'OVER_MAX_PRODUCT_QUANTITY_PER_ORDER' ||
+                  err.message === 'INSUFFICIENT_STOCK') {
+                _.each(err.data, function (p) {
+                  var message = err.message + ': ' + p.name + ' (';
+                  if (p.allowed !== undefined) {
+                    message += 'please limit your order to ' + p.allowed;
+                  }
+                  if (p.good !== undefined) {
+                    message += p.good + ' remaining';
+                  }
+                  message += ')';
+                  errOpts.err = {message: message};
+                  mps.publish('flash/new', [errOpts]);
+                });
+              } else {
+                errOpts.err = err;
+                mps.publish('flash/new', [errOpts]);
+              }
+
+              return false;
+            }
+            
+            mps.publish('flash/new', [{
+              message: data.message,
+              level: 'alert',
+              type: 'popup',
+              sticky: true
+            }, true]);
           });
         }
       });
