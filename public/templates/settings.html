@@ -59,6 +59,9 @@
   var privacy = data.config.privacy;
   var prefs = data.prefs;
 
+  // Shipping
+  data.address = data.address || {};
+
 %>
 
 <div class="rightside"></div>
@@ -67,12 +70,39 @@
     <table>
       <tbody>
         <tr>
+          <td colspan="6">
+            <h1 class="title-static" style="margin-top:0;">Banner Image</h1>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6" width="680" height="306" style="vertical-align:top;">
+            <form class="settings-banner-form" enctype="multipart/form-data" method="POST">
+              <input type="hidden" name="params"
+                  value='<%= JSON.stringify(this.app.profile.transloadit.profile) %>' />
+              <div class="settings-banner-dnd settings-banner-wrap">
+                <img class="masked settings-banner" src=<%= banner.ssl_url || banner.url %>
+                    width=<%= w %> height=<%= h %> style=<%= t + l %> />
+                <div class="settings-banner-spin" style="height:100%;"></div>
+                <a class="banner-file-chooser-dummy file-chooser-dummy important"
+                    href="javascript:;">Drag &amp; drop or select an image.</a>
+                <input class="banner-file-chooser file-chooser" type="file"
+                    name="banner_img" accept="image/gif, image/jpeg, image/png" />
+              </div>
+            </form>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6">
+            <h1 class="title-static">Profile</h1>
+          </td>
+        </tr>
+        <tr>
           <td colspan="3">
             <table>
               <tbody>
                 <tr>
                   <td>
-                    <label for="avatar_img">Profile Picture</label>
+                    <label for="avatar_img">Picture</label>
                   </td>
                 </tr>
                 <tr>
@@ -99,65 +129,65 @@
               </tbody>
             </table>
           </td>
-          <td colspan="3" style="vertical-align:top;">
+          <td colspan="3" style="padding-left:10px; vertical-align:top;">
             <table>
               <tbody>
                 <tr>
-                  <td>
+                  <td colspan="2">
                     <label for="displayName">Full name</label>
                   </td>
                 </tr>
                 <tr>
-                  <td style="width:335px;">
+                  <td colspan="2">
                     <input tabindex="1" name="displayName" type="text" placeholder="How your name appears..."
                         value="<%= data.displayName %>" />
                   </td>
                 </tr>
                 <tr>
-                  <td>
+                  <td colspan="2">
                     <label for="username">Username</label>
                   </td>
                 </tr>
                 <tr>
-                  <td style="width:335px;">
+                  <td colspan="2">
                     <input tabindex="2" name="username" type="text" placeholder="(required)" value="<%= data.username %>" />
                   </td>
                 </tr>
                 <tr>
-                  <td>
+                  <td colspan="2">
                     <label for="primaryEmail">Email address (private)</label>
                   </td>
                 </tr>
                 <tr>
-                  <td style="width:335px;">
+                  <td colspan="2">
                     <input tabindex="3" name="primaryEmail" type="text" placeholder="Used for notifications..."
                         value="<%= data.primaryEmail %>" />
                   </td>
                 </tr>
+                <tr>
+                  <td colspan="2">
+                    <label for="location.name">Current City</label>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <input tabindex="5" name="location.name" type="text" placeholder="e.g. San Francisco, California"
+                        value="<%= data.location ? data.location.name: '' %>" />
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <label for="hometown.name">Hometown</label>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <input tabindex="6" name="hometown.name" type="text" placeholder="e.g. Bozeman, Montana"
+                        value="<%= data.hometown ? data.hometown.name: '' %>" />
+                  </td>
+                </tr>
               </tbody>
             </table>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="6">
-            <label for="banner_img">Banner Image</label>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="6" width="680" height="306" style="vertical-align:top;">
-            <form class="settings-banner-form" enctype="multipart/form-data" method="POST">
-              <input type="hidden" name="params"
-                  value='<%= JSON.stringify(this.app.profile.transloadit.profile) %>' />
-              <div class="settings-banner-dnd settings-banner-wrap">
-                <img class="masked settings-banner" src=<%= banner.ssl_url || banner.url %>
-                    width=<%= w %> height=<%= h %> style=<%= t + l %> />
-                <div class="settings-banner-spin" style="height:100%;"></div>
-                <a class="banner-file-chooser-dummy file-chooser-dummy important"
-                    href="javascript:;">Drag &amp; drop or select an image.</a>
-                <input class="banner-file-chooser file-chooser" type="file"
-                    name="banner_img" accept="image/gif, image/jpeg, image/png" />
-              </div>
-            </form>
           </td>
         </tr>
         <tr>
@@ -172,27 +202,7 @@
           </td>
         </tr>
         <tr>
-          <td colspan="3" style="width:335px;">
-            <label for="location.name">Current City</label>
-          </td>
-          <td colspan="3" style="width:335px;">
-            <label for="hometown.name">Hometown</label>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="3">
-            <input tabindex="5" name="location.name" type="text"
-                placeholder="e.g. San Francisco, California"
-                value="<%= data.location ? data.location.name: '' %>" />
-          </td>
-          <td colspan="3">
-            <input tabindex="6" name="hometown.name" type="text"
-                placeholder="e.g. Bozeman, Montana"
-                value="<%= data.hometown ? data.hometown.name: '' %>" />
-          </td>
-        </tr>
-        <tr>
-          <td colspan="5">
+          <td colspan="6">
             <label for="website">Websites (one per line)</label>
           </td>
         </tr>
@@ -200,6 +210,58 @@
           <td colspan="6">
             <textarea tabindex="7" name="website"
                 placeholder="One URL per line..."><%= data.website %></textarea>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6">
+            <h1 class="title-static">Shipping Address (private)</h1>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6">
+            <label for="address.address">Address</label>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6">
+            <input tabindex="3" name="address.address" type="text" placeholder="e.g. 123 Whipper Ave. Apt. 5.10"
+                value="<%= data.address.address %>" />
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <label for="address.city">City</label>
+          </td>
+          <td colspan="3">
+            <label for="address.state">State</label>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <input tabindex="1" name="address.city" type="text" placeholder="e.g. Austin"
+                value="<%= data.address.city %>" />
+          </td>
+          <td colspan="3">
+            <input tabindex="2" name="address.state" type="text" placeholder="e.g. TX"
+                value="<%= data.address.state %>" />
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <label for="address.zip">ZIP</label>
+          </td>
+          <td colspan="3">
+            <label for="address.country">Country</label>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <input tabindex="1" name="address.zip" type="text" placeholder="e.g. 73301"
+                value="<%= data.address.zip %>" />
+          </td>
+          <td colspan="3">
+            <input tabindex="2" name="address.country" type="text" placeholder="e.g. United States"
+                value="<%= data.address.country %>" />
           </td>
         </tr>
         <tr>
