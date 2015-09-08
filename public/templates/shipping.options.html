@@ -1,3 +1,8 @@
+<%
+  var chosen = shipping ? shipping.serviceLevelCode:
+      options[0].serviceLevelCode;
+%>
+
 <div class="modal modal-wide">
   <span class="modal-title"><i class="icon-gauge"></i> How fast do you want it?</span>
   <div class="modal-body table shipping-form">
@@ -11,7 +16,7 @@
             <tr class="clickable">
               <td>
                 <span class="shipping-option-radio">
-                  <% if (i === 0) { %>
+                  <% if (o.serviceLevelCode === chosen) { %>
                     <input type="radio" name="option" value="<%= o.serviceLevelCode %>" checked="checked" />
                   <% } else { %>
                     <input type="radio" name="option" value="<%= o.serviceLevelCode %>"/>
@@ -40,6 +45,9 @@
     </form>
   </div>
   <div class="modal-actions">
+    <button class="modal-back modal-button button">
+      <i class="icon-angle-left"></i> <span>Back</span>
+    </button>
     <button class="modal-cancel modal-button button">Cancel</button>
     <button class="modal-confirm modal-button button">
       <span>Continue</span> <i class="icon-angle-right"></i>

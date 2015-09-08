@@ -15,11 +15,12 @@ define([
   'text!../../templates/shipping.address.html',
   'text!../../templates/shipping.options.html',
   'text!../../templates/shipping.summary.html',
+  'text!../../templates/shipping.processing.html',
   'views/lists/events',
   'views/lists/ticks'
 ], function ($, _, Backbone, mps, rest, util, Spin, template, title,
-      shippingAddressTemp, shippingOptionsTemp, shippingSummaryTemp, Events,
-      Ticks) {
+      shippingAddressTemp, shippingOptionsTemp, shippingSummaryTemp,
+      shippingProcessingTemp, Events, Ticks) {
 
   return Backbone.View.extend({
 
@@ -121,9 +122,16 @@ define([
 
     getShippingOptions: function (buyNow) {
       var cart = buyNow ? store.get('buyNow'): store.get('cart');
+
+      if (_.isEmpty(cart)) {
+        return false;
+      }
+
       var address;
       var saveAddress;
       var isValid = false;
+
+      this.clearOrder();
 
       $.fancybox(_.template(shippingAddressTemp)({
         member: this.app.profile.member
@@ -131,7 +139,8 @@ define([
         openEffect: 'fade',
         closeEffect: 'fade',
         closeBtn: false,
-        padding: 0
+        padding: 0,
+        modal: true
       });
 
       var confirm = $('.modal-confirm');
@@ -252,6 +261,7 @@ define([
       var cart = buyNow ? store.get('buyNow'): store.get('cart');
       var shipTo = store.get('shipTo');
       var shippingOptions = store.get('shippingOptions');
+      var shipping = store.get('shipping');
 
       if (_.isEmpty(cart) || !shipTo || !shippingOptions) {
         return false;
@@ -259,20 +269,27 @@ define([
 
       $.fancybox(_.template(shippingOptionsTemp)({
         member: this.app.profile.member,
-        options: shippingOptions
+        options: shippingOptions,
+        shipping: shipping
       }), {
         openEffect: 'fade',
         closeEffect: 'fade',
         closeBtn: false,
-        padding: 0
+        padding: 0,
+        modal: true
       });
 
-      var confirm = $('.modal-confirm');
       var cancel = $('.modal-cancel');
+      var back = $('.modal-back');
+      var confirm = $('.modal-confirm');
       
       cancel.click(function (e) {
         $.fancybox.close();
       });
+      back.click(_.bind(function (e) {
+        $.fancybox.close();
+        this.getShippingOptions(buyNow);
+      }, this));
       confirm.click(_.bind(function (e) {
         var optionCode =
             $('.shipping-options-form input:radio[name="option"]:checked')
@@ -329,6 +346,7 @@ define([
 
       return {
         cart: cart,
+        shipping: shipping,
         count: count,
         items: items,
         shippingAndHandling: shipping.serviceLevelName + ' (' +
@@ -349,24 +367,30 @@ define([
         openEffect: 'fade',
         closeEffect: 'fade',
         closeBtn: false,
-        padding: 0
+        padding: 0,
+        modal: true
       });
 
-      var confirm = $('.modal-confirm');
       var cancel = $('.modal-cancel');
+      var back = $('.modal-back');
+      var confirm = $('.modal-confirm');
       
       cancel.click(function (e) {
         $.fancybox.close();
       });
+      back.click(_.bind(function (e) {
+        $.fancybox.close();
+        this.chooseShippingOption(buyNow);
+      }, this));
       confirm.click(_.bind(function (e) {
         $.fancybox.close();
-        this.checkout(summary, buyNow);
+        this.collectPayment(summary, buyNow);
       }, this));
 
       return false;
     },
 
-    checkout: function (summary, buyNow) {
+    collectPayment: function (summary, buyNow) {
       var itemsDescription = summary.count + ' item';
       if (summary.count !== 1) {
         itemsDescription += 's';
@@ -383,49 +407,75 @@ define([
         amount: summary.total,
         image: this.app.images.store_avatar,
         token: _.bind(function (token) {
-          var payload = {
+          var order = {
             token: token,
             cart: summary.cart,
             shipping: summary.shipping,
             description: itemsDescription
           };
-          rest.post('/api/store/checkout', payload, _.bind(function (err, data) {
-            if (err) {
-              var errOpts = {level: 'error', type: 'popup', sticky: true};
-              if (err.message === 'OVER_MAX_PRODUCT_QUANTITY_PER_ORDER' ||
-                  err.message === 'INSUFFICIENT_STOCK') {
-                _.each(err.data, function (p) {
-                  var message = err.message + ': ' + p.name + ' (';
-                  if (p.allowed !== undefined) {
-                    message += 'please limit your order to ' + p.allowed;
-                  }
-                  if (p.good !== undefined) {
-                    message += p.good + ' remaining';
-                  }
-                  message += ')';
-                  errOpts.err = {message: message};
-                  mps.publish('flash/new', [errOpts, true]);
-                });
-              } else {
-                errOpts.err = err;
-                mps.publish('flash/new', [errOpts, true]);
-              }
-
-              return false;
-            }
-
-            this.emptyCart();
-            this.clearOrder();
-
-            mps.publish('flash/new', [{
-              message: data.message,
-              level: 'alert',
-              type: 'popup',
-              sticky: true
-            }, true]);
-          }, this));
+          this.placeOrder(order);
         }, this)
       });
+    },
+
+    placeOrder: function (order) {
+
+      // Give 'em a random processing GIF.
+      rest.get('http://api.giphy.com/v1/gifs/random?api_key=' +
+          'dc6zaTOxFJmzC&tag=processing', _.bind(function (err, res) {
+        loadingGIF = err ? null: res.data;
+
+        $.fancybox(_.template(shippingProcessingTemp)({
+          loadingGIF: loadingGIF
+        }), {
+          openEffect: 'fade',
+          closeEffect: 'fade',
+          closeBtn: false,
+          padding: 0,
+          modal: true
+        });
+
+        rest.post('/api/store/checkout', order, _.bind(function (err, data) {
+          if (err) {
+            var errOpts = {level: 'error', type: 'popup', sticky: true};
+            if (err.message === 'OVER_MAX_PRODUCT_QUANTITY_PER_ORDER' ||
+                err.message === 'INSUFFICIENT_STOCK') {
+              _.each(err.data, function (p) {
+                var message = err.message + ': ' + p.name + ' (';
+                if (p.allowed !== undefined) {
+                  message += 'please limit your order to ' + p.allowed;
+                }
+                if (p.good !== undefined) {
+                  message += p.good + ' remaining';
+                }
+                message += ')';
+                errOpts.err = {message: message};
+                mps.publish('flash/new', [errOpts, true]);
+              });
+            } else {
+              errOpts.err = err;
+              mps.publish('flash/new', [errOpts, true]);
+            }
+
+            return false;
+          }
+
+          this.emptyCart();
+          mps.publish('cart/update');
+          this.clearOrder();
+
+          $.fancybox.close();
+
+          mps.publish('flash/new', [{
+            message: data.message,
+            level: 'alert',
+            type: 'block',
+            sticky: true
+          }, true]);
+        }, this));
+      }, this));
+
+      return false;
     },
 
     emptyCart: function () {
