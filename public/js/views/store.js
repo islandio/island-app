@@ -9,14 +9,15 @@ define([
   'mps',
   'rest',
   'util',
+  'Spin',
   'text!../../templates/store.html',
   'text!../../templates/store.title.html',
   'text!../../templates/shipping.address.html',
   'text!../../templates/shipping.options.html',
   'views/lists/events',
   'views/lists/ticks'
-], function ($, _, Backbone, mps, rest, util, template, title, shippingAddress,
-      shippingOptions, Events, Ticks) {
+], function ($, _, Backbone, mps, rest, util, Spin, template, title,
+      shippingAddress, shippingOptions, Events, Ticks) {
 
   return Backbone.View.extend({
 
@@ -117,6 +118,10 @@ define([
     },
 
     getShippingOptions: function (buyNow) {
+      var address;
+      var saveAddress;
+      var isValid = false;
+
       $.fancybox(_.template(shippingAddress)({
         member: this.app.profile.member
       }), {
@@ -125,17 +130,56 @@ define([
         closeBtn: false,
         padding: 0
       });
-      $('.modal-cancel').click(function (e) {
+
+      var confirm = $('.modal-confirm');
+      var cancel = $('.modal-cancel');
+      var spinner = new Spin($('.modal .button-spin'), {
+        color: '#808080',
+        lines: 13,
+        length: 3,
+        width: 2,
+        radius: 6,
+      });
+
+      cancel.click(function (e) {
         $.fancybox.close();
       });
-      $('.modal-confirm').click(_.bind(function (e) {
+
+      confirm.click(_.bind(function (e) {
+        if (!isValid) {
+          return false;
+        }
+
+        spinner.start();
+        confirm.addClass('spinning').attr('disabled', true);
+
+        var username = this.app.profile.member ?
+            this.app.profile.member.username: false;
+        if (saveAddress && username) {
+          rest.put('/api/members/' + username, {
+            address: address
+          }, _.bind(function (err, data) {
+            if (err) {
+              mps.publish('flash/new', [{
+                err: err,
+                level: 'error',
+                type: 'popup',
+                sticky: true
+              }]);
+              return false;
+            }
+            this.app.profile.member.address = address;
+          }, this));
+        }
 
         // Get shipping options for sending the cart items to this address.
         var payload = {
           cart: buyNow ? store.get('buyNow'): store.get('cart') || {},
-          address: $('.shipping-address-form').serializeObject()
+          address: address
         };
         rest.post('/api/store/shipping', payload, _.bind(function (err, data) {
+          spinner.stop();
+          confirm.removeClass('spinning').attr('disabled', false);
 
           if (err) {
             mps.publish('flash/new', [{
@@ -155,6 +199,49 @@ define([
         }, this));
       }, this));
 
+      var form = $('.shipping-address-form');
+      var inputs = $('.shipping-form input[type="text"]');
+      var saveAddressBox = $('.modal-actions input[name="saveAddress"]');
+
+      function _getAddress() {
+        address = form.serializeObject();
+        _.each(address, function (v, k) {
+          if (v.trim() === '') {
+            address[k] = false;
+          }
+        });
+        if (!address.name || !address.address || !address.city ||
+            !address.zip || !address.country) {
+          confirm.addClass('disabled').attr('disabled', true);
+          isValid = false;
+          saveAddress = false;
+        } else {
+          confirm.removeClass('disabled').attr('disabled', false);
+          isValid = true;
+          saveAddress = saveAddressBox.is(':checked');
+        }
+
+        return isValid;
+      }
+
+      inputs.focus(function (e) {
+        var el = $(e.target);
+        el.parent().addClass('focus');
+        var sib = el.parent().prev();
+        if (sib.length > 0) {
+          sib.addClass('sibling-focus-right');
+        }
+      });
+
+      inputs.blur(function (e) {
+        $('.shipping-form td').removeClass('sibling-focus-right');
+        var el = $(e.target);
+        el.parent().removeClass('focus');
+      });
+
+      inputs.bind('keyup', function (e) { _getAddress(); });
+      _getAddress();
+
       return false;
     },
 
@@ -170,11 +257,14 @@ define([
         closeBtn: false,
         padding: 0
       });
-      $('.modal-cancel').click(function (e) {
+
+      var confirm = $('.modal-confirm');
+      var cancel = $('.modal-cancel');
+      
+      cancel.click(function (e) {
         $.fancybox.close();
       });
-      $('.modal-confirm').click(_.bind(function (e) {
-
+      confirm.click(_.bind(function (e) {
         var optionCode =
             $('.shipping-options-form input:radio[name="option"]:checked')
             .val();
@@ -188,6 +278,12 @@ define([
         this.checkout(buyNow);
 
       }, this));
+
+      $('.modal-body tr').click(function (e) {
+        var tr = $(e.target).closest('tr');
+        var option = $('input[name="option"]', tr);
+        option.attr('checked', 'checked');
+      });
 
       return false;
     },
@@ -248,11 +344,11 @@ define([
                   }
                   message += ')';
                   errOpts.err = {message: message};
-                  mps.publish('flash/new', [errOpts]);
+                  mps.publish('flash/new', [errOpts, true]);
                 });
               } else {
                 errOpts.err = err;
-                mps.publish('flash/new', [errOpts]);
+                mps.publish('flash/new', [errOpts, true]);
               }
 
               return false;
