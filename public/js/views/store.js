@@ -14,10 +14,12 @@ define([
   'text!../../templates/store.title.html',
   'text!../../templates/shipping.address.html',
   'text!../../templates/shipping.options.html',
+  'text!../../templates/shipping.summary.html',
   'views/lists/events',
   'views/lists/ticks'
 ], function ($, _, Backbone, mps, rest, util, Spin, template, title,
-      shippingAddress, shippingOptions, Events, Ticks) {
+      shippingAddressTemp, shippingOptionsTemp, shippingSummaryTemp, Events,
+      Ticks) {
 
   return Backbone.View.extend({
 
@@ -118,11 +120,12 @@ define([
     },
 
     getShippingOptions: function (buyNow) {
+      var cart = buyNow ? store.get('buyNow'): store.get('cart');
       var address;
       var saveAddress;
       var isValid = false;
 
-      $.fancybox(_.template(shippingAddress)({
+      $.fancybox(_.template(shippingAddressTemp)({
         member: this.app.profile.member
       }), {
         openEffect: 'fade',
@@ -174,7 +177,7 @@ define([
 
         // Get shipping options for sending the cart items to this address.
         var payload = {
-          cart: buyNow ? store.get('buyNow'): store.get('cart') || {},
+          cart: cart,
           address: address
         };
         rest.post('/api/store/shipping', payload, _.bind(function (err, data) {
@@ -246,11 +249,17 @@ define([
     },
 
     chooseShippingOption: function (buyNow) {
-      $.fancybox(_.template(shippingOptions)({
+      var cart = buyNow ? store.get('buyNow'): store.get('cart');
+      var shipTo = store.get('shipTo');
+      var shippingOptions = store.get('shippingOptions');
+
+      if (_.isEmpty(cart) || !shipTo || !shippingOptions) {
+        return false;
+      }
+
+      $.fancybox(_.template(shippingOptionsTemp)({
         member: this.app.profile.member,
-        cart: buyNow ? store.get('buyNow'): store.get('cart'),
-        address: store.get('address'),
-        options: store.get('shippingOptions')
+        options: shippingOptions
       }), {
         openEffect: 'fade',
         closeEffect: 'fade',
@@ -268,15 +277,14 @@ define([
         var optionCode =
             $('.shipping-options-form input:radio[name="option"]:checked')
             .val();
-        var shipping = _.find(store.get('shippingOptions'), function (o) {
+        var shipping = _.find(shippingOptions, function (o) {
           return o.serviceLevelCode === optionCode;
         });
-        shipping.shipTo = store.get('shipTo');
+        shipping.shipTo = shipTo;
         store.set('shipping', shipping);
 
         $.fancybox.close();
-        this.checkout(buyNow);
-
+        this.confirmShippingSummary(buyNow);
       }, this));
 
       $('.modal-body tr').click(function (e) {
@@ -288,12 +296,20 @@ define([
       return false;
     },
 
-    checkout: function (buyNow) {
+    getOrderSummary: function (buyNow) {
       var cart = buyNow ? store.get('buyNow'): store.get('cart');
       var shipping = store.get('shipping');
 
-      var count = 0;
+      if (_.isEmpty(cart) || !shipping || !shipping.shipTo) {
+        return false;
+      }
+
+      var items = {};
+      var shipment = shipping.shipments[0];
+      var shippingAndHandlingCost = shipment.cost.amount;
       var total = 0;
+      var count = 0;
+
       _.each(cart, _.bind(function (quantity, sku) {
         var product = _.find(this.app.profile.content.products.items,
             function (i) {
@@ -303,33 +319,77 @@ define([
           return;
         }
         var cost = quantity * product.price;
+        items[sku] = {product: product, quantity: quantity, cost: cost};
         total += cost;
         count += quantity;
       }, this));
-      var name = count + ' item';
-      if (count !== 1) {
-        name += 's';
-      }
-      name += ': $' + (total / 100).toFixed(2);
+      
+      var itemsTotal = total;
+      total += shippingAndHandlingCost * 100;
 
-      var shippingAndHandling = shipping.shipments[0].cost.amount * 100;
-      total += shippingAndHandling;
-      var description = 'Shipping & handling: $' +
-          (shippingAndHandling / 100).toFixed(2);
+      return {
+        cart: cart,
+        count: count,
+        items: items,
+        shippingAndHandling: shipping.serviceLevelName + ' (' +
+            shipment.carrier.description + ')',
+        shippingAndHandlingCost: shippingAndHandlingCost,
+        itemsTotal: itemsTotal,
+        total: total
+      };
+    },
+
+    confirmShippingSummary: function (buyNow) {
+      var summary = this.getOrderSummary(buyNow);
+
+      $.fancybox(_.template(shippingSummaryTemp)({
+        member: this.app.profile.member,
+        summary: summary
+      }), {
+        openEffect: 'fade',
+        closeEffect: 'fade',
+        closeBtn: false,
+        padding: 0
+      });
+
+      var confirm = $('.modal-confirm');
+      var cancel = $('.modal-cancel');
+      
+      cancel.click(function (e) {
+        $.fancybox.close();
+      });
+      confirm.click(_.bind(function (e) {
+        $.fancybox.close();
+        this.checkout(summary, buyNow);
+      }, this));
+
+      return false;
+    },
+
+    checkout: function (summary, buyNow) {
+      var itemsDescription = summary.count + ' item';
+      if (summary.count !== 1) {
+        itemsDescription += 's';
+      }
+      itemsDescription += ': $' + (summary.itemsTotal / 100).toFixed(2) +
+          ' (USD)';
+
+      var shippingDescription = 'Shipping & Handling: $' +
+          summary.shippingAndHandlingCost.toFixed(2) + ' (USD)';
 
       this.stripeHandler.open({
-        name: name,
-        description: description,
-        amount: total,
+        name: itemsDescription,
+        description: shippingDescription,
+        amount: summary.total,
         image: this.app.images.store_avatar,
-        token: function (token) {
+        token: _.bind(function (token) {
           var payload = {
             token: token,
-            cart: cart,
-            shipping: shipping,
-            description: [name, description].join(', ')
+            cart: summary.cart,
+            shipping: summary.shipping,
+            description: itemsDescription
           };
-          rest.post('/api/store/checkout', payload, function (err, data) {
+          rest.post('/api/store/checkout', payload, _.bind(function (err, data) {
             if (err) {
               var errOpts = {level: 'error', type: 'popup', sticky: true};
               if (err.message === 'OVER_MAX_PRODUCT_QUANTITY_PER_ORDER' ||
@@ -353,21 +413,31 @@ define([
 
               return false;
             }
-            
+
+            this.emptyCart();
+            this.clearOrder();
+
             mps.publish('flash/new', [{
               message: data.message,
               level: 'alert',
               type: 'popup',
               sticky: true
             }, true]);
-          });
-        }
+          }, this));
+        }, this)
       });
     },
 
     emptyCart: function () {
       store.set('cart', {});
-    }
+    },
+
+    clearOrder: function () {
+      store.set('shippingOptions', null);
+      store.set('shipTo', null);
+      store.set('shipping', null);
+      store.set('summary', null);
+    },
 
   });
 });

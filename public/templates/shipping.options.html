@@ -8,15 +8,15 @@
           <% _.each(options, function (o, i) {
             var shipment = o.shipments[0];
           %>
-            <tr>
+            <tr class="clickable">
               <td>
                 <span class="shipping-option-radio">
-                <% if (i === 0) { %>
-                  <input type="radio" name="option" value="<%= o.serviceLevelCode %>" checked="checked" />
-                <% } else { %>
-                  <input type="radio" name="option" value="<%= o.serviceLevelCode %>"/>
-                <% } %>
-              </span>
+                  <% if (i === 0) { %>
+                    <input type="radio" name="option" value="<%= o.serviceLevelCode %>" checked="checked" />
+                  <% } else { %>
+                    <input type="radio" name="option" value="<%= o.serviceLevelCode %>"/>
+                  <% } %>
+                </span>
               </td>
               <td>
                 <span class="shipping-option-title">
@@ -30,7 +30,7 @@
               </td>
               <td>
                 <span class="shipping-option-amount">
-                  $<%= shipment.cost.amount %> (<%= shipment.cost.currency %>)
+                  $<%= shipment.cost.amount.toFixed(2) %> (<%= shipment.cost.currency %>)
                 </span>
               </td>
             </tr>

@@ -1,0 +1,73 @@
+<div class="modal modal-wide">
+  <span class="modal-title"><i class="icon-ok"></i> Gotcha. How does this look?</span>
+  <div class="modal-body table shipping-form">
+    <label>Order summary:</label>
+    <form class="shipping-summary-form">
+      <table>
+        <tbody>
+          <% _.each(summary.items, function (item) { %>
+            <tr>
+              <td>
+                <span class="shipping-summary-quantity">
+                  <%= item.quantity %>
+                </span>
+              </td>
+              <td>
+                <span class="shipping-summary-thumb">
+                  <img src="<%= item.product.thumbs[0] %>" />
+                </span>
+              </td>
+              <td>
+                <span class="shipping-summary-item">
+                  <%= item.product.title %>
+                </span>
+                <span class="shipping-summary-details">
+                  <%= item.product.description %>
+                </span>
+              </td>
+              <td>
+                <span class="shipping-summary-amount">
+                  $<%= (item.cost / 100).toFixed(2) %> (USD)
+                </span>
+              </td>
+            </tr>
+          <% }); %>
+          <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>
+              <span class="shipping-summary-item">
+                Shipping & Handling
+              </span>
+              <span class="shipping-summary-details">
+                <%= summary.shippingAndHandling %>
+              </span>
+            </td>
+            <td>
+              <span class="shipping-summary-amount">
+                $<%= summary.shippingAndHandlingCost.toFixed(2) %> (USD)
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>
+              <span class="shipping-summary-total">
+                $<%= (summary.total / 100).toFixed(2) %> (USD)
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+  </div>
+  <div class="modal-actions">
+    <button class="modal-cancel modal-button button">Cancel</button>
+    <button class="modal-confirm modal-button button">
+      <span>Checkout</span> <i class="icon-angle-right"></i>
+    </button>
+    <div class="clear"></div>
+  </div>
+</div>

@@ -3423,10 +3423,10 @@ p.modal-message
   border 1px solid #cdcdcd
   position relative
 
-.modal-body.table.shipping-form table tr
+.modal-body.table.shipping-form table tr.clickable
   cursor pointer
 
-.modal-body.table.shipping-form table tr:hover
+.modal-body.table.shipping-form table tr.clickable:hover
   background #fcfcfc
 
 .modal-body.table.shipping-form table td
@@ -3435,6 +3435,7 @@ p.modal-message
   border-right none
   padding 10px
   font-size 13px
+  word-wrap break-word
 
 .modal-body.shipping-form table td.sibling-focus-right
   border-right-color blue
@@ -5688,18 +5689,34 @@ input.import-input
   display block
   width 10px
   cursor pointer
-  
-.shipping-option-title
+
+.shipping-summary-quantity
+  width 10px
+  color #808080
+
+.shipping-summary-thumb
+  vertical-align middle
+
+.shipping-option-title,
+.shipping-summary-item
   display block
   font-weight bold
   font-size 13px
 
-.shipping-option-details
+.shipping-option-details,
+.shipping-summary-details
   color #808080
   font-size 12px
-  
-.shipping-option-amount
+  white-space normal
+
+.shipping-option-amount,
+.shipping-summary-amount
   font-style italic
+  color #396400
+
+.shipping-summary-total
+  font-style italic
+  font-weight bold
   color #396400
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––other*/
