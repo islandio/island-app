@@ -47,6 +47,23 @@ define([
       return this;
     },
 
+    renderModal: function (template, opts) {
+      opts = opts || {};
+      opts.member = this.app.profile.member;
+
+      $.fancybox(_.template(template)(opts), {
+        openEffect: 'fade',
+        closeEffect: 'fade',
+        closeBtn: false,
+        padding: 0,
+        modal: true
+      });
+    },
+
+    closeModal: function () {
+      $.fancybox.close();
+    },
+
     events: {
       'click .add-to-cart': 'addToCart',
       'click .buy-now': 'buyNow',
@@ -133,15 +150,7 @@ define([
 
       this.clearOrder();
 
-      $.fancybox(_.template(shippingAddressTemp)({
-        member: this.app.profile.member
-      }), {
-        openEffect: 'fade',
-        closeEffect: 'fade',
-        closeBtn: false,
-        padding: 0,
-        modal: true
-      });
+      this.renderModal(shippingAddressTemp);
 
       var confirm = $('.modal-confirm');
       var cancel = $('.modal-cancel');
@@ -153,9 +162,7 @@ define([
         radius: 6,
       });
 
-      cancel.click(function (e) {
-        $.fancybox.close();
-      });
+      cancel.click(_.bind(this.closeOrder, this));
 
       confirm.click(_.bind(function (e) {
         if (!isValid) {
@@ -206,7 +213,7 @@ define([
           store.set('shippingOptions', data.options);
           store.set('shipTo', data.shipTo);
           
-          $.fancybox.close();
+          this.closeModal();
           this.chooseShippingOption(buyNow);
         }, this));
       }, this));
@@ -267,29 +274,22 @@ define([
         return false;
       }
 
-      $.fancybox(_.template(shippingOptionsTemp)({
-        member: this.app.profile.member,
+      this.renderModal(shippingOptionsTemp, {
         options: shippingOptions,
         shipping: shipping
-      }), {
-        openEffect: 'fade',
-        closeEffect: 'fade',
-        closeBtn: false,
-        padding: 0,
-        modal: true
       });
 
       var cancel = $('.modal-cancel');
       var back = $('.modal-back');
       var confirm = $('.modal-confirm');
       
-      cancel.click(function (e) {
-        $.fancybox.close();
-      });
+      cancel.click(_.bind(this.closeOrder, this));
+
       back.click(_.bind(function (e) {
-        $.fancybox.close();
+        this.closeModal();
         this.getShippingOptions(buyNow);
       }, this));
+
       confirm.click(_.bind(function (e) {
         var optionCode =
             $('.shipping-options-form input:radio[name="option"]:checked')
@@ -300,7 +300,7 @@ define([
         shipping.shipTo = shipTo;
         store.set('shipping', shipping);
 
-        $.fancybox.close();
+        this.closeModal();
         this.confirmShippingSummary(buyNow);
       }, this));
 
@@ -360,30 +360,23 @@ define([
     confirmShippingSummary: function (buyNow) {
       var summary = this.getOrderSummary(buyNow);
 
-      $.fancybox(_.template(shippingSummaryTemp)({
-        member: this.app.profile.member,
+      this.renderModal(shippingSummaryTemp, {
         summary: summary
-      }), {
-        openEffect: 'fade',
-        closeEffect: 'fade',
-        closeBtn: false,
-        padding: 0,
-        modal: true
       });
 
       var cancel = $('.modal-cancel');
       var back = $('.modal-back');
       var confirm = $('.modal-confirm');
       
-      cancel.click(function (e) {
-        $.fancybox.close();
-      });
+      cancel.click(_.bind(this.closeOrder, this));
+
       back.click(_.bind(function (e) {
-        $.fancybox.close();
+        this.closeModal();
         this.chooseShippingOption(buyNow);
       }, this));
+
       confirm.click(_.bind(function (e) {
-        $.fancybox.close();
+        this.closeModal();
         this.collectPayment(summary, buyNow);
       }, this));
 
@@ -419,20 +412,13 @@ define([
     },
 
     placeOrder: function (order) {
-
       // Give 'em a random processing GIF.
       rest.get('http://api.giphy.com/v1/gifs/random?api_key=' +
           'dc6zaTOxFJmzC&tag=processing', _.bind(function (err, res) {
         loadingGIF = err ? null: res.data;
 
-        $.fancybox(_.template(shippingProcessingTemp)({
+        this.renderModal(shippingProcessingTemp, {
           loadingGIF: loadingGIF
-        }), {
-          openEffect: 'fade',
-          closeEffect: 'fade',
-          closeBtn: false,
-          padding: 0,
-          modal: true
         });
 
         rest.post('/api/store/checkout', order, _.bind(function (err, data) {
@@ -462,9 +448,7 @@ define([
 
           this.emptyCart();
           mps.publish('cart/update');
-          this.clearOrder();
-
-          $.fancybox.close();
+          this.closeOrder();
 
           mps.publish('flash/new', [{
             message: data.message,
@@ -480,6 +464,7 @@ define([
 
     emptyCart: function () {
       store.set('cart', {});
+      store.set('buyNow', {});
     },
 
     clearOrder: function () {
@@ -488,6 +473,11 @@ define([
       store.set('shipping', null);
       store.set('summary', null);
     },
+
+    closeOrder: function () {
+      this.clearOrder();
+      this.closeModal();
+    }
 
   });
 });

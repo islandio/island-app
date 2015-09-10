@@ -32,6 +32,7 @@ define([
   'views/settings',
   'views/reset',
   'views/store',
+  'views/films',
   'views/static',
   'views/crags',
   'views/dashboard',
@@ -45,7 +46,7 @@ define([
   'views/share'
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
     Flashes, Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Tick,
-    Crag, Admin, ImportSearch, ImportInsert, Ascent, Settings, Reset, Store, Static,
+    Crag, Admin, ImportSearch, ImportInsert, Ascent, Settings, Reset, Store, Films, Static,
     Crags, Dashboard, Splash, Ticks, Medias, aboutTemp, privacyTemp, tipTemp, NewSession,
     Share
 ) {
@@ -140,6 +141,7 @@ define([
       this.route('settings', 'settings', this.settings);
       this.route('privacy', 'privacy', this.privacy);
       this.route('about', 'about', this.about);
+      this.route('films', 'films', this.films);
       this.route('store', 'store', this.store);
       this.route('crags', 'crags', this.crags);
       this.route('signin', 'signin', this.signin);
@@ -499,6 +501,18 @@ define([
         if (err) return;
         this.page = new Store(this.app).render();
         this.renderTabs({html: this.page.title});
+        this.stop();
+      }, this));
+    },
+
+    films: function () {
+      this.start();
+      this.renderTabs();
+      this.clearContainer();
+      this.render('/service/films', _.bind(function (err) {
+        if (err) return;
+        this.page = new Films(this.app).render();
+        this.renderTabs({title: 'Original films by The Island', log: true});
         this.stop();
       }, this));
     },
