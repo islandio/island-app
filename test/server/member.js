@@ -9,6 +9,7 @@ var cookies;
 
 describe('members resource', function() {
   it('check if service is up and user:' + user + ' doesn\'t exist', function(done) {
+    this.timeout(5000);
     request(url)
         .get('/api/members/' + user)
         .expect(200)
@@ -19,6 +20,7 @@ describe('members resource', function() {
   });
 
   it('create user: POST to /api/members', function(done) {
+    this.timeout(5000);
     var profile = {
       username: user,
       password: user,
