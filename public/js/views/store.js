@@ -12,6 +12,7 @@ define([
   'Spin',
   'text!../../templates/store.html',
   'text!../../templates/store.title.html',
+  'text!../../templates/shipping.cart.html',
   'text!../../templates/shipping.address.html',
   'text!../../templates/shipping.options.html',
   'text!../../templates/shipping.summary.html',
@@ -19,8 +20,8 @@ define([
   'views/lists/events',
   'views/lists/ticks'
 ], function ($, _, Backbone, mps, rest, util, Spin, template, title,
-      shippingAddressTemp, shippingOptionsTemp, shippingSummaryTemp,
-      shippingProcessingTemp, Events, Ticks) {
+      shippingCartTemp, shippingAddressTemp, shippingOptionsTemp,
+      shippingSummaryTemp, shippingProcessingTemp, Events, Ticks) {
 
   return Backbone.View.extend({
 
@@ -29,7 +30,7 @@ define([
     initialize: function (app) {
       this.app = app;
       this.subscriptions = [
-        mps.subscribe('cart/checkout', _.bind(this.getShippingOptions, this)),
+        mps.subscribe('cart/checkout', _.bind(this.checkout, this)),
         mps.subscribe('cart/empty', _.bind(this.emptyCart, this))
       ];
       this.on('rendered', this.setup, this);
@@ -77,10 +78,6 @@ define([
 
       this.feed = new Events(this.app, {parentView: this,
           reverse: true, filters: false});
-      this.boulders = new Ticks(this.app, {parentView: this, type: 'tick',
-          subtype: 'b', heading: 'Boulders'});
-      this.routes = new Ticks(this.app, {parentView: this, type: 'tick',
-          subtype: 'r', heading: 'Routes'});
 
       this.stripeHandler = StripeCheckout.configure({
         key: this.app.stripe.key,
@@ -100,8 +97,6 @@ define([
         mps.unsubscribe(s);
       });
       this.feed.destroy();
-      this.boulders.destroy();
-      this.routes.destroy();
       this.undelegateEvents();
       this.stopListening();
       this.empty();
@@ -115,6 +110,84 @@ define([
       }
     },
 
+    addToCart: function (e) {
+      var button = $(e.target).closest('.add-to-cart');
+      var picker = button.parent();
+      var sku = picker.data('sku');
+
+      var product = _.find(this.app.profile.content.products.items,
+          function (i) {
+        return i.sku === sku;
+      });
+      if (!product) {
+        return;
+      }
+
+      var cart = store.get('cart') || {};
+      var cnt = (cart[sku] || 0) + 1;
+      if (cnt > this.app.MAX_PRODUCT_QUANTITY_PER_ORDER) {
+        return mps.publish('flash/new', [{
+          message: 'Maximum quantity per order reached.',
+          level: 'alert',
+          type: 'popup'
+        }]);
+      }
+      cart[sku] = cnt;
+
+      store.set('cart', cart);
+      mps.publish('cart/update');
+
+      mps.publish('flash/new', [{
+        message: product.title + ' added to cart (' + cart[sku] + ' total).',
+        level: 'alert',
+        type: 'popup'
+      }]);
+    },
+
+    checkout: function (e) {
+      var summary = this.getOrderSummary();
+
+      if (summary.count <= 0) {
+        return;
+      }
+
+      this.renderModal(shippingCartTemp, {
+        summary: summary,
+        max: this.app.MAX_PRODUCT_QUANTITY_PER_ORDER
+      });
+
+      var cancel = $('.modal-cancel');
+      var confirm = $('.modal-confirm');
+      
+      cancel.click(_.bind(this.closeModal, this));
+
+      confirm.click(_.bind(function (e) {
+        this.closeModal();
+        this.getShippingOptions();
+      }, this));
+
+      $('input[name$="-qnty"]').bind('change', _.bind(function (e) {
+        var input = $(e.target);
+        var cnt = Math.min(parseInt(input.val(), 10),
+            this.app.MAX_PRODUCT_QUANTITY_PER_ORDER);
+        var sku = input.data('sku');
+
+        var cart = store.get('cart') || {};
+        cart[sku] = cnt;
+
+        store.set('cart', cart);
+        mps.publish('cart/update');
+
+        this.closeModal();
+        this.checkout();
+
+        $('input[name="' + sku + '-qnty"]').focus();
+
+      }, this));
+
+      return false;
+    },
+
     buyNow: function (e) {
       var button = $(e.target).closest('.buy-now');
       var picker = button.parent();
@@ -124,17 +197,6 @@ define([
       store.set('buyNow', buyNow);
 
       this.getShippingOptions(true);
-    },
-
-    addToCart: function (e) {
-      var button = $(e.target).closest('.add-to-cart');
-      var picker = button.parent();
-      var sku = picker.data('sku');
-
-      var cart = store.get('cart') || {};
-      cart[sku] = (cart[sku] || 0) + 1;
-      store.set('cart', cart);
-      mps.publish('cart/update');
     },
 
     getShippingOptions: function (buyNow) {
@@ -150,10 +212,14 @@ define([
 
       this.clearOrder();
 
-      this.renderModal(shippingAddressTemp);
+      this.renderModal(shippingAddressTemp, {
+        back: !buyNow
+      });
 
-      var confirm = $('.modal-confirm');
       var cancel = $('.modal-cancel');
+      var back = $('.modal-back');
+      var confirm = $('.modal-confirm');
+
       var spinner = new Spin($('.modal .button-spin'), {
         color: '#808080',
         lines: 13,
@@ -163,6 +229,11 @@ define([
       });
 
       cancel.click(_.bind(this.closeOrder, this));
+
+      back.click(_.bind(function (e) {
+        this.closeModal();
+        this.checkout();
+      }, this));
 
       confirm.click(_.bind(function (e) {
         if (!isValid) {
@@ -220,7 +291,7 @@ define([
 
       var form = $('.shipping-address-form');
       var inputs = $('.shipping-form input[type="text"]');
-      var saveAddressBox = $('.modal-actions input[name="saveAddress"]');
+      var saveAddressBox = $('.modal-options input[name="saveAddress"]');
 
       function _getAddress() {
         address = form.serializeObject();
@@ -258,7 +329,8 @@ define([
         el.parent().removeClass('focus');
       });
 
-      inputs.bind('keyup', function (e) { _getAddress(); });
+      inputs.bind('keyup', function (e) { _getAddress(); })
+          .bind('change', function (e) { _getAddress(); });
       _getAddress();
 
       return false;
@@ -313,17 +385,21 @@ define([
       return false;
     },
 
-    getOrderSummary: function (buyNow) {
+    getOrderSummary: function (buyNow, demandShipping) {
       var cart = buyNow ? store.get('buyNow'): store.get('cart');
       var shipping = store.get('shipping');
 
-      if (_.isEmpty(cart) || !shipping || !shipping.shipTo) {
+      if (_.isEmpty(cart)) {
+        return false;
+      }
+
+      if (demandShipping && (!shipping || !shipping.shipTo)) {
         return false;
       }
 
       var items = {};
-      var shipment = shipping.shipments[0];
-      var shippingAndHandlingCost = shipment.cost.amount;
+      var shipment = demandShipping ? shipping.shipments[0] : null;
+      var shippingAndHandlingCost = shipment ? shipment.cost.amount : 0;
       var total = 0;
       var count = 0;
 
@@ -349,8 +425,8 @@ define([
         shipping: shipping,
         count: count,
         items: items,
-        shippingAndHandling: shipping.serviceLevelName + ' (' +
-            shipment.carrier.description + ')',
+        shippingAndHandling: demandShipping ? shipping.serviceLevelName + ' (' +
+            shipment.carrier.description + ')' : null,
         shippingAndHandlingCost: shippingAndHandlingCost,
         itemsTotal: itemsTotal,
         total: total
@@ -358,7 +434,7 @@ define([
     },
 
     confirmShippingSummary: function (buyNow) {
-      var summary = this.getOrderSummary(buyNow);
+      var summary = this.getOrderSummary(buyNow, true);
 
       this.renderModal(shippingSummaryTemp, {
         summary: summary

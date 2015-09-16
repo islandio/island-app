@@ -103,6 +103,12 @@ define([
         this.$('.empty-cart-button').hide();
         this.$('.cart-button').addClass('disabled').attr('disabled', true);
         mps.publish('cart/empty');
+
+        mps.publish('flash/new', [{
+          message: 'Cart emptied.',
+          level: 'alert',
+          type: 'popup'
+        }]);
       }
     },
 

@@ -607,6 +607,7 @@ input[type=radio] {
   display: inline;
 }
 input[type=text]:not(.text),
+input[type=number],
 input[type=search],
 input[type=email],
 input[type=password] {
@@ -3369,7 +3370,7 @@ p.modal-message {
   list-style: inherit;
 }
 .modal-body.shipping-form form {
-  margin-top: 10px;
+  margin: 10px 0;
 }
 .modal-body.shipping-form table,
 .modal-body.shipping-form table input[type=text] {
@@ -3471,14 +3472,13 @@ button.button.modal-confirm.disabled {
 }
 button.button.modal-back {
   float: left;
+  margin-left: 0;
 }
 .modal-image img {
   display: inherit;
 }
 .modal-options {
-  float: left;
   font-size: 13px;
-  line-height: 32px;
 }
 .modal-overlay {
   display: none;
@@ -5620,9 +5620,10 @@ input.import-input {
   cursor: pointer;
 }
 .shipping-summary-quantity {
-  width: 10px;
   display: block;
-  color: #808080;
+}
+.shipping-summary-quantity input {
+  width: 30px;
 }
 .shipping-summary-thumb {
   vertical-align: middle;

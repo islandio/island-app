@@ -22,7 +22,7 @@ define([
       avatar_big: 'https://s3.amazonaws.com/island.io/avatar_325.png',
       banner: 'https://s3.amazonaws.com/island.io/banner_680.png',
       banner_big: 'https://s3.amazonaws.com/island.io/banner_1024.png',
-      store_avatar: 'https://s3.amazonaws.com/island.io/profile_s.png'
+      store_avatar: 'https://s3.amazonaws.com/island.io/store_avatar.png'
     };
 
     this.prefs = {
@@ -51,11 +51,10 @@ define([
       clientId: window.__s ? 203397619757208: 153015724883386
     };
     this.stripe = {
-      // "publishable" keys - can only create tokens (not charges)
       key: window.__s ? 'pk_live_p1Ojag00gWkn0MzgnF52RWFw':
           'pk_test_hUrz7pk2qdjqgIU1BDuHraVv'
-          
     };
+    this.MAX_PRODUCT_QUANTITY_PER_ORDER = 20;
 
     if (window.__s === '') {
       window._rpc = rpc;

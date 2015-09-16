@@ -20,27 +20,10 @@
               <i class="icon-cart-plus"></i> Add to Cart
             </a>
             <a href="javascript:;" class="button buy-button buy-button-right buy-now">
-              <i class="icon-cart-arrow-down"></i> $<%= (p.price/100).toFixed(2) %>
+              Buy Now ($<%= (p.price/100).toFixed(2) %>)
             </a>
           </div>
           <div class="clear"></div>
-        </div>
-      <% }, this)); %>
-    </div>
-    <div class="sidebar-ticks">
-      <span class="sidebar-heading">Recent public ascents:</span>
-      <div class="sidebar-ticks-r"></div>
-      <div class="sidebar-ticks-b"></div>
-    </div>
-    <div class="sidebar-broadcasts">
-      <% _.each(this.app.profile.content.broadcasts.items, _.bind(function (b) { %>
-        <div class="sidebar-broadcast">
-          <h1>
-            <a href="/blog/<%= b.slug %>">
-              <i class="icon-signal"></i> <%= b.title %>
-            </a>
-          </h1>
-          <p><%= b.preview %></p>
         </div>
       <% }, this)); %>
     </div>

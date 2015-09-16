@@ -4,7 +4,7 @@
 %>
 
 <div class="modal">
-  <span class="modal-title"><i class="icon-location"></i> Where should we send this?</span>
+  <span class="modal-title"><i class="icon-location"></i> Where should we send this stuff?</span>
   <div class="modal-body shipping-form">
     <label>Shipping address:</label>
     <form class="shipping-address-form">
@@ -44,13 +44,19 @@
         </tbody>
       </table>
     </form>
+    <% if (member.username) { %>
+      <div class="modal-options">
+        <input type="checkbox" name="saveAddress" checked="checked" /> Save address
+      </div>
+    <% } %>
   </div>
   <div class="modal-actions">
-    <% if (member.username) { %>
-    <div class="modal-options">
-      <input type="checkbox" name="saveAddress" checked="checked" /> Save address
-    </div>
+    <% if (back) { %>
+      <button class="modal-back modal-button button">
+        <i class="icon-angle-left"></i> <span>Back</span>
+      </button>
     <% } %>
+    
     <button class="modal-cancel modal-button button">Cancel</button>
     <button class="modal-confirm modal-button button disabled" disabled="disabled">
       <div class="button-spin"></div>

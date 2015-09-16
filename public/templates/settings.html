@@ -171,7 +171,7 @@
                 </tr>
                 <tr>
                   <td colspan="2">
-                    <input tabindex="5" name="location.name" type="text" placeholder="e.g. San Francisco, California"
+                    <input tabindex="4" name="location.name" type="text" placeholder="e.g. San Francisco, California"
                         value="<%= data.location ? data.location.name: '' %>" />
                   </td>
                 </tr>
@@ -182,7 +182,7 @@
                 </tr>
                 <tr>
                   <td colspan="2">
-                    <input tabindex="6" name="hometown.name" type="text" placeholder="e.g. Bozeman, Montana"
+                    <input tabindex="5" name="hometown.name" type="text" placeholder="e.g. Bozeman, Montana"
                         value="<%= data.hometown ? data.hometown.name: '' %>" />
                   </td>
                 </tr>
@@ -197,7 +197,7 @@
         </tr>
         <tr>
           <td colspan="6">
-            <textarea tabindex="4" name="description"
+            <textarea tabindex="6" name="description"
                 placeholder="Something about yourself..."><%= data.description %></textarea>
           </td>
         </tr>
@@ -224,7 +224,7 @@
         </tr>
         <tr>
           <td colspan="6">
-            <input tabindex="3" name="address.address" type="text" placeholder="e.g. 123 Whipper Ave. Apt. 5.10"
+            <input tabindex="8" name="address.address" type="text" placeholder="e.g. 123 Whipper Ave. Apt. 5.10"
                 value="<%= data.address.address %>" />
           </td>
         </tr>
@@ -238,11 +238,11 @@
         </tr>
         <tr>
           <td colspan="3">
-            <input tabindex="1" name="address.city" type="text" placeholder="e.g. Austin"
+            <input tabindex="9" name="address.city" type="text" placeholder="e.g. Austin"
                 value="<%= data.address.city %>" />
           </td>
           <td colspan="3">
-            <input tabindex="2" name="address.state" type="text" placeholder="e.g. TX"
+            <input tabindex="10" name="address.state" type="text" placeholder="e.g. TX"
                 value="<%= data.address.state %>" />
           </td>
         </tr>
@@ -256,11 +256,11 @@
         </tr>
         <tr>
           <td colspan="3">
-            <input tabindex="1" name="address.zip" type="text" placeholder="e.g. 73301"
+            <input tabindex="11" name="address.zip" type="text" placeholder="e.g. 73301"
                 value="<%= data.address.zip %>" />
           </td>
           <td colspan="3">
-            <input tabindex="2" name="address.country" type="text" placeholder="e.g. United States"
+            <input tabindex="12" name="address.country" type="text" placeholder="e.g. United States"
                 value="<%= data.address.country %>" />
           </td>
         </tr>
@@ -282,21 +282,21 @@
         </tr>
         <tr>
           <td colspan="2" style="padding-top: 5px;">
-            <input tabindex="9" type="radio" name="prefs.grades.boulder"
+            <input tabindex="13" type="radio" name="prefs.grades.boulder"
                 value="hueco" id="prefs.grades.boulder.hueco" 
                 <%= prefs.grades.boulder === 'hueco' ? 'checked="checked"': '' %> />
             <label for="prefs.grades.boulder.hueco" style="vertical-align:-1px;">Hueco</label>
           </td>
 
           <td colspan="2" style="padding-top: 5px;">
-            <input tabindex="9" type="radio" name="prefs.grades.route"
+            <input tabindex="14" type="radio" name="prefs.grades.route"
                 value="yds" id="prefs.grades.route.yds" 
                 <%= prefs.grades.route === 'yds' ? 'checked="checked"': '' %> />
             <label for="prefs.grades.route.yds" style="vertical-align:-1px;">YDS</label>
           </td>
 
           <td colspan="2" style="padding-top: 5px;">
-            <input tabindex="9" type="radio" name="prefs.units"
+            <input tabindex="15" type="radio" name="prefs.units"
                 value="si" id="prefs.units.si" 
                 <%= prefs.units === 'si' ? 'checked="checked"': '' %> />
             <label for="prefs.units.si" style="vertical-align:-1px;">SI</label>
@@ -304,21 +304,21 @@
         </tr>
         <tr>
           <td colspan="2" style="padding-top: 5px;">
-            <input tabindex="9" type="radio" name="prefs.grades.boulder"
+            <input tabindex="16" type="radio" name="prefs.grades.boulder"
                 value="font" id="prefs.grades.boulder.font" 
                 <%= prefs.grades.boulder === 'font' ? 'checked="checked"': '' %> />
             <label for="prefs.grades.boulder.font" style="vertical-align:-1px;">Font</label>
           </td>
 
           <td colspan="2" style="padding-top: 5px;">
-            <input tabindex="9" type="radio" name="prefs.grades.route"
+            <input tabindex="17" type="radio" name="prefs.grades.route"
                 value="french" id="prefs.grades.route.french" 
                 <%= prefs.grades.route === 'french' ? 'checked="checked"': '' %> />
             <label for="prefs.grades.route.french" style="vertical-align:-1px;">French</label>
           </td>
 
           <td colspan="2" style="padding-top: 5px;">
-            <input tabindex="9" type="radio" name="prefs.units"
+            <input tabindex="18" type="radio" name="prefs.units"
                 value="en" id="prefs.units.en" 
                 <%= prefs.units === 'en' ? 'checked="checked"': '' %> />
             <label for="prefs.units.en" style="vertical-align:-1px;">English</label>
@@ -331,7 +331,7 @@
           </td>
 
           <td colspan="2" style="padding-top: 5px;">
-            <input tabindex="9" type="radio" name="prefs.grades.route"
+            <input tabindex="19" type="radio" name="prefs.grades.route"
                 value="brit" id="prefs.grades.route.brit" 
                 <%= prefs.grades.route === 'brit' ? 'checked="checked"': '' %> />
             <label for="prefs.grades.route.brit" style="vertical-align:-1px;">British</label>
@@ -348,7 +348,7 @@
           </td>
 
           <td colspan="2" style="padding-top: 5px;">
-            <input tabindex="9" type="radio" name="prefs.grades.route"
+            <input tabindex="20" type="radio" name="prefs.grades.route"
                 value="aus" id="prefs.grades.route.aus" 
                 <%= prefs.grades.route === 'aus' ? 'checked="checked"': '' %> />
             <label for="prefs.grades.route.aus" style="vertical-align:-1px;">Ewbank</label>
@@ -372,10 +372,10 @@
         <tr>
           <td colspan="6" style="padding-top: 5px;">
             <% if (privacy.mode === 0 || privacy.mode === '0') { %>
-              <input tabindex="9" type="radio" name="config.privacy.mode"
+              <input tabindex="21" type="radio" name="config.privacy.mode"
                   value="0" checked="checked" id="config.privacy.mode.0" />
             <% } else { %>
-              <input tabindex="9" type="radio" name="config.privacy.mode"
+              <input tabindex="22" type="radio" name="config.privacy.mode"
                   value="0" id="config.privacy.mode.0" />
             <% } %>
             <label for="config.privacy.mode.0" style="vertical-align:-1px;">Off</label>
@@ -394,10 +394,10 @@
         <tr>
           <td colspan="6" style="padding-top: 5px;">
             <% if (privacy.mode === 1 || privacy.mode === '1') { %>
-              <input tabindex="10" type="radio" name="config.privacy.mode"
+              <input tabindex="23" type="radio" name="config.privacy.mode"
                   value="1" checked="checked" id="config.privacy.mode.1" />
             <% } else { %>
-              <input tabindex="10" type="radio" name="config.privacy.mode"
+              <input tabindex="24" type="radio" name="config.privacy.mode"
                   value="1" id="config.privacy.mode.1" />
             <% } %>
             <label for="config.privacy.mode.1" style="vertical-align:-1px;">On</label>
@@ -421,10 +421,10 @@
         <tr>
           <td colspan="6" style="padding-top: 5px;">
             <% if (!privacy.ticks || privacy.ticks === 0 || privacy.ticks === '0') { %>
-              <input tabindex="11" type="radio" name="config.privacy.ticks"
+              <input tabindex="25" type="radio" name="config.privacy.ticks"
                   value="0" checked="checked" id="config.privacy.ticks.0" />
             <% } else { %>
-              <input tabindex="11" type="radio" name="config.privacy.ticks"
+              <input tabindex="26" type="radio" name="config.privacy.ticks"
                   value="0" id="config.privacy.ticks.0" />
             <% } %>
             <label for="config.privacy.ticks.0" style="vertical-align:-1px;">Anyone</label>
@@ -433,10 +433,10 @@
         <tr>
           <td colspan="6" style="padding-top: 5px;">
             <% if (privacy.ticks === 1 || privacy.ticks === '1') { %>
-              <input tabindex="12" type="radio" name="config.privacy.ticks"
+              <input tabindex="27" type="radio" name="config.privacy.ticks"
                   value="1" checked="checked" id="config.privacy.ticks.1" />
             <% } else { %>
-              <input tabindex="12" type="radio" name="config.privacy.ticks"
+              <input tabindex="28" type="radio" name="config.privacy.ticks"
                   value="1" id="config.privacy.ticks.1" />
             <% } %>
             <label for="config.privacy.ticks.1" style="vertical-align:-1px;">Only followers</label>
@@ -445,10 +445,10 @@
         <tr>
           <td colspan="6" style="padding-top: 5px;">
             <% if (privacy.ticks === 2 || privacy.ticks === '2') { %>
-              <input tabindex="13" type="radio" name="config.privacy.ticks"
+              <input tabindex="29" type="radio" name="config.privacy.ticks"
                   value="2" checked="checked" id="config.privacy.ticks.2" />
             <% } else { %>
-              <input tabindex="13" type="radio" name="config.privacy.ticks"
+              <input tabindex="30" type="radio" name="config.privacy.ticks"
                   value="2" id="config.privacy.ticks.2" />
             <% } %>
             <label for="config.privacy.ticks.2" style="vertical-align:-1px;">Only me</label>
@@ -461,7 +461,7 @@
         </tr>
         <tr>
           <td colspan="6">
-            <a tabindex="14" class="button navigate" href="/import">
+            <a tabindex="31" class="button navigate" href="/import">
               <i class="icon-angle-right"></i> Import
             </a>
           </td>
@@ -473,7 +473,7 @@
         </tr>
         <tr>
           <td colspan="6">
-            <a tabindex="14" class="button" href="/api/ticks?csv=true">
+            <a tabindex="32" class="button" href="/api/ticks?csv=true">
               Download <i class="icon-angle-down"></i>
             </a>
           </td>
@@ -485,7 +485,7 @@
         </tr>
         <tr>
           <td colspan="6">
-            <a tabindex="14" class="button clear-ascents" href="javascript:;">
+            <a tabindex="33" class="button clear-ascents" href="javascript:;">
               Clear <i class="icon-angle-right"></i>
             </a>
           </td>
@@ -502,10 +502,10 @@
           <td colspan="2" class="text-right">
             <% if (notes.comment.email === true || notes.comment.email === 'true') { %>
               <input type="checkbox" name="config.notifications.comment.email"
-                  tabindex="15" checked="checked" />
+                  tabindex="34" checked="checked" />
             <% } else { %>
               <input type="checkbox" name="config.notifications.comment.email"
-                  tabindex="15" />
+                  tabindex="35" />
             <% } %>
             <label for="config.notifications.comment.email"
                 style="vertical-align:-1px;">Email (requires address above)</label>
@@ -519,10 +519,10 @@
           <td colspan="2" class="text-right">
             <% if (notes.hangten.email === true || notes.hangten.email === 'true') { %>
               <input type="checkbox" name="config.notifications.hangten.email"
-                  tabindex="15" checked="checked" />
+                  tabindex="36" checked="checked" />
             <% } else { %>
               <input type="checkbox" name="config.notifications.hangten.email"
-                  tabindex="15" />
+                  tabindex="37" />
             <% } %>
             <label for="config.notifications.hangten.email"
                 style="vertical-align:-1px;">Email</label>
@@ -536,10 +536,10 @@
           <td colspan="2" class="text-right">
             <% if (notes.follow.email === true || notes.follow.email === 'true') { %>
               <input type="checkbox" name="config.notifications.follow.email"
-                  tabindex="15" checked="checked" />
+                  tabindex="38" checked="checked" />
             <% } else { %>
               <input type="checkbox" name="config.notifications.follow.email"
-                  tabindex="15" />
+                  tabindex="39" />
             <% } %>
             <label for="config.notifications.follow.email"
                 style="vertical-align:-1px;">Email</label>
@@ -553,10 +553,10 @@
           <td colspan="2" class="text-right">
             <% if (notes.request.email === true || notes.request.email === 'true') { %>
               <input type="checkbox" name="config.notifications.request.email"
-                  tabindex="15" checked="checked" />
+                  tabindex="40" checked="checked" />
             <% } else { %>
               <input type="checkbox" name="config.notifications.request.email"
-                  tabindex="15" />
+                  tabindex="41" />
             <% } %>
             <label for="config.notifications.request.email"
                 style="vertical-align:-1px;">Email</label>
@@ -570,10 +570,10 @@
           <td colspan="2" class="text-right">
             <% if (notes.accept.email === true || notes.accept.email === 'true') { %>
               <input type="checkbox" name="config.notifications.accept.email"
-                  tabindex="15" checked="checked" />
+                  tabindex="42" checked="checked" />
             <% } else { %>
               <input type="checkbox" name="config.notifications.accept.email"
-                  tabindex="15" />
+                  tabindex="43" />
             <% } %>
             <label for="config.notifications.accept.email"
                 style="vertical-align:-1px;">Email</label>
@@ -589,12 +589,12 @@
           <td colspan="6">
             <div class="settings-services-spin"></div>
             <% if (!data.googleId) { %>
-              <a tabindex="16" class="button signin-strategy-btn google-btn"
+              <a tabindex="44" class="button signin-strategy-btn google-btn"
                   href="/connect/google">
                 Connect Google <i class="icon-angle-right"></i>
               </a>
             <% } else if (data.provider !== 'google') { %>
-              <a tabindex="16" class="button signin-strategy-btn google-btn"
+              <a tabindex="45" class="button signin-strategy-btn google-btn"
                   href="/disconnect/google">
                 Disconnect Google <i class="icon-angle-right"></i>
               </a>
@@ -607,12 +607,12 @@
             <br />
 
             <% if (!data.facebookId) { %>
-              <a tabindex="16" class="button signin-strategy-btn facebook-btn"
+              <a tabindex="46" class="button signin-strategy-btn facebook-btn"
                   href="/connect/facebook">
                 Connect Facebook <i class="icon-angle-right"></i>
               </a>
             <% } else if (data.provider !== 'facebook') { %>
-              <a tabindex="16" class="button signin-strategy-btn facebook-btn"
+              <a tabindex="47" class="button signin-strategy-btn facebook-btn"
                   href="/disconnect/facebook">
                 Disconnect Facebook <i class="icon-angle-right"></i>
               </a>
@@ -625,12 +625,12 @@
             <br />
 
             <% if (!data.twitterId) { %>
-              <a tabindex="17" class="button signin-strategy-btn twitter-btn"
+              <a tabindex="48" class="button signin-strategy-btn twitter-btn"
                   href="/connect/twitter">
                 Connect Twitter <i class="icon-angle-right"></i>
               </a>
             <% } else if (data.provider !== 'twitter') { %>
-              <a tabindex="17" class="button signin-strategy-btn twitter-btn"
+              <a tabindex="49" class="button signin-strategy-btn twitter-btn"
                   href="/disconnect/twitter">
                 Disconnect Twitter <i class="icon-angle-right"></i>
               </a>
@@ -643,12 +643,12 @@
             <br />
 
             <% if (!data.instagramId) { %>
-              <a tabindex="18" class="button signin-strategy-btn instagram-btn"
+              <a tabindex="50" class="button signin-strategy-btn instagram-btn"
                   href="/connect/instagram">
                 Connect with Instagram <i class="icon-angle-right"></i>
               </a>
             <% } else { %>
-              <a tabindex="18" class="button signin-strategy-btn instagram-btn"
+              <a tabindex="51" class="button signin-strategy-btn instagram-btn"
                   href="/disconnect/instagram">
                 Disconnect with Instagram <i class="icon-angle-right"></i>
               </a>
@@ -668,7 +668,7 @@
           </tr>
           <tr>
             <td colspan="6">
-              <a tabindex="19" href="/reset" class="button signin-strategy-btn navigate">
+              <a tabindex="52" href="/reset" class="button signin-strategy-btn navigate">
                 Change your password <i class="icon-angle-right"></i>
               </a>
             </td>
@@ -681,7 +681,7 @@
         </tr>
         <tr>
           <td colspan="6">
-            <a tabindex="20" href="javascript:;"
+            <a tabindex="53" href="javascript:;"
                 class="demolish button signin-strategy-btn delete-btn">
               Delete profile
             </a>
