@@ -34,7 +34,7 @@ var overMaxCart = {'M3-Island-Brush': store.MAX_PRODUCT_QUANTITY_PER_ORDER + 1};
 
 var goodCart = {'M1-Island-Brush': 1};
 
-describe('store resource', function() {
+describe('Store API', function() {
   it('request shipping rate with no address', function(done) {
     request(url)
         .post('/api/store/shipping')

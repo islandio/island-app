@@ -3,11 +3,11 @@ var assert = require('assert');
 var request = require('supertest');
 
 var url = 'localhost:8080';
-var user = 'testdummy5'
+var user = 'testdummy5';
 
 var cookies;
 
-describe('members resource', function() {
+describe('Members API', function() {
   it('check if service is up and user:' + user + ' doesn\'t exist', function(done) {
     this.timeout(5000);
     request(url)
@@ -50,8 +50,8 @@ describe('members resource', function() {
 
   it('delete user: DELETE to /api/members', function(done) {
 
-    var req = request(url).delete('/api/members/' + user)
-    req.cookies = cookies
+    var req = request(url).delete('/api/members/' + user);
+    req.cookies = cookies;
     req.expect(200)
         .end(function(err, res) {
           done(err);
