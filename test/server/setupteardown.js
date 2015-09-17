@@ -28,12 +28,12 @@ function createMember(name, cb) {
               .send(profile)
               .end(function(err, res) {
                 return cb(err);
-              })
+              });
         } else {
           cb(err);
         }
       });
-};
+}
 
 function login(name, cb) {
   var profile = {
@@ -48,8 +48,8 @@ function login(name, cb) {
       .end(function(err, res) {
         cookies = res.headers['set-cookie'].pop().split(';')[0];
         return cb(err);
-      })
-};
+      });
+}
 
 function logout(name, cb) {
   var req = request(url).get('/service/logout');
@@ -61,7 +61,7 @@ function deleteMember(name, cb) {
   var profile = {
     username: name,
     password: name
-  }
+  };
   request(url)
       .post('/api/members/auth')
       .send(profile)
@@ -83,7 +83,7 @@ function createCrag(name, cb) {
       latitude: 37.7833,
       longitude: -122.4167
     }
-  }
+  };
   console.log('creating crag ' + name);
   var req = request(url).post('/api/crags');
   req.cookies = cookies;
@@ -101,7 +101,7 @@ function createAscent(name, type, grade, cragid, cb) {
     crag_id: cragid,
     type: type,
     grade: grade
-  }
+  };
   console.log('creating ascent ' + name);
   var req = request(url).post('/api/ascents');
   req.cookies = cookies;
@@ -114,20 +114,18 @@ function createAscent(name, type, grade, cragid, cb) {
     });
 }
 
-
 before('building a mini island database of users, ascents, crags', function(done) {
   this.timeout(30000);
   async.waterfall([
-    function(cb) { createMember('islandTest', cb) },
-    function(cb) { login('islandTest', cb) },
-    function(cb) { createCrag('crag1', cb) },
-    function(res, cb) { createAscent('ascent1', 'b', 3, res.body._id, cb) }
+    function(cb) { createMember('islandTest', cb); },
+    function(cb) { login('islandTest', cb); },
+    function(cb) { createCrag('crag1', cb); },
+    function(res, cb) { createAscent('ascent1', 'b', 3, res.body._id, cb); }
   ], done);
 });
 
 after('clearing database', function(done) {
   async.parallel([
-    function(cb) { deleteMember('islandTest', cb) }
+    function(cb) { deleteMember('islandTest', cb); }
   ], done);
 });
-
