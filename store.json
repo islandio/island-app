@@ -36,5 +36,9 @@
   },
   "M3-Island-Case": {
     "price": 31250
+  },
+
+  "TEST-NO-STOCK": {
+    "price": 200
   }
 }

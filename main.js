@@ -108,7 +108,8 @@ if (cluster.isMaster) {
       estr = data;
       data = null;
     }
-    var fn = req.xhr ? res.send: res.render;
+    var fn = req.headers['user-agent'].indexOf('node-superagent') !== -1 ||
+        req.xhr ? res.send: res.render;
     if (err || (!data && estr)) {
       var profile = {
         member: req.user,

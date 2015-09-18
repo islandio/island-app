@@ -19,7 +19,7 @@ function createMember(name, cb) {
 
   request(url)
       .get('/api/members/' + name)
-      .expect(200)
+      .expect(404)
       .end(function(err, res) {
         if (!err && _.isEmpty(res.body)) {
           console.log('creating user ' + name);
