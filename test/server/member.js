@@ -7,20 +7,19 @@ var user = 'testdummy5';
 
 var cookies;
 
-describe('Members API', function() {
-  it('check if service is up and user:' + user + ' doesn\'t exist', function(done) {
-    this.timeout(5000);
+describe('Members', function() {
+  it('check if service is up and user:' + user + ' doesn\'t exist',
+      function(done) {
     request(url)
         .get('/api/members/' + user)
-        .expect(200)
+        .expect(404)
         .end(function(err, res) {
-          res.body.should.be.empty();
+          res.body.error.message.should.be.exactly('member not found');
           done(err);
         });
   });
 
   it('create user: POST to /api/members', function(done) {
-    this.timeout(5000);
     var profile = {
       username: user,
       password: user,
@@ -49,7 +48,6 @@ describe('Members API', function() {
   });
 
   it('delete user: DELETE to /api/members', function(done) {
-
     var req = request(url).delete('/api/members/' + user);
     req.cookies = cookies;
     req.expect(200)
@@ -61,9 +59,9 @@ describe('Members API', function() {
   it('verify delete: GET to /api/members', function(done) {
     request(url)
         .get('/api/members/' + user)
-        .expect(200)
+        .expect(404)
         .end(function(err, res) {
-          res.body.should.be.empty();
+          res.body.error.message.should.be.exactly('member not found');
           done(err);
         });
   });

@@ -14,14 +14,13 @@ function createMember(name, cb) {
   var profile = {
     username: name,
     password: name,
-    email: name + '@' + name + 'com'
+    email: name + '@' + name + '.com'
   };
-
   request(url)
       .get('/api/members/' + name)
       .expect(404)
       .end(function(err, res) {
-        if (!err && _.isEmpty(res.body)) {
+        if (!err && res.statusCode === 404) {
           console.log('creating user ' + name);
           request(url)
               .post('/api/members')
@@ -39,7 +38,7 @@ function login(name, cb) {
   var profile = {
     username: name,
     password: name,
-    email: name + '@' + name + 'com'
+    email: name + '@' + name + '.com'
   };
   request(url)
       .post('/api/members/auth')
@@ -114,7 +113,8 @@ function createAscent(name, type, grade, cragid, cb) {
     });
 }
 
-before('building a mini island database of users, ascents, crags', function(done) {
+before('building a mini island database of users, ascents, crags',
+    function(done) {
   this.timeout(30000);
   async.waterfall([
     function(cb) { createMember('islandTest', cb); },
