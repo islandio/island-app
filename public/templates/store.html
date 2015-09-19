@@ -7,22 +7,33 @@
           <div class="sidebar-product-details">
             <h1><%= p.title %></h1>
             <div class="sidebar-product-images">
-              <% _.each(p.thumbs, function (i) { %>
-                <img src="<%= i %>" />
+              <% _.each(p.thumbs, function (thumbUrl, i) { %>
+                <a href="<%= p.images[i] %>" class="fancybox" rel="p-<%= p.sku %>">
+                  <img src="<%= thumbUrl %>" />
+                </a>
               <% }); %>
             </div>
             <p><%= p.description %><p>
           </div>
           <div class="clear"></div>
-          <div class="sidebar-product-picker" data-sku="<%= p.sku %>" data-count="1"
-              data-price="<%= p.price %>">
-            <a href="javascript:;" class="button buy-button buy-button-left add-to-cart">
-              <i class="icon-cart-plus"></i> Add to Cart
-            </a>
-            <a href="javascript:;" class="button buy-button buy-button-right buy-now">
-              Buy Now ($<%= (p.price/100).toFixed(2) %>)
-            </a>
-          </div>
+          <% if (p.status === 'instock') { %>
+            <div class="sidebar-product-picker" data-sku="<%= p.sku %>" data-count="1"
+                data-price="<%= p.price %>">
+              <a href="javascript:;" class="button buy-button buy-button-left add-to-cart">
+                <i class="icon-cart-plus"></i> Add to Cart
+              </a>
+              <a href="javascript:;" class="button buy-button buy-button-right buy-now">
+                Buy Now ($<%= (p.price/100).toFixed(2) %>)
+              </a>
+            </div>
+          <% } else { %>
+            <div class="sidebar-product-picker">
+              <a href="javascript:;" class="button buy-button buy-button-disabled disabled"
+                  sdisabled="disabled">
+                <i class="icon-frown"></i> Out Of Stock ($<%= (p.price/100).toFixed(2) %>)
+              </a>
+            </div>
+          <% } %>
           <div class="clear"></div>
         </div>
       <% }, this)); %>

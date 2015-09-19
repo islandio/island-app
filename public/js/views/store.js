@@ -84,6 +84,16 @@ define([
         billingAddress: false
       });
 
+      var fancyOpts = {
+        openEffect: 'fade',
+        closeEffect: 'fade',
+        closeBtn: false,
+        nextClick: true,
+        padding: 0
+      };
+
+      this.$('a.fancybox').fancybox(fancyOpts);
+
       return this;
     },
 

@@ -2532,6 +2532,9 @@ a.sidebar-more:hover {
   padding: 0;
   border-right: 1px solid transparent;
 }
+.sidebar-product-images img:hover {
+  opacity: 0.8;
+}
 .sidebar-product-images img:last-child {
   border-right: none;
 }
@@ -2549,6 +2552,13 @@ a.sidebar-more:hover {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
+}
+.sidebar-product-picker a.button.buy-button.buy-button-disabled {
+  float: none;
+  width: 100%;
+  cursor: default;
+  background: #e76533;
+  color: #fff;
 }
 a.button.buy-button-left {
   border-right: 2px solid #396400;
@@ -3873,7 +3883,7 @@ textarea.comment-input {
   position: relative;
 }
 .image-mosaic-wrap:hover img {
-  opacity: 0.98;
+  opacity: 0.8;
 }
 img.image-mosaic-play {
   position: absolute !important;
@@ -3929,7 +3939,7 @@ span.image-mosaic-play-text {
   border-radius: 2px;
 }
 .post-instagram:hover {
-  opacity: 0.98;
+  opacity: 0.8;
 }
 .post .post-body {
   margin: 10px 0 0;

@@ -217,6 +217,24 @@
       "src": "fontawesome"
     },
     {
+      "uid": "d862a10e1448589215be19702f98f2c1",
+      "css": "smile",
+      "code": 59446,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "06ddc67d609c477cd5524a7238d7850d",
+      "css": "frown",
+      "code": 59445,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "2c5055a9c9723725f49f0593a08535af",
+      "css": "meh",
+      "code": 59447,
+      "src": "fontawesome"
+    },
+    {
       "uid": "627abcdb627cb1789e009c08e2678ef9",
       "css": "twitter",
       "code": 59425,
