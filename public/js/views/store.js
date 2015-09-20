@@ -430,13 +430,23 @@ define([
       var itemsTotal = total;
       total += shippingAndHandlingCost * 100;
 
+      var shippingAndHandling;
+      if (demandShipping) {
+        shippingAndHandling = shipping.serviceLevelName + ' (' +
+            shipment.carrier.description + ')<br />';
+        shippingAndHandling += 'Ships ' +  new Date(shipment.expectedShipDate)
+            .format('ddd, mmm d, h:MMtt Z') + '<br />';
+        shippingAndHandling += 'Delivered by ' +
+            new Date(shipment.expectedDeliveryMaxDate)
+            .format('ddd, mmm d, h:MMtt Z');
+      }
+
       return {
         cart: cart,
         shipping: shipping,
         count: count,
         items: items,
-        shippingAndHandling: demandShipping ? shipping.serviceLevelName + ' (' +
-            shipment.carrier.description + ')' : null,
+        shippingAndHandling: shippingAndHandling,
         shippingAndHandlingCost: shippingAndHandlingCost,
         itemsTotal: itemsTotal,
         total: total
