@@ -509,8 +509,17 @@ define([
 
     placeOrder: function (order) {
       // Give 'em a random processing GIF.
-      rest.get('http://api.giphy.com/v1/gifs/random?api_key=' +
+      rest.get('https://api.giphy.com/v1/gifs/random?api_key=' +
           'dc6zaTOxFJmzC&tag=processing', _.bind(function (err, res) {
+        if (err) {
+          mps.publish('flash/new', [{
+            err: err,
+            level: 'error',
+            type: 'popup',
+            sticky: true
+          }]);
+          return false;
+        }
         loadingGIF = err ? null: res.data;
 
         this.renderModal(shippingProcessingTemp, {
