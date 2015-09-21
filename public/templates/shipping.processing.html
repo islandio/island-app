@@ -1,6 +1,6 @@
 <div class="modal">
   <span class="modal-title"><i class="icon-hourglass"></i> Placing your order...</span>
-  <% if (loadingGIF) {
+  <% if (typeof loadingGIF !== 'undefined') {
     var aspect = loadingGIF.image_width / loadingGIF.image_height;
     var width = 500;
     var height = width / aspect;
