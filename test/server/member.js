@@ -3,17 +3,18 @@ var assert = require('assert');
 var request = require('supertest');
 
 var url = 'localhost:8080';
-var user = 'testdummy5'
+var user = 'testdummy5';
 
 var cookies;
 
-describe('members resource', function() {
-  it('check if service is up and user:' + user + ' doesn\'t exist', function(done) {
+describe('Members', function() {
+  it('check if service is up and user:' + user + ' doesn\'t exist',
+      function(done) {
     request(url)
         .get('/api/members/' + user)
-        .expect(200)
+        .expect(404)
         .end(function(err, res) {
-          res.body.should.be.empty();
+          res.body.error.message.should.be.exactly('member not found');
           done(err);
         });
   });
@@ -47,9 +48,8 @@ describe('members resource', function() {
   });
 
   it('delete user: DELETE to /api/members', function(done) {
-
-    var req = request(url).delete('/api/members/' + user)
-    req.cookies = cookies
+    var req = request(url).delete('/api/members/' + user);
+    req.cookies = cookies;
     req.expect(200)
         .end(function(err, res) {
           done(err);
@@ -59,9 +59,9 @@ describe('members resource', function() {
   it('verify delete: GET to /api/members', function(done) {
     request(url)
         .get('/api/members/' + user)
-        .expect(200)
+        .expect(404)
         .end(function(err, res) {
-          res.body.should.be.empty();
+          res.body.error.message.should.be.exactly('member not found');
           done(err);
         });
   });

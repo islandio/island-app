@@ -4,9 +4,9 @@
       <%= this.params.html %>
     <% } else { %>
       <% if (this.params.log) { %>
-        <% if (this.app.profile && this.app.profile.member
-            && this.app.profile.member.username !== 'island'
-            && this.app.profile.member.role !== 2) { %>
+        <% if (this.app.profile && this.app.profile.member &&
+            this.app.profile.member.username !== 'island' &&
+            this.app.profile.member.role !== 2) { %>
           <a href="javascript:;" class="button title-green-button log-session">
             <i class="icon-pencil"></i> Log
           </a>
@@ -19,9 +19,9 @@
     <% } %>
   </div>
 <% } else { %>
-  <% if (this.params.log
-      && this.app.profile.member.username !== 'island'
-      && this.app.profile.member.role !== 2) { %>
+  <% if (this.params.log &&
+      this.app.profile.member.username !== 'island' &&
+      this.app.profile.member.role !== 2) { %>
     <a href="javascript:;" class="button title-green-button log-session">
       <i class="icon-pencil"></i> Log
     </a>
@@ -29,7 +29,9 @@
   <ul>
     <% _.each(this.params.tabs, function (tab) { 
       var klass = 'tab';
-      if (tab.active) klass += ' active';
+      if (tab.active) {
+        klass += ' active';
+      }
     %>
       <li class="<%= klass %>">
         <a href="<%= tab.href %>" class="navigate"><%= tab.title %></a>

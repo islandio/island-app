@@ -386,7 +386,9 @@ h1.title-left
   line-height 40px
   color #404040
   font-family standard_thin
-  // text-transform uppercase
+
+h1.title-left.no-image
+  margin-left 0
 
 h1.title-left a,
 h1.title-left a:hover
@@ -628,7 +630,6 @@ textarea
   resize none
   font-weight normal
   -webkit-font-smoothing antialiased
-  // padding 8px
   padding 9px 8px 7px
   border 1px solid bordergray
   color #404040
@@ -638,6 +639,7 @@ input[type=checkbox], input[type=radio]
   display inline
 
 input[type=text]:not(.text),
+input[type=number],
 input[type=search],
 input[type=email],
 input[type=password]
@@ -987,15 +989,15 @@ a.button.buy-button
   border 1px solid transparent
   background #b1dc36
   font-size 12px
-  margin-top 12px
+  margin-top 17px
   margin-right 0
   line-height 24px
   min-height 24px
 
 a.button.buy-button:hover:not(.disabled)
-  color #1a1a1a
+  color #2f5a00
   background #b1dc36
-  border 1px solid #1a1a1a
+  border 1px solid rgb(57, 100, 0)
 
 a.button.new-session-button,
 button.button.new-session-button,
@@ -2463,20 +2465,36 @@ p.sidebar-tip span
 .sidebar-tick:last-child
   border-bottom 1px solid #f2f2f2
 
-.sidebar-broadcast
+.sidebar-products
+  margin-top 10px !important
+
+.sidebar-broadcast,
+.sidebar-product
   background #fcfcfc
   border 1px solid #f2f2f2
   border-radius 3px
   padding 7px 0
   margin-bottom 15px
 
-.sidebar-broadcast:last-child
+.sidebar-product
+  padding 0
+
+.sidebar-broadcast:last-child,
+.sidebar-product:last-child
   margin-bottom 0
 
-.sidebar-broadcast h1
+.sidebar-broadcast h1,
+.sidebar-product h1
   font-family standard_thin
   font-size 16px
   padding 0 7px 5px
+
+.sidebar-product h1
+  padding 10px
+  color #404040
+  text-align center
+  border-bottom 1px solid #f2f2f2
+  font-weight bold
 
 .sidebar-broadcast h1 a
   background none
@@ -2487,7 +2505,12 @@ p.sidebar-tip span
 .sidebar-broadcast h1 a i
   vertical-align 1px
 
+.sidebar-product h1 a.buy-button
+  float right
+  margin -4px 0 0 0
+
 .sidebar-broadcast p
+.sidebar-product p
   padding 0 10px
   color #666
   font-family standard_thin
@@ -2520,6 +2543,73 @@ a.sidebar-more
 a.sidebar-more:hover
   color blue
 
+.sidebar-product-details
+  padding 0
+
+.sidebar-product-images
+  height 83px
+  padding 10px
+
+.sidebar-product-images img
+  float left
+  font-size 0
+  width 83px
+  margin 0
+  padding 0
+  border-right 1px solid transparent
+
+.sidebar-product-images img:hover
+  opacity 0.8
+
+.sidebar-product-images img:last-child
+  border-right none
+
+.sidebar-product-picker
+  font-size 0
+  height 25px
+  padding 10px
+
+.sidebar-product-picker a.button.buy-button
+  display block
+  float left
+  margin 0
+  min-width 0
+  width 50%
+
+  box-sizing border-box
+  -moz-box-sizing border-box
+  -webkit-box-sizing border-box
+
+.sidebar-product-picker a.button.buy-button.buy-button-disabled
+  float none
+  width 100%
+  cursor default
+  background orange
+  color white
+
+a.button.buy-button-left
+  border-right 2px solid rgb(57, 100, 0)
+  border-radius 2px 0 0 2px
+
+a.button.buy-button-left:hover,
+a.button.buy-button-left:focus
+  border-right 2px solid rgb(57, 100, 0) !important
+
+a.button.buy-button-right
+  border-radius 0 2px 2px 0
+
+a.button.buy-button-right:hover,
+a.button.buy-button-right:focus
+  border-left-color transparent !important
+
+a.button.empty-cart-button
+  display none
+  padding 0 10px
+  border-left-width 1px
+
+a.button.empty-cart-button:hover
+  border-left-width 1px !important
+
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––beta*/
 
 .beta
@@ -2529,6 +2619,7 @@ a.sidebar-more:hover
   font-family standard_thin
   font-size 16px
   line-height 24px
+  margin-bottom 15px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––instagrams*/
 
@@ -3257,6 +3348,9 @@ img.page-title-avatar
   width 500px
   border-radius 2px
 
+.modal.modal-wide
+  width 650px
+
 .modal-title
   display block
   background #f2f2f2
@@ -3323,6 +3417,69 @@ p.modal-message
 .modal-body ol li
   list-style inherit
 
+.modal-body.shipping-form form
+  margin 10px 0
+
+.modal-body.shipping-form table,
+.modal-body.shipping-form table input[type=text]
+  width 100%
+  
+  box-sizing border-box
+  -moz-box-sizing border-box
+  -webkit-box-sizing border-box
+
+.modal-body.shipping-form table td
+  padding 0
+  border 1px solid #cdcdcd
+  position relative
+
+.modal-body.table.shipping-form table tr.clickable
+  cursor pointer
+
+.modal-body.table.shipping-form table tr.clickable:hover
+  background #fcfcfc
+
+.modal-body.table.shipping-form table td
+  border 1px solid #e6e6e6
+  border-left none
+  border-right none
+  padding 10px
+  font-size 13px
+  word-wrap break-word
+
+.modal-body.shipping-form table td.sibling-focus-right
+  border-right-color blue
+  
+.modal-body.shipping-form table td .td-focus-top
+  display none
+  position absolute
+  height 1px
+  top -1px
+  left 0
+  right 0
+  background blue
+
+.modal-body.shipping-form table input[type=text]
+  padding 8px 12px
+  border-radius 0
+  font-size 14px
+  line-height 24px
+  border-color transparent
+  
+  -webkit-box-shadow none
+  -moz-box-shadow none
+  box-shadow none
+
+.modal-body.shipping-form table td.focus
+  border-color blue
+  
+  -webkit-box-shadow inset 0 1px 2px rgba(0,0,0,0.075),0 0 5px rgba(75, 184, 215, 0.5)
+  -moz-box-shadow inset 0 1px 2px rgba(0,0,0,0.075),0 0 5px rgba(75, 184, 215, 0.5)
+  box-shadow inset 0 1px 2px rgba(0,0,0,0.075),0 0 5px rgba(75, 184, 215, 0.5)
+
+.modal-body.shipping-form table td.focus .td-focus-top
+  display block
+
 .modal-actions
   border-top 1px solid #ddd
   padding 15px 30px
@@ -3353,6 +3510,23 @@ p.modal-message
 button.button.modal-button.full
   width 100%
   margin 0
+
+button.button.modal-confirm
+  position relative
+
+button.button.modal-confirm.disabled
+  opacity 0.5
+  cursor pointer
+
+button.button.modal-back
+  float left
+  margin-left 0
+
+.modal-image img
+  display inherit
+
+.modal-options
+  font-size 13px
 
 .modal-overlay
   display none
@@ -3747,7 +3921,7 @@ textarea.comment-input
   position relative
 
 .image-mosaic-wrap:hover img
-  opacity 0.98
+  opacity 0.8
 
 img.image-mosaic-play
   position absolute !important
@@ -3802,7 +3976,7 @@ span.image-mosaic-play-text
   border-radius 2px
 
 .post-instagram:hover
-  opacity 0.98
+  opacity 0.8
 
 .post .post-body
   margin 10px 0 0
@@ -5515,13 +5689,52 @@ input.import-input
   position relative
   top 2px
 
-/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––ascent*/
+/*––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––ascent*/
 
 .ascent-grades-histogram
   width: 274px
   height: 200px
   margin-top 20px
   margin-bottom 20px
+
+/*––––––––––––––––––––––––––––––––––––––––––––––––––––––––– –shipping*/
+
+.shipping-option-radio
+  font-size 16px
+  display block
+  width 10px
+  cursor pointer
+
+.shipping-summary-quantity
+  display block
+
+.shipping-summary-quantity input
+  width 30px
+
+.shipping-summary-thumb
+  vertical-align middle
+
+.shipping-option-title,
+.shipping-summary-item
+  display block
+  font-weight bold
+  font-size 13px
+
+.shipping-option-details,
+.shipping-summary-details
+  color #808080
+  font-size 12px
+  white-space normal
+
+.shipping-option-amount,
+.shipping-summary-amount
+  font-style italic
+  color #396400
+
+.shipping-summary-total
+  font-style italic
+  font-weight bold
+  color #396400
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––other*/
 

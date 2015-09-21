@@ -31,6 +31,7 @@ define([
   'views/ascent',
   'views/settings',
   'views/reset',
+  'views/store',
   'views/films',
   'views/static',
   'views/crags',
@@ -45,7 +46,7 @@ define([
   'views/share'
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
     Flashes, Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Tick,
-    Crag, Admin, ImportSearch, ImportInsert, Ascent, Settings, Reset, Films, Static,
+    Crag, Admin, ImportSearch, ImportInsert, Ascent, Settings, Reset, Store, Films, Static,
     Crags, Dashboard, Splash, Ticks, Medias, aboutTemp, privacyTemp, tipTemp, NewSession,
     Share
 ) {
@@ -141,6 +142,7 @@ define([
       this.route('privacy', 'privacy', this.privacy);
       this.route('about', 'about', this.about);
       this.route('films', 'films', this.films);
+      this.route('store', 'store', this.store);
       this.route('crags', 'crags', this.crags);
       this.route('signin', 'signin', this.signin);
       this.route('signup', 'signup', this.signup);
@@ -259,8 +261,7 @@ define([
       cb = cb || function(){};
 
       // Check if a profile exists already.
-      var query = this.app.profile &&
-          this.app.profile.notes ? {n: 0}: {};
+      var query = this.app.profile && this.app.profile.notes ? {n: 0}: {};
       _.extend(query, data);
 
       // Get a profile, if needed.
@@ -492,6 +493,18 @@ define([
       }, this));
     },
 
+    store: function () {
+      this.start();
+      this.renderTabs();
+      this.clearContainer();
+      this.render('/service/store', _.bind(function (err) {
+        if (err) return;
+        this.page = new Store(this.app).render();
+        this.renderTabs({html: this.page.title});
+        this.stop();
+      }, this));
+    },
+
     films: function () {
       this.start();
       this.renderTabs();
@@ -559,10 +572,11 @@ define([
       this.start();
       this.renderTabs();
       this.clearContainer();
+      var path, name = '';
       if (this.app.state && this.app.state.import) {
         var target = this.app.state.import.target;
-        var path = this.app.state.import.userId + '-' + target
-        var name = this.app.state.import.name;
+        path = this.app.state.import.userId + '-' + target;
+        name = this.app.state.import.name;
       }
       delete this.app.state.import;
       this.render('/service/import/' + path, _.bind(function (err) {

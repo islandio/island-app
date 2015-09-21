@@ -1,0 +1,67 @@
+<%
+  member = member || {};
+  var address = member.address || {};
+%>
+
+<div class="modal">
+  <span class="modal-title"><i class="icon-location"></i> Where should we send this stuff?</span>
+  <div class="modal-body shipping-form">
+    <label>Shipping address:</label>
+    <form class="shipping-address-form">
+      <table>
+        <tbody>
+          <tr>
+            <td colspan="2">
+              <input type="text" name="name" placeholder="Name" value="<%= member.displayName || '' %>" />
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <div class="td-focus-top"></div>
+              <input type="text" name="address" placeholder="Address" value="<%= address.address || '' %>" />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="td-focus-top"></div>
+              <input type="text" name="city" placeholder="City" value="<%= address.city || '' %>" />
+            </td>
+            <td>
+              <div class="td-focus-top"></div>
+              <input type="text" name="state" placeholder="State / Region" value="<%= address.state || '' %>" />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="td-focus-top"></div>
+              <input type="text" name="zip" placeholder="ZIP / Postal Code" value="<%= address.zip || '' %>" />
+            </td>
+            <td>
+              <div class="td-focus-top"></div>
+              <input type="text" name="country" placeholder="Country" value="<%= address.country || '' %>" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+    <% if (member.username) { %>
+      <div class="modal-options">
+        <input type="checkbox" name="saveAddress" checked="checked" /> Save address
+      </div>
+    <% } %>
+  </div>
+  <div class="modal-actions">
+    <% if (back) { %>
+      <button class="modal-back modal-button button">
+        <i class="icon-angle-left"></i> <span>Back</span>
+      </button>
+    <% } %>
+    
+    <button class="modal-cancel modal-button button">Cancel</button>
+    <button class="modal-confirm modal-button button disabled" disabled="disabled">
+      <div class="button-spin"></div>
+      <span>Choose Shipping</span> <i class="icon-angle-right"></i>
+    </button>
+    <div class="clear"></div>
+  </div>
+</div>

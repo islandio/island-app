@@ -359,8 +359,10 @@ define([
             if (assembly.ok !== 'ASSEMBLY_COMPLETED') {
               this.bannerSpin.stop();
               this.bannerDropZone.removeClass('uploading');
-              mps.publish('flash/new', [{err: 'Upload failed. Please try again.',
-                  level: 'error', type: 'popup'}]);
+              mps.publish('flash/new', [{
+                err: 'Upload failed. Please try again.',
+                level: 'error', type: 'popup'
+              }]);
               return;
             } if (_.isEmpty(assembly.results)) {
               this.bannerSpin.stop();
@@ -383,7 +385,8 @@ define([
               this.bannerSpin.stop();
               this.bannerDropZone.removeClass('uploading');
 
-              mps.publish('flash/new', [{err: err, level: 'error', type: 'popup'}]);
+              mps.publish('flash/new', [{err: err, level: 'error',
+                  type: 'popup'}]);
               return;
             }
 
@@ -566,8 +569,11 @@ define([
             if (assembly.ok !== 'ASSEMBLY_COMPLETED') {
               this.avatarSpin.stop();
               this.avatarDropZone.removeClass('uploading');
-              mps.publish('flash/new', [{err: 'Upload failed. Please try again.',
-                  level: 'error', type: 'popup'}]);
+              mps.publish('flash/new', [{
+                err: 'Upload failed. Please try again.',
+                level: 'error',
+                type: 'popup'
+              }]);
               return;
             } if (_.isEmpty(assembly.results)) {
               this.avatarSpin.stop();
@@ -590,7 +596,8 @@ define([
               this.avatarSpin.stop();
               this.avatarDropZone.removeClass('uploading');
 
-              mps.publish('flash/new', [{err: err, level: 'error', type: 'popup'}]);
+              mps.publish('flash/new', [{err: err, level: 'error',
+                  type: 'popup'}]);
               return;
             }
 
@@ -742,7 +749,8 @@ define([
         rest.delete('/api/members/' + this.app.profile.member.username,
             {}, _.bind(function (err, data) {
           if (err) {
-            mps.publish('flash/new', [{err: err, level: 'error', type: 'popup'}]);
+            mps.publish('flash/new', [{err: err, level: 'error',
+                type: 'popup'}]);
             return;
           }
 
@@ -773,7 +781,8 @@ define([
         // Delete all ticks.
         rest.delete('/api/ticks/all', {}, _.bind(function (err, data) {
           if (err) {
-            mps.publish('flash/new', [{err: err, level: 'error', type: 'popup'}]);
+            mps.publish('flash/new', [{err: err, level: 'error',
+                type: 'popup'}]);
             return;
           }
 

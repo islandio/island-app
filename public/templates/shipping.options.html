@@ -1,0 +1,57 @@
+<%
+  var chosen = shipping ? shipping.serviceLevelCode:
+      options[0].serviceLevelCode;
+%>
+
+<div class="modal modal-wide">
+  <span class="modal-title"><i class="icon-gauge"></i> How fast do you want it?</span>
+  <div class="modal-body table shipping-form">
+    <label>Shipping options:</label>
+    <form class="shipping-options-form">
+      <table>
+        <tbody>
+          <% _.each(options, function (o, i) {
+            var shipment = o.shipments[0];
+          %>
+            <tr class="clickable">
+              <td>
+                <span class="shipping-option-radio">
+                  <% if (o.serviceLevelCode === chosen) { %>
+                    <input type="radio" name="option" value="<%= o.serviceLevelCode %>" checked="checked" />
+                  <% } else { %>
+                    <input type="radio" name="option" value="<%= o.serviceLevelCode %>"/>
+                  <% } %>
+                </span>
+              </td>
+              <td>
+                <span class="shipping-option-title">
+                  <%= o.serviceLevelName %> (<%= shipment.carrier.description %>)
+                </span>
+                <span class="shipping-option-details">
+                  - Ships <%= new Date(shipment.expectedShipDate).format('ddd, mmm d, h:MMtt Z') %>
+                  <br />
+                  - Delivered by <%= new Date(shipment.expectedDeliveryMaxDate).format('ddd, mmm d, h:MMtt Z') %>
+                </span>
+              </td>
+              <td>
+                <span class="shipping-option-amount">
+                  $<%= shipment.cost.amount.toFixed(2) %> (<%= shipment.cost.currency %>)
+                </span>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </form>
+  </div>
+  <div class="modal-actions">
+    <button class="modal-back modal-button button">
+      <i class="icon-angle-left"></i> <span>Back</span>
+    </button>
+    <button class="modal-cancel modal-button button">Cancel</button>
+    <button class="modal-confirm modal-button button">
+      <span>Continue</span> <i class="icon-angle-right"></i>
+    </button>
+    <div class="clear"></div>
+  </div>
+</div>

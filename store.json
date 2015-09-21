@@ -1,0 +1,44 @@
+{
+  "M1-Island-Brush": {
+    "name": "M1 Island Brush",
+    "title": "Island M1 Classic Brush",
+    "description": "Our version of the rock climbing toothbrush. Beech wood and boar's hair. Custom made in Bulgaria.",
+    "price": 750,
+    "images": [
+      "https://s3.amazonaws.com/island.io/store/img/m1-1.jpg",
+      "https://s3.amazonaws.com/island.io/store/img/m1-2.jpg",
+      "https://s3.amazonaws.com/island.io/store/img/m1-3.jpg"
+    ],
+    "thumbs": [
+      "https://s3.amazonaws.com/island.io/store/img/m1t-1.png",
+      "https://s3.amazonaws.com/island.io/store/img/m1t-2.png",
+      "https://s3.amazonaws.com/island.io/store/img/m1t-3.png"
+    ]
+  },
+  "M1-Island-Case": {
+    "price": 75000
+  },
+  "M3-Island-Brush": {
+    "name": "M3 Island Brush",
+    "title": "Island M3 Scrub Brush",
+    "description": "Palm-sized scrubber for those bigger holds. Beech wood and boar's hair. Custom made in Bulgaria.",
+    "price": 1250,
+    "images": [
+      "https://s3.amazonaws.com/island.io/store/img/m3-1.jpg",
+      "https://s3.amazonaws.com/island.io/store/img/m3-2.jpg",
+      "https://s3.amazonaws.com/island.io/store/img/m3-3.jpg"
+    ],
+    "thumbs": [
+      "https://s3.amazonaws.com/island.io/store/img/m3t-1.png",
+      "https://s3.amazonaws.com/island.io/store/img/m3t-2.png",
+      "https://s3.amazonaws.com/island.io/store/img/m3t-3.png"
+    ]
+  },
+  "M3-Island-Case": {
+    "price": 31250
+  },
+
+  "TEST-NO-STOCK": {
+    "price": 200
+  }
+}

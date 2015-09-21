@@ -28,6 +28,7 @@ define([
               member: err.member,
               content: err.content,
               message: err.error.message,
+              data: err.error.data,
               stack: err.error.stack,
               explain: err.error.explain,
               level: err.error.level,

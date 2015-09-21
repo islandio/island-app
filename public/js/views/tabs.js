@@ -28,6 +28,26 @@ define([
       this.subscriptions = [
         mps.subscribe('ascent/add', _.bind(function (opts) {
           this.add(null, opts);
+        }, this)),
+        mps.subscribe('cart/update', _.bind(function () {
+          var cart = store.get('cart');
+          var count = 0;
+          _.each(cart, function (i) {
+            count += i;
+          });
+          var countText = count + ' item';
+          if (count !== 1) {
+            countText += 's';
+          }
+          this.$('.cart-count').text(countText);
+
+          if (count > 0) {
+            this.$('.cart-button').removeClass('disabled').attr('disabled', false);
+            this.$('.empty-cart-button').show();
+          } else {
+            this.$('.cart-button').addClass('disabled').attr('disabled', true);
+            this.$('.empty-cart-button').hide();
+          }
         }, this))
       ];
     },
@@ -74,7 +94,22 @@ define([
       },
       'click .add-ascent': 'add',
       'click .log-session': 'log',
-      'click .clean-button': 'cleanLogs'
+      'click .clean-button': 'cleanLogs',
+      'click .cart-button': function () {
+        mps.publish('cart/checkout');
+      },
+      'click .empty-cart-button': function () {
+        this.$('.cart-count').text('0 items');
+        this.$('.empty-cart-button').hide();
+        this.$('.cart-button').addClass('disabled').attr('disabled', true);
+        mps.publish('cart/empty');
+
+        mps.publish('flash/new', [{
+          message: 'Cart emptied.',
+          level: 'alert',
+          type: 'popup'
+        }]);
+      }
     },
 
     setup: function () {

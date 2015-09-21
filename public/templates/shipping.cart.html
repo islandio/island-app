@@ -1,0 +1,62 @@
+<div class="modal modal-wide">
+  <span class="modal-title"><i class="icon-basket"></i> Checkout</span>
+  <div class="modal-body table shipping-form">
+    <label>Cart summary:</label>
+    <form class="shipping-summary-form">
+      <table>
+        <tbody>
+          <% _.each(summary.items, function (item, sku) {
+            if (item.quantity <= 0) {
+              return;
+            }
+          %>
+            <tr>
+              <td>
+                <span class="shipping-summary-quantity">
+                  <input type="number" name="<%= sku %>-qnty" placeholder="0"
+                      data-sku="<%= sku %>" value="<%= item.quantity %>"
+                      min="0" max="<%= max %>" />
+                </span>
+              </td>
+              <td>
+                <span class="shipping-summary-thumb">
+                  <img src="<%= item.product.thumbs[0] %>" />
+                </span>
+              </td>
+              <td>
+                <span class="shipping-summary-item">
+                  <%= item.product.title %> ($<%= (item.product.price / 100).toFixed(2) %>)
+                </span>
+                <span class="shipping-summary-details">
+                  <%= item.product.description %>
+                </span>
+              </td>
+              <td>
+                <span class="shipping-summary-amount">
+                  $<%= (item.cost / 100).toFixed(2) %> (USD)
+                </span>
+              </td>
+            </tr>
+          <% }); %>
+          <tr>
+            <td style="border-bottom:none;">&nbsp;</td>
+            <td style="border-bottom:none;">&nbsp;</td>
+            <td style="border-bottom:none;">&nbsp;</td>
+            <td style="border-bottom:none;">
+              <span class="shipping-summary-total">
+                $<%= (summary.total / 100).toFixed(2) %> (USD)
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+  </div>
+  <div class="modal-actions">
+    <button class="modal-cancel modal-button button">Cancel</button>
+    <button class="modal-confirm modal-button button">
+      <span>Continue</span> <i class="icon-angle-right"></i>
+    </button>
+    <div class="clear"></div>
+  </div>
+</div>
