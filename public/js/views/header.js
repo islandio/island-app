@@ -96,9 +96,9 @@ define([
     checkBeacon: function () {
       var unread = $('.panel .unread');
       if (unread.length > 0)
-        this.$('.count').text(unread.length).show();
+        this.$('.note-count').text(unread.length).show();
       else
-        this.$('.count').text('').hide();
+        this.$('.note-count').text('').hide();
     },
 
     signin: function (e) {

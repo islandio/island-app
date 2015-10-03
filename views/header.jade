@@ -27,8 +27,8 @@ header.header
       li
         a(class="navigate", href="/crags", alt="Search for a crag.") Crags
       li
-        a(class="navigate", href="/films", alt="We\'re proud to bring you professional grade content. Many thanks to everyone that has made these films happen.") Films
-        //- a(class="navigate", href="/store", alt="Accessories and apparel.") Store
+        a(class="navigate", href="/store", alt="Accessories and apparel.") Store
+          span.count.cart-count 2
       - if (typeof member === 'undefined')
         li
           a(class="navigate", href="/media", alt="Recently uploaded photos and videos.") Recent Media
@@ -46,7 +46,7 @@ header.header
         div.divider-vertical
         a.button.globe-button.header-action(href="javascript:;", title="Notifications")
           i.icon-globe
-          span.count
+          span.count.note-count
         div.divider-vertical
         a.button.header-action.navigate(href="/settings", title="Settings")
           i.icon-sliders

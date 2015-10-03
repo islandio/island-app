@@ -484,15 +484,12 @@ define([
       if (summary.count !== 1) {
         itemsDescription += 's';
       }
-      itemsDescription += ': $' + (summary.itemsTotal / 100).toFixed(2) +
+      itemsDescription += ' + S&H = $' + (summary.total / 100).toFixed(2) +
           ' (USD)';
 
-      var shippingDescription = 'Shipping & Handling: $' +
-          summary.shippingAndHandlingCost.toFixed(2) + ' (USD)';
-
       this.stripeHandler.open({
-        name: itemsDescription,
-        description: shippingDescription,
+        name: 'The Island',
+        description: itemsDescription,
         amount: summary.total,
         image: this.app.images.store_avatar,
         token: _.bind(function (token) {
