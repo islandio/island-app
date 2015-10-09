@@ -44,6 +44,12 @@ define([
             _.bind(this.checkBeacon, this)));
       }
 
+      this.subscriptions.push(mps.subscribe('cart/update',
+          _.bind(this.updateCart, this)));
+      this.subscriptions.push(mps.subscribe('cart/empty',
+          _.bind(this.updateCart, this)));
+      this.updateCart();
+
       // Start block messages.
       if(!this.flashes) {
         this.flashes = new Flashes(this.app, {
@@ -99,6 +105,20 @@ define([
         this.$('.note-count').text(unread.length).show();
       else
         this.$('.note-count').text('').hide();
+    },
+
+    updateCart: function () {
+      var cart = store.get('cart');
+      var count = 0;
+      _.each(cart, function (i) {
+        count += i;
+      });
+
+      if (count > 0) {
+        this.$('.cart-count').text(' (' + count + ')');
+      } else {
+        this.$('.cart-count').text('');
+      }
     },
 
     signin: function (e) {

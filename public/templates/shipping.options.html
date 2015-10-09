@@ -28,9 +28,9 @@
                   <%= o.serviceLevelName %> (<%= shipment.carrier.description %>)
                 </span>
                 <span class="shipping-option-details">
-                  - Ships <%= new Date(shipment.expectedShipDate).format('ddd, mmm d, h:MMtt Z') %>
+                  - Ships <%= new Date(shipment.expectedShipDate).format('dddd, d mmmm') %>
                   <br />
-                  - Delivered by <%= new Date(shipment.expectedDeliveryMaxDate).format('ddd, mmm d, h:MMtt Z') %>
+                  - Delivered by <%= new Date(shipment.expectedDeliveryMaxDate).format('dddd, d mmmm') %>
                 </span>
               </td>
               <td>

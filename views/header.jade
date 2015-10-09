@@ -3,7 +3,7 @@ header.header
     ul
   .header-inner
     a.button.disabled.logo.navigate(href="/")
-      span.tagline The Island Beta
+      span.tagline The Island
       //- span.tagline Train &middot; Climb
       img(src="#{root}/img/logo.png", width="127", height="30")
     div.divider-vertical.pad-right
@@ -28,7 +28,7 @@ header.header
         a(class="navigate", href="/crags", alt="Search for a crag.") Crags
       li
         a(class="navigate", href="/store", alt="Accessories and apparel.") Store
-          span.count.cart-count 2
+          span.cart-count
       - if (typeof member === 'undefined')
         li
           a(class="navigate", href="/media", alt="Recently uploaded photos and videos.") Recent Media

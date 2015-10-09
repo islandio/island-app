@@ -435,10 +435,10 @@ define([
         shippingAndHandling = shipping.serviceLevelName + ' (' +
             shipment.carrier.description + ')<br />';
         shippingAndHandling += 'Ships ' +  new Date(shipment.expectedShipDate)
-            .format('ddd, mmm d, h:MMtt Z') + '<br />';
+            .format('dddd, d mmmm') + '<br />';
         shippingAndHandling += 'Delivered by ' +
             new Date(shipment.expectedDeliveryMaxDate)
-            .format('ddd, mmm d, h:MMtt Z');
+            .format('dddd, d mmmm');
       }
 
       return {
