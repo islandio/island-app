@@ -435,10 +435,10 @@ define([
         shippingAndHandling = shipping.serviceLevelName + ' (' +
             shipment.carrier.description + ')<br />';
         shippingAndHandling += 'Ships ' +  new Date(shipment.expectedShipDate)
-            .format('ddd, mmm d, h:MMtt Z') + '<br />';
+            .format('dddd, d mmmm') + '<br />';
         shippingAndHandling += 'Delivered by ' +
             new Date(shipment.expectedDeliveryMaxDate)
-            .format('ddd, mmm d, h:MMtt Z');
+            .format('dddd, d mmmm');
       }
 
       return {
@@ -484,15 +484,12 @@ define([
       if (summary.count !== 1) {
         itemsDescription += 's';
       }
-      itemsDescription += ': $' + (summary.itemsTotal / 100).toFixed(2) +
+      itemsDescription += ' + S&H = $' + (summary.total / 100).toFixed(2) +
           ' (USD)';
 
-      var shippingDescription = 'Shipping & Handling: $' +
-          summary.shippingAndHandlingCost.toFixed(2) + ' (USD)';
-
       this.stripeHandler.open({
-        name: itemsDescription,
-        description: shippingDescription,
+        name: 'The Island',
+        description: itemsDescription,
         amount: summary.total,
         image: this.app.images.store_avatar,
         token: _.bind(function (token) {
