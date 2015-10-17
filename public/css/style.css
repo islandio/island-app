@@ -1564,11 +1564,12 @@ h1.splash-heading-one {
   font-family: Title, Verdana, Arial, sans-serif;
   color: #fff;
   white-space: nowrap;
+  margin-top: -100px;
 }
 h2.splash-heading-two {
   margin: 10px 0 30px 0;
   text-align: center;
-  font-size: 22px;
+  font-size: 18px;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   color: #fff;
   white-space: nowrap;
@@ -3374,6 +3375,8 @@ p.modal-message {
 }
 .modal-body ol {
   padding: 0 15px 15px;
+  font-size: 14px;
+  line-height: 20px;
 }
 .modal-body ol li {
   list-style: inherit;
