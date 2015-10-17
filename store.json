@@ -15,9 +15,11 @@
       "https://s3.amazonaws.com/island.io/store/img/m1t-3.png"
     ]
   },
+
   "M1-Island-Case": {
     "price": 75000
   },
+
   "M3-Island-Brush": {
     "name": "M3 Island Brush",
     "title": "Island M3 Scrub Brush",
@@ -34,8 +36,37 @@
       "https://s3.amazonaws.com/island.io/store/img/m3t-3.png"
     ]
   },
+
   "M3-Island-Case": {
     "price": 31250
+  },
+
+  "O12-Island-Cap-B": {
+    "hide": true,
+    "name": "O12 Island Cap B",
+    "title": "Island O12 Trucker Cap Black",
+    "description": "Lorem",
+    "price": 2800,
+    "images": [
+      
+    ],
+    "thumbs": [
+      
+    ]
+  },
+
+  "O12-Island-Cap-G": {
+    "hide": true,
+    "name": "O12 Island Cap G",
+    "title": "Island O12 Trucker Cap Gray",
+    "description": "Lorem",
+    "price": 2800,
+    "images": [
+      
+    ],
+    "thumbs": [
+      
+    ]
   },
 
   "TEST-NO-STOCK": {

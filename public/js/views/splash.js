@@ -26,7 +26,7 @@ define([
     },
 
     render: function () {
-      this.app.title('The Island | Beta');
+      this.app.title('The Island | Try hard');
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
       this.trigger('rendered');
