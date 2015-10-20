@@ -5,6 +5,7 @@
 
   // Banner sizing
   var banner = data.image || null;
+  var hasBanner = !!banner;
   if (!banner) {
     banner = {meta: {width: 680, height: 306}};
     banner.ssl_url = this.app.images.banner;
@@ -28,6 +29,7 @@
 
   // Avatar sizing
   var avatar = data.avatar_full || null;
+  var hasAvatar = !!avatar;
   if (!avatar) {
     avatar = {meta: {width: 325, height: 325}};
     avatar.ssl_url = this.app.images.avatar_big;
@@ -87,6 +89,10 @@
                     href="javascript:;">Drag &amp; drop or select an image.</a>
                 <input class="banner-file-chooser file-chooser" type="file"
                     name="banner_img" accept="image/gif, image/jpeg, image/png" />
+                <a href="javascript:;" class="remove-image settings-banner-remove"
+                    style="<%= hasBanner ? '' : 'display:none;'%>">
+                  <i class="icon-cancel"></i>
+                </a>
               </div>
             </form>
           </td>
@@ -118,6 +124,10 @@
                             href="javascript:;">Drag &amp; drop or select an image.</a>
                         <input class="avatar-file-chooser file-chooser" type="file"
                             name="avatar_img" accept="image/gif, image/jpeg, image/png" />
+                        <a href="javascript:;" class="remove-image settings-avatar-remove"
+                            style="<%= hasAvatar ? '' : 'display:none;'%>">
+                          <i class="icon-cancel"></i>
+                        </a>
                       </div>
                     </form>
                     <form class="settings-avatar-form2" enctype="multipart/form-data" method="POST">

@@ -462,6 +462,7 @@ define([
 
         if (!this.options.tick) {
           this.tickChoices.clearChoice();
+          $('.post-previews li').remove();
           this.validate();
         } else {
           this.destroy();
@@ -725,6 +726,7 @@ define([
           }
         });
       });
+      this.mediaToDelete = [];
 
       return false;
     },

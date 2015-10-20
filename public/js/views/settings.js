@@ -27,8 +27,6 @@ define([
     initialize: function (app) {
       this.app = app;
       this.on('rendered', this.setup, this);
-
-      this.cropAvatar = _.throttle(this.cropAvatar, 1000);
     },
 
     render: function () {
@@ -55,6 +53,7 @@ define([
       this.bannerForm = this.$('.settings-banner-form');
       this.bannerDropZone = this.$('.settings-banner-dnd');
       this.banner = this.$('img.settings-banner');
+      this.removeBannerButton = this.$('a.settings-banner-remove');
       this.bannerSpin = new Spin(this.$('.settings-banner-spin'), {
         color: '#4d4d4d'
       });
@@ -63,6 +62,7 @@ define([
       this.avatarForm2 = this.$('.settings-avatar-form2');
       this.avatarDropZone = this.$('.settings-avatar-dnd');
       this.avatar = this.$('img.settings-avatar');
+      this.removeAvatarButton = this.$('a.settings-avatar-remove');
       this.avatarSpin = new Spin(this.$('.settings-avatar-spin'), {
         color: '#4d4d4d'
       });
@@ -132,6 +132,9 @@ define([
         e.preventDefault();
         return true;
       });
+
+      this.removeBannerButton.click(_.bind(this.removeBanner, this));
+      this.removeAvatarButton.click(_.bind(this.removeAvatar, this));
 
       // Handle error display.
       this.$('input[type="text"], input[type="password"]').blur(function (e) {
@@ -258,6 +261,10 @@ define([
       }
       this.bannerUploading = true;
 
+      if (this.banner.attr('src') === this.app.images.avatar_big) {
+        return false;
+      }
+
       var w = {x: this.banner.width(), y: this.banner.height()};
       var m = {x: e.pageX, y: e.pageY};
       var p = {
@@ -323,20 +330,22 @@ define([
       if (this.bannerUploading) {
         return false;
       }
-      this.bannerUploading = true;
-      this.bannerSpin.start();
-      this.bannerDropZone.addClass('uploading');
 
       // Get the files, if any.
       var files = e.target.files || e.originalEvent.dataTransfer.files;
-      if (files.length === 0) return;
+      if (files.length === 0) {
+        return;
+      }
+
+      this.bannerUploading = true;
+      this.bannerSpin.start();
+      this.bannerDropZone.addClass('uploading');
 
       var data = e.target.files ? null:
           new FormData(this.bannerForm.get(0));
 
       // Loop over each file, adding it the the display
       // and from data object, if present.
-      var list = [];
       _.each(files, function (file) {
         if (data && typeof file === 'object')
           data.append('file', file);
@@ -404,15 +413,19 @@ define([
             }
             this.banner.hide();
             this.banner.attr({src: banner.ssl_url}).load(_.bind(function () {
-              this.avatar.attr({
-                src: banner.ssl_url, width: w,
-                height: h, style: o
+              this.banner.off('load');
+              this.banner.attr({
+                width: w,
+                height: h,
+                style: o
               });
               this.banner.fadeIn('slow');
 
               this.bannerUploading = false;
               this.bannerSpin.stop();
               this.bannerDropZone.removeClass('uploading');
+
+              this.removeBannerButton.show();
 
               mps.publish('flash/new', [{message: 'Saved.', level: 'alert',
                   type: 'popup'}, true]);
@@ -432,6 +445,44 @@ define([
       return false;
     },
 
+    removeBanner: function (e) {
+      if (this.bannerUploading) {
+        return false;
+      }
+      this.bannerUploading = true;
+
+      rest.put('/api/members/' + this.app.profile.member.username, {
+        $unset: {image: 1}
+      }, _.bind(function (err) {
+        var flash = {type: 'popup'};
+        if (err) {
+          flash.err = err;
+          flash.level = 'error';
+        } else {
+          flash.message = 'Saved.';
+          flash.level = 'alert';
+
+          this.banner.attr({src: this.app.images.banner}).load(
+              _.bind(function () {
+            this.banner.off('load');
+            this.banner.attr({
+              width: 680,
+              height: 306
+            }).css({
+              top: 0,
+              left: 0
+            });
+
+            this.removeBannerButton.hide();
+          }, this));
+        }
+        mps.publish('flash/new', [flash]);
+        this.bannerUploading = false;
+      }, this));
+
+      return false;
+    },
+
     avatarPosition: function (e) {
       e.stopPropagation();
       e.preventDefault();
@@ -441,6 +492,10 @@ define([
         return false;
       }
       self.avatarUploading = true;
+
+      if (self.avatar.attr('src') === self.app.images.avatar_big) {
+        return false;
+      }
 
       var w = {x: self.avatar.width(), y: self.avatar.height()};
       var m = {x: e.pageX, y: e.pageY};
@@ -532,20 +587,22 @@ define([
       if (this.avatarUploading) {
         return false;
       }
-      this.avatarUploading = true;
-      this.avatarSpin.start();
-      this.avatarDropZone.addClass('uploading');
 
       // Get the files, if any.
       var files = e.target.files || e.originalEvent.dataTransfer.files;
-      if (files.length === 0) return;
+      if (files.length === 0) {
+        return;
+      }
+
+      this.avatarUploading = true;
+      this.avatarSpin.start();
+      this.avatarDropZone.addClass('uploading');
 
       var data = e.target.files ? null:
           new FormData(this.avatarForm.get(0));
 
       // Loop over each file, adding it the the display
       // and from data object, if present.
-      var list = [];
       _.each(files, function (file) {
         if (data && typeof file === 'object') {
           data.append('file', file);
@@ -616,15 +673,19 @@ define([
             }
             this.avatar.hide();
             this.avatar.attr({src: avatar.ssl_url}).load(_.bind(function () {
+              this.avatar.off('load');
               this.avatar.attr({
-                src: avatar.ssl_url, width: w,
-                height: h, style: o
+                width: w,
+                height: h,
+                style: o
               });
               this.avatar.fadeIn('slow');
 
               this.avatarUploading = false;
               this.avatarSpin.stop();
               this.avatarDropZone.removeClass('uploading');
+
+              this.removeAvatarButton.show();
 
               this.cropAvatar(_.bind(function (err) {
                 if (!err) {
@@ -726,6 +787,45 @@ define([
 
       this.avatarForm2.transloadit(opts);
       this.avatarForm2.submit();
+
+      return false;
+    },
+
+    removeAvatar: function (e) {
+      if (this.avatarUploading) {
+        return false;
+      }
+      this.avatarUploading = true;
+
+      rest.put('/api/members/' + this.app.profile.member.username, {
+        $unset: {avatar: 1, avatar_full: 1, avatar_big: 1}
+      }, _.bind(function (err) {
+
+        var flash = {type: 'popup'};
+        if (err) {
+          flash.err = err;
+          flash.level = 'error';
+        } else {
+          flash.message = 'Saved.';
+          flash.level = 'alert';
+
+          this.avatar.attr({src: this.app.images.avatar_big}).load(
+              _.bind(function () {
+            this.avatar.off('load');
+            this.avatar.attr({
+              width: 325,
+              height: 325
+            }).css({
+              top: 0,
+              left: 0
+            });
+
+            this.removeAvatarButton.hide();
+          }, this));
+        }
+        mps.publish('flash/new', [flash]);
+        this.avatarUploading = false;
+      }, this));
 
       return false;
     },
