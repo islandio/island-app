@@ -256,14 +256,14 @@ define([
       e.stopPropagation();
       e.preventDefault();
 
+      if (this.banner.attr('src') === this.app.images.avatar_big) {
+        return false;
+      }
+
       if (this.bannerUploading) {
         return false;
       }
       this.bannerUploading = true;
-
-      if (this.banner.attr('src') === this.app.images.avatar_big) {
-        return false;
-      }
 
       var w = {x: this.banner.width(), y: this.banner.height()};
       var m = {x: e.pageX, y: e.pageY};
@@ -334,7 +334,7 @@ define([
       // Get the files, if any.
       var files = e.target.files || e.originalEvent.dataTransfer.files;
       if (files.length === 0) {
-        return;
+        return false;
       }
 
       this.bannerUploading = true;
@@ -368,6 +368,7 @@ define([
             if (assembly.ok !== 'ASSEMBLY_COMPLETED') {
               this.bannerSpin.stop();
               this.bannerDropZone.removeClass('uploading');
+              this.bannerUploading = false;
               mps.publish('flash/new', [{
                 err: 'Upload failed. Please try again.',
                 level: 'error', type: 'popup'
@@ -376,11 +377,13 @@ define([
             } if (_.isEmpty(assembly.results)) {
               this.bannerSpin.stop();
               this.bannerDropZone.removeClass('uploading');
+              this.bannerUploading = false;
               mps.publish('flash/new', [{err: 'You must choose a file.',
                   level: 'error', type: 'popup'}]);
               return;
             }
           } else {
+            this.bannerUploading = false;
             mps.publish('flash/new', [{err: 'No assembly found.',
                 level: 'error', type: 'popup'}]);
             return;
@@ -488,14 +491,18 @@ define([
       e.preventDefault();
       var self = this;
 
+      if (self.avatar.attr('src') === self.app.images.avatar_big) {
+        return false;
+      }
+
+      if (self.avatar.width() === self.avatar.height()) {
+        return false;
+      }
+
       if (self.avatarUploading) {
         return false;
       }
       self.avatarUploading = true;
-
-      if (self.avatar.attr('src') === self.app.images.avatar_big) {
-        return false;
-      }
 
       var w = {x: self.avatar.width(), y: self.avatar.height()};
       var m = {x: e.pageX, y: e.pageY};
@@ -591,7 +598,7 @@ define([
       // Get the files, if any.
       var files = e.target.files || e.originalEvent.dataTransfer.files;
       if (files.length === 0) {
-        return;
+        return false;
       }
 
       this.avatarUploading = true;
@@ -626,6 +633,7 @@ define([
             if (assembly.ok !== 'ASSEMBLY_COMPLETED') {
               this.avatarSpin.stop();
               this.avatarDropZone.removeClass('uploading');
+              this.avatarUploading = false;
               mps.publish('flash/new', [{
                 err: 'Upload failed. Please try again.',
                 level: 'error',
@@ -635,11 +643,13 @@ define([
             } if (_.isEmpty(assembly.results)) {
               this.avatarSpin.stop();
               this.avatarDropZone.removeClass('uploading');
+              this.avatarUploading = false;
               mps.publish('flash/new', [{err: 'You must choose a file.',
                   level: 'error', type: 'popup'}]);
               return;
             }
           } else {
+            this.avatarUploading = false;
             mps.publish('flash/new', [{err: 'No assembly found.',
                 level: 'error', type: 'popup'}]);
             return;
@@ -681,7 +691,6 @@ define([
               });
               this.avatar.fadeIn('slow');
 
-              this.avatarUploading = false;
               this.avatarSpin.stop();
               this.avatarDropZone.removeClass('uploading');
 
@@ -695,6 +704,7 @@ define([
                   mps.publish('flash/new', [{err: err, level: 'error',
                       type: 'popup'}]);
                 }
+                this.avatarUploading = false;
               }, this));
             }, this));
           }, this));
