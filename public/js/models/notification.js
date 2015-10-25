@@ -61,6 +61,9 @@ define([
       } else if (att.event.data.action.t === 'follow') {
         return '<strong>' + att.event.data.action.a + '</strong> '
             + 'is now following you.';
+      } else if (att.event.data.action.t === 'mention') {
+        return '<strong>' + att.event.data.action.a + '</strong> '
+            + 'mentioned you in their post.';
       } else {
         return '';
       }
