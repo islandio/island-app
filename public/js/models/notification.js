@@ -62,8 +62,30 @@ define([
         return '<strong>' + att.event.data.action.a + '</strong> '
             + 'is now following you.';
       } else if (att.event.data.action.t === 'mention') {
-        return '<strong>' + att.event.data.action.a + '</strong> '
-            + 'mentioned you in their post.';
+        var owner;
+        if (att.event.data.action.i === att.event.data.target.i) {
+          owner = 'their ';
+        } else if (att.subscriber_id === att.event.data.target.i)
+          owner = 'your ';
+        else {
+          owner = '<strong>' + att.event.data.target.a + '\'s </strong> ';
+        }
+        var str = '<strong>' + att.event.data.action.a + '</strong> '
+            + 'mentioned you '
+        if (att.event.data.target.t === 'post') {
+          str += 'in ' + owner + 'post.';
+        } else if (att.event.data.target.t === 'tick') {
+          str += 'in ' + owner + 'effort on'
+              + (att.event.data.target.n !== '' ? ' <strong>'
+              + att.event.data.target.n + '</strong>': '')
+              + (att.event.data.target.l ? ' in ' + att.event.data.target.l: '')
+              + '.';
+        } else if (att.event.data.target.t === 'crag') {
+          str += 'on the crag page for <strong>' + att.event.data.target.n;
+        } else if (att.event.data.target.t === 'ascent') {
+          str += 'on the ascent page for <strong>' + att.event.data.target.n;
+        }
+        return str;
       } else {
         return '';
       }
