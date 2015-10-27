@@ -37,7 +37,7 @@ exports.createMember = function(name, cb) {
 }
 
 // Returns cookie
-exports.login = function(name, cb) {
+var login = exports.login = function(name, cb) {
   var profile = {
     username: name,
     password: name,
@@ -48,7 +48,6 @@ exports.login = function(name, cb) {
       .send(profile)
       .expect(200)
       .end(function(err, res) {
-        console.log('logged into ' + name);
         cookies = res.headers['set-cookie'].pop().split(';')[0];
         return cb(err, cookies);
       });
@@ -65,17 +64,19 @@ exports.deleteMember = function(name, cb) {
     username: name,
     password: name
   };
-  request(url)
-      .post('/api/members/auth')
-      .send(profile)
-      .expect(200)
-      .end(function(err, res) {
-        if (err) return cb(err);
-        console.log('deleting user ' + name);
-        var req = request(url).delete('/api/members/' + name);
-        req.cookies = res.headers['set-cookie'].pop().split(';')[0];
-        req.expect(200, cb);
-      });
+  login(name, function() { 
+    request(url)
+        .post('/api/members/auth')
+        .send(profile)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return cb(err);
+          console.log('deleting user ' + name);
+          var req = request(url).delete('/api/members/' + name);
+          req.cookies = res.headers['set-cookie'].pop().split(';')[0];
+          req.expect(200, cb);
+        });
+  });
 }
 
 exports.createCrag = function(name, cb) {
@@ -119,7 +120,6 @@ exports.createAscent = function(name, type, grade, cragid, cb) {
 
 // must be logged in
 exports.createPost = function(body, cb) {
-  console.log('Creating post... "' + _.prune(body, 40) + '"');
   var profile = {
     body: body
   }
@@ -129,13 +129,28 @@ exports.createPost = function(body, cb) {
       .expect(200)
       .end(function(err, res) {
         if (err) return cb(err);
-        return cb(null);
+        return cb(null, res);
+      });
+}
+
+// must be logged in
+exports.createComment = function(body, type, parent_id, cb) {
+  var profile = {
+    body: body,
+    parent_id: parent_id
+  }
+  var req = request(url).post('/api/comments/' + type);
+  req.cookies = cookies;
+  req.send(profile)
+      .expect(200)
+      .end(function(err, res) {
+        if (err) return cb(err);
+        return cb(null, res);
       });
 }
 
 // must be logged in
 exports.getNotifications = function(cb) {
-  console.log('Getting notifications');
   var req = request(url).get('/service/static');
   req.cookies = cookies;
   req.send()

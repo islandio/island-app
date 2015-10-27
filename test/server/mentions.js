@@ -11,24 +11,23 @@ describe('Mentions', function() {
 
     Step(
       function() {
-        common.createMember('testerEyal', this.parallel());
-        common.createMember('testerSander', this.parallel());
-        common.createMember('testerSuperman', this.parallel());
+        common.createMember('testerA', this.parallel());
+        common.createMember('testerB', this.parallel());
+        common.createMember('testerC', this.parallel());
       },
       done
     );
 
   });
 
-  it('@testerSander receives notification on mention',
-      function(done) {
+  it('A mentions B in A’s stand-alone post', function(done) {
     Step(
       function() {
-        common.login('testerEyal', this);
+        common.login('testerA', this);
       },
       function(err) {
         if (err) return this(err);
-        common.createPost('Hello @testerSander', _.bind(function(err) {
+        common.createPost('Hello @testerB', _.bind(function(err) {
           //delay .2s for DB to catchup
           setTimeout(_.bind(function() {
             return this(err);
@@ -37,7 +36,7 @@ describe('Mentions', function() {
       },
       function(err) {
         if (err) return this(err);
-        common.login('testerSander', this);
+        common.login('testerB', this);
       },
       function(err) {
         if (err) return this(err);
@@ -47,21 +46,51 @@ describe('Mentions', function() {
         if (err) return done(err);
         notes.items[0].event.data.action.t.should.equal('mention');
         notes.items[0].event.data.target.b
-            .should.equal('Hello \u0091@testerSander\u0092');
+            .should.equal('Hello \u0091@testerB\u0092');
         done(err);
       }
     );
   });
 
-  it('@testerEyal does not receive notification on self-mention',
-      function(done) {
+  it('A mentions B in a comment on A\'s stand-alone post', function(done) {
     Step(
       function() {
-        common.login('testerEyal', this);
+        common.login('testerA', this);
       },
       function(err) {
         if (err) return this(err);
-        common.createPost('Hello @testerEyal', _.bind(function(err) {
+        common.createPost('Post', this);
+      },
+      function(err, res) {
+        if (err) return this(err);
+        common.createComment('Comment @testerB', 'post', res.body.id, this);
+      },
+      function(err, res) {
+        if (err) return this(err);
+        common.login('testerB', this);
+      },
+      function(err) {
+        if (err) return this(err);
+        common.getNotifications(this);
+      },
+      function(err, notes) {
+        if (err) return done(err);
+        notes.items.length.should.equal(2)
+        notes.items[0].event.data.action.t.should.equal('mention');
+        done(err);
+      }
+    );
+  });
+
+  it('@testerA does not receive notification on self-mention',
+      function(done) {
+    Step(
+      function() {
+        common.login('testerA', this);
+      },
+      function(err) {
+        if (err) return this(err);
+        common.createPost('Hello @testerA', _.bind(function(err) {
           //delay .2s for DB to catchup
           setTimeout(_.bind(function() {
             return this(err);
@@ -79,23 +108,14 @@ describe('Mentions', function() {
       }
     );
   });
+
   after('Delete created members', function(done) {
     this.timeout(60000);
     Step(
       function() {
-        common.login('testerEyal', this);
-      },
-      function(err) {
-        if (err) return this(err);
-        common.deleteMember('testerEyal', this);
-      },
-      function(err) {
-        if (err) return this(err);
-        common.login('testerSander', this);
-      },
-      function(err) {
-        if (err) return this(err);
-        common.deleteMember('testerSander', this);
+        common.deleteMember('testerA', this.parallel());
+        common.deleteMember('testerB', this.parallel());
+        common.deleteMember('testerC', this.parallel());
       },
       done
     );
