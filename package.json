@@ -102,6 +102,7 @@
     "mocha": "^2.2.5",
     "requirejs": "2.1.11",
     "should": "^7.0.2",
+    "step": "0.0.5",
     "supertest": "^1.0.1",
     "walk": "~2.2.1",
     "wrench": "~1.4.4"
