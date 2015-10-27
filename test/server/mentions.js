@@ -2,7 +2,7 @@ var should = require('should');
 var assert = require('assert');
 var request = require('supertest');
 var common = require('../../test/common');
-var Step = require('Step');
+var Step = require('step');
 var _ = require('underscore');
 
 describe('Mentions', function() {
