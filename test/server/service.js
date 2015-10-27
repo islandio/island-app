@@ -48,6 +48,7 @@ describe('Service (not logged in)', function() {
         });
   });
 
+/*
   it('ticks', function(done) {
     request(url)
         .get(route('ticks') + '/islandTest')
@@ -56,5 +57,6 @@ describe('Service (not logged in)', function() {
           done(err);
         });
   });
+*/
 
 });
