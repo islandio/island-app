@@ -99,6 +99,31 @@ exports.createCrag = function(name, cb) {
       });
 }
 
+exports.deleteCrag = function(name, cb) {
+  console.log('deleting crag ' + name);
+  var req = request(url).delete('/api/crags/usa/' + name.toLowerCase());
+  req.cookies = cookies;
+  req.send()
+      .expect(200)
+      .end(function(err, res) {
+        if (err) return cb(err);
+        return cb(null, res);
+      });
+}
+
+exports.deleteAscent = function(id, cb) {
+  console.log('deleting ascent');
+  var req = request(url).delete('/api/ascents/' + id);
+  req.cookies = cookies;
+  req.send()
+      .expect(200)
+      .end(function(err, res) {
+        if (err) return cb(err);
+        return cb(null, res);
+      });
+}
+
+
 exports.createAscent = function(name, type, grade, cragid, cb) {
   var profile = {
     name: name,
@@ -113,15 +138,20 @@ exports.createAscent = function(name, type, grade, cragid, cb) {
     .expect(200)
     .end(function(err, res) {
         if (err) return cb(err);
-        res.crag_id = cragid;
         return cb(null, res);
     });
 }
 
 // must be logged in
-exports.createPost = function(body, cb) {
+exports.createPost = function(body, type, parent_id, cb) {
   var profile = {
     body: body
+  }
+  if (typeof type !== 'function') {
+    profile.type = type;
+    profile.parent_id = parent_id;
+  } else {
+    cb = type;
   }
   var req = request(url).post('/api/posts');
   req.cookies = cookies;
