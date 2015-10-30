@@ -184,7 +184,8 @@ if (cluster.isMaster) {
         from: app.get('GMAIL_FROM'),
         host: app.get('GMAIL_HOST'),
         ssl: app.get('GMAIL_SSL'),
-        baseURI: app.get('HOME_URI')
+        baseURI: app.get('HOME_URI'),
+        mock: process.env.NODE_ENV !== 'production'
       }));
       app.set('events', new Events({
         db: db,
