@@ -1,44 +1,28 @@
 var should = require('should');
 var assert = require('assert');
 var request = require('supertest');
+var common = require('../../test/common');
 
-var url = 'localhost:8080';
-var user = 'testdummy5';
-
+var user = 'testdummy7';
 var cookies;
 
 describe('Members', function() {
-  it('check if service is up and user:' + user + ' doesn\'t exist',
-      function(done) {
-    request(url)
-        .get('/api/members/' + user)
-        .expect(404)
-        .end(function(err, res) {
-          res.body.error.message.should.be.exactly('member not found');
-          done(err);
-        });
-  });
 
   it('create user: POST to /api/members', function(done) {
-    var profile = {
-      username: user,
-      password: user,
-      email: user + '@wonderful.com',
-    };
-    request(url)
-        .post('/api/members')
-        .send(profile)
-        .expect(200)
-        .end(function(err, res) {
-          res.body.created.should.be.true();
-          // For logging in
-          cookies = res.headers['set-cookie'].pop().split(';')[0];
-          done(err);
-        });
+    common.createMember(user, function(err) {
+      done();
+    });
+  });
+
+  it('login to user: POST to /api/members/auth', function(done) {
+    common.login(user, function(err, _cookies) {
+      cookies = _cookies;
+      done(err);
+    });
   });
 
   it('get user: GET to /api/members', function(done) {
-    request(url)
+    request(common.url)
         .get('/api/members/' + user)
         .expect(200)
         .end(function(err, res) {
@@ -48,7 +32,7 @@ describe('Members', function() {
   });
 
   it('delete user: DELETE to /api/members', function(done) {
-    var req = request(url).delete('/api/members/' + user);
+    var req = request(common.url).delete('/api/members/' + user);
     req.cookies = cookies;
     req.expect(200)
         .end(function(err, res) {
@@ -57,7 +41,7 @@ describe('Members', function() {
   });
 
   it('verify delete: GET to /api/members', function(done) {
-    request(url)
+    request(common.url)
         .get('/api/members/' + user)
         .expect(404)
         .end(function(err, res) {

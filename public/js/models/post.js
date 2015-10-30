@@ -66,6 +66,12 @@ define([
 
     body: function (full) {
       var txt = util.formatText(this.get('body'));
+
+      // Replace @mentions with links to users:
+      txt = txt.replace(/\u0091@(.*?)\u0092/g, function(m, p1) {
+        return '<strong><a href="/' + p1 + '" class="title">'
+            + '@' + p1 + '</a></strong>';
+      })
       return txt;
     },
 

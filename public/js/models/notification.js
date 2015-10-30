@@ -5,27 +5,26 @@
 define([
   'Underscore',
   'Backbone',
-  'util'
-], function (_, Backbone, util) {
+], function (_, Backbone) {
   return Backbone.Model.extend({
 
     body: function () {
       var att = this.attributes;
+      var str;
+      var owner;
       if (att.event.data.action.t === 'comment') {
         var verb = 'commented on';
-        var owner;
         if (att.event.data.action.i === att.event.data.target.i) {
           owner = 'their';
           verb = 'also ' + verb;
         } else if (att.subscriber_id === att.event.data.target.i)
           owner = 'your';
         else {
-          owner = att.event.data.target.a + '\'s';
+          owner = '<strong>' + att.event.data.target.a + '\'s </strong>';
           verb = 'also ' + verb;
         }
-        var str = '<strong>' + att.event.data.action.a + '</strong> '
-            + verb + ' <strong>'
-            + owner + '</strong> ';
+        str = '<strong>' + att.event.data.action.a + '</strong> '
+            + verb + ' ' + owner + ' ';
         if (att.event.data.target.t === 'post') {
           str += 'post';
         } else if (att.event.data.target.t === 'tick') {
@@ -36,7 +35,7 @@ define([
           + ': "' + att.event.data.action.b
           + '".';
       } else if (att.event.data.action.t === 'hangten') {
-        var str = '<strong>' + att.event.data.action.a + '</strong> '
+        str = '<strong>' + att.event.data.action.a + '</strong> '
               + 'gave you a nod for ';
         if (att.event.data.target.t === 'post') {
           str += 'your post';
@@ -61,6 +60,32 @@ define([
       } else if (att.event.data.action.t === 'follow') {
         return '<strong>' + att.event.data.action.a + '</strong> '
             + 'is now following you.';
+      } else if (att.event.data.action.t === 'mention') {
+        if (att.event.data.action.i === att.event.data.target.i) {
+          owner = 'their ';
+        } else if (att.subscriber_id === att.event.data.target.i)
+          owner = 'your ';
+        else {
+          owner = '<strong>' + att.event.data.target.a + '\'s </strong> ';
+        }
+        str = '<strong>' + att.event.data.action.a + '</strong> '
+            + 'mentioned you ';
+        if (att.event.data.target.t === 'post') {
+          str += 'in ' + owner + 'post.';
+        } else if (att.event.data.target.t === 'tick') {
+          str += 'in ' + owner + 'effort on'
+              + (att.event.data.target.n !== '' ?
+                  ' <strong>' + att.event.data.target.n : '')
+              + (att.event.data.target.l ? ', ' + att.event.data.target.l : '')
+              + '</strong>.'
+        } else if (att.event.data.target.t === 'crag') {
+          str += 'on the page for <strong>' + att.event.data.target.n
+              + '</strong>.';
+        } else if (att.event.data.target.t === 'ascent') {
+          str += 'on the page for <strong>' + att.event.data.target.n
+              + '</strong>.';
+        }
+        return str;
       } else {
         return '';
       }

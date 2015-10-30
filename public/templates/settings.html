@@ -591,6 +591,23 @@
         </tr>
 
         <tr>
+          <td colspan="4">
+            <span class="settings-detail-txt">When someone mentions me</span>
+          </td>
+          <td colspan="2" class="text-right">
+            <% if (notes.mention.email === true || notes.mention.email === 'true') { %>
+              <input type="checkbox" name="config.notifications.mention.email"
+                  tabindex="42" checked="checked" />
+            <% } else { %>
+              <input type="checkbox" name="config.notifications.mention.email"
+                  tabindex="43" />
+            <% } %>
+            <label for="config.notifications.mention.email"
+                style="vertical-align:-1px;">Email</label>
+          </td>
+        </tr>
+
+        <tr>
           <td colspan="6">
             <h1 class="title-static">Services</h1>
           </td>
