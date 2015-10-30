@@ -79,9 +79,11 @@ define([
               + (att.event.data.target.l ? ', ' + att.event.data.target.l : '')
               + '</strong>.'
         } else if (att.event.data.target.t === 'crag') {
-          str += 'on the page for <strong>' + att.event.data.target.n;
+          str += 'on the page for <strong>' + att.event.data.target.n
+              + '</strong>.';
         } else if (att.event.data.target.t === 'ascent') {
-          str += 'on the page for <strong>' + att.event.data.target.n;
+          str += 'on the page for <strong>' + att.event.data.target.n
+              + '</strong>.';
         }
         return str;
       } else {
