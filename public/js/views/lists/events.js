@@ -242,6 +242,7 @@ define([
       this.unpaginate();
       this.app.rpc.socket.removeListener('event.new', this.collect);
       this.app.rpc.socket.removeListener('event.removed', this._remove);
+      this.choices.destroy();
       return List.prototype.destroy.call(this);
     },
 
@@ -626,13 +627,13 @@ define([
       var re = /\B@(\S*?)$/
       var res = re.exec(this.postBody.val())
       if (res) {
-        if (e.keyCode === 13 && e.which === 13) {
+        if (!e.shiftKey && (e.keyCode === 13 || e.which === 13)) {
           this.choices.chooseExternal();
           return false;
-        } else if (e.keyCode === 38 && e.which === 38) {
+        } else if (!e.shiftKey && (e.keyCode === 38 || e.which === 38)) {
           this.choices.up();
           return false;
-        } else if (e.keyCode === 40 && e.which === 40) {
+        } else if (!e.shiftKey && (e.keyCode === 40 || e.which === 40)) {
           this.choices.down();
           return false;
         }
@@ -666,6 +667,7 @@ define([
         var text = this.postBody.val().substr(0, res.index);
         this.postBody.val(text + '@' + username + ' ');
       }
+      this.choices.hide();
     },
 
     blur: function (e) {

@@ -9,11 +9,14 @@ define([
   'mps',
   'rest',
   'util',
+  'lib/textarea-caret-position/index',
   'text!../../../templates/lists/comments.html',
   'collections/comments',
   'views/rows/comment',
-  'views/lists/hangtens'
-], function ($, _, List, mps, rest, util, template, Collection, Row, Hangtens) {
+  'views/lists/hangtens',
+  'views/lists/choices'
+], function ($, _, List, mps, rest, util, Caret, template, Collection,
+    Row, Hangtens, Choices) {
   return List.extend({
     
     el: '.comments',
@@ -44,34 +47,49 @@ define([
     setup: function () {
       this.footer = this.$('.list-footer');
       this.inputWrap = this.$('#comment_input .comment');
+      this.commentSearch = $('.post-input-search');
+      // a bit of a hack... we use the event page search wrapper to deal
+      // with Z-indexing issues. In standalone comment pages, we use
+      // a local wrapper
+      if (this.commentSearch.length === 0)
+        this.commentSearch = $('.comment-input-search');
+      this.commentBody = this.$('textarea[name="body"]')
 
       if (!this.options.hangtenOnly) {
 
         // Autogrow the write comment box.
         this.$('textarea[name="body"]').autogrow();
-        this.$('textarea[name="body"]')
-            .bind('keyup', _.bind(function (e) {
-          if (!e.shiftKey && (e.keyCode === 13 || e.which === 13)) {
-            this.write();
-          }
-        }, this)).bind('keydown', _.bind(function (e) {
-          if (!e.shiftKey && (e.keyCode === 13 || e.which === 13)) {
-            return false;
-          }
-        }, this));
 
         // Show other elements.
         this.$('.comments-older.comment').show();
         if (!this.options.hideInput) {
           this.inputWrap.show();
+          this.choices = new Choices(this.app, {
+            reverse: true,
+            el: this.commentSearch,
+            choose: true,
+            onChoose: _.bind(this.choose, this),
+            types: ['members']
+          });
         } else {
           this.parentView.$('.toggle-comment-input').click(_.bind(function (e) {
             e.preventDefault();
             if (this.inputWrap.is(':visible')) {
               this.inputWrap.hide();
+              this.choices.destroy();
             } else {
               this.inputWrap.show();
               this.$('textarea.comment-input').focus();
+
+              // We create a choice selector on comment box creation so 
+              this.choices = new Choices(this.app, {
+                reverse: true,
+                el: this.commentSearch,
+                choose: true,
+                onChoose: _.bind(this.choose, this),
+                types: ['members']
+              });
+
             }
           }, this));
         }
@@ -82,15 +100,78 @@ define([
       return List.prototype.setup.call(this);
     },
 
+    keydown: function(e) {
+      var re = /\B@(\S*?)$/
+      var res = re.exec(this.commentBody.val())
+      if (res) {
+        if (!e.shiftKey && (e.keyCode === 13 || e.which === 13)) {
+          this.choices.chooseExternal();
+          return false;
+        } else if (!e.shiftKey && (e.keyCode === 38 || e.which === 38)) {
+          this.choices.up();
+          return false;
+        } else if (!e.shiftKey && (e.keyCode === 40 || e.which === 40)) {
+          this.choices.down();
+          return false;
+        }
+      } else {
+        if (!e.shiftKey && (e.keyCode === 13 || e.which === 13)) {
+          this.write();
+        }
+      }
+    },
+
+    input: function(e) {
+      // Test for @ pattern ending in the text area
+      var re = /\B@(\S*?)$/
+      var res = re.exec(this.commentBody.val())
+      if (res) {
+        var caretCoord = window.getCaretCoordinates(this.commentBody[0], res.index);
+        var searchTop = (this.commentBody.offset().top
+            - this.commentSearch.parent().offset().top
+            + caretCoord.top + 20) + 'px';
+        var searchLeft = (this.commentBody.offset().left
+            - this.commentSearch.parent().offset().left
+            + caretCoord.left) + 'px';
+        this.commentSearch.css({top: searchTop, left: searchLeft});
+        this.commentSearch.show();
+        this.choices.search(null, res[1]);
+      } else {
+        this.commentSearch.hide();
+        this.choices.hide();
+      }
+    },
+
+    choose: function(model) {
+      var username = model.get('username')
+      var re = /\B@(\S*?)$/
+      var res = re.exec(this.commentBody.val())
+      if (res) {
+        var text = this.commentBody.val().substr(0, res.index);
+        this.commentBody.val(text + '@' + username + ' ');
+      }
+    },
+
+    blur: function (e) {
+      this.commentSearch.hide();
+      this.choices.hide();
+    },
+
+
     destroy: function () {
       this.app.rpc.socket.removeListener('comment.new', this.collect);
       this.app.rpc.socket.removeListener('comment.removed', this._remove);
+      if (this.choices)
+        this.choices.destroy();
       return List.prototype.destroy.call(this);
     },
 
     events: {
       'click .comments-signin': 'signin',
-      'click .comments-older': 'older'
+      'click .comments-older': 'older',
+      'blur textarea[name="body"].comment-input': 'blur',
+      'keydown textarea[name="body"].comment-input': 'keydown',
+      'input textarea[name="body"].comment-input': 'input'
     },
 
     collect: function (data) {
