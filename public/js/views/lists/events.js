@@ -10,10 +10,13 @@ define([
   'rest',
   'util',
   'Spin',
+  'lib/textarea-caret-position/index',
   'text!../../../templates/lists/events.html',
   'collections/events',
-  'views/rows/event'
-], function ($, _, List, mps, rest, util, Spin, template, Collection, Row) {
+  'views/rows/event',
+  'views/lists/choices',
+], function ($, _, List, mps, rest, util, Spin, Caret,
+    template, Collection, Row, Choices) {
   return List.extend({
 
     el: '.events',
@@ -23,6 +26,7 @@ define([
     attachments: [],
 
     initialize: function (app, options) {
+
       this.template = _.template(template);
       this.collection = new Collection();
       this.Row = Row;
@@ -165,6 +169,8 @@ define([
     events: {
       'focus textarea[name="body"].post-input': 'focus',
       'blur textarea[name="body"].post-input': 'blur',
+      'keydown textarea[name="body"].post-input': 'keydown',
+      'input textarea[name="body"].post-input': 'input',
       'click .events-filter .subtab': 'filter',
     },
 
@@ -176,12 +182,21 @@ define([
       this.showingAll = this.parentView.$('.list-spin .empty-feed');
       this.postForm = this.$('.post-input-form');
       this.postBody = $('textarea[name="body"]', this.postForm);
+      this.postSearch = this.$('.post-input-search');
       this.postTitle = this.$('input[name="title"]', this.postForm);
       this.postButton = this.$('.post-button', this.postForm);
       this.dropZone = this.$('.post-dnd');
       this.postParams = this.$('.post-params');
       this.postSelect = this.$('.post-select');
       this.postFiles = this.$('.post-files');
+
+      this.choices = new Choices(this.app, {
+        reverse: true,
+        el: this.postSearch,
+        choose: true,
+        onChoose: _.bind(this.choose, this),
+        types: ['members']
+      });
 
       // Autogrow the write comment box.
       this.postBody.autogrow();
@@ -607,8 +622,56 @@ define([
       this.postSelect.hide();
     },
 
+    keydown: function(e) {
+      var re = /\B@(\S*?)$/
+      var res = re.exec(this.postBody.val())
+      if (res) {
+        if (e.keyCode === 13 && e.which === 13) {
+          this.choices.chooseExternal();
+          return false;
+        } else if (e.keyCode === 38 && e.which === 38) {
+          this.choices.up();
+          return false;
+        } else if (e.keyCode === 40 && e.which === 40) {
+          this.choices.down();
+          return false;
+        }
+      }
+    },
+
+    input: function(e) {
+      // Test for @ pattern ending in the text area
+      var re = /\B@(\S*?)$/
+      var res = re.exec(this.postBody.val())
+      if (res) {
+        var caretCoord = window.getCaretCoordinates(this.postBody[0], res.index);
+        var searchTop = (this.postBody.offset().top - this.$el.offset().top
+            + caretCoord.top + 20) + 'px';
+        var searchLeft = (this.postBody.offset().left - this.$el.offset().left
+            + caretCoord.left) + 'px';
+        this.postSearch.css({top: searchTop, left: searchLeft});
+        this.postSearch.show();
+        this.choices.search(null, res[1]);
+      } else {
+        this.postSearch.hide();
+        this.choices.hide();
+      }
+    },
+
+    choose: function(model) {
+      var username = model.get('username')
+      var re = /\B@(\S*?)$/
+      var res = re.exec(this.postBody.val())
+      if (res) {
+        var text = this.postBody.val().substr(0, res.index);
+        this.postBody.val(text + '@' + username + ' ');
+      }
+    },
+
     blur: function (e) {
       this.dropZone.removeClass('focus');
+      this.postSearch.hide();
+      this.choices.hide();
     },
 
     filter: function (e) {
