@@ -103,7 +103,7 @@ define([
     keydown: function(e) {
       var re = /\B@(\S*?)$/
       var res = re.exec(this.commentBody.val())
-      if (res) {
+      if (res && this.choices && this.choices.count() !== 0) {
         if (!e.shiftKey && (e.keyCode === 13 || e.which === 13)) {
           this.choices.chooseExternal();
           return false;

@@ -170,6 +170,10 @@ define([
       this.results.hide();
     },
 
+    count: function() {
+      return this.collection.length;
+    },
+
     search: function (e, optionalString) {
 
 
