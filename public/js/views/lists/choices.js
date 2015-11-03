@@ -92,6 +92,27 @@ define([
       }
     },
 
+    up: function() {
+      if (this.selecting.i > 0) {
+        this.selecting.i--;
+        this.highlight();
+      }
+    },
+
+    down: function() {
+      if (this.selecting.i < this.collection.length - 1) {
+        this.selecting.i++;
+        this.highlight();
+      }
+    },
+
+    // Force a choice externally
+    chooseExternal: function() {
+      if (this.selecting.el) {
+        this.views[this.selecting.el.index() - 1].choose();
+      }
+    },
+
     searchBlur: function (e) {
       if (!this.active) return;
 
@@ -115,19 +136,13 @@ define([
 
           // Up
           if (e.keyCode === 38 && e.which === 38) {
-            if (this.selecting.i > 0) {
-              this.selecting.i--;
-              this.highlight();
-            }
+            this.up();
             return false;
           }
 
           // Down
           else if (e.keyCode === 40 && e.which === 40) {
-            if (this.selecting.i < this.collection.length - 1) {
-              this.selecting.i++;
-              this.highlight();
-            }
+            this.down();
             return false;
           }
 
@@ -149,10 +164,21 @@ define([
       return str === '' || str.length < 2 ? null: str;
     },
 
-    search: function (e) {
+    hide: function() {
+      this.str = null;
+      this._clear();
+      this.results.hide();
+    },
+
+    count: function() {
+      return this.collection.length;
+    },
+
+    search: function (e, optionalString) {
+
 
       // Clean search string.
-      var str = this.searchVal();
+      var str = (optionalString !== null) ? optionalString : this.searchVal();
 
       // Handle interaction.
       if (str && str === this.str) return;
@@ -257,7 +283,7 @@ define([
       this.choice = choice;
       this.input.val('');
       if (this.options.onChoose) {
-        this.options.onChoose();
+        this.options.onChoose(choice.model);
       }
     },
 

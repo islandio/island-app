@@ -11,7 +11,11 @@
   var private = this.app.profile.content.private;
 
 %>
-
+  <div class="post-input-search inline-search">
+    <div class="search-display">
+      <div class="list-header"></div>
+    </div>
+  </div>
 <% if (!private && input) { %>
   <div class="post-input">
     <div class="post">
@@ -24,6 +28,8 @@
           <div class="post-dnd">
             <textarea name="body" class="post-input" tabindex="2" 
                 placeholder="Say something... include Vimeo and YouTube links"></textarea>
+
+
             <div class="post-select">
               Attach a video or photos by
               <% if (Modernizr.draganddrop) { %>

@@ -1759,6 +1759,16 @@ input.header-search-input {
   -moz-transition: all 0.1s ease-in-out 0;
   transition: all 0.1s ease-in-out;
 }
+.inline-search {
+  position: absolute;
+}
+.inline-search .search-display {
+  top: 0px;
+  left: 0px;
+  max-height: 200px;
+  z-index: 100;
+  width: 400px;
+}
 .search-display {
   display: none;
   position: absolute;
