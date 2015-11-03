@@ -106,6 +106,9 @@ define([
         if (!e.shiftKey && (e.keyCode === 13 || e.which === 13)) {
           this.choices.chooseExternal();
           return false;
+        } else if (!e.shiftKey && (e.keyCode === 9 || e.which === 9)) {
+          this.choices.chooseExternal();
+          return false;
         } else if (!e.shiftKey && (e.keyCode === 38 || e.which === 38)) {
           this.choices.up();
           return false;
