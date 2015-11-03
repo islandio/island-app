@@ -47,12 +47,9 @@ define([
     setup: function () {
       this.footer = this.$('.list-footer');
       this.inputWrap = this.$('#comment_input .comment');
-      this.commentSearch = $('.post-input-search');
       // a bit of a hack... we use the event page search wrapper to deal
       // with Z-indexing issues. In standalone comment pages, we use
       // a local wrapper
-      if (this.commentSearch.length === 0)
-        this.commentSearch = $('.comment-input-search');
       this.commentBody = this.$('textarea[name="body"]')
 
       if (!this.options.hangtenOnly) {
@@ -64,13 +61,7 @@ define([
         this.$('.comments-older.comment').show();
         if (!this.options.hideInput) {
           this.inputWrap.show();
-          this.choices = new Choices(this.app, {
-            reverse: true,
-            el: this.commentSearch,
-            choose: true,
-            onChoose: _.bind(this.choose, this),
-            types: ['members']
-          });
+          if (!this.choices) this.createChooser();
         } else {
           this.parentView.$('.toggle-comment-input').click(_.bind(function (e) {
             e.preventDefault();
@@ -80,16 +71,7 @@ define([
             } else {
               this.inputWrap.show();
               this.$('textarea.comment-input').focus();
-
-              // We create a choice selector on comment box creation so 
-              this.choices = new Choices(this.app, {
-                reverse: true,
-                el: this.commentSearch,
-                choose: true,
-                onChoose: _.bind(this.choose, this),
-                types: ['members']
-              });
-
+              if (!this.choices) this.createChooser();
             }
           }, this));
         }
@@ -98,6 +80,23 @@ define([
       this.hangtens = new Hangtens(this.app, {parentView: this});
 
       return List.prototype.setup.call(this);
+    },
+
+    createChooser: function() {
+      var html = ''
+        + '<div class="comment-input-search inline-search">'
+        +  '<div class="search-display"><div class="list-header"></div></div>'
+        + '</div>';
+      $('body').append(html);
+      this.commentSearch = $('.comment-input-search');
+      this.choices = new Choices(this.app, {
+        reverse: true,
+        el: this.commentSearch,
+        choose: true,
+        onChoose: _.bind(this.choose, this),
+        types: ['members']
+      });
+
     },
 
     keydown: function(e) {
@@ -117,8 +116,13 @@ define([
       } else {
         if (!e.shiftKey && (e.keyCode === 13 || e.which === 13)) {
           this.write();
+          return false;
         }
       }
+    },
+
+    keyup: function(e) {
+      return false;
     },
 
     input: function(e) {
@@ -171,6 +175,7 @@ define([
       'click .comments-older': 'older',
       'blur textarea[name="body"].comment-input': 'blur',
       'keydown textarea[name="body"].comment-input': 'keydown',
+      'keyup textarea[name="body"].comment-input': 'keyup',
       'input textarea[name="body"].comment-input': 'input'
     },
 
