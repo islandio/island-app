@@ -675,8 +675,11 @@ define([
 
     blur: function (e) {
       this.dropZone.removeClass('focus');
-      this.postSearch.hide();
-      this.choices.hide();
+      // settimeout allows for other events to occur, like clicking the choice
+      setTimeout(_.bind(function() {
+        this.postSearch.hide();
+        this.choices.hide();
+      }, this), 500);
     },
 
     filter: function (e) {

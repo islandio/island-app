@@ -160,8 +160,10 @@ define([
     },
 
     blur: function (e) {
-      this.commentSearch.hide();
-      this.choices.hide();
+      setTimeout(_.bind(function() {
+        this.commentSearch.hide();
+        this.choices.hide();
+      }, this), 500);
     },
 
 
