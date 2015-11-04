@@ -51,6 +51,7 @@ define([
       // with Z-indexing issues. In standalone comment pages, we use
       // a local wrapper
       this.commentBody = this.$('textarea[name="body"]')
+      this.commentSearch = $('.inline-search');
 
       if (!this.options.hangtenOnly) {
 
@@ -67,7 +68,7 @@ define([
             e.preventDefault();
             if (this.inputWrap.is(':visible')) {
               this.inputWrap.hide();
-              this.choices.destroy();
+              this.choices.hide();
             } else {
               this.inputWrap.show();
               this.$('textarea.comment-input').focus();
@@ -83,12 +84,6 @@ define([
     },
 
     createChooser: function() {
-      var html = ''
-        + '<div class="comment-input-search inline-search">'
-        +  '<div class="search-display"><div class="list-header"></div></div>'
-        + '</div>';
-      $('body').append(html);
-      this.commentSearch = $('.comment-input-search');
       this.choices = new Choices(this.app, {
         reverse: true,
         el: this.commentSearch,
@@ -171,7 +166,7 @@ define([
       this.app.rpc.socket.removeListener('comment.new', this.collect);
       this.app.rpc.socket.removeListener('comment.removed', this._remove);
       if (this.choices)
-        this.choices.destroy();
+        this.choices.hide();
       return List.prototype.destroy.call(this);
     },
 

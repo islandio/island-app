@@ -182,7 +182,7 @@ define([
       this.showingAll = this.parentView.$('.list-spin .empty-feed');
       this.postForm = this.$('.post-input-form');
       this.postBody = $('textarea[name="body"]', this.postForm);
-      this.postSearch = this.$('.post-input-search');
+      this.postSearch = $('.inline-search');
       this.postTitle = this.$('input[name="title"]', this.postForm);
       this.postButton = this.$('.post-button', this.postForm);
       this.dropZone = this.$('.post-dnd');
@@ -242,7 +242,7 @@ define([
       this.unpaginate();
       this.app.rpc.socket.removeListener('event.new', this.collect);
       this.app.rpc.socket.removeListener('event.removed', this._remove);
-      this.choices.destroy();
+      this.choices.hide();
       return List.prototype.destroy.call(this);
     },
 
@@ -649,9 +649,11 @@ define([
       var res = re.exec(this.postBody.val())
       if (res) {
         var caretCoord = window.getCaretCoordinates(this.postBody[0], res.index);
-        var searchTop = (this.postBody.offset().top - this.$el.offset().top
+        var searchTop = (this.postBody.offset().top
+            - this.postSearch.parent().offset().top
             + caretCoord.top + 20) + 'px';
-        var searchLeft = (this.postBody.offset().left - this.$el.offset().left
+        var searchLeft = (this.postBody.offset().left
+            - this.postSearch.parent().offset().left
             + caretCoord.left) + 'px';
         this.postSearch.css({top: searchTop, left: searchLeft});
         this.postSearch.show();
