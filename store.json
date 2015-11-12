@@ -1,7 +1,7 @@
 {
   "M1-Island-Brush": {
     "name": "M1 Island Brush",
-    "title": "Island M1 Classic Brush",
+    "title": "Island Classic Brush",
     "description": "Our version of the rock climbing toothbrush. Beech wood and boar's hair. Custom made in Bulgaria.",
     "price": 750,
     "images": [
@@ -22,7 +22,7 @@
 
   "M3-Island-Brush": {
     "name": "M3 Island Brush",
-    "title": "Island M3 Scrub Brush",
+    "title": "Island Scrub Brush",
     "description": "Palm-sized scrubber for those bigger holds. Beech wood and boar's hair. Custom made in Bulgaria.",
     "price": 1250,
     "images": [
@@ -42,30 +42,36 @@
   },
 
   "O12-Island-Cap-B": {
-    "hide": true,
     "name": "O12 Island Cap B",
-    "title": "Island O12 Trucker Cap Black",
-    "description": "Lorem",
+    "title": "Island Cap Black",
+    "description": "Black low-profile trucker with a white Island patch. 100% custom made.",
     "price": 2800,
     "images": [
-      
+      "https://s3.amazonaws.com/island.io/store/img/O12B-1.jpg",
+      "https://s3.amazonaws.com/island.io/store/img/O12B-2.jpg",
+      "https://s3.amazonaws.com/island.io/store/img/O12B-3.jpg"
     ],
     "thumbs": [
-      
+      "https://s3.amazonaws.com/island.io/store/img/O12Bt-1.jpg",
+      "https://s3.amazonaws.com/island.io/store/img/O12Bt-2.jpg",
+      "https://s3.amazonaws.com/island.io/store/img/O12Bt-3.jpg"
     ]
   },
 
   "O12-Island-Cap-G": {
-    "hide": true,
     "name": "O12 Island Cap G",
-    "title": "Island O12 Trucker Cap Gray",
-    "description": "Lorem",
+    "title": "Island Cap Gray",
+    "description": "Gray and white low-profile trucker with a brown and green Island patch. 100% custom made.",
     "price": 2800,
     "images": [
-      
+      "https://s3.amazonaws.com/island.io/store/img/O12G-1.jpg",
+      "https://s3.amazonaws.com/island.io/store/img/O12G-2.jpg",
+      "https://s3.amazonaws.com/island.io/store/img/O12G-3.jpg"
     ],
     "thumbs": [
-      
+      "https://s3.amazonaws.com/island.io/store/img/O12Gt-1.jpg",
+      "https://s3.amazonaws.com/island.io/store/img/O12Gt-2.jpg",
+      "https://s3.amazonaws.com/island.io/store/img/O12Gt-3.jpg"
     ]
   },
 
