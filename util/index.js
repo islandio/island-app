@@ -86,7 +86,7 @@ boots.start(function (client) {
       console.log('Indexing ascents');
 
       // Get all ascents.
-      client.db.Ascents.list({}, {limit: 100000}, this.parallel());
+      client.db.Ascents.list({}, this.parallel());
       client.cache.del('ascents-search', this.parallel());
     },
     function (err, docs) {
