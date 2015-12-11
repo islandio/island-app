@@ -30,7 +30,7 @@ var requestIndex = function(client, type, docs, keys, cb) {
   var q = queue(25);
   var fcn = _.bind(client.cache.index, client.cache);
   _.each(docs, function(d) {
-    q.defer(fcn, type, d, keys)
+    q.defer(fcn, type, d, keys);
   });
   q.awaitAll(function(err, res) {
     var idxed = _.reduce(res, function(m, r) {

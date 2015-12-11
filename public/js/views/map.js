@@ -399,6 +399,9 @@ define([
         this.hider.addClass('split-left');
         this.lesser.show();
         this.plotButton.show();
+        if (this.$el.hasClass('plotting-external')) {
+          this.updateNote.show();
+        }
         this.resize(250);
         store.set('mapClosed', false);
       } else {
@@ -409,6 +412,7 @@ define([
         this.hider.text('Show map');
         this.hider.removeClass('split-left');
         this.plotButton.hide();
+        this.updateNote.hide();
         this.lesser.hide();
         store.set('mapClosed', true);
       }
@@ -464,7 +468,9 @@ define([
         }
         this.$el.addClass('plotting');
         if (external) {
-          this.updateNote.show();
+          if (!this.$el.hasClass('closed')) {
+            this.updateNote.show();
+          }
           this.$el.addClass('plotting-external');
         }
         this.dataLayer.setInteraction(false);
