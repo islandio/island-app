@@ -290,7 +290,7 @@ define([
 
     clearContainer: function () {
       $('.container').removeClass('narrow').removeClass('wide')
-          .removeClass('landing').removeClass('blog');
+          .removeClass('landing').removeClass('blog').removeClass('sign');
     },
 
     renderWelcome: function (title, skipUpdate) {
@@ -700,27 +700,27 @@ define([
     signin: function () {
       this.start();
       this.clearContainer();
-      this.showMap = true;
+      this.showMap = false;
       this.render(_.bind(function (err) {
         if (err) return;
-        $('.container').addClass('narrow');
+        $('.container').addClass('narrow').addClass('sign');
         this.page = new Signin(this.app).render();
         this.stop();
       }, this));
-      this.renderTabs({title: 'Sign in to Island'});
+      this.renderTabs({title: 'Sign In'});
     },
 
     signup: function () {
       this.start();
       this.clearContainer();
-      this.showMap = true;
+      this.showMap = false;
       this.render(_.bind(function (err) {
         if (err) return;
-        $('.container').addClass('narrow');
+        $('.container').addClass('narrow').addClass('sign');
         this.page = new Signup(this.app).render();
         this.stop();
       }, this));
-      this.renderTabs({title: 'Sign up for Island'});
+      this.renderTabs({title: 'Sign Up'});
     },
 
     blog: function (slug) {
