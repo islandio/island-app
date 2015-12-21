@@ -64,20 +64,20 @@ define([
       return date.format('mm.dd.yy');
     },
 
-    body: function (full) {
-      var txt = util.formatText(this.get('body'));
+    formatText: function (txt, breaks, prune) {
+      txt = util.formatText(txt, breaks);
 
       // Replace @mentions with links to users:
       txt = txt.replace(/\u0091@(.*?)\u0092/g, function(m, p1) {
-        return '<strong><a href="/' + p1 + '" class="title">'
-            + '@' + p1 + '</a></strong>';
-      })
-      return txt;
+        return '<strong><a href="/' + p1 + '" class="title">' +
+            '@' + p1 + '</a></strong>';
+      });
+      return prune ? _.str.prune(txt, prune) : txt;
     },
 
     views: function () {
       return util.addCommas(this.get('vcnt') || 0);
-    },
+    }
 
   });
 });

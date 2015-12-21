@@ -75,7 +75,7 @@ define([
       m.height('100%');
     } else {
       if (rs.height() > ls.height()) {
-        var pu = $('.profile-upper');
+        var pu = $('.profile-upper, .post-upper');
         if (pu.length > 0) {
           rh += pu.outerHeight();
         }
@@ -290,7 +290,7 @@ define([
 
     clearContainer: function () {
       $('.container').removeClass('narrow').removeClass('wide')
-          .removeClass('landing').removeClass('blog');
+          .removeClass('landing').removeClass('blog').removeClass('sign');
     },
 
     renderWelcome: function (title, skipUpdate) {
@@ -522,7 +522,7 @@ define([
         if (err) return;
         this.page = new Static(this.app,
             {title: 'Privacy', template: privacyTemp}).render();
-        this.renderTabs({title: 'The Island\'s Privacy Policy',
+        this.renderTabs({title: 'Island\'s Privacy Policy',
             log: true});
         this.stop();
       }, this));
@@ -700,27 +700,27 @@ define([
     signin: function () {
       this.start();
       this.clearContainer();
-      this.showMap = true;
+      this.showMap = false;
       this.render(_.bind(function (err) {
         if (err) return;
-        $('.container').addClass('narrow');
+        $('.container').addClass('narrow').addClass('sign');
         this.page = new Signin(this.app).render();
         this.stop();
       }, this));
-      this.renderTabs({title: 'Sign in to The Island'});
+      this.renderTabs({title: 'Sign In'});
     },
 
     signup: function () {
       this.start();
       this.clearContainer();
-      this.showMap = true;
+      this.showMap = false;
       this.render(_.bind(function (err) {
         if (err) return;
-        $('.container').addClass('narrow');
+        $('.container').addClass('narrow').addClass('sign');
         this.page = new Signup(this.app).render();
         this.stop();
       }, this));
-      this.renderTabs({title: 'Sign up for The Island'});
+      this.renderTabs({title: 'Sign Up'});
     },
 
     blog: function (slug) {

@@ -985,6 +985,8 @@ a.button.title-green-button:focus:not(.disabled)
   background rgb(167, 210, 44)
 
 a.button.buy-button
+  position relative
+  z-index 1
   float right
   border 1px solid transparent
   background #b1dc36
@@ -1022,6 +1024,12 @@ a.button.start-button
   font-size 14px
   padding 5px 0
   border-radius 2px
+
+.sign a.button.start-button
+  width 100%
+  font-size inherit
+  padding 0
+  margin-top 30px
 
 button.button.modal-button.modal-delete
   position relative
@@ -1207,7 +1215,7 @@ body.loading .folder
 
 .container.narrow .folder
   width 661px
-  margin-top 160px
+  margin-top 40px
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––tabs*/
 
@@ -1281,7 +1289,7 @@ li.tab.active a
   border-top 4px solid blue
   padding-top 12px
   top 6px
-  margin-right -1px
+  // margin-right -1px
 
 li:first-child.tab.active a
   margin-right 0
@@ -1682,7 +1690,7 @@ ul.splash-features li p
 a.logo
   float left
   height 50px
-  padding 0 15px 0 0
+  padding 0 5px 0 0
   margin-left -5px
   border none !important
   border-radius 0
@@ -1690,7 +1698,7 @@ a.logo
   background none
 
 a.logo img
-  margin-top 10px
+  margin-top 5px
 
 span.tagline
   float right
@@ -2476,41 +2484,95 @@ p.sidebar-tip span
 .sidebar-tick:last-child
   border-bottom 1px solid #f2f2f2
 
-.sidebar-products
+.sidebar-products,
+.sidebar-featureds
   margin-top 10px !important
+  margin-bottom 30px !important
+
+.sidebar-sponsors
+  margin-bottom 30px !important
 
 .sidebar-broadcast,
-.sidebar-product
+.sidebar-product,
+.sidebar-featured
   background #fcfcfc
   border 1px solid #f2f2f2
   border-radius 3px
   padding 7px 0
   margin-bottom 15px
 
-.sidebar-product
+.sidebar-sponsor
+  width 137px
+  height 137px
+  float left
+
+  display -webkit-box
+  display -webkit-flex
+  display -ms-flexbox
+  display flex
+  -webkit-box-align center
+  -webkit-align-items center
+  -ms-flex-align center
+  align-items center
+  -webkit-box-pack center
+  -webkit-justify-content center
+  -ms-flex-pack center
+  justify-content center
+
+.sidebar-featured-right a
+.sidebar-sponsors a
+  background none
+
+.sidebar-sponsor img
+  display block
+
+  -webkit-box-flex 0
+  -webkit-flex none
+  -ms-flex none
+  flex none
+
+.sidebar-product,
+.sidebar-featured
   padding 0
 
 .sidebar-broadcast:last-child,
-.sidebar-product:last-child
+.sidebar-product:last-child,
+.sidebar-featured:last-child
   margin-bottom 0
 
 .sidebar-broadcast h1,
-.sidebar-product h1
+.sidebar-product h1,
+.sidebar-featured h1
   font-family standard_thin
   font-size 16px
   padding 0 7px 5px
 
-.sidebar-product h1
+.sidebar-product h1,
+.sidebar-featured h1
   padding 10px
   color #404040
-  text-align center
+  // text-align center
   border-bottom 1px solid #f2f2f2
-  // font-weight bold
+  font-family title
 
-.sidebar-broadcast h1 a
+.sidebar-featured-right img
+  border-radius 2px
+
+.sidebar-featured-right
+  float right
+  width 100px
+  height 100px
+  padding 10px 10px 0 10px
+
+.sidebar-featured-left
+  margin-top 10px
+
+.sidebar-broadcast h1 a,
+.sidebar-featured h1 a
   background none
 
-.sidebar-broadcast h1 a:hover
+.sidebar-broadcast h1 a:hover,
+.sidebar-featured h1 a:hover
   background none
 
 .sidebar-broadcast h1 a i
@@ -2521,16 +2583,19 @@ p.sidebar-tip span
   margin -4px 0 0 0
 
 .sidebar-broadcast p
-.sidebar-product p
+.sidebar-product p,
+.sidebar-featured p
   padding 0 10px
   color #666
   font-family standard_thin
 
-.sidebar-broadcast p a
+.sidebar-broadcast p a,
+.sidebar-featured p a
   background none
   color blue
 
-.sidebar-broadcast p a:hover
+.sidebar-broadcast p a:hover,
+.sidebar-featured p a:hover
   background none
   text-decoration underline
 
@@ -2554,8 +2619,12 @@ a.sidebar-more
 a.sidebar-more:hover
   color blue
 
-.sidebar-product-details
+.sidebar-product-details,
+.sidebar-featured-details
   padding 0
+
+.sidebar-featured-details
+  padding-bottom 10px
 
 .sidebar-product-images
   height 83px
@@ -2885,7 +2954,8 @@ button.activity-button i
   -moz-box-shadow 0 0 3px #b3b3b3
   box-shadow 0 0 3px #b3b3b3
 
-.landing .map
+.landing .map,
+.landing .sign
   display none !important
 
 .map.animated
@@ -3895,9 +3965,7 @@ textarea.comment-input
   animation-fill-mode both
 
 .post.single
-  width 1024px
-  margin-top 30px
-  margin-bottom 30px
+  width 1054px
   padding 0
 
 .post.blog
@@ -3907,6 +3975,9 @@ textarea.comment-input
 
 .post.single .event-timeline-label
   display none
+
+.post-upper
+  margin 30px 0 0 0
 
 .page-title span.post-title
   font-weight bold
@@ -3924,6 +3995,7 @@ textarea.comment-input
 .single .image-mosaic
   width 1024px
   height 576px
+  margin-bottom 0 !important
 
 .image-mosaic-wrap
   position absolute
@@ -4001,7 +4073,11 @@ span.image-mosaic-play-text
   font-family standard_thin
   margin-bottom 10px
 
-.post.single .post-body,
+.post.single .post-body
+  margin 0
+  font-size 16px
+  line-height 24px
+
 .post.blog .post-body
   margin -10px 0 0
   font-size 16px
@@ -4801,6 +4877,7 @@ table.post-params label
   margin-left 78px
   padding-left 40px
   border-left 1px solid #f2f2f2
+  font-size 0
 
 .session .event-title-text
   width 404px

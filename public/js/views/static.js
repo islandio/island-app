@@ -23,7 +23,7 @@ define([
 
     render: function () {
       if (this.options.title) {
-        this.app.title('The Island | ' + this.options.title);
+        this.app.title('Island | ' + this.options.title);
       }
 
       if (this.options.template) {

@@ -4,7 +4,7 @@ header.header
   .header-inner
     a.button.disabled.logo.navigate(href="/")
       //- span.tagline Climb
-      img(src="#{root}/img/logo.png", width="127", height="30")
+      img(src="#{root}/img/site-logo.png", width="128", height="41")
     div.divider-vertical.pad-right
     .header-search
       input.header-search-input(type="search", tabindex="1", placeholder="Search...")
@@ -34,7 +34,7 @@ header.header
         a(class="navigate #{typeof blog !== 'undefined' && blog == true ? 'active':''}", href="/blog", alt="News and feature updates.") Blog
       - if (typeof member !== 'undefined')
         li
-          a.header-tips(href="javascript:;", style="font-weight:bold;", alt="Tips on using The Island.") Tips
+          a.header-tips(href="javascript:;", style="font-weight:bold;", alt="Tips on using Island.") Tips
     - if (typeof member !== 'undefined')
       div.member-box
         div.divider-vertical

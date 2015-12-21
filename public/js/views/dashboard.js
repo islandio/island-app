@@ -87,7 +87,7 @@ define([
 
     setTitle: function () {
       var name = this.app.profile.member.displayName;
-      this.app.title('The Island | ' + name + ' - Home');
+      this.app.title('Island | ' + name + ' - Home');
     }
 
   });

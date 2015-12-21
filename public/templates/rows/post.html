@@ -4,35 +4,40 @@
 %>
 
 <% if (this.parentView) { %>
-  <% if (this.model.get('product') && this.model.get('product').sku) { %>
+  <% if (p.product && p.product.sku) { %>
     <a class="button buy-button" target="_blank" 
-        href="http://transactions.digitaldeliveryapp.com/products/<%= this.model.get('product').sku %>/purchase">
+        href="https://transactions.sendowl.com/products/<%= p.product.sku %>/add_to_cart">
       <i class="icon-download-cloud"></i>
-      <%= this.model.get('product').subtype %> Film ($<%= this.model.get('product').price %>)
+      <%= p.product.subtype %> Film ($<%= p.product.price %>)
     </a>
   <% } %>
   <div class="event-title">
-    <a href="/<%= this.model.get('author').username %>" class="title navigate">
+    <a href="/<%= p.author.username %>" class="title navigate">
       <%= this.model.formatAuthorFor(this.app.profile.member) %></a><%= this.model.explain() %>
   </div>
-  <% if (this.model.get('title')) { %>
+  <% if (p.title) { %>
     <span class="event-timeline-dot"></span>
     <span class="event-title-text">
-      <a href="/<%= this.model.get('key') %>" class="title-large navigate">
-        <%= this.model.get('title') %></a>
+      <a href="/<%= p.key %>" class="title-large navigate">
+        <%= p.title %></a>
     </span>
   <% } %>
 <% } %>
+
+<% if (!this.parentView) { %>
+  <div class="post-upper">
+<% } %>
+
 <% if (_.contains(mediaTypes, 'image')) { %>
   <div class="post-media">
     <span class="event-timeline-label">
       <i class="icon-picture"></i>
     </span>
-    <div class="image-mosaic" data-type="image" data-id="<%= this.model.id %>"></div>
+    <div class="image-mosaic" data-type="image" data-id="<%= p.id %>"></div>
   </div>
 <% } %>
 <% if (_.contains(mediaTypes, 'video')) {
-  var vids = _.filter(this.model.get('medias'), function (m) { return m.type === 'video'; });
+  var vids = _.filter(p.medias, function (m) { return m.type === 'video'; });
   vids = _.uniq(vids, function (v) {
     return v.video.original_id;
   });
@@ -48,7 +53,7 @@
     </div>
   <% }) %>
 <% } %>
-<% _.each(this.model.get('videoEmbeds'), _.bind(function (v) { %>
+<% _.each(p.videoEmbeds, _.bind(function (v) { %>
   <div class="post-media">
     <span class="event-timeline-label">
       <i class="icon-youtube-play"></i>
@@ -62,8 +67,8 @@
     <% } %>
   </div>
 <% }, this)); %>
-<% if (this.model.get('type') === 'instagram') {
-  var rm = this.model.get('remote_media');
+<% if (p.type === 'instagram') {
+  var rm = p.remote_media;
 %>
   <% if (rm) { %>
     <div class="post-media">
@@ -90,11 +95,71 @@
     </div>
   <% } %>
 <% } %>
-<% if (this.parentView || this.model.get('body').trim() !== '') { %>
+
+<% if (!this.parentView) { %>
+  </div>
+  <div class="rightside">
+
+    <% if (p.product && p.product.featured) { %>
+      <h2 class="sidebar-heading">Featured Athletes:</h2>
+      <div class="sidebar-featureds">
+        <% _.each(p.product.featured, _.bind(function (m) {
+          var g = 'https://www.gravatar.com/avatar/' +
+              m.gravatar + '?s=274&d=' +
+              encodeURIComponent(this.app.images.avatar_big);
+        %>
+          <div class="sidebar-featured">
+            <div class="sidebar-featured-details">
+              <h1>
+                <a href=<%= m.username %> class="navigate">
+                  <%= m.displayName %>
+                </a>
+              </h1>
+              <div class="sidebar-featured-right">
+                <a href="/<%= m.username %>" class="navigate">
+                  <img src="<%= m.avatar_big || g %>" width="100"
+                      height="100" />
+                </a>
+              </div>
+              <div class="sidebar-featured-left">
+                <p>
+                  <%= this.model.formatText(m.description || '', true, 240) %>
+                  <a href="/<%= m.username %>" title="Read more">read more</a>
+                </p>
+              </div>
+              <div class="clear"></div>
+            </div>
+            <div class="clear"></div>
+          </div>
+        <% }, this)); %>
+      </div>
+    <% } %>
+
+    <% if (p.product && p.product.sponsors) { %>
+      <h2 class="sidebar-heading">Brought to you by:</h2>
+      <div class="sidebar-sponsors">
+        <% _.each(p.product.sponsors, function (s) { %>
+          <a href="<%= s.url %>" target="_blank">
+            <div class="sidebar-sponsor">
+              <img src="<%= s.img %>" width="100" />
+            </div>
+          </a>
+        <% }); %>
+        <div class="clear"></div>
+      </div>
+    <% } %>
+
+    <div class="sidebar-items"></div>
+  </div>
+  <div class="leftside">
+<% } %>
+
+<% if (this.parentView || p.body.trim() !== '') { %>
   <div class="post-body">
-    <%= this.model.body(!this.parentView) %>
+    <%= this.model.formatText(p.body) %>
   </div>
 <% } %>
+
 <div class="event-info">
   <% if (this.app.profile.member) { %>
     <a href="javascript:;" class="muted hangten">Nod</a>
@@ -103,17 +168,24 @@
     <span class="info-divider">&nbsp;&middot;&nbsp;</span>
   <% } %>
   <% if (this.app.profile.member &&
-      this.model.get('author').id === this.app.profile.member.id) { %>
+      p.author.id === this.app.profile.member.id) { %>
     <a href="javascript:;" class="muted post-delete">Delete</a>
     <span class="info-divider">&nbsp;&middot;&nbsp;</span>
   <% } %>
   <a href="javascript:;" class="muted info-share">Share</a>
   <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-  <a href="/<%= this.model.get('key') %>" class="muted navigate"><time class="created" 
-        datetime="<%= this.model.get('created') %>" 
-        title="<%= this.model.get('created') %>" 
-        id="time_<%= this.model.id %>">
-    <%= this.model.get('created') %>
+  <a href="/<%= p.key %>" class="muted navigate"><time class="created" 
+        datetime="<%= p.created %>" 
+        title="<%= p.created %>" 
+        id="time_<%= p.id %>">
+    <%= p.created %>
   </time></a>
 </div>
 <div class="comments"></div>
+
+<% if (!this.parentView) { %>
+  </div>
+  <div class="clear"></div>
+<% } %>
+
+

@@ -210,7 +210,7 @@ define([
     },
 
     setTitle: function () {
-      this.app.title('The Island | ' + this.model.get('author').displayName +
+      this.app.title('Island | ' + this.model.get('author').displayName +
           ' - Ascents');
     }
 

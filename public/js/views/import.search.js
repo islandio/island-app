@@ -28,7 +28,7 @@ define([
     },
 
     render: function () {
-      this.app.title('The Island | 8a.nu Import');
+      this.app.title('Island | 8a.nu Import');
 
       this.template = _.template(template);
       $(this.template.call(this)).appendTo('.main');
