@@ -522,7 +522,7 @@ define([
         if (err) return;
         this.page = new Static(this.app,
             {title: 'Privacy', template: privacyTemp}).render();
-        this.renderTabs({title: 'The Island\'s Privacy Policy',
+        this.renderTabs({title: 'Island\'s Privacy Policy',
             log: true});
         this.stop();
       }, this));
@@ -707,7 +707,7 @@ define([
         this.page = new Signin(this.app).render();
         this.stop();
       }, this));
-      this.renderTabs({title: 'Sign in to The Island'});
+      this.renderTabs({title: 'Sign in to Island'});
     },
 
     signup: function () {
@@ -720,7 +720,7 @@ define([
         this.page = new Signup(this.app).render();
         this.stop();
       }, this));
-      this.renderTabs({title: 'Sign up for The Island'});
+      this.renderTabs({title: 'Sign up for Island'});
     },
 
     blog: function (slug) {

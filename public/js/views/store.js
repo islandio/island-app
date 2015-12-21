@@ -37,7 +37,7 @@ define([
     },
 
     render: function () {
-      this.app.title('The Island | Store');
+      this.app.title('Island | Store');
 
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
@@ -488,7 +488,7 @@ define([
           ' (USD)';
 
       this.stripeHandler.open({
-        name: 'The Island',
+        name: 'Island',
         description: itemsDescription,
         amount: summary.total,
         image: this.app.images.store_avatar,

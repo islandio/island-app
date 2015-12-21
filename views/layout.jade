@@ -3,7 +3,7 @@
 doctype 5
 html(lang="en", itemscope, itemtype="http://schema.org/#{typeof schema === 'undefined' ? 'Thing': schema}")
   head
-    meta(property="og:site_name", content="The Island")
+    meta(property="og:site_name", content="Island")
     meta(property="fb:app_id", content="203397619757208")
     meta(name="twitter:card", content="summary")
     meta(name="twitter:site", content="@the_island")
@@ -20,9 +20,9 @@ html(lang="en", itemscope, itemtype="http://schema.org/#{typeof schema === 'unde
       meta(name="twitter:title", content="#{title}")
       meta(itemprop="name", content="#{title}")
     - else
-      meta(property="og:title", content="The Island")
-      meta(name="twitter:title", content="The Island")
-      meta(itemprop="name", content="The Island")
+      meta(property="og:title", content="Island")
+      meta(name="twitter:title", content="Island")
+      meta(itemprop="name", content="Island")
     - if (typeof description !== 'undefined')
       meta(property="og:description", content="#{description}")
       meta(name="twitter:description", content="#{shortDescription}")
@@ -99,7 +99,7 @@ html(lang="en", itemscope, itemtype="http://schema.org/#{typeof schema === 'unde
     - if (typeof title !== 'undefined')
       title= title
     - else
-      title The Island
+      title Island
     - if (typeof description !== 'undefined')
       meta(name="description", content="#{description}")
     - else
@@ -108,7 +108,7 @@ html(lang="en", itemscope, itemtype="http://schema.org/#{typeof schema === 'unde
     - if (typeof author !== 'undefined')
       meta(name="author", content="#{author}")
     - else
-      meta(name="author", content="The Island")
+      meta(name="author", content="Island")
     meta(charset="UTF-8")
 
     <!--[if lt IE 9]><script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->

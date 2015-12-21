@@ -26,7 +26,7 @@ define([
     },
 
     render: function () {
-      this.app.title('The Island | Your climbing journal');
+      this.app.title('Island | Your climbing journal');
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
       this.trigger('rendered');

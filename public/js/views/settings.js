@@ -32,7 +32,7 @@ define([
     render: function () {
       this.model = new Model(this.app.profile.content.page);
 
-      this.app.title('The Island | ' + this.app.profile.member.displayName +
+      this.app.title('Island | ' + this.app.profile.member.displayName +
           ' - Settings');
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
@@ -927,7 +927,7 @@ define([
             '&bull; <em>Directions for Android phones:</em> Open the camera app.' +
             ' Select the Settings icon on the device. Scroll through the options' +
             ' and find GPS tag. Toggle the setting to “on”.',
-        title: 'The Island &hearts;\'s &nbsp;<img src="' + window.__s +
+        title: 'Island &hearts;\'s &nbsp;<img src="' + window.__s +
             '/img/instagram.png" width="24" height="24" />'
       }), {
         openEffect: 'fade',

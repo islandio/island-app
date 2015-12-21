@@ -57,7 +57,7 @@ define([
     },
 
     setTitle: function () {
-      this.app.title('The Island | Recent Media');
+      this.app.title('Island | Recent Media');
     }
 
   });

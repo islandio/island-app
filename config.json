@@ -47,7 +47,7 @@
   "INSTAGRAM_TAGS": "weareisland:islandio",
   "INSTAGRAM_USER": "island_io",
 
-  "GMAIL_FROM": "The Island <robot@island.io>",
+  "GMAIL_FROM": "Island <robot@island.io>",
   "GMAIL_USER": "robot@island.io",
   "GMAIL_HOST": "smtp.gmail.com",
   "GMAIL_PASSWORD": "I514nDr06ot",

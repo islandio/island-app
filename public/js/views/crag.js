@@ -154,7 +154,7 @@ define([
     },
 
     setTitle: function () {
-      var title = 'The Island | ' + [this.model.get('name'),
+      var title = 'Island | ' + [this.model.get('name'),
           this.model.get('country')].join(', ');
       if (this.options.config) {
         title += ' - Settings';

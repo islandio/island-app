@@ -25,7 +25,7 @@ define([
 
     render: function () {
 
-      this.app.title('The Island | ' + this.app.profile.member.displayName
+      this.app.title('Island | ' + this.app.profile.member.displayName
           + ' - Admin');
       this.template = _.template(template);
       this.$el.html(this.template.call(this, {util: util} ));
