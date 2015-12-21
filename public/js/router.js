@@ -75,7 +75,7 @@ define([
       m.height('100%');
     } else {
       if (rs.height() > ls.height()) {
-        var pu = $('.profile-upper');
+        var pu = $('.profile-upper, .post-upper');
         if (pu.length > 0) {
           rh += pu.outerHeight();
         }
