@@ -125,7 +125,7 @@ html(lang="en", itemscope, itemtype="http://schema.org/#{typeof schema === 'unde
   body.preload
     block content
     script(type="text/javascript", charset="utf-8", src="/socket.io/socket.io.js")
-    script(type="text/javascript", src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyAWgUokzlRODT2GBOjZC9Qd4WGmcKzyikA&sensor=false")
+    script(type="text/javascript", src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyAWgUokzlRODT2GBOjZC9Qd4WGmcKzyikA")
     - if (process.env.NODE_ENV === 'production')
       script(type="text/javascript", src="#{root}/js/store.min.js")
     - else

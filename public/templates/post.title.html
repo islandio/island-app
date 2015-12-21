@@ -7,7 +7,7 @@
 
 <% if (this.model.get('product') && this.model.get('product').sku) { %>
   <a class="button title-green-button" target="_blank" 
-      href="http://transactions.digitaldeliveryapp.com/products/<%= this.model.get('product').sku %>/purchase">
+      href="https://transactions.sendowl.com/products/<%= this.model.get('product').sku %>/add_to_cart">
     <i class="icon-download-cloud"></i>
     <%= this.model.get('product').subtype %> Film ($<%= this.model.get('product').price %>)
   </a>
