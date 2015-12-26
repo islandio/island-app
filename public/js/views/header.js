@@ -81,7 +81,8 @@ define([
       'click .navigate': 'navigate',
       'click .header-tips': function () {
         mps.publish('modal/welcome/open', ['Tips', true]);
-      }
+      },
+      'click .banner-side .closer': 'hideBanner',
     },
 
     togglePanel: function (e) {
@@ -145,6 +146,10 @@ define([
     highlightSub: function (href) {
       this.$('.header-menu a').removeClass('active');
       this.$('.header-menu a[href="' + href + '"]').addClass('active');
+    },
+
+    hideBanner: function (e) {
+      this.$('.banner-side').animate({left: -80});
     },
 
     navigate: function (e) {

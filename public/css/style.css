@@ -2008,20 +2008,29 @@ span.count {
   animation-fill-mode: both;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––banners*/
-a.banner-side {
+.banner-side {
   position: fixed;
   z-index: 2;
-  top: 33%;
+  top: 25%;
   left: 0;
-  width: 60px;
+  width: 80px;
+  height: 300px;
   background: none;
 }
-a.banner-side img {
+.banner-side img {
   -webkit-border-radius: 0 5px 5px 0;
   -moz-border-radius: 0 5px 5px 0;
   border-radius: 0 5px 5px 0;
   border: 1px solid #cdcdcd;
   border-left: none;
+}
+.banner-side a.closer {
+  position: absolute;
+  top: 1px;
+  right: 0;
+  -webkit-border-radius: 0 5px 0 0;
+  -moz-border-radius: 0 5px 0 0;
+  border-radius: 0 5px 0 0;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––messages*/
 .block-messages {
