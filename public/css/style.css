@@ -2007,6 +2007,22 @@ span.count {
   -o-animation-fill-mode: both;
   animation-fill-mode: both;
 }
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––banners*/
+a.banner-side {
+  position: fixed;
+  z-index: 2;
+  top: 33%;
+  left: 0;
+  width: 60px;
+  background: none;
+}
+a.banner-side img {
+  -webkit-border-radius: 0 5px 5px 0;
+  -moz-border-radius: 0 5px 5px 0;
+  border-radius: 0 5px 5px 0;
+  border: 1px solid #cdcdcd;
+  border-left: none;
+}
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––messages*/
 .block-messages {
   position: relative;
@@ -5838,6 +5854,9 @@ p.habla_conversation_p_item,
   }
 }
 @media (max-width: 1146px) {
+  .banner-side {
+    display: none;
+  }
   .header-inner {
     width: auto;
     padding-left: 15px;

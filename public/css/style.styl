@@ -2024,6 +2024,21 @@ span.count
   -o-animation-fill-mode both
   animation-fill-mode both
 
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––banners*/
+
+a.banner-side
+  position fixed
+  z-index 2
+  top 33%
+  left 0
+  width 60px
+  background none
+
+a.banner-side img
+  border-radius 0 5px 5px 0
+  border 1px solid #cdcdcd
+  border-left none
+
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––messages*/
 
 .block-messages
@@ -5923,6 +5938,10 @@ p.habla_conversation_p_item,
 }
 
 @media (max-width: 1146px) {
+
+  .banner-side {
+    display none
+  }
 
   .header-inner {
     width: auto;
