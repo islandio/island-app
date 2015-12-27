@@ -2015,6 +2015,8 @@ span.count {
   left: 0;
   width: 80px;
   height: 300px;
+}
+.banner-side > a {
   background: none;
 }
 .banner-side img {

@@ -149,7 +149,7 @@ define([
     },
 
     hideBanner: function (e) {
-      this.$('.banner-side').animate({left: -80});
+      this.$('.banner-side').animate({left: -81});
     },
 
     navigate: function (e) {

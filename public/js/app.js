@@ -18,11 +18,11 @@ define([
 
     // Location of images that must remain remote.
     this.images = {
-      avatar: 'https://s3.amazonaws.com/island.io/avatar_48.png',
-      avatar_big: 'https://s3.amazonaws.com/island.io/avatar_325.png',
-      banner: 'https://s3.amazonaws.com/island.io/banner_680.png',
-      banner_big: 'https://s3.amazonaws.com/island.io/banner_1024.png',
-      store_avatar: 'https://s3.amazonaws.com/island.io/store_avatar.png'
+      avatar: 'https://d3ulmsx02dkj2g.cloudfront.net/avatar_48.png',
+      avatar_big: 'https://d3ulmsx02dkj2g.cloudfront.net/avatar_325.png',
+      banner: 'https://d3ulmsx02dkj2g.cloudfront.net/banner_680.png',
+      banner_big: 'https://d3ulmsx02dkj2g.cloudfront.net/banner_1024.png',
+      store_avatar: 'https://d3ulmsx02dkj2g.cloudfront.net/store_avatar.png'
     };
 
     this.prefs = {
