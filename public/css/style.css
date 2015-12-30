@@ -765,8 +765,8 @@ a.button.button-middle,
 button.button.button-middle,
 div[role=button].button-middle,
 input[type=submit].button-middle {
-  margin-left: -1px;
-  margin-right: -1px;
+  margin-left: 0;
+  margin-right: 0;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
@@ -975,7 +975,9 @@ a.button.buy-button:hover:not(.disabled) {
 a.button.new-session-button,
 button.button.new-session-button,
 button.button.start-button,
-a.button.start-button {
+a.button.start-button,
+button.button.green-button,
+a.button.green-button {
   position: relative;
   color: #396400;
   border: 1px solid transparent;
@@ -1012,7 +1014,9 @@ button.button.modal-button.modal-delete {
 a.button.new-session-button:hover:not(.disabled),
 button.button.new-session-button:hover:not(.disabled),
 button.button.start-button:hover:not(.disabled),
-a.button.start-button:hover:not(.disabled) {
+a.button.start-button:hover:not(.disabled),
+button.button.green-button:hover:not(.disabled),
+a.button.green-button:hover:not(.disabled) {
   color: #2f5a00;
   border: 1px solid transparent;
   background: #a7d22c;
@@ -1020,21 +1024,27 @@ a.button.start-button:hover:not(.disabled) {
 a.button.new-session-button:active:not(.disabled),
 button.button.new-session-button:active:not(.disabled),
 button.button.start-button:active:not(.disabled),
-a.button.start-button:active:not(.disabled) {
+a.button.start-button:active:not(.disabled),
+button.button.green-button:active:not(.disabled),
+a.button.green-button:active:not(.disabled) {
   background: #a7d22c;
 }
 a.button.new-session-button.disabled,
 button.button.new-session-button.disabled,
 button.button.modal-button.modal-delete.disabled,
 button.button.start-button.disabled,
-a.button.start-button.disabled {
+a.button.start-button.disabled,
+button.button.green-button.disabled,
+a.button.green-button.disabled {
   opacity: 0.25;
   cursor: default;
 }
 a.button.new-session-button i,
 button.button.new-session-button i,
-button.button.start-button,
-a.button.start-button {
+button.button.start-button i,
+a.button.start-button i,
+button.button.green-button i,
+a.button.green-button i {
   color: #396400;
 }
 button.button.modal-button.modal-delete:hover,
@@ -1044,7 +1054,10 @@ button.button.modal-button.modal-delete.armed {
 }
 a.button.new-session-button.spinning,
 button.button.new-session-button.spinning,
-button.button.start-button.spinning {
+button.button.start-button.spinning,
+a.button.start-button.spinning,
+button.button.green-button.spinning,
+a.button.green-button.spinning {
   color: #b1dc36 !important;
   border: 1px solid transparent !important;
   background: #b1dc36 !important;
@@ -1061,7 +1074,10 @@ button.button.modal-button.modal-delete .button-spin {
 }
 a.button.new-session-button.spinning i,
 button.button.new-session-button.spinning i,
-button.button.start-button.spinning i {
+button.button.start-button.spinning i,
+a.button.start-button.spinning i,
+button.button.green-button.spinning i,
+a.button.green-button.spinning i {
   color: #b1dc36;
 }
 a.button.loading,
@@ -1075,7 +1091,7 @@ button.button.input-add-button {
   right: 1px;
   border: none;
   min-width: 0;
-  padding: 0 6px;
+  padding: 0 10px;
   -webkit-border-radius: 0 2px 2px 0;
   -moz-border-radius: 0 2px 2px 0;
   border-radius: 0 2px 2px 0;
@@ -1085,7 +1101,7 @@ button.button.input-add-button {
 button.button.input-add-button:hover,
 button.button.input-add-button:active,
 button.button.input-add-button:focus {
-  border: none;
+  border: none !important;
   outline: none;
 }
 a.sharing-button {
@@ -2786,7 +2802,6 @@ a.button.empty-cart-button:hover {
 .new-session {
   width: 100%;
   position: relative;
-  overflow: hidden;
 }
 .new-session .modal {
   width: 680px;
@@ -3054,6 +3069,7 @@ a.button.map-button {
   min-width: 0;
   font-size: 14px;
   line-height: 53px;
+  font-weight: normal;
   height: 53px;
   border: none !important;
   min-width: 28px;
@@ -3078,6 +3094,7 @@ a.button.map-button {
 }
 .map-button.map-plot {
   left: 46px;
+  padding: 0 12px;
 }
 .map-button.map-weather {
   left: 46px;
@@ -3090,7 +3107,7 @@ a.button.map-button:active {
   box-shadow: 0 1px 5px rgba(0,0,0,0.65);
 }
 a.button.map-button i {
-  font-size: 20px;
+  margin-left: -2px;
 }
 a.button.map-button [class^="icon-"]:before,
 [class*=" icon-"]:before {
@@ -3276,6 +3293,14 @@ ul.list li:last-child {
   -moz-border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;
   border-bottom-left-radius: 3px;
+}
+ul.list li > input[type=checkbox] {
+  margin: 0 -8px 0 5px;
+  position: relative;
+  z-index: 1;
+}
+ul.list li > input[type=checkbox]:focus {
+  outline: none;
 }
 ul.list li > a:not(.session-tick-button) {
   display: inline-block;
@@ -3478,13 +3503,28 @@ p.modal-message {
 .modal-body td {
   padding: 0 0 5px 0;
 }
-.modal-body ol {
-  padding: 0 15px 15px;
+.modal-body ul {
   font-size: 14px;
   line-height: 20px;
 }
-.modal-body ol li {
-  list-style: inherit;
+.modal-body ul li {
+  list-style: none;
+  padding: 0 0 10px 0;
+}
+.modal-body ul li span.item-pre {
+  color: #396400;
+  border: 1px solid transparent;
+  background: #b1dc36;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  display: inline-block;
+  padding: 0 5px;
+  font-size: 10px;
+  line-height: 15px;
+  vertical-align: 2px;
+  margin: 0 5px 0 0;
+  font-weight: bold;
 }
 .modal-body.shipping-form form {
   margin: 10px 0;
@@ -5711,6 +5751,36 @@ input.import-input {
   margin: 0 -30px;
   padding: 20px 30px 0;
   border-top: 1px solid #f2f2f2;
+}
+.ascents-tools {
+  font-size: 0;
+  margin-top: 15px;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+}
+.ascents-tools button {
+  flex-grow: 1;
+  -webkit-flex-grow: 1;
+}
+ul.list.ascents-tools-list li {
+  position: relative;
+  padding: 0 10px;
+  line-height: 33px;
+}
+ul.list.ascents-tools-list span {
+  font-size: 12px;
+  line-height: 18px;
+}
+a.ascents-tools-list-remove {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 0 5px !important;
 }
 .ticks-filter-input {
   margin: 0 -40px 0 -30px;

@@ -139,7 +139,7 @@ define([
         if (pending.note) {
           this.$('textarea[name="note"]').val(pending.note);
         }
-      }
+      }      
 
       return this;
     },

@@ -300,15 +300,15 @@ define([
       }
       $.fancybox(_.template(tipTemp)({
         message: '<span style="font-size:14px;">' +
-            '<ol>' +
-            '<li>Use the search bar at the top of the page to find people, crags, and climbs.</li>' +
-            '<li>Your activity feed shows climbing activity and posts from the crags and climbs you watch and the people you follow.</li>' +
-            '<li>Check out your sidebar for some suggested athletes to follow.</li>' +
-            '<li>The green "Log" button is your starting place for tracking your climbing.</li>' +
-            '<li>In addition to logging a completed climb as an "ascent", log attempts as "work".</li>' +
-            '<li>Don\'t want to broadcast your efforts to the entire world? Check out the privacy options in your profile <a class="alt" href="/settings" target="blank">settings</a>.</li>' +
-            '<li>Send us any questions or issues you have with the blue tab below or at <a class="alt" href="mailto:support@island.io">support@island.io</a>.</li>' +
-            '</ol>' +
+            '<ul>' +
+            '<li><span class="item-pre">1</span> Use the search bar at the top of the page to find people, crags, and climbs.</li>' +
+            '<li><span class="item-pre">2</span> Your feed shows activity from the crags and climbs you watch and the people you follow.</li>' +
+            '<li><span class="item-pre">3</span> Check out your sidebar for some suggested athletes to follow.</li>' +
+            '<li><span class="item-pre">4</span> The green "Log" buttons are your starting place for tracking your climbing.</li>' +
+            '<li><span class="item-pre">5</span> In addition to logging a completed climb as an "ascent", log attempts as "work".</li>' +
+            '<li><span class="item-pre">6</span> Don\'t want to broadcast to the entire world? Adjust the privacy options under your <a class="alt" href="/settings" target="blank">settings</a>.</li>' +
+            '<li><span class="item-pre">7</span> Send us any questions or issues you have with the blue tab below or at <a class="alt" href="mailto:support@island.io">support@island.io</a>.</li>' +
+            '</ul><br />' +
             '<span style="font-size:14px;"><strong>Do you use 8a.nu or 27crags?</strong>' +
             ' You can <a href="/import" target="blank" class="alt">import your scorecard</a> from your profile <a class="alt" href="/settings" target="blank">settings</a>.</span>',
         title: title

@@ -10,8 +10,12 @@ define([
   'rest',
   'util',
   'views/session.new',
+  'views/ascents.move',
+  'views/ascents.merge',
+  'views/ascents.delete',
   'text!../../../templates/ascents.html',
-], function ($, _, Backbone, mps, rest, util, NewSession, template) {
+], function ($, _, Backbone, mps, rest, util, NewSession, Move, Merge, Delete,
+      template) {
   return Backbone.View.extend({
 
     el: '.crag-ascents',
@@ -30,7 +34,11 @@ define([
 
     events: {
       'click .navigate': 'navigate',
-      'click .list-button': 'log'
+      'click .list-button': 'log',
+      'change .ascent-select': 'select',
+      'click .ascent-tool-move': 'move',
+      'click .ascent-tool-merge': 'merge',
+      'click .ascent-tool-delete': 'delete'
     },
 
     render: function (options) {
@@ -113,6 +121,7 @@ define([
       this.routesFilter = this.$('.r-filter').parent();
       this.boulders = this.$('.b-ascents');
       this.routes = this.$('.r-ascents');
+      this.tools = this.$('.ascents-tools');
 
       // Handle type changes.
       this.data.ascents.bcnt = this.data.ascents.bcnt || 0;
@@ -132,6 +141,8 @@ define([
 
       // Handle filtering.
       this.filterBox.bind('keyup search', _.bind(this.filter, this));
+
+      this.select();
 
       return this;
     },
@@ -221,7 +232,40 @@ define([
       var aid = $(e.target).closest('li').attr('id');
       var cid = $(e.target).closest('li').data('cid');
       new NewSession(this.app, {crag_id: cid, ascent_id: aid}).render();
-    }
+    },
+
+    getSelected: function () {
+      var flattened = this.flattened;
+      return _.map($('.ascent-select:checked'), function (a) {
+        a = $(a);
+        var id = a.attr('name');
+        var type = a.data('type');
+        return _.find(flattened[type], function (i) {
+          return i.id === id;
+        });
+      });
+    },
+
+    select: function (e) {
+      if (this.getSelected().length > 0) {
+        this.tools.show();
+      } else {
+        this.tools.hide();
+      }
+    },
+
+    move: function (e) {
+      e.preventDefault();
+      new Move(this.app, {ascents: this.getSelected()}).render();
+    },
+
+    merge: function () {
+      var selected = this.getSelected();
+    },
+
+    delete: function () {
+      var selected = this.getSelected();
+    },
 
   });
 });

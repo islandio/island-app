@@ -33,7 +33,7 @@
   position: relative;
   color: #444;
   text-shadow: none;
-  overflow: hidden;
+  /*overflow: hidden;*/
 }
 
 .fancybox-opened {
@@ -48,7 +48,11 @@
 
 .fancybox-outer, .fancybox-inner {
   position: relative;
-  overflow: hidden;
+  /*overflow: hidden;*/
+}
+
+.fancybox-inner {
+  overflow: inherit !important;
 }
 
 .fancybox-type-iframe .fancybox-inner {
