@@ -115,6 +115,7 @@ define([
           this.cragChoices.choice.model.attributes: {};
 
       return {
+        destination: cragChoice.name + ', ' + cragChoice.country,
         crag_id: cragChoice.id,
         ascent_ids: _.map(this.options.ascents, function (a) {
           return a.id;
@@ -125,6 +126,10 @@ define([
     submit: function (e) {
       e.preventDefault();
       var payload = this.getPayload();
+
+      if (!payload.crag_id) {
+        return false;
+      }
 
       this.submitButtonSpin.start();
       this.submitButton.addClass('spinning').attr('disabled', true);
@@ -148,13 +153,14 @@ define([
 
         // Show success.
         mps.publish('flash/new', [{
-          message: 'You moved ascents to ' + data.crag + '.',
+          message: 'You moved ' + payload.ascent_ids.length + ' ascent' +
+              (payload.ascent_ids.length !== 1 ? 's' : '') + ' to ' +
+              payload.destination + '.',
           level: 'alert',
           type: 'popup'
         }, true]);
 
-        // All done.
-        this.validate();
+        this.destroy();
 
       }, this));
 
