@@ -18,10 +18,9 @@ define([
 
     el: '.events',
 
-    fetching: false,
-    nomore: false,
-
     initialize: function (app, options) {
+      this.fetching = false;
+      this.nomore = false;
       this.template = _.template(template);
       this.collection = new Collection();
       this.Row = Row;

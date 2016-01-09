@@ -14,12 +14,11 @@ define([
 ], function ($, _, List, mps, rest, util, Collection, Row) {
   return List.extend({
 
-    active: false,
-    str: null,
-    selecting: {el: null, i: -1},
-
     initialize: function (app, options) {
       this.app = app;
+      this.active = false;
+      this.str = null;
+      this.selecting = {el: null, i: -1};
       this.collection = new Collection();
       this.Row = Row;
       this.options = options;

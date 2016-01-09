@@ -1,5 +1,5 @@
 /*
- * New ascent view
+ * Delete ascents view
  */
 
 define([
@@ -10,11 +10,8 @@ define([
   'rest',
   'util',
   'Spin',
-  'text!../../templates/ascent.new.html',
-  'views/lists/choices',
-  'views/session.new'
-], function ($, _, Backbone, mps, rest, util, Spin, template, Choices,
-      NewSession) {
+  'text!../../templates/ascents.delete.html'
+], function ($, _, Backbone, mps, rest, util, Spin, template) {
   return Backbone.View.extend({
 
     className: 'new-session',
@@ -27,11 +24,9 @@ define([
     },
 
     render: function () {
+      this.options.cragName = this.options.ascents[0].crag;
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
-
-      // Handle selects.
-      util.customSelects(this.el);
 
       // Dump content into modal.
       $.fancybox(this.$el, {
@@ -48,111 +43,22 @@ define([
     },
 
     events: {
-      'click .new-session-button': 'submit',
-      'click .new-session-boulder': 'checkBoulder',
-      'click .new-session-route': 'checkRoute',
+      'click .modal-delete': 'submit',
       'click .modal-cancel': 'cancel',
-      'click .modal-back': 'back',
-      'click .add-crag': 'addNewCrag'
+      'click .ascents-tools-list-remove': 'removeAscent'
     },
 
     setup: function () {
-      this.submitButton = this.$('.new-session-button');
+      this.submitButton = this.$('.modal-delete');
       this.submitButtonSpin = new Spin($('.button-spin', this.el), {
-        color: '#396400',
+        color: '#d04c38',
         lines: 13,
         length: 3,
         width: 2,
         radius: 6
       });
 
-      // Init choices.
-      this.cragChoices = new Choices(this.app, {
-        reverse: true,
-        el: '.new-session-crag-search',
-        choose: true,
-        onChoose: _.bind(this.validate, this),
-        types: ['crags']
-      });
-      if (this.options.crag_id) {
-        this.cragChoices.preChoose({type: 'crags', id: this.options.crag_id});
-      }
-
-      // Restric numeric inputs.
-      util.numbersOnly(this.$('.numeric'));
-
-      // Autogrow the write comment box.
-      this.$('textarea[name="note"]').autogrow();
-
-      // Handle warning, and error displays.
-      this.$('input[type="text"]').blur(function (e) {
-        var el = $(e.target);
-        if (el.hasClass('required') && el.val().trim() === '' &&
-            !$('.search-choice', el.parent()).is(':visible')) {
-          el.addClass('input-warning');
-        }
-        if (el.hasClass('input-error')) {
-          el.removeClass('input-error');
-        }
-      });
-
-      // Handle tips on focus.
-      this.$('input[type="text"]').focus(function (e) {
-        var el = $(e.target);
-        if (el.hasClass('input-warning')) {
-          el.removeClass('input-warning');
-        }
-      });
-
-      // Validate on change.
-      this.$('input[name="name"]').keyup(_.bind(this.validate, this));
-      this.$('select[name="grade"]').change(_.bind(this.validate, this));
-      this.$('select[name="rock"]').change(_.bind(this.validate, this));
-
-      // Focus cursor initial.
-      _.delay(_.bind(function () {
-        if (!this.options.crag_id) {
-          this.$('.new-session-crag-search-input').focus();
-        } else if (!this.options.ascent_id) {
-          this.$('input[name="name"]').focus();
-        } else {
-          this.$('textarea[name="note"]').focus();
-        }
-      }, this), 1);
-
-      // Choose values if pending ascent present.
-      var pending = store.get('pendingAscent');
-      if (pending) {
-        store.set('pendingAscent', false);
-        if (pending.sector) {
-          this.$('input[name="sector"]').val(pending.sector);
-        }
-        if (pending.name) {
-          this.$('input[name="name"]').val(pending.name);
-        }
-        if (pending.type === 'b') {
-          this.checkBoulder();
-        } else {
-          this.checkRoute();
-        }
-        this.selectOption('rock', pending.rock);
-        if (pending.note) {
-          this.$('textarea[name="note"]').val(pending.note);
-        }
-      }      
-
       return this;
-    },
-
-    selectOption: function (key, val) {
-      if (val === undefined) {
-        return;
-      }
-      var opt = this.$('select[name="' + key + '"] option[value="' +
-          val + '"]');
-      $('.select-styled', this.$('select[name="' + key + '"]').parent())
-          .text(opt.text());
-      opt.attr('selected', true);
     },
 
     destroy: function () {
@@ -160,8 +66,6 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      _.defer(_.bind(this.cragChoices.destroy, this));
-      this.cragChoices.destroy();
       this.undelegateEvents();
       this.stopListening();
     },
@@ -174,87 +78,30 @@ define([
       }
     },
 
-    validate: function () {
-      var crag = this.cragChoices.choice;
-
-      // Validate log button.
-      var name = this.$('input[name="name"]').val().trim();
-      var grade = this.$('select[name="grade"]').val();
-      var rock = this.$('select[name="rock"]').val();
-      if (!crag || name === '') {
-        this.submitButton.attr('disabled', true).addClass('disabled');
-      } else {
-        this.submitButton.attr('disabled', false).removeClass('disabled');
-      }
-      var type = this.$('.new-session-boulder').is(':checked') ? 'b': 'r';
-      this.updateGrades(type, crag ? crag.model.get('country') : 'default');
-    },
-
-    checkBoulder: function () {
-      var b = this.$('.new-session-boulder');
-      var r = this.$('.new-session-route');
-      b.attr('checked', true);
-      r.attr('checked', false);
-      this.swapImg(b);
-      this.swapImg(r);
-      var crag = this.cragChoices.choice;
-      this.updateGrades('b', crag ? crag.model.get('country') : 'default');
-    },
-
-    checkRoute: function () {
-      var b = this.$('.new-session-boulder');
-      var r = this.$('.new-session-route');
-      b.attr('checked', false);
-      r.attr('checked', true);
-      this.swapImg(b);
-      this.swapImg(r);
-      var crag = this.cragChoices.choice;
-      this.updateGrades('r', crag ? crag.model.get('country') : 'default');
-    },
-
-    swapImg: function (el) {
-      var img = $('img', el.parent());
-      var src = img.data('alt');
-      img.data('alt', img.attr('src'));
-      img.attr('src', src);
-    },
-
     getPayload: function () {
-
-      // Sanitize.
-      this.$('input[type!="submit"]:visible, textarea:visible')
-          .each(function () {
-        $(this).val(util.sanitize($(this).val()));
-      });
-
-      var cragChoice = this.cragChoices.choice ?
-          this.cragChoices.choice.model.attributes: {};
-
-      // Build the payload.
-      var type = this.$('.new-session-boulder').is(':checked') ? 'b': 'r';
-      var grade = Number(this.$('select[name="grade"]').val());
-      var payload = {
-        crag_id: cragChoice.id,
-        sector: this.$('input[name="sector"]').val().trim(),
-        name: this.$('input[name="name"]').val().trim(),
-        type: type,
-        grade: grade,
-        rock: this.$('select[name="rock"]').val(),
-        note: this.$('textarea[name="note"]').val().trim()
+      return {
+        ascent_ids: _.map(this.options.ascents, function (a) {
+          return a.id;
+        })
       };
-
-      return payload;
     },
 
     submit: function (e) {
       e.preventDefault();
+      if (!this.armedForDelete) {
+        this.armedForDelete = true;
+        this.submitButton.addClass('armed');
+        $('span', this.submitButton).text('Confirm delete');
+        return false;
+      }
+
       var payload = this.getPayload();
 
       this.submitButtonSpin.start();
       this.submitButton.addClass('spinning').attr('disabled', true);
 
       // Do the API request.
-      rest.post('/api/ascents/', payload, _.bind(function (err, data) {
+      rest.delete('/api/ascents', payload, _.bind(function (err, data) {
 
         // Stop spinner.
         this.submitButtonSpin.stop();
@@ -272,48 +119,20 @@ define([
 
         // Show success.
         mps.publish('flash/new', [{
-          message: 'You added a new climb in ' + data.crag + '.',
+          message: 'You deleted ' + payload.ascent_ids.length + ' ascent' +
+              (payload.ascent_ids.length !== 1 ? 's' : '') + ' from ' +
+              this.options.ascents[0].crag + '.',
           level: 'alert',
           type: 'popup'
         }, true]);
-        
-        // Refresh the map.
-        mps.publish('map/refresh/crags');
 
-        // All done.
-        this.clearInputs();
+        mps.publish('ascents/removeSelected');
 
-        // Check if there's a pending session with this crag.
-        if (this.options.back) {
-          this.destroy();
-          new NewSession(this.app, {crag_id: data.crag_id,
-              ascent_id: data.ascent_id}).render();
-        }
+        this.destroy();
+
       }, this));
 
       return false;
-    },
-
-    addNewCrag: function (e) {
-      e.preventDefault();
-      this.save();
-      this.cancel();
-      mps.publish('map/add');
-      return false;
-    },
-
-    back: function (e) {
-      if (e) {
-        e.preventDefault();
-      }
-      this.destroy();
-      new NewSession(this.app, {crag_id: this.options.crag_id}).render();
-    },
-
-    save: function () {
-      var payload = this.getPayload();
-      store.set('pendingAscent', payload);
-      return payload;
     },
 
     cancel: function (e) {
@@ -323,37 +142,16 @@ define([
       this.destroy();
     },
 
-    clearInputs: function() {
-      this.$('input[name="name"]').val('');
-      this.$('textarea[name="note"]').val('');
-      this.selectOption('grade', 'hide');
-      this.validate();
-    },
-
-    updateGrades: function (type, country) {
-      var added = [];
-      var select = this.$('select[name="grade"]');
-      var grades = select.parent().find('li');
-      var chosen = select.parent().find('.select-styled');
-      var txt = chosen.text();
-      var val = Number(select.val());
-      if (txt !== 'Project' && !isNaN(val)) {
-        chosen.text(this.app.gradeConverter[type].convert(val, country));
+    removeAscent: function (e) {
+      var li = $(e.target).closest('li');
+      this.options.ascents = _.reject(this.options.ascents, function (a) {
+        return a.id === li.attr('id');
+      });
+      li.remove();
+      if (this.options.ascents.length === 0) {
+        this.cancel();
       }
-      grades.each(_.bind(function (index, el) {
-        var $e = $(el);
-        var from = Number($e.attr('rel'));
-        if (!_.isNaN(from)) {
-          var grade = this.app.gradeConverter[type].convert(from, country);
-          if (added.indexOf(grade) !== -1) {
-            $e.hide();
-          } else {
-            added.push(grade);
-            $e.text(grade).show();
-          }
-        }
-      }, this));
-    }
+    },
 
   });
 });

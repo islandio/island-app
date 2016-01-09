@@ -17,13 +17,13 @@ define([
   return Backbone.View.extend({
 
     el: '#map',
-    mapped: false,
-    plotting: false,
-    saving: false,
-    fliedTo: false,
 
     initialize: function (app) {
       this.app = app;
+      this.mapped = false;
+      this.plotting = false;
+      this.saving = false;
+      this.fliedTo = false;
       this.subscriptions = [];
     },
 

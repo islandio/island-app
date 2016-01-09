@@ -19,9 +19,9 @@ define([
   return Backbone.View.extend({
 
     el: '.main',
-    ticks: [],
 
     initialize: function (app) {
+      this.ticks = [];
       this.app = app;
       this.subscriptions = [];
       this.prefs =  this.app.profile.member ?

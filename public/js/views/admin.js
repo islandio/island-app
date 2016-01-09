@@ -16,17 +16,17 @@ define([
   return Backbone.View.extend({
 
     el: '.main',
-    uploading: false,
 
     initialize: function (app) {
+      this.uploading = false;
       this.app = app;
       this.on('rendered', this.setup, this);
     },
 
     render: function () {
 
-      this.app.title('Island | ' + this.app.profile.member.displayName
-          + ' - Admin');
+      this.app.title('Island | ' + this.app.profile.member.displayName +
+          ' - Admin');
       this.template = _.template(template);
       this.$el.html(this.template.call(this, {util: util} ));
 

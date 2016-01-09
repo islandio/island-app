@@ -15,11 +15,11 @@ define([
   return List.extend({
     
     el: '.hangtens',
-    working: false,
 
     initialize: function (app, options) {
+      this.working = false;
       this.template = _.template(template);
-      this.collection = new Collection;
+      this.collection = new Collection();
       this.type = options.type;
 
       // Call super init.

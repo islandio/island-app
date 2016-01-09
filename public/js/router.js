@@ -44,10 +44,10 @@ define([
   'views/session.new',
   'views/share'
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
-    Flashes, Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Tick,
-    Crag, Admin, ImportSearch, ImportInsert, Ascent, Settings, Reset, Store, Static,
-    Crags, Dashboard, Splash, Ticks, Medias, aboutTemp, privacyTemp, tipTemp, NewSession,
-    Share
+    Flashes, Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session,
+    Tick, Crag, Admin, ImportSearch, ImportInsert, Ascent, Settings, Reset,
+    Store, Static, Crags, Dashboard, Splash, Ticks, Medias, aboutTemp,
+    privacyTemp, tipTemp, NewSession, Share
 ) {
 
   /*
@@ -95,8 +95,10 @@ define([
       this.app = app;
 
       // Clear the hashtag that comes back from facebook.
-      if (window.location.hash !== '' || window.location.href.indexOf('#') !== -1) {
-        if (window.location.hash.length === 0 || window.location.hash === '#_=_') {
+      if (window.location.hash !== '' ||
+          window.location.href.indexOf('#') !== -1) {
+        if (window.location.hash.length === 0 ||
+            window.location.hash === '#_=_') {
           try {
             window.history.replaceState('', '', window.location.pathname +
                 window.location.search);
@@ -124,7 +126,8 @@ define([
       this.route('crags/:y/:g', 'crag', this.crag);
       this.route('crags/:y/:g/config', 'crag.config', this.cragConfig);
       this.route('crags/:y/:g/:t/:a', 'ascent', this.ascent);
-      this.route('crags/:y/:g/:t/:a/config', 'ascent.config', this.ascentConfig);
+      this.route('crags/:y/:g/:t/:a/config', 'ascent.config',
+          this.ascentConfig);
 
       this.route('blog/:p', 'blog', this.blog);
       this.route('blog/category/:c', 'blog', this.blog);
@@ -207,7 +210,8 @@ define([
         if (!this.map && this.showMap) {
           this.map = new Map(this.app).render();
         }
-        if (!this.notifications && this.app.profile && this.app.profile.member) {
+        if (!this.notifications && this.app.profile &&
+            this.app.profile.member) {
           this.notifications = new Notifications(this.app, {reverse: true});
         }
         if (!this.footer) {
@@ -228,7 +232,8 @@ define([
 
       // Grab hash for comment.
       this.app.requestedCommentId = null;
-      if (window.location.hash !== '' || window.location.href.indexOf('#') !== -1) {
+      if (window.location.hash !== '' ||
+          window.location.href.indexOf('#') !== -1) {
         var tmp = window.location.hash.match(/#c=([a-z0-9]{24})/i);
         if (tmp) {
           this.app.requestedCommentId = tmp[1];

@@ -20,10 +20,10 @@ define([
   return Backbone.View.extend({
 
     el: '.main',
-    str: null,
-    num: 0,
 
     initialize: function (app) {
+      this.str = null;
+      this.num = 0;
       this.app = app;
       this.subscriptions = [];
 

@@ -21,11 +21,11 @@ define([
   return Backbone.View.extend({
 
     el: '.main',
-    bannerUploading: false,
-    avatarUploading: false,
 
     initialize: function (app) {
       this.app = app;
+      this.bannerUploading = false;
+      this.avatarUploading = false;
       this.on('rendered', this.setup, this);
     },
 

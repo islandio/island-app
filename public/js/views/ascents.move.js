@@ -1,5 +1,5 @@
 /*
- * New ascent view
+ * Move ascents view
  */
 
 define([
@@ -25,6 +25,7 @@ define([
     },
 
     render: function () {
+      this.options.cragName = this.options.ascents[0].crag;
       this.template = _.template(template);
       this.$el.html(this.template.call(this));
 
@@ -159,6 +160,8 @@ define([
           level: 'alert',
           type: 'popup'
         }, true]);
+
+        mps.publish('ascents/removeSelected');
 
         this.destroy();
 

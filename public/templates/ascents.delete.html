@@ -1,120 +1,35 @@
 <div class="modal">
-  <span class="modal-title"><i class="icon-pencil"></i> Add a new boulder problem or route</span>
+  <span class="modal-title"><i class="icon-trash"></i> Delete climbs in <em><%= this.options.cragName %></em></span>
   <form enctype="multipart/form-data" method="POST">
     <div class="modal-body">
       <div class="new-session-activities">
         <div class="new-session-activity">
           <div class="new-session-ticks">
-            <div class="new-session-tick">
-              <table>
-                <tbody>
-                  <tr class="new-session-row-nopad">
-                    <td colspan="3" class="new-session-cell" style="width: 50%;">
-                      <div class="new-session-search new-session-crag-search">
-                        <input tabindex="10" id="new-session-crag" name="crag" type="text"
-                            class="new-session-crag-search-input required" placeholder="Search existing crags"
-                            autocomplete="off" />
-                        <button class="button input-add-button add-crag"><i class="icon-plus"></i></button>
-                        <div class="search-choice">
-                          <div class="search-choice-content"></div>
-                          <a href="javascript:;" class="search-choice-clear" tabindex="-1">
-                            <i class="icon-cancel"></i>
-                          </a>
-                        </div>
-                        <div class="search-display" style="max-height: 275px;">
-                          <div class="list-header"></div>
-                        </div>
-                      </div>
-                    </td>
-                    <td colspan="3" class="new-session-cell" style="width: 50%;">
-                      <input tabindex="11" name="sector" type="text" placeholder="Sector (optional)" />
-                    </td>
-                  </tr>
-                  <tr class="new-session-row-nopad">
-                    <td colspan="4" class="new-session-cell" style="width: 75%;">
-                      <input tabindex="12" name="name" type="text" class="required" placeholder="Climb name (new or just missing from Island)" />
-                    </td>
-                    <td colspan="2" class="new-session-cell checkbox-styled-wrap" style="width: 25%;">
-                      <label class="checkbox-styled checkbox-styled-left">
-                        <input class="new-session-boulder" type="checkbox" name="boulder" value="b" checked />
-                        <span><img src="/img/boulder_16_white.png" data-alt="/img/boulder_16.png" width="16" height="16" /> Boulder</span>
-                      </label>
-                      <label class="checkbox-styled checkbox-styled-right">
-                        <input class="new-session-route" type="checkbox" name="route" value="r" />
-                        <span><img src="/img/route_16.png" data-alt="/img/route_16_white.png" width="16" height="16" /> Route</span>
-                      </label>
-                    </td>
-                  </tr>
-                  <tr class="new-session-row-nopad">
-                    <td colspan="3" class="new-session-cell" style="width: 50%;">
-                      <select name="grade" class="required" style="max-height: 175px;">
-                        <option value="hide">-- Grade --</option>
-                        <option value="-1">Project</option>
-                        <option value="0">3</option>
-                        <option value="1">4</option>
-                        <option value="2">5a</option>
-                        <option value="3">5b</option>
-                        <option value="4">5c</option>
-                        <option value="5">6a</option>
-                        <option value="6">6a+</option>
-                        <option value="7">6b</option>
-                        <option value="8">6b+</option>
-                        <option value="9">6c</option>
-                        <option value="10">6c+</option>
-                        <option value="11">7a</option>
-                        <option value="12">7a+</option>
-                        <option value="13">7b</option>
-                        <option value="14">7b+</option>
-                        <option value="15">7c</option>
-                        <option value="16">7c+</option>
-                        <option value="17">8a</option>
-                        <option value="18">8a+</option>
-                        <option value="19">8b</option>
-                        <option value="20">8b+</option>
-                        <option value="21">8c</option>
-                        <option value="22">8c+</option>
-                        <option value="23">9a</option>
-                        <option value="24">9a+</option>
-                        <option value="25">9b</option>
-                        <option value="26">9b+</option>
-                        <option value="27">9c</option>
-                        <option value="28">9c+</option>
-                      </select>
-                    </td>
-                    <td colspan="3" class="new-session-cell" style="width: 50%;">
-                      <select name="rock" class="required" style="max-height: 175px;">
-                        <option value="hide">-- Rock type --</option>
-                        <option value="1">Gneiss</option>
-                        <option value="2">Granite</option>
-                        <option value="3">Gritstone</option>
-                        <option value="4">Limestone</option>
-                        <option value="5">Sandstone</option>
-                        <option value="6">Quartzite</option>
-                      </select>
-                    </td>
-                  </tr>
-                  <tr class="new-session-row-nopad">
-                    <td colspan="6" class="new-session-cell">
-                      <textarea tabindex="13" name="note" placeholder="Beta or access notes..."></textarea>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <span class="modal-group-heading">Climbs that will be deleted:</span>
+            <ul class="list ascents-tools-list">
+              <% _.each(this.options.ascents, function (a, i) {
+                var back = i % 2 === 0 ? '#f2f2f2': '#f9f9f9'; %>
+                <li style="background:<%= back %>;" id="<%= a.id %>" data-cid="<%= a.crag_id %>">
+                  <% if (a.sector) { %>
+                    <span class="list-row-title"><%= a.name %> <span style="font-size:90%;">(<%= a.sector %>)</span></span>
+                  <% } else { %>
+                    <span class="list-row-title"><%= a.name %></span>
+                  <% } %>
+                  <a href="javascript:;" class="ascents-tools-list-remove">
+                    <i class="icon-cancel"></i>
+                  </a>
+                </li>
+              <% }); %>
+            </ul>
           </div>
         </div>
       </div>
     </div>
     <div class="modal-actions">
-      <% if (this.options.back) { %>
-        <button tabindex="14" class="modal-back modal-button button">
-          <i class="icon-angle-left"></i> Back to logging
-        </button>
-      <% } %>
-      <button tabindex="15" class="modal-cancel modal-button button">Close</button>
-      <button tabindex="16" class="modal-confirm modal-button button new-session-button disabled" disabled>
+      <button tabindex="15" type="button" class="modal-cancel modal-button button">Close</button>
+      <button tabindex="16" type="button" class="modal-delete modal-button button">
         <div class="button-spin"></div>
-        <i class="icon-ok"></i> Add it
+        <i class="icon-trash"></i> <span>Delete 'em</span>
       </button>
       <div class="clear"></div>
     </div>

@@ -21,11 +21,11 @@ define([
 
     el: '.events',
 
-    fetching: false,
-    nomore: false,
-    attachments: [],
-
     initialize: function (app, options) {
+
+      this.fetching = false;
+      this.nomore = false;
+      this.attachments = [];
 
       this.template = _.template(template);
       this.collection = new Collection();
@@ -624,8 +624,8 @@ define([
     },
 
     keydown: function(e) {
-      var re = /\B@(\S*?)$/
-      var res = re.exec(this.postBody.val())
+      var re = /\B@(\S*?)$/;
+      var res = re.exec(this.postBody.val());
       if (res && this.choices.count() !== 0) {
         if (!e.shiftKey && (e.keyCode === 13 || e.which === 13)) {
           this.choices.chooseExternal();
@@ -645,16 +645,16 @@ define([
 
     input: function(e) {
       // Test for @ pattern ending in the text area
-      var re = /\B@(\S*?)$/
-      var res = re.exec(this.postBody.val())
+      var re = /\B@(\S*?)$/;
+      var res = re.exec(this.postBody.val());
       if (res) {
         var caretCoord = window.getCaretCoordinates(this.postBody[0], res.index);
-        var searchTop = (this.postBody.offset().top
-            - this.postSearch.parent().offset().top
-            + caretCoord.top + 20) + 'px';
-        var searchLeft = (this.postBody.offset().left
-            - this.postSearch.parent().offset().left
-            + caretCoord.left) + 'px';
+        var searchTop = (this.postBody.offset().top -
+            this.postSearch.parent().offset().top +
+            caretCoord.top + 20) + 'px';
+        var searchLeft = (this.postBody.offset().left -
+            this.postSearch.parent().offset().left +
+            caretCoord.left) + 'px';
         this.postSearch.css({top: searchTop, left: searchLeft});
         this.postSearch.show();
         this.choices.search(null, res[1]);
@@ -665,9 +665,9 @@ define([
     },
 
     choose: function(model) {
-      var username = model.get('username')
-      var re = /\B@(\S*?)$/
-      var res = re.exec(this.postBody.val())
+      var username = model.get('username');
+      var re = /\B@(\S*?)$/;
+      var res = re.exec(this.postBody.val());
       if (res) {
         var text = this.postBody.val().substr(0, res.index);
         this.postBody.val(text + '@' + username + ' ');

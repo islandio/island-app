@@ -1,3 +1,8 @@
+<% if (this.app.profile.member) { %>
+  <a href="javascript:;" class="ascents-edit">
+    <i class="icon-down-dir"></i>Editing tools
+  </a>
+<% } %>
 <div class="ascents-filter">
   <div class="subtabs">
     <ul>
@@ -12,11 +17,13 @@
   <div class="ascents-filter-input">
     <input class="filter-box" type="search" tabindex="2" placeholder="filter climbs..." />
   </div>
-  <div class="ascents-tools">
-    <button class="button button-left ascent-tool-move"><i class="icon-location"></i> Move</button>
-    <button class="button button-middle ascent-tool-merge"><i class="icon-flow-merge"></i> Merge</button>
-    <button class="button button-right ascent-tool-delete"><i class="icon-trash"></i> Delete</button>
-  </div>
+  <% if (this.app.profile.member) { %>
+    <div class="ascents-tools">
+      <button class="button button-left ascent-tool-move disabled" disabled><i class="icon-location"></i> Move</button>
+      <button class="button button-middle ascent-tool-merge disabled" disabled><i class="icon-flow-merge"></i> Merge</button>
+      <button class="button button-right ascent-tool-delete disabled" disabled><i class="icon-trash"></i> Delete</button>
+    </div>
+  <% } %>
 </div>
 <% _.each(this.data.ascents, _.bind(function (ascents, t) {
   if (t !== 'b' && t !== 'r') return; %>
@@ -32,7 +39,9 @@
         <% _.each(buck, _.bind(function (a) {
           var back = i % 2 === 0 ? '#f2f2f2': '#f9f9f9'; %>
           <li style="background:<%= back %>;" id="<%= a.id %>" data-cid="<%= a.crag_id %>">
-            <input class="ascent-select" type="checkbox" name="<%= a.id %>" data-type="<%= a.type %>" />
+            <% if (this.app.profile.member) { %>
+              <input class="ascent-select" type="checkbox" name="<%= a.id %>" data-type="<%= a.type %>" />
+            <% } %>
             <a href="/crags/<%= a.key %>" class="navigate">
               <% if (a.sector) { %>
                 <span class="list-row-title"><%= a.name %> <span style="font-size:90%;">(<%= a.sector %>)</span></span>

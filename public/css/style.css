@@ -822,7 +822,10 @@ input[type=submit].button-right.selected {
 }
 a.button.button-left.disabled,
 a.button.button-middle.disabled,
-a.button.button-right.disabled {
+a.button.button-right.disabled,
+button.button.button-left.disabled,
+button.button.button-middle.disabled,
+button.button.button-right.disabled {
   opacity: 0.5;
   cursor: default;
 }
@@ -3503,15 +3506,15 @@ p.modal-message {
 .modal-body td {
   padding: 0 0 5px 0;
 }
-.modal-body ul {
+.modal-body ul:not(.select-options) {
   font-size: 14px;
   line-height: 20px;
 }
-.modal-body ul li {
+.modal-body ul:not(.select-options) li {
   list-style: none;
   padding: 0 0 10px 0;
 }
-.modal-body ul li span.item-pre {
+.modal-body ul:not(.select-options) li span.item-pre {
   color: #396400;
   border: 1px solid transparent;
   background: #b1dc36;
@@ -3675,6 +3678,13 @@ button.button.modal-back {
   -moz-animation-fill-mode: both;
   -o-animation-fill-mode: both;
   animation-fill-mode: both;
+}
+.modal-group-heading {
+  font-size: 16px;
+  margin-bottom: 10px;
+  display: block;
+  color: #666;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––profiles*/
 .profile {
@@ -5739,6 +5749,19 @@ input.import-input {
   margin-bottom: -3px;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crag*/
+.crag-ascents {
+  position: relative;
+}
+a.ascents-edit {
+  position: absolute;
+  top: 8px;
+  left: -4px;
+  background: none;
+  font-size: 13px;
+}
+a.ascents-edit:hover {
+  background: none;
+}
 .ascents-filter,
 .ticks-filter {
   text-align: right;
@@ -5754,7 +5777,7 @@ input.import-input {
 }
 .ascents-tools {
   font-size: 0;
-  margin-top: 15px;
+  margin-top: 10px;
   display: -webkit-box;
   display: -moz-box;
   display: -ms-flexbox;
@@ -5772,7 +5795,7 @@ ul.list.ascents-tools-list li {
   padding: 0 10px;
   line-height: 33px;
 }
-ul.list.ascents-tools-list span {
+ul.list.ascents-tools-list span:not(.list-group-heading) {
   font-size: 12px;
   line-height: 18px;
 }

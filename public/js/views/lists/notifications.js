@@ -17,14 +17,12 @@ define([
 
     el: '.panel-content',
 
-    fetching: false,
-    nomore: false,
-    limit: 5,
-
-    // misc. init
     initialize: function (app, options) {
+      this.fetching = false;
+      this.nomore = false;
+      this.limit = 5;
       this.template = _.template(template);
-      this.collection = new Collection;
+      this.collection = new Collection();
       this.Row = Row;
 
       List.prototype.initialize.call(this, app, options);
@@ -45,12 +43,10 @@ define([
       this.collection.reset(this.latest_list.items);
     },
 
-    // receive note from event bus
     collect: function (data) {
       this.collection.unshift(data);
     },
 
-    // receive update from event bus
     read: function (data) {
       var view = _.find(this.views, function (v) {
         return v.model.id === data.id;
@@ -109,7 +105,7 @@ define([
     _remove: function (data) {
       var index = -1;
       var view = _.find(this.views, function (v) {
-        ++index
+        ++index;
         return v.model.id === data.id;
       });
 

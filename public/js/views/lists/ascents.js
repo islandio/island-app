@@ -35,7 +35,8 @@ define([
     events: {
       'click .navigate': 'navigate',
       'click .list-button': 'log',
-      'change .ascent-select': 'select',
+      'click .ascents-edit': 'toggleTools',
+      'change .ascent-select': 'checkToolsEnabled',
       'click .ascent-tool-move': 'move',
       'click .ascent-tool-merge': 'merge',
       'click .ascent-tool-delete': 'delete'
@@ -142,7 +143,22 @@ define([
       // Handle filtering.
       this.filterBox.bind('keyup search', _.bind(this.filter, this));
 
-      this.select();
+      this.subscriptions.push(mps.subscribe('ascents/clearSelected',
+          _.bind(function () {
+        this.$('.ascent-select:checked').attr('checked', false);
+      }, this)));
+
+      this.subscriptions.push(mps.subscribe('ascents/removeSelected',
+          _.bind(function () {
+        this.$('.ascent-select:checked').closest('li').remove();
+        _.delay(_.bind(function () {
+          $('.crag-ascents ul.list').not(':has(li)').remove();
+        }, 50));
+      }, this)));
+
+      if (this.app.profile.member) {
+        this.toggleTools();
+      }
 
       return this;
     },
@@ -236,7 +252,7 @@ define([
 
     getSelected: function () {
       var flattened = this.flattened;
-      return _.map($('.ascent-select:checked'), function (a) {
+      return _.map(this.$('.ascent-select:checked'), function (a) {
         a = $(a);
         var id = a.attr('name');
         var type = a.data('type');
@@ -246,11 +262,36 @@ define([
       });
     },
 
-    select: function (e) {
-      if (this.getSelected().length > 0) {
-        this.tools.show();
+    checkToolsEnabled: function() {
+      var selected = this.getSelected();
+
+      if (selected.length > 0) {
+        this.$('.ascent-tool-move, .ascent-tool-delete')
+            .attr('disabled', false).removeClass('disabled');
       } else {
+        this.$('.ascent-tool-move, .ascent-tool-delete')
+            .attr('disabled', true).addClass('disabled');
+      }
+
+      if (selected.length > 1) {
+        this.$('.ascent-tool-merge').attr('disabled', false)
+            .removeClass('disabled');
+      } else {
+        this.$('.ascent-tool-merge').attr('disabled', true)
+            .addClass('disabled');
+      }
+    },
+
+    toggleTools: function (e) {
+      var el = $('a.ascents-edit');
+      if (this.tools.is(':visible')) {
         this.tools.hide();
+        el.html('<i class="icon-right-dir"></i>Editing tools');
+        this.$('.ascent-select').hide();
+      } else {
+        this.tools.show();
+        this.$('.ascent-select').show();
+        el.html('<i class="icon-down-dir"></i>Editing tools');
       }
     },
 
@@ -259,12 +300,14 @@ define([
       new Move(this.app, {ascents: this.getSelected()}).render();
     },
 
-    merge: function () {
-      var selected = this.getSelected();
+    merge: function (e) {
+      e.preventDefault();
+      new Merge(this.app, {ascents: this.getSelected()}).render();
     },
 
-    delete: function () {
-      var selected = this.getSelected();
+    delete: function (e) {
+      e.preventDefault();
+      new Delete(this.app, {ascents: this.getSelected()}).render();
     },
 
   });
