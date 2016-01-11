@@ -119,7 +119,7 @@ define([
 
         // Show success.
         mps.publish('flash/new', [{
-          message: 'You deleted ' + payload.ascent_ids.length + ' ascent' +
+          message: 'You deleted ' + payload.ascent_ids.length + ' climb' +
               (payload.ascent_ids.length !== 1 ? 's' : '') + ' from ' +
               this.options.ascents[0].crag + '.',
           level: 'alert',

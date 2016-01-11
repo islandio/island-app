@@ -212,7 +212,6 @@ define([
         ascent_ids: _.map(this.options.ascents, function (a) {
           return a.id;
         }),
-        destination: this.options.ascents[0].crag,
         props: {
           name: this.$('input[name="name"]').val().trim(),
           type: type,
@@ -251,14 +250,14 @@ define([
 
         // Show success.
         mps.publish('flash/new', [{
-          message: 'You moved ' + payload.ascent_ids.length + ' ascent' +
-              (payload.ascent_ids.length !== 1 ? 's' : '') + ' to ' +
-              payload.destination + '.',
+          message: 'You merged ' + payload.ascent_ids.length + ' climb' +
+              (payload.ascent_ids.length !== 1 ? 's' : '') + ' in ' +
+              this.options.ascents[0].crag + '.',
           level: 'alert',
           type: 'popup'
         }, true]);
 
-        mps.publish('ascents/removeSelected');
+        this.app.router.navigate('/crags/' + data.key, {trigger: true});
 
         this.destroy();
 

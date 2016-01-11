@@ -247,6 +247,10 @@ define([
           type: 'popup'
         }, true]);
 
+        if (payload.username) {
+          window.location = '/settings';
+        }
+
       }, this));
 
       return false;

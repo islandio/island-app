@@ -32,8 +32,7 @@ define([
     render: function (single) {
       Row.prototype.render.call(this, single);
       if (!this.model.get('sticky')) {
-        var wait = this.model.collection.options.type === 'block' ?
-          8000: 3000;
+        var wait = 8000;
         _.delay(_.bind(this.delete, this), wait);
       }
     },

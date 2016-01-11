@@ -177,8 +177,8 @@ define([
 
 
       // Clean search string.
-      var str = (optionalString === null || optionalString === undefined)
-          ? this.searchVal() : optionalString;
+      var str = (optionalString === null || optionalString === undefined) ?
+          this.searchVal() : optionalString;
 
       // Handle interaction.
       if (str && str === this.str) return;

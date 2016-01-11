@@ -46,24 +46,24 @@ define([
           if (this.get('body') && this.get('body') !== '') {
             if (tmp !== '') tmp += ': ';
             tmp += _.str.prune(this.get('body'), 100);
-          } 
+          }
           if (tmp === '')
             title += this.get('key');
           else title += tmp;
           break;
         case 'crags':
-          title += '<i class="icon-location"></i>'
-              + '<strong>' + this.get('name') + '</strong>, '
-              + this.get('country');
+          title += '<i class="icon-location"></i>' +
+              '<strong>' + this.get('name') + '</strong>, ' +
+              this.get('country');
           break;
         case 'ascents':
           var t = this.get('type');
           var g = this.get('grade');
           var c = this.get('country');
           var g_ = this.gradeConverter[t].convert(g, c);
-          title += '<strong>' + this.get('name') + '</strong>, '
-              + this.get('crag') + ' ('
-              + g_ + ')';
+          title += '<strong>' + this.get('name') + '</strong>, ' +
+              this.get('crag') + ' (' +
+              g_ + ')';
           break;
       }
       return title;

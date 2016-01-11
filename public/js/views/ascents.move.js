@@ -116,7 +116,7 @@ define([
           this.cragChoices.choice.model.attributes: {};
 
       return {
-        destination: cragChoice.name + ', ' + cragChoice.country,
+        destination: cragChoice.name,
         crag_id: cragChoice.id,
         ascent_ids: _.map(this.options.ascents, function (a) {
           return a.id;
@@ -154,7 +154,7 @@ define([
 
         // Show success.
         mps.publish('flash/new', [{
-          message: 'You moved ' + payload.ascent_ids.length + ' ascent' +
+          message: 'You moved ' + payload.ascent_ids.length + ' climb' +
               (payload.ascent_ids.length !== 1 ? 's' : '') + ' to ' +
               payload.destination + '.',
           level: 'alert',

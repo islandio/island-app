@@ -1,6 +1,6 @@
 <% if (this.app.profile.member) { %>
   <a href="javascript:;" class="ascents-edit">
-    <i class="icon-down-dir"></i>Editing tools
+    <i class="icon-down-dir"></i>Configure
   </a>
 <% } %>
 <div class="ascents-filter">
@@ -42,7 +42,7 @@
             <% if (this.app.profile.member) { %>
               <input class="ascent-select" type="checkbox" name="<%= a.id %>" data-type="<%= a.type %>" />
             <% } %>
-            <a href="/crags/<%= a.key %>" class="navigate">
+            <a href="/crags/<%= a.key %>" class="ascent-name navigate">
               <% if (a.sector) { %>
                 <span class="list-row-title"><%= a.name %> <span style="font-size:90%;">(<%= a.sector %>)</span></span>
               <% } else { %>
@@ -52,8 +52,18 @@
             <% if (this.app.profile.member
                 && this.app.profile.member.username !== 'island'
                 && this.app.profile.member.role !== 2) { %>
-              <a href="javascript:;" class="list-button">
+              <input type="text" class="ascent-name-edit" data-original="<%= a.name %>" value="<%= a.name %>" />
+              <a href="javascript:;" class="list-button list-button-log" title="Log">
+                <i class="icon-book-open"></i>
+              </a>
+              <a href="javascript:;" class="list-button list-button-edit" title="Edit name">
                 <i class="icon-pencil"></i>
+              </a>
+              <a href="javascript:;" class="list-button list-button-ok" title="Okay">
+                <i class="icon-ok"></i>
+              </a>
+              <a href="javascript:;" class="list-button list-button-cancel" title="Cancel">
+                <i class="icon-cancel"></i>
               </a>
             <% } %>
           </li>

@@ -1898,9 +1898,6 @@ a.choice.hover
 a.choice:hover
   background-color #d0ecf2
 
-// a.choice:active
-//   background-color #adc9d0
-
 a.choice.active
   background-color green
 
@@ -1923,7 +1920,7 @@ span.choice-name .list-button
   right 0
   top 0
   padding 8px
-  color #e6e6e6
+  color gray
 
 a.choice:hover .list-button
   color #4d4d4d
@@ -2158,7 +2155,7 @@ span.count
   background rgba(255,255,255,0.9)
 
 .popup-messages .flash-alert
-  background rgba(177,220,54,0.5)
+  background rgba(177,220,54,0.8)
 
 .popup-messages .flash-error
   border 2px solid red
@@ -3353,7 +3350,7 @@ ul.list li a.list-button
   right 0
   top 0
   bottom 0
-  color #e6e6e6
+  color gray
 
   -webkit-display flex
   display -webkit-flex
@@ -3391,8 +3388,18 @@ ul.list li a.list-button:hover
   color #2f5a00
   background #a7d22c
 
+ul.list li a.list-button-cancel:hover
+  color #640000
+  background red
+
 ul.list li a.list-button:active
-  background #a7d22c
+  background rgb(167, 210, 44)
+  -moz-box-shadow inset 0 2px 5px rgba(0, 0, 0, 0.3)
+  -webkit-box-shadow inset 0 2px 5px rgba(0, 0, 0, 0.3)
+  box-shadow inset 0 2px 5px rgba(0, 0, 0, 0.3)
+
+ul.list li a.list-button-cancel:active
+  background red
 
 ul.list li i.icon-folder
   margin-left 5px
@@ -5835,6 +5842,39 @@ a.ascents-edit
 a.ascents-edit:hover
   background none
 
+.crag-ascents a.list-button-edit,
+.crag-ascents a.list-button-ok,
+.crag-ascents a.list-button-cancel
+  display none !important
+
+.crag-ascents a.list-button-ok
+  right 39px !important
+  border-radius 0 !important
+
+.crag-ascents.editing a.list-button-log
+  display none !important
+
+.crag-ascents.editing a.list-button-edit
+  display inherit !important
+
+.crag-ascents li input.ascent-name-edit
+  display none
+  margin 5px
+  height 5px
+  width 168px
+
+.crag-ascents li.editing input.ascent-name-edit
+  display inline-block
+
+.crag-ascents li.editing a.list-button-ok,
+.crag-ascents li.editing a.list-button-cancel
+  display inherit !important
+
+.crag-ascents li.editing a.list-button-edit,
+.crag-ascents li.editing a.ascent-name,
+.crag-ascents li.editing input.ascent-select
+  display none !important
+
 .ascents-filter,
 .ticks-filter
   text-align right
@@ -5920,7 +5960,7 @@ a.ascents-tools-list-remove
   margin-top 20px
   margin-bottom 20px
 
-/*––––––––––––––––––––––––––––––––––––––––––––––––––––––––– –shipping*/
+/*––––––––––––––––––––––––––––––––––––––––––––––––––––––––––shipping*/
 
 .shipping-option-radio
   font-size 16px

@@ -217,7 +217,6 @@ define([
       _.each(this.subscriptions, function (s) {
         mps.unsubscribe(s);
       });
-      console.log(this.ticks.length)
       _.each(this.ticks, function (t) {
         t.destroy();
       });

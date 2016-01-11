@@ -34,12 +34,16 @@ define([
 
     events: {
       'click .navigate': 'navigate',
-      'click .list-button': 'log',
+      'click .list-button-log': 'log',
+      'click .list-button-edit': 'editAscentName',
+      'click .list-button-ok': 'submitAscentName',
+      'click .list-button-cancel': 'cancelAscentName',
       'click .ascents-edit': 'toggleTools',
       'change .ascent-select': 'checkToolsEnabled',
       'click .ascent-tool-move': 'move',
       'click .ascent-tool-merge': 'merge',
-      'click .ascent-tool-delete': 'delete'
+      'click .ascent-tool-delete': 'delete',
+      'keydown input.ascent-name-edit': 'enterSubmitAscentName',
     },
 
     render: function (options) {
@@ -286,12 +290,15 @@ define([
       var el = $('a.ascents-edit');
       if (this.tools.is(':visible')) {
         this.tools.hide();
-        el.html('<i class="icon-right-dir"></i>Editing tools');
+        el.html('<i class="icon-right-dir"></i>Configure');
         this.$('.ascent-select').hide();
+        this.$el.removeClass('editing');
+        this.$('li.editing').removeClass('editing');
       } else {
         this.tools.show();
         this.$('.ascent-select').show();
-        el.html('<i class="icon-down-dir"></i>Editing tools');
+        el.html('<i class="icon-down-dir"></i>Configure');
+        this.$el.addClass('editing');
       }
     },
 
@@ -308,6 +315,62 @@ define([
     delete: function (e) {
       e.preventDefault();
       new Delete(this.app, {ascents: this.getSelected()}).render();
+    },
+
+    editAscentName: function (e) {
+      var li = $(e.target).closest('li');
+      var input = $('.ascent-name-edit', li);
+      input.val(input.data('original'));
+      li.addClass('editing');
+    },
+
+    enterSubmitAscentName: function(e) {
+      if (e.keyCode === 13 || e.which === 13) {
+        this.submitAscentName(e);
+        return false;
+      } else if (e.keyCode === 27 || e.which === 27) {
+        this.cancelAscentName(e);
+        return false;
+      }
+    },
+
+    submitAscentName: function (e) {
+      var li = $(e.target).closest('li');
+      var id = li.attr('id');
+      var display = $('.list-row-title', li);
+      var input = $('.ascent-name-edit', li);
+      var original = input.data('original');
+      var value = input.val();
+      var payload = {name: value};
+
+      rest.put('/api/ascents/' + id, payload, _.bind(function (err, data) {
+        if (err) {
+          if (err.type === 'LENGTH_INVALID') {
+            input.val(original);
+          }
+          mps.publish('flash/new', [{err: err, level: 'error'}]);
+          return false;
+        }
+
+        input.data('original', value);
+        display.text(value);
+        li.removeClass('editing');
+
+        // Show saved status.
+        mps.publish('flash/new', [{
+          message: 'Saved.',
+          level: 'alert',
+          type: 'popup'
+        }, true]);
+
+      }, this));
+
+      return false;
+    },
+
+    cancelAscentName: function (e) {
+      var li = $(e.target).closest('li');
+      li.removeClass('editing');
     },
 
   });
