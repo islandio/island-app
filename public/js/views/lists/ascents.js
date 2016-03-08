@@ -338,6 +338,7 @@ define([
       var li = $(e.target).closest('li');
       var id = li.attr('id');
       var display = $('.list-row-title', li);
+      var anc = $('.ascent-name', li);
       var input = $('.ascent-name-edit', li);
       var original = input.data('original');
       var value = input.val();
@@ -354,6 +355,7 @@ define([
 
         input.data('original', value);
         display.text(value);
+        anc.attr('href', '/crags/' + data.key);
         li.removeClass('editing');
 
         // Show saved status.
