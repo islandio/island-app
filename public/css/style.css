@@ -2438,9 +2438,13 @@ a.privacy-link:hover {
   margin: 0 -30px 30px;
   padding: 0 30px 30px;
   border-bottom: 1px solid #f2f2f2;
+  position: relative;
 }
 .sidebar-items > div:last-child {
   border-bottom: none;
+}
+.sidebar-sectors {
+  border-bottom: 1px solid #f2f2f2 !important;
 }
 .sidebar-watchees > div,
 .sidebar-ticks > div,
@@ -2452,8 +2456,34 @@ a.privacy-link:hover {
 .sidebar-categories > div:last-child {
   margin-bottom: 0;
 }
-div.sidebar-watchers {
-  padding-bottom: 0;
+.button.sidebar-button {
+  position: absolute;
+  top: -5px;
+  right: 30px;
+  min-height: 0;
+  height: 25px;
+  line-height: 25px;
+  font-size: 11px;
+  background: #e76533;
+  color: #fff;
+  border: none;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  font-weight: normal;
+  padding: 0 15px;
+}
+.button.sidebar-button i {
+  margin-left: -3px;
+}
+.button.sidebar-button:hover,
+.button.sidebar-button:active {
+  background: #d25d2e !important;
+  border: none !important;
+  color: #fff !important;
+}
+.button.sidebar-button:focus {
+  border: none !important;
 }
 .sidebar-heading,
 .sidebar-heading-small {
@@ -3070,44 +3100,31 @@ a.button.map-button {
   color: #404040;
   background: #fff;
   min-width: 0;
-  font-size: 14px;
-  line-height: 53px;
+  font-size: 12px;
+  line-height: 52px;
   font-weight: normal;
-  height: 53px;
-  border: none !important;
-  min-width: 28px;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
-  -webkit-box-shadow: 0 1px 5px rgba(0,0,0,0.65);
-  -moz-box-shadow: 0 1px 5px rgba(0,0,0,0.65);
-  box-shadow: 0 1px 5px rgba(0,0,0,0.65);
-  -webkit-animation-name: fadeIn;
-  -moz-animation-name: fadeIn;
-  -o-animation-name: fadeIn;
-  animation-name: fadeIn;
-  -webkit-animation-duration: 0.3s;
-  -moz-animation-duration: 0.3s;
-  -o-animation-duration: 0.3s;
-  animation-duration: 0.3s;
-  -webkit-animation-fill-mode: both;
-  -moz-animation-fill-mode: both;
-  -o-animation-fill-mode: both;
-  animation-fill-mode: both;
-}
-.map-button.map-plot {
-  left: 46px;
-  padding: 0 12px;
-}
-.map-button.map-weather {
-  left: 46px;
+  height: 52px;
+  border: 1px solid #666;
+  padding: 0 20px;
+  opacity: 0.8;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
 }
 a.button.map-button:hover,
 a.button.map-button:active {
-  background-color: #f4f4f4;
-  -webkit-box-shadow: 0 1px 5px rgba(0,0,0,0.65);
-  -moz-box-shadow: 0 1px 5px rgba(0,0,0,0.65);
-  box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+  border: 1px solid #666;
+  background-color: #f9f9f9;
+  opacity: 1;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  box-shadow: none !important;
+}
+.map-button.map-plot {
+  left: 46px;
+}
+.map-button.map-weather {
+  left: 46px;
 }
 a.button.map-button i {
   margin-left: -2px;
@@ -3130,9 +3147,9 @@ a.button.map-button [class^="icon-"]:before,
   background: #fff;
   padding: 0 5px 5px 0;
   border: none;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
   -webkit-animation-name: fadeIn;
   -moz-animation-name: fadeIn;
   -o-animation-name: fadeIn;
@@ -3151,9 +3168,7 @@ a.button.map-button [class^="icon-"]:before,
   display: none;
   left: 46px;
   top: 10px;
-  -webkit-box-shadow: 0 1px 5px rgba(0,0,0,0.65);
-  -moz-box-shadow: 0 1px 5px rgba(0,0,0,0.65);
-  box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+  border: 1px solid #666;
 }
 .update-note {
   padding: 0 15px;
@@ -3237,6 +3252,9 @@ a.button.map-button [class^="icon-"]:before,
   margin-left: -8px;
   border: 8px solid transparent;
   border-top-color: #f2f2f2;
+}
+.leaflet-bar {
+  border: 1px solid #666;
 }
 .cartodb-logo {
   z-index: auto !important;
@@ -5761,10 +5779,17 @@ input.import-input {
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––crag*/
 .crag-ascents {
   position: relative;
+  margin-top: 15px;
+}
+.crag-ascents .sidebar-heading {
+  margin-bottom: 10px;
+}
+.crag-ascents .sidebar-button {
+  right: 0;
 }
 a.ascents-edit {
   position: absolute;
-  top: 8px;
+  top: 48px;
   left: -4px;
   background: none;
   font-size: 13px;
@@ -5782,6 +5807,9 @@ a.ascents-edit:hover {
   -webkit-border-radius: 0 !important;
   -moz-border-radius: 0 !important;
   border-radius: 0 !important;
+}
+.crag-ascents.editing .empty-feed {
+  margin-top: -10px;
 }
 .crag-ascents.editing a.list-button-log {
   display: none !important;
@@ -5886,8 +5914,9 @@ a.ascents-tools-list-remove {
 .ascent-grades-histogram {
   width: 274px;
   height: 200px;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin: 0 -30px 30px;
+  padding: 0 30px 30px;
+  border-bottom: 1px solid #f2f2f2;
 }
 /*––––––––––––––––––––––––––––––––––––––––––––––––––––––––––shipping*/
 .shipping-option-radio {

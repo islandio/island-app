@@ -52,10 +52,13 @@ define([
 
         // Save ref to flattened lists for filtering and convert the grade
         this.flattened = {};
+        this.count = 0;
         var prefs = this.app.profile.member ?
             this.app.profile.member.prefs: this.app.prefs;
         _.each(this.data.ascents, _.bind(function (ascents, t) {
           this.flattened[t] = _.flatten(ascents);
+          this.count += this.flattened[t].length;
+
 
           // convert grades
           var a = {};

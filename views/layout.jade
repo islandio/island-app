@@ -113,6 +113,7 @@ html(lang="en", itemscope, itemtype="http://schema.org/#{typeof schema === 'unde
 
     <!--[if lt IE 9]><script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
     link(rel="stylesheet", href="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/themes/css/cartodb.css")
+    link(rel='stylesheet', href="https://api.mapbox.com/mapbox.js/v2.3.0/mapbox.css")
     link(rel="stylesheet", href="#{root}/css/fancybox.css")
     link(rel="stylesheet", href="#{root}/css/fontello.css")
     link(rel="stylesheet", href="#{root}/css/animation.css")
@@ -164,7 +165,9 @@ html(lang="en", itemscope, itemtype="http://schema.org/#{typeof schema === 'unde
     script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js")
     script(type="text/javascript", src="https://jwpsrv.com/library/1lrC0MMbEeKOnyIACqoQEQ.js")
     script(type="text/javascript", src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/cartodb.js")
+    script(src="https://api.mapbox.com/mapbox.js/v2.3.0/mapbox.standalone.js")
     script(type="text/javascript", src="https://checkout.stripe.com/checkout.js")
+
     - if (process.env.NODE_ENV === 'production')
       script(type="text/javascript", src="#{root}/js/min.js")
     - else

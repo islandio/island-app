@@ -1,7 +1,18 @@
+<span class="sidebar-heading">
+  Climbs <span class="sidebar-heading-cnt">(<%= this.count %>)</span>
+</span>
+
 <% if (this.app.profile.member) { %>
-  <a href="javascript:;" class="ascents-edit">
-    <i class="icon-down-dir"></i>Configure
-  </a>
+  <% if (this.app.profile.member.role !== 2) { %>
+    <a href="javascript:;" class="button sidebar-button add-ascent">
+      Add Climb
+    </a>
+  <% } %>
+  <% if (this.app.profile.member.admin) { %>
+    <a href="javascript:;" class="ascents-edit">
+      <i class="icon-down-dir"></i>Configure
+    </a>
+  <% } %>
 <% } %>
 <div class="ascents-filter">
   <div class="subtabs">

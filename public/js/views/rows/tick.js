@@ -214,7 +214,7 @@ define([
                   width: el.width().toString(),
                   height: el.height().toString(),
                   autostart: true,
-                  primary: 'flash',
+                  // primary: 'flash',
                   ga: {},
                   sharing: {
                     link: window.location.protocol + '//' +

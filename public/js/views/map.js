@@ -62,12 +62,14 @@ define([
 
       // Crag was added.
       this.subscriptions.push(mps.subscribe('map/add',
-          _.bind(function () {
+          _.bind(function (opts) {
+        opts = opts || {};
         if (this.$el.hasClass('closed')) {
           this.hideShow();
         }
-        this.listenForPlot();
-      }, this, true)));
+        this.pendingSectorParentId = opts.parent_id;
+        this.listenForPlot(null, null, !!opts.parent_id);
+      }, this)));
 
       // Request to listen for plot.
       this.plotQueue = [];
@@ -190,25 +192,37 @@ define([
       this.map = new L.Map('map_inner', {
         center: [40, -20],
         zoom: 3,
-        minZoom: 2
+        minZoom: 2,
+        maxZoom: 19
       });
+
+      L.mapbox.accessToken = 'pk.eyJ1IjoiaXNsYW5kaW8iLCJhIjoibFBxS1lqYyJ9.6PtOJXR32CpwnTdwI_fK0g';
 
       // Add a base tile layer.
       // http://1.maps.nlp.nokia.com/maptile/2.1/maptile/newest/terrain.day/{LOD}/{X}/{Y}/256/png?app_code=INSERT_LICENCE_TOKEN_HERE&app_id=INSERT_APP_ID_HERE
-      L.tileLayer('https://{s}.maps.nlp.nokia.com/maptile/2.1/' +
-          'maptile/{mapID}/{variant}/{z}/{x}/{y}/256/png8?' +
-          'app_id={app_id}&app_code={app_code}', {
-        attribution:
-            'Map &copy; 1987-2014 <a href="http://developer.here.com">HERE</a>',
-        subdomains: '1234',
-        mapID: 'newest',
-        'app_id': 'PvVIz1964Y3C1MabyVqB',
-        'app_code': 'yuYSbxg5Z5b2c594mYfLtA',
-        base: 'base',
-        variant: 'terrain.day',
-        minZoom: 0,
-        maxZoom: 20
+      
+      // L.tileLayer('https://{s}.maps.nlp.nokia.com/maptile/2.1/' +
+      //     'maptile/{mapID}/{variant}/{z}/{x}/{y}/256/png8?' +
+      //     'app_id={app_id}&app_code={app_code}', {
+      //   attribution:
+      //       'Map &copy; 1987-2014 <a href="http://developer.here.com">HERE</a>',
+      //   subdomains: '1234',
+      //   mapID: 'newest',
+      //   'app_id': 'PvVIz1964Y3C1MabyVqB',
+      //   'app_code': 'yuYSbxg5Z5b2c594mYfLtA',
+      //   base: 'base',
+      //   variant: 'terrain.day',
+      //   minZoom: 0,
+      //   maxZoom: 20
+      // }).addTo(this.map);
+
+      L.tileLayer('https://api.mapbox.com/v4/mapbox.streets-satellite/{z}/{x}/{y}.png?access_token=' + L.mapbox.accessToken, {
+        attribution: '© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       }).addTo(this.map);
+
+      // L.tileLayer('https://api.mapbox.com/v4/mapbox.mapbox-streets-v7/{z}/{x}/{y}.png?access_token=' + L.mapbox.accessToken, {
+      //   attribution: '© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      // }).addTo(this.map);
 
       // this.temperature = L.tileLayer('http://{s}.tile.openweathermap.org/map/temp/{z}/{x}/{y}.png', {
       //     attribution: 'Map data © OpenWeatherMap',
@@ -438,7 +452,7 @@ define([
       this.featureOut();
     },
 
-    listenForPlot: function (e, external) {
+    listenForPlot: function (e, external, sector) {
       if (e) {
         e.preventDefault(e);
       }
@@ -463,6 +477,14 @@ define([
           this.map.fire('focus');
           this.plotButton.addClass('active');
           this.plotButton.hide();
+          if (sector) {
+            $('input[name="name"]', this.plotForm).attr('placeholder',
+                'New sector name');
+          }
+          else {
+            $('input[name="name"]', this.plotForm).attr('placeholder',
+                'New crag name');
+          }
           this.plotForm.show();
           this.setPlotLocation();
         }
@@ -491,6 +513,7 @@ define([
       } else {
         return {
           name: util.sanitize(name),
+          parent_id: this.pendingSectorParentId,
           location: {
             latitude: latitude,
             longitude: longitude
@@ -554,8 +577,14 @@ define([
           flash.level = 'error';
           mps.publish('flash/new', [flash, true]);
         } else {
+          var target;
+          if (data.parent) {
+            target = 'sector in ' + data.parent;
+          } else {
+            target = 'crag in ' + data.country;
+          }
           mps.publish('flash/new', [{
-            message: 'You added a new crag in ' + data.country + '.',
+            message: 'You added a new ' + target + '.',
             level: 'alert'
           }, true]);
 
