@@ -127,6 +127,7 @@ define([
         }, true]);
 
         mps.publish('ascents/removeSelected');
+        mps.publish('map/refresh/crags');
 
         this.destroy();
 

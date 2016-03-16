@@ -119,21 +119,19 @@ define([
 
     setup: function () {
 
-      // Save refs.
       this.plotButton = this.$('.map-plot');
       // this.weatherButton = this.$('.map-weather');
       this.plotForm = this.$('.plot-form');
       this.updateNote = this.$('.update-note');
       this.submitButton = this.$('.new-session-button');
       this.infoBox = this.$('.map-infobox');
-
-      // Changes to map display are animated.
-      this.$el.addClass('animated');
-
-      // Save DOM refs.
+      this.helpText = this.$('.map-control .help');
       this.mapInner = this.$('.map-inner');
       this.hider = this.$('.hide-show');
       this.lesser = this.$('.less-more');
+
+      // Changes to map display are animated.
+      this.$el.addClass('animated');
 
       // Hide/show plot button.
       if (this.app.profile && this.app.profile.member) {
@@ -193,8 +191,20 @@ define([
         center: [40, -20],
         zoom: 3,
         minZoom: 2,
-        maxZoom: 19
+        maxZoom: 19,
+        scrollWheelZoom: false
       });
+
+      $(document).bind('keydown', _.bind(function (e) {
+        if (e.keyCode === 16) {
+          this.map.scrollWheelZoom.enable();
+        }
+      }, this));
+      $(document).bind('keyup', _.bind(function (e) {
+        if (e.keyCode === 16) {
+          this.map.scrollWheelZoom.disable();
+        }
+      }, this));
 
       L.mapbox.accessToken = 'pk.eyJ1IjoiaXNsYW5kaW8iLCJhIjoibFBxS1lqYyJ9.6PtOJXR32CpwnTdwI_fK0g';
 
@@ -413,6 +423,7 @@ define([
         this.hider.addClass('split-left');
         this.lesser.show();
         this.plotButton.show();
+        this.helpText.show();
         if (this.$el.hasClass('plotting-external')) {
           this.updateNote.show();
         }
@@ -426,6 +437,7 @@ define([
         this.hider.text('Show map');
         this.hider.removeClass('split-left');
         this.plotButton.hide();
+        this.helpText.hide();
         this.updateNote.hide();
         this.lesser.hide();
         store.set('mapClosed', true);
