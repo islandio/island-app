@@ -91,8 +91,8 @@ define([
 
     // Collect new data from socket events.
     collect: function (data) {
-      if (data.parent_id === this.parentView.parentView.model.id
-          && !this.collection.get(-1)) {
+      if (data.parent_id === this.parentView.parentView.model.id &&
+          !this.collection.get(-1)) {
         this.collection.push(data);
       }
     },

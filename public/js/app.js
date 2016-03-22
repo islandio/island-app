@@ -38,6 +38,9 @@ define([
       'r': new GradeConverter('routes')
     };
 
+    this.mapbox = {
+      accessToken: 'pk.eyJ1IjoiaXNsYW5kaW8iLCJhIjoibFBxS1lqYyJ9.6PtOJXR32CpwnTdwI_fK0g'
+    };
     this.cartodb = {
       sqlPre: "select *, st_asgeojson(the_geom) as geometry from " +
           (window.__s ? 'crags': 'crags_dev') +

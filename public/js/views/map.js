@@ -206,33 +206,11 @@ define([
         }
       }, this));
 
-      L.mapbox.accessToken = 'pk.eyJ1IjoiaXNsYW5kaW8iLCJhIjoibFBxS1lqYyJ9.6PtOJXR32CpwnTdwI_fK0g';
-
       // Add a base tile layer.
-      // http://1.maps.nlp.nokia.com/maptile/2.1/maptile/newest/terrain.day/{LOD}/{X}/{Y}/256/png?app_code=INSERT_LICENCE_TOKEN_HERE&app_id=INSERT_APP_ID_HERE
-      
-      // L.tileLayer('https://{s}.maps.nlp.nokia.com/maptile/2.1/' +
-      //     'maptile/{mapID}/{variant}/{z}/{x}/{y}/256/png8?' +
-      //     'app_id={app_id}&app_code={app_code}', {
-      //   attribution:
-      //       'Map &copy; 1987-2014 <a href="http://developer.here.com">HERE</a>',
-      //   subdomains: '1234',
-      //   mapID: 'newest',
-      //   'app_id': 'PvVIz1964Y3C1MabyVqB',
-      //   'app_code': 'yuYSbxg5Z5b2c594mYfLtA',
-      //   base: 'base',
-      //   variant: 'terrain.day',
-      //   minZoom: 0,
-      //   maxZoom: 20
-      // }).addTo(this.map);
-
+      L.mapbox.accessToken = this.app.mapbox.accessToken;
       L.tileLayer('https://api.mapbox.com/v4/mapbox.streets-satellite/{z}/{x}/{y}.png?access_token=' + L.mapbox.accessToken, {
         attribution: '© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       }).addTo(this.map);
-
-      // L.tileLayer('https://api.mapbox.com/v4/mapbox.mapbox-streets-v7/{z}/{x}/{y}.png?access_token=' + L.mapbox.accessToken, {
-      //   attribution: '© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-      // }).addTo(this.map);
 
       // this.temperature = L.tileLayer('http://{s}.tile.openweathermap.org/map/temp/{z}/{x}/{y}.png', {
       //     attribution: 'Map data © OpenWeatherMap',
@@ -357,17 +335,20 @@ define([
     getCragRadius: function (info) {
       var cnt = Math.max(info.bcnt, info.rcnt);
       var d = 10;
-      if (cnt >= 50) {
+      if (cnt < 50) {
         d = 25;
       }
-      if (cnt >= 200) {
+      if (cnt >= 50) {
         d = 50;
       }
-      if (cnt >= 500) {
+      if (cnt >= 200) {
         d = 75;
       }
-      if (cnt >= 1000) {
+      if (cnt >= 500) {
         d = 100;
+      }
+      if (cnt >= 1000) {
+        d = 150;
       }
       if (cnt >= 2000) {
         d = 200;
@@ -390,7 +371,7 @@ define([
 
       function _fly() {
         this.map.setView(new L.LatLng(location.latitude,
-            location.longitude), 10);
+            location.longitude), 16);
         this.location = location;
       }
 

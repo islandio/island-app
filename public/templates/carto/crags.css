@@ -7,47 +7,53 @@
   ba/marker-comp-op: color-dodge;
   
   ra/marker-opacity: 0.2;
-  ra/marker-fill: #888800;
+  ra/marker-fill: #880088;
   ra/marker-width: 0;
   ra/marker-line-width: 0;
   ra/marker-allow-overlap: true;
   ra/marker-comp-op: color-dodge;
 }
 
-#crags [bcnt >= 50] {
+#crags [bcnt < 50] {
   ba/marker-width: 25;
 }
-#crags [bcnt >= 200] {
+#crags [bcnt >= 50] {
   ba/marker-width: 50;
 }
-#crags [bcnt >= 500] {
+#crags [bcnt >= 200] {
   ba/marker-width: 75;
 }
-#crags [bcnt >= 1000] {
+#crags [bcnt >= 500] {
   ba/marker-width: 100;
+}
+#crags [bcnt >= 1000] {
+  ba/marker-width: 150;
 }
 #crags [bcnt >= 2000] {
   ba/marker-width: 200;
 }
 
-#crags [rcnt >= 50] {
+#crags [rcnt < 50] {
   ra/marker-width: 25;
 }
-#crags [rcnt >= 200] {
+#crags [rcnt >= 50] {
   ra/marker-width: 50;
 }
-#crags [rcnt >= 500] {
+#crags [rcnt >= 200] {
   ra/marker-width: 75;
 }
-#crags [rcnt >= 1000] {
+#crags [rcnt >= 500] {
   ra/marker-width: 100;
+}
+#crags [rcnt >= 1000] {
+  ra/marker-width: 150;
 }
 #crags [rcnt >= 2000] {
   ra/marker-width: 200;
 }
 
 #crags::top {
-  marker-fill: #1a1a1a;
+  marker-fill: #fff;
   marker-opacity: 0.9;
   marker-allow-overlap: true;
   marker-placement: point;
