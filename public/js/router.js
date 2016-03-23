@@ -207,9 +207,16 @@ define([
           this.app.blog = false;
         }
 
-        if (!this.map && this.showMap) {
+        if (this.map) {
+          if (this.showMap) {
+            this.map.show();
+          } else {
+            this.map.hide();
+          }
+        } else if (!this.map && this.showMap) {
           this.map = new Map(this.app).render();
         }
+
         if (!this.notifications && this.app.profile &&
             this.app.profile.member) {
           this.notifications = new Notifications(this.app, {reverse: true});
@@ -403,7 +410,7 @@ define([
     dashboard: function () {
       this.start();
       $('.container').removeClass('narrow').removeClass('blog')
-          .addClass('landing');
+          .removeClass('sign').addClass('landing');
       this.renderTabs();
       var query = {actions: this.getEventActions()};
       this.render('/service/dashboard', query, _.bind(function (err) {
