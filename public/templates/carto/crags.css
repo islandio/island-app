@@ -1,13 +1,13 @@
 #crags {
   ba/marker-opacity: 0.4;
-  ba/marker-fill: #008888;
+  ba/marker-fill: #b1dc36;
   ba/marker-width: 0;
   ba/marker-line-width: 0;
   ba/marker-allow-overlap: true;
   ba/marker-comp-op: color-dodge;
   
   ra/marker-opacity: 0.2;
-  ra/marker-fill: #880088;
+  ra/marker-fill: #4bb8d7;
   ra/marker-width: 0;
   ra/marker-line-width: 0;
   ra/marker-allow-overlap: true;
