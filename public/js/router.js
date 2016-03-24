@@ -411,7 +411,7 @@ define([
     activity: function () {
       this.start();
       $('.container').removeClass('narrow').removeClass('blog')
-          .removeClass('sign').addClass('landing');
+          .removeClass('sign');
       this.renderTabs();
       var query = {
         actions: this.getEventActions(),
@@ -440,7 +440,7 @@ define([
     following: function () {
       this.start();
       $('.container').removeClass('narrow').removeClass('blog')
-          .removeClass('sign').addClass('landing');
+          .removeClass('sign');
       this.renderTabs();
       var query = {actions: this.getEventActions()};
       this.render('/service/activity', query, _.bind(function (err) {
@@ -473,6 +473,7 @@ define([
           this.header.highlight('/');
           this.renderTabs({tabs: [
             {title: 'Activity', href: '/'},
+            {title: 'Following', href: '/following'},
             {title: 'Recent Media', href: '/media', active: true},
             {title: 'My Ascents', href: '/' +
                 this.app.profile.member.username + '/ascents'}
@@ -500,6 +501,7 @@ define([
           this.header.highlight('/');
           this.renderTabs({tabs: [
             {title: 'Activity', href: '/'},
+            {title: 'Following', href: '/following'},
             {title: 'Recent Media', href: '/media'},
             {title: 'My Ascents', href: '/' + username + '/ascents',
                 active: true}
