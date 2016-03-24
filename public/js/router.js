@@ -34,7 +34,7 @@ define([
   'views/store',
   'views/static',
   'views/crags',
-  'views/dashboard',
+  'views/activity',
   'views/splash',
   'views/ticks',
   'views/medias',
@@ -147,7 +147,8 @@ define([
       this.route('crags', 'crags', this.crags);
       this.route('signin', 'signin', this.signin);
       this.route('signup', 'signup', this.signup);
-      this.route('', 'dashboard', this.dashboard);
+      this.route('following', 'following', this.following);
+      this.route('', 'activity', this.activity);
       this.route('_blank', 'blank', function(){});
 
       // Save dom refs.
@@ -407,19 +408,49 @@ define([
 
     // Routes //
 
-    dashboard: function () {
+    activity: function () {
       this.start();
       $('.container').removeClass('narrow').removeClass('blog')
           .removeClass('sign').addClass('landing');
       this.renderTabs();
-      var query = {actions: this.getEventActions()};
-      this.render('/service/dashboard', query, _.bind(function (err) {
+      var query = {
+        actions: this.getEventActions(),
+        public: true
+      };
+      this.render('/service/activity', query, _.bind(function (err) {
         if (err) return;
         if (this.app.profile.member) {
           this.clearContainer();
           this.page = new Dashboard(this.app).render();
           this.renderTabs({tabs: [
             {title: 'Activity', href: '/', active: true},
+            {title: 'Following', href: '/following'},
+            {title: 'Recent Media', href: '/media'},
+            {title: 'My Ascents', href: '/' + this.app.profile.member.username +
+                '/ascents'}
+          ], log: true});
+        } else {
+          $('.container').addClass('wide').addClass('landing');
+          this.page = new Splash(this.app).render();
+        }
+        this.stop();
+      }, this));
+    },
+
+    following: function () {
+      this.start();
+      $('.container').removeClass('narrow').removeClass('blog')
+          .removeClass('sign').addClass('landing');
+      this.renderTabs();
+      var query = {actions: this.getEventActions()};
+      this.render('/service/activity', query, _.bind(function (err) {
+        if (err) return;
+        if (this.app.profile.member) {
+          this.clearContainer();
+          this.page = new Dashboard(this.app).render();
+          this.renderTabs({tabs: [
+            {title: 'Activity', href: '/'},
+            {title: 'Following', href: '/following', active: true},
             {title: 'Recent Media', href: '/media'},
             {title: 'My Ascents', href: '/' + this.app.profile.member.username +
                 '/ascents'}

@@ -8,7 +8,7 @@ define([
   'Backbone',
   'mps',
   'util',
-  'text!../../templates/dashboard.html',
+  'text!../../templates/activity.html',
   'views/lists/events',
   'views/lists/followers',
   'views/lists/followees',
