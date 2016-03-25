@@ -9,7 +9,7 @@ var dut = require('../../lib/resources/ascent').calculateGradeByConsensus;
 
 describe('GradeConsensus', function() {
 
-  var consensus = []
+  var consensus = [];
 
   it('0 grades', function() {
     _.isNull(dut(consensus)).should.equal(true);

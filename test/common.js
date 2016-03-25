@@ -34,7 +34,7 @@ exports.createMember = function(name, cb) {
           cb(err);
         }
       });
-}
+};
 
 // Returns cookie
 var login = exports.login = function(name, cb) {
@@ -51,20 +51,20 @@ var login = exports.login = function(name, cb) {
         cookies = res.headers['set-cookie'].pop().split(';')[0];
         return cb(err, cookies);
       });
-}
+};
 
 exports.logout = function(name, cb) {
   var req = request(url).get('/service/logout');
   req.cookies = cookies;
   req.expect(200, cb);
-}
+};
 
 exports.deleteMember = function(name, cb) {
   var profile = {
     username: name,
     password: name
   };
-  login(name, function() { 
+  login(name, function() {
     request(url)
         .post('/api/members/auth')
         .send(profile)
@@ -77,7 +77,7 @@ exports.deleteMember = function(name, cb) {
           req.expect(200, cb);
         });
   });
-}
+};
 
 exports.createCrag = function(name, cb) {
   var profile = {
@@ -97,7 +97,7 @@ exports.createCrag = function(name, cb) {
         if (err) return cb(err);
         return cb(null, res);
       });
-}
+};
 
 exports.deleteCrag = function(name, cb) {
   console.log('deleting crag ' + name);
@@ -109,7 +109,7 @@ exports.deleteCrag = function(name, cb) {
         if (err) return cb(err);
         return cb(null, res);
       });
-}
+};
 
 exports.deleteAscent = function(id, cb) {
   console.log('deleting ascent');
@@ -121,7 +121,7 @@ exports.deleteAscent = function(id, cb) {
         if (err) return cb(err);
         return cb(null, res);
       });
-}
+};
 
 
 exports.createAscent = function(name, type, grade, cragid, cb) {
@@ -140,13 +140,13 @@ exports.createAscent = function(name, type, grade, cragid, cb) {
         if (err) return cb(err);
         return cb(null, res);
     });
-}
+};
 
 // must be logged in
 exports.createPost = function(body, type, parent_id, cb) {
   var profile = {
     body: body
-  }
+  };
   if (typeof type !== 'function') {
     profile.type = type;
     profile.parent_id = parent_id;
@@ -161,14 +161,14 @@ exports.createPost = function(body, type, parent_id, cb) {
         if (err) return cb(err);
         return cb(null, res);
       });
-}
+};
 
 // must be logged in
 exports.createComment = function(body, type, parent_id, cb) {
   var profile = {
     body: body,
     parent_id: parent_id
-  }
+  };
   var req = request(url).post('/api/comments/' + type);
   req.cookies = cookies;
   req.send(profile)
@@ -177,7 +177,7 @@ exports.createComment = function(body, type, parent_id, cb) {
         if (err) return cb(err);
         return cb(null, res);
       });
-}
+};
 
 // must be logged in
 exports.getNotifications = function(cb) {
@@ -189,5 +189,5 @@ exports.getNotifications = function(cb) {
         if (err) return cb(err);
         return cb(null, res.body.notes);
       });
-}
+};
 

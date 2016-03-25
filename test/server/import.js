@@ -24,7 +24,7 @@ describe('Import8a', function() {
     });
   });
   it('8a get ticks for Daniel Woods', function(done) {
-    this.timeout(120000);
+    this.timeout(60000);
     lib8a.getTicks(lib8aUserId, function(err, res) {
       res.should.be.Array();
       var tick = _.find(res, function(r) {
