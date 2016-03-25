@@ -24,7 +24,7 @@ describe('Import8a', function() {
     });
   });
   it('8a get ticks for Daniel Woods', function(done) {
-    this.timeout(30000);
+    this.timeout(45000);
     lib8a.getTicks(lib8aUserId, function(err, res) {
       res.should.be.Array();
       var tick = _.find(res, function(r) {
@@ -61,7 +61,7 @@ describe('Import27crags', function() {
     });
   });
   it('27crags get ticks for Daniel Woods', function(done) {
-    this.timeout(30000);
+    this.timeout(45000);
     lib27.getTicks(lib27UserId, function(err, res) {
       res.should.be.Array();
       var tick = _.find(res, function(r) {
