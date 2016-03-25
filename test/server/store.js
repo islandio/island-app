@@ -507,7 +507,7 @@ describe('Store', function() {
       });
 
       it('checkout with valid token', function(done) {
-        this.timeout(30000);
+        this.timeout(60000);
         request(url)
             .post('/api/store/checkout')
             .send({
