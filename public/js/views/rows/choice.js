@@ -42,7 +42,7 @@ define([
       if (e) {
         e.preventDefault();
         if ($(e.target).hasClass('list-button') ||
-            $(e.target).hasClass('icon-pencil')) {
+            $(e.target).hasClass('icon-book-open')) {
           return false;
         }
       }
@@ -70,10 +70,11 @@ define([
     },
 
     log: function (e) {
-      if (this.model.get('_type') === 'crag')
+      if (this.model.get('_type') === 'crags') {
         mps.publish('session/new', [{crag_id: this.model.id}]);
-      else
+      } else {
         mps.publish('session/new', [{ascent_id: this.model.id}]);
+      }
     }
 
   });

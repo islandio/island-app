@@ -29,11 +29,20 @@ define([
 
     formatDescription: function () {
       var t = this.attributes;
-      var str = '<span class="crag-verb">added the crag</span> *';
-      var name = '<a href="/crags/' + t.key + '" class="title navigate">';
-      name += '<i class="icon-location"></i> ' + t.name + '</a>';
-      name += ' in <a href="/crags/' + t.key.substr(0,3) + '" class="title navigate">';
-      name += t.country + '</a>';
+      var str, name;
+      if (t.parent) {
+        str = '<span class="crag-verb">added the sector</span> *';
+        name = '<a href="/crags/' + t.key + '" class="title navigate">';
+        name += '<i class="icon-location"></i>' + t.name + '</a>';
+        name += ' in <a href="/crags/' + t.parent.key + '" class="title navigate">';
+        name += '<i class="icon-location"></i>' + t.parent.name + '</a>';
+      } else {
+        str = '<span class="crag-verb">added the crag</span> *';
+        name = '<a href="/crags/' + t.key + '" class="title navigate">';
+        name += '<i class="icon-location"></i>' + t.name + '</a>';
+        name += ' in <a href="/crags/' + t.key.substr(0,3) + '" class="title navigate">';
+        name += t.country + '</a>';
+      }
       str = str.replace('*', name);
       return str;
     },

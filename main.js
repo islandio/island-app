@@ -80,7 +80,7 @@ if (cluster.isMaster) {
   var collections = require('island-collections').collections;
   var Events = require('island-events').Events;
   var Emailer = require('island-emailer').Emailer;
-  var resources = require('./lib/resources.js').resources;
+  var resources = require('./lib/resources').resources;
   var Client = require('./lib/client').Client;
   var Stripe = require('stripe');
   var SendOwl = require('sendowl-node').SendOwl;

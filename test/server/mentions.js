@@ -8,7 +8,7 @@ var _ = require('underscore');
 var crag_id, ascent_id;
 var wait = function(err, time, cb) {
   setTimeout(function() { return cb(err); }, time);
-}
+};
 
 describe('Mentions', function() {
 
@@ -44,6 +44,7 @@ describe('Mentions', function() {
   });
 
   it('A mentions B in A’s stand-alone post', function(done) {
+    this.timeout(60000);
     Step(
       function() {
         common.login('testerA', this);
@@ -64,7 +65,7 @@ describe('Mentions', function() {
       },
       function(err, notes) {
         if (err) return done(err);
-        notes.items.length.should.equal(1)
+        notes.items.length.should.equal(1);
         notes.items[0].event.data.action.t.should.equal('mention');
         notes.items[0].event.data.target.b
             .should.equal('Hello \u0091@testerB\u0092');
@@ -241,7 +242,7 @@ describe('Mentions', function() {
       },
       function(err, notes) {
         if (err) return done(err);
-        notes.items[0].event.data.target.t.should.equal('ascent')
+        notes.items[0].event.data.target.t.should.equal('ascent');
         notes.items[0].event.data.target.n
             .should.equal('testAscent, testCrag, United States');
         done(err);

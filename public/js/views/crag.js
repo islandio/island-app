@@ -15,11 +15,13 @@ define([
   'views/lists/events',
   'views/lists/ascents',
   'views/lists/watchers',
+  'views/lists/sectors',
   'views/instafeed',
+  'views/ascent.new',
   'text!../../templates/confirm.html',
   'Skycons'
 ], function ($, _, Backbone, mps, rest, util, Crag, template, title,
-      Events, Ascents, Watchers, Instafeed, confirm) {
+      Events, Ascents, Watchers, Sectors, Instafeed, NewAscent, confirm) {
   return Backbone.View.extend({
 
     el: '.main',
@@ -63,6 +65,8 @@ define([
     },
 
     events: {
+      'click .add-ascent': 'addAscent',
+      'click .add-sector': 'addSector',
       'click .navigate': 'navigate',
       'change .settings-param': 'save',
       'click .demolish': 'demolish'
@@ -93,6 +97,7 @@ define([
 
       // Render lists.
       this.watchers = new Watchers(this.app, {parentView: this, reverse: true});
+      this.sectors = new Sectors(this.app, {parentView: this, reverse: true});
 
       // Render ascents.
       this.ascents = new Ascents(this.app).render({
@@ -263,6 +268,20 @@ define([
       }, this));
 
       return false;
+    },
+
+    addAscent: function (e) {
+      if (e) {
+        e.preventDefault();
+      }
+      new NewAscent(this.app, {crag_id: this.model.id}).render();
+    },
+
+    addSector: function (e) {
+      if (e) {
+        e.preventDefault();
+      }
+      mps.publish('map/add', [{parent_id: this.model.id}]);
     },
 
     demolish: function (e) {

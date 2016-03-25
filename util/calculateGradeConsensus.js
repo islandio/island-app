@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- *  update16.js: Add sent ticks to grad consensus
+ *  Re-calculate grade consensus.
  */
 
 // Arguments
@@ -23,33 +23,43 @@ var async = require('async');
 
 boots.start(function (client) {
 
-  var updateConsensus = function(grade, ascent, memberid, tickid, cb) {
-    if (typeof tick === 'function') {
-      cb = tick;
+  var updateConsensus = function(ascent, ticks, cb) {
+    var consensus = [];
+    if (ascent.grade) {
+      consensus.push({grade: ascent.grade});
     }
-    var consensus = ascent.consensus;
-    // Remove old grade suggestion
-    consensus = _.filter(consensus, function(c) {
-      if (!c.author_id) return true;
-      return (c.author_id.toString() !== memberid.toString());
-    });
-    consensus.push({
-      grade: grade,
-      author_id: memberid,
-      tick_id: tickid
+    _.each(ticks, function(t) {
+      if (t.grade) {
+        consensus.push({
+          grade: t.grade,
+          author_id: t.author_id,
+          tick_id: t._id
+        });
+      }
     });
     var newgrade = calculateGradeByConsensus(consensus);
 
     var update = {$set: {}};
     update.$set.consensus = consensus;
-    if (newgrade !== ascent.grade) {
+    if (newgrade && newgrade !== ascent.grade) {
       update.$set.grade = newgrade;
     }
     client.db.Ascents.update({_id: ascent._id}, update, cb);
   };
 
   var calculateGradeByConsensus = function(consensus) {
+    // If sent, don't include suggestions (ie, no tick_id)
+    if (_.some(consensus, function(c) { return !!c.tick_id; })) {
+      consensus = _.filter(consensus, function(c) { return !!c.tick_id; });
+    }
+
     var byGrade = _.countBy(consensus, 'grade');
+
+    // If grades exist other than -1 (Project), ignore Project grades
+    if (byGrade['-1'] && _.keys(byGrade).length > 1) {
+      delete byGrade['-1'];
+    }
+
     var maxGrade = _.max(byGrade);
     var consensusGrades = [];
     _.each(byGrade, function(v, k) {
@@ -57,37 +67,33 @@ boots.start(function (client) {
         consensusGrades.push(Number(k));
       }
     });
-    return (_.find(consensus, function(c) {
+    f = _.find(consensus, function(c) {
       return consensusGrades.indexOf(c.grade) !== -1;
-    })).grade;
+    });
+    return _.isUndefined(f) ? null : f.grade;
   };
 
   async.waterfall([
     function getTicks(cb) {
-      client.db.Ticks.list({sent: true, grade: {$exists: true}}, cb);
+      client.db.Ascents.list({}, cb);
     },
-    function addToConsensus(ticks, cb) {
-      console.log('Ok, got ticks');
+    function addToConsensus(ascents, cb) {
+      console.log('Ok, got ascents');
 
-      var queue = async.queue(function(task, cb) {
+      var queue = async.queue(function(ascent, cb) {
         var len = queue.length();
         if (len % 1000 === 0) {
           console.log(len + ' left');
         }
-        client.db.Ascents.read({_id: task.ascent_id}, function(err, ascent) {
-          updateConsensus(task.obj.grade, ascent, task.obj.author_id,
-              task.obj.tick_id, cb);
-
+        client.db.Ticks.list({ascent_id: ascent._id, sent: true}, function(err, ticks) {
+          updateConsensus(ascent, ticks, cb);
         });
       }, 20);
 
       queue.drain = cb;
 
-      _.each(ticks, function(t, idx) {
-        queue.push({
-          obj: {grade: t.grade, author_id: t.author_id, tick_id: t._id},
-          ascent_id: t.ascent_id
-        });
+      _.each(ascents, function(a) {
+        queue.push(a);
       });
 
     }

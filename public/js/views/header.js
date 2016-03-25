@@ -15,9 +15,9 @@ define([
   return Backbone.View.extend({
 
     el: '.header',
-    working: false,
 
     initialize: function (app) {
+      this.working = false;
       this.app = app;
       this.subscriptions = [];
     },

@@ -50,7 +50,7 @@ define([
       // a bit of a hack... we use the event page search wrapper to deal
       // with Z-indexing issues. In standalone comment pages, we use
       // a local wrapper
-      this.commentBody = this.$('textarea[name="body"]')
+      this.commentBody = this.$('textarea[name="body"]');
       this.commentSearch = $('.inline-search');
 
       if (!this.options.hangtenOnly) {
@@ -95,8 +95,8 @@ define([
     },
 
     keydown: function(e) {
-      var re = /\B@(\S*?)$/
-      var res = re.exec(this.commentBody.val())
+      var re = /\B@(\S*?)$/;
+      var res = re.exec(this.commentBody.val());
       if (res && this.choices && this.choices.count() !== 0) {
         if (!e.shiftKey && (e.keyCode === 13 || e.which === 13)) {
           this.choices.chooseExternal();
@@ -125,16 +125,16 @@ define([
 
     input: function(e) {
       // Test for @ pattern ending in the text area
-      var re = /\B@(\S*?)$/
-      var res = re.exec(this.commentBody.val())
+      var re = /\B@(\S*?)$/;
+      var res = re.exec(this.commentBody.val());
       if (res) {
         var caretCoord = window.getCaretCoordinates(this.commentBody[0], res.index);
-        var searchTop = (this.commentBody.offset().top
-            - this.commentSearch.parent().offset().top
-            + caretCoord.top + 20) + 'px';
-        var searchLeft = (this.commentBody.offset().left
-            - this.commentSearch.parent().offset().left
-            + caretCoord.left) + 'px';
+        var searchTop = (this.commentBody.offset().top -
+            this.commentSearch.parent().offset().top +
+            caretCoord.top + 20) + 'px';
+        var searchLeft = (this.commentBody.offset().left -
+            this.commentSearch.parent().offset().left +
+            caretCoord.left) + 'px';
         this.commentSearch.css({top: searchTop, left: searchLeft});
         this.commentSearch.show();
         this.choices.search(null, res[1]);
@@ -145,9 +145,9 @@ define([
     },
 
     choose: function(model) {
-      var username = model.get('username')
-      var re = /\B@(\S*?)$/
-      var res = re.exec(this.commentBody.val())
+      var username = model.get('username');
+      var re = /\B@(\S*?)$/;
+      var res = re.exec(this.commentBody.val());
       if (res) {
         var text = this.commentBody.val().substr(0, res.index);
         this.commentBody.val(text + '@' + username + ' ');

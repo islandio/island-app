@@ -6,7 +6,6 @@
 
 // Module Dependencies
 var redis = require('redis');
-var util = require('util');
 var Step = require('step');
 var _ = require('underscore');
 _.mixin(require('underscore.string'));
@@ -15,14 +14,15 @@ var Search = require('island-search').Search;
 var Events = require('island-events').Events;
 var collections = require('island-collections').collections;
 
-var config = require('./config.json');
-_.each(config, function (v, k) {
-  config[k] = process.env[k] || v;
+var app = require('./app').init();
+
+_.each(require('./config.json'), function (v, k) {
+  app.set(k, process.env[k] || v);
 });
 
 var error = exports.error = function (err) {
   if (!err) return;
-  util.error(err.stack || err);
+  console.error(err.stack || err);
   process.exit(1);
 };
 
@@ -31,18 +31,17 @@ exports.start = function (opts, cb) {
     cb = opts;
     opts = {};
   }
-  var props = {db: db};
 
   Step(
     function () {
-      new db.Connection(config.MONGO_URI, {ensureIndexes: opts.index},
+      new db.Connection(app.get('MONGO_URI'), {ensureIndexes: opts.index},
           this.parallel());
 
-      if (config.REDIS_PORT && config.REDIS_HOST_CACHE) {
-        props.cache = new Search({
-          redisHost: config.REDIS_HOST_CACHE,
-          redisPort: config.REDIS_PORT
-        }, this.parallel());
+      if (app.get('REDIS_PORT') && app.get('REDIS_HOST_CACHE')) {
+        app.set('search', new Search({
+          redisHost: app.get('REDIS_HOST_CACHE'),
+          redisPort: app.get('REDIS_PORT')
+        }, this.parallel()));
       }
     },
     function (err, connection) {
@@ -56,9 +55,10 @@ exports.start = function (opts, cb) {
     function (err) {
       error(err);
 
-      props.events = new Events({db: db});
+      app.set('db', db);
+      app.set('events', new Events({db: db}));
 
-      cb(props);
+      cb(app);
     }
   );
 };

@@ -1,0 +1,37 @@
+<div class="modal">
+  <span class="modal-title"><i class="icon-trash"></i> Delete climbs in <em><%= this.options.cragName %></em></span>
+  <form enctype="multipart/form-data" method="POST">
+    <div class="modal-body">
+      <div class="new-session-activities">
+        <div class="new-session-activity">
+          <div class="new-session-ticks">
+            <span class="modal-group-heading">Climbs that will be deleted:</span>
+            <ul class="list ascents-tools-list">
+              <% _.each(this.options.ascents, function (a, i) {
+                var back = i % 2 === 0 ? '#f2f2f2': '#f9f9f9'; %>
+                <li style="background:<%= back %>;" id="<%= a.id %>" data-cid="<%= a.crag_id %>">
+                  <% if (a.sector) { %>
+                    <span class="list-row-title"><%= a.name %> <span style="font-size:90%;">(<%= a.sector %>)</span></span>
+                  <% } else { %>
+                    <span class="list-row-title"><%= a.name %></span>
+                  <% } %>
+                  <a href="javascript:;" class="ascents-tools-list-remove">
+                    <i class="icon-cancel"></i>
+                  </a>
+                </li>
+              <% }); %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button tabindex="15" type="button" class="modal-cancel modal-button button">Close</button>
+      <button tabindex="16" type="button" class="modal-delete modal-button button">
+        <div class="button-spin"></div>
+        <i class="icon-trash"></i> <span>Delete 'em</span>
+      </button>
+      <div class="clear"></div>
+    </div>
+  </form>
+</div>

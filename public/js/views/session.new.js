@@ -17,8 +17,6 @@ define([
     Choices) {
   return Backbone.View.extend({
 
-    attachments: [],
-    mediaToDelete: [],
     className: 'new-session',
 
     initialize: function (app, options) {
@@ -27,6 +25,7 @@ define([
       this.subscriptions = [];
       this.on('rendered', this.setup, this);
       this.attachments = [];
+      this.mediaToDelete = [];
     },
 
     render: function () {
@@ -462,7 +461,16 @@ define([
 
         if (!this.options.tick) {
           this.tickChoices.clearChoice();
-          $('.post-previews li').remove();
+          this.$('.post-previews li').remove();
+          this.selectOption('time', 'hide');
+          this.selectOption('duration', 'hide');
+          this.selectOption('performance', 'hide');
+          this.selectOption('grade', 'hide');
+          this.selectOption('feel', 'hide');
+          this.selectOption('tries', 'hide');
+          this.selectOption('rating', 'hide');
+          this.selectOption('first', 'hide');
+          this.$('textarea[name="note"]').val('');
           this.validate();
         } else {
           this.destroy();

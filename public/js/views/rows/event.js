@@ -70,8 +70,6 @@ define([
     },
 
     setup: function () {
-
-      // For rendering tooltips
       this.$('.tooltip').tooltipster({delay: 300, multiple: true});
       Row.prototype.setup.call(this);
     },

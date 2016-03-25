@@ -32,27 +32,16 @@ define([
         this.sql = new cartodb.SQL({user: 'island', protocol: 'https'});
         this.map = new L.Map(this.$el.attr('id'), {
           center: [location.latitude, location.longitude],
-          zoom: 8,
-          minZoom: 8,
-          maxZoom: 8,
+          zoom: 16,
+          minZoom: 16,
+          maxZoom: 16,
           zoomControl: false
         });
 
         // Add a base tile layer.
-        // http://1.maps.nlp.nokia.com/maptile/2.1/maptile/newest/terrain.day/{LOD}/{X}/{Y}/256/png?app_code=INSERT_LICENCE_TOKEN_HERE&app_id=INSERT_APP_ID_HERE
-        L.tileLayer('https://{s}.maps.nlp.nokia.com/maptile/2.1/' +
-            'maptile/{mapID}/{variant}/{z}/{x}/{y}/256/png8?' +
-            'app_id={app_id}&app_code={app_code}', {
-          attribution:
-              'Map &copy; 1987-2014 <a href="http://developer.here.com">HERE</a>',
-          subdomains: '1234',
-          mapID: 'newest',
-          'app_id': 'PvVIz1964Y3C1MabyVqB',
-          'app_code': 'yuYSbxg5Z5b2c594mYfLtA',
-          base: 'base',
-          variant: 'terrain.day',
-          minZoom: 0,
-          maxZoom: 20
+        L.mapbox.accessToken = this.app.mapbox.accessToken;
+        L.tileLayer('https://api.mapbox.com/v4/mapbox.streets-satellite/{z}/{x}/{y}.png?access_token=' + L.mapbox.accessToken, {
+          attribution: '© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(this.map);
 
         // Create the data layer.

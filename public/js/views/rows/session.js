@@ -21,8 +21,6 @@ define([
       activityTemp, title, confirm, MiniMap, skycons) {
   return Backbone.View.extend({
 
-    ticks: [],
-
     attributes: function () {
       var attrs = {class: 'session'};
       if (this.model) {
@@ -42,6 +40,7 @@ define([
       this.template = _.template(template);
       this.activityTemp = _.template(activityTemp);
       this.subscriptions = [];
+      this.ticks = [];
 
       // Socket subscriptions
       _.bindAll(this, 'onRemoved', 'collect', '_remove');

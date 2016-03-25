@@ -1,9 +1,10 @@
 header.header
-  div.banner-side
-    a.closer(href="javascript:;")
-      i.icon-cancel
-    a.navigate(href="/bigpawproductions/968508692")
-      img(src="https://d3ulmsx02dkj2g.cloudfront.net/store/img/za/banners/bannertall.jpg", width="80", height="300")
+  - if (process.env.NODE_ENV === 'production')
+    div.banner-side
+      a.closer(href="javascript:;")
+        i.icon-cancel
+      a.navigate(href="/bigpawproductions/968508692")
+        img(src="https://d3ulmsx02dkj2g.cloudfront.net/store/img/za/banners/bannertall.jpg", width="80", height="300")
   .block-messages
     ul
   .header-inner
@@ -17,12 +18,14 @@ header.header
         .list-header
     ul.header-links
       li
-        a(class="navigate", href="/", alt="Log your climbing. Follow other athletes. Watch crags and climbs.") Home
+        a(class="navigate", href="/", alt="Track your progression as a climber. Follow other athletes. Watch your favorite areas and routes.") Home
         - if (typeof member !== 'undefined')
           div.header-menu
             ul
               li
-                a(class="navigate", href="/", alt="Log your climbing. Follow other athletes. Watch crags and climbs.") Activity
+                a(class="navigate", href="/", alt="Track your progression as a climber. Follow other athletes. Watch your favorite areas and routes.") Activity
+              li
+                a(class="navigate", href="/following", alt="Activity from the athletes you follow and the crags you watch.") Following
               li
                 a(class="navigate", href="/media", alt="Recently uploaded photos and videos.") Recent Media
               li

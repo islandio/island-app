@@ -1,3 +1,19 @@
+<span class="sidebar-heading">
+  Climbs <span class="sidebar-heading-cnt">(<%= this.count %>)</span>
+</span>
+
+<% if (this.app.profile.member) { %>
+  <% if (this.app.profile.member.role !== 2) { %>
+    <a href="javascript:;" class="button sidebar-button add-ascent">
+      Add Climb
+    </a>
+  <% } %>
+  <% if (this.app.profile.member.admin) { %>
+    <a href="javascript:;" class="ascents-edit">
+      <i class="icon-down-dir"></i>Configure
+    </a>
+  <% } %>
+<% } %>
 <div class="ascents-filter">
   <div class="subtabs">
     <ul>
@@ -12,6 +28,13 @@
   <div class="ascents-filter-input">
     <input class="filter-box" type="search" tabindex="2" placeholder="filter climbs..." />
   </div>
+  <% if (this.app.profile.member) { %>
+    <div class="ascents-tools">
+      <button class="button button-left ascent-tool-move disabled" disabled><i class="icon-location"></i> Move</button>
+      <button class="button button-middle ascent-tool-merge disabled" disabled><i class="icon-flow-merge"></i> Merge</button>
+      <button class="button button-right ascent-tool-delete disabled" disabled><i class="icon-trash"></i> Delete</button>
+    </div>
+  <% } %>
 </div>
 <% _.each(this.data.ascents, _.bind(function (ascents, t) {
   if (t !== 'b' && t !== 'r') return; %>
@@ -27,7 +50,10 @@
         <% _.each(buck, _.bind(function (a) {
           var back = i % 2 === 0 ? '#f2f2f2': '#f9f9f9'; %>
           <li style="background:<%= back %>;" id="<%= a.id %>" data-cid="<%= a.crag_id %>">
-            <a href="/crags/<%= a.key %>" class="navigate">
+            <% if (this.app.profile.member) { %>
+              <input class="ascent-select" type="checkbox" name="<%= a.id %>" data-type="<%= a.type %>" />
+            <% } %>
+            <a href="/crags/<%= a.key %>" class="ascent-name navigate">
               <% if (a.sector) { %>
                 <span class="list-row-title"><%= a.name %> <span style="font-size:90%;">(<%= a.sector %>)</span></span>
               <% } else { %>
@@ -37,8 +63,18 @@
             <% if (this.app.profile.member
                 && this.app.profile.member.username !== 'island'
                 && this.app.profile.member.role !== 2) { %>
-              <a href="javascript:;" class="list-button">
+              <input type="text" class="ascent-name-edit" data-original="<%= a.name %>" value="<%= a.name %>" />
+              <a href="javascript:;" class="list-button list-button-log" title="Log">
+                <i class="icon-book-open"></i>
+              </a>
+              <a href="javascript:;" class="list-button list-button-edit" title="Edit name">
                 <i class="icon-pencil"></i>
+              </a>
+              <a href="javascript:;" class="list-button list-button-ok" title="Okay">
+                <i class="icon-ok"></i>
+              </a>
+              <a href="javascript:;" class="list-button list-button-cancel" title="Cancel">
+                <i class="icon-cancel"></i>
               </a>
             <% } %>
           </li>

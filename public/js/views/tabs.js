@@ -19,12 +19,12 @@ define([
   return Backbone.View.extend({
 
     el: '.tabs',
-    working: false,
 
     initialize: function (app, params) {
       this.app = app;
       this.params = params || {};
       this.on('rendered', this.setup, this);
+      this.working = false;
       this.subscriptions = [
         mps.subscribe('ascent/add', _.bind(function (opts) {
           this.add(null, opts);

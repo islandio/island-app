@@ -10,8 +10,12 @@ define([
   'rest',
   'util',
   'views/session.new',
+  'views/ascents.move',
+  'views/ascents.merge',
+  'views/ascents.delete',
   'text!../../../templates/ascents.html',
-], function ($, _, Backbone, mps, rest, util, NewSession, template) {
+], function ($, _, Backbone, mps, rest, util, NewSession, Move, Merge, Delete,
+      template) {
   return Backbone.View.extend({
 
     el: '.crag-ascents',
@@ -30,7 +34,16 @@ define([
 
     events: {
       'click .navigate': 'navigate',
-      'click .list-button': 'log'
+      'click .list-button-log': 'log',
+      'click .list-button-edit': 'editAscentName',
+      'click .list-button-ok': 'submitAscentName',
+      'click .list-button-cancel': 'cancelAscentName',
+      'click .ascents-edit': 'toggleTools',
+      'change .ascent-select': 'checkToolsEnabled',
+      'click .ascent-tool-move': 'move',
+      'click .ascent-tool-merge': 'merge',
+      'click .ascent-tool-delete': 'delete',
+      'keydown input.ascent-name-edit': 'enterSubmitAscentName',
     },
 
     render: function (options) {
@@ -39,10 +52,13 @@ define([
 
         // Save ref to flattened lists for filtering and convert the grade
         this.flattened = {};
+        this.count = 0;
         var prefs = this.app.profile.member ?
             this.app.profile.member.prefs: this.app.prefs;
         _.each(this.data.ascents, _.bind(function (ascents, t) {
           this.flattened[t] = _.flatten(ascents);
+          this.count += this.flattened[t].length;
+
 
           // convert grades
           var a = {};
@@ -113,6 +129,7 @@ define([
       this.routesFilter = this.$('.r-filter').parent();
       this.boulders = this.$('.b-ascents');
       this.routes = this.$('.r-ascents');
+      this.tools = this.$('.ascents-tools');
 
       // Handle type changes.
       this.data.ascents.bcnt = this.data.ascents.bcnt || 0;
@@ -132,6 +149,23 @@ define([
 
       // Handle filtering.
       this.filterBox.bind('keyup search', _.bind(this.filter, this));
+
+      this.subscriptions.push(mps.subscribe('ascents/clearSelected',
+          _.bind(function () {
+        this.$('.ascent-select:checked').attr('checked', false);
+      }, this)));
+
+      this.subscriptions.push(mps.subscribe('ascents/removeSelected',
+          _.bind(function () {
+        this.$('.ascent-select:checked').closest('li').remove();
+        _.delay(_.bind(function () {
+          $('.crag-ascents ul.list').not(':has(li)').remove();
+        }, 50));
+      }, this)));
+
+      if (this.app.profile.member) {
+        this.toggleTools();
+      }
 
       return this;
     },
@@ -221,7 +255,128 @@ define([
       var aid = $(e.target).closest('li').attr('id');
       var cid = $(e.target).closest('li').data('cid');
       new NewSession(this.app, {crag_id: cid, ascent_id: aid}).render();
-    }
+    },
+
+    getSelected: function () {
+      var flattened = this.flattened;
+      return _.map(this.$('.ascent-select:checked'), function (a) {
+        a = $(a);
+        var id = a.attr('name');
+        var type = a.data('type');
+        return _.find(flattened[type], function (i) {
+          return i.id === id;
+        });
+      });
+    },
+
+    checkToolsEnabled: function() {
+      var selected = this.getSelected();
+
+      if (selected.length > 0) {
+        this.$('.ascent-tool-move, .ascent-tool-delete')
+            .attr('disabled', false).removeClass('disabled');
+      } else {
+        this.$('.ascent-tool-move, .ascent-tool-delete')
+            .attr('disabled', true).addClass('disabled');
+      }
+
+      if (selected.length > 1) {
+        this.$('.ascent-tool-merge').attr('disabled', false)
+            .removeClass('disabled');
+      } else {
+        this.$('.ascent-tool-merge').attr('disabled', true)
+            .addClass('disabled');
+      }
+    },
+
+    toggleTools: function (e) {
+      var el = $('a.ascents-edit');
+      if (this.tools.is(':visible')) {
+        this.tools.hide();
+        el.html('<i class="icon-right-dir"></i>Configure');
+        this.$('.ascent-select').hide();
+        this.$el.removeClass('editing');
+        this.$('li.editing').removeClass('editing');
+      } else {
+        this.tools.show();
+        this.$('.ascent-select').show();
+        el.html('<i class="icon-down-dir"></i>Configure');
+        this.$el.addClass('editing');
+      }
+    },
+
+    move: function (e) {
+      e.preventDefault();
+      new Move(this.app, {ascents: this.getSelected()}).render();
+    },
+
+    merge: function (e) {
+      e.preventDefault();
+      new Merge(this.app, {ascents: this.getSelected()}).render();
+    },
+
+    delete: function (e) {
+      e.preventDefault();
+      new Delete(this.app, {ascents: this.getSelected()}).render();
+    },
+
+    editAscentName: function (e) {
+      var li = $(e.target).closest('li');
+      var input = $('.ascent-name-edit', li);
+      input.val(input.data('original'));
+      li.addClass('editing');
+    },
+
+    enterSubmitAscentName: function(e) {
+      if (e.keyCode === 13 || e.which === 13) {
+        this.submitAscentName(e);
+        return false;
+      } else if (e.keyCode === 27 || e.which === 27) {
+        this.cancelAscentName(e);
+        return false;
+      }
+    },
+
+    submitAscentName: function (e) {
+      var li = $(e.target).closest('li');
+      var id = li.attr('id');
+      var display = $('.list-row-title', li);
+      var anc = $('.ascent-name', li);
+      var input = $('.ascent-name-edit', li);
+      var original = input.data('original');
+      var value = input.val();
+      var payload = {name: value};
+
+      rest.put('/api/ascents/' + id, payload, _.bind(function (err, data) {
+        if (err) {
+          if (err.type === 'LENGTH_INVALID') {
+            input.val(original);
+          }
+          mps.publish('flash/new', [{err: err, level: 'error'}]);
+          return false;
+        }
+
+        input.data('original', value);
+        display.text(value);
+        anc.attr('href', '/crags/' + data.key);
+        li.removeClass('editing');
+
+        // Show saved status.
+        mps.publish('flash/new', [{
+          message: 'Saved.',
+          level: 'alert',
+          type: 'popup'
+        }, true]);
+
+      }, this));
+
+      return false;
+    },
+
+    cancelAscentName: function (e) {
+      var li = $(e.target).closest('li');
+      li.removeClass('editing');
+    },
 
   });
 });

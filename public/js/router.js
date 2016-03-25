@@ -34,7 +34,7 @@ define([
   'views/store',
   'views/static',
   'views/crags',
-  'views/dashboard',
+  'views/activity',
   'views/splash',
   'views/ticks',
   'views/medias',
@@ -44,10 +44,10 @@ define([
   'views/session.new',
   'views/share'
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
-    Flashes, Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session, Tick,
-    Crag, Admin, ImportSearch, ImportInsert, Ascent, Settings, Reset, Store, Static,
-    Crags, Dashboard, Splash, Ticks, Medias, aboutTemp, privacyTemp, tipTemp, NewSession,
-    Share
+    Flashes, Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session,
+    Tick, Crag, Admin, ImportSearch, ImportInsert, Ascent, Settings, Reset,
+    Store, Static, Crags, Dashboard, Splash, Ticks, Medias, aboutTemp,
+    privacyTemp, tipTemp, NewSession, Share
 ) {
 
   /*
@@ -95,8 +95,10 @@ define([
       this.app = app;
 
       // Clear the hashtag that comes back from facebook.
-      if (window.location.hash !== '' || window.location.href.indexOf('#') !== -1) {
-        if (window.location.hash.length === 0 || window.location.hash === '#_=_') {
+      if (window.location.hash !== '' ||
+          window.location.href.indexOf('#') !== -1) {
+        if (window.location.hash.length === 0 ||
+            window.location.hash === '#_=_') {
           try {
             window.history.replaceState('', '', window.location.pathname +
                 window.location.search);
@@ -124,7 +126,8 @@ define([
       this.route('crags/:y/:g', 'crag', this.crag);
       this.route('crags/:y/:g/config', 'crag.config', this.cragConfig);
       this.route('crags/:y/:g/:t/:a', 'ascent', this.ascent);
-      this.route('crags/:y/:g/:t/:a/config', 'ascent.config', this.ascentConfig);
+      this.route('crags/:y/:g/:t/:a/config', 'ascent.config',
+          this.ascentConfig);
 
       this.route('blog/:p', 'blog', this.blog);
       this.route('blog/category/:c', 'blog', this.blog);
@@ -144,7 +147,8 @@ define([
       this.route('crags', 'crags', this.crags);
       this.route('signin', 'signin', this.signin);
       this.route('signup', 'signup', this.signup);
-      this.route('', 'dashboard', this.dashboard);
+      this.route('following', 'following', this.following);
+      this.route('', 'activity', this.activity);
       this.route('_blank', 'blank', function(){});
 
       // Save dom refs.
@@ -204,10 +208,18 @@ define([
           this.app.blog = false;
         }
 
-        if (!this.map && this.showMap) {
+        if (this.map) {
+          if (this.showMap) {
+            this.map.show();
+          } else {
+            this.map.hide();
+          }
+        } else if (!this.map && this.showMap) {
           this.map = new Map(this.app).render();
         }
-        if (!this.notifications && this.app.profile && this.app.profile.member) {
+
+        if (!this.notifications && this.app.profile &&
+            this.app.profile.member) {
           this.notifications = new Notifications(this.app, {reverse: true});
         }
         if (!this.footer) {
@@ -228,7 +240,8 @@ define([
 
       // Grab hash for comment.
       this.app.requestedCommentId = null;
-      if (window.location.hash !== '' || window.location.href.indexOf('#') !== -1) {
+      if (window.location.hash !== '' ||
+          window.location.href.indexOf('#') !== -1) {
         var tmp = window.location.hash.match(/#c=([a-z0-9]{24})/i);
         if (tmp) {
           this.app.requestedCommentId = tmp[1];
@@ -300,15 +313,15 @@ define([
       }
       $.fancybox(_.template(tipTemp)({
         message: '<span style="font-size:14px;">' +
-            '<ol>' +
-            '<li>Use the search bar at the top of the page to find people, crags, and climbs.</li>' +
-            '<li>Your activity feed shows climbing activity and posts from the crags and climbs you watch and the people you follow.</li>' +
-            '<li>Check out your sidebar for some suggested athletes to follow.</li>' +
-            '<li>The green "Log" button is your starting place for tracking your climbing.</li>' +
-            '<li>In addition to logging a completed climb as an "ascent", log attempts as "work".</li>' +
-            '<li>Don\'t want to broadcast your efforts to the entire world? Check out the privacy options in your profile <a class="alt" href="/settings" target="blank">settings</a>.</li>' +
-            '<li>Send us any questions or issues you have with the blue tab below or at <a class="alt" href="mailto:support@island.io">support@island.io</a>.</li>' +
-            '</ol>' +
+            '<ul>' +
+            '<li><span class="item-pre">1</span> Use the search bar at the top of the page to find people, crags, and climbs.</li>' +
+            '<li><span class="item-pre">2</span> Your feed shows activity from the crags and climbs you watch and the people you follow.</li>' +
+            '<li><span class="item-pre">3</span> Check out your sidebar for some suggested athletes to follow.</li>' +
+            '<li><span class="item-pre">4</span> The green "Log" buttons are your starting place for tracking your climbing.</li>' +
+            '<li><span class="item-pre">5</span> In addition to logging a completed climb as an "ascent", log attempts as "work".</li>' +
+            '<li><span class="item-pre">6</span> Don\'t want to broadcast to the entire world? Adjust the privacy options under your <a class="alt" href="/settings" target="blank">settings</a>.</li>' +
+            '<li><span class="item-pre">7</span> Send us any questions or issues you have with the blue tab below or at <a class="alt" href="mailto:support@island.io">support@island.io</a>.</li>' +
+            '</ul><br />' +
             '<span style="font-size:14px;"><strong>Do you use 8a.nu or 27crags?</strong>' +
             ' You can <a href="/import" target="blank" class="alt">import your scorecard</a> from your profile <a class="alt" href="/settings" target="blank">settings</a>.</span>',
         title: title
@@ -395,19 +408,49 @@ define([
 
     // Routes //
 
-    dashboard: function () {
+    activity: function () {
       this.start();
       $('.container').removeClass('narrow').removeClass('blog')
-          .addClass('landing');
+          .removeClass('sign');
       this.renderTabs();
-      var query = {actions: this.getEventActions()};
-      this.render('/service/dashboard', query, _.bind(function (err) {
+      var query = {
+        actions: this.getEventActions(),
+        public: true
+      };
+      this.render('/service/activity', query, _.bind(function (err) {
         if (err) return;
         if (this.app.profile.member) {
           this.clearContainer();
           this.page = new Dashboard(this.app).render();
           this.renderTabs({tabs: [
             {title: 'Activity', href: '/', active: true},
+            {title: 'Following', href: '/following'},
+            {title: 'Recent Media', href: '/media'},
+            {title: 'My Ascents', href: '/' + this.app.profile.member.username +
+                '/ascents'}
+          ], log: true});
+        } else {
+          $('.container').addClass('wide').addClass('landing');
+          this.page = new Splash(this.app).render();
+        }
+        this.stop();
+      }, this));
+    },
+
+    following: function () {
+      this.start();
+      $('.container').removeClass('narrow').removeClass('blog')
+          .removeClass('sign');
+      this.renderTabs();
+      var query = {actions: this.getEventActions()};
+      this.render('/service/activity', query, _.bind(function (err) {
+        if (err) return;
+        if (this.app.profile.member) {
+          this.clearContainer();
+          this.page = new Dashboard(this.app).render();
+          this.renderTabs({tabs: [
+            {title: 'Activity', href: '/'},
+            {title: 'Following', href: '/following', active: true},
             {title: 'Recent Media', href: '/media'},
             {title: 'My Ascents', href: '/' + this.app.profile.member.username +
                 '/ascents'}
@@ -430,6 +473,7 @@ define([
           this.header.highlight('/');
           this.renderTabs({tabs: [
             {title: 'Activity', href: '/'},
+            {title: 'Following', href: '/following'},
             {title: 'Recent Media', href: '/media', active: true},
             {title: 'My Ascents', href: '/' +
                 this.app.profile.member.username + '/ascents'}
@@ -457,6 +501,7 @@ define([
           this.header.highlight('/');
           this.renderTabs({tabs: [
             {title: 'Activity', href: '/'},
+            {title: 'Following', href: '/following'},
             {title: 'Recent Media', href: '/media'},
             {title: 'My Ascents', href: '/' + username + '/ascents',
                 active: true}

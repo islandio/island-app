@@ -15,11 +15,11 @@ define([
   return List.extend({
     
     el: '.hangtens',
-    working: false,
 
     initialize: function (app, options) {
+      this.working = false;
       this.template = _.template(template);
-      this.collection = new Collection;
+      this.collection = new Collection();
       this.type = options.type;
 
       // Call super init.
@@ -91,8 +91,8 @@ define([
 
     // Collect new data from socket events.
     collect: function (data) {
-      if (data.parent_id === this.parentView.parentView.model.id
-          && !this.collection.get(-1)) {
+      if (data.parent_id === this.parentView.parentView.model.id &&
+          !this.collection.get(-1)) {
         this.collection.push(data);
       }
     },

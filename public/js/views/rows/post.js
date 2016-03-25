@@ -169,7 +169,7 @@ define([
                   width: el.width().toString(),
                   height: el.height().toString(),
                   autostart: true,
-                  primary: 'flash',
+                  // primary: 'flash',
                   ga: {},
                   sharing: {
                     link: window.location.protocol + '//' +
@@ -239,7 +239,7 @@ define([
           width: el.width().toString(),
           height: el.height().toString(),
           autostart: false,
-          primary: 'flash',
+          // primary: 'flash',
           file: el.attr('src'),
           image: el.attr('poster'),
           ga: {}

@@ -9,12 +9,12 @@ define([
   'mps',
   'rest',
   'util',
-  'text!../../../templates/lists/watchers.html',
-  'views/rows/watcher'
+  'text!../../../templates/lists/sectors.html',
+  'views/rows/sector'
 ], function ($, _, List, mps, rest, util, template, Row) {
   return List.extend({
 
-    el: '.sidebar-watchers',
+    el: '.sidebar-sectors',
 
     initialize: function (app, options) {
       this.template = _.template(template);
@@ -23,14 +23,14 @@ define([
       List.prototype.initialize.call(this, app, options);
 
       _.bindAll(this, 'collect', '_remove');
-      this.app.rpc.socket.on('watch.new', this.collect);
-      this.app.rpc.socket.on('watch.removed', this._remove);
+      this.app.rpc.socket.on('sector.new', this.collect);
+      this.app.rpc.socket.on('sector.removed', this._remove);
 
-      if (!this.app.profile.content.watchers) {
+      if (!this.app.profile.content.sectors) {
         return;
       }
 
-      this.collection.reset(this.app.profile.content.watchers.items);
+      this.collection.reset(this.app.profile.content.sectors.items);
     },
 
     setup: function () {
@@ -44,13 +44,13 @@ define([
     events: {},
 
     destroy: function () {
-      this.app.rpc.socket.removeListener('watch.new', this.collect);
-      this.app.rpc.socket.removeListener('watch.removed', this._remove);
+      this.app.rpc.socket.removeListener('sector.new', this.collect);
+      this.app.rpc.socket.removeListener('sector.removed', this._remove);
       return List.prototype.destroy.call(this);
     },
 
     collect: function (data) {
-      if (data.subscribee.id === this.parentView.model.id) {
+      if (data.parent_id === this.parentView.model.id) {
         this.collection.unshift(data);
         this.updateCount();
       }

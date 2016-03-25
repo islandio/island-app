@@ -271,6 +271,12 @@
       "src": "entypo"
     },
     {
+      "uid": "51727ca007aa35ceabcaffc28934faee",
+      "css": "book-open",
+      "code": 59449,
+      "src": "entypo"
+    },
+    {
       "uid": "7f6916533c0842b6cec699fd773693d3",
       "css": "hourglass",
       "code": 59444,
@@ -304,6 +310,12 @@
       "uid": "5c49851100aa021825b346d16d7f3abf",
       "css": "temperatire",
       "code": 59431,
+      "src": "typicons"
+    },
+    {
+      "uid": "c1bea2b4c01d1d4bd1e4e1f79e51cdd2",
+      "css": "flow-merge",
+      "code": 59448,
       "src": "typicons"
     },
     {
