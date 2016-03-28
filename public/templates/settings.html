@@ -71,12 +71,12 @@
   <div class="settings">
     <table>
       <tbody>
-        <tr>
+        <tr class="settings-images">
           <td colspan="6">
             <h1 class="title-static" style="margin-top:0;">Banner Image</h1>
           </td>
         </tr>
-        <tr>
+        <tr class="settings-images">
           <td colspan="6" width="680" height="306" style="vertical-align:top;">
             <form class="settings-banner-form" enctype="multipart/form-data" method="POST">
               <input type="hidden" name="params"
@@ -102,7 +102,7 @@
             <h1 class="title-static">Profile</h1>
           </td>
         </tr>
-        <tr>
+        <tr class="settings-images">
           <td colspan="3">
             <table>
               <tbody>
@@ -274,12 +274,12 @@
                 value="<%= data.address.country %>" />
           </td>
         </tr>
-        <tr>
+        <tr class="settings-grade-pref">
           <td colspan="6">
             <h1 class="title-static">Preferences</h1>
           </td>
         </tr>
-        <tr>
+        <tr class="settings-grade-pref">
           <td colspan="2">
             <span class="settings-detail-txt">Bouldering grade system</span>
           </td>
@@ -290,7 +290,7 @@
             <span class="settings-detail-txt">Units</span>
           </td>
         </tr>
-        <tr>
+        <tr class="settings-grade-pref">
           <td colspan="2" style="padding-top: 5px;">
             <input tabindex="13" type="radio" name="prefs.grades.boulder"
                 value="hueco" id="prefs.grades.boulder.hueco" 
@@ -312,7 +312,7 @@
             <label for="prefs.units.si" style="vertical-align:-1px;">SI</label>
           </td>
         </tr>
-        <tr>
+        <tr class="settings-grade-pref">
           <td colspan="2" style="padding-top: 5px;">
             <input tabindex="16" type="radio" name="prefs.grades.boulder"
                 value="font" id="prefs.grades.boulder.font" 
@@ -335,7 +335,7 @@
           </td>
         </tr>
 
-        <tr>
+        <tr class="settings-grade-pref">
           <td colspan="2" style="padding-top: 5px;">
             
           </td>
@@ -352,7 +352,7 @@
           </td>
         </tr>
 
-        <tr>
+        <tr class="settings-grade-pref">
           <td colspan="2" style="padding-top: 5px;">
             
           </td>
@@ -464,36 +464,36 @@
             <label for="config.privacy.ticks.2" style="vertical-align:-1px;">Only me</label>
           </td>
         </tr>
-        <tr>
+        <tr class="settings-actions">
           <td colspan="6">
             <h1 class="title-static">Import Scorecard from sites like <a href="http://www.8a.nu">8a.nu</a> or <a href="http://www.27crags.com">27crags</a></h1>
           </td>
         </tr>
-        <tr>
+        <tr class="settings-actions">
           <td colspan="6">
             <a tabindex="31" class="button navigate" href="/import">
               <i class="icon-angle-right"></i> Import
             </a>
           </td>
         </tr>
-        <tr>
+        <tr class="settings-actions">
           <td colspan="6">
             <h1 class="title-static">Download My Data </h1>
           </td>
         </tr>
-        <tr>
+        <tr class="settings-actions">
           <td colspan="6">
             <a tabindex="32" class="button" href="/api/ticks?csv=true">
               Download <i class="icon-angle-down"></i>
             </a>
           </td>
         </tr>
-        <tr>
+        <tr class="settings-actions">
           <td colspan="6">
             <h1 class="title-static">Clear My Logs </h1>
           </td>
         </tr>
-        <tr>
+        <tr class="settings-actions">
           <td colspan="6">
             <a tabindex="33" class="button clear-ascents" href="javascript:;">
               Clear <i class="icon-angle-right"></i>
