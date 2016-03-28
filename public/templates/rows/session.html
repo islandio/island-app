@@ -68,7 +68,8 @@
         <img src="<%= this.model.get('author').avatar || gravatar %>" width="36" height="36" class="tooltip" />
       </span>
 
-      <%= this.model.formatAuthorFor(this.app.profile.member) %></a> logged 
+      <%= this.model.formatAuthorFor(this.app.profile.member) %></a>
+      <span class="log-verb"> logged </span/>
       <a href="/sessions/<%= this.model.get('key') %>" class="title navigate">climbing</a>.
     <a href="/crags/<%= this.model.get('crag').key %>" class="session-location title navigate">
       <i class="icon-location"></i> <%= this.model.get('crag').name %>, <%= this.model.get('crag').country %>

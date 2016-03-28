@@ -5364,8 +5364,12 @@ table.session-weather th {
   float: right;
 }
 .crag-verb,
-.ascent-verb {
+.ascent-verb,
+.log-verb,
+.action-verb {
   font-weight: bold;
+  font-size: 12px;
+  color: #404040;
 }
 .tick .session-tick-grade {
   margin-left: 5px;
@@ -6157,6 +6161,8 @@ p.habla_conversation_p_item,
   input[type="color"] {
     font-size: 16px;
   }
+  .select,
+  .new-session td.new-session-cell input,
   .settings td input[type=text],
   .settings td input[type=password] {
     font-size: 16px;
@@ -6275,6 +6281,9 @@ p.habla_conversation_p_item,
   .event-info,
   .event-divider {
     width: auto;
+  }
+  .event-title {
+    font-size: 12px;
   }
   .event-left {
     display: none;

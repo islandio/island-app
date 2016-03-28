@@ -19,7 +19,10 @@
       <span class="event-right-avatar">
         <img src="<%= this.model.get('author').avatar || gravatar %>" width="36" height="36" class="tooltip" />
       </span>
-      <%= this.model.formatAuthorFor(this.app.profile.member) %></a><%= this.model.explain() %>
+      <%= this.model.formatAuthorFor(this.app.profile.member) %>
+      <span class="action-verb">
+        <%= this.model.explain() %>
+      </span>
     </a>
 
   </div>
