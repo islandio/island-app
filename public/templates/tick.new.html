@@ -75,7 +75,7 @@ var tick = this.options.tick;
         <td colspan="6" class="new-session-cell" style="width: 100%;">
           <div class="new-session-search new-session-crag-search">
             <input id="new-session-crag" name="crag" type="text"
-                class="new-session-crag-search-input required" placeholder="Search existing crags or..."
+                class="new-session-crag-search-input required" placeholder="Search existing crags..."
                 autocomplete="off" tabindex="10" />
             <button type="button" class="button green-button input-add-button add-crag">Add new</button>
             <div class="search-choice">
@@ -91,10 +91,10 @@ var tick = this.options.tick;
         </td>
       </tr>
       <tr class="new-session-row-nopad">
-        <td colspan="4" class="new-session-cell" style="width: 75%;">
+        <td colspan="4" class="new-session-cell">
           <div class="new-session-search new-session-ascent-search">
             <input name="tick" type="text"
-                class="new-session-tick-search-input required" placeholder="Search existing climbs or..."
+                class="new-session-tick-search-input required" placeholder="Search existing climbs..."
                 autocomplete="off" tabindex="11" />
             <button type="button" class="button green-button input-add-button add-ascent">Add new</button>
             <div class="search-choice">
@@ -108,7 +108,7 @@ var tick = this.options.tick;
             </div>
           </div>
         </td>
-        <td colspan="2" class="new-session-cell checkbox-styled-wrap" style="width: 25%;">
+        <td colspan="2" class="new-session-cell checkbox-styled-wrap">
           <label class="checkbox-styled checkbox-styled-left">
             <input class="new-session-tried" type="checkbox" name="tried" value="tried" checked />
             <span>Work</span>
@@ -120,7 +120,7 @@ var tick = this.options.tick;
         </td>
       </tr>
       <tr class="new-session-row-nopad">
-        <td colspan="3" class="new-session-cell" style="width: 50%;">
+        <td colspan="3" class="new-session-cell">
           <select name="duration" style="max-height: 218px;">
             <option value="hide">-- Time spent --</option>
             <option value="30">30m</option>
@@ -173,7 +173,7 @@ var tick = this.options.tick;
             <option value="1440">24h</option>
           </select>
         </td>
-        <td colspan="3" class="new-session-cell" style="width: 50%;">
+        <td colspan="3" class="new-session-cell">
           <select name="performance">
             <option value="hide">-- Feel --</option>
             <option value="-1">Weak</option>
@@ -183,7 +183,7 @@ var tick = this.options.tick;
         </td>
       </tr>
       <tr class="new-session-tick-details">
-        <td class="new-session-cell" style="width: 20%;">
+        <td class="new-session-cell">
           <select name="grade" style="max-height: 218px;">
             <option value="hide">-- Grade --</option>
             <option value="0">3</option>
@@ -217,7 +217,7 @@ var tick = this.options.tick;
             <option value="28">9c+</option>
           </select>
         </td>
-        <td class="new-session-cell" style="width: 20%;">
+        <td class="new-session-cell">
           <select name="feel">
             <option value="hide">-- Feel --</option>
             <option value="0">Average</option>
@@ -225,7 +225,7 @@ var tick = this.options.tick;
             <option value="1">Hard</option>
           </select>
         </td>
-        <td class="new-session-cell" style="width: 20%;">
+        <td class="new-session-cell">
           <select name="tries">
             <option value="hide">-- Tries --</option>
             <option value="1">Onsight</option>
@@ -235,7 +235,7 @@ var tick = this.options.tick;
             <option value="5">> 3 tries</option>
           </select>
         </td>
-        <td class="new-session-cell" style="width: 20%;">
+        <td class="new-session-cell">
           <select name="rating">
             <option value="hide">-- Stars --</option>
             <option value="0">No stars</option>
@@ -244,7 +244,7 @@ var tick = this.options.tick;
             <option value="3">3 stars</option>
           </select>
         </td>
-        <td colspan="2" class="new-session-cell" style="width: 20%;">
+        <td colspan="2" class="new-session-cell">
           <select name="first">
             <option value="hide">-- Style --</option>
             <option value="0">Repeat</option>
@@ -261,13 +261,13 @@ var tick = this.options.tick;
       <tr class="new-session-row-nopad">
         <td colspan="6" class="new-session-cell">
           <div class="post-select">
-            Attach a video or photos by
+            Attach media by
             <% if (Modernizr.draganddrop) { %>
-              dragging &amp; dropping or 
-              <a class="post-file-chooser-dummy file-chooser-dummy important" href="javascript:;">selecting them</a>.
+              drag &amp; drop or 
+              <a class="post-file-chooser-dummy file-chooser-dummy important" href="javascript:;">selection</a>.
               <input class="post-file-chooser session-file-chooser file-chooser" type="file" name="post_file" multiple="multiple" />
             <% } else { %>
-              <a class="post-file-chooser-dummy file-chooser-dummy important" href="javascript:;">selecting them</a>.
+              <a class="post-file-chooser-dummy file-chooser-dummy important" href="javascript:;">selection</a>.
               <input class="post-file-chooser session-file-chooser file-chooser" type="file" name="post_file" multiple="multiple" style="left:78px;" />
             <% } %>
           </div>

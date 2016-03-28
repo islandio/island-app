@@ -20,6 +20,7 @@ define([
       this.working = false;
       this.app = app;
       this.subscriptions = [];
+      this.searchActive = false;
     },
 
     render: function (login) {
@@ -37,6 +38,8 @@ define([
       // Save refs.
       this.panel = $('.panel');
       this.wrap = $('.container');
+      this.panelButton = $('.header-inner .panel-button');
+      this.searchButton = $('.header-inner .search-button');
 
       this.delegateEvents();
       if (this.app.profile && this.app.profile.member) {
@@ -63,11 +66,11 @@ define([
         this.choices = new Choices(this.app, {
           reverse: true,
           el: '.header-search',
-          collapse: true,
+          collapse: !isMobile(),
           placeholder: 'Search for members, ascents and crags...',
           route: true,
           types: ['members', 'ascents', 'crags'],
-          log: true
+          log: !isMobile()
         });
       }
     },
@@ -77,7 +80,8 @@ define([
       'click .header-avatar': 'avatar',
       // 'click .header-add-crag-button': 'addCrag',
       // 'click .header-add-ascent-button': 'addAscent',
-      'click .globe-button': 'togglePanel',
+      'click .panel-button': 'togglePanel',
+      'click .search-button': 'search', // mobile-only
       'click .navigate': 'navigate',
       'click .header-tips': function () {
         mps.publish('modal/welcome/open', ['Tips', true]);
@@ -89,10 +93,12 @@ define([
       if (this.panel.hasClass('open')) {
         this.wrap.removeClass('panel-open');
         this.panel.removeClass('open');
+        this.panelButton.removeClass('active');
         store.set('notesOpen', false);
       } else {
         this.wrap.addClass('panel-open');
         this.panel.addClass('open');
+        this.panelButton.addClass('active');
         store.set('notesOpen', true);
       }
       _.delay(function () {
@@ -159,6 +165,29 @@ define([
         this.app.router.navigate(path, {trigger: true});
       }
     },
+
+    search: function() {
+      if (this.searchActive) {
+        $('.header-inner .header-search').hide();
+        $('.header-inner .logo').removeClass('search-hide');
+        $('.header-inner .divider-vertical').removeClass('search-hide');
+        $('.header-inner .panel-button').removeClass('search-hide');
+        $('.header-inner .header-avatar').removeClass('search-hide');
+        this.searchButton.removeClass('active');
+        this.searchActive = false;
+      } else {
+        if (this.panel.hasClass('open')) {
+          this.togglePanel();
+        }
+        $('.header-inner .logo').addClass('search-hide');
+        $('.header-inner .divider-vertical').addClass('search-hide');
+        $('.header-inner .header-avatar').addClass('search-hide');
+        $('.header-inner .panel-button').addClass('search-hide');
+        $('.header-inner .header-search').fadeIn('slow');
+        this.searchButton.addClass('active');
+        this.searchActive = true;
+      }
+    }
 
   });
 });

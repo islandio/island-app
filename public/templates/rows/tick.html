@@ -116,20 +116,7 @@
       <%= this.model.formatTime() %>
     </span>
   <% } %>
-  <span class="session-tick-grade">
-    <%= this.model.formatTickGrades(t.grade, t.feel, t.crag.country)
-        || this.model.formatTickGrades(t.ascent.grade, null, t.crag.country) %>
-  </span>
-  <% if (t.sent) { %>
-    <span class="session-tick-stars">
-      <% for (var i=0; i < t.rating||0; ++i) { %>
-        <i class="icon-star"></i>
-      <% } %>
-      <% for (var i=0; i < 3 - t.rating||0; ++i) { %>
-        <i class="icon-star empty"></i>
-      <% } %>
-    </span>
-  <% } %>
+
   <span class="session-tick-name">
     <% if (this.options.showAuthorName) { %>
       <a href="/<%= t.author.username %>" class="navigate">
@@ -153,6 +140,24 @@
       <% } %>
     <% } %>
   </span>
+  <span class="session-tick-grade">
+    <%= this.model.formatTickGrades(t.grade, t.feel, t.crag.country)
+        || this.model.formatTickGrades(t.ascent.grade, null, t.crag.country) %>
+  </span>
+  <% if (t.sent) { %>
+    <span class="session-tick-stars">
+      <% for (var i=0; i < t.rating||0; ++i) { %>
+        <i class="icon-star"></i>
+      <% } %>
+      <% for (var i=0; i < 3 - t.rating||0; ++i) { %>
+        <i class="icon-star empty"></i>
+      <% } %>
+    </span>
+    <span class="session-tick-style">
+      <%= this.model.formatTickDetails(t) %>
+    </span>
+
+  <% } %>
   <% if ((t.duration || t.performance || w) && !compact) { %>
     <span class="session-tick-detail">
       <% if (inlineWeather) { %>

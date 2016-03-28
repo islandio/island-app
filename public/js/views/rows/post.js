@@ -118,7 +118,15 @@ define([
       // Create a mosaic for each group.
       _.each(mosaics, _.bind(function (o) {
         var el = this.$('.image-mosaic[data-id="' + o.id + '"]');
-        util.createImageMosaic(o.images, el.width(), el.height(), _.bind(function (item) {
+        // if el is hidden, we don't know the width. Use the first parent
+        // that has a width
+        var w = el.width();
+        var nextParent = el;
+        while (w == 0) {
+          nextParent = nextParent.parent()
+          w = nextParent.width();
+        }
+        util.createImageMosaic(o.images, w, el.height(), _.bind(function (item) {
           var src = item.data.ssl_url || item.data.url;
           var anc = $('<a class="fancybox" data-type="' + o.type + '" rel="g-' + o.id +
               '" href="' + src + '">');

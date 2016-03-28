@@ -18,28 +18,37 @@
 %>
 
 <a href="javascript:;" class="button title-button sharing-button">
-    <i class="icon-export"></i> Share</a>
+  <i class="icon-export"></i>
+  <span class="tab-name"> Share</span>
+</a>
 <% if (this.app.profile.member) { %>
   <% if (sub && sub.subscribee_id === this.model.id) { %>
     <a href="javascript:;" class="button title-button unwatch-button"
         data-path="/api/sessions/<%= this.model.id %>/unwatch"
         data-_path="/api/sessions/<%= this.model.id %>/watch">
-      <i class="icon-eye-off"></i> Unwatch</a>
+      <i class="icon-eye-off"></i>
+      <span class="tab-name"> Unwatch</span>
+    </a>
   <% } else { %>
     <a href="javascript:;" class="button title-button watch-button"
         data-path="/api/sessions/<%= this.model.id %>/watch"
         data-_path="/api/sessions/<%= this.model.id %>/unwatch">
-      <i class="icon-eye"></i> Watch</a>
+      <i class="icon-eye"></i>
+      <span class="tab-name"> Watch</span>
+    </a>
   <% } %>
 <% } %>
-<a href="/crags/<%= this.model.get('crag').key %>" class="session-location title navigate">
-  <i class="icon-location"></i> <%= this.model.get('crag').name %>, <%= this.model.get('crag').country %>
-</a>
+<div class="page-title-fill"></div>
 <div class="page-title">
   <a href="/<%= this.model.get('author').username %>" class="image-anchor navigate">
     <img src="<%= this.model.get('author').avatar || gravatar %>" class="page-title-avatar" width="26" height="26" /></a>
   <a href="/<%= this.model.get('author').username %>" class="navigate">
     <%= this.model.get('author').displayName %></a> 
+  in
+  <a href="/crags/<%= this.model.get('crag').key %>" class="navigate">
+    <span><%= this.model.get('crag').name %>, <%= this.model.get('crag').country %>
+    </span>
+  </a>
   / <a href="/sessions/<%= this.model.get('key') %>" class="navigate">
   <span class="session-title"><%= this.model.formatName() %></span></a>
   <% if (daily && weatherURL) { %>

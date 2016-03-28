@@ -421,13 +421,13 @@ define([
         if (err) return;
         if (this.app.profile.member) {
           this.clearContainer();
-          this.page = new Dashboard(this.app).render();
+          this.page = new Dashboard(this.app, {}).render();
           this.renderTabs({tabs: [
-            {title: 'Activity', href: '/', active: true},
-            {title: 'Following', href: '/following'},
-            {title: 'Recent Media', href: '/media'},
-            {title: 'My Ascents', href: '/' + this.app.profile.member.username +
-                '/ascents'}
+            {title: 'Activity', icon: 'icon-globe', href: '/', active: true},
+            {title: 'Following', icon: 'icon-user', href: '/following'},
+            {title: 'Recent Media', icon: 'icon-picture', href: '/media'},
+            {title: 'My Ascents', icon: 'icon-award',
+                href: '/' + this.app.profile.member.username + '/ascents'}
           ], log: true});
         } else {
           $('.container').addClass('wide').addClass('landing');
@@ -447,13 +447,14 @@ define([
         if (err) return;
         if (this.app.profile.member) {
           this.clearContainer();
-          this.page = new Dashboard(this.app).render();
+          this.page = new Dashboard(this.app, {following: true}).render();
           this.renderTabs({tabs: [
-            {title: 'Activity', href: '/'},
-            {title: 'Following', href: '/following', active: true},
-            {title: 'Recent Media', href: '/media'},
-            {title: 'My Ascents', href: '/' + this.app.profile.member.username +
-                '/ascents'}
+            {title: 'Activity', icon: 'icon-globe', href: '/'},
+            {title: 'Following', icon: 'icon-user', href: '/following',
+                active: true},
+            {title: 'Recent Media', icon: 'icon-picture', href: '/media'},
+            {title: 'My Ascents', icon: 'icon-award',
+                href: '/' + this.app.profile.member.username + '/ascents'}
           ], log: true});
         } else {
           $('.container').addClass('wide').addClass('landing');
@@ -472,11 +473,12 @@ define([
         if (this.app.profile.member) {
           this.header.highlight('/');
           this.renderTabs({tabs: [
-            {title: 'Activity', href: '/'},
-            {title: 'Following', href: '/following'},
-            {title: 'Recent Media', href: '/media', active: true},
-            {title: 'My Ascents', href: '/' +
-                this.app.profile.member.username + '/ascents'}
+            {title: 'Activity', icon: 'icon-globe', href: '/'},
+            {title: 'Following', icon: 'icon-user', href: '/following'},
+            {title: 'Recent Media', icon: 'icon-picture', href: '/media',
+                active: true},
+            {title: 'My Ascents', icon: 'icon-award',
+                href: '/' + this.app.profile.member.username + '/ascents'}
           ], log: true});
         }
         _.defer(_.bind(function () {
@@ -500,10 +502,11 @@ define([
             this.app.profile.member.username === username) {
           this.header.highlight('/');
           this.renderTabs({tabs: [
-            {title: 'Activity', href: '/'},
-            {title: 'Following', href: '/following'},
-            {title: 'Recent Media', href: '/media'},
-            {title: 'My Ascents', href: '/' + username + '/ascents',
+            {title: 'Activity', icon: 'icon-globe', href: '/'},
+            {title: 'Following', icon: 'icon-user', href: '/following'},
+            {title: 'Recent Media', icon: 'icon-picture', href: '/media'},
+            {title: 'My Ascents', icon: 'icon-award',
+                href: '/' + this.app.profile.member.username + '/ascents',
                 active: true}
           ], log: true});
         }

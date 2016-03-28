@@ -23,7 +23,8 @@
         && this.app.profile.member.role !== 2) { %>
       <a href="javascript:;" class="button title-green-button log-session"
           data-cid="<%= this.model.id %>">
-        <i class="icon-book-open"></i> Log
+        <i class="icon-book-open"></i>
+        <span class="tab-name"> Log</span>
       </a>
     <% } %>
 
@@ -31,18 +32,25 @@
       <a href="javascript:;" class="button title-button unwatch-button"
           data-path="/api/crags/<%= this.model.id %>/unwatch"
           data-_path="/api/crags/<%= this.model.id %>/watch">
-        <i class="icon-eye-off"></i> Unwatch</a>
+        <i class="icon-eye-off"></i>
+        <span class="tab-name"> Unwatch</span>
+      </a>
     <% } else { %>
       <a href="javascript:;" class="button title-button watch-button"
           data-path="/api/crags/<%= this.model.id %>/watch"
           data-_path="/api/crags/<%= this.model.id %>/unwatch">
-        <i class="icon-eye"></i> Watch</a>
+        <i class="icon-eye"></i>
+        <span class="tab-name"> Watch</span>
+      </a>
     <% } %>
   <% } else { %>
     <a href="/crags/<%= data.key %>" class="button title-button navigate">
-        <i class="icon-angle-left"></i> Done</a>
+      <i class="icon-angle-left"></i>
+      <span class="tab-name"> Done</span>
+    </a>
   <% } %>
 <% } %>
+<div class="page-title-fill"></div>
 <div class="page-title">
   <img class="crag-flag" src="<%= __s %>/img/flags/<%= data.key.substr(0,3) %>.png" height="26" />
   <a href="/crags/<%= data.key.substr(0,3) %>" class="navigate"><%= data.country %></a> / 

@@ -6,14 +6,13 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
-  'Modernizr',
   'mps',
   'rest',
   'util',
   'Spin',
   'text!../../templates/popup.html',
   'text!../../templates/carto/crags.css'
-], function ($, _, Backbone, Modernizr, mps, rest, util, Spin, popup, css) {
+], function ($, _, Backbone, mps, rest, util, Spin, popup, css) {
   return Backbone.View.extend({
 
     el: '#map',
