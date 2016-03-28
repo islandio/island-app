@@ -208,6 +208,8 @@ define([
           this.app.blog = false;
         }
 
+        this.showMap = this.showMap & !isMobile()
+
         if (this.map) {
           if (this.showMap) {
             this.map.show();
