@@ -6365,6 +6365,9 @@ p.habla_conversation_p_item,
   .post {
     width: auto;
   }
+  .post.blog {
+    padding: 0px;
+  }
   .media {
     margin-left: 5px;
     margin-right: 5px;
