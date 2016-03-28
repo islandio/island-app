@@ -38,7 +38,6 @@ define([
       'click .list-button-edit': 'editAscentName',
       'click .list-button-ok': 'submitAscentName',
       'click .list-button-cancel': 'cancelAscentName',
-      'click .ascents-edit': 'toggleTools',
       'change .ascent-select': 'checkToolsEnabled',
       'click .ascent-tool-move': 'move',
       'click .ascent-tool-merge': 'merge',
@@ -131,6 +130,10 @@ define([
       this.routes = this.$('.r-ascents');
       this.tools = this.$('.ascents-tools');
 
+      if (this.app.profile.member && this.app.profile.member.admin) {
+        this.$el.addClass('editing');
+      }
+
       // Handle type changes.
       this.data.ascents.bcnt = this.data.ascents.bcnt || 0;
       this.data.ascents.rcnt = this.data.ascents.rcnt || 0;
@@ -146,6 +149,10 @@ define([
       this.checkCurrentCount();
       this.bouldersFilter.click(_.bind(this.changeType, this, 'b'));
       this.routesFilter.click(_.bind(this.changeType, this, 'r'));
+      this.handleListScroll();
+
+      this.offset = this.$el.offset().top;
+      $(window).bind('scroll', _.bind(this.handleScroll, this));
 
       // Handle filtering.
       this.filterBox.bind('keyup search', _.bind(this.filter, this));
@@ -162,10 +169,6 @@ define([
           $('.crag-ascents ul.list').not(':has(li)').remove();
         }, 50));
       }, this)));
-
-      if (this.app.profile.member) {
-        this.toggleTools();
-      }
 
       return this;
     },
@@ -221,11 +224,59 @@ define([
       this.$('.' + this.currentType + '-ascents').show();
       this.checkCurrentCount();
       this.filterBox.keyup();
+      this.handleListScroll();
+    },
+
+    handleScroll: function (e) {
+      var win = $(window);
+      var scrollTop = win.scrollTop();
+      if (this.offset - scrollTop - 30 <= 0) {
+        this.$el.addClass('sidebar-sticky');
+      } else {
+        this.$el.removeClass('sidebar-sticky');
+      }
+    },
+
+    handleListScroll: function () {
+      var win = $(window);
+      var list = this.$('.' + this.currentType + '-ascents');
+      var groups = this.$('.' + this.currentType + '-ascents ul.list');
+      list.scrollTop(0);
+
+      var height = _.bind(function (e) {
+        var winHeight = win.height();
+        list.height(winHeight - 306);
+      }, this);
+
+      var stickyTop = this.$('.ascents-tools').length > 0 ? 190: 148;
+      var scroll = _.bind(function (e) {
+        var scrollTop = list.scrollTop();
+        var listTop = list.offset().top;
+        groups.each(function (i) {
+          var group = $(this);
+          var diff = listTop - group.offset().top;
+          var rel = group.hasClass('sticky') ? -33: 0;
+          if (diff >= rel) {
+            group.addClass('sticky');
+            $('.list-group-heading', group).css('top', stickyTop);
+          } else {
+            group.removeClass('sticky');
+            $('.list-group-heading', group).css('top', 'initial');
+          }
+        });
+      }, this);
+
+      win.bind('resize', height);
+      height();
+
+      list.bind('scroll', scroll);
+      scroll();
     },
 
     filter: function () {
       var txt = this.filterBox.val().trim().toLowerCase();
       var ct = this.currentType;
+      this.$('.' + this.currentType + '-ascents').scrollTop(0);
       $('.' + ct + '-ascents .no-results').hide();
       if (txt === '') {
         $('.' + ct + '-ascents .list li').show();
@@ -286,22 +337,6 @@ define([
       } else {
         this.$('.ascent-tool-merge').attr('disabled', true)
             .addClass('disabled');
-      }
-    },
-
-    toggleTools: function (e) {
-      var el = $('a.ascents-edit');
-      if (this.tools.is(':visible')) {
-        this.tools.hide();
-        el.html('<i class="icon-right-dir"></i>Configure');
-        this.$('.ascent-select').hide();
-        this.$el.removeClass('editing');
-        this.$('li.editing').removeClass('editing');
-      } else {
-        this.tools.show();
-        this.$('.ascent-select').show();
-        el.html('<i class="icon-down-dir"></i>Configure');
-        this.$el.addClass('editing');
       }
     },
 
@@ -376,7 +411,7 @@ define([
     cancelAscentName: function (e) {
       var li = $(e.target).closest('li');
       li.removeClass('editing');
-    },
+    }
 
   });
 });
