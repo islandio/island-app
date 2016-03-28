@@ -6363,11 +6363,14 @@ p.habla_conversation_p_item,
     padding-right: 5px;
     max-width: 320px;
   }
+  .tick-media .image-mosaic,
+  .post-media .image-mosaic {
+    height: 160px;
+    width: auto;
+  }
   .event-right > .tick .image-mosaic,
   .single .post-media .image-mosaic,
   .single .tick-media .image-mosaic,
-  .post-media .image-mosaic,
-  .tick-media .image-mosaic,
   .media .image-mosaic,
   .media-instagram,
   .image-mosiac {

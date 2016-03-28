@@ -161,12 +161,13 @@ define([
         var el = this.$('.image-mosaic[data-id="' + o.id + '"]');
         // if el is hidden, we don't know the width. Use the first parent
         // that has a width
-        var w = el.width();
+        var w = el.css('width');
         var nextParent = el;
-        while (w == 0) {
+        while (parseInt(w) == 0 || w.indexOf('%') !== -1) {
           nextParent = nextParent.parent()
-          w = nextParent.width();
+          w = nextParent.css('width');
         }
+        w = parseInt(w);
         util.createImageMosaic(o.images, w, el.height(), _.bind(function (item) {
           var src = item.data.ssl_url || item.data.url;
           var anc = $('<a class="fancybox" data-type="' + o.type + '" rel="g-' + o.id +
