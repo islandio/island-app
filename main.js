@@ -216,6 +216,7 @@ if (cluster.isMaster) {
         });
         next();
       });
+      app.use(express.compress());
       app.use(express.bodyParser());
       app.use(app.get('cookieParser'));
       app.use(express.session({
