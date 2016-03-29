@@ -58,7 +58,6 @@ define([
           this.flattened[t] = _.flatten(ascents);
           this.count += this.flattened[t].length;
 
-
           // convert grades
           var a = {};
           var self = this;
@@ -81,6 +80,7 @@ define([
                 self.data.country, system);
           });
         }, this));
+        this.count = util.addCommas(this.count);
 
         this.$el.html(this.template.call(this));
 
@@ -198,12 +198,14 @@ define([
     checkCurrentCount: function () {
       var ticks = this.flattened[this.currentType] || [];
       if (ticks.length === 0) {
-        this.filterBox.hide();
         this.$('.' + this.currentType + '-ascents .empty-feed').show()
             .css('display', 'block');
+        this.$('.' + this.currentType + '-ascents').css('overflow-y',
+            'initial');
       } else {
-        this.filterBox.show();
         this.$('.' + this.currentType + '-ascents .empty-feed').hide();
+        this.$('.' + this.currentType + '-ascents').css('overflow-y',
+            'scroll');
       }
     },
 
@@ -245,10 +247,14 @@ define([
 
       var height = _.bind(function (e) {
         var winHeight = win.height();
-        list.height(winHeight - 306);
+        list.height('initial');
+        var maxHeight = winHeight - 306;
+        if (list.height() > maxHeight) {
+          list.height(maxHeight);
+        }
       }, this);
 
-      var stickyTop = this.$('.ascents-tools').length > 0 ? 190: 148;
+      var stickyTop = this.$('.ascents-tools').length > 0 ? 181: 139;
       var scroll = _.bind(function (e) {
         var scrollTop = list.scrollTop();
         var listTop = list.offset().top;
@@ -276,7 +282,12 @@ define([
     filter: function () {
       var txt = this.filterBox.val().trim().toLowerCase();
       var ct = this.currentType;
-      this.$('.' + this.currentType + '-ascents').scrollTop(0);
+      if (this.flattened[ct].length === 0) {
+        $('.' + ct + '-ascents .no-results').hide();
+        return false;
+      }
+      var list = this.$('.' + this.currentType + '-ascents');
+      list.scrollTop(0);
       $('.' + ct + '-ascents .no-results').hide();
       if (txt === '') {
         $('.' + ct + '-ascents .list li').show();
@@ -296,7 +307,13 @@ define([
         }
       });
       if (!y) {
-        $('.list-wrap .no-results').show();
+        $('.list-wrap .no-results').css('display', 'inline-block');
+      }
+      var winHeight = $(window).height();
+      list.height('initial');
+      var maxHeight = winHeight - 306;
+      if (list.height() > maxHeight) {
+        list.height(maxHeight);
       }
       return false;
     },
