@@ -8,11 +8,6 @@
       Add Climb
     </a>
   <% } %>
-  <% if (this.app.profile.member.admin) { %>
-    <a href="javascript:;" class="ascents-edit">
-      <i class="icon-down-dir"></i>Configure
-    </a>
-  <% } %>
 <% } %>
 <div class="ascents-filter">
   <div class="subtabs">
@@ -28,7 +23,7 @@
   <div class="ascents-filter-input">
     <input class="filter-box" type="search" tabindex="2" placeholder="filter climbs..." />
   </div>
-  <% if (this.app.profile.member) { %>
+  <% if (this.app.profile.member && this.app.profile.member.admin) { %>
     <div class="ascents-tools">
       <button class="button button-left ascent-tool-move disabled" disabled><i class="icon-location"></i> Move</button>
       <button class="button button-middle ascent-tool-merge disabled" disabled><i class="icon-flow-merge"></i> Merge</button>
@@ -50,7 +45,7 @@
         <% _.each(buck, _.bind(function (a) {
           var back = i % 2 === 0 ? '#f2f2f2': '#f9f9f9'; %>
           <li style="background:<%= back %>;" id="<%= a.id %>" data-cid="<%= a.crag_id %>">
-            <% if (this.app.profile.member) { %>
+            <% if (this.app.profile.member && this.app.profile.member.admin) { %>
               <input class="ascent-select" type="checkbox" name="<%= a.id %>" data-type="<%= a.type %>" />
             <% } %>
             <a href="/crags/<%= a.key %>" class="ascent-name navigate">
