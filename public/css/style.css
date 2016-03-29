@@ -6537,6 +6537,9 @@ p.habla_conversation_p_item,
   .blog .sidebar-heading-small {
     margin-top: 0px;
   }
+  .crag-ascents {
+    display: none;
+  }
 }
 @-moz-keyframes fadeIn {
   0% {
