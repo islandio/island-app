@@ -75,24 +75,28 @@
             <td>
               <label for="cragLatitude">Latitude</label>
             </td>
+          </tr>
+          <tr>
+            <td>
+              <input type="text" tabindex="13" id="cragLatitude" name="location.latitude"
+                  data-saved="<%= location.latitude %>" class="settings-param" placeholder="latitude"
+                  value="<%= location.latitude %>" />
+            </td>
+
+          </tr>
+          <tr>
             <td>
               <label for="cragLongitude">Longitude</label>
             </td>
           </tr>
           <tr>
             <td style="padding-bottom:20px;">
-              <input type="text" tabindex="13" id="cragLatitude" name="location.latitude"
-                  data-saved="<%= location.latitude %>" class="settings-param" placeholder="latitude"
-                  value="<%= location.latitude %>" />
-              <span class="settings-note">Click map to set a new location.</span>
-            </td>
-            <td style="padding-bottom:20px;">
               <input type="text" tabindex="14" id="cragLongitude" name="location.longitude"
                   data-saved="<%= location.longitude %>" class="settings-param" placeholder="longitude"
                   value="<%= location.longitude %>" />
+              <span class="settings-note">Click map to set a new location.</span>
             </td>
           </tr>
-
           <tr>
             <td colspan="2" style="padding-top:15px;">
               <a tabindex="15" href="javascript:;" class="demolish button signin-strategy-btn delete-btn">

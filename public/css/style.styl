@@ -6303,6 +6303,7 @@ p.habla_conversation_p_item,
 
   .header-search {
     display: none;
+    width: 73%; // Hack to get the search bar to expand
   }
 
   .header-inner .header-links{
@@ -6327,7 +6328,7 @@ p.habla_conversation_p_item,
     padding-top: 0;
     padding-right: 0;
     padding-left: 0;
-    margin-top: 40px;
+    margin-top: 10px;
     margin-left: 0px;
   }
 
@@ -6385,6 +6386,10 @@ p.habla_conversation_p_item,
     display: none
   }
 
+  .events-filter + .list-header + .empty-feed {
+    width: 100%
+  }
+
   .banner-side {
     display none
   }
@@ -6409,9 +6414,13 @@ p.habla_conversation_p_item,
     display: none;
   }
 
+  .sidebar-sectors,
+  .sidebar-watchers,
   .sidebar-watchees {
     display :none
   }
+
+
 
 
   .session.single ul.session-ticks,
@@ -6688,5 +6697,13 @@ p.habla_conversation_p_item,
 
   .crag-ascents {
     display: none
+  }
+
+  input.header-search-input {
+    width: 100%
+  }
+
+  .folder-title .page-title {
+    margin: 0 10px
   }
 }

@@ -41,6 +41,9 @@ define([
       items.sort(function (a, b) {
         return (new Date(b.date)).valueOf() - (new Date(a.date)).valueOf();
       });
+      if (isMobile) {
+        items = _.first(items, 3);
+      }
       this.collection.reset(items);
     },
 

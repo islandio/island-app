@@ -6232,6 +6232,7 @@ p.habla_conversation_p_item,
   }
   .header-search {
     display: none;
+    width: 73%;
   }
   .header-inner .header-links {
     display: none;
@@ -6252,7 +6253,7 @@ p.habla_conversation_p_item,
     padding-top: 0;
     padding-right: 0;
     padding-left: 0;
-    margin-top: 40px;
+    margin-top: 10px;
     margin-left: 0px;
   }
   .rightside.equal,
@@ -6299,6 +6300,9 @@ p.habla_conversation_p_item,
   .events-filter {
     display: none;
   }
+  .events-filter + .list-header + .empty-feed {
+    width: 100%;
+  }
   .banner-side {
     display: none;
   }
@@ -6316,6 +6320,8 @@ p.habla_conversation_p_item,
   .mini-map-wrap {
     display: none;
   }
+  .sidebar-sectors,
+  .sidebar-watchers,
   .sidebar-watchees {
     display: none;
   }
@@ -6539,6 +6545,12 @@ p.habla_conversation_p_item,
   }
   .crag-ascents {
     display: none;
+  }
+  input.header-search-input {
+    width: 100%;
+  }
+  .folder-title .page-title {
+    margin: 0 10px;
   }
 }
 @-moz-keyframes fadeIn {

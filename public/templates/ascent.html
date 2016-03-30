@@ -57,15 +57,19 @@
             <td>
               <label for="ascentName">Name</label>
             </td>
-            <td>
-              <label for="ascentSector">Sector</label>
-            </td>
           </tr>
           <tr>
             <td>
               <input type="text" tabindex="10" id="ascentName" name="name" data-saved="<%= data.name %>"
                   class="settings-param" placeholder="name" value="<%= data.name %>" />
             </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="ascentSector">Sector</label>
+            </td>
+          </tr>
+          <tr>
             <td>
               <input type="text" tabindex="10" id="ascentSector" name="sector"
                   class="settings-param" placeholder="sector" value="<%= data.sector %>" />
@@ -75,9 +79,6 @@
           <tr>
             <td>
               <label for="ascentGrade">Grade</label>
-            </td>
-            <td>
-              <label for="ascentRockType">Rock type</label>
             </td>
           </tr>
           <tr>
@@ -116,6 +117,13 @@
                 <option value="28">9c+</option>
               </select>
             </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="ascentRockType">Rock type</label>
+            </td>
+          </tr>
+          <tr>
             <td style="width:50%; padding-bottom:15px;">
               <select name="rock" class="required">
                 <option value="hide">-- Select --</option>
@@ -128,7 +136,6 @@
               </select>
             </td>
           </tr>
-
           <tr>
             <td colspan="2">
               <label for="ascentNote">Notes</label>
