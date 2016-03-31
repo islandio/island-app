@@ -185,6 +185,7 @@ define([
         $('.header-inner .panel-button').addClass('search-hide');
         $('.header-inner .header-search').fadeIn('slow');
         this.searchButton.addClass('active');
+        this.choices.input.focus();
         this.searchActive = true;
       }
     }
