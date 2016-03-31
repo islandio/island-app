@@ -128,9 +128,14 @@ define([
       this.rwidth = this.rSideWidth;
       this.mwidth = (this.$el.width() - this.margin.left - this.margin.right) -
           this.lwidth - this.rwidth;
+
       // responsive stuff
       if (this.mwidth < this.breakWidth || this.compact) {
         this.mwidth = 0;
+        this.lwidth = (this.$el.width() - this.margin.left - this.margin.right);
+        this.responsive = true;
+      } else {
+        this.responsive = false;
       }
 
       this.bheight = 40;
@@ -158,6 +163,11 @@ define([
       this.mbSvg = this.svg.append('g')
           .attr('class', 'mb-svg')
           .attr('transform', 'translate(' + (this.margin.left + this.lwidth) +
+              ',' + btop + ')');
+
+      this.lbSvg = this.svg.append('g')
+          .attr('class', 'lb-svg')
+          .attr('transform', 'translate(' + (this.margin.left) +
               ',' + btop + ')');
 
       // Scales
@@ -447,9 +457,12 @@ define([
         }
       };
 
-      var radioButtons = this.rtSvg.append('g')
+      var svgButtonParent = this.responsive ? this.lbSvg : this.rtSvg;
+      var svgButtonTransform = this.responsive ? '20, -40': '45, 0'
+
+      var radioButtons = svgButtonParent.append('g')
           .attr('class', 'svg-buttons')
-          .attr('transform', 'translate(45, 0)')
+          .attr('transform', 'translate(' + svgButtonTransform + ')')
           .selectAll('svg-button')
           .data(this.buttons)
           .enter()

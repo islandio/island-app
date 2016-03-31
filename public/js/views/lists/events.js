@@ -618,7 +618,10 @@ define([
     },
 
     unfocus: function (e) {
-      this.postBody.css({'min-height': 'inherit'}).blur();
+      if (!isMobile()) {
+        this.postBody.css({'min-height': 'inherit'})
+      }
+      this.postBody.blur();
       this.postParams.hide();
       this.postSelect.hide();
     },

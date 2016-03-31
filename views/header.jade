@@ -50,14 +50,17 @@ header.header
           - g = 'https://www.gravatar.com/avatar/' + member.gravatar + '?s=50&d=https%3A%2F%2Fs3.amazonaws.com%2Fisland.io%2Favatar_48.png'
           img(src="#{member.avatar || g}", width="50", height="50")
         div.divider-vertical
-        a.button.globe-button.header-action(href="javascript:;", title="Notifications")
-          i.icon-globe
+        a.button.panel-button.header-action(href="javascript:;", title="Notifications")
+          i.icon-folder
           span.count.note-count
         div.divider-vertical
-        a.button.header-action.navigate(href="/settings", title="Settings")
+        a.button.settings-button.header-action.navigate(href="/settings", title="Settings")
           i.icon-sliders
         div.divider-vertical
-        a.button.header-action(href="/logout", title="Sign out")
+        a.button.search-button.header-action(href="javascript:;", title="Search")
+          i.icon-search
+        div.divider-vertical
+        a.button.logout-button.header-action(href="/logout", title="Sign out")
           i.icon-logout
     - else
       a.button.signin-button.header-action.navigate(href="/signin", alt="Sign In. Forgot your password? Sign Up.")

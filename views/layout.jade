@@ -110,6 +110,7 @@ html(lang="en", itemscope, itemtype="http://schema.org/#{typeof schema === 'unde
     - else
       meta(name="author", content="Island")
     meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width,initial-scale=1.0")
 
     <!--[if lt IE 9]><script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
     link(rel="stylesheet", href="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/themes/css/cartodb.css")
@@ -142,10 +143,14 @@ html(lang="en", itemscope, itemtype="http://schema.org/#{typeof schema === 'unde
             w.className = w.className + ' panel-open';
           }
         }
+    script(src="/js/lib/modernizr/modernizr.src.js")
+    script.
+      var isMobile = function() { return Modernizr.mq('(max-width: 1148px)'); }
     script(type="text/javascript")
       if (window.store) {
         var mapClosed = store.get('mapClosed');
         var mapTall = store.get('mapTall');
+        if (isMobile()) { mapClosed = false; mapTall = false}
         var m = document.getElementById('map');
         var hs = document.getElementById('hide_show');
         var lm = document.getElementById('less_more');

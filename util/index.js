@@ -25,10 +25,10 @@ var queue = require('queue-async');
 
 var membersIndexed, postsIndexed, cragsIndexed, ascentsIndexed;
 
-var requestIndex = function(client, type, docs, keys, cb) {
+var requestIndex = function(search, type, docs, keys, cb) {
   if (docs.length === 0) return cb(null, 0);
   var q = queue(25);
-  var fcn = _.bind(client.cache.index, client.cache);
+  var fcn = _.bind(search.index, search);
   _.each(docs, function(d) {
     q.defer(fcn, type, d, keys);
   });
@@ -41,18 +41,20 @@ var requestIndex = function(client, type, docs, keys, cb) {
 };
 
 boots.start(function (client) {
+  var db = client.get('db');
+  var search = client.get('search');
 
   Step(
     function () {
       console.log('Indexing members');
 
       // Get all members.
-      client.db.Members.list({}, this.parallel());
-      client.cache.del('members-search', this.parallel());
+      db.Members.list({}, this.parallel());
+      search.del('members-search', this.parallel());
     },
     function (err, docs) {
       boots.error(err);
-      requestIndex(client, 'members', docs, ['username', 'displayName'], this);
+      requestIndex(search, 'members', docs, ['username', 'displayName'], this);
     },
     function (err, count) {
       boots.error(err);
@@ -60,12 +62,12 @@ boots.start(function (client) {
       console.log('Indexing crags');
 
       // Get all crags.
-      client.db.Crags.list({}, this.parallel());
-      client.cache.del('crags-search', this.parallel());
+      db.Crags.list({}, this.parallel());
+      search.del('crags-search', this.parallel());
     },
     function (err, docs) {
       boots.error(err);
-      requestIndex(client, 'crags', docs, ['name', 'country'], this);
+      requestIndex(search, 'crags', docs, ['name', 'country'], this);
     },
     function (err, count) {
       boots.error(err);
@@ -73,12 +75,12 @@ boots.start(function (client) {
       console.log('Indexing posts');
 
       // Get all posts.
-      client.db.Posts.list({}, this.parallel());
-      client.cache.del('posts-search', this.parallel());
+      db.Posts.list({}, this.parallel());
+      search.del('posts-search', this.parallel());
     },
     function (err, docs) {
       boots.error(err);
-      requestIndex(client, 'posts', docs, ['title'], this);
+      requestIndex(search, 'posts', docs, ['title'], this);
     },
     function (err, count) {
       boots.error(err);
@@ -86,12 +88,12 @@ boots.start(function (client) {
       console.log('Indexing ascents');
 
       // Get all ascents.
-      client.db.Ascents.list({}, this.parallel());
-      client.cache.del('ascents-search', this.parallel());
+      db.Ascents.list({}, this.parallel());
+      search.del('ascents-search', this.parallel());
     },
     function (err, docs) {
       boots.error(err);
-      requestIndex(client, 'ascents', docs, ['name'], this);
+      requestIndex(search, 'ascents', docs, ['name'], this);
     },
     function (err, count) {
       boots.error(err);

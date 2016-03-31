@@ -1,6 +1,9 @@
 <%
   var p = this.model.attributes;
   var mediaTypes = _.uniq(_.pluck(p.medias, 'type'));
+  var gravatar = this.model.get('author') ? ('https://www.gravatar.com/avatar/' +
+      this.model.get('author').gravatar + '?s=36&d=' +
+      encodeURIComponent(this.app.images.avatar)) : null;
 %>
 
 <% if (this.parentView) { %>
@@ -13,7 +16,15 @@
   <% } %>
   <div class="event-title">
     <a href="/<%= p.author.username %>" class="title navigate">
-      <%= this.model.formatAuthorFor(this.app.profile.member) %></a><%= this.model.explain() %>
+      <span class="event-right-avatar">
+        <img src="<%= this.model.get('author').avatar || gravatar %>" width="36" height="36" class="tooltip" />
+      </span>
+      <%= this.model.formatAuthorFor(this.app.profile.member) %>
+      <span class="action-verb">
+        <%= this.model.explain() %>
+      </span>
+    </a>
+
   </div>
   <% if (p.title) { %>
     <span class="event-timeline-dot"></span>
@@ -59,10 +70,10 @@
       <i class="icon-youtube-play"></i>
     </span>
     <% if (this.parentView) { %>
-      <iframe src="<%= v.link %>" width="561" height="316"
+      <iframe src="<%= v.link %>" width="100%" height="316"
           frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
     <% } else { %>
-      <iframe src="<%= v.link %>" width="1024" height="576"
+      <iframe src="<%= v.link %>" width="100%" height="576"
           frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
     <% } %>
   </div>
@@ -88,8 +99,7 @@
           <i class="icon-picture"></i>
         </span>
         <a href="<%= rm.link %>" class="image-anchor" target="_blank">
-          <img src="<%= img.url %>" class="post-instagram" width="561"
-              height="561" />
+          <img src="<%= img.url %>" class="post-instagram" />
         </a>
       <% } %>
     </div>
