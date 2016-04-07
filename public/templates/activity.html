@@ -1,9 +1,11 @@
 <div class="rightside">
   <div class="sidebar-items">
     <div class="sidebar-ticks">
+    <% if (!this.options.following) { %>
       <span class="sidebar-heading">Recent public ascents:</span>
       <div class="sidebar-ticks-r"></div>
       <div class="sidebar-ticks-b"></div>
+    <% } %>
     </div>
     <% if (this.app.profile.member.username !== 'island'
         && this.app.profile.member.role !== 2) { %>
@@ -14,9 +16,11 @@
         <div class="sidebar-ascents-b"></div>
       </div>
     <% } %>
-    <div class="sidebar-followers"></div>
-    <div class="sidebar-followees"></div>
-    <div class="sidebar-recs"></div>
+    <% if (this.options.following) { %>
+      <div class="sidebar-followers"></div>
+      <div class="sidebar-followees"></div>
+      <div class="sidebar-recs"></div>
+    <% } %>
   </div>
 </div>
 <div class="leftside">

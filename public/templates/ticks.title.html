@@ -21,32 +21,44 @@
 <% if (this.app.profile.member) { %>
   <% if (this.app.profile.member.id === data.author.id) { %>
     <a href="/settings" class="button title-button navigate">
-      <i class="icon-params"></i> Settings</a>
+      <i class="icon-params"></i>
+      <span class="tab-name"> Settings </span>
+    </a>
   <% } else { %>
     <% if (sub && sub.subscribee_id === data.author.id) { %>
       <% if (sub.meta.style === 'request') { %>
         <a href="javascript:;" class="button title-button disabled">
-          <i class="icon-user"></i> Requested</a>
+          <i class="icon-user"></i>
+          <span class="tab-name"> Requested</span>
+        </a>
       <% } else { %>
         <a href="javascript:;" class="button title-button unfollow-button"
             data-path="/api/members/<%= data.author.username %>/unfollow"
             data-_path="/api/members/<%= data.author.username %>/follow">
-          <i class="icon-user-delete"></i> Unfollow</a>
+          <i class="icon-user-delete"></i>
+          <span class="tab-name"> Unfollow</span>
+        </a>
       <% } %>
     <% } else { %>
       <a href="javascript:;" class="button title-button follow-button"
           data-path="/api/members/<%= data.author.username %>/follow"
           data-_path="/api/members/<%= data.author.username %>/unfollow">
-        <i class="icon-user-add"></i> Follow</a>
+        <i class="icon-user-add"></i>
+        <span class="tab-name"> Follow</span>
+      </a>
     <% } %>
     <% if (this.app.profile.member.admin) { %>
       <a href="javascript:;" data-member-id="<%= data.author.id %>" class="button title-button clean-button">
-          <i class="icon-flash"></i> Clean</a>
+        <i class="icon-flash"></i>
+        <span class="tab-name"> Clean</span>
+      </a>
     <% } %>
   <% } %>
 <% } %>
 <a href="/<%= data.author.username %>" class="button title-button navigate">
-    <i class="icon-angle-left"></i> Profile</a>
+    <i class="icon-angle-left"></i>
+    <span class="tab-name"> Profile</span>
+</a>
 <div class="page-title">
   <img src="<%= data.author.avatar || gravatar %>" class="page-title-avatar" width="26" height="26" />
   <a href="/<%= data.author.username %>" class="navigate">@<%= data.author.username %>

@@ -21,10 +21,11 @@ define([
 
     el: '.main',
 
-    initialize: function (app) {
+    initialize: function (app, options) {
       this.app = app;
       this.subscriptions = [];
       this.on('rendered', this.setup, this);
+      this.options = options;
     },
 
     render: function () {

@@ -35,7 +35,8 @@ define([
           zoom: 16,
           minZoom: 16,
           maxZoom: 16,
-          zoomControl: false
+          zoomControl: false,
+          scrollWheelZoom: false
         });
 
         // Add a base tile layer.

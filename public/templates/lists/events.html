@@ -25,43 +25,41 @@
                 placeholder="Say something... include Vimeo and YouTube links"></textarea>
 
 
-            <div class="post-select">
-              Attach a video or photos by
-              <% if (Modernizr.draganddrop) { %>
-                dragging &amp; dropping or 
-                <a class="post-file-chooser-dummy file-chooser-dummy important" href="javascript:;">selecting them</a>.
-                <input class="post-file-chooser file-chooser" type="file" name="post_file" multiple="multiple" />
-              <% } else { %>
-                <a class="post-file-chooser-dummy file-chooser-dummy important" href="javascript:;">selecting them</a>.
-                <input class="post-file-chooser file-chooser" type="file" name="post_file" multiple="multiple" style="left:78px;" />
-              <% } %>
+            <div class="post-select-wrap">
+              <div class="post-select">
+                Attach a video or photos by
+                <% if (Modernizr.draganddrop) { %>
+                  dragging &amp; dropping or 
+                  <a class="post-file-chooser-dummy file-chooser-dummy important" href="javascript:;">selecting them</a>.
+                  <input class="post-file-chooser file-chooser" type="file" name="post_file" multiple="multiple" />
+                <% } else { %>
+                  <a class="post-file-chooser-dummy file-chooser-dummy important" href="javascript:;">selecting them</a>.
+                  <input class="post-file-chooser file-chooser" type="file" name="post_file" multiple="multiple" style="left:78px;" />
+                <% } %>
+              </div>
             </div>
             <div class="post-files"></div>
           </div>
-          <table class="post-params">
-            <tr>
-              <td style="width:213px;">
-                <input type="text" name="title" placeholder="Title (optional)"
-                    tabindex="3" style="width:200px;" />
-              </td>
-              <% if (member.facebookId || member.twitterId) { %>
-                <td>
-                  <% if (member.facebookId) { %>
-                    <input id="facebook" name="facebook" type="checkbox" tabindex="4" />
-                    <label for="facebook">Facebook</label>
-                    &nbsp;&nbsp;
-                  <% } %>
-                  <% if (member.twitterId) { %>
-                    <input id="twitter" name="twitter" type="checkbox" tabindex="5" />
-                    <label for="twitter">Twitter</label>
-                  <% } %>
-                </td>
+          <div class="post-params">
+            <input type="text" name="title" placeholder="Title (optional)"
+                tabindex="3" style="width:200px;" />
+            <% if (member.facebookId || member.twitterId) { %>
+              <% if (member.facebookId) { %>
+                <div style="display:inline-block;">
+                  <input id="facebook" name="facebook" type="checkbox" tabindex="4" />
+                  <label for="facebook">Facebook</label>
+                </div>
+                &nbsp;&nbsp;
               <% } %>
-              <td class="last">
-                <input type="submit" class="post-button" value="Post" tabindex="6" />
-              </td>
-            </tr>
-          </table>
+              <% if (member.twitterId) { %>
+                <div style="display:inline-block;">
+                  <input id="twitter" name="twitter" type="checkbox" tabindex="5" />
+                  <label for="twitter">Twitter</label>
+                </div>
+              <% } %>
+            <% } %>
+            <input type="submit" class="post-button" value="Post" tabindex="6" />
+          </div>
           <input type="hidden" name="params"
               value='<%= JSON.stringify(this.app.profile.transloadit.media) %>' />
         </form>

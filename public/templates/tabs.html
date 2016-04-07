@@ -8,7 +8,8 @@
             this.app.profile.member.username !== 'island' &&
             this.app.profile.member.role !== 2) { %>
           <a href="javascript:;" class="button title-green-button log-session">
-            <i class="icon-book-open"></i> Log
+            <i class="icon-book-open"></i>
+            <span class="tab-name"> Log </span>
           </a>
         <% } %>
       <% } %>
@@ -23,7 +24,8 @@
       this.app.profile.member.username !== 'island' &&
       this.app.profile.member.role !== 2) { %>
     <a href="javascript:;" class="button title-green-button log-session">
-      <i class="icon-book-open"></i> Log
+      <i class="icon-book-open"></i>
+      <span class="tab-name"> Log </span>
     </a>
   <% } %>
   <ul>
@@ -34,7 +36,10 @@
       }
     %>
       <li class="<%= klass %>">
-        <a href="<%= tab.href %>" class="navigate"><%= tab.title %></a>
+        <a href="<%= tab.href %>" class="navigate">
+          <i class="<%= tab.icon %>"></i>
+          <span class="tab-name"> <%= tab.title %> </span>
+        </a>
       </li>
     <% }); %>
   </ul>

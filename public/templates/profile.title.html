@@ -22,32 +22,45 @@
   <% if (this.app.profile.member.id === data.id) { %>
     <% if (!settings) { %>
       <a href="/settings" class="button title-button navigate">
-        <i class="icon-sliders"></i> Settings</a>
+        <i class="icon-sliders"></i>
+        <span class="tab-name"> Settings </span>
+      </a>
     <% } else { %>
       <a href="/<%= data.username %>" class="button title-button navigate">
-        <i class="icon-angle-left"></i> Done</a>
+        <i class="icon-angle-left"></i>
+        <span class="tab-name"> Done </span>
+      </a>
     <% } %>
   <% } else { %>
     <% if (sub && sub.subscribee_id === data.id) { %>
       <% if (sub.meta.style === 'request') { %>
         <a href="javascript:;" class="button title-button disabled">
-          <i class="icon-user"></i> Requested</a>
+          <i class="icon-user"></i>
+          <span class="tab-name"> Requested</span>
+        </a>
       <% } else { %>
         <a href="javascript:;" class="button title-button unfollow-button"
             data-path="/api/members/<%= data.username %>/unfollow"
             data-_path="/api/members/<%= data.username %>/follow">
-          <i class="icon-user-delete"></i> Unfollow</a>
+          <i class="icon-user-delete"></i>
+          <span class="tab-name"> Unfollow</span>
+        </a>
       <% } %>
     <% } else { %>
       <a href="javascript:;" class="button title-button follow-button"
           data-path="/api/members/<%= data.username %>/follow"
           data-_path="/api/members/<%= data.username %>/unfollow">
-        <i class="icon-user-add"></i> Follow</a>
+        <i class="icon-user-add"></i>
+        <span class="tab-name"> Follow</span>
+      </a>
     <% } %>
   <% } %>
 <% } %>
 <a href="/<%= data.username %>/ascents" class="button title-button navigate">
-    <i class="icon-award"></i> Ascents</a>
+  <i class="icon-award"></i>
+  <span class="tab-name"> Ascents </span>
+</a>
+<div class="page-title-fill"></div>
 <div class="page-title">
   <img src="<%= data.avatar || gravatar %>" class="page-title-avatar" width="26" height="26" />
   <a href="/<%= data.username %>" class="navigate">@<%= data.username %>

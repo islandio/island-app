@@ -33,8 +33,9 @@
     .update-note
       span Click on the map to update the crag's location.
   .map-control
-    span#map_help.help Hold the <em>shift</em> key to zoom
-    div
+    .map-help-wrap
+      span#map_help.help Hold the <em>shift</em> key to zoom
+    .map-showhide
       a#hide_show.hide-show.button(href="javascript:;") Show map
       a#less_more.less-more.button.split-right(href="javascript:;", style="display:none;") More map
   .map-infobox

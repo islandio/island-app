@@ -56,6 +56,8 @@ define([
       this.input.bind('focus', _.bind(this.searchFocus, this));
       this.input.bind('keyup', _.bind(this.search, this));
       this.input.bind('keydown', _.bind(this.searchBlur, this));
+      // search event only used to handle clearing html5 search
+      this.input.bind('search', _.bind(this.handleClear, this));
       $(document).on('mouseup', _.bind(this.searchBlur, this));
 
       return List.prototype.setup.call(this);
@@ -310,6 +312,12 @@ define([
         }
       }
     },
+
+    handleClear: function(e) {
+      if (this.input.val() === '') {
+        this.hide();
+      }
+    }
 
   });
 });
