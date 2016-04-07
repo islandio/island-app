@@ -3,7 +3,7 @@
     "name": "M1 Island Brush",
     "title": "Island Classic Brush",
     "description": "Our version of the rock climbing toothbrush. Beech wood and boar's hair. Custom made in Bulgaria.",
-    "price": 750,
+    "price": 200,
     "images": [
       "https://d3ulmsx02dkj2g.cloudfront.net/store/img/m1-1.jpg",
       "https://d3ulmsx02dkj2g.cloudfront.net/store/img/m1-2.jpg",
@@ -17,14 +17,14 @@
   },
 
   "M1-Island-Case": {
-    "price": 75000
+    "price": 20000
   },
 
   "M3-Island-Brush": {
     "name": "M3 Island Brush",
     "title": "Island Scrub Brush",
     "description": "Palm-sized scrubber for those bigger holds. Beech wood and boar's hair. Custom made in Bulgaria.",
-    "price": 1250,
+    "price": 400,
     "images": [
       "https://d3ulmsx02dkj2g.cloudfront.net/store/img/m3-1.jpg",
       "https://d3ulmsx02dkj2g.cloudfront.net/store/img/m3-2.jpg",
@@ -38,14 +38,14 @@
   },
 
   "M3-Island-Case": {
-    "price": 31250
+    "price": 10000
   },
 
   "O12-Island-Cap-B": {
     "name": "O12 Island Cap B",
     "title": "Island Cap Black",
-    "description": "Black low-profile trucker with a white Island patch. 100% custom made.",
-    "price": 2800,
+    "description": "Black with a white Island patch. 100% custom made.",
+    "price": 1900,
     "images": [
       "https://d3ulmsx02dkj2g.cloudfront.net/store/img/O12B-1.jpg",
       "https://d3ulmsx02dkj2g.cloudfront.net/store/img/O12B-2.jpg",
@@ -61,8 +61,8 @@
   "O12-Island-Cap-G": {
     "name": "O12 Island Cap G",
     "title": "Island Cap Gray",
-    "description": "Gray and white low-profile trucker with a brown and green Island patch. 100% custom made.",
-    "price": 2800,
+    "description": "Gray and white with a brown and green Island patch. 100% custom made.",
+    "price": 1900,
     "images": [
       "https://d3ulmsx02dkj2g.cloudfront.net/store/img/O12G-1.jpg",
       "https://d3ulmsx02dkj2g.cloudfront.net/store/img/O12G-2.jpg",

@@ -135,7 +135,13 @@ define([
 
       var cart = store.get('cart') || {};
       var cnt = (cart[sku] || 0) + 1;
-      if (cnt > this.app.MAX_PRODUCT_QUANTITY_PER_ORDER) {
+      var totalCnt = cnt;
+      _.each(cart, function (v, k) {
+        if (sku !== k) {
+          totalCnt += v;
+        }
+      });
+      if (totalCnt > this.app.MAX_PRODUCT_QUANTITY_PER_ORDER) {
         return mps.publish('flash/new', [{
           message: 'Maximum quantity per order reached.',
           level: 'alert',
@@ -178,11 +184,21 @@ define([
 
       $('input[name$="-qnty"]').bind('change', _.bind(function (e) {
         var input = $(e.target);
-        var cnt = Math.min(parseInt(input.val(), 10),
-            this.app.MAX_PRODUCT_QUANTITY_PER_ORDER);
+        var cnt = parseInt(input.val(), 10);
         var sku = input.data('sku');
 
         var cart = store.get('cart') || {};
+
+        var totalCnt = cnt;
+        _.each(cart, function (v, k) {
+          if (sku !== k) {
+            totalCnt += v;
+          }
+        });
+        if (totalCnt > this.app.MAX_PRODUCT_QUANTITY_PER_ORDER) {
+          input.val(cart[sku]);
+          return;
+        }
         cart[sku] = cnt;
 
         store.set('cart', cart);
