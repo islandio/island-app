@@ -157,8 +157,7 @@
     var wasArray = grades instanceof Array;
     var self = this;
     grades = (wasArray ? grades : [grades]).map(function (g) {
-      return self.fromSystem === 'indexes' ? g :
-          (g.toLowerCase ? g.toLowerCase() : g);
+      return self.fromSystem === 'indexes' ? g : g.toLowerCase();
     });
 
     if (grades.length === 0 || grades[0] === 'project') {
@@ -272,7 +271,5 @@
   };
 
   return GradeConverter;
-
-
 
 }).call(this);
