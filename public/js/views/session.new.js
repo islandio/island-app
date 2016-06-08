@@ -42,7 +42,7 @@ define([
         closeEffect: 'fade',
         closeBtn: false,
         padding: 0,
-        minWidth: Math.min(680, $(window).width() * .9),
+        minWidth: Math.min(680, $(window).width() * 0.9),
         modal: true
       });
 

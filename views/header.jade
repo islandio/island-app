@@ -1,5 +1,5 @@
 header.header
-  - if (process.env.NODE_ENV === 'production')
+  - if (process.env.NODE_ENV === 'production' && false)
     div.banner-side
       a.closer(href="javascript:;")
         i.icon-cancel
@@ -51,7 +51,7 @@ header.header
           img(src="#{member.avatar || g}", width="50", height="50")
         div.divider-vertical
         a.button.panel-button.header-action(href="javascript:;", title="Notifications")
-          i.icon-folder
+          i.icon-bell-alt
           span.count.note-count
         div.divider-vertical
         a.button.settings-button.header-action.navigate(href="/settings", title="Settings")

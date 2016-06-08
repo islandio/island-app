@@ -1717,8 +1717,8 @@ span.tagline {
 .divider-vertical.pad-right {
   margin-right: 10px;
 }
-a.button.header-action,
-position relative {
+a.button.header-action {
+  position: relative;
   float: left;
   width: 40px;
   height: 45px;
@@ -2008,7 +2008,7 @@ span.count {
   position: absolute;
   left: 19px;
   top: 12px;
-  padding: 2px 3px;
+  padding: 3px 4px 2px;
   color: #fff;
   background: rgba(208,76,56,0.8);
   font-size: 8px;

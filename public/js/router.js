@@ -426,7 +426,7 @@ define([
           this.page = new Dashboard(this.app, {}).render();
           this.renderTabs({tabs: [
             {title: 'Activity', icon: 'icon-globe', href: '/', active: true},
-            {title: 'Following', icon: 'icon-user', href: '/following'},
+            {title: 'Following', icon: 'icon-users', href: '/following'},
             {title: 'Recent Media', icon: 'icon-picture', href: '/media'},
             {title: 'My Ascents', icon: 'icon-award',
                 href: '/' + this.app.profile.member.username + '/ascents'}
@@ -452,7 +452,7 @@ define([
           this.page = new Dashboard(this.app, {following: true}).render();
           this.renderTabs({tabs: [
             {title: 'Activity', icon: 'icon-globe', href: '/'},
-            {title: 'Following', icon: 'icon-user', href: '/following',
+            {title: 'Following', icon: 'icon-users', href: '/following',
                 active: true},
             {title: 'Recent Media', icon: 'icon-picture', href: '/media'},
             {title: 'My Ascents', icon: 'icon-award',
@@ -476,7 +476,7 @@ define([
           this.header.highlight('/');
           this.renderTabs({tabs: [
             {title: 'Activity', icon: 'icon-globe', href: '/'},
-            {title: 'Following', icon: 'icon-user', href: '/following'},
+            {title: 'Following', icon: 'icon-users', href: '/following'},
             {title: 'Recent Media', icon: 'icon-picture', href: '/media',
                 active: true},
             {title: 'My Ascents', icon: 'icon-award',
@@ -505,7 +505,7 @@ define([
           this.header.highlight('/');
           this.renderTabs({tabs: [
             {title: 'Activity', icon: 'icon-globe', href: '/'},
-            {title: 'Following', icon: 'icon-user', href: '/following'},
+            {title: 'Following', icon: 'icon-users', href: '/following'},
             {title: 'Recent Media', icon: 'icon-picture', href: '/media'},
             {title: 'My Ascents', icon: 'icon-award',
                 href: '/' + this.app.profile.member.username + '/ascents',

@@ -353,6 +353,18 @@
       "css": "params",
       "code": 59393,
       "src": "linecons"
+    },
+    {
+      "uid": "x8m4z7b33cv1h2s784tjlam56uq40wtd",
+      "css": "users",
+      "code": 59450,
+      "src": "typicons"
+    },
+    {
+      "uid": "671f29fa10dda08074a4c6a341bb4f39",
+      "css": "bell-alt",
+      "code": 59451,
+      "src": "fontawesome"
     }
   ]
 }

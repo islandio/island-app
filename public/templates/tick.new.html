@@ -262,7 +262,7 @@ var tick = this.options.tick;
         <td colspan="6" class="new-session-cell">
           <div class="post-select">
             Attach media by
-            <% if (Modernizr.draganddrop) { %>
+            <% if (!isMobile()) { %>
               drag &amp; drop or 
               <a class="post-file-chooser-dummy file-chooser-dummy important" href="javascript:;">selection</a>.
               <input class="post-file-chooser session-file-chooser file-chooser" type="file" name="post_file" multiple="multiple" />
