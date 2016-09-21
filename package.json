@@ -64,7 +64,7 @@
     "moment": "^2.6.0",
     "mongish": "^1.0.5",
     "mongodb": "^1.4.4",
-    "ngrok": "^0.1.97",
+    "ngrok": "^2.2.2",
     "optimist": "~0.5.0",
     "passport": "~0.1.17",
     "passport-facebook": "~1.0.1",

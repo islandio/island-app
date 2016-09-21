@@ -32,7 +32,6 @@ var rel = argv._[0];
 if (!_.endsWith(rel, '/')) rel += '/';
 
 // Module Dependencies
-var sys = require('sys');
 var fs = require('fs');
 var walk = require('walk');
 var knox = require('knox');
@@ -74,7 +73,7 @@ Step(
     fs.renameSync(rel + dir + '/min.js', rel + dir + '/js/min.js');
     fs.renameSync(rel + dir + '/store.min.js', rel + dir + '/js/store.min.js');
     wrench.rmdirSyncRecursive(rel + dir + '/templates');
-    
+
     var min = fs.readFileSync(rel + dir + '/js/min.js', 'utf8');
     var banner = '/*\n * ' + pack.name + ' v' + nv + '\n */\n';
     var vvar = 'var __s = "' + pack.builds.cloudfront + '/' + nv + '";';
