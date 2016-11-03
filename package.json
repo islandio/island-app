@@ -26,7 +26,7 @@
   },
   "domain": "www.island.io",
   "port": 8080,
-  "securePort": 443,
+  "securePort": 8443,
   "tunnel": {
     "subdomain": "island",
     "authtoken": "ndUsFsVgmCOiv9rJ/1s9"
