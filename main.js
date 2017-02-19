@@ -56,14 +56,23 @@ if (cluster.isMaster) {
 
   var http = require('http');
   var https = require('https');
-  var connect = require('connect');
+  // var connect = require('connect');
   var express = require('express');
+  var bodyParser = require('body-parser');
+  var cookieParser = require('cookie-parser');
+  var serveStatic = require('serve-static');
+  var favicon = require('serve-favicon');
+  var session = require('express-session');
+  var morgan = require('morgan');
+  var expressErrorhandler = require('errorhandler');
+  var methodOverride = require('method-override');
   var slashes = require('connect-slashes');
   var zmq = require('zmq');
   var socketio = require('socket.io');
   var redis = require('redis');
-  var RedisStore = require('connect-redis')(express);
-  var jade = require('jade');
+  var ioredis = require('socket.io-redis');
+  var RedisStore = require('connect-redis')(session);
+  var pug = require('pug');
   var stylus = require('stylus');
   var passport = require('passport');
   var psio = require('passport.socketio');
@@ -74,7 +83,6 @@ if (cluster.isMaster) {
   var iutil = require('island-util');
   var loggly = require('loggly');
   var _ = require('underscore');
-  _.mixin(require('underscore.string'));
   var db = require('mongish');
   var Search = require('island-search').Search;
   var collections = require('island-collections').collections;
@@ -199,12 +207,11 @@ if (cluster.isMaster) {
       app.set('errorHandler', errorHandler);
 
       app.set('views', __dirname + '/views');
-      app.set('view engine', 'jade');
-      app.set('sessionStore', new RedisStore({client: rc, maxAge: 2592000000}));
+      app.set('view engine', 'pug');
+      app.set('sessionStore', new RedisStore({client: rc, ttl: 60*60*24*30}));
       app.set('sessionSecret', 'weareisland');
-      app.set('sessionKey', 'express.sid');
-      app.set('cookieParser', express.cookieParser(app.get('sessionKey')));
-      app.use(express.logger('dev'));
+      app.set('cookieParser', cookieParser(app.get('sessionKey')));
+      app.use(morgan('dev'));
 
       // Get the raw body
       // http://stackoverflow.com/questions/18710225/node-js-get-raw-request-body-using-express
@@ -216,33 +223,37 @@ if (cluster.isMaster) {
         });
         next();
       });
-      app.use(express.bodyParser());
+      app.use(bodyParser.json());
+      app.use(bodyParser.urlencoded({ extended: true }));
       app.use(app.get('cookieParser'));
-      app.use(express.session({
+      app.use(session({
         store: app.get('sessionStore'),
         secret: app.get('sessionSecret'),
-        key: app.get('sessionKey')
+        resave: true,
+        saveUninitialized: false,
+        cookie: {
+          maxAge: 60*60*24*30*1000,
+          secure: process.env.NODE_ENV === 'production'
+        }
       }));
       app.use(passport.initialize());
       app.use(passport.session());
-      app.use(express.methodOverride());
+      app.use(methodOverride());
 
       // Development only
       if (process.env.NODE_ENV !== 'production') {
-        app.use(express.favicon(__dirname + '/public/img/favicon.ico'));
-        app.use(stylus.middleware({src: __dirname + '/public'}));
-        app.use(express.static(__dirname + '/public'));
+        app.use(favicon(__dirname + '/public/img/favicon.ico'));
+        app.use(stylus.middleware(__dirname + '/public'));
+        app.use(serveStatic(__dirname + '/public'));
         app.use(slashes(false));
-        app.use(app.router);
-        app.use(express.errorHandler({dumpExceptions: true, showStack: true}));
+        app.use(expressErrorhandler({dumpExceptions: true, showStack: true}));
       }
 
       // Production only
       else {
-        app.use(express.favicon(app.get('ROOT_URI') + '/img/favicon.ico'));
-        app.use(express.static(__dirname + '/public', {maxAge: 31557600000}));
+        app.use(favicon(app.get('ROOT_URI') + '/img/favicon.ico'));
+        app.use(serveStatic(__dirname + '/public', {maxAge: 60*60*24*30*1000}));
         app.use(slashes(false));
-        app.use(app.router);
         app.use(function (err, req, res, next) {
           if (!err) return next();
           console.error('Returning code 500', err);
@@ -376,48 +387,58 @@ if (cluster.isMaster) {
               _server = http.createServer(app);
             }
 
-            var sio = socketio.listen(server, {log: false,
-                secure: process.env.NODE_ENV === 'production'});
-            sio.set('store', new socketio.RedisStore({
-              redis: redis,
-              redisPub: rp,
-              redisSub: rs,
-              redisClient: rc
-            }));
+            // var sio = socketio(server, {
+            //   log: false,
+            //   secure: process.env.NODE_ENV === 'production'
+            // });
+            var sio = socketio(server);
+            // sio.adapter(ioredis({
+            //   // redis: redis,
+            //   redisPub: rp,
+            //   redisSub: rs,
+            //   redisClient: rc
+            // }));
 
             if (process.env.NODE_ENV !== 'production') {
-              sio.set('log level', 2);
+              // sio.set('log level', 2);
             } else {
               sio.enable('browser client minification');
               sio.enable('browser client etag');
               sio.enable('browser client gzip');
-              sio.set('log level', 1);
-              sio.set('transports', [
-                'websocket',
-                'flashsocket',
-                'htmlfile',
-                'xhr-polling',
-                'jsonp-polling'
-              ]);
+              // sio.set('log level', 1);
+              // sio.set('transports', [
+              //   'websocket',
+              //   'flashsocket',
+              //   'htmlfile',
+              //   'xhr-polling',
+              //   'jsonp-polling'
+              // ]);
             }
 
-            sio.set('authorization', psio.authorize({
-              cookieParser: express.cookieParser,
-              key: app.get('sessionKey'),
-              secret: app.get('sessionSecret'),
-              store: app.get('sessionStore'),
-              fail: function(data, accept) { accept(null, true); },
-              success: function(data, accept) { accept(null, true); }
-            }));
+            // sio.use(psio.authorize({
+            //   cookieParser: cookieParser,
+            //   key: 'express.sid',
+            //   secret: app.get('sessionSecret'),
+            //   store: app.get('sessionStore'),
+            //   fail: function(data, message, error, accept) {
+            //     // console.log(arguments, 'fail')
+            //     accept(null, true);
+            //   },
+            //   success: function(data, accept) {
+            //     // console.log(arguments, 'success')
+            //     accept(null, true);
+            //   }
+            // }));
 
-            sio.sockets.on('connection', function (webSock) {
-
-              // Back-end socket for talking to other Island services
-              var backSock = zmq.socket('sub');
-              backSock.connect(app.get('SUB_SOCKET_PORT'));
-
-              webSock.client = new Client(webSock, backSock);
-            });
+            // sio.sockets.on('connection', function (webSock) {
+            //   console.log('connection!')
+            //
+            //   // Back-end socket for talking to other Island services
+            //   var backSock = zmq.socket('sub');
+            //   backSock.connect(app.get('SUB_SOCKET_PORT'));
+            //
+            //   webSock.client = new Client(webSock, backSock);
+            // });
 
             if (process.env.NODE_ENV !== 'production') {
               server.listen(app.get('PORT'));
