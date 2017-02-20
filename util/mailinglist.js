@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 var _ = require('underscore');
-_.mixin(require('underscore.string'));
 var Step = require('step');
 var boots = require('../boots');
 var async = require('async');

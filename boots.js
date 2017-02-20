@@ -8,7 +8,6 @@
 var redis = require('redis');
 var Step = require('step');
 var _ = require('underscore');
-_.mixin(require('underscore.string'));
 var db = require('mongish');
 var Search = require('island-search').Search;
 var Events = require('island-events').Events;

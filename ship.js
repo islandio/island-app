@@ -9,7 +9,7 @@ var optimist = require('optimist');
 var util = require('util');
 var clc = require('cli-color');
 var _ = require('underscore');
-_.mixin(require('underscore.string'));
+var _s = require('underscore.string');
 var argv = optimist
     .usage('Build and deploy app.\nUsage: $0')
     .describe('help', 'Get help')
@@ -29,7 +29,7 @@ if (argv.help) {
 }
 
 var rel = argv._[0];
-if (!_.endsWith(rel, '/')) rel += '/';
+if (!_s.endsWith(rel, '/')) rel += '/';
 
 // Module Dependencies
 var fs = require('fs');
@@ -44,8 +44,8 @@ var boots = require(rel + 'boots');
 // Build vars.
 var dir = 'build';
 var pack = require('./package.json');
-var bv = _.strLeftBack(pack.version, '.');
-var lv = parseInt(_.strRightBack(pack.version, '.'), 10) + 1;
+var bv = _s.strLeftBack(pack.version, '.');
+var lv = parseInt(_s.strRightBack(pack.version, '.'), 10) + 1;
 var nv = bv + '.' + String(lv);
 
 // AWS credentials.
@@ -94,7 +94,7 @@ Step(
       if (file.name === '.DS_Store') return next();
 
       // Build the path for S3.
-      var path = _.strRight(root, rel + dir + '/');
+      var path = _s.strRight(root, rel + dir + '/');
       path = path === root ? nv: nv + '/' + path;
       var key = path + '/' + file.name;
 

@@ -19,7 +19,6 @@ if (argv._.length || argv.help) {
 var util = require('util');
 var Step = require('step');
 var _ = require('underscore');
-_.mixin(require('underscore.string'));
 var boots = require('../boots');
 var queue = require('queue-async');
 

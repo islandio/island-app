@@ -47,7 +47,6 @@ define([
       }, this));
 
       // Finally, emit the event.
-      // console.log(args)
       this.socket.emit.apply(this.socket, args);
     }
 
