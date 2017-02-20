@@ -13,9 +13,10 @@ define([
     init: function () {
 
       // Attach a socket connection.
-      console.log(window.location.origin);
-      this.socket = io(window.location.origin);
-      console.log(this.socket)
+      this.socket = io(window.location.origin, {
+        transports: ['websocket'],
+        upgrade: false
+      });
 
       return this;
     },
@@ -24,11 +25,12 @@ define([
 
       // Check arguments.
       var args = Array.prototype.slice.call(arguments);
-      console.log(args)
-      if (args.length === 0)
+      if (args.length === 0) {
         return console.error('Missing method name');
-      if (args.length < 2 || typeof _.last(args) !== 'function')
+      }
+      if (args.length < 2 || typeof _.last(args) !== 'function') {
         return console.error('Missing callback');
+      }
 
       // Parse arguments.
       var cb = args.pop();
@@ -45,6 +47,7 @@ define([
       }, this));
 
       // Finally, emit the event.
+      // console.log(args)
       this.socket.emit.apply(this.socket, args);
     }
 

@@ -8,7 +8,7 @@ var _package_ = require('./package.json');
 var cluster = require('cluster');
 var util = require('util');
 var cpus = require('os').cpus().length;
-var ngrok = require('ngrok');
+var localtunnel = require('localtunnel');
 var optimist = require('optimist');
 var argv = optimist
     .describe('help', 'Get help')
@@ -38,11 +38,13 @@ if (cluster.isMaster) {
   // Setup an outside tunnel to our localhost in development.
   // We will pass this to the workers.
   if (process.env.NODE_ENV !== 'production' && argv.tunnel) {
-    var tunnel = _package_.tunnel;
-    tunnel.port = _package_.port;
-    ngrok.connect(tunnel, function (err, url) {
-      util.log('Setting up tunnel from this machine to ' + url);
-      createWorkers({tunnelURL: url});
+    localtunnel(_package_.port, {subdomain: _package_.tunnel.subdomain}, function(err, tunnel) {
+      if (err) {
+        console.error(err);
+      } else {
+        util.log('Setting up tunnel from this machine to ' + tunnel.url);
+      }
+      createWorkers({tunnelURL: tunnel.url});
     });
   } else {
     createWorkers();
@@ -215,14 +217,14 @@ if (cluster.isMaster) {
 
       // Get the raw body
       // http://stackoverflow.com/questions/18710225/node-js-get-raw-request-body-using-express
-      app.use(function (req, res, next) {
-        req.rawBody = '';
-        req.setEncoding('utf8');
-        req.on('data', function (chunk) {
-          req.rawBody += chunk;
-        });
-        next();
-      });
+      // app.use(function (req, res, next) {
+      //   req.rawBody = '';
+      //   req.setEncoding('utf8');
+      //   req.on('data', function (chunk) {
+      //     req.rawBody += chunk;
+      //   });
+      //   next();
+      // });
       app.use(bodyParser.json());
       app.use(bodyParser.urlencoded({ extended: true }));
       app.use(app.get('cookieParser'));
@@ -230,7 +232,9 @@ if (cluster.isMaster) {
         store: app.get('sessionStore'),
         secret: app.get('sessionSecret'),
         resave: true,
-        saveUninitialized: false,
+        key: 'express.sid',
+        name: 'express.sid',
+        saveUninitialized: true,
         cookie: {
           maxAge: 60*60*24*30*1000,
           secure: process.env.NODE_ENV === 'production'
@@ -392,53 +396,40 @@ if (cluster.isMaster) {
             //   secure: process.env.NODE_ENV === 'production'
             // });
             var sio = socketio(server);
-            // sio.adapter(ioredis({
-            //   // redis: redis,
-            //   redisPub: rp,
-            //   redisSub: rs,
-            //   redisClient: rc
-            // }));
+            sio.adapter(ioredis({
+              redisPub: rp,
+              redisSub: rs,
+              redisClient: rc
+            }));
+            sio.set('transports', ['websocket']);
 
-            if (process.env.NODE_ENV !== 'production') {
-              // sio.set('log level', 2);
-            } else {
-              sio.enable('browser client minification');
-              sio.enable('browser client etag');
-              sio.enable('browser client gzip');
-              // sio.set('log level', 1);
-              // sio.set('transports', [
-              //   'websocket',
-              //   'flashsocket',
-              //   'htmlfile',
-              //   'xhr-polling',
-              //   'jsonp-polling'
-              // ]);
-            }
+            sio.use(psio.authorize({
+              cookieParser: cookieParser,
+              key: 'express.sid',
+              name: 'express.sid',
+              secret: app.get('sessionSecret'),
+              store: app.get('sessionStore'),
+              fail: function (data, message, error, accept) {
+                accept(null, true);
+              },
+              success: function (data, accept) {
+                accept(null, true);
+              }
+            }));
 
-            // sio.use(psio.authorize({
-            //   cookieParser: cookieParser,
-            //   key: 'express.sid',
-            //   secret: app.get('sessionSecret'),
-            //   store: app.get('sessionStore'),
-            //   fail: function(data, message, error, accept) {
-            //     // console.log(arguments, 'fail')
-            //     accept(null, true);
-            //   },
-            //   success: function(data, accept) {
-            //     // console.log(arguments, 'success')
-            //     accept(null, true);
-            //   }
-            // }));
+            sio.on('connection', function (webSock) {
+              // Back-end socket for talking to other Island services
+              var backSock = zmq.socket('sub');
+              backSock.connect(app.get('SUB_SOCKET_PORT'));
 
-            // sio.sockets.on('connection', function (webSock) {
-            //   console.log('connection!')
-            //
-            //   // Back-end socket for talking to other Island services
-            //   var backSock = zmq.socket('sub');
-            //   backSock.connect(app.get('SUB_SOCKET_PORT'));
-            //
-            //   webSock.client = new Client(webSock, backSock);
-            // });
+              webSock._client = new Client(webSock, backSock);
+
+              // Unsubscribe all on disconnect
+              webSock.on('disconnect', function () {
+                webSock._client.channelUnsubscribeAll();
+                delete webSock._client;
+              });
+            });
 
             if (process.env.NODE_ENV !== 'production') {
               server.listen(app.get('PORT'));
