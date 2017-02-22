@@ -39,7 +39,7 @@ var exec = require('child_process').exec;
 var wrench = require('wrench');
 var request = require('request');
 var Step = require('step');
-var boots = require(rel + 'boots');
+var boots = require('island-boots');
 
 // Build vars.
 var dir = 'build';
@@ -134,7 +134,7 @@ Step(
     // Push to eb.
     if (argv.push) {
       util.log(clc.blackBright('Pushing to AWS Elastic Beanstalk ...'));
-      exec('eb deploy', this);
+      exec('eb deploy --profile eb-cli2', this);
     } else this();
   },
   function (err) {
