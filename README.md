@@ -1,6 +1,5 @@
 ![Island Build Status](https://circleci.com/gh/The-Island/island-app.svg?style=shield&circle-token=f46cdeda0c3c2f693e5e085b5f3b980561a2d41b "Island-app Build Status")
 
-
 # The Island
 
 ### Development
@@ -12,11 +11,12 @@
 3. Download and install [Redis](http://redis.io/download). Do something like [this](http://reistiago.wordpress.com/2011/07/23/installing-on-redis-mac-os-x/) to start the Redis server via a launch daemon, or just do ```redis-server``` whenever developing.
 4. Download and install [ØMQ](http://zeromq.org/docs:source-git).
 5. Install application dependencies with ```npm install```. This will install everything specified in ```package.json```.
-6. Install ```nodemon``` globally with ```npm install nodemon -g```. Use ```nodemon``` in place of ```node``` to restart your local web server whenever changes are made... very handy.
-7. Now you can start your local web server with ```nodemon main.js```.
-8. Clone [island-pubsub](https://github.com/The-Island/island-pubsub).
-9. Install island-pubsub dependencies with ```npm install```.
-10. Start island-pubsub with ```node start.js```.
+6. Install the frontend builder globally ```npm install grunt-cli -g```
+7. Install ```nodemon``` globally with ```npm install nodemon -g```. Use ```nodemon``` in place of ```node``` to restart your local web server whenever changes are made... very handy.
+8. Now you can start your local web server with ```nodemon main.js```.
+9. Clone [island-pubsub](https://github.com/The-Island/island-pubsub).
+10. Install island-pubsub dependencies with ```npm install```.
+11. Start island-pubsub with ```node start.js```.
 
 Island is now running at [```http://localhost:8080/```](http://localhost:8080/).
 
@@ -27,117 +27,6 @@ Island is now running at [```http://localhost:8080/```](http://localhost:8080/).
 3. [JSHint](http://jshint.com/) all files using Island's [.jshintrc](https://github.com/The-Island/island-app/blob/develop/linters/.jshintrc) file.
 4. When ready, rebase the feature branch onto ```develop```, open a Github pull request, and request a review from another Island developer.
 5. Once reviewed, merge and close the pull request.
-
-### Deployment
-
-##### Setup
-
-Island runs in production on [AWS Elastic Beanstalk](http://aws.amazon.com/elasticbeanstalk/).
-
-1. Install the [command line interface](http://aws.amazon.com/code/6752709412171743) for EBS. You may also need to install python's boto (```pip install boto```)
-2. Install ruby (```apt-get install ruby``` on Linux)
-3. Run ```eb init``` to initialize the Amazon file structure and supply the correct Git commands
-4. Modify the file structure at the top-level of your local repo.
-
-```
-.aws
-	aws_credential_file
-	islandio.pem
-.elasticbeanstalk
-	config
-	optionsettings.app
-```
-
-```.aws/aws_credential_file``` : (_Get these values from Sander or Eyal_)
-
-```
-AWSAccessKeyId=<YOUR_IAM_ACCESS_KEY_ID>
-AWSSecretKey=<YOUR_IAM_SECRET_KEY>
-AWSRegion=us-east-1
-```
-
-```.aws/islandio.pem``` : (_Used to ```tail``` logs... get this from Sander or Eyal_)
-
-```.elasticbeanstalk/config``` : (_\<PATH\_TO\_ISLAND\> must be absolute_)
-
-```
-[global]
-ApplicationName=island-app
-AwsCredentialFile=<PATH_TO_ISLAND>/.aws/aws_credential_file
-DevToolsEndpoint=git.elasticbeanstalk.us-east-1.amazonaws.com
-EnvironmentName=island-app-env
-InstanceProfileName=aws-elasticbeanstalk-ec2-role
-OptionSettingFile=<PATH_TO_ISLAND>/.elasticbeanstalk/optionsettings.app
-RdsEnabled=No
-Region=us-east-1
-ServiceEndpoint=https://elasticbeanstalk.us-east-1.amazonaws.com
-SolutionStack=64bit Amazon Linux 2014.03 v1.0.4 running Node.js
-```
-
-```.elasticbeanstalk/optionsettings.app``` :
-
-```
-[aws:autoscaling:asg]
-MaxSize=3
-MinSize=3
-
-[aws:autoscaling:launchconfiguration]
-InstanceType=t2.medium
-EC2KeyName=islandio
-IamInstanceProfile=aws-elasticbeanstalk-ec2-role
-
-[aws:elasticbeanstalk:application:environment]
-AWS_ACCESS_KEY_ID=<YOUR_IAM_ACCESS_KEY_ID>
-AWS_SECRET_KEY=<YOUR_IAM_SECRET_KEY>
-AWS_REGION=us-east-1
-NODE_ENV=production
-MONGO_URI=<MONGO_URI>
-REDIS_HOST_CACHE=<REDIS_HOST_CACHE>
-REDIS_HOST_SESSION=<REDIS_HOST_SESSION>
-REDIS_PORT=6379
-GMAIL_USER=<GMAIL_USER>
-GMAIL_PASSWORD=<GMAIL_PASSWORD>
-GMAIL_FROM=<GMAIL_FROM>
-GMAIL_HOST=smtp.gmail.com
-GMAIL_SSL=true
-GOOGLE_CLIENT_ID=<GOOGLE_CLIENT_ID>
-GOOGLE_CLIENT_SECRET=<GOOGLE_CLIENT_SECRET>
-FACEBOOK_NAME=TheIsland
-FACEBOOK_CLIENT_ID=<FACEBOOK_CLIENT_ID>
-FACEBOOK_CLIENT_SECRET=<FACEBOOK_CLIENT_SECRET>
-TWITTER_CONSUMER_KEY=<TWITTER_CONSUMER_KEY>
-TWITTER_CONSUMER_SECRET=<TWITTER_CONSUMER_SECRET>
-CARTODB_USER=island
-CARTODB_TABLE=crags
-CARTODB_KEY=<CARTODB_KEY>
-PUB_SOCKET_PORT=<PUB_SOCKET_PORT>
-SUB_SOCKET_PORT=<SUB_SOCKET_PORT>
-
-[aws:elasticbeanstalk:container:nodejs]
-GzipCompression=false
-NodeCommand=node start.js
-NodeVersion=0.10.26
-ProxyServer=none
-
-[aws:elasticbeanstalk:hostmanager]
-LogPublicationControl=true
-
-[aws:elasticbeanstalk:monitoring]
-Automatically Terminate Unhealthy Instances=true
-
-[aws:elb:loadbalancer]
-LoadBalancerHTTPPort=80
-LoadBalancerPortProtocol=TCP
-LoadBalancerHTTPSPort=443
-LoadBalancerSSLPortProtocol=SSL
-SSLCertificateId=www_island_io
-```
-
-Lastly, install the frontend builder globally.
-
-```
-$ npm install grunt-cli -g
-```
 
 ##### Deployment TBD
 1. Deployment rules
