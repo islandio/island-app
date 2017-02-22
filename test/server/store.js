@@ -202,10 +202,10 @@ describe('Store', function() {
             address: nonExistingAddress,
             cart: goodCart
           })
-          .expect(400)
+          .expect(422)
           .end(function(err, res) {
             should(res.body.error.message).be.exactly(
-                'No shipping options found for the specified address');
+                '[order.shipTo.country] Unrecognizable Country');
             done(err);
           });
     });
@@ -309,10 +309,11 @@ describe('Store', function() {
         card: {
           number: '4242424242424242',
           exp_month: 12,
-          exp_year: 2016,
+          exp_year: 2017,
           cvc: '123'
         }
       }, function (err, token) {
+        console.log(err, token)
         token.should.have.property('id');
         goodToken = token;
         done(err);
