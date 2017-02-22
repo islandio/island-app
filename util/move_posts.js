@@ -29,7 +29,7 @@ var iutil = require('island-util');
 var Step = require('step');
 var _ = require('underscore');
 var _s = require('underscore.string');
-var boots = require('../boots');
+var boots = require('island-boots');
 
 boots.start(function (client) {
 

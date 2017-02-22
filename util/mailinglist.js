@@ -2,7 +2,7 @@
 
 var _ = require('underscore');
 var Step = require('step');
-var boots = require('../boots');
+var boots = require('island-boots');
 var async = require('async');
 
 boots.start(function (client) {

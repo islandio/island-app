@@ -193,6 +193,9 @@ if (cluster.isMaster) {
         process.exit(1);
         return;
       }
+      rc.on('error', console.error);
+      rp.on('error', console.error);
+      rs.on('error', console.error);
 
       app.set('db', db);
       app.set('emailer', new Emailer({
