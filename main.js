@@ -118,8 +118,8 @@ if (cluster.isMaster) {
       estr = data;
       data = null;
     }
-    var fn = req.headers['user-agent'].indexOf('node-superagent') !== -1 ||
-        req.xhr ? res.send: res.render;
+    var isXhr =
+        req.headers['user-agent'].indexOf('node-superagent') !== -1 || req.xhr;
     if (err || (!data && estr)) {
       var profile = {
         member: req.user,
@@ -130,10 +130,18 @@ if (cluster.isMaster) {
       if (err) {
         console.log('Error in errorHandler:', (err.stack || err));
         profile.error = err.error || err;
-        fn.call(res, profile.error.code || 500, iutil.client(profile));
+        if (isXhr) {
+          res.status(profile.error.code || 500).send(iutil.client(profile));
+        } else {
+          res.status(profile.error.code || 500).render(iutil.client(profile));
+        }
       } else {
         profile.error = {message: estr + ' not found'};
-        fn.call(res, 404, iutil.client(profile));
+        if (isXhr) {
+          res.status(404).send(iutil.client(profile));
+        } else {
+          res.status(404).render(iutil.client(profile));
+        }
       }
       return true;
     } else {

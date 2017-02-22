@@ -313,7 +313,6 @@ describe('Store', function() {
           cvc: '123'
         }
       }, function (err, token) {
-        console.log(err, token)
         token.should.have.property('id');
         goodToken = token;
         done(err);
