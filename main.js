@@ -133,14 +133,14 @@ if (cluster.isMaster) {
         if (isXhr) {
           res.status(profile.error.code || 500).send(iutil.client(profile));
         } else {
-          res.status(profile.error.code || 500).render(iutil.client(profile));
+          res.status(profile.error.code || 500).render('500', iutil.client(profile));
         }
       } else {
         profile.error = {message: estr + ' not found'};
         if (isXhr) {
           res.status(404).send(iutil.client(profile));
         } else {
-          res.status(404).render(iutil.client(profile));
+          res.status(404).render('404', iutil.client(profile));
         }
       }
       return true;
@@ -263,14 +263,13 @@ if (cluster.isMaster) {
 
       // Production only
       else {
-        app.use(favicon(app.get('ROOT_URI') + '/img/favicon.ico'));
         app.use(serveStatic(__dirname + '/public', {maxAge: 60*60*24*30*1000}));
         app.use(slashes(false));
         app.use(function (err, req, res, next) {
           if (!err) return next();
           console.error('Returning code 500', err);
           console.error(err.stack);
-          res.render('500', {root: app.get('ROOT_URI')});
+          res.status(500).render('500', {root: app.get('ROOT_URI')});
         });
       }
 

@@ -24,10 +24,10 @@ describe('Service (not logged in)', function() {
 
   it('static profiles', function(done) {
     request(url)
-        .get(route('profile'))
+        .get(route('static'))
         .expect(200)
         .end(function(err, res) {
-          res.body.should.be.empty();
+          res.body.should.not.be.empty();
           done(err);
         });
   });
