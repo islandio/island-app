@@ -32,9 +32,9 @@ describe('Service (not logged in)', function() {
         });
   });
 
-  it('dash profile', function(done) {
+  it('activity profile', function(done) {
     request(url)
-        .get(route('dashboard', {actions: 'all'}))
+        .get(route('activity', {actions: 'all'}))
         .expect(200, done);
   });
 
