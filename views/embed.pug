@@ -36,13 +36,12 @@ html(lang="en")
     meta(name="author", content="Island")
     meta(charset="UTF-8")
     link(rel="shortcut icon", href=`${root}/img/favicon.ico`, type="image/x-icon")
-    style
+    style.
       html, body, video {margin: 0; padding: 0; width: 100%; height: 100%;}
   body
-    video(id="video", src=`${src}`, data-params=`${params}`,
-        controls="controls", width="100%", height="100%")
+    video(id="video", src=`${src}`, data-params=`${params}`, controls="controls", width="100%", height="100%")
     script(type="text/javascript", src="https://jwpsrv.com/library/1lrC0MMbEeKOnyIACqoQEQ.js")
-    script(type="text/javascript")
+    script(type="text/javascript").
       var vid = document.getElementById('video');
       var params = vid.getAttribute('data-params');
       var params = JSON.parse(params);
@@ -57,7 +56,7 @@ html(lang="en")
           + window.location.host + window.location.pathname
           + "' frameborder='0'></iframe>";
       jwplayer('video').setup(params);
-    script(type="text/javascript")
+    script(type="text/javascript").
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-23247079-1']);
       _gaq.push(['_setDomainName', 'island.io']);

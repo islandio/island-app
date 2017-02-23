@@ -237,7 +237,7 @@ if (cluster.isMaster) {
         saveUninitialized: true,
         cookie: {
           maxAge: 60*60*24*30*1000,
-          secure: process.env.NODE_ENV === 'production'
+          secure: false
         }
       }));
       app.use(passport.initialize());
