@@ -5,29 +5,10 @@
   "license": "MIT",
   "beta": false,
   "protocol": {
-    "name": "https",
-    "allow": [
-      {
-        "url": "/api/instagrams/users",
-        "method": "GET"
-      },
-      {
-        "url": "/api/instagrams/tags",
-        "method": "GET"
-      },
-      {
-        "url": "/api/instagrams/users",
-        "method": "POST"
-      },
-      {
-        "url": "/api/instagrams/tags",
-        "method": "POST"
-      }
-    ]
+    "name": "https"
   },
   "domain": "www.island.io",
   "port": 8080,
-  "securePort": 8443,
   "tunnel": {
     "subdomain": "island"
   },
