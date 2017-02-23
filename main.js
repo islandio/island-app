@@ -276,36 +276,36 @@ if (cluster.isMaster) {
         });
       }
 
-      app.all('*', function (req, res, next) {
-
-        if (process.env.NODE_ENV === 'production' &&
-            app.get('package').protocol.name === 'https') {
-          if (req.secure || _.find(app.get('package').protocol.allow,
-              function (allow) {
-            var pathname = url.parse(req.url, true).pathname;
-            return pathname === allow.url && req.method === allow.method;
-          })) {
-            return _next();
-          }
-          res.redirect(301, 'https://' + req.headers.host + req.url);
-        } else {
-          _next();
-        }
-
-        // Ensure Safari does not cache the response.
-        function _next() {
-          var agent;
-          agent = req.headers['user-agent'];
-          if (agent && agent.indexOf('Safari') > -1 &&
-              agent.indexOf('Chrome') === -1 &&
-              agent.indexOf('OPR') === -1) {
-            res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
-            res.header('Pragma', 'no-cache');
-            res.header('Expires', 0);
-          }
-          next();
-        }
-      });
+      // app.all('*', function (req, res, next) {
+      //
+      //   if (process.env.NODE_ENV === 'production' &&
+      //       app.get('package').protocol.name === 'https') {
+      //     if (req.secure || _.find(app.get('package').protocol.allow,
+      //         function (allow) {
+      //       var pathname = url.parse(req.url, true).pathname;
+      //       return pathname === allow.url && req.method === allow.method;
+      //     })) {
+      //       return _next();
+      //     }
+      //     res.redirect(301, 'https://' + req.headers.host + req.url);
+      //   } else {
+      //     _next();
+      //   }
+      //
+      //   // Ensure Safari does not cache the response.
+      //   function _next() {
+      //     var agent;
+      //     agent = req.headers['user-agent'];
+      //     if (agent && agent.indexOf('Safari') > -1 &&
+      //         agent.indexOf('Chrome') === -1 &&
+      //         agent.indexOf('OPR') === -1) {
+      //       res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+      //       res.header('Pragma', 'no-cache');
+      //       res.header('Expires', 0);
+      //     }
+      //     next();
+      //   }
+      // });
 
       if (!module.parent) {
 
@@ -390,16 +390,16 @@ if (cluster.isMaster) {
 
             // HTTP(S) server.
             var server, _server;
-            if (process.env.NODE_ENV !== 'production') {
-              server = http.createServer(app);
-            } else {
-              server = https.createServer({
-                ca: fs.readFileSync('./ssl/ca-chain.crt'),
-                key: fs.readFileSync('./ssl/www_island_io.key'),
-                cert: fs.readFileSync('./ssl/www_island_io.crt')
-              }, app);
-              _server = http.createServer(app);
-            }
+            // if (process.env.NODE_ENV !== 'production') {
+            server = http.createServer(app);
+            // } else {
+            //   server = https.createServer({
+            //     ca: fs.readFileSync('./ssl/ca-chain.crt'),
+            //     key: fs.readFileSync('./ssl/www_island_io.key'),
+            //     cert: fs.readFileSync('./ssl/www_island_io.crt')
+            //   }, app);
+            //   _server = http.createServer(app);
+            // }
 
             // var sio = socketio(server, {
             //   log: false,
@@ -441,16 +441,14 @@ if (cluster.isMaster) {
               });
             });
 
-            if (process.env.NODE_ENV !== 'production') {
+            // if (process.env.NODE_ENV !== 'production') {
               server.listen(app.get('PORT'));
-            } else {
-              server.listen(app.get('SECURE_PORT'));
-              _server.listen(app.get('PORT'));
-            }
+            // } else {
+            //   server.listen(app.get('SECURE_PORT'));
+            //   _server.listen(app.get('PORT'));
+            // }
             if (cluster.worker.id === 1) {
-              util.log('Web server listening on port ' +
-                  (process.env.NODE_ENV !== 'production' ?
-                  app.get('PORT'): app.get('SECURE_PORT')) +
+              util.log('Web server listening on port ' + app.get('PORT') +
                   ' with ' + cpus + ' worker(s)');
             }
           }
