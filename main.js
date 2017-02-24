@@ -263,6 +263,14 @@ if (cluster.isMaster) {
           console.error(err.stack);
           res.status(500).render('500', {root: app.get('ROOT_URI')});
         });
+
+        // Forward load balancer requests originating with http to https
+        app.all('*', function (req, res, next) {
+          if (req.get('X-Forwarded-Proto').toString().toLowerCase() === 'https') {
+            return next();
+          }
+          res.redirect(301, 'https://' + req.headers.host + req.url);
+        });
       }
 
       if (!module.parent) {
