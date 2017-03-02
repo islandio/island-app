@@ -7,8 +7,3 @@ aws.config.json
 dump.rdb
 dump
 .DS_Store
-# Elastic Beanstalk Files
-.elasticbeanstalk/*
-.ebextensions/*
-!.elasticbeanstalk/*.cfg.yml
-!.elasticbeanstalk/*.global.yml

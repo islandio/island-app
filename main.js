@@ -266,7 +266,11 @@ if (cluster.isMaster) {
 
         // Forward load balancer requests originating with http to https
         app.all('*', function (req, res, next) {
-          if (req.get('X-Forwarded-Proto').toString().toLowerCase() === 'https') {
+          var proto = req.get('x-forwarded-proto');
+          if (!proto) {
+            return next();
+          }
+          if (proto.toLowerCase() === 'https') {
             return next();
           }
           res.redirect(301, 'https://' + req.headers.host + req.url);
