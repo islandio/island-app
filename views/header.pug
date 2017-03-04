@@ -1,5 +1,5 @@
 header.header
-  - if (process.env.NODE_ENV === 'production' && false)
+  if (process.env.NODE_ENV === 'production' && false)
     div.banner-side
       a.closer(href="javascript:;")
         i.icon-cancel
@@ -10,7 +10,7 @@ header.header
   .header-inner
     a.button.disabled.logo.navigate(href="/")
       //- span.tagline Climb
-      img(src="#{root}/img/site-logo.png", width="128", height="41")
+      img(src=`${root}/img/site-logo.png`, width="128", height="41")
     div.divider-vertical.pad-right
     .header-search
       input.header-search-input(type="search", tabindex="1", placeholder="Search...")
@@ -19,7 +19,7 @@ header.header
     ul.header-links
       li
         a(class="navigate", href="/", alt="Track your progression as a climber. Follow other athletes. Watch your favorite areas and routes.") Home
-        - if (typeof member !== 'undefined')
+        if (typeof member !== 'undefined')
           div.header-menu
             ul
               li
@@ -29,26 +29,26 @@ header.header
               li
                 a(class="navigate", href="/media", alt="Recently uploaded photos and videos.") Recent Media
               li
-                a(class="navigate", href="/#{member.username}/ascents", alt="My rock climbing ascents.") My Ascents
+                a(class="navigate", href=`/${member.username}/ascents`, alt="My rock climbing ascents.") My Ascents
       li
         a(class="navigate", href="/crags", alt="Search for a crag.") Crags
       li
         a(class="navigate", href="/store", alt="Accessories and apparel.") Store
           span.cart-count
-      - if (typeof member === 'undefined')
+      if (typeof member === 'undefined')
         li
           a(class="navigate", href="/media", alt="Recently uploaded photos and videos.") Recent Media
       li
-        a(class="navigate #{typeof blog !== 'undefined' && blog == true ? 'active':''}", href="/blog", alt="News and feature updates.") Blog
-      - if (typeof member !== 'undefined')
+        a(class=`navigate ${typeof blog !== 'undefined' && blog == true ? 'active':''}`, href="/blog", alt="News and feature updates.") Blog
+      if (typeof member !== 'undefined')
         li
           a.header-tips(href="javascript:;", style="font-weight:bold;", alt="Tips on using Island.") Tips
-    - if (typeof member !== 'undefined')
+    if (typeof member !== 'undefined')
       div.member-box
         div.divider-vertical
         a.header-avatar(href="/" + member.username)
           - g = 'https://www.gravatar.com/avatar/' + member.gravatar + '?s=50&d=https%3A%2F%2Fs3.amazonaws.com%2Fisland.io%2Favatar_48.png'
-          img(src="#{member.avatar || g}", width="50", height="50")
+          img(src=`${member.avatar || g}`, width="50", height="50")
         div.divider-vertical
         a.button.panel-button.header-action(href="javascript:;", title="Notifications")
           i.icon-bell-alt
@@ -62,7 +62,7 @@ header.header
         div.divider-vertical
         a.button.logout-button.header-action(href="/logout", title="Sign out")
           i.icon-logout
-    - else
+    else
       a.button.signin-button.header-action.navigate(href="/signin", alt="Sign In. Forgot your password? Sign Up.")
-        span Sign in 
+        span Sign in
         i.icon-login

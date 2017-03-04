@@ -8,7 +8,7 @@ var _package_ = require('./package.json');
 var cluster = require('cluster');
 var util = require('util');
 var cpus = require('os').cpus().length;
-var ngrok = require('ngrok');
+var localtunnel = require('localtunnel');
 var optimist = require('optimist');
 var argv = optimist
     .describe('help', 'Get help')
@@ -38,11 +38,13 @@ if (cluster.isMaster) {
   // Setup an outside tunnel to our localhost in development.
   // We will pass this to the workers.
   if (process.env.NODE_ENV !== 'production' && argv.tunnel) {
-    var tunnel = _package_.tunnel;
-    tunnel.port = _package_.port;
-    ngrok.connect(tunnel, function (err, url) {
-      util.log('Setting up tunnel from this machine to ' + url);
-      createWorkers({tunnelURL: url});
+    localtunnel(_package_.port, {subdomain: _package_.tunnel.subdomain}, function(err, tunnel) {
+      if (err) {
+        console.error(err);
+      } else {
+        util.log('Setting up tunnel from this machine to ' + tunnel.url);
+      }
+      createWorkers({tunnelURL: tunnel.url});
     });
   } else {
     createWorkers();
@@ -56,14 +58,23 @@ if (cluster.isMaster) {
 
   var http = require('http');
   var https = require('https');
-  var connect = require('connect');
+  // var connect = require('connect');
   var express = require('express');
+  var bodyParser = require('body-parser');
+  var cookieParser = require('cookie-parser');
+  var serveStatic = require('serve-static');
+  var favicon = require('serve-favicon');
+  var session = require('express-session');
+  var morgan = require('morgan');
+  var expressErrorhandler = require('errorhandler');
+  var methodOverride = require('method-override');
   var slashes = require('connect-slashes');
   var zmq = require('zmq');
   var socketio = require('socket.io');
   var redis = require('redis');
-  var RedisStore = require('connect-redis')(express);
-  var jade = require('jade');
+  var ioredis = require('socket.io-redis');
+  var RedisStore = require('connect-redis')(session);
+  var pug = require('pug');
   var stylus = require('stylus');
   var passport = require('passport');
   var psio = require('passport.socketio');
@@ -74,7 +85,6 @@ if (cluster.isMaster) {
   var iutil = require('island-util');
   var loggly = require('loggly');
   var _ = require('underscore');
-  _.mixin(require('underscore.string'));
   var db = require('mongish');
   var Search = require('island-search').Search;
   var collections = require('island-collections').collections;
@@ -94,7 +104,6 @@ if (cluster.isMaster) {
 
   // App port is env var in production.
   app.set('PORT', process.env.PORT || app.get('package').port);
-  app.set('SECURE_PORT', app.get('package').securePort);
 
   _.each(require('./config.json'), function (v, k) {
     app.set(k, process.env[k] || v);
@@ -108,8 +117,8 @@ if (cluster.isMaster) {
       estr = data;
       data = null;
     }
-    var fn = req.headers['user-agent'].indexOf('node-superagent') !== -1 ||
-        req.xhr ? res.send: res.render;
+    var isXhr =
+        req.headers['user-agent'].indexOf('node-superagent') !== -1 || req.xhr;
     if (err || (!data && estr)) {
       var profile = {
         member: req.user,
@@ -120,10 +129,18 @@ if (cluster.isMaster) {
       if (err) {
         console.log('Error in errorHandler:', (err.stack || err));
         profile.error = err.error || err;
-        fn.call(res, profile.error.code || 500, iutil.client(profile));
+        if (isXhr) {
+          res.status(profile.error.code || 500).send(iutil.client(profile));
+        } else {
+          res.status(profile.error.code || 500).render('500', iutil.client(profile));
+        }
       } else {
         profile.error = {message: estr + ' not found'};
-        fn.call(res, 404, iutil.client(profile));
+        if (isXhr) {
+          res.status(404).send(iutil.client(profile));
+        } else {
+          res.status(404).render('404', iutil.client(profile));
+        }
       }
       return true;
     } else {
@@ -175,6 +192,9 @@ if (cluster.isMaster) {
         process.exit(1);
         return;
       }
+      rc.on('error', console.error);
+      rp.on('error', console.error);
+      rs.on('error', console.error);
 
       app.set('db', db);
       app.set('emailer', new Emailer({
@@ -199,88 +219,63 @@ if (cluster.isMaster) {
       app.set('errorHandler', errorHandler);
 
       app.set('views', __dirname + '/views');
-      app.set('view engine', 'jade');
-      app.set('sessionStore', new RedisStore({client: rc, maxAge: 2592000000}));
+      app.set('view engine', 'pug');
+      app.set('sessionStore', new RedisStore({client: rc, ttl: 60*60*24*30}));
       app.set('sessionSecret', 'weareisland');
-      app.set('sessionKey', 'express.sid');
-      app.set('cookieParser', express.cookieParser(app.get('sessionKey')));
-      app.use(express.logger('dev'));
+      app.set('cookieParser', cookieParser(app.get('sessionKey')));
+      app.use(morgan('dev'));
 
-      // Get the raw body
-      // http://stackoverflow.com/questions/18710225/node-js-get-raw-request-body-using-express
-      app.use(function (req, res, next) {
-        req.rawBody = '';
-        req.setEncoding('utf8');
-        req.on('data', function (chunk) {
-          req.rawBody += chunk;
-        });
-        next();
-      });
-      app.use(express.bodyParser());
+      app.use(bodyParser.json());
+      app.use(bodyParser.urlencoded({ extended: true }));
       app.use(app.get('cookieParser'));
-      app.use(express.session({
+      app.use(session({
         store: app.get('sessionStore'),
         secret: app.get('sessionSecret'),
-        key: app.get('sessionKey')
+        resave: true,
+        key: 'express.sid',
+        name: 'express.sid',
+        saveUninitialized: true,
+        cookie: {
+          maxAge: 60*60*24*30*1000,
+          secure: false
+        }
       }));
       app.use(passport.initialize());
       app.use(passport.session());
-      app.use(express.methodOverride());
+      app.use(methodOverride());
 
       // Development only
       if (process.env.NODE_ENV !== 'production') {
-        app.use(express.favicon(__dirname + '/public/img/favicon.ico'));
-        app.use(stylus.middleware({src: __dirname + '/public'}));
-        app.use(express.static(__dirname + '/public'));
+        app.use(favicon(__dirname + '/public/img/favicon.ico'));
+        app.use(stylus.middleware(__dirname + '/public'));
+        app.use(serveStatic(__dirname + '/public'));
         app.use(slashes(false));
-        app.use(app.router);
-        app.use(express.errorHandler({dumpExceptions: true, showStack: true}));
+        app.use(expressErrorhandler({dumpExceptions: true, showStack: true}));
       }
 
       // Production only
       else {
-        app.use(express.favicon(app.get('ROOT_URI') + '/img/favicon.ico'));
-        app.use(express.static(__dirname + '/public', {maxAge: 31557600000}));
+        app.use(serveStatic(__dirname + '/public', {maxAge: 60*60*24*30*1000}));
         app.use(slashes(false));
-        app.use(app.router);
         app.use(function (err, req, res, next) {
           if (!err) return next();
           console.error('Returning code 500', err);
           console.error(err.stack);
-          res.render('500', {root: app.get('ROOT_URI')});
+          res.status(500).render('500', {root: app.get('ROOT_URI')});
         });
-      }
 
-      app.all('*', function (req, res, next) {
-
-        if (process.env.NODE_ENV === 'production' &&
-            app.get('package').protocol.name === 'https') {
-          if (req.secure || _.find(app.get('package').protocol.allow,
-              function (allow) {
-            var pathname = url.parse(req.url, true).pathname;
-            return pathname === allow.url && req.method === allow.method;
-          })) {
-            return _next();
+        // Forward load balancer requests originating with http to https
+        app.all('*', function (req, res, next) {
+          var proto = req.get('x-forwarded-proto');
+          if (!proto) {
+            return next();
+          }
+          if (proto.toLowerCase() === 'https') {
+            return next();
           }
           res.redirect(301, 'https://' + req.headers.host + req.url);
-        } else {
-          _next();
-        }
-
-        // Ensure Safari does not cache the response.
-        function _next() {
-          var agent;
-          agent = req.headers['user-agent'];
-          if (agent && agent.indexOf('Safari') > -1 &&
-              agent.indexOf('Chrome') === -1 &&
-              agent.indexOf('OPR') === -1) {
-            res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
-            res.header('Pragma', 'no-cache');
-            res.header('Expires', 0);
-          }
-          next();
-        }
-      });
+        });
+      }
 
       if (!module.parent) {
 
@@ -363,72 +358,48 @@ if (cluster.isMaster) {
               });
             });
 
-            // HTTP(S) server.
-            var server, _server;
-            if (process.env.NODE_ENV !== 'production') {
-              server = http.createServer(app);
-            } else {
-              server = https.createServer({
-                ca: fs.readFileSync('./ssl/ca-chain.crt'),
-                key: fs.readFileSync('./ssl/www_island_io.key'),
-                cert: fs.readFileSync('./ssl/www_island_io.crt')
-              }, app);
-              _server = http.createServer(app);
-            }
+            var server = http.createServer(app);
 
-            var sio = socketio.listen(server, {log: false,
-                secure: process.env.NODE_ENV === 'production'});
-            sio.set('store', new socketio.RedisStore({
-              redis: redis,
+            var sio = socketio(server);
+            sio.adapter(ioredis({
               redisPub: rp,
               redisSub: rs,
               redisClient: rc
             }));
+            sio.set('transports', ['websocket']);
 
-            if (process.env.NODE_ENV !== 'production') {
-              sio.set('log level', 2);
-            } else {
-              sio.enable('browser client minification');
-              sio.enable('browser client etag');
-              sio.enable('browser client gzip');
-              sio.set('log level', 1);
-              sio.set('transports', [
-                'websocket',
-                'flashsocket',
-                'htmlfile',
-                'xhr-polling',
-                'jsonp-polling'
-              ]);
-            }
-
-            sio.set('authorization', psio.authorize({
-              cookieParser: express.cookieParser,
-              key: app.get('sessionKey'),
+            sio.use(psio.authorize({
+              cookieParser: cookieParser,
+              key: 'express.sid',
+              name: 'express.sid',
               secret: app.get('sessionSecret'),
               store: app.get('sessionStore'),
-              fail: function(data, accept) { accept(null, true); },
-              success: function(data, accept) { accept(null, true); }
+              fail: function (data, message, error, accept) {
+                accept(null, true);
+              },
+              success: function (data, accept) {
+                accept(null, true);
+              }
             }));
 
-            sio.sockets.on('connection', function (webSock) {
-
+            sio.on('connection', function (webSock) {
               // Back-end socket for talking to other Island services
               var backSock = zmq.socket('sub');
               backSock.connect(app.get('SUB_SOCKET_PORT'));
 
-              webSock.client = new Client(webSock, backSock);
+              webSock._client = new Client(webSock, backSock);
+
+              // Unsubscribe all on disconnect
+              webSock.on('disconnect', function () {
+                webSock._client.channelUnsubscribeAll();
+                delete webSock._client;
+              });
             });
 
-            if (process.env.NODE_ENV !== 'production') {
-              server.listen(app.get('PORT'));
-            } else {
-              server.listen(app.get('SECURE_PORT'));
-              _server.listen(app.get('PORT'));
-            }
+            server.listen(app.get('PORT'));
+
             if (cluster.worker.id === 1) {
-              util.log('Web server listening on port ' +
-                  (process.env.NODE_ENV !== 'production' ?
-                  app.get('PORT'): app.get('SECURE_PORT')) +
+              util.log('Web server listening on port ' + app.get('PORT') +
                   ' with ' + cpus + ' worker(s)');
             }
           }

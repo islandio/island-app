@@ -28,8 +28,8 @@ var util = require('util');
 var iutil = require('island-util');
 var Step = require('step');
 var _ = require('underscore');
-_.mixin(require('underscore.string'));
-var boots = require('../boots');
+var _s = require('underscore.string');
+var boots = require('island-boots');
 
 boots.start(function (client) {
 
@@ -71,7 +71,7 @@ boots.start(function (client) {
 
         Step(
           function () {
-            var key = [to.username, _.strRight(d.key, '/')].join('/');
+            var key = [to.username, _s.strRight(d.key, '/')].join('/');
             client.db.Posts._update({_id: d._id}, {$set: {author_id: to._id, key: key}}, this.parallel());
             client.db.Events._update({action_id: d._id}, {$set: {
               actor_id: to._id,

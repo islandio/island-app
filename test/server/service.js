@@ -24,17 +24,17 @@ describe('Service (not logged in)', function() {
 
   it('static profiles', function(done) {
     request(url)
-        .get(route('profile'))
+        .get(route('static'))
         .expect(200)
         .end(function(err, res) {
-          res.body.should.be.empty();
+          res.body.should.not.be.empty();
           done(err);
         });
   });
 
-  it('dash profile', function(done) {
+  it('activity profile', function(done) {
     request(url)
-        .get(route('dashboard', {actions: 'all'}))
+        .get(route('activity', {actions: 'all'}))
         .expect(200, done);
   });
 

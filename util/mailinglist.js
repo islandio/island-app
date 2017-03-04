@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 
 var _ = require('underscore');
-_.mixin(require('underscore.string'));
 var Step = require('step');
-var boots = require('../boots');
+var boots = require('island-boots');
 var async = require('async');
 
 boots.start(function (client) {

@@ -1,48 +1,47 @@
 - var defaultDescription = "Track your progression as a climber. Follow other athletes. Watch your favorite areas and routes."
 
-doctype 5
+doctype html
 html(lang="en")
   head
 
     meta(property="og:site_name", content="Island")
     meta(property="fb:app_id", content="203397619757208")
     meta(property="og:type", content="video")
-    meta(property="og:url", content="#{url}")
-    meta(property="og:title", content="#{title}")
+    meta(property="og:url", content=`${url}`)
+    meta(property="og:title", content=`${title}`)
     title= title
-    - if (typeof description !== 'undefined')
-      meta(property="og:description", content="#{description}")
-    - else
-      meta(property="og:description", content="#{defaultDescription}")
+    if (typeof description !== 'undefined')
+      meta(property="og:description", content=`${description}`)
+    else
+      meta(property="og:description", content=`${defaultDescription}`)
 
-    meta(property="og:image", content="#{media.poster.ssl_url || media.poster.url}")
-    - if (media.poster.ssl_url && media.poster.ssl_url.indexOf('https://') !== -1)
-      meta(property="og:image:secure_url", content="#{media.poster.ssl_url}")
-    meta(property="og:image:width", content="#{media.poster.meta.width}")
-    meta(property="og:image:height", content="#{media.poster.meta.height}")
-    meta(property="og:image:type", content="#{media.poster.mime || 'image/jpeg'}")
+    meta(property="og:image", content=`${media.poster.ssl_url || media.poster.url}`)
+    if (media.poster.ssl_url && media.poster.ssl_url.indexOf('https://') !== -1)
+      meta(property="og:image:secure_url", content=`${media.poster.ssl_url}`)
+    meta(property="og:image:width", content=`${media.poster.meta.width}`)
+    meta(property="og:image:height", content=`${media.poster.meta.height}`)
+    meta(property="og:image:type", content=`${media.poster.mime || 'image/jpeg'}`)
 
     - swf = assets + '/plugins/jwplayer/player.swf?autostart=true&skin=' + encodeURIComponent(assets + '/plugins/jwplayer/skins/bekle.zip') + '&file=' + encodeURIComponent(media.video.ssl_url)
-    meta(property="og:video", content="#{swf}")
-    meta(property="og:video:secure_url", content="#{swf}")
+    meta(property="og:video", content=`${swf}`)
+    meta(property="og:video:secure_url", content=`${swf}`)
     meta(property="og:video:type", content="application/x-shockwave-flash")
-    meta(property="og:video", content="#{media.video.ssl_url}")
-    meta(property="og:video:secure_url", content="#{media.video.ssl_url}")
+    meta(property="og:video", content=`${media.video.ssl_url}`)
+    meta(property="og:video:secure_url", content=`${media.video.ssl_url}`)
     meta(property="og:video:type", content="video/mp4")
     meta(property="og:video:width", content="500")
-    meta(property="og:video:height", content="#{Math.round(500*media.video.meta.height/media.video.meta.width)}")
+    meta(property="og:video:height", content=`${Math.round(500*media.video.meta.height/media.video.meta.width)}`)
 
     meta(name="keywords", content="Climb, Climbing, Rock Climbing, Bouldering, Island, Training, Logging")
     meta(name="author", content="Island")
     meta(charset="UTF-8")
-    link(rel="shortcut icon", href="#{root}/img/favicon.ico", type="image/x-icon")
-    style
+    link(rel="shortcut icon", href=`${root}/img/favicon.ico`, type="image/x-icon")
+    style.
       html, body, video {margin: 0; padding: 0; width: 100%; height: 100%;}
   body
-    video(id="video", src="#{src}", data-params="#{params}",
-        controls="controls", width="100%", height="100%")
+    video(id="video", src=`${src}`, data-params=`${params}`, controls="controls", width="100%", height="100%")
     script(type="text/javascript", src="https://jwpsrv.com/library/1lrC0MMbEeKOnyIACqoQEQ.js")
-    script(type="text/javascript")
+    script(type="text/javascript").
       var vid = document.getElementById('video');
       var params = vid.getAttribute('data-params');
       var params = JSON.parse(params);
@@ -57,7 +56,7 @@ html(lang="en")
           + window.location.host + window.location.pathname
           + "' frameborder='0'></iframe>";
       jwplayer('video').setup(params);
-    script(type="text/javascript")
+    script(type="text/javascript").
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-23247079-1']);
       _gaq.push(['_setDomainName', 'island.io']);

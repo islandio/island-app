@@ -63,7 +63,7 @@ define([
         dataType: 'json'
       };
       if (data) {
-        if (type === 'POST') {
+        if (type !== 'GET') {
           params.data = JSON.stringify(data);
         } else {
           params.url += '?' + $.param(data);
@@ -86,8 +86,8 @@ define([
         cb = data;
         data = {};
       }
-      data._method = 'PUT';
-      this.exec('POST', url, data, cb);
+      // data._method = 'PUT';
+      this.exec('PUT', url, data, cb);
     },
 
     delete: function (url, data, cb) {
@@ -96,8 +96,8 @@ define([
         cb = data;
         data = {};
       }
-      data._method = 'DELETE';
-      this.exec('POST', url, data, cb);
+      // data._method = 'DELETE';
+      this.exec('DELETE', url, data, cb);
     }
 
   };

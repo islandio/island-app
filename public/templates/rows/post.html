@@ -8,7 +8,7 @@
 
 <% if (this.parentView) { %>
   <% if (p.product && p.product.sku) { %>
-    <a class="button buy-button" target="_blank" 
+    <a class="button buy-button" target="_blank"
         href="https://transactions.sendowl.com/products/<%= p.product.sku %>/add_to_cart">
       <i class="icon-download-cloud"></i>
       <%= p.product.subtype %> Film ($<%= p.product.price %>)
@@ -90,7 +90,7 @@
         <span class="event-timeline-label">
           <i class="icon-youtube-play"></i>
         </span>
-        <video src="<%= vid.url %>" id="video-<%= rm.id %>" class="post-instagram" 
+        <video src="<%= vid.url %>" id="video-<%= rm.id %>" class="post-instagram"
             poster="<%= img.url %>" controls="controls" width="561" height="561" />
       <% } else {
         var img = rm.images.standard_resolution;
@@ -184,9 +184,9 @@
   <% } %>
   <a href="javascript:;" class="muted info-share">Share</a>
   <span class="info-divider">&nbsp;&middot;&nbsp;</span>
-  <a href="/<%= p.key %>" class="muted navigate"><time class="created" 
-        datetime="<%= p.created %>" 
-        title="<%= p.created %>" 
+  <a href="/<%= p.key %>" class="muted navigate"><time class="created"
+        datetime="<%= p.created %>"
+        title="<%= p.created %>"
         id="time_<%= p.id %>">
     <%= p.created %>
   </time></a>
@@ -197,5 +197,3 @@
   </div>
   <div class="clear"></div>
 <% } %>
-
-

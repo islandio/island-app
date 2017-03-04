@@ -16,8 +16,8 @@ if (argv._.length || argv.help) {
 
 // Module Dependencies
 var _ = require('underscore');
-_.mixin(require('underscore.string'));
-var boots = require('../boots');
+var _s = require('underscore.string');
+var boots = require('island-boots');
 var async = require('async');
 
 
