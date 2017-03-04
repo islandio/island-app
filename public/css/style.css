@@ -4145,6 +4145,10 @@ span.image-mosaic-play-text {
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
+  width: 561px;
+}
+.single .post-instagram {
+  width: 1024px;
 }
 .post-instagram:hover {
   opacity: 0.8;
@@ -6383,6 +6387,7 @@ p.habla_conversation_p_item,
   .image-mosiac {
     width: auto;
   }
+  .single .post-instagram,
   .post-instagram {
     height: auto;
     width: 100%;
