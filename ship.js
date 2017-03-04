@@ -134,7 +134,7 @@ Step(
     // Push to eb.
     if (argv.push) {
       util.log(clc.blackBright('Pushing to AWS Elastic Beanstalk ...'));
-      exec('eb deploy --profile eb-cli2', this);
+      exec('eb deploy the-island-app --profile eb-cli2', this);
     } else this();
   },
   function (err) {
