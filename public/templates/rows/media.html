@@ -2,7 +2,7 @@
   var type = this.model.get('action_type');
   var data = this.model.attributes.action;
   var gravatar = 'https://www.gravatar.com/avatar/'
-      + data.author.gravatar + '?s=48&d='
+      + data.author.gravatar + '?s=96&d='
       + encodeURIComponent(this.app.images.avatar);
   var mediaTypes = _.uniq(_.pluck(data.medias, 'type'));
   var title = this.model.getTitle();

@@ -1426,7 +1426,7 @@ li.subtab.disabled a {
 }
 .footer-logo {
   position: absolute;
-  left: -5px;
+  left: 0;
   top: -3px;
 }
 .panel {
@@ -6273,7 +6273,7 @@ p.habla_conversation_p_item,
     padding: 0 30px;
   }
   .footer-logo {
-    left: 25px;
+    left: 15px;
   }
   .tick .leftside,
   .session .leftside,

@@ -18,7 +18,7 @@ define([
 
     // Location of images that must remain remote.
     this.images = {
-      avatar: 'https://d3ulmsx02dkj2g.cloudfront.net/avatar_48.png',
+      avatar: 'https://d3ulmsx02dkj2g.cloudfront.net/avatar_48_2.png',
       avatar_big: 'https://d3ulmsx02dkj2g.cloudfront.net/avatar_325.png',
       banner: 'https://d3ulmsx02dkj2g.cloudfront.net/banner_680.png',
       banner_big: 'https://d3ulmsx02dkj2g.cloudfront.net/banner_1024.png',
@@ -116,6 +116,6 @@ define([
         console.log('island ' + _.str.strRightBack(window.__s, '/'));
       }
     }
-    
+
   };
 });

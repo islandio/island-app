@@ -1,7 +1,7 @@
 <%
   var t = this.model.attributes;
   var gravatar = t.author ? ('https://www.gravatar.com/avatar/'
-      + t.author.gravatar + '?s=36&d=' 
+      + t.author.gravatar + '?s=96&d='
       + encodeURIComponent(this.app.images.avatar)): null;
   var grade = this.model.formatTickGrades(t.grade, t.feel, t.crag.country)
       || this.model.formatTickGrades(t.ascent.grade, null, t.crag.country)
@@ -26,9 +26,9 @@
   </a>
   <span class="info-divider">&nbsp;&middot;&nbsp;</span>
   <a href="/efforts/<%= t.key %>" class="navigate muted">
-    <time class="created" 
-        datetime="<%= t.date %>" 
-        title="<%= t.date %>" 
+    <time class="created"
+        datetime="<%= t.date %>"
+        title="<%= t.date %>"
         id="time_<%= this.model.id %>">
       <%= t.updated %>
     </time>
