@@ -38,7 +38,7 @@ define([
       // Socket subscriptions
       _.bindAll(this, 'onRemoved');
       this.app.rpc.socket.on('post.removed', this.onRemoved);
-      
+
       this.on('rendered', this.setup, this);
       return this;
     },
@@ -231,7 +231,7 @@ define([
                   height: el.height().toString()
                 });
                 this.$('span.image-mosaic-play-text').hide();
-                
+
                 // Finally, play the video.
                 jwplayer('video-' + o.id).setup(params);
 

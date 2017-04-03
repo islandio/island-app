@@ -1,7 +1,114 @@
 <div class="rightside">
+  <h2 class="sidebar-heading">Athlete Co-owners & Ambassadors:</h2>
+  <div class="sidebar-featureds">
+    <% _.each(this.model.attributes.ambassadors, _.bind(function (m) {
+      var g = 'https://www.gravatar.com/avatar/' +
+          m.gravatar + '?s=274&d=' +
+          encodeURIComponent(this.app.images.avatar_big);
+    %>
+      <div class="sidebar-featured">
+        <div class="sidebar-featured-details">
+          <h1>
+            <a href=<%= m.username %> class="navigate">
+              <%= m.displayName %>
+            </a>
+          </h1>
+          <div class="sidebar-featured-right">
+            <a href="/<%= m.username %>" class="navigate">
+              <img src="<%= m.avatar_big || g %>" width="100"
+                  height="100" />
+            </a>
+          </div>
+          <div class="sidebar-featured-left">
+            <p>
+              <%= this.model.formatText(m.description || '', true, 240) %>
+              <a href="/<%= m.username %>" class="navigate" title="Read more">read more</a>
+            </p>
+          </div>
+          <div class="clear"></div>
+        </div>
+        <div class="clear"></div>
+      </div>
+    <% }, this)); %>
+  </div>
 
+  <div class="sidebar-items"></div>
 </div>
+
 <div class="leftside">
-  
+
+  <div class="post-body about">
+
+    <p class="page">
+      <span class="sidebar-heading">For climbers by climbers:</span>
+This Island started as a passion project by Dave Graham and Sander Pick. Annoyed with existing tools for climbers, they decided to try and build something useful for the community.
+      <br /><br />
+      If you have a question or just want to chat, please <b><a href="mailto:support@island.io">send us an email</a></b>!
+      <br /><br />
+      <span class="sidebar-heading">Our Team:</span>
+    </p>
+
+    <section class="team-member">
+      <div class="team-photo">
+        <a href="/davegraham" class="navigate">
+          <img src="https://s3.amazonaws.com/island.io/dave.jpg" width="200" height="200" />
+        </a>
+      </div>
+      <div class="team-about">
+        <a href="/davegraham" class="navigate">
+          <h2>Dave Graham</h2>
+        </a>
+        <h3>Co-founder</h3>
+        <p>
+Dave is a professional rock climber, amateur geologist, outdoor enthusiast, and electronic musician. Athlete at Island, Petzl, Walltopia, TrangoWorld Official. Co-founder & Chief Community Officer at Island.
+<br /><br />
+See more from <a href="/davegraham" class="navigate">@davegraham</a> at <a href="https://twitter.com/Dave_Graham_">Twitter<a>, <a href="http://instagram.com/dave_graham_">Instagram</a>, <a href="https://www.facebook.com/david.graham.92798072">Facebook</a>, and <a href="http://soundcloud.com/the-island">SoundCloud</a>.
+        </p>
+      </div>
+      <div class="clear"></div>
+    </section>
+
+    <section class="team-member">
+      <div class="team-photo">
+        <a href="/sander" class="navigate">
+          <img src="https://s3.amazonaws.com/island.io/sander.jpg" width="200" height="200" />
+        </a>
+      </div>
+      <div class="team-about">
+        <a href="/sander" class="navigate">
+          <h2>Sander Pick</h2>
+        </a>
+        <h3>Co-founder, engineer, & designer</h3>
+        <p>
+Sander is a professional software engineer and designer, amateur rock climber, skier, fly fisherman, musician, and videographer. He likes hard problems, focus, and open spaces. Montanan. Pro partner at Mammut. Co-founder & Chief Executive Officer at Island. Co-founder & Chief Technology Officer at <a href="https://www.set.gl/">Set</a>.
+<br /><br />
+See more from <a href="/sander" class="navigate">@sander</a> at <a href="http://sanderpick.com">sanderpick.com<a>, <a href="https://github.com/sanderpick">GitHub<a>, <a href="https://www.linkedin.com/in/sanderpick/">LinkedIn</a>, <a href="https://twitter.com/sanderpick">Twitter<a>, <a href="http://instagram.com/sanderpick">Instagram</a>, <a href="https://www.vimeo.com/sanderpick">Vimeo</a>, and <a href="http://soundcloud.com/sanderpick">SoundCloud</a>.
+        </p>
+      </div>
+      <div class="clear"></div>
+    </section>
+
+    <section class="team-member">
+      <div class="team-photo">
+        <a href="/eyalcohen" class="navigate">
+          <img src="https://s3.amazonaws.com/island.io/eyal.jpg" width="200" height="200" />
+        </a>
+      </div>
+      <div class="team-about">
+        <a href="/eyalcohen" class="navigate">
+          <h2>Eyal Cohen</h2>
+        </a>
+        <h3>Co-owner & engineer</h3>
+        <p>
+          Eyal is a professional hardware and software engineer, amateur rock climber, and accomplished musician. Co-owner and contributing engineer at Island. Engineer at <a href="https://www.ottomotors.com/">Otto</a>.
+          <br /><br />
+          See more from <a href="/eyalcohen" class="navigate">@eyalcohen</a> at <a href="https://github.com/eyalcohen">GitHub</a>, <a href="http://instagram.com/eyalcohen1">Instagram</a>, and <a href="https://www.linkedin.com/in/eyal-cohen-135a296/">LinkedIn<a>.
+        </p>
+      </div>
+      <div class="clear"></div>
+    </section>
+
+  </div>
+
 </div>
 <div class="clear"></div>

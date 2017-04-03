@@ -1684,7 +1684,7 @@ a.logo {
   background: none;
 }
 a.logo img {
-  margin-top: 5px;
+  margin-top: 6px;
 }
 span.tagline {
   float: right;
@@ -2401,6 +2401,48 @@ a.privacy-link {
 }
 a.privacy-link:hover {
   text-decoration: underline;
+}
+/*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––about*/
+.about p.page {
+  margin: 0;
+}
+.about section.team-member {
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  padding: 30px 0;
+  border-top: 1px solid #f2f2f2;
+}
+.about section.team-member .team-photo {
+  float: left;
+}
+.about section.team-member .team-about {
+  margin: 0 0 0 230px;
+}
+.about section.team-member a {
+  background: none;
+}
+.about section.team-member img {
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+}
+.about section.team-member h2 {
+  font-size: 20px;
+  font-family: Title, Verdana, Arial, sans-serif;
+}
+.about section.team-member h3 {
+  font-size: 16px;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  line-height: 30px;
+  color: #808080;
+  font-style: italic;
+  font-weight: 200;
+}
+.about section.team-member p {
+  font-size: 13px;
+  line-height: 20px;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  color: #666;
+  margin-top: 5px;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––signin*/
 .signin-submit,
@@ -3988,14 +4030,12 @@ textarea.comment-input {
   content: "";
   position: absolute;
   display: block;
-  background: url("../img/nod_r.png") no-repeat top right;
+  background: url("../img/bump.png") no-repeat top right;
+  background-size: 50%;
   width: 20px;
   height: 20px;
-  left: 5px;
-  top: 4px;
-  -moz-transform: rotate(20deg);
-  -webkit-transform: rotate(20deg);
-  transform: rotate(20deg);
+  left: 0px;
+  top: 8px;
 }
 .hangtens:before {
   content: "";
@@ -4019,10 +4059,10 @@ textarea.comment-input {
   content: "";
   position: absolute;
   display: block;
-  background: url("../img/nod_r_s.png") no-repeat top right;
-  width: 12px;
-  height: 12px;
-  left: 0px;
+  background: url("../img/bump.png") no-repeat top right;
+  width: 20px;
+  height: 20px;
+  left: -8px;
   top: 2px;
   -moz-transform: rotate(20deg);
   -webkit-transform: rotate(20deg);
@@ -5118,7 +5158,6 @@ ul.session-ticks {
 }
 .tick .session-tick-name {
   display: block;
-  margin-right: 100px;
 }
 .tick .session-tick-name a {
   font-size: 14px;
@@ -6544,6 +6583,12 @@ p.habla_conversation_p_item,
   }
   .folder-title .page-title {
     margin: 0 10px;
+  }
+  .about section.team-member .team-photo {
+    float: none;
+  }
+  .about section.team-member .team-about {
+    margin: 10px 0 0 0;
   }
 }
 @-moz-keyframes fadeIn {

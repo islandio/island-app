@@ -38,6 +38,7 @@ define([
   'views/splash',
   'views/ticks',
   'views/medias',
+  'views/about',
   'text!../templates/about.html',
   'text!../templates/privacy.html',
   'text!../templates/tip.html',
@@ -46,7 +47,7 @@ define([
 ], function ($, _, Backbone, Spin, mps, rest, util, Error, Header, Tabs, Footer,
     Flashes, Signin, Signup, Forgot, Notifications, Map, Profile, Post, Session,
     Tick, Crag, Admin, ImportSearch, ImportInsert, Ascent, Settings, Reset,
-    Store, Static, Crags, Dashboard, Splash, Ticks, Medias, aboutTemp,
+    Store, Static, Crags, Dashboard, Splash, Ticks, Medias, About, aboutTemp,
     privacyTemp, tipTemp, NewSession, Share
 ) {
 
@@ -555,11 +556,10 @@ define([
       this.start();
       this.renderTabs();
       this.clearContainer();
-      this.render('/service/static', _.bind(function (err) {
+      this.render('/service/about', _.bind(function (err) {
         if (err) return;
-        this.page = new Static(this.app,
-            {title: 'About', template: aboutTemp}).render();
-        this.renderTabs({title: 'What\'s going on here?', log: true});
+        this.page = new About(this.app).render();
+        this.renderTabs({title: 'About The Island'});
         this.stop();
       }, this));
     },

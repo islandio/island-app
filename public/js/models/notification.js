@@ -36,7 +36,7 @@ define([
           '".';
       } else if (att.event.data.action.t === 'hangten') {
         str = '<strong>' + att.event.data.action.a + '</strong> ' +
-              'gave you a nod for ';
+              'gave you a bump for ';
         if (att.event.data.target.t === 'post') {
           str += 'your post';
         } else if (att.event.data.target.t === 'tick') {

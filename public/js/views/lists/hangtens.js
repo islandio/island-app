@@ -13,7 +13,7 @@ define([
   'collections/hangtens'
 ], function ($, _, List, mps, rest, util, template, Collection) {
   return List.extend({
-    
+
     el: '.hangtens',
 
     initialize: function (app, options) {
@@ -105,9 +105,9 @@ define([
 
     setButtonText: function () {
       if (this.hangtened) {
-        this.button.text('Unnod');
+        this.button.text('Unbump');
       } else {
-        this.button.text('Nod');
+        this.button.text('Bump');
       }
     },
 

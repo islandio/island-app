@@ -163,7 +163,7 @@ define([
     checkout: function (e) {
       var summary = this.getOrderSummary();
 
-      if (summary.count <= 0) {
+      if (!summary || summary.count <= 0) {
         return;
       }
 
@@ -174,7 +174,7 @@ define([
 
       var cancel = $('.modal-cancel');
       var confirm = $('.modal-confirm');
-      
+
       cancel.click(_.bind(this.closeModal, this));
 
       confirm.click(_.bind(function (e) {
@@ -306,10 +306,10 @@ define([
             }]);
             return false;
           }
-          
+
           store.set('shippingOptions', data.options);
           store.set('shipTo', data.shipTo);
-          
+
           this.closeModal();
           this.chooseShippingOption(buyNow);
         }, this));
@@ -380,7 +380,7 @@ define([
       var cancel = $('.modal-cancel');
       var back = $('.modal-back');
       var confirm = $('.modal-confirm');
-      
+
       cancel.click(_.bind(this.closeOrder, this));
 
       back.click(_.bind(function (e) {
@@ -442,7 +442,7 @@ define([
         total += cost;
         count += quantity;
       }, this));
-      
+
       var itemsTotal = total;
       total += shippingAndHandlingCost * 100;
 
@@ -479,7 +479,7 @@ define([
       var cancel = $('.modal-cancel');
       var back = $('.modal-back');
       var confirm = $('.modal-confirm');
-      
+
       cancel.click(_.bind(this.closeOrder, this));
 
       back.click(_.bind(function (e) {

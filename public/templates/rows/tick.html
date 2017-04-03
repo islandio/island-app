@@ -18,7 +18,7 @@
 <% if (!this.parentView) { %>
   <div class="rightside">
     <div class="mini-map" id="tick_map_<%= this.model.id %>"></div>
-    <% if (w) { 
+    <% if (w) {
       var cloudCover = Math.round(w.cloudCover * 100);
     %>
       <table class="session-weather">
@@ -84,7 +84,7 @@
 <% } %>
 
 <div class="tick-inner" data-key="<%= this.model.get('key') %>">
-  <% if (this.parentView && this.parentView.model 
+  <% if (this.parentView && this.parentView.model
       && this.parentView.model.get('action')) { %>
     <span class="tick-avatar">
       <a href="/<%= t.author.username %>" class="image-anchor navigate">
@@ -156,7 +156,6 @@
     <span class="session-tick-style">
       <%= this.model.formatTickDetails(t) %>
     </span>
-
   <% } %>
   <% if ((t.duration || t.performance || w) && !compact) { %>
     <span class="session-tick-detail">
@@ -180,6 +179,11 @@
   <% if (t.note && !compact) { %>
     <p class="session-tick-note">
       &ldquo;<%= this.model.formatNote() %>&rdquo;
+    </p>
+  <% } %>
+  <% if (!t.note && !compact) { %>
+    <p class="session-tick-note">
+      <span style="color: #b3b3b3; font-style: italic;">no comment</span>
     </p>
   <% } %>
   <div class="clear"></div>
@@ -227,7 +231,7 @@
   <% } %>
   <% if (this.options.info !== false) { %>
     <% if (this.app.profile.member && !this.options.commentless) { %>
-      <a href="javascript:;" class="muted hangten">Nod</a>
+      <a href="javascript:;" class="muted hangten">Bump</a>
       <span class="info-divider">&nbsp;&middot;&nbsp;</span>
       <a href="javascript:;" class="muted toggle-comment-input">Comment</a>
       <span class="info-divider">&nbsp;&middot;&nbsp;</span>
@@ -248,7 +252,7 @@
         <span class="info-divider">&nbsp;&middot;&nbsp;</span>
       <% } %>
     <% } %>
-    <% if ((this.app.profile.member && this.app.profile.member.admin) || own) { %>
+    <% if ((this.app.profile.member && this.app.profile.member.admin && !this.options.inlineRemove) || own) { %>
       <a href="javascript:;" class="muted tick-edit">Edit</a>
       <span class="info-divider">&nbsp;&middot;&nbsp;</span>
     <% } %>
@@ -261,9 +265,9 @@
     <% } %>
     <% if (!this.options.dateless) { %>
       <a href="/efforts/<%= this.model.get('key') %>"
-          class="muted navigate"><time class="created" 
-          datetime="<%= this.model.get('updated') %>" 
-          title="<%= this.model.get('updated') %>" 
+          class="muted navigate"><time class="created"
+          datetime="<%= this.model.get('updated') %>"
+          title="<%= this.model.get('updated') %>"
           id="time_<%= this.model.id %>">
         <%= this.model.get('updated') %>
         </time></a>
