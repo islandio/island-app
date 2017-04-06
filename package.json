@@ -38,7 +38,7 @@
     "express-session": "^1.15.1",
     "island-boots": "git+https://island-ebs:i51andghebs@github.com/The-Island/island-boots.git#0.0.2",
     "island-collections": "git+https://island-ebs:i51andghebs@github.com/The-Island/island-collections.git#0.0.2",
-    "island-emailer": "git+https://island-ebs:i51andghebs@github.com/The-Island/island-emailer.git#0.0.2",
+    "island-emailer": "git+https://island-ebs:i51andghebs@github.com/The-Island/island-emailer.git#0.0.3",
     "island-events": "git+https://island-ebs:i51andghebs@github.com/The-Island/island-events.git#0.0.2",
     "island-lib27crags": "git+https://island-ebs:i51andghebs@github.com/The-Island/island-lib27crags.git#0.0.2",
     "island-lib8a": "git+https://island-ebs:i51andghebs@github.com/The-Island/island-lib8a.git#0.0.2",
