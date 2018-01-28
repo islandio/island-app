@@ -163,7 +163,7 @@ define([
         // that has a width
         var w = el.css('width');
         var nextParent = el;
-        while (parseInt(w) == 0 || w.indexOf('%') !== -1) {
+        while (!w || parseInt(w) == 0 || w.indexOf('%') !== -1) {
           nextParent = nextParent.parent()
           w = nextParent.css('width');
         }

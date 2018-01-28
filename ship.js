@@ -39,7 +39,7 @@ var exec = require('child_process').exec;
 var wrench = require('wrench');
 var request = require('request');
 var Step = require('step');
-var boots = require('island-boots');
+var boots = require('@islandio/boots');
 
 // Build vars.
 var dir = 'build';

@@ -25,11 +25,11 @@ if (argv._.length || argv.help) {
 
 // Module Dependencies
 var util = require('util');
-var iutil = require('island-util');
+var iutil = require('@islandio/util');
 var Step = require('step');
 var _ = require('underscore');
 var _s = require('underscore.string');
-var boots = require('island-boots');
+var boots = require('@islandio/boots');
 
 boots.start(function (client) {
 

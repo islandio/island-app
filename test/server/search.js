@@ -3,7 +3,7 @@ var assert = require('assert');
 var request = require('supertest');
 var _ = require('underscore');
 
-var Search = require('island-search').Search;
+var Search = require('@islandio/search').Search;
 var search;
 
 var docId = '1234';

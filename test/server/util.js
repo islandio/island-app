@@ -3,7 +3,7 @@ var assert = require('assert');
 var request = require('supertest');
 var _ = require('underscore');
 
-var iutil = require('island-util');
+var iutil = require('@islandio/util');
 
 describe('Island Utils', function() {
   it('atmentions function', function() {

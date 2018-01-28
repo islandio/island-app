@@ -707,7 +707,7 @@ textarea::-moz-focus-inner
 
 a.button,
 button.button,
-div[role=button],
+div[role=button]:not([class^="jw-"]),
 input[type=submit]:not(.submit)
   font-size 12px
   padding 0 8px
@@ -737,7 +737,7 @@ input[type=submit]:not(.submit)
 
 a.button:hover:not(.disabled),
 button.button:hover:not(.disabled),
-div[role=button]:hover:not(.disabled),
+div[role=button]:hover:not(.disabled):not([class^="jw-"]),
 input[type='submit']:hover:not(.disabled)
   color #1a1a1a
   background-color #e1e1e1
@@ -745,7 +745,7 @@ input[type='submit']:hover:not(.disabled)
 
 a.button:active:not(.disabled),
 button.button:active:not(.disabled),
-div[role=button]:active:not(.disabled),
+div[role=button]:active:not(.disabled):not([class^="jw-"]),
 input[type='submit']:active:not(.disabled)
   color #1a1a1a
   -moz-box-shadow inset 0 2px 5px rgba(0, 0, 0, 0.3)
@@ -755,7 +755,7 @@ input[type='submit']:active:not(.disabled)
 
 a.button:focus:not(.disabled),
 button.button:focus:not(.disabled),
-div[role=button]:focus:not(.disabled),
+div[role=button]:focus:not(.disabled):not([class^="jw-"]),
 input[type=submit]:focus:not(.disabled)
   border 1px solid #98c1e6
 
@@ -5041,6 +5041,9 @@ textarea.post-input
 
 .media-instagram
   display block
+
+.jwplayer .jw-rightclick
+  display: none !important;
 
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––sessions*/
 

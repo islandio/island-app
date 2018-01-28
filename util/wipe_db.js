@@ -20,7 +20,7 @@ if (argv._.length || argv.help) {
 var util = require('util');
 var Step = require('step');
 var _ = require('underscore');
-var boots = require('island-boots');
+var boots = require('@islandio/boots');
 
 boots.start(function (client) {
 

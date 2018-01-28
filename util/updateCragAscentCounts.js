@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var _ = require('underscore');
-var boots = require('island-boots');
+var boots = require('@islandio/boots');
 var async = require('async');
 
 boots.start(function (client) {

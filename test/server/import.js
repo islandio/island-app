@@ -3,8 +3,8 @@ var assert = require('assert');
 var request = require('supertest');
 var _ = require('underscore');
 
-var lib8a = require('island-lib8a');
-var lib27 = require('island-lib27crags');
+var lib8a = require('@islandio/lib8a');
+var lib27 = require('@islandio/lib27crags');
 
 var lib8aUserId, lib27UserId;
 
