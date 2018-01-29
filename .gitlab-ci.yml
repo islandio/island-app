@@ -1,0 +1,33 @@
+image: node:8.9.4
+
+before_script:
+  - printf "@islandio:registry=https://registry.yarnpkg.com/\nalways-auth=true\n_authToken=$NPM_TOKEN" > .npmrc
+  - yarn global add node-gyp
+  - npm run clean
+  - npm run setup
+
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  services:
+    - redis:latest
+    - mongodb:latest
+  script:
+    - npm run build
+    - npm run startBackground
+    - sleep 10
+    - npm run test
+
+production:
+  stage: deploy
+  script:
+    - npm run build
+    - . ./scripts/upload-static.sh
+    - . ./scripts/ci-deploy-setup.sh
+    - eb deploy the-island-app --profile eb-cli --region us-east-1
+  environment: production
+  only:
+    - tags

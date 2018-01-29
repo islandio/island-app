@@ -33,24 +33,17 @@ Island is now running at [```http://localhost:8080/```](http://localhost:8080/).
 2. Devleopment server
 3. Testing rules
 
-##### Shipping
+##### Releases
 
-Now that everyting is setup, you can build a new version:
-
-```
-$ npm version patch
-$ npm run build
-```
-
-Then deploy the static build to S3 and push the app to EBS:
+Releases are deployed with tags via CI:
 
 ```
-$ npm run deploy
+$ npm run release
 ```
+
+This will bump version, create and push a tag, build and upload the frontend to S3, and push a new app version to EBS.
 
 Check that your new version of Island is running at [```https://www.island.io```](https://www.island.io).
-
-Lastly, ```git push --follow-tags``` to push your changes and tag.
 
 That's it!
 

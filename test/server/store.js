@@ -211,7 +211,7 @@ describe('Store', function() {
     });
 
     it('request shipping rate with good address', function(done) {
-      this.timeout(5000);
+      this.timeout(10000);
       request(url)
           .post('/api/store/shipping')
           .send({
@@ -309,7 +309,7 @@ describe('Store', function() {
         card: {
           number: '4242424242424242',
           exp_month: 12,
-          exp_year: 2017,
+          exp_year: 2022,
           cvc: '123'
         }
       }, function (err, token) {
@@ -319,215 +319,211 @@ describe('Store', function() {
       });
     });
 
-  });
-
-  after(function () {
-
     describe('Checkout', function() {
 
       it('checkout with no stripe token', function(done) {
         request(url)
-            .post('/api/store/checkout')
-            .send({
-              cart: goodCart,
-              shipping: shipping,
-              description: description
-            })
-            .expect(403)
-            .end(function(err, res) {
-              should(res.body.error.message).be.exactly('Token invalid');
-              done(err);
-            });
+          .post('/api/store/checkout')
+          .send({
+            cart: goodCart,
+            shipping: shipping,
+            description: description
+          })
+          .expect(403)
+          .end(function(err, res) {
+            should(res.body.error.message).be.exactly('Token invalid');
+            done(err);
+          });
       });
 
       it('checkout with no cart', function(done) {
         request(url)
-            .post('/api/store/checkout')
-            .send({
-              token: goodToken,
-              shipping: shipping,
-              description: description
-            })
-            .expect(403)
-            .end(function(err, res) {
-              should(res.body.error.message).be.exactly('Cart invalid');
-              done(err);
-            });
+          .post('/api/store/checkout')
+          .send({
+            token: goodToken,
+            shipping: shipping,
+            description: description
+          })
+          .expect(403)
+          .end(function(err, res) {
+            should(res.body.error.message).be.exactly('Cart invalid');
+            done(err);
+          });
       });
 
       it('checkout with empty cart', function(done) {
         request(url)
-            .post('/api/store/checkout')
-            .send({
-              token: goodToken,
-              cart: {},
-              shipping: shipping,
-              description: description
-            })
-            .expect(403)
-            .end(function(err, res) {
-              should(res.body.error.message).be.exactly('Cart invalid');
-              done(err);
-            });
+          .post('/api/store/checkout')
+          .send({
+            token: goodToken,
+            cart: {},
+            shipping: shipping,
+            description: description
+          })
+          .expect(403)
+          .end(function(err, res) {
+            should(res.body.error.message).be.exactly('Cart invalid');
+            done(err);
+          });
       });
 
       it('checkout with no shipping', function(done) {
         request(url)
-            .post('/api/store/checkout')
-            .send({
-              token: goodToken,
-              cart: goodCart,
-              description: description
-            })
-            .expect(403)
-            .end(function(err, res) {
-              should(res.body.error.message).be.exactly('Shipping invalid');
-              done(err);
-            });
+          .post('/api/store/checkout')
+          .send({
+            token: goodToken,
+            cart: goodCart,
+            description: description
+          })
+          .expect(403)
+          .end(function(err, res) {
+            should(res.body.error.message).be.exactly('Shipping invalid');
+            done(err);
+          });
       });
 
       it('checkout with no shipping address', function(done) {
         var _shipping = _.clone(shipping);
         delete _shipping.shipTo;
         request(url)
-            .post('/api/store/checkout')
-            .send({
-              token: goodToken,
-              cart: goodCart,
-              shipping: _shipping,
-              description: description
-            })
-            .expect(403)
-            .end(function(err, res) {
-              should(res.body.error.message).be.exactly('Shipping invalid');
-              done(err);
-            });
+          .post('/api/store/checkout')
+          .send({
+            token: goodToken,
+            cart: goodCart,
+            shipping: _shipping,
+            description: description
+          })
+          .expect(403)
+          .end(function(err, res) {
+            should(res.body.error.message).be.exactly('Shipping invalid');
+            done(err);
+          });
       });
 
       it('checkout with no shipment', function(done) {
         var _shipping = _.clone(shipping);
         delete _shipping.shipments;
         request(url)
-            .post('/api/store/checkout')
-            .send({
-              token: goodToken,
-              cart: goodCart,
-              shipping: _shipping,
-              description: description
-            })
-            .expect(403)
-            .end(function(err, res) {
-              should(res.body.error.message).be.exactly('Shipping invalid');
-              done(err);
-            });
+          .post('/api/store/checkout')
+          .send({
+            token: goodToken,
+            cart: goodCart,
+            shipping: _shipping,
+            description: description
+          })
+          .expect(403)
+          .end(function(err, res) {
+            should(res.body.error.message).be.exactly('Shipping invalid');
+            done(err);
+          });
       });
 
       it('checkout with no description', function(done) {
         request(url)
-            .post('/api/store/checkout')
-            .send({
-              token: goodToken,
-              cart: goodCart,
-              shipping: shipping
-            })
-            .expect(403)
-            .end(function(err, res) {
-              should(res.body.error.message).be.exactly('Description invalid');
-              done(err);
-            });
+          .post('/api/store/checkout')
+          .send({
+            token: goodToken,
+            cart: goodCart,
+            shipping: shipping
+          })
+          .expect(403)
+          .end(function(err, res) {
+            should(res.body.error.message).be.exactly('Description invalid');
+            done(err);
+          });
       });
 
       it('checkout with over max product quantity cart', function(done) {
         request(url)
-            .post('/api/store/checkout')
-            .send({
-              token: goodToken,
-              cart: overMaxCart,
-              shipping: shipping,
-              description: description
-            })
-            .expect(403)
-            .end(function(err, res) {
-              should(res.body.error.message).be.exactly(
-                  'OVER_MAX_PRODUCT_QUANTITY_PER_ORDER');
-              done(err);
-            });
+          .post('/api/store/checkout')
+          .send({
+            token: goodToken,
+            cart: overMaxCart,
+            shipping: shipping,
+            description: description
+          })
+          .expect(403)
+          .end(function(err, res) {
+            should(res.body.error.message).be.exactly(
+              'OVER_MAX_PRODUCT_QUANTITY_PER_ORDER');
+            done(err);
+          });
       });
 
       it('checkout with unknown product', function(done) {
         this.timeout(5000);
         request(url)
-            .post('/api/store/checkout')
-            .send({
-              token: goodToken,
-              cart: invalidCart,
-              shipping: shipping,
-              description: description
-            })
-            .expect(403)
-            .end(function(err, res) {
-              should(res.body.error.message).be.exactly('Cart invalid');
-              done(err);
-            });
+          .post('/api/store/checkout')
+          .send({
+            token: goodToken,
+            cart: invalidCart,
+            shipping: shipping,
+            description: description
+          })
+          .expect(403)
+          .end(function(err, res) {
+            should(res.body.error.message).be.exactly('Cart invalid');
+            done(err);
+          });
       });
 
       it('checkout with insufficient stock', function(done) {
         this.timeout(5000);
         request(url)
-            .post('/api/store/checkout')
-            .send({
-              token: goodToken,
-              cart: outOfStockCart,
-              shipping: shipping,
-              description: description
-            })
-            .expect(403)
-            .end(function(err, res) {
-              should(res.body.error.message).be.exactly('INSUFFICIENT_STOCK');
-              done(err);
-            });
+          .post('/api/store/checkout')
+          .send({
+            token: goodToken,
+            cart: outOfStockCart,
+            shipping: shipping,
+            description: description
+          })
+          .expect(403)
+          .end(function(err, res) {
+            should(res.body.error.message).be.exactly('INSUFFICIENT_STOCK');
+            done(err);
+          });
       });
 
       it('checkout with invalid token', function(done) {
         this.timeout(5000);
         request(url)
-            .post('/api/store/checkout')
-            .send({
-              token: invalidToken,
-              cart: goodCart,
-              shipping: shipping,
-              description: description
-            })
-            .expect(500)
-            .end(function(err, res) {
-              should(res.body.error.message).be.exactly(
-                  'No such token: canihazdollarbills');
-              done(err);
-            });
+          .post('/api/store/checkout')
+          .send({
+            token: invalidToken,
+            cart: goodCart,
+            shipping: shipping,
+            description: description
+          })
+          .expect(500)
+          .end(function(err, res) {
+            should(res.body.error.message).be.exactly(
+              'No such token: canihazdollarbills');
+            done(err);
+          });
       });
 
       it('checkout with valid token', function(done) {
         this.timeout(60000);
         request(url)
-            .post('/api/store/checkout')
-            .send({
-              token: goodToken,
-              cart: goodCart,
-              shipping: shipping,
-              description: description
-            })
-            .expect(200)
-            .end(function(err, res) {
-              res.body.should.have.property('orderNo');
-              res.body.should.have.property('orderId');
+          .post('/api/store/checkout')
+          .send({
+            token: goodToken,
+            cart: goodCart,
+            shipping: shipping,
+            description: description
+          })
+          .expect(200)
+          .end(function(err, res) {
+            res.body.should.have.property('orderNo');
+            res.body.should.have.property('orderId');
 
-              shipwire.orders.cancel({id: res.body.orderId},
-                  function (err, data) {
+            shipwire.orders.cancel({id: res.body.orderId},
+              function (err, data) {
                 should(data.status).be.exactly(200);
                 should(data.message).be.exactly('Order cancelled');
                 done(err);
               });
-            });
+          });
       });
 
     });

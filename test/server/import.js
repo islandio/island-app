@@ -9,7 +9,7 @@ var lib27 = require('@islandio/lib27crags');
 var lib8aUserId, lib27UserId;
 
 describe('Import8a', function() {
-  it('8a search for daniel woods', function(done) {
+  it.skip('8a search for daniel woods', function(done) {
     this.timeout(60000);
     lib8a.searchUser('Daniel Woods', function(err, res) {
       res.should.be.Array();
@@ -23,7 +23,7 @@ describe('Import8a', function() {
       done(err);
     });
   });
-  it('8a get ticks for Daniel Woods', function(done) {
+  it.skip('8a get ticks for Daniel Woods', function(done) {
     this.timeout(60000);
     lib8a.getTicks(lib8aUserId, function(err, res) {
       res.should.be.Array();

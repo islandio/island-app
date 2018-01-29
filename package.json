@@ -22,10 +22,14 @@
     "url": "git://github.com/The-Island/island-app.git"
   },
   "scripts": {
-    "start": "./start.js",
-    "test": "mocha",
+    "start": "node start.js",
+    "startBackground": "node start.js &",
+    "test": "mocha --recursive --reporter spec",
+    "setup": "yarn install",
+    "clean": ". ./scripts/clean.sh",
     "build": "./scripts/build.js .",
-    "deploy": ". ./scripts/deploy.sh"
+    "release": "npm version patch",
+    "postversion": "git push --follow-tags"
   },
   "dependencies": {
     "@islandio/boots": "^0.0.4",
