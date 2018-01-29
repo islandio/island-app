@@ -35,21 +35,22 @@ Island is now running at [```http://localhost:8080/```](http://localhost:8080/).
 
 ##### Shipping
 
-Now that everyting is setup, you can concat and minify JS files and send the frontend to Amazon S3.
+Now that everyting is setup, you can build a new version:
 
 ```
-$ ./ship.js .
+$ npm version patch
+$ npm run build
 ```
 
-Then deploy to EBS with ```eb push``` or just do it via ```ship.js```.
+Then deploy the static build to S3 and push the app to EBS:
 
 ```
-$ ./ship.js --push .
+$ npm run deploy
 ```
 
 Check that your new version of Island is running at [```https://www.island.io```](https://www.island.io).
 
-Lastly, ```git push``` the version bump auto-commit to avoid conflicts in ```package.json``` and/or overwriting old frontend directory on Amazon S3.
+Lastly, ```git push --follow-tags``` to push your changes and tag.
 
 That's it!
 

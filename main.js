@@ -57,8 +57,6 @@ if (cluster.isMaster) {
   }
 
   var http = require('http');
-  var https = require('https');
-  // var connect = require('connect');
   var express = require('express');
   var bodyParser = require('body-parser');
   var cookieParser = require('cookie-parser');
@@ -74,13 +72,9 @@ if (cluster.isMaster) {
   var redis = require('redis');
   var ioredis = require('socket.io-redis');
   var RedisStore = require('connect-redis')(session);
-  var pug = require('pug');
   var stylus = require('stylus');
   var passport = require('passport');
   var psio = require('passport.socketio');
-  var fs = require('fs');
-  var path = require('path');
-  var url = require('url');
   var Step = require('step');
   var iutil = require('@islandio/util');
   var loggly = require('loggly');
