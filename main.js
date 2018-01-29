@@ -5,56 +5,56 @@
  */
 
 var _package_ = require('./package.json');
-var cluster = require('cluster');
+// var cluster = require('cluster');
 var util = require('util');
-var cpus = require('os').cpus().length;
-var localtunnel = require('localtunnel');
-var optimist = require('optimist');
-var argv = optimist
-    .describe('help', 'Get help')
-    .describe('index', 'Ensure indexes on MongoDB collections')
-      .boolean('index')
-    .describe('tunnel', 'Setup an introspected tunnel')
-      .boolean('tunnel')
-    .argv;
+// var cpus = require('os').cpus().length;
+// var localtunnel = require('localtunnel');
+// var optimist = require('optimist');
+// var argv = optimist
+//     .describe('help', 'Get help')
+//     .describe('index', 'Ensure indexes on MongoDB collections')
+//       .boolean('index')
+//     .describe('tunnel', 'Setup an introspected tunnel')
+//       .boolean('tunnel')
+//     .argv;
 
-if (cluster.isMaster) {
-  var createWorkers = function (opts) {
-
-    // Create a worker for each CPU.
-    for (var i = 0; i < cpus; ++i) {
-      cluster.fork(opts);
-    }
-
-    // Listen for dying workers
-    cluster.on('exit', function (worker) {
-
-      // Replace the dead worker.
-      util.log('Worker ' + worker.id + ' died');
-      cluster.fork();
-    });
-  };
-
-  // Setup an outside tunnel to our localhost in development.
-  // We will pass this to the workers.
-  if (process.env.NODE_ENV !== 'production' && argv.tunnel) {
-    localtunnel(_package_.port, {subdomain: _package_.tunnel.subdomain}, function(err, tunnel) {
-      if (err) {
-        console.error(err);
-      } else {
-        util.log('Setting up tunnel from this machine to ' + tunnel.url);
-      }
-      createWorkers({tunnelURL: tunnel.url});
-    });
-  } else {
-    createWorkers();
-  }
-} else {
-
-  if (argv._.length || argv.help) {
-    optimist.showHelp();
-    process.exit(1);
-  }
+// if (cluster.isMaster) {
+//   var createWorkers = function (opts) {
+//
+//     // Create a worker for each CPU.
+//     for (var i = 0; i < cpus; ++i) {
+//       cluster.fork(opts);
+//     }
+//
+//     // Listen for dying workers
+//     cluster.on('exit', function (worker) {
+//
+//       // Replace the dead worker.
+//       util.log('Worker ' + worker.id + ' died');
+//       cluster.fork();
+//     });
+//   };
+//
+//   // Setup an outside tunnel to our localhost in development.
+//   // We will pass this to the workers.
+//   if (process.env.NODE_ENV !== 'production' && argv.tunnel) {
+//     localtunnel(_package_.port, {subdomain: _package_.tunnel.subdomain}, function(err, tunnel) {
+//       if (err) {
+//         console.error(err);
+//       } else {
+//         util.log('Setting up tunnel from this machine to ' + tunnel.url);
+//       }
+//       createWorkers({tunnelURL: tunnel.url});
+//     });
+//   } else {
+//     createWorkers();
+//   }
+// } else {
+//
+//   if (argv._.length || argv.help) {
+//     optimist.showHelp();
+//     process.exit(1);
+//   }
 
   var http = require('http');
   var express = require('express');
@@ -265,14 +265,14 @@ if (cluster.isMaster) {
         });
       }
 
-      if (!module.parent) {
+      // if (!module.parent) {
 
         Step(
           function () {
 
             // Open DB connection.
             new db.Connection(
-              app.get('MONGO_URI'), {ensureIndexes: argv.index && cluster.worker.id === 1}, this.parallel());
+              app.get('MONGO_URI'), {ensureIndexes: false}, this.parallel());
 
             app.set('cache', new Search({
               redisHost: app.get('REDIS_HOST_CACHE'),
@@ -384,12 +384,12 @@ if (cluster.isMaster) {
 
             server.listen(app.get('PORT'));
 
-            if (cluster.worker.id === 1) {
-              util.log('Web server listening on port ' + app.get('PORT') + ' with ' + cpus + ' worker(s)');
-            }
+            // if (cluster.worker.id === 1) {
+              util.log('Web server listening on port ' + app.get('PORT'));
+            // }
           }
         );
-      }
+      // }
     }
   );
-}
+// }
