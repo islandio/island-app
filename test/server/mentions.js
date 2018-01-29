@@ -16,31 +16,27 @@ describe('Mentions', function() {
     this.timeout(30000);
 
     common.createMember('testerA', function (err) {
-      console.log(err)
       if (err) return done(err)
       common.createMember('testerB', function (err) {
-        console.log(err)
         if (err) return done(err)
         common.createMember('testerC', function (err) {
-          console.log(err)
           if (err) return done(err)
           common.login('testerC', function (err) {
-            console.log(err)
-            done()
-            // if (err) return done(err)
-            // common.createCrag('testCrag', function(err, res) {
-            //   console.log(err)
-            //   if (err) return done(err);
-            //   crag_id = res.body._id;
-            //   console.log(crag_id)
-            //   common.createAscent('testAscent', 'b', 10, crag_id, function(err, res) {
-            //     console.log(err)
-            //     if (err) return done(err);
-            //     ascent_id = res.body.ascent_id;
-            //     console.log(ascent_id)
-            //     done()
-            //   });
-            // });
+            if (err) return done(err)
+            common.createCrag('testCrag', function(err, res) {
+              console.log(err)
+              done()
+              // if (err) return done(err);
+              // crag_id = res.body._id;
+              // console.log(crag_id)
+              // common.createAscent('testAscent', 'b', 10, crag_id, function(err, res) {
+              //   console.log(err)
+              //   if (err) return done(err);
+              //   ascent_id = res.body.ascent_id;
+              //   console.log(ascent_id)
+              //   done()
+              // });
+            });
           });
         });
       });
