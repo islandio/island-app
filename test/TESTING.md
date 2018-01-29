@@ -35,7 +35,6 @@ Check these pages / functions before pushing to production.
 - Logout
 - Map behaviors
 
-
 ### Back-end Functions
 
 

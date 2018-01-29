@@ -22,7 +22,6 @@ exports.createMember = function(name, cb) {
       .get('/api/members/' + name)
       .end(function(err, res) {
         if (res.statusCode === 404) {
-          console.log('creating user ' + name);
           request(url)
               .post('/api/members')
               .send(profile)
@@ -71,7 +70,6 @@ exports.deleteMember = function(name, cb) {
         .expect(200)
         .end(function(err, res) {
           if (err) return cb(err);
-          console.log('deleting user ' + name);
           var req = request(url).delete('/api/members/' + name);
           req.cookies = res.headers['set-cookie'].pop().split(';')[0];
           req.expect(200, cb);
@@ -88,7 +86,6 @@ exports.createCrag = function(name, cb) {
       longitude: -122.4167
     }
   };
-  console.log('creating crag ' + name);
   var req = request(url).post('/api/crags');
   req.cookies = cookies;
   req.send(profile)
@@ -100,7 +97,6 @@ exports.createCrag = function(name, cb) {
 };
 
 exports.deleteCrag = function(name, cb) {
-  console.log('deleting crag ' + name);
   var req = request(url).delete('/api/crags/usa/' + name.toLowerCase());
   req.cookies = cookies;
   req.send()
@@ -112,7 +108,6 @@ exports.deleteCrag = function(name, cb) {
 };
 
 exports.deleteAscent = function(id, cb) {
-  console.log('deleting ascent');
   var req = request(url).delete('/api/ascents/' + id);
   req.cookies = cookies;
   req.send()
@@ -131,7 +126,6 @@ exports.createAscent = function(name, type, grade, cragid, cb) {
     type: type,
     grade: grade
   };
-  console.log('creating ascent ' + name);
   var req = request(url).post('/api/ascents');
   req.cookies = cookies;
   req.send(profile)

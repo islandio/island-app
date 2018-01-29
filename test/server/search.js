@@ -11,7 +11,8 @@ var docId = '1234';
 describe('Search', function() {
   it('Create redis connection', function(done) {
     search = new Search({
-      redisHost: 'localhost'
+      redisHost: process.env.REDIS_HOST_CACHE || 'localhost',
+      redisPort: process.env.REDIS_PORT || 6379
     }, done);
   });
   it('Index a document', function(done) {

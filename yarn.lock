@@ -80,6 +80,17 @@
     step "1.0.0"
     underscore "~1.8.3"
 
+"@islandio/search@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@islandio/search/-/search-0.0.5.tgz#a36028c0d22b6d5a64a9bccbae736f01d96c68d3"
+  dependencies:
+    async "~2.1.4"
+    diacritics "^1.3.0"
+    porter-stemmer "^0.9.1"
+    redis "^2.8.0"
+    step "1.0.0"
+    underscore "~1.8.3"
+
 "@islandio/util@^0.0.4":
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/@islandio/util/-/util-0.0.4.tgz#15c65eb6ff8bc71232b7eaeb634b33b8be2cb0fc"
@@ -2891,7 +2902,7 @@ redis@2.6.3:
     redis-commands "^1.2.0"
     redis-parser "^2.0.0"
 
-redis@^2.1.0, redis@^2.6.5:
+redis@^2.1.0, redis@^2.6.5, redis@^2.8.0:
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/redis/-/redis-2.8.0.tgz#202288e3f58c49f6079d97af7a10e1303ae14b02"
   dependencies:

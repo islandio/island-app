@@ -166,19 +166,13 @@ if (cluster.isMaster) {
           json: true
         }));
 
-        app.set('ROOT_URI', [app.get('package').builds.cloudfront,
-            app.get('package').version].join('/'));
-        app.set('HOME_URI', [app.get('package').protocol.name,
-            app.get('package').domain].join('://'));
+        app.set('ROOT_URI', [app.get('package').builds.cloudfront, app.get('package').version].join('/'));
+        app.set('HOME_URI', [app.get('package').protocol.name, app.get('package').domain].join('://'));
       }
 
-      this.parallel()(null, redis.createClient(app.get('REDIS_PORT'),
-          app.get('REDIS_HOST_SESSION')));
-      this.parallel()(null, redis.createClient(app.get('REDIS_PORT'),
-          app.get('REDIS_HOST_SESSION')));
-      this.parallel()(null, redis.createClient(app.get('REDIS_PORT'),
-          app.get('REDIS_HOST_SESSION')));
-
+      this.parallel()(null, redis.createClient(app.get('REDIS_PORT'), app.get('REDIS_HOST_SESSION')));
+      this.parallel()(null, redis.createClient(app.get('REDIS_PORT'), app.get('REDIS_HOST_SESSION')));
+      this.parallel()(null, redis.createClient(app.get('REDIS_PORT'), app.get('REDIS_HOST_SESSION')));
     },
     function (err, rc, rp, rs) {
       if (err) {
@@ -277,9 +271,8 @@ if (cluster.isMaster) {
           function () {
 
             // Open DB connection.
-            new db.Connection(app.get('MONGO_URI'), {ensureIndexes:
-                argv.index && cluster.worker.id === 1},
-                this.parallel());
+            new db.Connection(
+              app.get('MONGO_URI'), {ensureIndexes: argv.index && cluster.worker.id === 1}, this.parallel());
 
             app.set('cache', new Search({
               redisHost: app.get('REDIS_HOST_CACHE'),
@@ -338,7 +331,7 @@ if (cluster.isMaster) {
               password: app.get('SHIPWIRE_PASS')
             }));
 
-            _.each(resources, function (r, name) {
+            _.each(resources, function (r) {
               r.init();
             });
 
@@ -356,9 +349,8 @@ if (cluster.isMaster) {
 
             var sio = socketio(server);
             sio.adapter(ioredis({
-              redisPub: rp,
-              redisSub: rs,
-              redisClient: rc
+              pubClient: rp,
+              subClient: rs
             }));
             sio.set('transports', ['websocket']);
 
@@ -393,8 +385,7 @@ if (cluster.isMaster) {
             server.listen(app.get('PORT'));
 
             if (cluster.worker.id === 1) {
-              util.log('Web server listening on port ' + app.get('PORT') +
-                  ' with ' + cpus + ' worker(s)');
+              util.log('Web server listening on port ' + app.get('PORT') + ' with ' + cpus + ' worker(s)');
             }
           }
         );

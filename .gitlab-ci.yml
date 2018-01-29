@@ -1,10 +1,11 @@
-image: node:8.9.4
+image: lgatica/node-zmq:8.9.1
 
 before_script:
   - printf "@islandio:registry=https://registry.yarnpkg.com/\nalways-auth=true\n_authToken=$NPM_TOKEN" > .npmrc
   - yarn global add node-gyp
   - npm run clean
   - npm run setup
+  - npm i -g grunt-cli@1.2.0
 
 stages:
   - build
