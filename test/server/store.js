@@ -1,6 +1,6 @@
 var should = require('should');
 var assert = require('assert');
-var request = require('supertest');
+var request = require('@islandio/supertest');
 var _ = require('underscore');
 var store = require('../../lib/resources/store');
 var skus = Object.keys(require('../../store.json'));

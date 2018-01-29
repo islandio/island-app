@@ -91,6 +91,13 @@
     step "1.0.0"
     underscore "~1.8.3"
 
+"@islandio/supertest@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@islandio/supertest/-/supertest-3.0.0.tgz#5c105e70c47c22849be58d519e6e9948620e1a7b"
+  dependencies:
+    methods "~1.1.2"
+    superagent "^3.0.0"
+
 "@islandio/util@^0.0.4":
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/@islandio/util/-/util-0.0.4.tgz#15c65eb6ff8bc71232b7eaeb634b33b8be2cb0fc"
@@ -3387,13 +3394,6 @@ superagent@^3.0.0:
     mime "^1.4.1"
     qs "^6.5.1"
     readable-stream "^2.0.5"
-
-"supertest@git+https://github.com/bkeepers/supertest.git#unknown-errors":
-  version "3.0.0"
-  resolved "git+https://github.com/bkeepers/supertest.git#389c831284b6cd055afa25e46f8d506c7d2a489b"
-  dependencies:
-    methods "~1.1.2"
-    superagent "^3.0.0"
 
 supports-color@4.4.0:
   version "4.4.0"
