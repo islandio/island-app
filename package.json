@@ -22,8 +22,8 @@
     "url": "git://github.com/The-Island/island-app.git"
   },
   "scripts": {
-    "start": "node start.js",
-    "startBackground": "node start.js &",
+    "start": "node main.js",
+    "startBackground": "node main.js &",
     "test": "mocha --recursive --reporter spec",
     "setup": "yarn install",
     "clean": ". ./scripts/clean.sh",
