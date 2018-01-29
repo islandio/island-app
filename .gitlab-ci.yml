@@ -14,7 +14,7 @@ build:
   stage: build
   services:
     - redis:latest
-    - mongodb:latest
+    - mongo:latest
   script:
     - npm run build
     - npm run startBackground
