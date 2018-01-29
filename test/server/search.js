@@ -9,6 +9,10 @@ var search;
 var docId = '1234';
 
 describe('Search', function() {
+  after('teardown redis', function (done) {
+    search.client.quit()
+    done()
+  });
   it('Create redis connection', function(done) {
     search = new Search({
       redisHost: process.env.REDIS_HOST_CACHE || 'localhost',

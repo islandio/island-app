@@ -26,7 +26,6 @@ describe('Mentions', function() {
         common.login('testerC', this);
       },
       function(err) {
-        var self = this;
         if (err) return this(err);
         common.createCrag('testCrag', _.bind(function(err, res) {
           if (err) return this(err);

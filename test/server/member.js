@@ -10,7 +10,7 @@ describe('Members', function() {
 
   it('create user: POST to /api/members', function(done) {
     common.createMember(user, function(err) {
-      done();
+      done(err);
     });
   });
 
