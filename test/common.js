@@ -26,8 +26,9 @@ exports.createMember = function(name, cb) {
               .post('/api/members')
               .send(profile)
               .end(function(err, res) {
+                if (err) return cb(err)
                 res.body.created.should.be.true();
-                return cb(err);
+                return cb(null);
               });
         } else {
           cb(err);
@@ -47,8 +48,9 @@ var login = exports.login = function(name, cb) {
       .send(profile)
       .expect(200)
       .end(function(err, res) {
+        if (err) return cb(err)
         cookies = res.headers['set-cookie'].pop().split(';')[0];
-        return cb(err, cookies);
+        return cb(null, cookies);
       });
 };
 
