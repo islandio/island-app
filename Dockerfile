@@ -14,4 +14,4 @@ RUN python get-pip.py --user
 RUN /root/.local/bin/pip install --upgrade --user awsebcli
 RUN echo "export PATH=~/.local/bin:\$PATH" >> ~/.bashrc
 
-ENTRYPOINT ["/bin/bash"]
+CMD ["node"]
