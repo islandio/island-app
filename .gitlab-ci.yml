@@ -1,4 +1,4 @@
-image: lgatica/node-zmq:8.9.1
+image: islandio/node-eb-zmq:8.9.3
 
 before_script:
   - printf "@islandio:registry=https://registry.yarnpkg.com/\nalways-auth=true\n_authToken=$NPM_TOKEN" > .npmrc

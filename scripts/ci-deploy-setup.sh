@@ -1,13 +1,5 @@
 #!/usr/bin/env bash
 
-# Install the EB CLI
-apt-get update
-apt-get --yes install python-dev
-curl -O https://bootstrap.pypa.io/get-pip.py
-python get-pip.py --user
-export PATH=~/.local/bin:$PATH
-pip install --upgrade --user awsebcli
-
 # EB configs
 mkdir ~/.aws
 touch ~/.aws/config
