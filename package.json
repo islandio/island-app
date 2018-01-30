@@ -29,6 +29,7 @@
     "clean": ". ./scripts/clean.sh",
     "build": "./scripts/build.js .",
     "release": "npm version patch",
+    "preversion": "npm run build && npm test",
     "postversion": "git push --follow-tags"
   },
   "dependencies": {
