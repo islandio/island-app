@@ -223,14 +223,12 @@ define([
                   width: el.width().toString(),
                   height: el.height().toString(),
                   autostart: true,
-                  // primary: 'flash',
-                  ga: {},
                   sharing: {
                     link: window.location.protocol + '//' +
                         window.location.host + '/efforts/' + this.model.get('key'),
-                    code: "<iframe width='100%' height='100%' src='//" +
-                        window.location.host + "/embed/" +
-                        ipad.video.id + "' frameborder='0'></iframe>"
+                    // code: "<iframe width='100%' height='100%' src='//" +
+                    //     window.location.host + "/embed/" +
+                    //     ipad.video.id + "' frameborder='0'></iframe>"
                   }
                 };
 

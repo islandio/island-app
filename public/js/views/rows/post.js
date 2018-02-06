@@ -122,7 +122,7 @@ define([
         // that has a width
         var w = el.css('width');
         var nextParent = el;
-        while (parseInt(w) == 0 || w.indexOf('%') !== -1) {
+        while (!w || parseInt(w) == 0 || w.indexOf('%') !== -1) {
           nextParent = nextParent.parent()
           w = nextParent.css('width');
         }
@@ -179,14 +179,12 @@ define([
                   width: el.width().toString(),
                   height: el.height().toString(),
                   autostart: true,
-                  // primary: 'flash',
-                  ga: {},
                   sharing: {
                     link: window.location.protocol + '//' +
-                        window.location.host + '/' + this.model.get('key'),
-                    code: "<iframe width='100%' height='100%' src='//" +
-                        window.location.host + "/embed/" +
-                        ipad.video.id + "' frameborder='0'></iframe>"
+                        window.location.host + '/' + this.model.get('key')
+                    // code: "<iframe width='100%' height='100%' src='//" +
+                    //     window.location.host + "/embed/" +
+                    //     ipad.video.id + "' frameborder='0'></iframe>"
                   }
                 };
 
