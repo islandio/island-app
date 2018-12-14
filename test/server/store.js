@@ -167,7 +167,7 @@ describe('Store', function() {
 
   describe('Shipping Rates', function() {
 
-    it('request shipping rate with no address', function(done) {
+    it.skip('request shipping rate with no address', function(done) {
       request(url)
           .post('/api/store/shipping')
           .send({
@@ -180,7 +180,7 @@ describe('Store', function() {
           });
     });
 
-    it('request shipping rate with invalid address', function(done) {
+    it.skip('request shipping rate with invalid address', function(done) {
       request(url)
           .post('/api/store/shipping')
           .send({
@@ -194,7 +194,7 @@ describe('Store', function() {
           });
     });
 
-    it('request shipping rate with non-existing address', function(done) {
+    it.skip('request shipping rate with non-existing address', function(done) {
       this.timeout(5000);
       request(url)
           .post('/api/store/shipping')
@@ -210,7 +210,7 @@ describe('Store', function() {
           });
     });
 
-    it('request shipping rate with good address', function(done) {
+    it.skip('request shipping rate with good address', function(done) {
       this.timeout(10000);
       request(url)
           .post('/api/store/shipping')
@@ -226,7 +226,7 @@ describe('Store', function() {
           });
     });
 
-    it('request shipping rate with no cart', function(done) {
+    it.skip('request shipping rate with no cart', function(done) {
       request(url)
           .post('/api/store/shipping')
           .send({
@@ -239,7 +239,7 @@ describe('Store', function() {
           });
     });
 
-    it('request shipping rate with empty cart', function(done) {
+    it.skip('request shipping rate with empty cart', function(done) {
       request(url)
           .post('/api/store/shipping')
           .send({
@@ -253,7 +253,7 @@ describe('Store', function() {
           });
     });
 
-    it('request shipping rate with invalid cart', function(done) {
+    it.skip('request shipping rate with invalid cart', function(done) {
       request(url)
           .post('/api/store/shipping')
           .send({
@@ -267,7 +267,7 @@ describe('Store', function() {
           });
     });
 
-    it('request shipping rate with over max product quantity cart',
+    it.skip('request shipping rate with over max product quantity cart',
         function(done) {
       request(url)
           .post('/api/store/shipping')
@@ -283,7 +283,7 @@ describe('Store', function() {
           });
     });
 
-    it('request shipping rate with good cart', function(done) {
+    it.skip('request shipping rate with good cart', function(done) {
       this.timeout(5000);
       request(url)
           .post('/api/store/shipping')
@@ -303,7 +303,7 @@ describe('Store', function() {
 
   describe('Stripe.js', function() {
 
-    it('stripe token create', function(done) {
+    it.skip('stripe token create', function(done) {
       this.timeout(5000);
       stripe.tokens.create({
         card: {
@@ -321,7 +321,7 @@ describe('Store', function() {
 
     describe('Checkout', function() {
 
-      it('checkout with no stripe token', function(done) {
+      it.skip('checkout with no stripe token', function(done) {
         request(url)
           .post('/api/store/checkout')
           .send({
@@ -336,7 +336,7 @@ describe('Store', function() {
           });
       });
 
-      it('checkout with no cart', function(done) {
+      it.skip('checkout with no cart', function(done) {
         request(url)
           .post('/api/store/checkout')
           .send({
@@ -351,7 +351,7 @@ describe('Store', function() {
           });
       });
 
-      it('checkout with empty cart', function(done) {
+      it.skip('checkout with empty cart', function(done) {
         request(url)
           .post('/api/store/checkout')
           .send({
@@ -367,7 +367,7 @@ describe('Store', function() {
           });
       });
 
-      it('checkout with no shipping', function(done) {
+      it.skip('checkout with no shipping', function(done) {
         request(url)
           .post('/api/store/checkout')
           .send({
@@ -382,7 +382,7 @@ describe('Store', function() {
           });
       });
 
-      it('checkout with no shipping address', function(done) {
+      it.skip('checkout with no shipping address', function(done) {
         var _shipping = _.clone(shipping);
         delete _shipping.shipTo;
         request(url)
@@ -400,7 +400,7 @@ describe('Store', function() {
           });
       });
 
-      it('checkout with no shipment', function(done) {
+      it.skip('checkout with no shipment', function(done) {
         var _shipping = _.clone(shipping);
         delete _shipping.shipments;
         request(url)
@@ -418,7 +418,7 @@ describe('Store', function() {
           });
       });
 
-      it('checkout with no description', function(done) {
+      it.skip('checkout with no description', function(done) {
         request(url)
           .post('/api/store/checkout')
           .send({
@@ -433,7 +433,7 @@ describe('Store', function() {
           });
       });
 
-      it('checkout with over max product quantity cart', function(done) {
+      it.skip('checkout with over max product quantity cart', function(done) {
         request(url)
           .post('/api/store/checkout')
           .send({
@@ -450,7 +450,7 @@ describe('Store', function() {
           });
       });
 
-      it('checkout with unknown product', function(done) {
+      it.skip('checkout with unknown product', function(done) {
         this.timeout(5000);
         request(url)
           .post('/api/store/checkout')
@@ -467,7 +467,7 @@ describe('Store', function() {
           });
       });
 
-      it('checkout with insufficient stock', function(done) {
+      it.skip('checkout with insufficient stock', function(done) {
         this.timeout(5000);
         request(url)
           .post('/api/store/checkout')
@@ -484,7 +484,7 @@ describe('Store', function() {
           });
       });
 
-      it('checkout with invalid token', function(done) {
+      it.skip('checkout with invalid token', function(done) {
         this.timeout(5000);
         request(url)
           .post('/api/store/checkout')
@@ -502,7 +502,7 @@ describe('Store', function() {
           });
       });
 
-      it('checkout with valid token', function(done) {
+      it.skip('checkout with valid token', function(done) {
         this.timeout(60000);
         request(url)
           .post('/api/store/checkout')
