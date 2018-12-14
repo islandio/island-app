@@ -1,8 +1,6 @@
 image: islandio/node-eb-zmq:8.9.3
 
 before_script:
-  - printf "@islandio:https://registry.npmjs.org/\nalways-auth=true\n_authToken=$NPM_TOKEN" > .npmrc
-  - printf "registry \"https://registry.npmjs.org/\"" > .yarnrc
   - yarn global add node-gyp
   - npm run clean
   - npm run setup
