@@ -48,7 +48,7 @@ describe('Import8a', function() {
 });
 
 describe('Import27crags', function() {
-  it('27crags search for daniel woods', function(done) {
+  it.skip('27crags search for daniel woods', function(done) {
     this.timeout(30000);
     lib27.searchUser('Daniel Woods', function(err, res) {
       res.should.be.Array();
@@ -60,7 +60,7 @@ describe('Import27crags', function() {
       done(err);
     });
   });
-  it('27crags get ticks for Daniel Woods', function(done) {
+  it.skip('27crags get ticks for Daniel Woods', function(done) {
     this.timeout(45000);
     lib27.getTicks(lib27UserId, function(err, res) {
       res.should.be.Array();
