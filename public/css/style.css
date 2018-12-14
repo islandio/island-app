@@ -2021,6 +2021,22 @@ span.count {
   animation-fill-mode: both;
 }
 /*–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––banners*/
+.banner-top {
+  color: #fff;
+  font-size: 16px;
+  background: #d04c38;
+  padding: 20px;
+  line-height: 1.5;
+}
+.banner-top > h2 {
+  font-size: 18px;
+}
+.banner-top a,
+.banner-top a:hover {
+  color: #fff !important;
+  font-weight: bold;
+  background: none;
+}
 .banner-side {
   position: fixed;
   z-index: 2;
